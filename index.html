@@ -1,1 +1,244 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09080d">
+  <title>Вырасти рега</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <main id="app" class="app">
+    <header class="brand">
+      <div class="brand__icon">♠</div>
+      <div>
+        <div class="brand__title">Вырасти рега</div>
+        <div class="brand__subtitle">путь от рыбы до Triton</div>
+      </div>
+    </header>
 
+    <section id="screen-intro" class="screen screen--active">
+      <div class="panel intro">
+        <div class="eyebrow">Все когда-то были рыбой</div>
+        <h1>Вырастишь рега<br>или оплатишь чужой отпуск?</h1>
+        <p>Создай персонажа, учись принимать решения, копи банкролл и открывай покерные серии.</p>
+        <button id="intro-start" class="button button--primary">🃏 Вырастить рега</button>
+        <div class="signature">by Фриковая Дама 💋</div>
+      </div>
+    </section>
+
+    <section id="screen-create" class="screen">
+      <div class="panel">
+        <div class="eyebrow">Первый день карьеры</div>
+        <h2>Создай своего рега</h2>
+        <p class="muted">Выбор пока скромный. Как и стартовый банкролл.</p>
+
+        <label class="label" for="reg-name">Имя персонажа</label>
+        <input id="reg-name" class="input" maxlength="18" placeholder="Например, LuckyFish">
+
+        <div class="avatar-grid">
+          <button class="avatar-card avatar-card--active" data-avatar="🧑🏻‍💻">
+            <span>🧑🏻‍💻</span><small>Гриндер</small>
+          </button>
+          <button class="avatar-card" data-avatar="👩🏻‍🎤">
+            <span>👩🏻‍🎤</span><small>Дива</small>
+          </button>
+          <button class="avatar-card" data-avatar="😼">
+            <span>😼</span><small>Кот-рег</small>
+          </button>
+        </div>
+
+        <button id="create-reg" class="button button--primary">Начать карьеру</button>
+        <div class="signature">by Фриковая Дама 💋</div>
+      </div>
+    </section>
+
+    <section id="screen-home" class="screen">
+      <div class="profile-head">
+        <div class="profile-head__left">
+          <div id="home-avatar" class="avatar-small">🧑🏻‍💻</div>
+          <div>
+            <div id="home-name" class="profile-name">LuckyFish</div>
+            <div id="home-rank" class="muted small">Уровень 1 · Новичок</div>
+          </div>
+        </div>
+        <button id="reset-game" class="text-button">Сбросить</button>
+      </div>
+
+      <div class="panel room">
+        <div class="room__badge">Стартовый кабинет</div>
+        <div id="room-avatar" class="room__avatar">🧑🏻‍💻</div>
+        <div class="desk">
+          <span>💻</span><span>☕</span><span>🪑</span>
+        </div>
+        <div class="room__caption">Ноутбук пережил больше бедбитов, чем хозяин.</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>⚡ EV</span><strong id="stat-ev">0</strong></div>
+        <div class="stat"><span>💵 Банкролл</span><strong id="stat-bankroll">$100</strong></div>
+        <div class="stat"><span>👑 Репутация</span><strong id="stat-reputation">0</strong></div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-block__top">
+          <span>До уровня 2</span><span id="level-progress-text">0 / 200 EV</span>
+        </div>
+        <div class="progress"><div id="level-progress-bar" class="progress__bar"></div></div>
+      </div>
+
+      <button id="start-training" class="button button--primary">🃏 Начать тренировку</button>
+
+      <nav class="quick-nav">
+        <button class="quick-nav__item" data-open="series"><span>🌍</span><small>Серии</small></button>
+        <button class="quick-nav__item" data-open="shop"><span>👕</span><small>Магазин</small></button>
+        <button class="quick-nav__item" data-open="missions"><span>🎯</span><small>Миссии</small></button>
+        <button class="quick-nav__item" data-open="profile"><span>👤</span><small>Профиль</small></button>
+      </nav>
+
+      <div class="section-title">Следующая цель</div>
+      <button id="open-kaliningrad" class="series-preview">
+        <div class="series-preview__icon">🏰</div>
+        <div class="series-preview__text">
+          <strong>Калининград</strong>
+          <span>Первая серия · слабое поле</span>
+        </div>
+        <div>
+          <strong id="kaliningrad-state" class="locked">🔒 Закрыто</strong>
+          <span>$300</span>
+        </div>
+      </button>
+
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-training" class="screen">
+      <div class="training-top">
+        <button class="icon-button" data-back="home">←</button>
+        <div>
+          <strong>Свайп-тест</strong>
+          <div id="question-counter" class="muted small">1 / 10</div>
+        </div>
+        <div id="training-score" class="pill">0 верно</div>
+      </div>
+
+      <div class="progress"><div id="training-progress" class="progress__bar"></div></div>
+
+      <div class="panel question-panel">
+        <div id="cards" class="cards"></div>
+        <h2 id="question-text" class="question-text"></h2>
+        <div class="question-meta">
+          <div><span>Позиция</span><strong id="question-position"></strong></div>
+          <div><span>Стек</span><strong id="question-stack"></strong></div>
+        </div>
+      </div>
+
+      <div id="answer-buttons" class="answer-buttons">
+        <button data-answer="fold">← Фолд</button>
+        <button data-answer="call">↑ Колл</button>
+        <button data-answer="raise" class="answer-buttons__raise">Рейз →</button>
+      </div>
+
+      <div id="feedback" class="panel feedback">
+        <h3 id="feedback-title"></h3>
+        <p id="feedback-explanation"></p>
+        <blockquote id="feedback-comment"></blockquote>
+        <button id="next-question" class="button button--primary">Следующая рука</button>
+      </div>
+
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-summary" class="screen">
+      <div class="panel">
+        <div class="eyebrow">Тренировка завершена</div>
+        <h1 id="summary-title">Рег на испытательном сроке</h1>
+        <p class="muted">Результат: <strong id="summary-score"></strong></p>
+
+        <div class="rewards">
+          <div><span>⚡</span><strong id="reward-ev">+0</strong><small>EV</small></div>
+          <div><span>💵</span><strong id="reward-money">+$0</strong><small>Банкролл</small></div>
+          <div><span>👑</span><strong id="reward-reputation">+0</strong><small>Репутация</small></div>
+        </div>
+
+        <div id="summary-verdict" class="verdict"></div>
+
+        <div class="goal-card">
+          <strong>Следующая цель: Калининград</strong>
+          <p id="summary-goal" class="muted"></p>
+        </div>
+
+        <button id="summary-home" class="button button--primary">Вернуться к регу</button>
+        <div class="signature">by Фриковая Дама 💋</div>
+      </div>
+    </section>
+
+    <section id="screen-series" class="screen">
+      <div class="subscreen-head">
+        <button class="icon-button" data-back="home">←</button>
+        <h2>Карта серий</h2>
+      </div>
+      <div id="series-list" class="series-list"></div>
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-shop" class="screen">
+      <div class="subscreen-head">
+        <button class="icon-button" data-back="home">←</button>
+        <h2>Магазин</h2>
+      </div>
+      <div class="panel empty-state">
+        <div class="empty-state__icon">👕</div>
+        <h3>Магазин откроется в V2.1</h3>
+        <p class="muted">Здесь будут худи «Похуй колл», очки, кепки, рюкзаки и рабочее место рега.</p>
+      </div>
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-missions" class="screen">
+      <div class="subscreen-head">
+        <button class="icon-button" data-back="home">←</button>
+        <h2>Миссии</h2>
+      </div>
+      <div class="mission-list">
+        <div class="mission"><span>🃏</span><div><strong>Пройди тренировку</strong><small>Награда: +25$</small></div></div>
+        <div class="mission"><span>🔥</span><div><strong>Ответь правильно 7 раз</strong><small>Награда: +5 репутации</small></div></div>
+        <div class="mission"><span>🏰</span><div><strong>Открой Калининград</strong><small>Нужно накопить $300</small></div></div>
+      </div>
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-profile" class="screen">
+      <div class="subscreen-head">
+        <button class="icon-button" data-back="home">←</button>
+        <h2>Профиль</h2>
+      </div>
+      <div class="panel profile-panel">
+        <div id="profile-avatar" class="profile-avatar">🧑🏻‍💻</div>
+        <h2 id="profile-name">LuckyFish</h2>
+        <div id="profile-rank" class="muted">Новичок</div>
+        <div class="profile-grid">
+          <div><span>Тренировок</span><strong id="profile-trainings">0</strong></div>
+          <div><span>Лучший результат</span><strong id="profile-best">0/10</strong></div>
+          <div><span>Банкролл</span><strong id="profile-bankroll">$100</strong></div>
+          <div><span>Репутация</span><strong id="profile-reputation">0</strong></div>
+        </div>
+      </div>
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+
+    <section id="screen-city" class="screen">
+      <div class="subscreen-head">
+        <button class="icon-button" data-back="series">←</button>
+        <h2 id="city-title">Калининград</h2>
+      </div>
+      <div id="city-content" class="panel city-detail"></div>
+      <div class="signature">by Фриковая Дама 💋</div>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
