@@ -2,724 +2,109 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<title>Фриковая Дама — Poker Swipe</title>
-
-<style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  margin:0;
-  width:100%;
-  min-height:100%;
-  background:#05050a;
-  color:white;
-  font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-  display:flex;
-  justify-content:center;
-}
-
-.app{
-  width:100%;
-  max-width:430px;
-  min-height:100vh;
-  position:relative;
-  background:#05050a;
-  overflow:hidden;
-}
-
-.screen{
-  display:none;
-  position:relative;
-  width:100%;
-  min-height:100vh;
-  background:#05050a;
-}
-
-.screen.active{
-  display:block;
-}
-
-.bg{
-  display:block;
-  width:100%;
-  height:auto;
-  min-height:100vh;
-  object-fit:cover;
-}
-
-.hot{
-  position:absolute;
-  border:0;
-  background:transparent;
-  cursor:pointer;
-  z-index:20;
-}
-
-/* КАРТЫ ПОВЕРХ ВИЗУАЛА */
-
-.handOverlay{
-  position:absolute;
-  top:34%;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:8px;
-  z-index:10;
-  pointer-events:none;
-}
-
-.card{
-  width:72px;
-  height:100px;
-  border-radius:9px;
-  background:#fff;
-  color:#111;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  font-size:36px;
-  box-shadow:0 6px 18px rgba(0,0,0,.45);
-}
-
-.card.red{
-  color:#d71920;
-}
-
-.card .suit{
-  font-size:30px;
-  line-height:30px;
-}
-
-/* СЧЁТЧИК */
-
-.counter{
-  position:absolute;
-  top:15%;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:12;
-  font-weight:bold;
-  font-size:18px;
-  text-shadow:0 2px 5px #000;
-}
-
-/* НАДПИСИ РЕЗУЛЬТАТОВ */
-
-.ladyOverlay{
-  position:absolute;
-  left:8%;
-  right:8%;
-  bottom:12%;
-  z-index:12;
-  text-align:center;
-  font-size:20px;
-  line-height:1.35;
-  font-weight:700;
-  text-shadow:0 2px 8px #000;
-}
-
-.snark{
-  display:block;
-  margin-top:8px;
-  color:#d13cff;
-  font-size:15px;
-  font-weight:normal;
-}
-
-/* ФИНАЛ */
-
-.verdictOverlay{
-  position:absolute;
-  left:7%;
-  right:7%;
-  top:59%;
-  z-index:15;
-  text-align:center;
-  font-size:18px;
-  line-height:1.4;
-  font-weight:700;
-  text-shadow:0 2px 8px #000;
-}
-
-.scoreOverlay{
-  position:absolute;
-  left:0;
-  right:0;
-  top:72%;
-  text-align:center;
-  z-index:15;
-  font-size:17px;
-  font-weight:bold;
-  color:#b934ff;
-  text-shadow:0 2px 6px #000;
-}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05050a">
+<title>Фриковая Дама — Poker Trainer</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-<div class="app">
-
-<!-- ================= ГЛАВНЫЙ ЭКРАН ================= -->
-
-<section id="home" class="screen active">
-
-  <img class="bg" src="home.png" alt="Главный экран">
-
-  <!-- невидимая кнопка по области СВАЙП-ТЕСТ -->
-  <button
-    id="startSwipe"
-    class="hot"
-    aria-label="Начать свайп-тест"
-    style="left:50%;top:34%;width:47%;height:13%;">
-  </button>
-
-</section>
-
-
-<!-- ================= ОСНОВНЫЕ РУКИ ================= -->
-
-<section id="question" class="screen">
-
-  <img class="bg" src="question-aj.png" alt="Свайп тест">
-
-  <div id="counter" class="counter">1 / 15</div>
-
-  <div class="handOverlay">
-    <div id="card1" class="card"></div>
-    <div id="card2" class="card"></div>
-  </div>
-
-  <!-- ФОЛД -->
-  <button
-    class="hot decision"
-    data-action="fold"
-    aria-label="Фолд"
-    style="left:3%;top:74%;width:30%;height:17%;">
-  </button>
-
-  <!-- КОЛЛ -->
-  <button
-    class="hot decision"
-    data-action="call"
-    aria-label="Колл"
-    style="left:35%;top:74%;width:30%;height:17%;">
-  </button>
-
-  <!-- РЕЙЗ -->
-  <button
-    class="hot decision"
-    data-action="raise"
-    aria-label="Рейз"
-    style="left:67%;top:74%;width:30%;height:17%;">
-  </button>
-
-</section>
-
-
-<!-- ================= ПРАВИЛЬНЫЙ ОТВЕТ ================= -->
-
-<section id="match" class="screen resultScreen">
-
-  <img class="bg" src="match.png" alt="Правильное решение">
-
-  <div class="ladyOverlay">
-    ФРИКОВАЯ ДАМА
-    <span class="snark" id="matchQuote"></span>
-  </div>
-
-  <button
-    class="hot nextBtn"
-    aria-label="Следующая рука"
-    style="left:15%;top:83%;width:70%;height:10%;">
-  </button>
-
-</section>
-
-
-<!-- ================= СПОРНЫЙ ОТВЕТ ================= -->
-
-<section id="yellow" class="screen resultScreen">
-
-  <img class="bg" src="yellow.png" alt="Среднее решение">
-
-  <div class="ladyOverlay">
-    ФРИКОВАЯ ДАМА
-    <span class="snark" id="yellowQuote"></span>
-  </div>
-
-  <button
-    class="hot nextBtn"
-    aria-label="Следующая рука"
-    style="left:15%;top:83%;width:70%;height:10%;">
-  </button>
-
-</section>
-
-
-<!-- ================= НЕПРАВИЛЬНЫЙ ОТВЕТ ================= -->
-
-<section id="red" class="screen resultScreen">
-
-  <img class="bg" src="red.png" alt="Неправильное решение">
-
-  <div class="ladyOverlay">
-    ФРИКОВАЯ ДАМА
-    <span class="snark" id="redQuote"></span>
-  </div>
-
-  <button
-    class="hot nextBtn"
-    aria-label="Следующая рука"
-    style="left:15%;top:83%;width:70%;height:10%;">
-  </button>
-
-</section>
-
-
-<!-- ================= 15-Я РУКА ================= -->
-
-<section id="last" class="screen">
-
-  <img class="bg" src="question-22.png" alt="Последняя рука">
-
-  <div class="counter">15 / 15</div>
-
-  <div class="handOverlay">
-    <div id="lastCard1" class="card"></div>
-    <div id="lastCard2" class="card"></div>
-  </div>
-
-  <button
-    id="resultBtn"
-    class="hot"
-    aria-label="Узнать результат"
-    style="left:18%;top:86%;width:64%;height:9%;">
-  </button>
-
-</section>
-
-
-<!-- ================= ФИНАЛ ================= -->
-
-<section id="verdict" class="screen">
-
-  <img class="bg" src="verdict.png" alt="Финальный результат">
-
-  <div class="verdictOverlay">
-    <div id="verdictQuote"></div>
-  </div>
-
-  <div id="score" class="scoreOverlay"></div>
-
-  <button
-    id="continueBtn"
-    class="hot"
-    aria-label="Продолжить"
-    style="left:25%;top:86%;width:50%;height:8%;">
-  </button>
-
-</section>
-
-</div>
-
-
-<script>
-
-/* ======================================================
-   15 РАЗНЫХ РУК
-   Формат:
-   [карта1, масть1, карта2, масть2, лучший ответ]
-====================================================== */
-
-const hands = [
-
-  ['A','♠','J','♥','raise'],
-  ['K','♥','10','♣','raise'],
-  ['2','♥','2','♣','raise'],
-
-  ['A','♦','9','♣','raise'],
-  ['7','♠','6','♠','raise'],
-  ['K','♣','Q','♣','raise'],
-
-  ['A','♥','5','♥','raise'],
-  ['Q','♠','10','♠','raise'],
-  ['J','♦','9','♦','raise'],
-
-  ['8','♣','7','♣','raise'],
-  ['K','♠','7','♥','fold'],
-  ['Q','♦','6','♣','fold'],
-
-  ['A','♣','3','♦','raise'],
-  ['9','♥','8','♥','raise'],
-
-  /* последняя */
-  ['2','♠','2','♦','raise']
-
-];
-
-
-/* ======================================================
-   ЦИТАТЫ ФРИКОВОЙ ДАМЫ
-====================================================== */
-
-const quotes = {
-
-  match: [
-    'Надо же. Сегодня кнопки нажимаются не наугад.',
-    'Очень интересно. Особенно приятно, что в этот раз оно ещё и правильно.',
-    'GTO Wizard где-то тихо тобой гордится.',
-    'Ладно. Это действительно было похоже на покер.',
-    'Вот сейчас рег внутри тебя на секунду проснулся.',
-    'Похуй call отменяется. Здесь всё прилично.',
-    'Редкий случай: решение пережило проверку здравым смыслом.'
-  ],
-
-  yellow: [
-    'Жить можно. Но солвер слегка приподнял бровь.',
-    'Не преступление против покера, но вопросы имеются.',
-    'Погранично. Фриковая Дама пока не вызывает полицию.',
-    'Скажем так: в клубе тебя за это не выгонят.',
-    'Есть решения лучше. Есть хуже. Ты выбрал существовать посередине.'
-  ],
-
-  red: [
-    'Неприятные новости: это была не эксплуатация. Это была ошибка.',
-    'Солвер только что закрыл ноутбук и ушёл.',
-    'Вот за такие решения банкролл и начинает задавать вопросы.',
-    'Агрессия прекрасна, пока у неё есть причина.',
-    'Это не похуй call. Это уже похуй на EV.',
-    'Фриковая Дама официально просит больше так не делать.'
-  ]
-
-};
-
-
-/* ======================================================
-   ПЕРЕМЕННЫЕ
-====================================================== */
-
-let current = 0;
-let correct = 0;
-let lastResult = '';
-
-
-const screens = [
-  'home',
-  'question',
-  'match',
-  'yellow',
-  'red',
-  'last',
-  'verdict'
-];
-
-
-/* ======================================================
-   ПОКАЗ ЭКРАНА
-====================================================== */
-
-function show(id){
-
-  screens.forEach(screenId => {
-
-    const element = document.getElementById(screenId);
-
-    if(element){
-      element.classList.toggle(
-        'active',
-        screenId === id
-      );
-    }
-
-  });
-
-  window.scrollTo(0,0);
-}
-
-
-/* ======================================================
-   КАРТЫ
-====================================================== */
-
-function setCard(element, rank, suit){
-
-  element.className = 'card';
-
-  if(suit === '♥' || suit === '♦'){
-    element.classList.add('red');
-  }
-
-  element.innerHTML =
-    '<div>' + rank + '</div>' +
-    '<div class="suit">' + suit + '</div>';
-}
-
-
-/* ======================================================
-   ОТРИСОВКА РУКИ
-====================================================== */
-
-function renderHand(){
-
-  if(current >= 14){
-    renderLast();
-    return;
-  }
-
-  const hand = hands[current];
-
-  document.getElementById('counter').textContent =
-    (current + 1) + ' / 15';
-
-  setCard(
-    document.getElementById('card1'),
-    hand[0],
-    hand[1]
-  );
-
-  setCard(
-    document.getElementById('card2'),
-    hand[2],
-    hand[3]
-  );
-
-}
-
-
-/* ======================================================
-   ПОСЛЕДНЯЯ РУКА
-====================================================== */
-
-function renderLast(){
-
-  const hand = hands[14];
-
-  setCard(
-    document.getElementById('lastCard1'),
-    hand[0],
-    hand[1]
-  );
-
-  setCard(
-    document.getElementById('lastCard2'),
-    hand[2],
-    hand[3]
-  );
-
-  show('last');
-}
-
-
-/* ======================================================
-   СЛУЧАЙНАЯ ЦИТАТА
-====================================================== */
-
-function randomQuote(type){
-
-  const arr = quotes[type];
-
-  return arr[
-    Math.floor(Math.random() * arr.length)
-  ];
-
-}
-
-
-/* ======================================================
-   ОЦЕНКА РЕШЕНИЯ
-====================================================== */
-
-function choose(action){
-
-  const correctAction = hands[current][4];
-
-  let result;
-
-  if(action === correctAction){
-
-    result = 'match';
-    correct++;
-
-  }
-
-  else if(
-    (action === 'call' && correctAction === 'raise') ||
-    (action === 'raise' && correctAction === 'call')
-  ){
-
-    result = 'yellow';
-
-  }
-
-  else{
-
-    result = 'red';
-
-  }
-
-  lastResult = result;
-
-  const quoteElement =
-    document.getElementById(result + 'Quote');
-
-  if(quoteElement){
-    quoteElement.textContent = randomQuote(result);
-  }
-
-  show(result);
-}
-
-
-/* ======================================================
-   СТАРТ
-====================================================== */
-
-document
-.getElementById('startSwipe')
-.addEventListener('click', function(){
-
-  current = 0;
-  correct = 0;
-
-  renderHand();
-
-  show('question');
-
-});
-
-
-/* ======================================================
-   FOLD / CALL / RAISE
-====================================================== */
-
-document
-.querySelectorAll('.decision')
-.forEach(function(button){
-
-  button.addEventListener('click', function(){
-
-    choose(
-      button.dataset.action
-    );
-
-  });
-
-});
-
-
-/* ======================================================
-   СЛЕДУЮЩАЯ РУКА
-====================================================== */
-
-document
-.querySelectorAll('.nextBtn')
-.forEach(function(button){
-
-  button.addEventListener('click', function(){
-
-    current++;
-
-    if(current >= 14){
-
-      renderLast();
-
-    } else {
-
-      renderHand();
-      show('question');
-
-    }
-
-  });
-
-});
-
-
-/* ======================================================
-   УЗНАТЬ РЕЗУЛЬТАТ
-====================================================== */
-
-document
-.getElementById('resultBtn')
-.addEventListener('click', function(){
-
-  showFinalVerdict();
-
-});
-
-
-/* ======================================================
-   ФИНАЛЬНЫЙ ВЕРДИКТ
-====================================================== */
-
-function showFinalVerdict(){
-
-  let text = '';
-
-  if(correct >= 12){
-
-    text =
-      '15 рук позади, а ты всё ещё играешь лучше, чем 90% регов на этом лимите. Не расслабляйся — большие банки любят терпеливых и беспощадных.';
-
-  }
-
-  else if(correct >= 8){
-
-    text =
-      'Потенциал рега обнаружен. Осталось перестать иногда нажимать кнопки по велению сердца.';
-
-  }
-
-  else if(correct >= 5){
-
-    text =
-      'Ты уже понимаешь, где находится кнопка рейз. Это хорошее начало. Теперь осталось понять зачем.';
-
-  }
-
-  else{
-
-    text =
-      'Фриковая Дама рекомендует временно отойти от кнопки CALL и подумать о содеянном.';
-
-  }
-
-  document.getElementById('verdictQuote').textContent = text;
-
-  document.getElementById('score').textContent =
-    'Правильных решений: ' + correct + ' / 15';
-
-  show('verdict');
-}
-
-
-/* ======================================================
-   ПРОДОЛЖИТЬ — ВЕРНУТЬСЯ НА ГЛАВНУЮ
-====================================================== */
-
-document
-.getElementById('continueBtn')
-.addEventListener('click', function(){
-
-  current = 0;
-  correct = 0;
-
-  show('home');
-
-});
-
-</script>
-
+<main class="app">
+  <header class="topbar">
+    <div class="stat user"><div class="lvl">17</div><div><small>LuckyDuck</small><b>12 580</b></div></div>
+    <div class="stat"><small>EV (ОНБТ)</small><b id="evTop">+2.58</b></div>
+    <div class="stat"><small>БАНКРОЛЛ</small><b>$ 3 250</b></div>
+    <div class="stat"><small>РЕПУТАЦИЯ</small><b id="repTop">2 480</b></div>
+  </header>
+
+  <section id="home" class="screen active">
+    <div class="home-hero">
+      <div class="hero-card">
+        <img class="hero-img" src="assets/home-hero.png" alt="">
+        <div class="hero-shade"></div>
+        <div class="hero-actions">
+          <button id="fastGame" class="mode fast tap">⚡ БЫСТРАЯ ИГРА<span>20-минутный турнир · скоро</span></button>
+          <button id="startSwipe" class="mode swipe tap">🃏 СВАЙП-ТЕСТ<span>15 рук · реальные решения</span></button>
+        </div>
+      </div>
+      <div class="goal">
+        <small>СЛЕДУЮЩАЯ ЦЕЛЬ</small>
+        <h3>КАЛИНИНГРАД 🏆</h3>
+        <div style="color:#c8c2d0;margin-bottom:10px">Первая поездка на серию · 68%</div>
+        <div class="progress"><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="game-head">
+      <button id="backHome" class="back tap" aria-label="Назад">←</button>
+      <h2>СВАЙП-ТЕСТ</h2>
+      <div id="handCount" class="count">1 / 15</div>
+    </div>
+    <div class="table">
+      <div class="table-meta">
+        <div class="mini"><small>БАНК</small><b id="pot">2.4 BB</b></div>
+        <div class="mini"><small>СТЕК</small><b id="stack">18 BB</b></div>
+      </div>
+      <div class="opponent">😎</div>
+      <div class="dealer">D · оппонент</div>
+      <div id="cards" class="cards"></div>
+      <div class="question">Какое действие<br>ты выберешь?</div>
+      <div id="situation" class="situation"></div>
+      <div class="info-row">
+        <div class="info"><small>ПОЗИЦИЯ</small><b id="pos"></b></div>
+        <div class="info"><small>СТАДИЯ</small><b id="stage"></b></div>
+        <div class="info"><small>ФОРМАТ</small><b>9-MAX</b></div>
+      </div>
+      <div class="actions">
+        <button class="action fold tap" data-action="fold">✕<br>ФОЛД</button>
+        <button class="action call tap" data-action="call">↑<br>КОЛЛ</button>
+        <button class="action raise tap" data-action="raise">↗<br>РЕЙЗ</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="result-wrap">
+      <div class="result-card">
+        <div id="resultCards" class="cards result-cards"></div>
+        <div id="flag" class="flag match">MATCH ❤️</div>
+        <h2 id="resultTitle">Правильное решение!</h2>
+        <div id="explain" class="explain"></div>
+        <div class="lady">
+          <div class="lady-avatar">💋</div>
+          <div><b>ФРИКОВАЯ ДАМА</b><p id="ladyText"></p></div>
+        </div>
+        <button id="nextHand" class="next tap">СЛЕДУЮЩАЯ РУКА →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="verdict" class="screen">
+    <div class="verdict">
+      <div class="verdict-card">
+        <div class="series">СЕРИЯ ЗАВЕРШЕНА</div>
+        <div class="lady-big">💋</div>
+        <div id="finalQuote" class="final-quote"></div>
+        <div class="metrics">
+          <div class="metric"><small>ПРАВИЛЬНЫХ</small><b id="score">0 / 15</b></div>
+          <div class="metric"><small>EV</small><b id="finalEv">+2.58</b></div>
+          <div class="metric"><small>РЕПУТАЦИЯ</small><b id="finalRep">2 480</b></div>
+        </div>
+        <div class="rewards">
+          <div class="reward">💵<br><b>$ 500</b></div>
+          <div class="reward">✦<br><b>250</b></div>
+          <div class="reward">XP<br><b>750</b></div>
+        </div>
+        <button id="continueBtn" class="next tap">ПРОДОЛЖИТЬ</button>
+        <button id="againBtn" class="ghost tap">ЕЩЁ 15 РУК</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

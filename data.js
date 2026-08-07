@@ -1,23 +1,527 @@
-
-const QUESTIONS = [
-  {cards:["A♠","Q♦"],position:"BTN",stack:"40 BB",situation:"До тебя все сфолдили. Что делаешь?",correct:"raise",explanation:"AQo — сильное открытие с баттона.",good:"Ладно, красиво. Сегодня банкролл может выдохнуть.",bad:"Очень авторское решение. Диапазон просил его не упоминать."},
-  {cards:["K♣","7♦"],position:"UTG",stack:"50 BB",situation:"Ты первый говоришь за полным столом.",correct:"fold",explanation:"K7o слишком слабая для ранней позиции.",good:"Ты прошёл мимо K7o. Где-то один рег расстроился.",bad:"K7o снова нашла человека, который поверил в неё сильнее, чем в себя."},
-  {cards:["J♠","J♥"],position:"CO",stack:"35 BB",situation:"MP открыл 2.2 BB. До тебя все сфолдили.",correct:"raise",explanation:"JJ достаточно сильны для 3-бета на вэлью.",good:"Валеты получили уважение, а не очередную семейную драму.",bad:"Играть валетов пассивно — как прятать зарплату под матрасом. Надёжно только кажется."},
-  {cards:["A♥","9♣"],position:"UTG",stack:"30 BB",situation:"Ты открываешь торговлю за столом 9-max.",correct:"fold",explanation:"A9o часто доминирована более сильными тузами.",good:"Красивое лицо не спасло токсичный характер. Фолд.",bad:"Ты снова выбрал красоту вместо совместимости. Очень по-человечески."},
-  {cards:["8♠","8♦"],position:"BTN",stack:"25 BB",situation:"До тебя все сфолдили.",correct:"raise",explanation:"Карманная пара на баттоне — уверенное открытие.",good:"Пара восьмёрок уже серьёзнее половины знакомств в Telegram.",bad:"Ты испугался карманной пары на баттоне. Тревожность победила EV."},
-  {cards:["A♣","K♣"],position:"SB",stack:"45 BB",situation:"BTN открыл 2.3 BB. Твой ход.",correct:"raise",explanation:"AKs — премиальная рука, стандартно 3-бетим.",good:"Наконец-то проявился первым и не унизился.",bad:"AKs посмотрели на твой пассивный выбор и попросили другого владельца."},
-  {cards:["Q♠","9♠"],position:"BB",stack:"40 BB",situation:"BTN открыл 2 BB, SB сфолдил.",correct:"call",explanation:"Q9s хорошо защищает BB против маленького открытия BTN.",good:"Не каждый колл — эмоциональная зависимость. Иногда это пот-оддсы.",bad:"Сегодня ты выбросил руку, которая хотела просто посмотреть флоп. Жестоко."},
-  {cards:["A♦","A♣"],position:"HJ",stack:"60 BB",situation:"До тебя все сфолдили.",correct:"raise",explanation:"Тузы — сильнейшая стартовая рука. Их нужно разгонять.",good:"Редкий профиль без красных флагов. Рейз.",bad:"Ты сыграл тузы так, будто прячешь их от налоговой."},
-  {cards:["6♥","5♥"],position:"UTG",stack:"18 BB",situation:"Ты первый говоришь за полным столом.",correct:"fold",explanation:"При коротком стеке 65s теряет ценность.",good:"Красивые перспективы требуют глубоких стеков. Ты это понял.",bad:"18 BB, 65s и вера в чудо. Полный набор начинающего инвестора."},
-  {cards:["K♠","Q♠"],position:"CO",stack:"32 BB",situation:"UTG открыл 2.2 BB, остальные сфолдили.",correct:"call",explanation:"KQs достаточно сильна для колла в позиции.",good:"Спокойный здоровый колл. Даже Фриковая Дама иногда такое одобряет.",bad:"Не надо форсировать отношения с KQs. Иногда достаточно просто колла."}
-];
-
-const SERIES = [
-  {id:"kaliningrad",icon:"🏰",name:"Калининград",subtitle:"Первая серия · слабое поле",bankroll:300,level:1,description:"Первый выезд твоего рега. Поле мягкое, ошибки ещё прощаются.",reward:"до $1 000"},
-  {id:"sochi",icon:"🌊",name:"Сочи",subtitle:"Тёплый климат, холодные реги",bankroll:1200,level:3,description:"Поле становится сильнее. Появляются таймбанки, 3-беты и неприятные люди.",reward:"до $5 000"},
-  {id:"minsk",icon:"🏙️",name:"Минск",subtitle:"Больше давления и ICM",bankroll:3500,level:5,description:"Ошибки стоят дороже, а финальные столы становятся реальной целью.",reward:"до $12 000"},
-  {id:"cyprus",icon:"🌴",name:"Кипр",subtitle:"Международное поле",bankroll:9000,level:8,description:"Сильные реги, глубокие стеки и первая по-настоящему дорогая поездка.",reward:"до $30 000"},
-  {id:"ept",icon:"♣️",name:"EPT",subtitle:"Европейская элита",bankroll:25000,level:12,description:"Сложные ICM-решения, давление больших денег и минимум права на ошибку.",reward:"до $250 000"},
-  {id:"wsop",icon:"🏆",name:"WSOP",subtitle:"Путь к браслету",bankroll:80000,level:18,description:"Главная мечта турнирного игрока. Здесь история становится легендой.",reward:"браслет WSOP"},
-  {id:"triton",icon:"💎",name:"Triton",subtitle:"Эндгейм для хайроллеров",bankroll:500000,level:25,description:"Лучшие игроки, огромные бай-ины и решения, которые нельзя принять на чуйке.",reward:"титул Triton Regular"}
+window.HANDS = [
+  {
+    "id": 1,
+    "cards": [
+      [
+        "A",
+        "♠"
+      ],
+      [
+        "J",
+        "♥"
+      ]
+    ],
+    "position": "BTN",
+    "stack": "18 BB",
+    "pot": "2.4 BB",
+    "stage": "Средняя · ITM",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Слишком тайтово. AJo на BTN — сильное открытие."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Лимп не катастрофа, но ты отдаёшь инициативу и эквити."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Стандартное прибыльное открытие с баттона."
+      }
+    }
+  },
+  {
+    "id": 2,
+    "cards": [
+      [
+        "K",
+        "♥"
+      ],
+      [
+        "10",
+        "♣"
+      ]
+    ],
+    "position": "BTN",
+    "stack": "21 BB",
+    "pot": "2.3 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Слишком осторожно для BTN. Можно открывать шире."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Лимп здесь теряет смысл — рука лучше реализуется через рейз."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Хорошее стандартное открытие на баттоне."
+      }
+    }
+  },
+  {
+    "id": 3,
+    "cards": [
+      [
+        "2",
+        "♥"
+      ],
+      [
+        "2",
+        "♣"
+      ]
+    ],
+    "position": "CO",
+    "stack": "24 BB",
+    "pot": "2.2 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Допустимо в очень нитовой стратегии, но слишком пассивно."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Открытый лимп с CO здесь хуже рейза."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Маленькая пара хорошо подходит для открытия с CO."
+      }
+    }
+  },
+  {
+    "id": 4,
+    "cards": [
+      [
+        "Q",
+        "♠"
+      ],
+      [
+        "10",
+        "♦"
+      ]
+    ],
+    "position": "UTG",
+    "stack": "30 BB",
+    "pot": "2.2 BB",
+    "stage": "Ранняя",
+    "situation": "Ты открываешь торговлю 9-max.",
+    "actions": {
+      "fold": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "QTo из UTG слишком слабая для стабильного открытия."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Открытый лимп из UTG создаёт неудобный диапазон."
+      },
+      "raise": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Агрессивно, но слишком широко для стандартной 9-max структуры."
+      }
+    }
+  },
+  {
+    "id": 5,
+    "cards": [
+      [
+        "A",
+        "♦"
+      ],
+      [
+        "9",
+        "♦"
+      ]
+    ],
+    "position": "BTN",
+    "stack": "35 BB",
+    "pot": "2.4 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "A9s на BTN слишком хорош, чтобы выбрасывать."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Лимп возможен в смешанной стратегии, но рейз проще и сильнее."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Сильное открытие: блокер, позиция, хорошая реализация эквити."
+      }
+    }
+  },
+  {
+    "id": 6,
+    "cards": [
+      [
+        "K",
+        "♣"
+      ],
+      [
+        "7",
+        "♦"
+      ]
+    ],
+    "position": "BB",
+    "stack": "17 BB",
+    "pot": "3.5 BB",
+    "stage": "Средняя",
+    "situation": "BTN открыл 2 BB. SB фолд.",
+    "actions": {
+      "fold": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Фолд допустим против тайтового BTN, но обычно защищаем шире."
+      },
+      "call": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Нормальная защита BB против небольшого открытия BTN."
+      },
+      "raise": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Для 3-бета эта конкретная рука слишком слабая и плохо блокирует продолжение."
+      }
+    }
+  },
+  {
+    "id": 7,
+    "cards": [
+      [
+        "A",
+        "♣"
+      ],
+      [
+        "5",
+        "♣"
+      ]
+    ],
+    "position": "CO",
+    "stack": "26 BB",
+    "pot": "2.4 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "A5s слишком хорош для фолда в CO."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Лимп теряет инициативу."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Отличный кандидат на открытие: блокер и играбельность."
+      }
+    }
+  },
+  {
+    "id": 8,
+    "cards": [
+      [
+        "J",
+        "♠"
+      ],
+      [
+        "8",
+        "♦"
+      ]
+    ],
+    "position": "UTG",
+    "stack": "30 BB",
+    "pot": "2.2 BB",
+    "stage": "Ранняя",
+    "situation": "Ты первый говоришь 9-max.",
+    "actions": {
+      "fold": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Правильно: J8o из UTG слишком слабая."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Открытый лимп не спасает слабую руку."
+      },
+      "raise": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Слишком широкое открытие без достаточной постфлоп-реализации."
+      }
+    }
+  },
+  {
+    "id": 9,
+    "cards": [
+      [
+        "10",
+        "♠"
+      ],
+      [
+        "10",
+        "♥"
+      ]
+    ],
+    "position": "HJ",
+    "stack": "22 BB",
+    "pot": "4.8 BB",
+    "stage": "Средняя",
+    "situation": "MP открыл 2.2 BB.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "TT слишком сильна для фолда."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Колл возможен, но часто уступает агрессии по EV."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Сильный 3-бет на вэлью и защита своей доли банка."
+      }
+    }
+  },
+  {
+    "id": 10,
+    "cards": [
+      [
+        "A",
+        "♥"
+      ],
+      [
+        "Q",
+        "♥"
+      ]
+    ],
+    "position": "CO",
+    "stack": "31 BB",
+    "pot": "5.2 BB",
+    "stage": "Средняя",
+    "situation": "HJ открыл 2.2 BB.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "AQs слишком сильна для фолда."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Колл допустим, но часто теряет часть EV против 3-бета."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Сильный 3-бет с отличной играбельностью."
+      }
+    }
+  },
+  {
+    "id": 11,
+    "cards": [
+      [
+        "7",
+        "♠"
+      ],
+      [
+        "6",
+        "♠"
+      ]
+    ],
+    "position": "SB",
+    "stack": "20 BB",
+    "pot": "3.0 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Можно выкинуть против сильного BB, но стандартно играем активнее."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Лимп возможен в смешанной стратегии."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Хороший агрессивный выбор против BB."
+      }
+    }
+  },
+  {
+    "id": 12,
+    "cards": [
+      [
+        "K",
+        "♣"
+      ],
+      [
+        "Q",
+        "♣"
+      ]
+    ],
+    "position": "MP",
+    "stack": "42 BB",
+    "pot": "2.5 BB",
+    "stage": "Ранняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "KQs слишком сильна для фолда."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Открытый лимп без причины теряет EV."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Стандартное сильное открытие из MP."
+      }
+    }
+  },
+  {
+    "id": 13,
+    "cards": [
+      [
+        "9",
+        "♣"
+      ],
+      [
+        "9",
+        "♦"
+      ]
+    ],
+    "position": "BTN",
+    "stack": "14 BB",
+    "pot": "3.0 BB",
+    "stage": "Поздняя",
+    "situation": "CO открыл 2 BB.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "99 слишком сильна для фолда на таком стеке."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Колл возможен, но короткий стек делает агрессию привлекательнее."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Сильная агрессия на вэлью против широкого CO."
+      }
+    }
+  },
+  {
+    "id": 14,
+    "cards": [
+      [
+        "Q",
+        "♥"
+      ],
+      [
+        "J",
+        "♥"
+      ]
+    ],
+    "position": "CO",
+    "stack": "19 BB",
+    "pot": "2.6 BB",
+    "stage": "Средняя",
+    "situation": "До тебя все сфолдили.",
+    "actions": {
+      "fold": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "QJs слишком сильна для фолда с CO."
+      },
+      "call": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Лимп возможен редко, но рейз проще и прибыльнее."
+      },
+      "raise": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "Стандартное открытие с хорошей постфлоп-играбельностью."
+      }
+    }
+  },
+  {
+    "id": 15,
+    "cards": [
+      [
+        "A",
+        "♠"
+      ],
+      [
+        "4",
+        "♦"
+      ]
+    ],
+    "position": "UTG",
+    "stack": "16 BB",
+    "pot": "2.3 BB",
+    "stage": "Баббл",
+    "situation": "9-max, давление ICM.",
+    "actions": {
+      "fold": {
+        "grade": "match",
+        "title": "MATCH",
+        "text": "На баббле и с таким стеком A4o из UTG — слишком маргинально."
+      },
+      "call": {
+        "grade": "red",
+        "title": "RED FLAG",
+        "text": "Открытый лимп только усложнит жизнь."
+      },
+      "raise": {
+        "grade": "yellow",
+        "title": "YELLOW FLAG",
+        "text": "Слишком агрессивно для базовой стратегии на баббле."
+      }
+    }
+  }
 ];
