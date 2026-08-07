@@ -32,7 +32,7 @@ button{font:inherit;color:inherit}
 .cover-art:before{content:"♠";position:absolute;right:-16px;bottom:-58px;font-size:220px;color:rgba(245,42,120,.13)}
 .cover-art:after{content:"404\\A BAD DECISION";white-space:pre;position:absolute;right:28px;top:34px;text-align:right;font-weight:900;color:#efe9df;opacity:.12;font-size:34px}
 .cover-copy{position:relative;z-index:2;font-size:31px;line-height:1.02;font-weight:900;max-width:300px}
-.start{background:var(--pink);border-radius:18px;padding:18px;text-align:center;font-weight:900;font-size:18px}
+.start{width:100%;border:0;color:white;background:var(--pink);border-radius:18px;padding:18px;text-align:center;font-weight:900;font-size:18px;cursor:pointer}
 .top{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 10px}
 .brand{font-weight:1000;font-size:21px;letter-spacing:-.05em;font-style:italic}
 .pill{border:1px solid var(--line);background:var(--panel);padding:8px 10px;border-radius:999px;font-size:12px}
@@ -81,7 +81,7 @@ button{font:inherit;color:inherit}
 <section id="cover" class="cover">
   <div><div class="label">TELEGRAM MINI APP</div><div class="logo">POKER<br><span class="pink">SWIPE</span></div><p class="pink" style="font-weight:800;transform:rotate(-3deg)">тест на адекватность, а не на удачу</p></div>
   <div class="cover-art"><div class="cover-copy">ПОКЕР, НО КАК TINDER.<br><span class="pink">ТВОЙ ПУШ ИЛИ ФОЛД.</span></div></div>
-  <div><div class="start">НАЧАТЬ ИГРАТЬ →</div><div class="small muted" style="text-align:center;margin-top:9px">тапни куда угодно · прогресс сохранится</div></div>
+  <div><button id="startButton" class="start" type="button">НАЧАТЬ ИГРАТЬ →</button><div class="small muted" style="text-align:center;margin-top:9px">тапни куда угодно · прогресс сохранится</div></div>
 </section>
 
 <div id="app" class="app hidden">
@@ -167,6 +167,8 @@ const KEY='pokerSwipeState_v3';
 const D={xp:0,ev:0,rep:50,streak:0,lastDay:null,played:0,correct:0,preP:0,preC:0,postP:0,postC:0,act:{fold:0,call:0,raise:0},seen:[],ach:[],filter:'mix'};
 let S;try{S={...D,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){S={...D}}
 let current=null,mode='swipe',quickLeft=0,drag={on:false,sx:0,sy:0,x:0,y:0};
+const content=document.getElementById('content'),backCard=document.getElementById('backCard'),frontCard=document.getElementById('frontCard'),feedback=document.getElementById('feedback');
+const hello=document.getElementById('hello'),name=document.getElementById('name'),avatar=document.getElementById('avatar'),xp=document.getElementById('xp'),ev=document.getElementById('ev'),rep=document.getElementById('rep'),streakTop=document.getElementById('streakTop'),pxp=document.getElementById('pxp'),level=document.getElementById('level'),leakEl=document.getElementById('leak'),fp=document.getElementById('fp'),cp=document.getElementById('cp'),rp=document.getElementById('rp'),preacc=document.getElementById('preacc'),postacc=document.getElementById('postacc'),ptype=document.getElementById('ptype'),pquote=document.getElementById('pquote'),badges=document.getElementById('badges'),leaders=document.getElementById('leaders');
 
 try{Telegram.WebApp.ready();Telegram.WebApp.expand()}catch(e){}
 function user(){try{return Telegram.WebApp.initDataUnsafe.user||null}catch(e){return null}}
@@ -174,8 +176,10 @@ function save(){localStorage.setItem(KEY,JSON.stringify(S));ui()}
 function today(){return new Date().toISOString().slice(0,10)}
 function toast(x){const t=document.getElementById('toast');t.textContent=x;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
 function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===id))}
-const coverEl=document.getElementById('cover'); const appEl=document.getElementById('app');
-coverEl.addEventListener('click',()=>{ coverEl.classList.add('hidden'); appEl.classList.remove('hidden'); ui(); });
+const coverEl=document.getElementById('cover'); const appEl=document.getElementById('app'); const startButton=document.getElementById('startButton');
+function enterApp(){coverEl.classList.add('hidden');appEl.classList.remove('hidden');go('home');ui();window.scrollTo(0,0)}
+startButton.addEventListener('click',(e)=>{e.preventDefault();e.stopPropagation();enterApp()});
+coverEl.addEventListener('click',enterApp);
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.nav);if(b.dataset.nav==='swipe'&&!current)start('swipe')}));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.mode)));
@@ -223,7 +227,7 @@ function showFeedback(good){
  feedback.innerHTML=`<h2 class="${good?'green':'pink'}">${good?'НЕПЛОХО':'RED FLAG'}</h2><p><b>${txt}</b></p><p class="muted">${current.why}</p>
  <div class="votes"><div>Фолд<br><b>${v[0]}%</b></div><div>Колл<br><b>${v[1]}%</b></div><div>Рейз<br><b>${v[2]}%</b></div></div>
  <div class="row"><span>Результат</span><b>${good?'+':'−'}${current.diff} EV · +${good?20+current.diff*4:4} XP</b></div><button id="next" class="cta">СЛЕДУЮЩАЯ РАЗДАЧА →</button>`;
- feedback.classList.remove('hidden');next.addEventListener('click',nextSpot)
+ feedback.classList.remove('hidden');document.getElementById('next').addEventListener('click',nextSpot)
 }
 function votes(ok){return ok==='fold'?[58,23,19]:ok==='call'?[19,59,22]:[18,22,60]}
 function nextSpot(){
@@ -272,7 +276,7 @@ function unlock(){
 function ui(){
  const u=user(),n=u?.first_name||'Игрок';hello.textContent=u?`Привет, ${n}. Сегодня без героизма.`:'Фриковая Дама наблюдает';
  name.textContent=n;avatar.textContent=n.slice(0,2).toUpperCase();xp.textContent=S.xp;ev.textContent=(S.ev>0?'+':'')+S.ev;rep.textContent=S.rep;streakTop.textContent=S.streak;
- pxp.textContent=S.xp;level.textContent=Math.floor(S.xp/400)+1;leak.textContent=leak();
+ pxp.textContent=S.xp;level.textContent=Math.floor(S.xp/400)+1;leakEl.textContent=leak();
  let t=S.played||1;fp.textContent=Math.round(S.act.fold/t*100)+'%';cp.textContent=Math.round(S.act.call/t*100)+'%';rp.textContent=Math.round(S.act.raise/t*100)+'%';
  preacc.textContent=(S.preP?Math.round(S.preC/S.preP*100):0)+'%';postacc.textContent=(S.postP?Math.round(S.postC/S.postP*100):0)+'%';
  let ty=type();ptype.textContent=ty[0];pquote.textContent=ty[1];badges.innerHTML=[
