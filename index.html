@@ -37,25 +37,57 @@ radial-gradient(circle at 82% 60%,rgba(245,42,120,.18),transparent 36%),#0a0a0c}
 .nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(520px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:#0b0b0ddd;border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(16px)}
 .nav button{border:0;background:transparent;color:#77727e;font-size:10px;padding:6px 2px}.nav button.active{color:var(--pink);font-weight:900}.nav i{display:block;font-style:normal;font-size:20px}
 .filter{display:flex;gap:7px;padding:0 16px 10px}.filter button{flex:1;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:9px;font-size:12px}.filter button.on{background:var(--pink);border-color:var(--pink)}
-.stack{position:relative;height:500px;margin:0 16px 10px}
-.card{position:absolute;inset:0;background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:17px;touch-action:none;user-select:none;overflow:hidden;transition:transform .2s ease,opacity .2s ease}
+.stack{position:relative;height:610px;margin:0 16px 10px}
+.card{position:absolute;inset:0;background:
+ radial-gradient(circle at 50% 42%,rgba(255,31,122,.08),transparent 32%),
+ linear-gradient(180deg,#17171d 0%,#111116 100%);
+ border:1px solid #34343e;border-radius:28px;padding:16px;touch-action:none;user-select:none;overflow:hidden;
+ box-shadow:0 18px 55px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.025);
+ transition:transform .2s ease,opacity .2s ease}
 .card.behind{transform:scale(.97) translateY(10px);opacity:.35}
-.cardhead{display:flex;justify-content:space-between;align-items:center}.progress{height:7px;background:#222228;border-radius:99px;overflow:hidden;margin:10px 0 13px}.progress span{display:block;height:100%;background:var(--pink)}
-.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mini div{background:#0e0e12;border:1px solid var(--line);border-radius:13px;padding:9px;text-align:center}
-.hole{display:flex;justify-content:center;gap:10px;margin:18px 0 10px}.pcard{width:92px;height:126px;background:var(--paper);color:#111;border-radius:14px;display:grid;place-items:center;font-size:37px;font-weight:900}
-.board{display:flex;justify-content:center;gap:5px;margin-bottom:10px}.board .pcard{width:52px;height:72px;font-size:21px;border-radius:9px}
-.context{text-align:center;color:#d3cfd5;font-size:13px;min-height:48px}.question{text-align:center;font-size:27px;font-weight:900;margin:8px 0}.hint{text-align:center;color:var(--muted);font-size:12px}
+.cardhead{display:flex;justify-content:space-between;align-items:center}
+.progress{height:6px;background:#24242b;border-radius:99px;overflow:hidden;margin:9px 0 12px}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,#ff1976,#ff4a9b);box-shadow:0 0 14px rgba(255,25,118,.55)}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini div{background:#0d0d12;border:1px solid #303039;border-radius:13px;padding:8px;text-align:center}
+.tableZone{margin:18px 0 0;padding:14px 10px 16px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008));border:1px solid #292932}
+.boardLabel,.heroLabel{text-align:center;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8f8b96;font-weight:900}
+.board{display:flex;justify-content:center;gap:7px;margin:9px 0 0}
+.pcard{background:linear-gradient(145deg,#fff,#ececf0);color:#101014;border:1px solid rgba(255,255,255,.85);display:grid;place-items:center;font-weight:950}
+.board .pcard{width:48px;height:67px;font-size:19px;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.25)}
+.board .pcard span{filter:drop-shadow(0 1px 0 rgba(255,255,255,.4))}
+.streetLine{display:flex;align-items:center;gap:9px;margin:14px 4px 0;color:#65616b;font-size:9px;font-weight:900;letter-spacing:.12em}
+.streetLine:before,.streetLine:after{content:"";height:1px;background:#303039;flex:1}
+.context{text-align:center;color:#c8c4cd;font-size:12px;line-height:1.35;margin:11px 5px 0;min-height:33px}
+.heroWrap{margin-top:15px}
+.hole{display:flex;justify-content:center;gap:16px;margin:9px 0 0}
+.hole .pcard{width:112px;height:150px;border-radius:17px;font-size:43px;
+ box-shadow:0 0 0 1px rgba(255,255,255,.22),0 12px 28px rgba(0,0,0,.38),0 0 24px rgba(255,31,122,.16);
+ transform:translateZ(0)}
+.hole .pcard:first-child{transform:rotate(-1.5deg)}
+.hole .pcard:last-child{transform:rotate(1.5deg)}
+.redSuit{color:#e51f3f;text-shadow:0 1px 0 #fff}
+.blackSuit{color:#11131a;text-shadow:0 1px 0 #fff}
+.question{text-align:center;font-size:25px;font-weight:950;margin:15px 0 3px;letter-spacing:-.02em}
+.hint{text-align:center;color:#77727e;font-size:11px}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px}.action{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:14px 4px;font-weight:900}.fold{color:var(--red)}.call{color:var(--green)}.raise{color:var(--pink)}
 .stamp{position:absolute;top:72px;border:3px solid currentColor;border-radius:9px;padding:6px 10px;font-size:27px;font-weight:900;opacity:0;pointer-events:none}.left{left:18px;color:var(--red);transform:rotate(-10deg)}.right{right:18px;color:var(--pink);transform:rotate(10deg)}.up{left:50%;transform:translateX(-50%);color:var(--green)}
 .feedback{margin:12px 16px;border:1px solid var(--line);background:var(--panel);border-radius:22px;padding:18px}.feedback h2{font-size:30px;margin:0 0 7px}
 .row{display:flex;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:8px}
 .section{padding:0 16px 14px}.profileHead{display:flex;align-items:center;gap:12px}.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--pink),#45233c);font-weight:900}
 .badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.badge{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:11px;text-align:center;min-height:100px}.lock{opacity:.35}
-@media(max-width:375px){.logo{font-size:62px}.stack{height:470px}.pcard{width:82px;height:114px}}
+.redSuit{color:#e7354f}.blackSuit{color:#111}
+.resultFlash{position:fixed;inset:0;z-index:999;pointer-events:none;opacity:0;transition:opacity .16s ease}
+.resultFlash.greenFlash{background:rgba(43,205,99,.34)}
+.resultFlash.redFlash{background:rgba(255,49,78,.36)}
+.resultFlash.yellowFlash{background:rgba(255,196,46,.32)}
+.resultFlash.show{opacity:1}
+.yellow{color:#ffc43d}
+@media(max-width:375px){.logo{font-size:62px}.stack{height:590px}.hole .pcard{width:102px;height:140px;font-size:40px}.board .pcard{width:44px;height:62px;font-size:18px}}.stack{height:525px}.pcard{width:92px;height:126px}.board .pcard{width:46px;height:65px}}
 </style>
 </head>
 <body>
-<div class="wrap" id="root">
+<div id="resultFlash" class="resultFlash"></div><div class="wrap" id="root">
 <section id="cover" class="cover">
   <div><div class="label">TELEGRAM MINI APP</div><div class="logo">POKER<br><span class="pink">SWIPE</span></div><p class="pink"><b>тест на адекватность, а не на удачу</b></p></div>
   <div class="cover-art"><div class="cover-copy">ПОКЕР, НО КАК TINDER.<br><span class="pink">ТВОЙ ПУШ ИЛИ ФОЛД.</span></div></div>
@@ -63,7 +95,7 @@ radial-gradient(circle at 82% 60%,rgba(245,42,120,.18),transparent 36%),#0a0a0c}
 </section>
 
 <div id="app" class="app hidden">
-<header class="top"><div><div class="brand">POKER <span class="pink">SWIPE</span></div><div class="small muted">Фриковая Дама наблюдает</div></div><div class="pill">🔥 <span id="streak">0</span></div></header>
+<header class="top"><div><div class="brand">POKER <span class="pink">SWIPE</span></div><div class="small muted">Фриковая Дама наблюдает · UI 3.0</div></div><div class="pill">🔥 <span id="streak">0</span></div></header>
 <main>
 <section id="home" class="screen active">
 <div class="stats"><div class="stat"><span class="label">XP</span><b id="xp">0</b></div><div class="stat"><span class="label">EV</span><b class="green" id="ev">0</b></div><div class="stat"><span class="label">Репа</span><b class="pink" id="rep">50</b></div></div>
@@ -106,7 +138,7 @@ const els={
  feedback:document.getElementById('feedback'),xp:document.getElementById('xp'),ev:document.getElementById('ev'),rep:document.getElementById('rep'),
  streak:document.getElementById('streak'),leak:document.getElementById('leak'),leaders:document.getElementById('leaders'),
  level:document.getElementById('level'),ptype:document.getElementById('ptype'),pquote:document.getElementById('pquote'),
- preacc:document.getElementById('preacc'),postacc:document.getElementById('postacc'),badges:document.getElementById('badges')
+ preacc:document.getElementById('preacc'),postacc:document.getElementById('postacc'),badges:document.getElementById('badges'),flash:document.getElementById('resultFlash')
 };
 let state={xp:0,ev:0,rep:50,streak:0,played:0,correct:0,preP:0,preC:0,postP:0,postC:0,act:{fold:0,call:0,raise:0},filter:'mix',seen:[]};
 try{const raw=localStorage.getItem(STORAGE);if(raw)state={...state,...JSON.parse(raw)}}catch(e){}
@@ -126,20 +158,68 @@ document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click'
 function pool(){if(state.filter==='pre')return BASE.filter(x=>x.street==='PREFLOP');if(state.filter==='post')return BASE.filter(x=>x.street==='POSTFLOP');return BASE}
 function pick(hard=false){let p=pool();if(hard)p=p.filter(x=>x.stage==='Баббл'||x.board.length>=4);let u=p.filter(x=>!state.seen.includes(BASE.indexOf(x)));if(!u.length)u=p;return u[Math.floor(Math.random()*u.length)]}
 function startMode(m){mode=m;quickLeft=m==='quick'?10:0;showScreen('swipe');current=pick(m==='death');render()}
+function pokerCard(c){
+ const suit=c.slice(-1), rank=c.slice(0,-1), red=(suit==='♥'||suit==='♦');
+ return `<div class="pcard"><span class="${red?'redSuit':'blackSuit'}">${rank}${suit}</span></div>`
+}
 function cardHTML(s){
- const b=s.board.length?`<div class="board">${s.board.map(c=>`<div class="pcard">${c}</div>`).join('')}</div>`:'';
+ const boardBlock=s.board.length
+   ?`<div class="tableZone"><div class="boardLabel">${s.board.length===3?'FLOP':s.board.length===4?'TURN':'RIVER'}</div><div class="board">${s.board.map(pokerCard).join('')}</div><div class="streetLine">СТОЛ</div><div class="context">${s.ctx}</div></div>`
+   :`<div class="tableZone"><div class="boardLabel">PREFLOP</div><div class="context">${s.ctx}</div></div>`;
  return `<div class="cardhead"><div><span class="label">${s.street}</span><div><b>${s.pos}</b></div></div><div class="pill">${s.stage}</div></div>
  <div class="progress"><span style="width:${(state.played%15)/15*100}%"></span></div>
- <div class="mini"><div><span class="label">Банк</span><b>${s.pot} BB</b></div><div><span class="label">Стек</span><b>${s.stack} BB</b></div></div>
- <div class="hole">${s.hero.map(c=>`<div class="pcard">${c}</div>`).join('')}</div>${b}
- <div class="context">${s.ctx}</div><div class="question">ТВОЙ ХОД</div><div class="hint">${s.pos} · ${s.stage} · 9-MAX</div>`}
+ <div class="mini"><div><span class="label">БАНК</span><b>${s.pot} BB</b></div><div><span class="label">СТЕК</span><b>${s.stack} BB</b></div></div>
+ ${boardBlock}
+ <div class="heroWrap"><div class="heroLabel">ТВОЯ РУКА</div><div class="hole">${s.hero.map(pokerCard).join('')}</div></div>
+ <div class="question">ТВОЙ ХОД</div><div class="hint">${s.pos} · ${s.stage} · 9-MAX</div>`}
 function render(){els.content.innerHTML=cardHTML(current);els.behind.innerHTML=cardHTML(pick());els.feedback.classList.add('hidden');els.front.style.transform='';els.front.style.opacity='1';els.front.querySelectorAll('.stamp').forEach(x=>x.style.opacity=0)}
-function submit(action){
- if(!current)return;const good=action===current.ok;state.played++;state.act[action]++;if(current.street==='PREFLOP'){state.preP++;if(good)state.preC++}else{state.postP++;if(good)state.postC++}
- if(good){state.correct++;state.xp+=24;state.ev+=1;state.rep=Math.min(100,state.rep+1)}else{state.xp+=4;state.ev-=1;state.rep=Math.max(0,state.rep-1)}
- const idx=BASE.indexOf(current);if(idx>=0&&!state.seen.includes(idx))state.seen.push(idx);save();showFeedback(good)
+function grade(action){
+ if(action===current.ok)return 'green';
+ // Yellow = defensible/less catastrophic alternative; red = the action furthest from the intended line.
+ if(current.ok==='raise' && action==='call')return 'yellow';
+ if(current.ok==='call' && action==='raise')return 'yellow';
+ if(current.ok==='fold' && action==='call')return 'yellow';
+ return 'red';
 }
-function showFeedback(good){els.feedback.innerHTML=`<h2 class="${good?'green':'pink'}">${good?'НЕПЛОХО':'RED FLAG'}</h2><p><b>${good?'Сегодня кнопки нажимаются не наугад.':'Это не эксплойт. Это просто ошибка, только уверенная.'}</b></p><p class="muted">${current.why}</p><button id="nextBtn" class="cta" type="button">СЛЕДУЮЩАЯ РАЗДАЧА →</button>`;els.feedback.classList.remove('hidden');document.getElementById('nextBtn').addEventListener('click',next)}
+function flashResult(g){
+ els.flash.className='resultFlash '+(g==='green'?'greenFlash':g==='yellow'?'yellowFlash':'redFlash')+' show';
+ setTimeout(()=>els.flash.classList.remove('show'),420);
+}
+function submit(action){
+ if(!current)return;
+ const g=grade(action), good=g==='green';
+ state.played++;state.act[action]++;
+ if(current.street==='PREFLOP'){state.preP++;if(good)state.preC++}else{state.postP++;if(good)state.postC++}
+ if(g==='green'){state.correct++;state.xp+=24;state.ev+=1;state.rep=Math.min(100,state.rep+1)}
+ else if(g==='yellow'){state.xp+=10;state.ev-=0.25}
+ else{state.xp+=2;state.ev-=1;state.rep=Math.max(0,state.rep-1)}
+ const idx=BASE.indexOf(current);if(idx>=0&&!state.seen.includes(idx))state.seen.push(idx);
+ save();flashResult(g);showFeedback(g,action)
+}
+function showFeedback(g,action){
+ const green=[
+  'GREEN FLAG. Ничего себе. Ты не просто увидел карты, ты ещё и понял, что с ними делать. Фриковая Дама на секунду убирает токсичность и даже почти уважает твой выбор. Не расслабляйся: одна нормальная кнопка ещё не делает тебя регом, но сегодня хотя бы не придётся объяснять полю, что ты «играл по динамике».',
+  'GREEN FLAG. Поздравляю: решение принято головой, а не внутренним голосом «ну вдруг доедет». Именно так и выглядит момент, когда покерист перестаёт быть бесплатной программой лояльности для остальных участников стола.',
+  'GREEN FLAG. Удивительно прилично. Сейчас было похоже на покер, а не на дорогостоящий способ посмотреть пять общих карт. Зафиксируй ощущение — оно тебе ещё пригодится.'
+ ];
+ const yellow=[
+  'YELLOW FLAG. Не катастрофа, но шампанское пока убери. Ты выбрал линию, с которой можно дожить до следующей улицы и даже не краснеть, но оптимальной её делает только очень богатое воображение. Короче: не долбоёб, но собеседование на топ-рега пока не прошёл.',
+  'YELLOW FLAG. Жить можно. Это тот самый ответ «ну технически не ужас», которым тренер пытается не разрушить твою психику. Идея в решении есть, исполнение тоже где-то рядом. Ещё сантиметр — и было бы хорошо.',
+  'YELLOW FLAG. Ты не въехал в стену — просто припарковался на газоне. Линия терпимая, но сильнее здесь было другое действие. Фриковая Дама не орёт, а это уже практически комплимент.'
+ ];
+ const red=[
+  'RED FLAG. Вот это уже авторский покер. Ты посмотрел на ситуацию, увидел нормальное решение и с достоинством выбрал другое. Это не «нестандартная линия», не «эксплойт поля» и не «я так чувствовал». Это кнопка, после которой реги молча добавляют тебя в избранное и начинают интересоваться, во сколько ты обычно садишься играть.',
+  'RED FLAG. Поздравляю, ты только что добровольно профинансировал чужой винрейт. Самое прекрасное — насколько уверенно это было сделано. Если очень хочется назвать это эксплойтом, сначала найди человека, которого ты здесь эксплойтил. Спойлер: скорее всего, это был ты.',
+  'RED FLAG. Фриковая Дама официально просит отойти от стола и перестать объяснять это «динамикой». Ты не прочитал оппонента — ты написал ему благотворительный грант. Карты здесь вообще ни при чём, преступление произошло на уровне кнопки.'
+ ];
+ const arr=g==='green'?green:g==='yellow'?yellow:red;
+ const title=g==='green'?'GREEN FLAG':g==='yellow'?'YELLOW FLAG':'RED FLAG';
+ const cls=g==='green'?'green':g==='yellow'?'yellow':'pink';
+ const reward=g==='green'?'+1 EV · +24 XP':g==='yellow'?'−0.25 EV · +10 XP':'−1 EV · +2 XP';
+ els.feedback.innerHTML=`<h2 class="${cls}">${title}</h2><p><b>${arr[state.played%arr.length]}</b></p><p class="muted"><b>Что здесь по покеру:</b> ${current.why}</p><div class="row"><span>Вердикт</span><b>${reward}</b></div><button id="nextBtn" class="cta" type="button">СЛЕДУЮЩАЯ РАЗДАЧА →</button>`;
+ els.feedback.classList.remove('hidden');
+ document.getElementById('nextBtn').addEventListener('click',next)
+}
 function next(){if(mode==='daily'||mode==='death'){showScreen('home');return}if(mode==='quick'){quickLeft--;if(quickLeft<=0){showScreen('home');return}}current=pick();render()}
 function submitAnimated(action){const t={fold:'translate(-120%,20px) rotate(-18deg)',call:'translate(0,-120%)',raise:'translate(120%,20px) rotate(18deg)'};els.front.style.transform=t[action];els.front.style.opacity='.15';setTimeout(()=>{submit(action);els.front.style.transform='';els.front.style.opacity='1'},180)}
 document.querySelectorAll('[data-action]').forEach(b=>{b.replaceWith(b.cloneNode(true))});
