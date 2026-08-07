@@ -174,7 +174,8 @@ function save(){localStorage.setItem(KEY,JSON.stringify(S));ui()}
 function today(){return new Date().toISOString().slice(0,10)}
 function toast(x){const t=document.getElementById('toast');t.textContent=x;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1400)}
 function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===id))}
-document.getElementById('cover').addEventListener('click',()=>{cover.classList.add('hidden');app.classList.remove('hidden');ui()});
+const coverEl=document.getElementById('cover'); const appEl=document.getElementById('app');
+coverEl.addEventListener('click',()=>{ coverEl.classList.add('hidden'); appEl.classList.remove('hidden'); ui(); });
 document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>{go(b.dataset.nav);if(b.dataset.nav==='swipe'&&!current)start('swipe')}));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>start(b.dataset.mode)));
