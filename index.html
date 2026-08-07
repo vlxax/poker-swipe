@@ -3,107 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#05050a">
-<title>Фриковая Дама — Poker Trainer</title>
+<meta name="theme-color" content="#f42b91">
+<title>Фриковая Дама — Свайп-тест</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="app">
-  <header class="topbar">
-    <div class="stat user"><div class="lvl">17</div><div><small>LuckyDuck</small><b>12 580</b></div></div>
-    <div class="stat"><small>EV (ОНБТ)</small><b id="evTop">+2.58</b></div>
-    <div class="stat"><small>БАНКРОЛЛ</small><b>$ 3 250</b></div>
-    <div class="stat"><small>РЕПУТАЦИЯ</small><b id="repTop">2 480</b></div>
-  </header>
-
-  <section id="home" class="screen active">
-    <div class="home-hero">
-      <div class="hero-card">
-        <img class="hero-img" src="assets/home-hero.png" alt="">
-        <div class="hero-shade"></div>
-        <div class="hero-actions">
-          <button id="fastGame" class="mode fast tap">⚡ БЫСТРАЯ ИГРА<span>20-минутный турнир · скоро</span></button>
-          <button id="startSwipe" class="mode swipe tap">🃏 СВАЙП-ТЕСТ<span>15 рук · реальные решения</span></button>
-        </div>
-      </div>
-      <div class="goal">
-        <small>СЛЕДУЮЩАЯ ЦЕЛЬ</small>
-        <h3>КАЛИНИНГРАД 🏆</h3>
-        <div style="color:#c8c2d0;margin-bottom:10px">Первая поездка на серию · 68%</div>
-        <div class="progress"><i></i></div>
-      </div>
-    </div>
+  <section id="home" class="screen active home">
+    <img src="assets/home.jpg" alt="Фриковая Дама — свайп-тест">
+    <button id="homeTap" class="homeTap" aria-label="Начать свайп-тест"></button>
   </section>
 
   <section id="game" class="screen">
-    <div class="game-head">
-      <button id="backHome" class="back tap" aria-label="Назад">←</button>
-      <h2>СВАЙП-ТЕСТ</h2>
+    <div class="topbar">
+      <button id="backHome" class="back">←</button>
+      <div class="title">СВАЙП-ТЕСТ</div>
       <div id="handCount" class="count">1 / 15</div>
     </div>
-    <div class="table">
-      <div class="table-meta">
-        <div class="mini"><small>БАНК</small><b id="pot">2.4 BB</b></div>
-        <div class="mini"><small>СТЕК</small><b id="stack">18 BB</b></div>
-      </div>
-      <div class="opponent">😎</div>
-      <div class="dealer">D · оппонент</div>
-      <div id="cards" class="cards"></div>
-      <div class="question">Какое действие<br>ты выберешь?</div>
-      <div id="situation" class="situation"></div>
-      <div class="info-row">
-        <div class="info"><small>ПОЗИЦИЯ</small><b id="pos"></b></div>
-        <div class="info"><small>СТАДИЯ</small><b id="stage"></b></div>
-        <div class="info"><small>ФОРМАТ</small><b>9-MAX</b></div>
-      </div>
-      <div class="actions">
-        <button class="action fold tap" data-action="fold">✕<br>ФОЛД</button>
-        <button class="action call tap" data-action="call">↑<br>КОЛЛ</button>
-        <button class="action raise tap" data-action="raise">↗<br>РЕЙЗ</button>
+    <div class="gameWrap">
+      <div class="pokerCard">
+        <div class="meta">
+          <div class="metaBox"><small>БАНК</small><b id="pot"></b></div>
+          <div class="metaBox"><small>СТЕК</small><b id="stack"></b></div>
+        </div>
+        <div id="cards" class="cards"></div>
+        <div class="question">Какое действие<br>ты выберешь?</div>
+        <div id="situation" class="situation"></div>
+        <div class="info">
+          <div><small>ПОЗИЦИЯ</small><b id="position"></b></div>
+          <div><small>СТАДИЯ</small><b id="stage"></b></div>
+          <div><small>ФОРМАТ</small><b>9-MAX</b></div>
+        </div>
+        <div class="actions">
+          <button class="action fold" data-action="fold">✕<br>ФОЛД</button>
+          <button class="action call" data-action="call">↑<br>КОЛЛ</button>
+          <button class="action raise" data-action="raise">↗<br>РЕЙЗ</button>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="result" class="screen">
-    <div class="result-wrap">
-      <div class="result-card">
-        <div id="resultCards" class="cards result-cards"></div>
+    <div class="resultWrap">
+      <div class="resultBox">
+        <div id="resultCards" class="cards"></div>
         <div id="flag" class="flag match">MATCH ❤️</div>
-        <h2 id="resultTitle">Правильное решение!</h2>
+        <div id="resultTitle" class="resultTitle"></div>
         <div id="explain" class="explain"></div>
-        <div class="lady">
-          <div class="lady-avatar">💋</div>
-          <div><b>ФРИКОВАЯ ДАМА</b><p id="ladyText"></p></div>
+        <div class="ladyBox">
+          <b>💋 ФРИКОВАЯ ДАМА</b>
+          <p id="ladyText"></p>
         </div>
-        <button id="nextHand" class="next tap">СЛЕДУЮЩАЯ РУКА →</button>
+        <button id="nextHand" class="next">СЛЕДУЮЩАЯ РУКА →</button>
       </div>
     </div>
   </section>
 
   <section id="verdict" class="screen">
-    <div class="verdict">
-      <div class="verdict-card">
-        <div class="series">СЕРИЯ ЗАВЕРШЕНА</div>
-        <div class="lady-big">💋</div>
-        <div id="finalQuote" class="final-quote"></div>
+    <div class="verdictWrap">
+      <div class="verdictBox">
+        <div class="verdictHead">
+          <div class="kiss">💋</div>
+          <h1>ВЕРДИКТ ФРИКОВОЙ ДАМЫ</h1>
+        </div>
+        <div id="bigRoast" class="bigRoast"></div>
         <div class="metrics">
-          <div class="metric"><small>ПРАВИЛЬНЫХ</small><b id="score">0 / 15</b></div>
-          <div class="metric"><small>EV</small><b id="finalEv">+2.58</b></div>
-          <div class="metric"><small>РЕПУТАЦИЯ</small><b id="finalRep">2 480</b></div>
+          <div class="metric"><small>ПРАВИЛЬНО</small><b id="score"></b></div>
+          <div class="metric"><small>ПОГРАНИЧНО</small><b id="yellowCount"></b></div>
+          <div class="metric"><small>КРАСНЫХ ФЛАГОВ</small><b id="redCount"></b></div>
         </div>
-        <div class="rewards">
-          <div class="reward">💵<br><b>$ 500</b></div>
-          <div class="reward">✦<br><b>250</b></div>
-          <div class="reward">XP<br><b>750</b></div>
-        </div>
-        <button id="continueBtn" class="next tap">ПРОДОЛЖИТЬ</button>
-        <button id="againBtn" class="ghost tap">ЕЩЁ 15 РУК</button>
+        <button id="again" class="next" style="margin-top:16px">ЕЩЁ 15 РУК</button>
+        <button id="homeBtn" class="next" style="margin-top:10px;background:linear-gradient(90deg,#ff4f9d,#f42687)">НА ГЛАВНУЮ</button>
+        <div class="footerNote">Без воды. Без жалости. Только правда и диапазоны.</div>
       </div>
     </div>
   </section>
 </main>
-
-<div id="toast" class="toast"></div>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
