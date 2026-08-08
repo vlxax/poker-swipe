@@ -1,0 +1,149 @@
+{
+  "section": "daily",
+  "goal": "Одна реально сложная раздача в день: решение → уверенность → аргументы → разбор → перенос идеи.",
+  "flow": [
+    "context",
+    "street_reveal",
+    "decision",
+    "confidence",
+    "reasons",
+    "for_vs_against",
+    "key",
+    "transfer_test",
+    "archive"
+  ],
+  "daily_templates": [
+    {
+      "id": "DAY_RIVER_THIN_001",
+      "theme": "river_thin_value",
+      "difficulty": "hard",
+      "context": {
+        "format": "MTT",
+        "stage": "final_table",
+        "players": 5,
+        "hero_pos": "BTN",
+        "hero_stack_bb": 38,
+        "villain": "BB агрессивный регуляр"
+      },
+      "hero": [
+        "A♠",
+        "Q♣"
+      ],
+      "streets": [
+        {
+          "street": "PREFLOP",
+          "action": "BTN 2.2 BB → BB call"
+        },
+        {
+          "street": "FLOP",
+          "board": [
+            "Q♠",
+            "8♣",
+            "5♠"
+          ],
+          "action": "BB check → BTN 33% → call"
+        },
+        {
+          "street": "TURN",
+          "board_add": "4♥",
+          "action": "BB check → BTN 75% → call"
+        },
+        {
+          "street": "RIVER",
+          "board_add": "K♠",
+          "action": "BB check",
+          "pot_bb": 24.6,
+          "behind_bb": 25
+        }
+      ],
+      "decision": [
+        "ЧЕК",
+        "25%",
+        "50%",
+        "ALL-IN"
+      ],
+      "preferred": [
+        "50%",
+        "ALL-IN"
+      ],
+      "acceptable": [
+        "ЧЕК"
+      ],
+      "arguments_for": [
+        "У BB остаются bluff-catcher'ы хуже",
+        "Сильная часть диапазона ещё может получить улицу value",
+        "Полярная часть диапазона способна использовать крупный размер"
+      ],
+      "arguments_against": [
+        "Закрылись пики",
+        "Не вся Qx обязана хотеть максимальный размер",
+        "Чек-рейз неприятен"
+      ],
+      "key": "Не спрашивай 'насколько сильная у меня рука?'. Спроси: какие худшие руки реально платят выбранный размер?",
+      "transfer_concept_id": "SW_RIVER_THIN_VALUE"
+    },
+    {
+      "id": "DAY_BC_001",
+      "theme": "river_bluffcatch",
+      "difficulty": "hard",
+      "context": {
+        "format": "MTT",
+        "stage": "late",
+        "hero_pos": "BB",
+        "hero_stack_bb": 44,
+        "villain": "BTN сильный регуляр"
+      },
+      "hero": [
+        "A♥",
+        "J♣"
+      ],
+      "streets": [
+        {
+          "street": "PREFLOP",
+          "action": "BTN 2.2 BB → BB call"
+        },
+        {
+          "street": "FLOP",
+          "board": [
+            "J♠",
+            "8♦",
+            "3♣"
+          ],
+          "action": "BB check → BTN 33% → call"
+        },
+        {
+          "street": "TURN",
+          "board_add": "4♥",
+          "action": "BB check → BTN 75% → call"
+        },
+        {
+          "street": "RIVER",
+          "board_add": "K♦",
+          "action": "BTN 125%"
+        }
+      ],
+      "decision": [
+        "ФОЛД",
+        "КОЛЛ"
+      ],
+      "preferred": [
+        "ФОЛД"
+      ],
+      "key": "Сначала посчитай цену колла и натуральные блефы; уже потом вспоминай, что у тебя топ-пара.",
+      "transfer_concept_id": "SW_RIVER_BC_OVERBET"
+    }
+  ],
+  "archive_fields": [
+    "date",
+    "theme",
+    "choice",
+    "confidence",
+    "result_grade",
+    "transfer_result",
+    "thinking_seconds"
+  ],
+  "future_field_stats": [
+    "all_players_distribution",
+    "top_skill_percentile_distribution"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "section": "onboarding_diagnostic",
+  "goal": "Получить стартовую гипотезу по навыкам, не выдавая 10 ответов за окончательный диагноз.",
+  "skills": [
+    "preflop_rfi",
+    "bb_defence",
+    "vs_3bet",
+    "flop_cbet",
+    "flop_defence",
+    "turn_barrel",
+    "sizing",
+    "river_value",
+    "river_bluffcatch",
+    "icm"
+  ],
+  "scoring": {
+    "per_skill": "0-100 на основе конкретных задач",
+    "minimum_sample_for_display": 2,
+    "if_low_sample": "мало данных",
+    "confidence_capture": "На 2-3 задачах спросить: сомневаюсь / скорее уверен / уверен."
+  },
+  "spots": [
+    {
+      "id": "DIA01",
+      "skill": "preflop_rfi",
+      "format": "MTT",
+      "stack_bb": 30,
+      "pos": "BTN",
+      "hero": [
+        "A♠",
+        "8♠"
+      ],
+      "context": "До тебя все сфолдили.",
+      "actions": [
+        "ФОЛД",
+        "РЕЙЗ"
+      ],
+      "preferred": [
+        "РЕЙЗ"
+      ],
+      "concept": "BTN открывает широкий диапазон; suited Ax хорошо реализуют equity и блокируют сильные Ax."
+    },
+    {
+      "id": "DIA02",
+      "skill": "bb_defence",
+      "format": "MTT",
+      "stack_bb": 40,
+      "pos": "BB",
+      "hero": [
+        "K♦",
+        "8♦"
+      ],
+      "context": "BTN открыл 2.2 BB, SB фолд.",
+      "actions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ"
+      ],
+      "preferred": [
+        "КОЛЛ"
+      ],
+      "acceptable": [
+        "3-БЕТ"
+      ],
+      "concept": "Против широкого BTN suited Kx часто достаточно сильны для защиты BB."
+    },
+    {
+      "id": "DIA03",
+      "skill": "vs_3bet",
+      "format": "MTT",
+      "stack_bb": 40,
+      "pos": "CO",
+      "hero": [
+        "A♣",
+        "J♦"
+      ],
+      "context": "CO открыл 2.2 BB, BTN 3-бет 7.5 BB.",
+      "actions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "4-БЕТ"
+      ],
+      "preferred": [
+        "КОЛЛ"
+      ],
+      "concept": "Средние offsuit Broadway против 3-бета чувствительны к позиции/сайзингу; не надо автоматически превращать их в 4-бет."
+    },
+    {
+      "id": "DIA04",
+      "skill": "flop_cbet",
+      "hero": [
+        "Q♣",
+        "J♣"
+      ],
+      "board": [
+        "A♦",
+        "7♠",
+        "2♥"
+      ],
+      "context": "CO vs BB, BB чек.",
+      "actions": [
+        "ЧЕК",
+        "25%",
+        "75%"
+      ],
+      "preferred": [
+        "25%"
+      ],
+      "acceptable": [
+        "ЧЕК"
+      ],
+      "concept": "Сухой A-high часто позволяет маленький широкий c-bet."
+    },
+    {
+      "id": "DIA05",
+      "skill": "flop_defence",
+      "hero": [
+        "7♣",
+        "6♣"
+      ],
+      "board": [
+        "A♠",
+        "7♦",
+        "K♥"
+      ],
+      "context": "BTN ставит 135% банка.",
+      "actions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "РЕЙЗ"
+      ],
+      "preferred": [
+        "ФОЛД"
+      ],
+      "concept": "Слабая пара резко теряет ценность против крупной полярной ставки."
+    },
+    {
+      "id": "DIA06",
+      "skill": "turn_barrel",
+      "hero": [
+        "A♣",
+        "Q♣"
+      ],
+      "board": [
+        "Q♦",
+        "8♠",
+        "3♣",
+        "2♥"
+      ],
+      "context": "BTN vs BB. Флоп 33% — колл. BB снова чек.",
+      "actions": [
+        "ЧЕК",
+        "50%",
+        "75%"
+      ],
+      "preferred": [
+        "75%",
+        "50%"
+      ],
+      "concept": "Сильная топ-пара продолжает собирать вэлью на безопасном тёрне."
+    },
+    {
+      "id": "DIA07",
+      "skill": "sizing",
+      "hero": [
+        "A♥",
+        "Q♥"
+      ],
+      "board": [
+        "A♠",
+        "7♦",
+        "2♣"
+      ],
+      "context": "BTN vs BB, BB чек.",
+      "actions": [
+        "25%",
+        "33%",
+        "75%",
+        "125%"
+      ],
+      "preferred": [
+        "25%",
+        "33%"
+      ],
+      "concept": "Сухой A-high позволяет дешёвую широкую ставку."
+    },
+    {
+      "id": "DIA08",
+      "skill": "river_value",
+      "hero": [
+        "K♥",
+        "Q♥"
+      ],
+      "board": [
+        "K♣",
+        "9♦",
+        "5♠",
+        "2♥",
+        "2♣"
+      ],
+      "context": "BB чекнул третью улицу.",
+      "actions": [
+        "ЧЕК",
+        "25%",
+        "75%"
+      ],
+      "preferred": [
+        "25%"
+      ],
+      "acceptable": [
+        "75%"
+      ],
+      "concept": "Нужно думать, какие худшие Kx/пары реально платят."
+    },
+    {
+      "id": "DIA09",
+      "skill": "river_bluffcatch",
+      "hero": [
+        "K♠",
+        "J♦"
+      ],
+      "board": [
+        "K♥",
+        "9♣",
+        "4♦",
+        "7♠",
+        "A♣"
+      ],
+      "context": "BTN овербет 140% банка.",
+      "actions": [
+        "ФОЛД",
+        "КОЛЛ"
+      ],
+      "preferred": [
+        "ФОЛД"
+      ],
+      "concept": "Большой полярный сайзинг требует достаточной плотности блефов; абсолютная сила топ-пары не спасает."
+    },
+    {
+      "id": "DIA10",
+      "skill": "icm",
+      "hero": [
+        "A♣",
+        "T♦"
+      ],
+      "context": "Баббл. 18 BB. Большой стек HJ открыл 2.3 BB.",
+      "actions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ ALL-IN"
+      ],
+      "preferred": [
+        "ФОЛД"
+      ],
+      "concept": "Risk premium может сделать chipEV-пограничное продолжение плохим в деньгах."
+    }
+  ]
+}

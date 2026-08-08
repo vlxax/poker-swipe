@@ -1,0 +1,119 @@
+{
+  "section": "sizing",
+  "goal": "Тренировать не цифру, а связку цель → структура диапазона → размер.",
+  "modes": [
+    {
+      "id": "basic",
+      "ui": "buttons",
+      "actions": [
+        "ЧЕК",
+        "25%",
+        "33%",
+        "50%",
+        "75%",
+        "100%",
+        "125%"
+      ],
+      "use": "Быстрые задачи."
+    },
+    {
+      "id": "multi",
+      "ui": "multi_select",
+      "use": "Выбрать все размеры, которые стратегически живут."
+    },
+    {
+      "id": "why",
+      "ui": "reason_choice",
+      "use": "Объяснить цель ставки конкурентными причинами."
+    },
+    {
+      "id": "reg_slider",
+      "ui": "slider_0_200",
+      "use": "Самостоятельно выставить размер без подсказки."
+    },
+    {
+      "id": "range_mode",
+      "ui": "board_only",
+      "use": "Выбрать сайзинг для диапазона без конкретной руки."
+    },
+    {
+      "id": "compare_hands",
+      "ui": "two_hands",
+      "use": "Какая часть диапазона хочет крупнее?"
+    }
+  ],
+  "principles": [
+    {
+      "id": "SZ_SMALL_STATIC",
+      "boards": [
+        "dry",
+        "static",
+        "high_card"
+      ],
+      "range_shape": "wide_merged",
+      "preferred_zone_pct": [
+        20,
+        40
+      ],
+      "reason": "Широкий диапазон ставки лучше выдерживает маленький размер; не нужно преждевременно поляризоваться."
+    },
+    {
+      "id": "SZ_MED_DYNAMIC",
+      "boards": [
+        "dynamic"
+      ],
+      "range_shape": "narrower",
+      "preferred_zone_pct": [
+        45,
+        80
+      ],
+      "reason": "На динамике чаще требуется защита equity и более узкая value/bluff конструкция."
+    },
+    {
+      "id": "SZ_OVERBET_POLAR",
+      "streets": [
+        "TURN",
+        "RIVER"
+      ],
+      "conditions": [
+        "nut_advantage",
+        "opponent_capped"
+      ],
+      "preferred_zone_pct": [
+        100,
+        180
+      ],
+      "reason": "Overbet имеет смысл, когда ставка полярна и диапазон оппонента ограничен сверху."
+    },
+    {
+      "id": "SZ_CHECK_MEDIUM",
+      "hand_classes": [
+        "medium_showdown"
+      ],
+      "reason": "Иногда лучший размер — отсутствие ставки: сохраняем слабые руки, контролируем банк и защищаем checking range."
+    },
+    {
+      "id": "SZ_RIVER_THIN",
+      "streets": [
+        "RIVER"
+      ],
+      "hand_classes": [
+        "thin_value"
+      ],
+      "preferred_zone_pct": [
+        20,
+        60
+      ],
+      "reason": "Размер должен быть ориентирован на конкретные худшие руки, которые способны заплатить."
+    }
+  ],
+  "report_metrics": [
+    "check_selection",
+    "small_bet",
+    "big_bet",
+    "overbet",
+    "river_value",
+    "average_selected_size",
+    "average_good_zone_midpoint"
+  ]
+}

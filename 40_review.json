@@ -1,0 +1,199 @@
+{
+  "section": "nu_chto_opyat_ne_tak",
+  "goal": "Учить hand review: найти первое плохое решение, понять причину и починить линию.",
+  "action_grades": [
+    "normal",
+    "questionable",
+    "first_problem",
+    "major_error",
+    "consequence"
+  ],
+  "case_types": [
+    "sizing",
+    "overplay",
+    "missed_value",
+    "hero_call",
+    "icm",
+    "preflop_origin",
+    "no_error"
+  ],
+  "cases": [
+    {
+      "id": "RV01",
+      "title": "СЛИШКОМ РАНО РАЗДУЛ",
+      "hero": [
+        "A♣",
+        "K♦"
+      ],
+      "board": [
+        "K♣",
+        "8♦",
+        "3♣",
+        "4♥",
+        "4♠"
+      ],
+      "nodes": [
+        {
+          "street": "PREFLOP",
+          "action": "BTN open 2.2 BB",
+          "grade": "normal"
+        },
+        {
+          "street": "PREFLOP",
+          "action": "BB call",
+          "grade": "normal"
+        },
+        {
+          "street": "FLOP",
+          "action": "BB check",
+          "grade": "normal"
+        },
+        {
+          "street": "FLOP",
+          "action": "BTN bet 75%",
+          "grade": "first_problem"
+        },
+        {
+          "street": "FLOP",
+          "action": "BB call",
+          "grade": "normal"
+        },
+        {
+          "street": "TURN",
+          "action": "BTN bet 125%",
+          "grade": "major_error"
+        },
+        {
+          "street": "RIVER",
+          "action": "BTN bet 125%",
+          "grade": "consequence"
+        }
+      ],
+      "reason_options": [
+        "Слишком рано сузили range крупным размером",
+        "Нельзя ставить топ-пару",
+        "Любая ставка на флопе плохая",
+        "Проблема только на ривере"
+      ],
+      "reason_best": 0,
+      "repair_actions": [
+        "ЧЕК",
+        "25%",
+        "33%",
+        "75%"
+      ],
+      "repair_best": [
+        "25%",
+        "33%"
+      ],
+      "geometry_example": {
+        "old_river_spr": 0.6,
+        "new_river_spr": 1.2
+      },
+      "lesson": "Самая дорогая улица не всегда первая стратегическая ошибка."
+    },
+    {
+      "id": "RV02",
+      "title": "ЛЮБОПЫТСТВО НА РИВЕРЕ",
+      "hero": [
+        "K♣",
+        "Q♣"
+      ],
+      "board": [
+        "K♦",
+        "8♠",
+        "5♥",
+        "3♣",
+        "A♥"
+      ],
+      "nodes": [
+        {
+          "street": "PREFLOP",
+          "action": "CO open 2.3 BB",
+          "grade": "normal"
+        },
+        {
+          "street": "FLOP",
+          "action": "CO bet 33%",
+          "grade": "normal"
+        },
+        {
+          "street": "TURN",
+          "action": "check-check",
+          "grade": "normal"
+        },
+        {
+          "street": "RIVER",
+          "action": "BB bet 125%",
+          "grade": "normal"
+        },
+        {
+          "street": "RIVER",
+          "action": "CO call",
+          "grade": "major_error"
+        }
+      ],
+      "reason_options": [
+        "Недостаточно естественных блефов против такого сайзинга",
+        "Топ-пара всегда фолд",
+        "Нужно рейзить",
+        "Префлоп был плохой"
+      ],
+      "reason_best": 0,
+      "repair_actions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "РЕЙЗ"
+      ],
+      "repair_best": [
+        "ФОЛД"
+      ],
+      "lesson": "Оценивай руку относительно диапазона ставки, а не по названию комбинации."
+    },
+    {
+      "id": "RV03",
+      "title": "НИЧЕГО НЕ СЛОМАНО",
+      "hero": [
+        "A♠",
+        "Q♠"
+      ],
+      "board": [
+        "Q♦",
+        "7♣",
+        "2♥",
+        "4♣",
+        "9♠"
+      ],
+      "nodes": [
+        {
+          "street": "PREFLOP",
+          "action": "BTN open 2.2 BB",
+          "grade": "normal"
+        },
+        {
+          "street": "FLOP",
+          "action": "BTN bet 33%",
+          "grade": "normal"
+        },
+        {
+          "street": "TURN",
+          "action": "BTN bet 60%",
+          "grade": "normal"
+        },
+        {
+          "street": "RIVER",
+          "action": "BTN check back",
+          "grade": "normal"
+        }
+      ],
+      "allow_no_error": true,
+      "lesson": "Hand review не обязан находить преступление в каждой раздаче."
+    }
+  ],
+  "report_metrics": [
+    "point_accuracy",
+    "reason_accuracy",
+    "repair_accuracy",
+    "late_blame_rate"
+  ]
+}

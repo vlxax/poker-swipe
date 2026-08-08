@@ -1,0 +1,81 @@
+{
+  "section": "poker_swipe",
+  "goal": "Быстро тренировать legal action и распознавать повторяющиеся концептуальные ошибки.",
+  "grading": [
+    "clean",
+    "live",
+    "thin",
+    "mistake"
+  ],
+  "rules": [
+    "Показывать только юридически возможные действия конкретного node.",
+    "Не использовать CALL как синоним check-back.",
+    "Одна попытка; после ответа блокировать кнопки.",
+    "После 10 рук выдавать session report.",
+    "Раз в 5-8 рук спрашивать причину или уверенность.",
+    "Повторная ошибка по тому же concept_id повышает вес лика."
+  ],
+  "concepts": [
+    {
+      "id": "SW_PRE_RFI_BTN",
+      "skill": "preflop_rfi",
+      "trigger": "first_in_btn",
+      "lesson": "BTN открывает широко; suited Ax и Broadway получают ценность от позиции и fold equity.",
+      "remember": "Позиция меняет порог открытия сильнее, чем ощущение 'рука красивая'."
+    },
+    {
+      "id": "SW_BB_DEF",
+      "skill": "bb_defence",
+      "trigger": "bb_vs_small_open",
+      "lesson": "BB получает цену банка и защищает шире, чем другие позиции, но offsuit мусор всё равно остаётся мусором.",
+      "remember": "Цена защищает диапазон, не самооценку."
+    },
+    {
+      "id": "SW_FLOP_DRY_SMALL",
+      "skill": "flop_cbet",
+      "board_classes": [
+        "dry",
+        "high_card"
+      ],
+      "lesson": "На статичных high-card досках маленький размер часто позволяет ставить широкой частью диапазона."
+    },
+    {
+      "id": "SW_FLOP_WET",
+      "skill": "flop_strategy",
+      "board_classes": [
+        "wet",
+        "connected"
+      ],
+      "lesson": "На динамичных досках сильнее роль nut advantage и поляризации; автоматический range-bet хуже."
+    },
+    {
+      "id": "SW_TURN_BARREL",
+      "skill": "turn_barrel",
+      "lesson": "Тёрн сужает диапазоны; второй баррель должен иметь понятную value/bluff структуру."
+    },
+    {
+      "id": "SW_RIVER_THIN_VALUE",
+      "skill": "river_value",
+      "lesson": "Перед чеком спроси: какие худшие руки реально платят небольшой размер?"
+    },
+    {
+      "id": "SW_RIVER_BC_OVERBET",
+      "skill": "river_bluffcatch",
+      "lesson": "Сначала required equity, затем value combos, natural bluffs и blockers; только после этого call/fold."
+    },
+    {
+      "id": "SW_BLOCKERS",
+      "skill": "blockers",
+      "lesson": "Хороший bluff-catcher чаще блокирует value и НЕ блокирует естественные блефы."
+    }
+  ],
+  "session_report_fields": [
+    "preflop",
+    "flop",
+    "turn",
+    "river",
+    "confidence_errors",
+    "repeat_errors",
+    "new_leak_candidates"
+  ]
+}

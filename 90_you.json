@@ -1,0 +1,119 @@
+{
+  "section": "you",
+  "goal": "Личное покерное досье: что изменилось, на чём основана оценка, какой следующий шаг.",
+  "top_metrics": [
+    {
+      "id": "skill",
+      "meaning": "Накопленная оценка качества решений с весом сложности и свежести.",
+      "requires_sample": 20
+    },
+    {
+      "id": "form",
+      "meaning": "Качество последних 20 решений; показывает текущую форму.",
+      "requires_sample": 20
+    },
+    {
+      "id": "streak",
+      "meaning": "Дни подряд с полноценной тренировкой.",
+      "requires_sample": 1
+    }
+  ],
+  "skill_tree": {
+    "preflop": [
+      "rfi",
+      "bb_defence",
+      "three_bet",
+      "vs_three_bet",
+      "icm",
+      "short_stack"
+    ],
+    "postflop": [
+      "flop",
+      "turn",
+      "river",
+      "value",
+      "bluff",
+      "bluffcatch",
+      "barrel",
+      "checkback"
+    ],
+    "sizing": [
+      "check_selection",
+      "small_bet",
+      "big_bet",
+      "overbet",
+      "river_value"
+    ],
+    "discipline": [
+      "memory_check",
+      "repeat_error_rate",
+      "confident_mistakes",
+      "closed_leaks"
+    ]
+  },
+  "sample_rules": {
+    "min_show_score": 10,
+    "min_confident_diagnosis": 20,
+    "low_sample_label": "мало данных"
+  },
+  "leak_detection": {
+    "conditions": [
+      "sample >= 10",
+      "recent mistake rate elevated",
+      "same concept repeated",
+      "weighted by confidence and recency"
+    ],
+    "statuses": [
+      "NEW",
+      "TREATING",
+      "IMPROVING",
+      "CONTROL",
+      "CLOSED"
+    ]
+  },
+  "leak_detail_fields": [
+    "score",
+    "trend_7d",
+    "sample",
+    "why_detected",
+    "recent_hands",
+    "retest",
+    "heal_cta"
+  ],
+  "confidence_profile": {
+    "buckets": [
+      "correct_confident",
+      "correct_unsure",
+      "wrong_unsure",
+      "wrong_confident"
+    ],
+    "special_focus": "wrong_confident"
+  },
+  "charts": [
+    {
+      "id": "skill_trend",
+      "type": "line",
+      "ranges": [
+        "7D",
+        "30D",
+        "ALL"
+      ]
+    },
+    {
+      "id": "poker_dna",
+      "type": "horizontal_bars"
+    },
+    {
+      "id": "leak_sparkline",
+      "type": "mini_line"
+    }
+  ],
+  "daily_recommendation": {
+    "rule": "Выбирать одну наиболее полезную следующую тренировку по сочетанию слабости, свежести и достаточной выборки.",
+    "cta": "5 МИНУТ НА ЭТО →"
+  },
+  "future_field_percentiles": {
+    "enabled_when": "есть реальная многопользовательская база и достаточная выборка",
+    "never_fake": true
+  }
+}

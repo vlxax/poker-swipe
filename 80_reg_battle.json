@@ -1,0 +1,145 @@
+{
+  "section": "reg_battle",
+  "goal": "PvE exploit: научиться менять стратегию против систематически неправильного оппонента.",
+  "scores": {
+    "read": "Правильно ли распознал tendency.",
+    "adapt": "Изменил ли стратегию в нужную сторону.",
+    "execution": "Насколько качественно исполнил конкретные решения.",
+    "mastery": "Сводный показатель по архетипу на достаточной выборке."
+  },
+  "archetypes": [
+    {
+      "id": "calling_station",
+      "name": "ТЕЛЕФОН",
+      "public_stats": {
+        "vpip": 61,
+        "pfr": 8
+      },
+      "hidden_tendencies": [
+        {
+          "id": "fold_flop_low",
+          "unlock_after_hands": 3,
+          "text": "Фолдит флоп заметно реже среднего."
+        },
+        {
+          "id": "river_call_high",
+          "unlock_after_hands": 7,
+          "text": "Слишком часто платит ривер."
+        },
+        {
+          "id": "river_bluff_low",
+          "unlock_after_hands": 12,
+          "text": "Редко находит крупные блефы на ривере."
+        }
+      ],
+      "adjustments": [
+        "тоньше value",
+        "крупнее value там, где range выдерживает",
+        "меньше чистых блефов",
+        "меньше hero-call против редкой агрессии"
+      ],
+      "missions": {
+        "thin_value": 3,
+        "unnecessary_bluff_max": 1,
+        "three_street_value": 2
+      },
+      "freaky": "Не любит выбрасывать. Вообще. Убедить его фолдить — дорогой вид благотворительности."
+    },
+    {
+      "id": "nit",
+      "name": "НИТ",
+      "public_stats": {
+        "vpip": 16,
+        "pfr": 12
+      },
+      "hidden_tendencies": [
+        {
+          "id": "fold_cbet_high",
+          "unlock_after_hands": 3,
+          "text": "Слишком часто сдаёт среднюю часть диапазона на флопе."
+        },
+        {
+          "id": "river_aggression_low",
+          "unlock_after_hands": 8,
+          "text": "Крупная river aggression редка и сильна."
+        }
+      ],
+      "adjustments": [
+        "чаще steal",
+        "чаще маленькое давление на capped range",
+        "останавливаться против редкой большой агрессии"
+      ],
+      "missions": {
+        "successful_pressure": 3,
+        "respect_big_river_bet": 1
+      }
+    },
+    {
+      "id": "maniac",
+      "name": "МАНЬЯК",
+      "public_stats": {
+        "vpip": 53,
+        "pfr": 39,
+        "three_bet": 17
+      },
+      "hidden_tendencies": [
+        {
+          "id": "checkraise_high",
+          "unlock_after_hands": 3,
+          "text": "Чек-рейзит значительно шире."
+        },
+        {
+          "id": "river_bluff_high",
+          "unlock_after_hands": 7,
+          "text": "Переблефовывает крупные риверы."
+        }
+      ],
+      "adjustments": [
+        "меньше overfold",
+        "больше bluff-catch правильной частью range",
+        "больше trapping",
+        "не превращать каждую руку в войну"
+      ],
+      "missions": {
+        "good_bluffcatch": 2,
+        "overfold_max": 1,
+        "ego_war_max": 1
+      }
+    },
+    {
+      "id": "old_school_passive",
+      "name": "ДЕД",
+      "public_stats": {
+        "vpip": 48,
+        "pfr": 7
+      },
+      "hidden_tendencies": [
+        {
+          "id": "limp_high",
+          "unlock_after_hands": 1,
+          "text": "Очень широкий limp-range."
+        },
+        {
+          "id": "big_river_strong",
+          "unlock_after_hands": 6,
+          "text": "Внезапная крупная river bet почти всегда смещена к value."
+        }
+      ],
+      "adjustments": [
+        "шире isolating value",
+        "крупнее value против липкого range",
+        "сильно уважать редкую крупную агрессию"
+      ],
+      "missions": {
+        "iso_value": 2,
+        "thin_value": 2,
+        "hero_call_max": 0
+      }
+    }
+  ],
+  "progression": {
+    "mastery_boss_threshold": 70,
+    "boss_hand": "Одна сложная многоуличная раздача без подсказок.",
+    "hard_mode": "Открывается после прохождения Boss."
+  }
+}

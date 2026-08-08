@@ -1,0 +1,124 @@
+{
+  "section": "my_hands",
+  "goal": "Личный poker journal + честная математика + hand-history replay.",
+  "input_flow": [
+    "format/stage",
+    "positions",
+    "effective_stack",
+    "hero_cards",
+    "optional_villain_cards_or_range",
+    "preflop_actions",
+    "flop_cards_and_actions",
+    "turn_card_and_actions",
+    "river_card_and_actions",
+    "question"
+  ],
+  "action_types": [
+    "CHECK",
+    "BET",
+    "CALL",
+    "RAISE",
+    "FOLD",
+    "ALL-IN"
+  ],
+  "automatic_calculations": [
+    "pot_after_each_action",
+    "spr_by_street",
+    "required_equity_for_calls",
+    "bet_size_pct"
+  ],
+  "analysis_layers": [
+    {
+      "id": "math",
+      "show": [
+        "pot_growth",
+        "spr",
+        "required_equity",
+        "allin_equity_if_villain_known"
+      ]
+    },
+    {
+      "id": "timeline",
+      "show": [
+        "first_expensive_branch",
+        "largest_pot_commitment",
+        "street_pressure"
+      ]
+    },
+    {
+      "id": "range_questions",
+      "show": [
+        "what_worse_calls",
+        "what_better_folds",
+        "natural_bluffs",
+        "blocker_questions"
+      ],
+      "warning": "Если range оппонента не задан, не изображать точные equity против неизвестности."
+    },
+    {
+      "id": "takeaway",
+      "show": [
+        "one_concrete_lesson",
+        "link_to_existing_leak",
+        "retest_later"
+      ]
+    }
+  ],
+  "quick_calc_tabs": [
+    {
+      "id": "pot_odds",
+      "inputs": [
+        "pot_before_bet",
+        "villain_bet"
+      ],
+      "output": "required_equity_pct"
+    },
+    {
+      "id": "allin_equity",
+      "inputs": [
+        "hero_cards",
+        "villain_cards",
+        "known_board"
+      ],
+      "output": "hero_vs_villain_equity"
+    },
+    {
+      "id": "outs",
+      "inputs": [
+        "outs",
+        "cards_to_come"
+      ],
+      "output": "approx_hit_pct"
+    },
+    {
+      "id": "mdf",
+      "inputs": [
+        "pot_before_bet",
+        "villain_bet"
+      ],
+      "output": "mdf_pct"
+    }
+  ],
+  "verdict_categories": [
+    {
+      "id": "clean_cooler",
+      "label": "ЧИСТЫЙ КУЛЕР",
+      "rule": "Линия не содержит явной математической/структурной красной зоны; проигрыш сам по себе не доказывает ошибку."
+    },
+    {
+      "id": "could_be_cheaper",
+      "label": "МОЖНО БЫЛО ДЕШЕВЛЕ",
+      "rule": "Результат мог быть неизбежен, но размер вложений/геометрия банка вызывает вопросы."
+    },
+    {
+      "id": "needs_range_review",
+      "label": "НУЖЕН РАЗБОР ДИАПАЗОНА",
+      "rule": "Для вывода не хватает villain range/комбинаторики."
+    }
+  ],
+  "freaky_lines": [
+    "Карты могут быть кулером. Размер ущерба иногда уже авторская работа.",
+    "Сегодня можно ненавидеть колоду. У тебя справка.",
+    "Переезд случился на ривере. Решение могло заболеть раньше."
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "section": "heal",
+  "goal": "Исправлять конкретный лик не через повтор Swipe, а через микронавыки.",
+  "leak_courses": {
+    "river_bluffcatch": {
+      "target_score": 60,
+      "modules": [
+        {
+          "id": "find_bluffs",
+          "required_tasks": 5,
+          "task_type": "combo_multi_select",
+          "teaches": "Какие естественные блефы реально доходят до линии.",
+          "example": {
+            "line": "CO open → BB call → flop x/c → turn x/c → river bet 125%",
+            "combos": [
+              "QTs",
+              "T9s",
+              "76s",
+              "A5s",
+              "Q9s",
+              "65s",
+              "KQ",
+              "AA"
+            ],
+            "bluffs": [
+              "QTs",
+              "T9s",
+              "76s",
+              "A5s",
+              "Q9s",
+              "65s"
+            ],
+            "value": [
+              "KQ",
+              "AA"
+            ]
+          }
+        },
+        {
+          "id": "build_value",
+          "required_tasks": 4,
+          "task_type": "drag_value_vs_not_value",
+          "teaches": "Собрать value-range и увидеть, сколько блефов нужно рядом."
+        },
+        {
+          "id": "pot_odds",
+          "required_tasks": 5,
+          "task_type": "slider_required_equity",
+          "teaches": "Автоматически считать порог колла.",
+          "tolerance_pct_points": 2
+        },
+        {
+          "id": "blockers",
+          "required_tasks": 5,
+          "task_type": "compare_bluffcatchers",
+          "teaches": "Выбирать руку, которая блокирует value и не блокирует естественные блефы."
+        },
+        {
+          "id": "control",
+          "required_tasks": 1,
+          "task_type": "full_hand_no_hints",
+          "teaches": "Перенос навыка в обычную раздачу."
+        }
+      ],
+      "score_update": {
+        "micro_tasks": "малый вес",
+        "control_test": "средний вес",
+        "delayed_memory_check": "самый высокий вес"
+      }
+    },
+    "turn_sizing": {
+      "target_score": 65,
+      "modules": [
+        {
+          "id": "goal_first",
+          "required_tasks": 4,
+          "task_type": "choose_bet_goal_then_size"
+        },
+        {
+          "id": "range_shape",
+          "required_tasks": 4,
+          "task_type": "wide_vs_polar_slider"
+        },
+        {
+          "id": "compare_hands",
+          "required_tasks": 4,
+          "task_type": "two_hand_compare"
+        },
+        {
+          "id": "control",
+          "required_tasks": 1,
+          "task_type": "full_hand_no_hints"
+        }
+      ]
+    }
+  },
+  "status_flow": [
+    "NEW",
+    "TREATING",
+    "IMPROVING",
+    "CONTROL",
+    "CLOSED"
+  ]
+}

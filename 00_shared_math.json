@@ -1,0 +1,60 @@
+{
+  "module": "poker_math",
+  "formulas": {
+    "pot_odds_required_equity": {
+      "formula": "call / (pot_before_bet + bet + call)",
+      "plain_ru": "Сколько процентов equity нужно, чтобы колл был безубыточным до учёта будущих улиц.",
+      "examples": [
+        {
+          "pot_before_bet": 100,
+          "bet": 50,
+          "call": 50,
+          "required_equity_pct": 25.0
+        },
+        {
+          "pot_before_bet": 20,
+          "bet": 15,
+          "call": 15,
+          "required_equity_pct": 30.0
+        },
+        {
+          "pot_before_bet": 24,
+          "bet": 18,
+          "call": 18,
+          "required_equity_pct": 30.0
+        }
+      ]
+    },
+    "mdf": {
+      "formula": "pot_before_bet / (pot_before_bet + bet)",
+      "plain_ru": "Минимальная доля диапазона, которую теоретически нужно продолжать против ставки, чтобы оппонент не мог прибыльно блефовать любыми двумя картами.",
+      "warning": "MDF не означает, что конкретная комбинация обязана коллировать."
+    },
+    "spr": {
+      "formula": "effective_stack_after_preflop / pot_on_flop",
+      "plain_ru": "Отношение эффективного стека к банку; помогает понимать, насколько быстро рука движется к игре на стек."
+    },
+    "outs_approx": {
+      "next_card": "outs * 2",
+      "two_cards": "outs * 4",
+      "warning": "Правило 2/4 — быстрый столовый приблизительный расчёт, не точное значение."
+    }
+  },
+  "combo_counts": {
+    "pocket_pair": 6,
+    "suited_hand": 4,
+    "offsuit_hand": 12,
+    "unpaired_total": 16
+  },
+  "freaky_lines": {
+    "pot_odds_bad_call": [
+      "Вера в людей опять обогнала математику.",
+      "Колл может быть красивым. Без нужной equity он всё ещё дорогой.",
+      "Любопытство — тоже стратегия. Просто отрицательная."
+    ],
+    "mdf_warning": [
+      "MDF — не повестка из военкомата. Именно эта рука не обязана защищаться.",
+      "Защищать диапазон надо. Защищать каждый bluff-catcher — уже фанатизм."
+    ]
+  }
+}
