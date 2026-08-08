@@ -1,15 +1,22 @@
-# QA REPORT — V14 РЕНТГЕН
+# QA REPORT — V14.4 SWIPE + XRAY
 
-- JavaScript syntax: **OK** (`node --check`)
-- ZIP root: `index.html`, `README.md`, `QA_REPORT.md`
+Browser test: Chromium headless, 390×844 viewport.
 
-- screen_xray: **OK**
-- nav_xray: **OK**
-- old_nav_battle_removed: **OK**
-- home_xray: **OK**
-- xray_renderer: **OK**
-- range_grid: **OK**
-- river_sort: **OK**
-- blocker_scan: **OK**
-- profile_xray: **OK**
-- build_badge: **OK**
+- New-user onboarding → HOME: OK
+- Existing-user startup path (onboarded=true): OK
+- Poker Swipe opens: OK
+- Swipe action click gets selected/grade class: OK
+- Swipe card changes automatically after answer: OK
+- Swipe session uses 10 unique hands from a 16-spot pool: OK
+- Röntgen bottom navigation opens: OK
+- Röntgen landing renders: OK
+- Full Röntgen starts: OK
+- 13×13 grid = 169 cells: OK
+- Range can be removed/kept by tap: OK
+- Fix range → reveal: OK
+- Next street keeps the user's prior model instead of resetting to reference: OK
+- Home / My Hands / YOU navigation after Röntgen: OK
+- JavaScript syntax (`node --check`): OK
+- Browser console/page errors during tested flow: NONE
+
+Important: reference ranges are curated training models, not claimed solver outputs.
