@@ -1,0 +1,21 @@
+{
+  "version": "20.0",
+  "internal_reference_library": {
+    "preflop": {
+      "hand_classes": 169,
+      "stack_bins": 36,
+      "positions": 6,
+      "spot_families": 4,
+      "logical_states": 146016
+    },
+    "postflop": {
+      "textures": 20,
+      "hand_buckets": 12,
+      "spr_bins": 5,
+      "contexts": 5,
+      "position_modes": 2,
+      "logical_states": 12000
+    }
+  },
+  "ui_policy": "internal model metadata is not shown to users"
+}

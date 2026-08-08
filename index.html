@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="18.2">
+<meta name="app-version" content="20.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V18.2 MY CARDS COMPLETE</title>
+<title>POKER SWIPE — V20</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -265,11 +265,50 @@ main,.top,.nav{position:relative;z-index:1}
 .pos18{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.pos18 button{border:1px solid #34343e;background:#0d0d12;color:#999;border-radius:10px;padding:9px 1px;font-size:8px}.pos18 button.on{border-color:#ffd257;color:#fff}
 .recon18 input,.recon18 select,.recon18 textarea{width:100%;border:1px solid #34343e;background:#0d0d12;color:#fff;border-radius:12px;padding:10px;font-size:11px;margin:4px 0}.recon18 textarea{min-height:66px}.street18{border:1px solid #30303a;border-radius:15px;padding:9px;margin:6px 0}.saved18{border:1px solid #292933;border-radius:15px;padding:10px;margin:6px 0}.saved18 small{display:block;color:#8e8792;margin-top:3px}
 
+
+/* V19 GTO BRAIN INSPECTOR */
+.brain19{margin:12px 14px 110px;border:1px solid #30303a;border-radius:24px;padding:15px;background:radial-gradient(circle at 90% 0,#42e78618,transparent 35%),#111117}
+.brain19Top{display:flex;justify-content:space-between;gap:10px;align-items:center}.brain19Live{font-size:9px;font-weight:1000;color:#42e786;letter-spacing:.12em}.brain19Grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.brain19Grid div{border:1px solid #30303a;border-radius:13px;padding:9px}.brain19Grid b{display:block;font-size:18px}.brain19Grid small{font-size:8px;color:#8f8994}.brain19Note{font-size:9px;color:#918a96;line-height:1.45;margin-top:9px}
+
+
+/* ============ V20 PRODUCTION CLEANUP ============ */
+.build,.brainHome,.brain19,.analysisNote,.refLabel,.homeCreator,.youMethod,.evidenceBoard{display:none!important}
+.nickEdit #hello{font-size:22px!important;font-weight:1000!important;line-height:1!important;letter-spacing:-.05em!important}
+.tile,.quick5,.metric{transition:transform .12s ease,border-color .16s ease,box-shadow .16s ease}
+.tile:active,.quick5:active,.metric:active{transform:scale(.982)}
+.dailyTile{position:relative}.doneStamp20{position:absolute;right:12px;top:12px;z-index:5;border:2px solid #42e786;color:#42e786;border-radius:8px;padding:5px 8px;font:1000 10px/1 ui-monospace,monospace;transform:rotate(8deg);background:#08140da8;box-shadow:0 0 18px #42e78635}
+.quick5{position:relative;overflow:hidden;min-height:112px}
+.quick5:before{content:"";position:absolute;right:-34px;top:-38px;width:145px;height:145px;border:1px dashed #ff2e8465;border-radius:50%;animation:orbit20 12s linear infinite}
+.quick5:after{content:"♠  ✦  ♦  ✦";position:absolute;right:10px;top:21px;color:#ff91bd77;font-size:12px;letter-spacing:7px;animation:float20 4s ease-in-out infinite}
+@keyframes orbit20{to{transform:rotate(360deg)}}@keyframes float20{50%{transform:translateY(9px)}}
+
+/* ============ V20 YOU ============ */
+.you20{padding:0 14px 110px}
+.you20Profile{display:flex;align-items:center;gap:14px;margin:3px 0 14px}
+.you20Avatar{width:84px;height:84px;flex:0 0 84px;border-radius:50%;background:#f8f5f4;border:3px solid #fff;box-shadow:0 12px 32px #000a,0 0 0 1px #ff2e8433;display:grid;place-items:center;position:relative;overflow:hidden}
+.you20AvatarInner{font-size:44px;animation:avatarFloat20 3.5s ease-in-out infinite}
+.you20Avatar:after{content:"";position:absolute;left:-15%;right:-15%;bottom:7px;height:18px;border-radius:50%;background:#79dfff24;animation:water20 3s ease-in-out infinite}
+.you20AvatarBtn{position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border:2px solid #08080c;border-radius:50%;background:#ff2e84;color:#fff;z-index:3}
+@keyframes avatarFloat20{50%{transform:translateY(-5px) rotate(-2deg)}}@keyframes water20{50%{transform:translateX(10px) scaleX(.92)}}
+.you20Name{min-width:0}.you20Name h1{font-size:31px;letter-spacing:-.055em;margin:2px 0 3px}.you20Name p{font-size:10px;color:#948d98;line-height:1.4;margin:0}.you20Level{display:inline-flex;margin-top:7px;border:1px solid #34343e;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:1000}
+.you20Hero{border:1px solid #30303a;border-radius:24px;padding:15px;background:radial-gradient(circle at 86% 0,#ff2e8420,transparent 36%),#111117}
+.you20HeroTop{display:flex;justify-content:space-between;align-items:flex-end}.you20HeroTop b{font-size:40px;line-height:.9}.you20HeroTop span{font-size:9px;color:#8e8792}
+.you20Trend{height:62px;background:#0c0c11;border-radius:14px;margin-top:10px;overflow:hidden}.you20Trend svg{width:100%;height:100%}
+.you20Quote{position:relative;overflow:hidden;border:1px solid #642541;border-radius:22px;padding:16px 17px;background:linear-gradient(145deg,#1e0d16,#100c11);margin:10px 0}.you20Quote:after{content:"“";position:absolute;right:10px;top:-28px;font:1000 105px/1 Georgia;color:#ff2e8418}.you20Quote blockquote{position:relative;z-index:2;margin:7px 0 0;font:italic 800 15px/1.36 Georgia,"Times New Roman",serif}.you20Quote .ey{color:#ff8fbd}
+.you20Grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.you20Stat{border:1px solid #30303a;border-radius:18px;padding:12px 8px;background:#101015;text-align:left}.you20Stat b{display:block;font-size:24px;margin:4px 0}.you20Stat small{font-size:8px;color:#8e8792;line-height:1.28}.you20Stat.good{border-color:#42e78670;background:#0d1712}.you20Stat.bad{border-color:#ff4b6870;background:#190d11}.you20Stat.mid{border-color:#ffd25755;background:#17150e}
+.you20Section{margin-top:16px}.you20SectionTitle{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.you20SectionTitle h3{font-size:11px;letter-spacing:.11em;margin:0}.you20SectionTitle span{font-size:8px;color:#77717d}
+.you20Error{border:1px solid #2e2e37;border-radius:16px;padding:11px 12px;background:#0f0f14;margin:6px 0}.you20ErrorTop{display:flex;justify-content:space-between;gap:8px;font-size:10px;font-weight:1000}.you20Bar{height:7px;background:#22222b;border-radius:99px;overflow:hidden;margin-top:8px}.you20Bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff2e84,#ff4b68)}
+.you20Confidence{display:grid;grid-template-columns:1fr 1fr;gap:7px}.you20Confidence div{border:1px solid #30303a;border-radius:16px;padding:11px;background:#0e0e13}.you20Confidence b{font-size:22px;display:block}.you20Confidence small{font-size:8px;color:#8e8792}
+.you20Distance{border:1px solid #30303a;border-radius:20px;padding:13px;background:#101015}.you20Stages{display:flex;justify-content:space-between;font-size:19px}.you20Stages span.lock{filter:grayscale(1);opacity:.25}.you20DistanceTrack{height:7px;background:#25252d;border-radius:99px;margin:12px 4px 7px;overflow:hidden}.you20DistanceTrack i{display:block;height:100%;background:linear-gradient(90deg,#ff9ac1,#ff2e84,#ffb02e);border-radius:99px;transition:width .55s ease}
+.avatarPicker20{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}.avatarPicker20 button{height:58px;border:1px solid #d1c9cd;border-radius:14px;background:#fff;font-size:28px}.avatarPicker20 button.locked{filter:grayscale(1);opacity:.3}
+@media(prefers-reduced-motion:reduce){.quick5:before,.quick5:after,.you20AvatarInner,.you20Avatar:after{animation:none!important}}
+
 </style>
+<script src="poker_brain_v20.js"></script>
 </head>
 <body>
 <div class="app">
-<div class="build">V18.2 · MY CARDS</div>
+<div class="build" style="display:none">V20</div>
 
 <section id="onboarding" class="onboard"><div id="story" class="story">
       <span class="ey">POKER SWIPE · STARTUP</span>
@@ -444,7 +483,7 @@ window.editNickname=editNickname;
 
 function card(c,small=false){return `<span class="pc ${/[♥♦]/.test(c)?'suit-red':''}" style="${small?'width:42px;height:58px;font-size:17px':''}">${c}</span>`};function hand(a){return `<div class="cards">${a.map(x=>card(x)).join('')}</div>`};function board(a){return `<div class="cards">${a.map(x=>card(x,true)).join('')}</div>`};
 function sampleText(n,score){if(n<5)return'МАЛО ДАННЫХ';if(n<15)return`${score} · мало данных`;return String(score)}
-function refBadge(){return '<span class="refLabel">GTO BRAIN · LOCAL ENGINE</span>'}
+function refBadge(){return ''}
 
 /* DIAGNOSTIC ONBOARDING */
 const STORY=['ПРИВЕТ.','МЕНЯ ЗОВУТ<br><span class="pink">ФРИКОВАЯ ДАМА.</span>','ЗДЕСЬ Я БУДУ<br><span class="pink">ЛОВИТЬ ТВОИ ЛИКИ.</span>'];
@@ -581,7 +620,7 @@ function regSignals(h){const out=[];const truth=showdownTruth(h);if(truth&&h.res
 function showHand(h){const ph=Array.isArray(h.potHistory)&&h.potHistory.length?h.potHistory:[{street:'PRE',pot:1.5}],max=Math.max(...ph.map(x=>Number(x.pot)||0),Number(h.pot)||0,1),eq=exactEquity(h.hero||[],h.villain||[],h.board||[]),truth=showdownTruth(h),signals=regSignals(h);$('#myArea').innerHTML=`<div class="panel"><span class="ey">HAND REPORT · REG CHECK</span><h1 class="impact">${esc((h.hero||[]).join(' ')||'HAND')}</h1><div class="showdownStrip"><div><span class="ey">HERO</span><b>${esc((h.hero||[]).join(' ')||'—')}</b></div><div><span class="ey">VILLAIN</span><b>${h.villain?.length?esc(h.villain.join(' ')):'НЕ ПОКАЗАЛ'}</b></div></div>${h.board?.length?board(h.board):''}<div class="handTruth"><div><span class="ey">ЗАПИСАННЫЙ ИТОГ</span><b>${resultLabel(h.result)}</b></div><div><span class="ey">ПО КАРТАМ</span><b>${truth?resultLabel(truth):'НЕТ ДАННЫХ'}</b></div></div><div class="potHistory">${ph.map(x=>`<div><i style="height:${Math.max(5,(Number(x.pot)||0)/max*70)}px"></i>${esc(x.street)}<br>${Number(x.pot||0).toFixed(1)}</div>`).join('')}<div><i style="height:${Math.max(5,(Number(h.pot)||0)/max*70)}px"></i>FINAL<br>${Number(h.pot||0).toFixed(1)}</div></div>${eq!=null?`<div class="verdict"><span class="ey">EXACT EQUITY VS ПОКАЗАННАЯ РУКА</span><h2>${eq.toFixed(1)}%</h2><p>Hindsight-математика против конкретных двух карт. Не подмена range analysis.</p></div>`:''}<div class="regReport"><span class="ey">РЕКОМЕНДАЦИИ РЕГА · ЧТО ПРОВЕРИТЬ</span><h3>НЕ «КТО ВЫИГРАЛ?», А «ГДЕ БЫЛО РЕШЕНИЕ?»</h3>${signals.map(s=>`<div class="regSignal"><i>${s.icon}</i><div><b>${s.title}</b><p>${s.text}</p></div></div>`).join('')}</div>${h.question?`<div class="verdict"><span class="ey">ТВОЙ ВОПРОС</span><p>${esc(h.question)}</p></div>`:''}${h.heroReason?`<div class="regReport"><span class="ey">ТВОЯ ГИПОТЕЗА · ${esc(h.decisionStreet||'DECISION')}</span><h3>${esc(h.heroReason)}</h3>${h.villainRead?`<p class="mut"><b>READ ДО SHOWDOWN:</b> ${esc(h.villainRead)}</p>`:''}</div>`:''}${h.resultNote?`<div class="verdict"><span class="ey">КОНТЕКСТ ИЗ КАТКИ</span><p>${esc(h.resultNote)}</p></div>`:''}<div class="hindsight"><b>ВАЖНО:</b> «опп выиграл» и «опп сыграл правильно» — разные утверждения. Пока нет solver/reference node или заданного диапазона, приложение обязано разделять факты и стратегический вывод.</div><button class="primary" id="myBack">К МОИМ РАЗДАЧАМ →</button></div>`;$('#myBack').onclick=renderMy}
 function quickCalc(){openModal(`<h2>POT ODDS</h2><div class="grid2"><input id="qp" type="number" value="100"><input id="qb" type="number" value="50"></div><button class="primary" id="qg">ПОСЧИТАТЬ</button><div id="qo"></div>`);setTimeout(()=>{$('#qg').onclick=()=>{const p=Number($('#qp').value),b=Number($('#qb').value);if(!(p>=0&&b>0)){if($('#qo'))$('#qo').innerHTML='<div class="verdict"><b>Проверь числа.</b></div>';return}$('#qo').innerHTML=`<div class="verdict"><span class="ey">REQUIRED EQUITY</span><h2>${(b/(p+b+b)*100).toFixed(1)}%</h2><p>Минимальная equity для безубыточного call в этой точке.</p></div>`}},0)}
 
-/* XRAY — REAL COMBO COUNTS */
+/* XRAY — ДИАПАЗОНS */
 const XR_RANKS=RANKS;const XR=[
  {title:'ТРОЙНОЙ БАРРЕЛЬ',villain:'BTN · 40 BB',hero:['K♠','J♦'],board:['K♣','8♦','3♠','4♥','A♣'],line:['BTN open 2.2','K♣8♦3♠ · 33%','4♥ · 75%','A♣ · 125%'],ref:[['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','QJo'],['AA','KK','QQ','JJ','TT','99','88','44','33','AKs','AQs','AJs','ATs','A8s','A5s','KQs','KJs','KTs','QJs','QTs','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','KQo'],['AA','KK','88','44','33','AKs','AQs','A8s','A5s','KQs','KJs','QJs','QTs','JTs','T9s','76s','65s','54s','AKo','AQo','KQo'],['AA','KK','88','44','33','AKs','AQs','A8s','QJs','QTs','JTs','T9s']],river:[['AA','V'],['KK','V'],['88','V'],['44','V'],['33','V'],['AKs','V'],['AQs','V'],['A8s','V'],['QJs','B'],['QTs','B'],['JTs','B'],['T9s','B']]},
  {title:'BVB POLAR',villain:'SB · 55 BB',hero:['Q♠','8♥'],board:['Q♣','7♦','2♠','5♣','K♥'],line:['SB open 3','Q♣7♦2♠ · 33%','5♣ · 80%','K♥ · 150%'],ref:[['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','Q8s','JTs','J9s','T9s','T8s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','KTo','QJo'],['AA','KK','QQ','JJ','TT','99','77','55','22','AKs','AQs','AJs','ATs','A5s','KQs','KJs','QJs','QTs','Q9s','Q8s','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','KQo','QJo'],['AA','KK','QQ','77','55','22','AKs','AQs','A5s','KQs','KJs','QJs','QTs','JTs','T9s','87s','76s','65s','54s','AKo','AQo','KQo'],['KK','QQ','77','55','22','AKs','KQs','KJs','A5s','JTs','T9s','87s']],river:[['KK','V'],['QQ','V'],['77','V'],['55','V'],['22','V'],['AKs','V'],['KQs','V'],['KJs','V'],['A5s','B'],['JTs','B'],['T9s','B'],['87s','B']]}
@@ -592,7 +631,7 @@ function xkey(r,c){const a=XR_RANKS[r],b=XR_RANKS[c];return r===c?a+a:r<c?a+b+'s
 function xrDead(stage,hero=false){const s=XR[xrI],n=stage===0?0:stage===1?3:stage===2?4:5;return [...s.board.slice(0,n),...(hero?s.hero:[])]}
 function weightedScore(user,ref,dead){let inter=0,u=0,r=0;for(const k of user){const w=comboCount([k],dead);u+=w;if(ref.has(k))inter+=w}for(const k of ref)r+=comboCount([k],dead);const p=inter/Math.max(1,u),rc=inter/Math.max(1,r);return Math.round(2*p*rc/Math.max(.001,p+rc)*100)}
 function xrGrid(){const prev=xrCandidate;let o='<div class="xrGrid">';for(let r=0;r<13;r++)for(let c=0;c<13;c++){const k=xkey(r,c),alive=prev.has(k),keep=xrCurrent.has(k);o+=`<button class="xrCell ${alive?'alive':'dead'} ${keep?'keep':''}" data-xc="${k}" ${alive?'':'disabled'}>${k}</button>`}return o+'</div>'}
-function renderXray(){const s=XR[S.xray.runs%XR.length],pre=comboCount(s.ref[0],[]);$('#xrayArea').innerHTML=`${quickBanner('xray')}<div class="xrStage">${refBadge()}<span class="ey">◎ РЕНТГЕН · RANGE READING</span><h1 class="impact">НЕ УГАДЫВАЙ РУКУ.<br><span class="pink">УБИВАЙ НЕВОЗМОЖНЫЕ.</span></h1><p>Здесь цифры COMBOS считаются из конкретных card combinations с card removal, а не из количества клеток 13×13.</p><div class="shareCard"><span class="ey">РЕНТГЕН ДНЯ</span><h2>${s.title}</h2><div class="big">${pre} → ?</div><p class="mut">actual available combos</p></div><button class="primary" id="xrFull">ПОЛНЫЙ РЕНТГЕН →</button><button class="secondary" id="xrQuick">БЫСТРЫЙ · С ТЁРНА →</button></div>`;$('#xrFull').onclick=()=>xrBegin(0);$('#xrQuick').onclick=()=>xrBegin(2)}
+function renderXray(){const s=XR[S.xray.runs%XR.length],pre=comboCount(s.ref[0],[]);$('#xrayArea').innerHTML=`${quickBanner('xray')}<div class="xrStage"><span class="ey">◎ РЕНТГЕН · ДИАПАЗОН</span><h1 class="impact">НЕ УГАДЫВАЙ РУКУ.<br><span class="pink">УБИРАЙ НЕВОЗМОЖНЫЕ.</span></h1><p>Отмечай, какие руки ещё могут быть у оппонента после каждого действия. Диапазон будет сужаться по улицам.</p><div class="shareCard"><span class="ey">СПОТ ДНЯ</span><h2>${s.title}</h2><div class="big">${pre} → ?</div><p class="mut">доступные комбинации</p></div><button class="primary" id="xrFull">РАЗОБРАТЬ ПО УЛИЦАМ →</button><button class="secondary" id="xrQuick">НАЧАТЬ С ТЁРНА →</button></div>`;$('#xrFull').onclick=()=>xrBegin(0);$('#xrQuick').onclick=()=>xrBegin(2)}
 function xrBegin(st){xrI=S.xray.runs%XR.length;xrStage=st;xrCurrent=new Set(XR[xrI].ref[st===0?0:st-1]);xrCandidate=new Set(xrCurrent);xrScores={pre:0,narrow:0,river:0,blockers:0};xrFunnel=[];renderXrayStage()}
 function renderXrayStage(){const s=XR[xrI],dead=xrDead(xrStage,false),ref=new Set(s.ref[xrStage]);const live=comboCount(xrCurrent,dead);$('#xrayArea').innerHTML=`<div class="xrStage">${refBadge()}<div class="xrayMeta"><div><span class="ey">${s.villain} · ${['PRE','FLOP','TURN','RIVER'][xrStage]}</span><h2>${s.line[xrStage]}</h2></div><div><span class="ey">ТВОЯ МОДЕЛЬ</span><b id="xrLive">${live}</b><span class="mut small"> combos</span></div></div>${xrStage?board(s.board.slice(0,xrStage===1?3:xrStage===2?4:5)):''}<div class="xrRule">То, что ты убил на прошлой улице, не воскресает.</div>${xrGrid()}<button class="primary" id="xrLock">ЗАФИКСИРОВАТЬ RANGE →</button></div>`;$$('[data-xc]').forEach(b=>b.onclick=()=>{const k=b.dataset.xc;xrCurrent.has(k)?xrCurrent.delete(k):xrCurrent.add(k);b.classList.toggle('keep',xrCurrent.has(k));$('#xrLive').textContent=comboCount(xrCurrent,dead)});$('#xrLock').onclick=()=>{const score=weightedScore(xrCurrent,ref,dead);if(xrStage===0)xrScores.pre=score;else xrScores.narrow=Math.round(((xrScores.narrow||score)+score)/2);xrFunnel[xrStage]=comboCount(xrCurrent,dead);xrReveal(score)}}
 function xrReveal(score){const s=XR[xrI],ref=new Set(s.ref[xrStage]),dead=xrDead(xrStage,false),extra=[...xrCurrent].filter(k=>!ref.has(k)).length,miss=[...ref].filter(k=>!xrCurrent.has(k)).length;$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">СРАВНЕНИЕ</span><h1 class="impact">${score>=80?'ПОХОЖЕ.<br><span class="pink">ДАЛЬШЕ.</span>':'RANGE<br><span class="pink">ПЛЫВЁТ.</span>'}</h1><div class="grid2"><div class="lab"><span class="ey">ЛИШНИЕ КЛАССЫ</span><h2>${extra}</h2></div><div class="lab"><span class="ey">УБИЛ РАНО</span><h2>${miss}</h2></div></div><div class="verdict"><h2>WEIGHTED SCORE ${score}</h2><p>Классы взвешены реальным количеством доступных combos после board removal.</p></div><button class="primary" id="xrNext">${xrStage<3?'СЛЕДУЮЩАЯ УЛИЦА':'VALUE / BLUFF'} →</button></div>`;$('#xrNext').onclick=()=>{if(xrStage<3){xrStage++;xrCandidate=new Set(xrCurrent);renderXrayStage()}else xrRiver()}}
@@ -616,7 +655,7 @@ function startQuick(){quick={active:true,index:0,start:now(),flow:['swipe','sizi
 function quickAdvance(){quick.index++;if(quick.index>=quick.flow.length){const sec=Math.round((now()-quick.start)/1000);quick.active=false;openModal(`<span class="ey">5 МИНУТ · ГОТОВО</span><h1>${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</h1><p>Swipe → Sizing → Memory Check → Review → X-Ray.</p><button class="primary" id="qDone">НА ГЛАВНУЮ</button>`);setTimeout(()=>$('#qDone').onclick=()=>{closeModal();show('home')},0);return}const next=quick.flow[quick.index];if(next==='memory'){const leak=topLeak(),cand=SWIPE.filter(x=>x.concept===leak?.concept);const pick=(cand.length?cand:SWIPE).find(x=>x.id!==memorySpotId)||SWIPE[0];memorySpotId=pick.id;swSession=[pick];swIndex=0;swSessionGrades=[];show('swipe');return}if(next==='review')rv=(rv+1)%REVIEWS.length;if(next==='xray'){show('xray');setTimeout(()=>xrBegin(2),0)}else show(next)}
 
 /* HOME */
-function renderHome(){const D=dailyToday();$('#home').innerHTML=`<div class="homeCreator"><span>by Фриковая Дама 💋</span><small>POKER TRAINER / FIELD NOTES</small></div><div class="metrics"><button class="metric"><span class="ey">SKILL</span><b class="pink">${S.skill}</b><span class="mut small">долгий</span></button><button class="metric"><span class="ey">FORM</span><b>${formScore()}</b><span class="mut small">последние 20</span></button><button class="metric"><span class="ey">СЕРИЯ</span><b>${S.streak}</b><span class="mut small">дней</span></button></div><div class="grid2"><button class="tile dailyTile" id="homeDaily"><span class="modeNumber">01</span><span class="ey">DAILY #${D.number} · ${D.theme}</span><h2 class="impact">ОДНА РУКА.<br><span class="pink">НО НОРМАЛЬНО.</span></h2><span class="mut small">Replay → size → confidence → drag arguments.</span><div class="dailyBoard"><span>${D.board[0]}</span><span>${D.board[1]}</span><span>?</span></div><span class="go">→</span></button><button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">SIZING</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">CHECK тоже может быть стратегией.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button><button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">CSI</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Иногда — ничего.</span><div class="csiPreview">PRE ●<br>FLOP ●<br>TURN ⚠<br>RIVER ?</div><span class="go">→</span></button><button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Action + size. Быстро, но не тупо.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button><button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">REAL COMBO COUNT</span><b>◎ РЕНТГЕН</b><span class="mut small">Range narrowing + real card removal.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button></div><button class="quick5" id="quick5"><div><span class="ey">⚡ У МЕНЯ 5 МИНУТ</span><b>SMART SESSION</b><div class="mut small">Swipe → Sizing → Memory → Review → X-Ray.</div></div><strong>05:00</strong></button>`;$('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick}
+function renderHome(){const D=dailyToday();$('#home').innerHTML=`<div class="homeCreator"><span>by Фриковая Дама 💋</span><small></small></div><div class="metrics"><button class="metric"><span class="ey">SKILL</span><b class="pink">${S.skill}</b><span class="mut small">долгий</span></button><button class="metric"><span class="ey">FORM</span><b>${formScore()}</b><span class="mut small">последние 20</span></button><button class="metric"><span class="ey">СЕРИЯ</span><b>${S.streak}</b><span class="mut small">дней</span></button></div><div class="grid2"><button class="tile dailyTile" id="homeDaily"><span class="modeNumber">01</span><span class="ey">DAILY #${D.number} · ${D.theme}</span><h2 class="impact">ОДНА РУКА.<br><span class="pink">НО НОРМАЛЬНО.</span></h2><span class="mut small">Один сложный спот в день.</span><div class="dailyBoard"><span>${D.board[0]}</span><span>${D.board[1]}</span><span>?</span></div><span class="go">→</span></button><button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">SIZING</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">CHECK тоже может быть стратегией.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button><button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">CSI</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Иногда — ничего.</span><div class="csiPreview">PRE ●<br>FLOP ●<br>TURN ⚠<br>RIVER ?</div><span class="go">→</span></button><button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button><button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Range narrowing + real card removal.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button></div><button class="quick5" id="quick5"><div><span class="ey">⚡ У МЕНЯ 5 МИНУТ</span><b>БЫСТРАЯ СЕССИЯ</b><div class="mut small">Задания на основе твоих ошибок.</div></div><strong>05:00</strong></button>`;$('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick}
 
 /* ===== V17 BRAIN INTEGRATION ===== */
 function brainSourceLabel(s=''){return ({EXACT_REFERENCE_NODE:'EXACT NODE',PREFLOP_ATLAS:'PREFLOP ATLAS',POSTFLOP_ATLAS:'POSTFLOP MODEL',LINE_MODEL:'LINE MODEL',REPAIR_MODEL:'REPAIR MODEL',NO_MODEL:'NO MODEL'})[s]||s}
@@ -649,9 +688,9 @@ xrReveal=function(score){_xrRevealV16(score);const v=$('#xrayArea .verdict');if(
 
 /* Home + YOU: expose that Brain is actually online */
 const _renderHomeV16=renderHome;
-renderHome=function(){_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>GTO BRAIN ONLINE</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')} policy records · ${s.exactNodes} exact nodes</span></div></div><span>v${PokerBrain.version}</span></div>`)}
+renderHome=function(){_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>АНАЛИЗ</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')}  · ${s.exactNodes} </span></div></div><span>v${PokerBrain.version}</span></div>`)}
 const _renderProfileV16=renderProfile;
-renderProfile=function(){_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b>GTO Brain подключён:</b> ${s.totalPolicies.toLocaleString('ru-RU')} локальных policy records + exact poker math. YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
+renderProfile=function(){_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b></b> ${s.totalPolicies.toLocaleString('ru-RU')}  YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
 
 /* Brain-based course routing when conceptId exists */
 const _courseForConceptV16=courseForConcept;
@@ -692,6 +731,122 @@ function saveRecon18(part){let h={id:Date.now(),format:$('#rf').value,stack:$('#
 function wireRecon18(){$('#rsave').onclick=()=>{saveRecon18(true);$('#rout').innerHTML=`<div class="answer18 mix18"><h2>СОХРАНЕНО.</h2><p>Неполная реальная рука лучше идеально выдуманной.</p></div>`};$('#ran').onclick=()=>{let h=saveRecon18(false),n=[h.pre,h.flop,h.turn,h.river].filter(Boolean).length;$('#rout').innerHTML=`<div class="answer18 good18"><span class="ey">HAND SCAN</span><h2>${n}/4 УЛИЦЫ</h2><p>${h.read?'Read до шоудауна сохранён отдельно. ':''}Результат банка не используется как доказательство качества решения. Оппонента разбираем с его позиции.</p></div>`}}
 const oldMy18=renderMy;renderMy=function(){let a=$('#myArea');if(!a)return;let v=window.myView18||'hub';if(v==='hub')a.innerHTML=myHub18();if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0)}if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0)}if(v==='recon'){a.innerHTML=reconView18();setTimeout(wireRecon18,0)}}
 window.myGo18=myGo18;
+
+
+/* V19 bridge: new brain overrides old push heuristic at decision time */
+const __push18legacy = typeof push18==="function" ? push18 : null;
+if(__push18legacy){
+ push18=function(h,pos,bb,stage,mode){
+   if(window.GTOBrainV19){
+     const hand=GTOBrainV19.handClass(h[0],h[1]);
+     const a=GTOBrainV19.analyze({street:"PREFLOP",spot:mode==="CALL"?"CALL_VS_SHOVE":"RFI",position:pos,stack:bb,stage,hand});
+     if(a.actions){
+       const key=mode==="CALL"?"CALL":(a.actions.PUSH!=null?"PUSH":"RAISE");
+       const p=a.actions[key]||0, label=p>=66?(mode==="CALL"?"CALL":key):p>=25?"MIX":"FOLD";
+       return {c:hand,p:Math.round(p),label,brain:a};
+     }
+   }
+   return __push18legacy(h,pos,bb,stage,mode);
+ }
+}
+function brain19Card(){
+ if(!window.GTOBrainV19)return "";
+ return `<div class="brain19"><div class="brain19Top"><div><span class="brain19Live">● GTO BRAIN V19 ONLINE</span><h3 style="margin:5px 0 0">NODE ENGINE</h3></div><b>${GTOBrainV19.nodes.length}</b></div><div class="brain19Grid"><div><b>EXACT</b><small>same anchor node</small></div><div><b>NEAR</b><small>distance + confidence</small></div><div><b>EST.</b><small>clearly labelled</small></div></div><div class="brain19Note">Ядро больше не притворяется солвером там, где данных нет: exact / nearest / estimate разделены. Postflop без dataset не выдумывает GTO-частоты.</div></div>`;
+}
+const __renderHome19=typeof renderHome==="function"?renderHome:null;
+if(__renderHome19)renderHome=function(){let r=__renderHome19.apply(this,arguments);setTimeout(()=>{const s=document.querySelector(".screen.active");if(s&&!s.querySelector(".brain19")){const nav=s.querySelector(".bottomNav,.nav");if(nav)nav.insertAdjacentHTML("beforebegin",brain19Card())}},0);return r}
+
+
+/* ============ V20 HOME + YOU OVERRIDES ============ */
+function you20Events(){return Array.isArray(S.events)?S.events:[]}
+function you20Score(e){return e.grade==='g'?100:e.grade==='y'?58:0}
+function you20Street(e){
+ const s=String(e.street||'').toUpperCase();
+ if(s.includes('PRE')||s.includes('ПРЕ'))return'pre';
+ if(s.includes('FLOP')||s.includes('ФЛОП')||s.includes('TURN')||s.includes('ТЁРН')||s.includes('RIVER')||s.includes('РИВЕР'))return'post';
+ return'';
+}
+function you20Stat(f){
+ const a=you20Events().filter(f),n=a.length;if(!n)return{n:0,score:null,err:0};
+ return{n,score:Math.round(a.reduce((s,e)=>s+you20Score(e),0)/n),err:a.filter(e=>e.grade==='r').length};
+}
+function you20Class(s){return s==null?'mid':s>=70?'good':s<50?'bad':'mid'}
+function you20Display(s){return s.n<3?'—':s.score}
+function you20AvatarStage(){
+ const n=you20Events().length,t=[0,50,150,400,900],icons=['🐟','🐠','🐡','🦈','🦈'];let unlocked=0;
+ t.forEach((x,i)=>{if(n>=x)unlocked=i});
+ let idx=Number(S.avatarStage20);if(!Number.isFinite(idx)||idx>unlocked)idx=unlocked;
+ return{n,t,icons,idx,unlocked};
+}
+function you20StageName(i){return['МАЛЁК','РЫБА С ОПЫТОМ','УЖЕ КУСАЕТСЯ','МАЛАЯ АКУЛА','АКУЛА'][i]||'РЫБА'}
+function you20Quote(stats){
+ const e=you20Events(),n=e.length,form=formScore(),skill=S.skill||50,arr=[stats.pre,stats.post,stats.size].filter(x=>x.n>=3).sort((a,b)=>a.score-b.score),bad=arr[0],wc=e.filter(x=>x.grade==='r'&&Number(x.confidence)>=80).length;
+ if(n<5)return'Я пока не могу определить: рег ты или фиш. Быстрее принимай оптимальные решения, устала ждать.';
+ if(wc>=5)return'Уверенность великолепная. Жаль, что иногда она приезжает на место ошибки раньше здравого смысла.';
+ if(bad&&bad.score<35)return'Опять я в этом рыбьем царстве. Выплывай скорее: статистика уже начала дышать жабрами.';
+ if(form<42)return'Это не даунстрик, если половину пожара ты разводишь сам.';
+ if(form>=82&&skill>=70)return'Чисто. Даже токсичить почти не за что. Неприятная динамика.';
+ if(skill<45)return'Пока не рег. Но уже хотя бы рыба с аналитикой — технологический прогресс.';
+ return'Живём. Местами даже прилично. Я всё равно слежу, не расслабляйся.';
+}
+function you20Spark(){
+ const a=you20Events().slice(-28);if(a.length<2)return'';
+ const w=310,h=58,p=a.map((e,i)=>`${i/(a.length-1)*w},${h-you20Score(e)/100*(h-10)-5}`).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="u20g"><stop offset="0" stop-color="#ff2e84"/><stop offset="1" stop-color="#ffd257"/></linearGradient></defs><polyline points="${p}" fill="none" stroke="url(#u20g)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function you20Errors(){
+ const e=you20Events(),G=[
+ ['Префлоп',x=>you20Street(x)==='pre'],
+ ['Флоп',x=>/FLOP|ФЛОП/i.test(x.street||'')],
+ ['Тёрн',x=>/TURN|ТЁРН/i.test(x.street||'')],
+ ['Ривер',x=>/RIVER|РИВЕР/i.test(x.street||'')],
+ ['Сайзинг',x=>x.mode==='sizing'||x.sizePct!=null]
+ ];
+ return G.map(([name,f])=>{const a=e.filter(f),r=a.filter(x=>x.grade==='r').length;return{name,n:a.length,r,p:a.length?Math.round(r/a.length*100):0}}).filter(x=>x.n).sort((a,b)=>b.p-a.p);
+}
+function openAvatar20(){
+ const a=you20AvatarStage();
+ openModal(`<span class="ey">АВАТАР</span><h2>ВЫБЕРИ, ДО КОГО ДОРОС</h2><p class="mut">Новые формы открываются дистанцией. Можно выбрать любую уже открытую.</p><div class="avatarPicker20">${a.icons.map((x,i)=>`<button data-av20="${i}" class="${i>a.unlocked?'locked':''}" ${i>a.unlocked?'disabled':''}>${x}</button>`).join('')}</div><p class="small mut" style="margin-top:10px">${a.n} решений в статистике.</p>`);
+ setTimeout(()=>$$('[data-av20]').forEach(b=>b.onclick=()=>{S.avatarStage20=+b.dataset.av20;save();closeModal();renderProfile()}),0);
+}
+function renderProfile20(){
+ const pre=you20Stat(e=>you20Street(e)==='pre'),post=you20Stat(e=>you20Street(e)==='post'&&e.mode!=='sizing'),size=you20Stat(e=>e.mode==='sizing'||e.sizePct!=null),a=you20AvatarStage(),ev=you20Events(),errs=you20Errors(),form=formScore(),skill=S.skill||50;
+ const wc=ev.filter(e=>e.grade==='r'&&Number(e.confidence)>=80).length,cc=ev.filter(e=>e.grade==='g'&&Number(e.confidence)>=80).length,pct=Math.min(100,Math.round(a.n/a.t[a.t.length-1]*100));
+ $('#profileArea').innerHTML=`<div class="you20">
+  <div class="you20Profile"><div class="you20Avatar"><div class="you20AvatarInner">${a.icons[a.idx]}</div><button class="you20AvatarBtn" id="youAvatar20">✦</button></div><div class="you20Name"><span class="ey">ТВОЙ ПРОФИЛЬ</span><h1>${esc(S.nick||'REG')}</h1><p>${a.n} решений в досье. Чем больше дистанция, тем меньше случайности.</p><span class="you20Level">${you20StageName(a.idx)}</span></div></div>
+  <div class="you20Hero"><div class="you20HeroTop"><div><span class="ey">ФОРМА СЕЙЧАС</span><b>${form}</b></div><span>SKILL ${skill}<br>${ev.length} решений</span></div><div class="you20Trend">${you20Spark()||'<div class="small mut" style="padding:22px 12px">Нужно ещё несколько решений для графика.</div>'}</div></div>
+  <div class="you20Quote"><span class="ey">ВЕРДИКТ ФРИКОВОЙ ДАМЫ</span><blockquote>${esc(you20Quote({pre,post,size}))}</blockquote></div>
+  <div class="you20Grid">
+   <button class="you20Stat ${you20Class(pre.score)}" data-u20="pre"><span class="ey">ПРЕФЛОП</span><b>${you20Display(pre)}</b><small>${pre.n} решений · ${pre.err} ошибок</small></button>
+   <button class="you20Stat ${you20Class(post.score)}" data-u20="post"><span class="ey">ПОСТФЛОП</span><b>${you20Display(post)}</b><small>${post.n} решений · ${post.err} ошибок</small></button>
+   <button class="you20Stat ${you20Class(size.score)}" data-u20="size"><span class="ey">САЙЗИНГ</span><b>${you20Display(size)}</b><small>${size.n} решений · ${size.err} ошибок</small></button>
+  </div>
+  <div class="you20Section"><div class="you20SectionTitle"><h3>ГДЕ ЧАЩЕ ОШИБАЕШЬСЯ</h3><span>вся дистанция</span></div>${errs.length?errs.slice(0,5).map(x=>`<div class="you20Error"><div class="you20ErrorTop"><span>${x.name}</span><span class="${x.p>=45?'red':x.p<=20?'green':'yellow'}">${x.p}% ошибок</span></div><div class="you20Bar"><i style="width:${x.p}%"></i></div><div class="small mut" style="margin-top:5px">${x.r} из ${x.n}</div></div>`).join(''):'<div class="you20Error"><div class="small mut">Пока мало данных. Набери несколько решений.</div></div>'}</div>
+  <div class="you20Section"><div class="you20SectionTitle"><h3>УВЕРЕННОСТЬ</h3><span>важнее одной ошибки</span></div><div class="you20Confidence"><div><span class="ey">УВЕРЕН И ПРАВ</span><b class="green">${cc}</b><small>хороший паттерн</small></div><div><span class="ey">УВЕРЕН И МИМО</span><b class="red">${wc}</b><small>самые дорогие слепые зоны</small></div></div></div>
+  <div class="you20Section"><div class="you20SectionTitle"><h3>ДИСТАНЦИЯ</h3><span>аватар растёт вместе с ней</span></div><div class="you20Distance"><div class="you20Stages">${a.icons.map((x,i)=>`<span class="${i>a.unlocked?'lock':''}">${x}</span>`).join('')}</div><div class="you20DistanceTrack"><i style="width:${pct}%"></i></div><div class="small mut">${a.n} решений · ${you20StageName(a.idx)}</div></div></div>
+ </div>`;
+ $('#youAvatar20').onclick=openAvatar20;
+ $$('[data-u20]').forEach(b=>b.onclick=()=>{const k=b.dataset.u20,s=k==='pre'?pre:k==='post'?post:size;openModal(`<span class="ey">СТАТИСТИКА</span><h2>${k==='pre'?'ПРЕФЛОП':k==='post'?'ПОСТФЛОП':'САЙЗИНГ'}</h2><p>${s.n<3?'Пока мало данных. Я не буду изображать диагноз после двух решений.':`Оценка ${s.score}. Ошибок ${s.err} из ${s.n}. Чем больше выборка, тем надёжнее профиль.`}</p>`);});
+}
+renderProfile=renderProfile20;
+
+function dailyDone20(){return Array.isArray(S.dailyArchive)&&S.dailyArchive.some(x=>x.date===today())}
+function renderHome20(){
+ const D=dailyToday(),done=dailyDone20();
+ $('#home').innerHTML=`<div class="metrics"><button class="metric"><span class="ey">SKILL</span><b class="pink">${S.skill}</b><span class="mut small">общий уровень</span></button><button class="metric"><span class="ey">FORM</span><b>${formScore()}</b><span class="mut small">последние 20</span></button><button class="metric"><span class="ey">СЕРИЯ</span><b>${S.streak}</b><span class="mut small">дней</span></button></div>
+ <div class="grid2">
+  <button class="tile dailyTile" id="homeDaily">${done?'<span class="doneStamp20">DONE</span>':''}<span class="modeNumber">01</span><span class="ey">РАЗДАЧА ДНЯ</span><h2 class="impact">ОДНА<br><span class="pink">РУКА.</span></h2><span class="mut small">Один сложный спот в день: решение, размер и логика.</span><div class="dailyBoard"><span>${D.board[0]}</span><span>${D.board[1]}</span><span>?</span></div><span class="go">→</span></button>
+  <button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Выбери размер ставки и пойми, зачем он здесь.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button>
+  <button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">РАЗБОР ЛИНИИ</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Найди первую реальную ошибку в раздаче.</span><div class="csiPreview">ПРЕ ●<br>ФЛОП ●<br>ТЁРН ⚠<br>РИВЕР ?</div><span class="go">→</span></button>
+  <button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки. Быстро, без лишней воды.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button>
+  <button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Сужай диапазон по улицам и убирай невозможные руки.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button>
+ </div>
+ <button class="quick5" id="quick5"><div><span class="ey">⚡ ЕСТЬ 5 МИНУТ?</span><b>БЫСТРАЯ СЕССИЯ</b><div class="mut small">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong>05:00</strong></button>`;
+ $('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick;
+ if(typeof bindMetrics18==='function')setTimeout(bindMetrics18,0);
+}
+renderHome=renderHome20;
+window.openAvatar20=openAvatar20;
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
