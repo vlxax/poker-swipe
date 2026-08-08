@@ -1,16 +1,19 @@
-# Poker Swipe — Reg + Creator consolidated update
+# POKER SWIPE · REG + CREATOR V9
 
-Single-file Telegram Mini App / GitHub Pages build.
+Консолидированная версия после совместного продуктового аудита.
 
-## Included
-- one-time nickname onboarding and saved profile
-- personalized YOU/profile and tappable SKILL / EV LOSS / STREAK explanations
-- tappable Poker DNA categories with short toxic explanations
-- main leak evidence, "Почему так?", personalized "Лечить" lab concept
-- "Разбор полётов" error history + retry
-- Poker Swipe: tap actions only, card fly-out as visual effect, contextual verdict CTA, automatic next hand; repeated red mistakes stop flow
-- renamed full-hand review to "Ну что опять не так?" with one confirmed attempt
-- solo REG BATTLE archetypes instead of pass-the-phone
-- existing sizing, Daily, My Hands and saved progress retained
+Главные изменения:
+- разговорный tap-through onboarding + ник + реальный диагностический тест на 10 спотов;
+- Daily стал отдельной сложной hand-of-the-day механикой: улицы раскрываются по одной, ответ фиксируется, затем пользователь защищает его причинами и проходит контрольный перенос идеи;
+- Poker Swipe максимально чистый: только tap по Fold/Call/Raise, крупные кнопки выше, нет отдельной вкладки Swipe, нет кнопки «следующая», автопереход медленнее и зависит от результата;
+- разные CTA для green/yellow/red, повторный red останавливает поток;
+- Sizing: выбранная кнопка подсвечивается и блокируется, добавлен вопрос «зачем?», несколько допустимых размеров, серия и итоговый report;
+- «Ну что опять не так?» — одна попытка, «Я уверен», причина, реальный repair-интерфейс и анализ исправления;
+- «Лечить» — отдельные микроупражнения: найти блефы, pot odds, blocker lab;
+- Battle — PvE exploit mode с архетипами, tendencies, миссией, многоуличной раздачей без промежуточного feedback и post-battle exploit/read разбором;
+- YOU — единое личное досье: динамика, Poker DNA, кликабельные навыки, объединённые лики + история ошибок + лечение;
+- МОИ — личный журнал, улучшенный ввод карт, красные/чёрные масти, pot odds calculator и all-in equity Monte Carlo calculator, street-by-street quality map и конкретные выводы;
+- убраны пользовательские технические оправдания про backend и лишний англоязычный жаргон;
+- токсичный голос Фриковой Дамы используется как акцент, а не вместо полезного объяснения.
 
-Important: educational EV values in the legacy spot base are not solver output. UI labels avoid presenting them as verified solver calculations.
+`index.html` можно загрузить в GitHub Pages как статическое Telegram Mini App.
