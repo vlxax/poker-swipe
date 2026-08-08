@@ -1,13 +1,8 @@
-# QA V21
-
-- brain syntax: **OK**
-- index inline JS: **OK**
-- new cinematic onboarding: **OK**
-- home-only creator mark: **OK**
-- greeting home only: **OK**
-- screen transitions: **OK**
-- daily done preserved: **OK**
-- YOU preserved: **OK**
-- My Cards preserved: **OK**
-- Brain preserved: **OK**
-- dev UI hidden: **OK**
+# V21.1 QA
+- Inline JavaScript syntax: OK
+- Diagnostic buttons rebound after final DOM render: OK
+- Double-tap protection: OK
+- Diagnostic tactile feedback: OK
+- Nickname wording changed to «Напиши свой никнейм»: OK
+- V21 visual layer preserved: OK
+- V20 Brain preserved: OK

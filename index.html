@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="21.0">
+<meta name="app-version" content="21.1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V21 VISUAL FINAL</title>
+<title>POKER SWIPE — V21.1</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -411,6 +411,11 @@ input[type=range]{height:28px}
 .story input{font-size:19px!important;padding:15px!important;background:#ffffff08!important;border-color:#ffffff13!important}
 .diagChoice{transition:.14s var(--v21-ease)!important}.diagChoice:active{transform:scale(.985)}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+
+
+.diagChoice{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:58px!important;padding:14px 15px!important;background:linear-gradient(145deg,#fff,#f1ecef)!important;box-shadow:0 8px 0 #bdb4b9,0 15px 28px #0005!important;transition:transform .12s cubic-bezier(.22,.9,.22,1),box-shadow .12s,border-color .12s!important}
+.diagChoice:active,.diagChoice.on{transform:translateY(4px) scale(.99)!important;box-shadow:0 3px 0 #a89fa4,0 7px 14px #0004!important}
+.diagChoice:disabled{opacity:1!important}
 
 </style>
 <script src="poker_brain_v20.js"></script>
@@ -1019,9 +1024,9 @@ renderStory=function(){
    $('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center">
      <div class="storyStep21">${[0,1,2].map(()=>'<i class="on"></i>').join('')}</div>
      <div class="storyIdentity21"><span class="line"></span><b>ПОЧТИ ГОТОВО</b><span class="line"></span></div>
-     <h1 class="impact">КАК ТЕБЯ<br><span class="pink">НАЗЫВАТЬ?</span></h1>
-     <p>Это имя будет жить в профиле и на главной. Без паспорта, спокойно.</p>
-     <input id="nickInput" maxlength="18" placeholder="ник">
+     <h1 class="impact">НАПИШИ СВОЙ<br><span class="pink">НИКНЕЙМ.</span></h1>
+     <p>Он появится на главной и в твоём профиле.</p>
+     <input id="nickInput" maxlength="18" placeholder="Твой никнейм">
      <button class="primary" id="nickGo" style="margin-top:10px">НАЧАТЬ ДИАГНОСТИКУ →</button>
    </div>`;
    $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;save();renderDiagnostic()};
@@ -1029,17 +1034,49 @@ renderStory=function(){
  }
  renderDiagnostic();
 };
-const __renderDiagnosticV21=renderDiagnostic;
 renderDiagnostic=function(){
-  __renderDiagnosticV21();
-  const s=document.getElementById('story');
-  if(!s)return;
-  // strip developer-ish wording from onboarding diagnostic
-  s.innerHTML=s.innerHTML
-   .replaceAll('ПЕРВЫЙ POKER DNA','ПЕРВЫЙ СРЕЗ ИГРЫ')
-   .replaceAll('диагнозы','выводы')
-   .replaceAll('приложение хотя бы не знакомится с тобой с пустой головой','теперь приложение знает, с какого уровня начинать')
-   .replaceAll('Без подсказки. Потом будем разбираться.','Без подсказок. Просто выбери своё решение.');
+ if(diag>=DIAG.length){
+   S.diagDone=true;S.diagnostic=diagScores;save();
+   const good=diagScores.filter(x=>x.ok).length;
+   $('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center">
+    <div class="storyIdentity21"><span class="line"></span><b>ПЕРВЫЙ СРЕЗ ИГРЫ</b><span class="line"></span></div>
+    <h1 class="impact">${good}/8<br><span class="pink">ЭТО ТОЛЬКО НАЧАЛО.</span></h1>
+    <p>Восьми решений мало для серьёзных выводов. Но теперь приложение знает, с какого уровня начинать собирать твою статистику.</p>
+    <button class="primary" id="diagEnter">ВОЙТИ В POKER SWIPE →</button>
+   </div>`;
+   $('#diagEnter').onclick=()=>{
+     $('#onboarding').classList.add('hidden');
+     $('#mainApp').classList.remove('hidden');
+     document.body.classList.add('home-context');
+     renderHome();
+   };
+   return;
+ }
+ const d=DIAG[diag];
+ $('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center;align-items:stretch;text-align:left">
+   <div class="storyStep21">${Array.from({length:8},(_,i)=>`<i class="${i<=diag?'on':''}"></i>`).join('')}</div>
+   <div style="width:100%;max-width:360px;margin:0 auto">
+    <span class="ey">ДИАГНОСТИКА · ${diag+1}/8</span>
+    <div class="diagProgress"><span style="width:${(diag+1)/8*100}%"></span></div>
+    <h2 style="font-size:24px;line-height:1.08;margin:18px 0">${d.q}</h2>
+    <div id="diagChoices21">${d.a.map((x,i)=>`<button type="button" class="diagChoice" data-da21="${i}"><span>${x}</span><b style="opacity:.28">→</b></button>`).join('')}</div>
+    <p class="mut" style="font-size:10px;margin-top:12px">Без подсказок. Просто выбери своё решение.</p>
+   </div>
+ </div>`;
+ $$('[data-da21]').forEach(b=>{
+   b.onclick=()=>{
+     const answer=d.a[Number(b.dataset.da21)];
+     const ok=answer===d.p;
+     b.classList.add('on');
+     b.style.borderColor=ok?'#42e786':'#ff4b68';
+     b.style.transform='scale(.985)';
+     // lock double taps, show tactile feedback, then advance
+     $$('[data-da21]').forEach(x=>x.disabled=true);
+     diagScores.push({concept:d.c,ok});
+     recordEvent({mode:'diagnostic',concept:d.c,grade:ok?'g':'r',action:answer});
+     setTimeout(()=>{diag++;renderDiagnostic()},180);
+   };
+ });
 };
 document.body.classList.add('home-context');
 
