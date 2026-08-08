@@ -1,14 +1,13 @@
-# QA V20
+# QA V21
 
-- brain JS: **OK**
-- index JS: **OK**
-- YOU has no heal button: **OK**
-- fish-to-shark avatars: **OK**
-- toxic verdict: **OK**
-- pre/post/sizing: **OK**
-- Daily DONE: **OK**
-- Xray description: **OK**
-- Quick personalization: **OK**
+- brain syntax: **OK**
+- index inline JS: **OK**
+- new cinematic onboarding: **OK**
+- home-only creator mark: **OK**
+- greeting home only: **OK**
+- screen transitions: **OK**
+- daily done preserved: **OK**
+- YOU preserved: **OK**
 - My Cards preserved: **OK**
-- nickname preserved: **OK**
-- expanded brain: **OK**
+- Brain preserved: **OK**
+- dev UI hidden: **OK**
