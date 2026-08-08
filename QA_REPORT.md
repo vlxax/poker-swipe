@@ -1,12 +1,11 @@
-# QA REPORT — V17.2 MOBILE FIX
+# QA REPORT — V17.4 HARD BOOT FIX
 
-- Inline JavaScript syntax: **OK**
-- PokerBrain runtime test: **OK**
-- Runtime sample: `{"source":"EXACT_REFERENCE_NODE","grade":"g","score":100,"policies":20779}`
-- self_contained_strategy_pack: **OK**
-- self_contained_poker_brain: **OK**
-- no_brain_folder_dependency: **OK**
-- visible_boot_state: **OK**
-- visible_error_fallback: **OK**
-- brain_integrity_check: **OK**
-- version_badge: **OK**
+- JavaScript syntax: **OK**
+- safe_optional_nick_binding: **OK**
+- no_direct_boot_editNickname_assignment: **OK**
+- editor_exposed: **OK**
+- no_fatal_editor_check: **OK**
+- boot_flag: **OK**
+- post_boot_errors_nonfatal: **OK**
+- brain_embedded: **OK**
+- version: **OK**
