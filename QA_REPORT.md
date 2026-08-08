@@ -1,13 +1,16 @@
-# QA REPORT — V16.1 CREATOR POLISH
+# QA REPORT — V16.2 PURPOSE POLISH
 
+- JavaScript syntax: **OK**
 - js_syntax: **OK**
-- nav_3: **OK**
-- no_xray_nav: **OK**
-- xray_in_play: **OK**
-- edit_nick: **OK**
-- creator_identity: **OK**
-- you_verdict: **OK**
-- my_result: **OK**
-- showdown_truth: **OK**
-- three_d_chips: **OK**
-- reduced_motion: **OK**
+- my_nav: **OK**
+- my_renderer: **OK**
+- home_my_cta: **OK**
+- showdown_result: **OK**
+- reg_recommendations: **OK**
+- creator_home_once: **OK**
+- profile_toxic_verdict: **OK**
+- profile_blockers_removed: **OK**
+- evidence_board: **OK**
+- unknown_course_not_fake: **OK**
+- creator_hand_removed: **OK**
+- global_signature_removed: **OK**
