@@ -1,15 +1,12 @@
-# QA REPORT — V17.1
+# QA REPORT — V17.2 MOBILE FIX
 
-- _inline_check.js: **OK**
-- poker_brain.js: **OK**
-- strategy_pack_v17.js: **OK**
-- home_handlab_removed: **OK**
-- home_today_removed: **OK**
-- smart_session_kept: **OK**
-- my_nav_kept: **OK**
-- my_manual_entry: **OK**
-- my_import_entry: **OK**
-- user_reasoning: **OK**
-- result_separate: **OK**
-- showdown_optional: **OK**
-- brain_files_kept: **OK**
+- Inline JavaScript syntax: **OK**
+- PokerBrain runtime test: **OK**
+- Runtime sample: `{"source":"EXACT_REFERENCE_NODE","grade":"g","score":100,"policies":20779}`
+- self_contained_strategy_pack: **OK**
+- self_contained_poker_brain: **OK**
+- no_brain_folder_dependency: **OK**
+- visible_boot_state: **OK**
+- visible_error_fallback: **OK**
+- brain_integrity_check: **OK**
+- version_badge: **OK**

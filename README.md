@@ -1,5 +1,16 @@
-# Brain-ready event layer
+# POKER SWIPE V17.2 — MOBILE BOOT FIX
 
-V15 уже сохраняет решения на уровне `concept / action / size / grade / confidence / responseMs`.
+Причина мобильного белого/пустого экрана:
+- V17.1 index.html ожидал `brain/strategy_pack_v17.js` и `brain/poker_brain.js`.
+- В текущем GitHub-репозитории эти JS-файлы лежат в корне.
+- В V17.2 весь strategy pack и PokerBrain встроены прямо в `index.html`.
 
-Это подготовка к solver-backed Poker Brain. Точная EV/GTO оценка в этой сборке намеренно не выдумывается. Reference-зоны в интерфейсе подписаны как учебная базовая модель.
+Что это даёт:
+- для запуска достаточно заменить только `index.html`;
+- приложение больше не зависит от структуры папок GitHub;
+- GTO Brain загружается до старта интерфейса;
+- вместо пустой белой плашки при реальной runtime-ошибке будет видимый STARTUP ERROR;
+- добавлена более безопасная совместимость с Safari/WebView.
+
+После публикации справа сверху должен быть бейдж:
+`V17.2 · MOBILE FIX`
