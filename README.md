@@ -1,26 +1,10 @@
-# POKER SWIPE V14.4 — SWIPE + XRAY FIXED
+# POKER BRAIN V1 — Technical Pack
 
-Исправлены два критичных блока.
+Файлы:
+- `POKER_BRAIN_GTO_ARCHITECTURE_V1.docx` — основной подробный документ.
+- `POKER_BRAIN_GTO_ARCHITECTURE_V1.md` — developer-friendly версия.
+- `poker_brain_training_item.schema.json` — стартовая JSON Schema для training item.
+- `example_training_item.json` — пример записи. EV намеренно `null`, пока нет реального solver output.
+- `brain_manifest.example.json` — пример manifest мозга.
 
-## Poker Swipe
-- 16 разных spots вместо 4;
-- сессия 10 рук без повторов;
-- кнопка после тапа ярко фиксируется;
-- CLEAN / LIVE / ERROR;
-- auto-next с визуальным переходом;
-- session report после 10 рук;
-- только legal actions для текущего node.
-
-## Рентген
-- исправлен critical startup bug для уже зарегистрированных пользователей;
-- нормальный landing screen;
-- полный и быстрый режим;
-- range реально переносится между улицами;
-- убитая комбинация не воскресает на следующей улице;
-- value/bluff работает только с тем, что дожило;
-- blocker scan и итоговый Range Report.
-
-После публикации должен быть бейдж `V14.4 · SWIPE+XRAY`.
-
-## Совместимость сохранений
-V14.4 читает данные из V14.3 / V14.2 / V14.1, если новый ключ ещё пуст. Поэтому зарегистрированный пользователь не должен терять локальный прогресс при обновлении.
+Важно: этот пакет описывает архитектуру и схему собственной solver-базы. Он не содержит выгруженных ranges/trees из GTO Wizard.

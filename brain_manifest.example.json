@@ -1,0 +1,31 @@
+{
+  "brain_version": "1.0.0",
+  "primary_format": "MTT_6MAX_BB_ANTE",
+  "stack_buckets": [
+    15,
+    20,
+    25,
+    30,
+    40,
+    60
+  ],
+  "modules": [
+    "game_state",
+    "math",
+    "ranges",
+    "solver_db",
+    "grading",
+    "explanations",
+    "personalization"
+  ],
+  "modes": [
+    "SWIPE",
+    "SIZING",
+    "REVIEW",
+    "DAILY",
+    "HEAL",
+    "MY_HANDS",
+    "XRAY",
+    "YOU"
+  ]
+}

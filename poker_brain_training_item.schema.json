@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Poker Brain Training Item V1",
+  "type": "object",
+  "required": [
+    "training_id",
+    "mode",
+    "node_id",
+    "hero_combo",
+    "concept_ids",
+    "source"
+  ],
+  "properties": {
+    "training_id": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "SWIPE",
+        "SIZING",
+        "REVIEW",
+        "DAILY",
+        "HEAL",
+        "MY_HANDS",
+        "XRAY"
+      ]
+    },
+    "node_id": {
+      "type": "string"
+    },
+    "hero_combo": {
+      "type": "string"
+    },
+    "difficulty": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "concept_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "version"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "SOLVER",
+            "CALCULATED",
+            "CURATED"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "solver_family": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "config_hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "enum": [
+            "PREFLOP",
+            "FLOP",
+            "TURN",
+            "RIVER"
+          ]
+        },
+        "actor": {
+          "type": "string"
+        },
+        "pot_bb": {
+          "type": "number"
+        },
+        "effective_stack_bb": {
+          "type": "number"
+        },
+        "spr": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "legal_actions": {
+          "type": "array"
+        }
+      }
+    },
+    "grading": {
+      "type": "object"
+    },
+    "explanation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

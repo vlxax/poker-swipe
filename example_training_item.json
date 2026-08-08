@@ -1,0 +1,57 @@
+{
+  "training_id": "sw_mtt30_btnbb_a72r_qhqh_001",
+  "mode": "SWIPE",
+  "node_id": "mtt30_btnbb_a72r_flop_bbcheck",
+  "hero_combo": "QhJh",
+  "difficulty": 0.42,
+  "concept_ids": [
+    "SMALL_CBET",
+    "RANGE_ADVANTAGE",
+    "STATIC_BOARD"
+  ],
+  "source": {
+    "type": "SOLVER",
+    "version": "2026.08-mtt30-v1",
+    "solver_family": "LICENSED_SOLVER",
+    "config_hash": "sha256:PLACEHOLDER"
+  },
+  "node": {
+    "street": "FLOP",
+    "actor": "BTN",
+    "pot_bb": 5.5,
+    "effective_stack_bb": 27.8,
+    "spr": 5.05,
+    "legal_actions": [
+      {
+        "id": "check",
+        "type": "CHECK"
+      },
+      {
+        "id": "b25",
+        "type": "BET",
+        "size_pct_pot": 25
+      },
+      {
+        "id": "b75",
+        "type": "BET",
+        "size_pct_pot": 75
+      }
+    ]
+  },
+  "combo_strategy": {
+    "check": {
+      "frequency": 0.31,
+      "ev_bb": null
+    },
+    "b25": {
+      "frequency": 0.69,
+      "ev_bb": null
+    },
+    "b75": {
+      "frequency": 0.0,
+      "ev_bb": null
+    }
+  },
+  "note": "Числа EV намеренно null до загрузки реального solver output. Не использовать placeholders как покерную истину.",
+  "explanation_id": "exp_small_cbet_a_high_v1"
+}
