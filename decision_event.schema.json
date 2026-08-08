@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Poker Swipe V15 Decision Event",
+  "type": "object",
+  "required": [
+    "mode",
+    "concept",
+    "grade",
+    "ts"
+  ],
+  "properties": {
+    "spotId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": "string"
+    },
+    "concept": {
+      "type": "string"
+    },
+    "street": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sizePct": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "grade": {
+      "enum": [
+        "g",
+        "y",
+        "r"
+      ]
+    },
+    "gradeAction": {
+      "enum": [
+        "g",
+        "y",
+        "r",
+        null
+      ]
+    },
+    "gradeSize": {
+      "enum": [
+        "g",
+        "y",
+        "r",
+        null
+      ]
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "responseMs": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ts": {
+      "type": "number"
+    }
+  }
+}

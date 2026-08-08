@@ -1,22 +1,22 @@
-# QA REPORT — V14.4 SWIPE + XRAY
+# QA REPORT — V15 REG UPDATE
 
-Browser test: Chromium headless, 390×844 viewport.
+## Автоматические проверки
+- JavaScript syntax (`node --check`): **OK**
+- Browser runtime smoke test (Chromium, mobile viewport 390×844): **OK**
+- Page errors during tested flow: **0**
 
-- New-user onboarding → HOME: OK
-- Existing-user startup path (onboarded=true): OK
-- Poker Swipe opens: OK
-- Swipe action click gets selected/grade class: OK
-- Swipe card changes automatically after answer: OK
-- Swipe session uses 10 unique hands from a 16-spot pool: OK
-- Röntgen bottom navigation opens: OK
-- Röntgen landing renders: OK
-- Full Röntgen starts: OK
-- 13×13 grid = 169 cells: OK
-- Range can be removed/kept by tap: OK
-- Fix range → reveal: OK
-- Next street keeps the user's prior model instead of resetting to reference: OK
-- Home / My Hands / YOU navigation after Röntgen: OK
-- JavaScript syntax (`node --check`): OK
-- Browser console/page errors during tested flow: NONE
+## Прокликанные цепочки
+- Onboarding → nickname → 8-step diagnostic → PLAY: **OK**
+- Smart Session start → Poker Swipe: **OK**
+- Daily replay → decision → optional sizing → confidence → argument board: **OK**
+- Daily tap fallback for argument placement: **OK**
+- Daily real pointer drag to drop zone: **OK**
+- Daily unlocks reveal only after all arguments are assigned: **OK**
+- X-Ray opens: **OK**
+- X-Ray renders 169 hand-class cells: **OK**
+- X-Ray removed class stays unavailable on next street: **OK**
+- My Hands builder exposes Hero/Villain card controls and actor controls: **OK**
+- YOU page and custom Poker DNA bottom-nav icon render: **OK**
 
-Important: reference ranges are curated training models, not claimed solver outputs.
+## Important honesty rule
+This build does not claim that hand-written teaching references are solver output. Actual GTO frequencies/EV require the separate solver-backed Poker Brain database.

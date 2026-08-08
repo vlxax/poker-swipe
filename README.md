@@ -1,10 +1,5 @@
-# POKER BRAIN V1 — Technical Pack
+# Brain-ready event layer
 
-Файлы:
-- `POKER_BRAIN_GTO_ARCHITECTURE_V1.docx` — основной подробный документ.
-- `POKER_BRAIN_GTO_ARCHITECTURE_V1.md` — developer-friendly версия.
-- `poker_brain_training_item.schema.json` — стартовая JSON Schema для training item.
-- `example_training_item.json` — пример записи. EV намеренно `null`, пока нет реального solver output.
-- `brain_manifest.example.json` — пример manifest мозга.
+V15 уже сохраняет решения на уровне `concept / action / size / grade / confidence / responseMs`.
 
-Важно: этот пакет описывает архитектуру и схему собственной solver-базы. Он не содержит выгруженных ranges/trees из GTO Wizard.
+Это подготовка к solver-backed Poker Brain. Точная EV/GTO оценка в этой сборке намеренно не выдумывается. Reference-зоны в интерфейсе подписаны как учебная базовая модель.
