@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="21.1">
+<meta name="app-version" content="21.2">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V21.1</title>
+<title>POKER SWIPE — V21.2 TELEGRAM UI</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -416,6 +416,74 @@ input[type=range]{height:28px}
 .diagChoice{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:58px!important;padding:14px 15px!important;background:linear-gradient(145deg,#fff,#f1ecef)!important;box-shadow:0 8px 0 #bdb4b9,0 15px 28px #0005!important;transition:transform .12s cubic-bezier(.22,.9,.22,1),box-shadow .12s,border-color .12s!important}
 .diagChoice:active,.diagChoice.on{transform:translateY(4px) scale(.99)!important;box-shadow:0 3px 0 #a89fa4,0 7px 14px #0004!important}
 .diagChoice:disabled{opacity:1!important}
+
+
+/* ================= V21.2 · TELEGRAM MINI APP FIX ================= */
+#mainApp,.app,.screen,.tool18,.my18,#myhands,#myArea{max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+#mainApp,.app,.screen{overflow-x:hidden!important}
+.tool18,.my18{padding-left:12px!important;padding-right:12px!important}
+.panel18,.tool18Panel,.cards18,.board18,.duel18,.read18{min-width:0!important;width:100%!important;box-sizing:border-box!important}
+.cards18{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+.board18{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.cards18>*,.board18>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.toolTop{position:relative;z-index:2}
+.cardPick18{
+ appearance:none;-webkit-appearance:none;width:100%;min-width:0;height:72px;border:1px solid #ffffff12;border-radius:15px;
+ background:linear-gradient(165deg,#faf7f7,#e9e4e6);color:#171419;font-size:22px;font-weight:1000;
+ display:flex;align-items:center;justify-content:center;gap:3px;box-shadow:0 8px 18px #0005,inset 0 1px #fff;
+ transition:transform .12s cubic-bezier(.22,.9,.22,1),box-shadow .12s
+}
+.cardPick18:active{transform:translateY(3px) scale(.985);box-shadow:0 4px 9px #0005}
+.cardPick18.empty{color:#aaa3a7}.cardPick18.red{color:#d52250}.cardPick18.black{color:#121216}
+.board18 .cardPick18{height:52px;font-size:16px;border-radius:12px}
+.cardPickHint18{font-size:8px;color:#7f7884;margin-top:6px;line-height:1.3}
+.cardPicker18 h2{margin:2px 0 10px;font-size:28px}
+.cardRankGrid18{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:10px}
+.cardRankGrid18 button,.cardSuitGrid18 button{
+ border:1px solid #d8cfd4;background:#fff;color:#161318;border-radius:14px;min-height:48px;font-weight:1000;font-size:15px
+}
+.cardRankGrid18 button.on{background:#171419;color:#fff;border-color:#171419}
+.cardSuitGrid18{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}
+.cardSuitGrid18 button{font-size:24px}.cardSuitGrid18 .redSuit18{color:#d52250}
+.cardPicker18 .clear18{width:100%;margin-top:9px;border:1px solid #ded6da;background:transparent;border-radius:13px;padding:11px;color:#716a70;font-size:9px;font-weight:900}
+.cardPicker18 .used18{opacity:.23!important;pointer-events:none}
+.eqResultCompact18{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:6px;align-items:center}
+.eqResultCompact18>div{min-width:0;text-align:center;border:1px solid #30303a;border-radius:15px;padding:10px 4px;background:#0d0d12}
+.eqResultCompact18 strong{display:block;font-size:26px;white-space:nowrap}
+.eqResultCompact18 small{font-size:8px;color:#938c97}.eqResultCompact18>b{text-align:center;font-size:9px;color:#77717d}
+.quick5{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:12px!important;padding:16px!important}
+.quick5Copy21{min-width:0;position:relative;z-index:3;text-align:left}.quick5Title21{display:block!important;font-size:22px!important;line-height:.94!important;margin:5px 0 7px!important;letter-spacing:-.045em!important}
+.quick5Desc21{max-width:245px!important;font-size:10px!important;line-height:1.4!important}
+.quick5Timer21{position:relative;z-index:3;align-self:center;font-size:25px!important;white-space:nowrap;text-align:right}
+@media(max-width:360px){
+ .quick5{grid-template-columns:1fr!important}
+ .quick5Timer21{text-align:left;font-size:21px!important;margin-top:2px}
+ .quick5Desc21{max-width:210px!important}
+}
+/* YOU — custom cartoon fish */
+.you20Avatar{width:112px!important;height:112px!important;flex:0 0 112px!important;cursor:pointer;background:#f8f5f4!important;border:4px solid #fff!important}
+.you20AvatarInner{font-size:0!important;width:100%;height:100%;display:grid;place-items:center;animation:none!important}
+.you20AvatarBtn{display:none!important}
+.fishCartoon20{position:relative;width:90px;height:66px;animation:fishSwim21 3.8s ease-in-out infinite;filter:drop-shadow(0 10px 10px #0003)}
+.fishBody20{position:absolute;left:17px;top:13px;width:61px;height:42px;border-radius:55% 48% 48% 55%;background:linear-gradient(145deg,#73d5ff,#3186c2);border:3px solid #163c5c;box-sizing:border-box}
+.fishTail20{position:absolute;left:2px;top:20px;width:0;height:0;border-top:16px solid transparent;border-bottom:16px solid transparent;border-right:25px solid #3186c2;filter:drop-shadow(-2px 0 #163c5c)}
+.fishFin20{position:absolute;left:43px;top:45px;width:22px;height:13px;background:#2875ad;clip-path:polygon(0 0,100% 50%,15% 100%)}
+.fishEye20{position:absolute;right:18px;top:21px;width:15px;height:15px;background:white;border:2px solid #111;border-radius:50%;z-index:3}
+.fishEye20:after{content:"";position:absolute;width:6px;height:6px;background:#111;border-radius:50%;left:5px;top:4px;animation:fishLook21 2.8s ease-in-out infinite}
+.fishMouth20{position:absolute;right:9px;top:39px;width:10px;height:5px;border-bottom:3px solid #111;border-radius:50%;z-index:4}
+.fishCartoon20.f1{transform:scale(1.06)}.fishCartoon20.f1 .fishBody20{background:linear-gradient(145deg,#ffbdde,#ff5ba2);border-color:#7d214d}.fishCartoon20.f1 .fishTail20{border-right-color:#ff5ba2}.fishCartoon20.f1 .fishFin20{background:#e7478c}
+.fishCartoon20.f2{width:78px}.fishCartoon20.f2 .fishBody20{left:13px;width:55px;height:55px;top:7px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff39b,#f0b729 70%);border-color:#76570b}.fishCartoon20.f2 .fishTail20{top:20px;border-right-color:#e4a71f}.fishCartoon20.f2 .fishFin20{background:#d39817;top:47px}.fishCartoon20.f2:after{content:"• • •";position:absolute;left:29px;top:16px;color:#8d6711;font-size:13px;letter-spacing:3px}.fishCartoon20.f2 .fishEye20{right:9px;top:19px}
+.fishCartoon20.f3,.fishCartoon20.f4{width:98px}.fishCartoon20.f3 .fishBody20,.fishCartoon20.f4 .fishBody20{left:10px;width:75px;height:37px;top:17px;border-radius:58% 35% 35% 58%;background:linear-gradient(#aab8c7,#667787);border-color:#303d48}.fishCartoon20.f3 .fishTail20,.fishCartoon20.f4 .fishTail20{left:-2px;top:19px;border-right-color:#667787}.fishCartoon20.f3:before,.fishCartoon20.f4:before{content:"";position:absolute;left:48px;top:5px;border-left:11px solid transparent;border-right:11px solid transparent;border-bottom:22px solid #748493;transform:rotate(-5deg)}.fishCartoon20.f3 .fishEye20,.fishCartoon20.f4 .fishEye20{right:16px;top:23px;width:13px;height:13px}.fishCartoon20.f3 .fishMouth20,.fishCartoon20.f4 .fishMouth20{right:5px;top:40px}
+.fishCartoon20.f4{transform:scale(1.12)}.fishCartoon20.f4 .fishBody20{background:linear-gradient(#778898,#36434f)}.fishCartoon20.f4 .fishMouth20{width:15px;height:8px;border:0;background:repeating-linear-gradient(90deg,#fff 0 3px,#27323a 3px 5px);clip-path:polygon(0 0,100% 20%,85% 100%,12% 90%)}
+@keyframes fishSwim21{50%{transform:translateY(-4px) rotate(-2deg)}}@keyframes fishLook21{50%{transform:translateX(-3px)}}
+.you20Profile{align-items:center!important}.you20Name h1{font-size:29px!important}
+.avatarTapHint21{font-size:8px;color:#77717d;margin-top:5px}
+.avatarPicker20{grid-template-columns:repeat(5,minmax(0,1fr))!important}.avatarPicker20 button{height:70px!important;padding:0!important;display:grid;place-items:center;overflow:hidden}.avatarPicker20 .fishCartoon20{transform:scale(.48)!important}
+@media(max-width:390px){
+ .you20Avatar{width:102px!important;height:102px!important;flex-basis:102px!important}
+ .fishCartoon20{transform:scale(.9)}
+ .you20Name h1{font-size:26px!important}
+}
 
 </style>
 <script src="poker_brain_v20.js"></script>
@@ -835,11 +903,34 @@ function equity18(h,v,b){let k=[...h,...v,...b];if(new Set(k).size!==k.length)re
 function cls18(a,b){if(!a||!b)return'';if(a[0]===b[0])return a[0]+b[0];let hi=R18.indexOf(a[0])>R18.indexOf(b[0])?a:b,lo=hi===a?b:a;return hi[0]+lo[0]+(a[1]===b[1]?'s':'o')}
 function push18(h,pos,bb,stage,mode){let c=cls18(...h),pair=c.length===2,a=R18.indexOf(c[0]),b=R18.indexOf(c[1]||c[0]),x=pair?54+a*3.3:18+a*2.4+b*.75+(c.endsWith('s')?6:0)+(Math.abs(a-b)<=2?4:0)+(c[0]==='A'?5:0);x+=({UTG:-11,HJ:-6,CO:0,BTN:8,SB:12,BB:3}[pos]||0)+(12-bb)*3.4+(stage==='BUBBLE'?-5:stage==='FT'?-7:0)+(mode==='CALL'?-9:0);x=Math.max(3,Math.min(97,Math.round(x)));return{c,p:x,label:x>=66?(mode==='CALL'?'CALL':'PUSH'):x>=38?'MIX':'FOLD'}}
 function myGo18(v){window.myView18=v;renderMy()}
-function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">OFFLINE REG TOOLKIT</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Equity + pot odds.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Восстанови офлайн-раздачу. Read до шоудауна хранится отдельно.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
-function eqView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>ALL-IN</h2></div><div class="panel18"><div class="label18">ТЫ</div><div class="cards18"><input id="eh1" placeholder="A♠"><input id="eh2" placeholder="K♥"></div><div class="label18" style="margin-top:10px">ОППОНЕНТ</div><div class="cards18"><input id="ev1" placeholder="Q♣"><input id="ev2" placeholder="Q♦"></div></div><div class="panel18"><div class="label18">БОРД · МОЖНО ПУСТЫМ</div><div class="board18">${[1,2,3,4,5].map(i=>`<input id="eb${i}" placeholder="—">`).join('')}</div></div><div id="eqout" class="panel18"><div class="duel18"><div><strong>—</strong>ТЫ</div><b>VS</b><div><strong>—</strong>ОПП</div></div></div><div class="panel18"><div class="read18"><span>Банк до ставки</span><strong id="potr">12 BB</strong></div><input id="pot18" class="range18" type="range" min="1" max="100" value="12"><div class="read18"><span>Доставить</span><strong id="callr">5 BB</strong></div><input id="call18" class="range18" type="range" min="1" max="100" value="5"><div id="math18" class="answer18 mix18"></div></div></div>`}
-function wireEq18(){let f=()=>{let h=[pc18($('#eh1').value),pc18($('#eh2').value)],v=[pc18($('#ev1').value),pc18($('#ev2').value)],b=[1,2,3,4,5].map(i=>pc18($('#eb'+i).value)).filter(Boolean),p=+$('#pot18').value,c=+$('#call18').value,need=c/(p+c+c)*100;$('#potr').textContent=p+' BB';$('#callr').textContent=c+' BB';let r=h.every(Boolean)&&v.every(Boolean)?equity18(h,v,b):null;if(r){$('#eqout').innerHTML=`<div class="duel18"><div><strong>${r.h.toFixed(1)}%</strong>ТЫ</div><b>VS</b><div><strong>${r.v.toFixed(1)}%</strong>ОПП</div></div>`;let e=r.h-need;$('#math18').className='answer18 '+(e>=0?'good18':'bad18');$('#math18').innerHTML=`<h2>${e>=0?'CALL ✓':'FOLD'}</h2><p>Нужно ${need.toFixed(1)}% equity. У тебя ${r.h.toFixed(1)}%. Запас ${e>=0?'+':''}${e.toFixed(1)} п.п.</p>`}else $('#math18').innerHTML=`<p>Введи обе известные руки. Equity пересчитается автоматически.</p>`};['eh1','eh2','ev1','ev2','eb1','eb2','eb3','eb4','eb5','pot18','call18'].forEach(x=>$('#'+x).oninput=f);f()}
-function pushView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>PUSH / FOLD</h2></div><div class="segs18"><button id="first18" class="on">Я ПЕРВЫЙ</button><button id="callmode18">В МЕНЯ ПУШ</button></div><div class="panel18"><div class="label18">ПОЗИЦИЯ</div><div class="pos18">${['UTG','HJ','CO','BTN','SB','BB'].map(x=>`<button data-pos18="${x}" class="${x==='BTN'?'on':''}">${x}</button>`).join('')}</div><div class="label18" style="margin-top:12px">РУКА</div><div class="cards18"><input id="ph1" value="A♠"><input id="ph2" value="7♠"></div><div class="read18" style="margin-top:12px"><span>Стек</span><strong id="stackr">9 BB</strong></div><input id="stack18" class="range18" type="range" min="3" max="30" value="9"></div><div class="panel18"><div class="label18">СТАДИЯ</div><div class="stages18">${[['START','СТАРТ'],['MID','MID'],['BUBBLE','БАББЛ'],['ITM','ITM'],['FT','FT']].map((x,i)=>`<button data-stage18="${x[0]}" class="${i===1?'on':''}">${x[1]}</button>`).join('')}</div></div><div id="pout18" class="answer18"></div><div class="panel18"><div class="label18">НАЙДИ ГРАНИЦУ</div><p class="small mut">Двигай стек. Смотри, где решение переворачивается.</p><input id="bound18" class="range18" type="range" min="3" max="30" value="9"><div id="boundr" class="small"></div></div><div class="aggroRule"><b>Важно:</b> это быстрый reference. Баббл и финалка без payout/всех стеков — не честный полноценный ICM solver.</div></div>`}
-function wirePush18(){let pos='BTN',stage='MID',mode='PUSH',f=()=>{let h=[pc18($('#ph1').value),pc18($('#ph2').value)],bb=+$('#stack18').value;if(!h.every(Boolean))return;$('#stackr').textContent=bb+' BB';let r=push18(h,pos,bb,stage,mode);$('#pout18').className='answer18 '+(r.label==='FOLD'?'bad18':r.label==='MIX'?'mix18':'good18');$('#pout18').innerHTML=`<span class="ey">${r.c} · ${pos} · ${bb} BB</span><h2>${r.label}</h2><p>${mode==='CALL'?'CALL':'PUSH'} ${r.p}% · альтернатива ${100-r.p}%</p>`;let q=+$('#bound18').value,z=push18(h,pos,q,stage,mode);$('#boundr').textContent=q+' BB → '+z.label+' · '+z.p+'%'};$$('[data-pos18]').forEach(b=>b.onclick=()=>{$$('[data-pos18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');pos=b.dataset.pos18;f()});$$('[data-stage18]').forEach(b=>b.onclick=()=>{$$('[data-stage18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');stage=b.dataset.stage18;f()});$('#first18').onclick=()=>{mode='PUSH';$('#first18').classList.add('on');$('#callmode18').classList.remove('on');f()};$('#callmode18').onclick=()=>{mode='CALL';$('#callmode18').classList.add('on');$('#first18').classList.remove('on');f()};['ph1','ph2','stack18','bound18'].forEach(x=>$('#'+x).oninput=f);f()}
+function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Шансы руки + цена колла.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Восстанови офлайн-раздачу. Read до шоудауна хранится отдельно.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
+function eqView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>ALL-IN</h2></div>
+ <div class="panel18"><div class="label18">ТЫ</div><div class="cards18">${cardButton18('eh1','A♠')}${cardButton18('eh2','K♥')}</div>
+ <div class="cardPickHint18">Тапни на карту → выбери номинал → выбери масть.</div>
+ <div class="label18" style="margin-top:13px">ОППОНЕНТ</div><div class="cards18">${cardButton18('ev1','Q♣')}${cardButton18('ev2','Q♦')}</div></div>
+ <div class="panel18"><div class="label18">БОРД · МОЖНО ОСТАВИТЬ ПУСТЫМ</div><div class="board18">${[1,2,3,4,5].map(i=>cardButton18('eb'+i,'—',true)).join('')}</div></div>
+ <div id="eqout" class="panel18"><div class="eqResultCompact18"><div><strong>—</strong><small>ТЫ</small></div><b>VS</b><div><strong>—</strong><small>ОПП</small></div></div></div>
+ <div class="panel18"><div class="read18"><span>Банк до ставки</span><strong id="potr">12 BB</strong></div><input id="pot18" class="range18" type="range" min="1" max="100" value="12">
+ <div class="read18"><span>Доставить</span><strong id="callr">5 BB</strong></div><input id="call18" class="range18" type="range" min="1" max="100" value="5"><div id="math18" class="answer18 mix18"></div></div></div>`}
+function wireEq18(){
+ let f=()=>{
+  const get=id=>$('#'+id)?.dataset.card||null;
+  let h=[get('eh1'),get('eh2')],v=[get('ev1'),get('ev2')],b=[1,2,3,4,5].map(i=>get('eb'+i)).filter(Boolean),p=+$('#pot18').value,c=+$('#call18').value,need=c/(p+c+c)*100;
+  $('#potr').textContent=p+' BB';$('#callr').textContent=c+' BB';
+  let r=h.every(Boolean)&&v.every(Boolean)?equity18(h,v,b):null;
+  if(r){
+   $('#eqout').innerHTML=`<div class="eqResultCompact18"><div><strong>${r.h.toFixed(1)}%</strong><small>ТЫ</small></div><b>VS</b><div><strong>${r.v.toFixed(1)}%</strong><small>ОПП</small></div></div>`;
+   let e=r.h-need;$('#math18').className='answer18 '+(e>=0?'good18':'bad18');$('#math18').innerHTML=`<h2>${e>=0?'CALL ✓':'FOLD'}</h2><p>Для колла нужно ${need.toFixed(1)}%. У твоей руки ${r.h.toFixed(1)}%. ${e>=0?`Запас +${e.toFixed(1)} п.п.`:`Не хватает ${Math.abs(e).toFixed(1)} п.п.`}</p>`;
+  }else{
+   $('#eqout').innerHTML=`<div class="eqResultCompact18"><div><strong>—</strong><small>ТЫ</small></div><b>VS</b><div><strong>—</strong><small>ОПП</small></div></div>`;
+   $('#math18').className='answer18 mix18';$('#math18').innerHTML=`<p>Выбери обе известные руки. Шансы пересчитаются автоматически.</p>`;
+  }
+ };
+ bindCardPicker18(['eh1','eh2','ev1','ev2','eb1','eb2','eb3','eb4','eb5'],f);
+ ['pot18','call18'].forEach(x=>$('#'+x).oninput=f);f();
+}
+function pushView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>PUSH / FOLD</h2></div><div class="segs18"><button id="first18" class="on">Я ПЕРВЫЙ</button><button id="callmode18">В МЕНЯ ПУШ</button></div><div class="panel18"><div class="label18">ПОЗИЦИЯ</div><div class="pos18">${['UTG','HJ','CO','BTN','SB','BB'].map(x=>`<button data-pos18="${x}" class="${x==='BTN'?'on':''}">${x}</button>`).join('')}</div><div class="label18" style="margin-top:12px">РУКА</div><div class="cards18">${cardButton18("ph1","A♠")}${cardButton18("ph2","7♠")}</div><div class="cardPickHint18">Тапни на карту, чтобы выбрать номинал и масть.</div><div class="read18" style="margin-top:12px"><span>Стек</span><strong id="stackr">9 BB</strong></div><input id="stack18" class="range18" type="range" min="3" max="30" value="9"></div><div class="panel18"><div class="label18">СТАДИЯ</div><div class="stages18">${[['START','СТАРТ'],['MID','MID'],['BUBBLE','БАББЛ'],['ITM','ITM'],['FT','FT']].map((x,i)=>`<button data-stage18="${x[0]}" class="${i===1?'on':''}">${x[1]}</button>`).join('')}</div></div><div id="pout18" class="answer18"></div><div class="panel18"><div class="label18">НАЙДИ ГРАНИЦУ</div><p class="small mut">Двигай стек. Смотри, где решение переворачивается.</p><input id="bound18" class="range18" type="range" min="3" max="30" value="9"><div id="boundr" class="small"></div></div><div class="aggroRule"><b>Важно:</b> это быстрый ориентир. Баббл и финалка без выплат и всех стеков — не даёт точного ICM-ответа.</div></div>`}
+function wirePush18(){let pos='BTN',stage='MID',mode='PUSH',f=()=>{let h=[$('#ph1')?.dataset.card||null,$('#ph2')?.dataset.card||null],bb=+$('#stack18').value;if(!h.every(Boolean)){if($('#pout18'))$('#pout18').innerHTML='<p>Сначала выбери две карты.</p>';return;}$('#stackr').textContent=bb+' BB';let r=push18(h,pos,bb,stage,mode);$('#pout18').className='answer18 '+(r.label==='FOLD'?'bad18':r.label==='MIX'?'mix18':'good18');$('#pout18').innerHTML=`<span class="ey">${r.c} · ${pos} · ${bb} BB</span><h2>${r.label}</h2><p>${mode==='CALL'?'CALL':'PUSH'} ${r.p}% · альтернатива ${100-r.p}%</p>`;let q=+$('#bound18').value,z=push18(h,pos,q,stage,mode);$('#boundr').textContent=q+' BB → '+z.label+' · '+z.p+'%'};$$('[data-pos18]').forEach(b=>b.onclick=()=>{$$('[data-pos18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');pos=b.dataset.pos18;f()});$$('[data-stage18]').forEach(b=>b.onclick=()=>{$$('[data-stage18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');stage=b.dataset.stage18;f()});$('#first18').onclick=()=>{mode='PUSH';$('#first18').classList.add('on');$('#callmode18').classList.remove('on');f()};$('#callmode18').onclick=()=>{mode='CALL';$('#callmode18').classList.add('on');$('#first18').classList.remove('on');f()};bindCardPicker18(['ph1','ph2'],f);['stack18','bound18'].forEach(x=>$('#'+x).oninput=f);f()}
 function reconView18(){return`<div class="tool18 recon18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>РАЗОБРАТЬ РУКУ</h2></div><div class="panel18"><div class="label18">КОНТЕКСТ</div><select id="rf"><option>MTT</option><option>CASH</option></select><input id="rs" placeholder="Эффективный стек · BB"><input id="rp" placeholder="Твоя позиция · BTN"><input id="rvp" placeholder="Оппонент · BB"><input id="rh" placeholder="Твоя рука · AsQd"><input id="rv" placeholder="Рука оппа · если видел"><textarea id="rr" placeholder="Что ты думал о его диапазоне ДО шоудауна?"></textarea></div>${['PREFLOP','FLOP','TURN','RIVER'].map(x=>`<div class="street18"><b>${x}</b><input id="r${x}" placeholder="Борд / действия / сайзы как помнишь"></div>`).join('')}<div class="panel18"><div class="label18">ФАКТ ПОСЛЕ РУКИ</div><select id="rres"><option>Не помню / неважно</option><option>Я выиграл</option><option>Оппонент выиграл</option><option>Сплит</option></select><textarea id="rq" placeholder="Что хочешь понять? Например: он вообще имел право так коллить?"></textarea></div><button id="ran" class="primary">РАЗОБРАТЬ →</button><button id="rsave" class="secondary" style="margin-top:7px">НЕ ПОМНЮ БОЛЬШЕ · СОХРАНИТЬ</button><div id="rout"></div></div>`}
 function saveRecon18(part){let h={id:Date.now(),format:$('#rf').value,stack:$('#rs').value,pos:$('#rp').value,vpos:$('#rvp').value,hero:$('#rh').value,villain:$('#rv').value,read:$('#rr').value,pre:$('#rPREFLOP').value,flop:$('#rFLOP').value,turn:$('#rTURN').value,river:$('#rRIVER').value,result:$('#rres').value,question:$('#rq').value,partial:part};S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h}
 function wireRecon18(){$('#rsave').onclick=()=>{saveRecon18(true);$('#rout').innerHTML=`<div class="answer18 mix18"><h2>СОХРАНЕНО.</h2><p>Неполная реальная рука лучше идеально выдуманной.</p></div>`};$('#ran').onclick=()=>{let h=saveRecon18(false),n=[h.pre,h.flop,h.turn,h.river].filter(Boolean).length;$('#rout').innerHTML=`<div class="answer18 good18"><span class="ey">HAND SCAN</span><h2>${n}/4 УЛИЦЫ</h2><p>${h.read?'Read до шоудауна сохранён отдельно. ':''}Результат банка не используется как доказательство качества решения. Оппонента разбираем с его позиции.</p></div>`}}
@@ -894,14 +985,16 @@ function you20AvatarStage(){
 }
 function you20StageName(i){return['МАЛЁК','РЫБА С ОПЫТОМ','УЖЕ КУСАЕТСЯ','МАЛАЯ АКУЛА','АКУЛА'][i]||'РЫБА'}
 function you20Quote(stats){
- const e=you20Events(),n=e.length,form=formScore(),skill=S.skill||50,arr=[stats.pre,stats.post,stats.size].filter(x=>x.n>=3).sort((a,b)=>a.score-b.score),bad=arr[0],wc=e.filter(x=>x.grade==='r'&&Number(x.confidence)>=80).length;
- if(n<5)return'Я пока не могу определить: рег ты или фиш. Быстрее принимай оптимальные решения, устала ждать.';
- if(wc>=5)return'Уверенность великолепная. Жаль, что иногда она приезжает на место ошибки раньше здравого смысла.';
- if(bad&&bad.score<35)return'Опять я в этом рыбьем царстве. Выплывай скорее: статистика уже начала дышать жабрами.';
- if(form<42)return'Это не даунстрик, если половину пожара ты разводишь сам.';
- if(form>=82&&skill>=70)return'Чисто. Даже токсичить почти не за что. Неприятная динамика.';
- if(skill<45)return'Пока не рег. Но уже хотя бы рыба с аналитикой — технологический прогресс.';
- return'Живём. Местами даже прилично. Я всё равно слежу, не расслабляйся.';
+ const e=you20Events(),n=e.length,form=formScore(),skill=S.skill||50,arr=[['префлоп',stats.pre],['постфлоп',stats.post],['сайзинг',stats.size]].filter(x=>x[1].n>=3).sort((a,b)=>a[1].score-b[1].score),bad=arr[0],wc=e.filter(x=>x.grade==='r'&&Number(x.confidence)>=80).length;
+ if(n<5)return'Я пока не понимаю: ты рег или просто человек, которому дали кнопки. Дай мне дистанцию, устала гадать по двум решениям.';
+ if(wc>=5)return'Обожаю эту уверенность: нажать хуйню с 90% confidence и уйти с лицом человека, которому солвер лично пожал руку.';
+ if(bad&&bad[1].score<35)return`Опять я в рыбьем царстве. На ${bad[0]} у тебя пока не стратегия, а организованное кормление пруда. Выплывай.`;
+ if(form<42)return'Форма такая, будто решения принимаются по фазе луны. Верни покер обратно в покер, пожалуйста.';
+ if(form>=82&&skill>=70)return'Мерзкая ситуация: всё зелёное, придраться почти не к чему. Продолжай — я всё равно найду, где ты переоценил себя.';
+ if(skill<45)return'Пока это не рег. Это рыба, которая научилась открывать тренажёр. Но эволюция хотя бы официально началась.';
+ if(stats.size.n>=5&&stats.size.score<50)return'Сайзинги выглядят так, будто фишки тебя чем-то обидели и ты мстишь им случайными числами.';
+ if(stats.post.n>=5&&stats.post.score<55)return'До флопа ещё держишь лицо. После флопа начинается авторское кино, и сценарист явно устал.';
+ return'Местами уже похоже на покер. Не расслабляйся: один творческий ривер — и снова встречаемся в рыбном отделе.';
 }
 function you20Spark(){
  const a=you20Events().slice(-28);if(a.length<2)return'';
@@ -918,16 +1011,21 @@ function you20Errors(){
  ];
  return G.map(([name,f])=>{const a=e.filter(f),r=a.filter(x=>x.grade==='r').length;return{name,n:a.length,r,p:a.length?Math.round(r/a.length*100):0}}).filter(x=>x.n).sort((a,b)=>b.p-a.p);
 }
+
+function fishAvatarMarkup20(i,mini=false){
+ return `<div class="fishCartoon20 f${i} ${mini?'miniFish20':''}"><i class="fishTail20"></i><i class="fishBody20"></i><i class="fishFin20"></i><i class="fishEye20"></i><i class="fishMouth20"></i></div>`;
+}
+
 function openAvatar20(){
  const a=you20AvatarStage();
- openModal(`<span class="ey">АВАТАР</span><h2>ВЫБЕРИ, ДО КОГО ДОРОС</h2><p class="mut">Новые формы открываются дистанцией. Можно выбрать любую уже открытую.</p><div class="avatarPicker20">${a.icons.map((x,i)=>`<button data-av20="${i}" class="${i>a.unlocked?'locked':''}" ${i>a.unlocked?'disabled':''}>${x}</button>`).join('')}</div><p class="small mut" style="margin-top:10px">${a.n} решений в статистике.</p>`);
+ openModal(`<span class="ey">АВАТАР</span><h2>ВЫБЕРИ, ДО КОГО ДОРОС</h2><p class="mut">Новые формы открываются дистанцией. Можно выбрать любую уже открытую.</p><div class="avatarPicker20">${a.icons.map((x,i)=>`<button data-av20="${i}" class="${i>a.unlocked?'locked':''}" ${i>a.unlocked?'disabled':''}>${fishAvatarMarkup20(i,true)}</button>`).join('')}</div><p class="small mut" style="margin-top:10px">${a.n} решений в статистике.</p>`);
  setTimeout(()=>$$('[data-av20]').forEach(b=>b.onclick=()=>{S.avatarStage20=+b.dataset.av20;save();closeModal();renderProfile()}),0);
 }
 function renderProfile20(){
  const pre=you20Stat(e=>you20Street(e)==='pre'),post=you20Stat(e=>you20Street(e)==='post'&&e.mode!=='sizing'),size=you20Stat(e=>e.mode==='sizing'||e.sizePct!=null),a=you20AvatarStage(),ev=you20Events(),errs=you20Errors(),form=formScore(),skill=S.skill||50;
  const wc=ev.filter(e=>e.grade==='r'&&Number(e.confidence)>=80).length,cc=ev.filter(e=>e.grade==='g'&&Number(e.confidence)>=80).length,pct=Math.min(100,Math.round(a.n/a.t[a.t.length-1]*100));
  $('#profileArea').innerHTML=`<div class="you20">
-  <div class="you20Profile"><div class="you20Avatar"><div class="you20AvatarInner">${a.icons[a.idx]}</div><button class="you20AvatarBtn" id="youAvatar20">✦</button></div><div class="you20Name"><span class="ey">ТВОЙ ПРОФИЛЬ</span><h1>${esc(S.nick||'REG')}</h1><p>${a.n} решений в досье. Чем больше дистанция, тем меньше случайности.</p><span class="you20Level">${you20StageName(a.idx)}</span></div></div>
+  <div class="you20Profile"><button type="button" class="you20Avatar" id="youAvatar20" aria-label="Выбрать аватар"><div class="you20AvatarInner">${fishAvatarMarkup20(a.idx)}</div></button><div class="you20Name"><span class="ey">ТВОЙ ПРОФИЛЬ</span><h1>${esc(S.nick||'REG')}</h1><p>${a.n} решений в досье. Чем больше дистанция, тем меньше случайности.</p><div class="avatarTapHint21">Тапни на рыбу, чтобы выбрать открытую форму.</div><span class="you20Level">${you20StageName(a.idx)}</span></div></div>
   <div class="you20Hero"><div class="you20HeroTop"><div><span class="ey">ФОРМА СЕЙЧАС</span><b>${form}</b></div><span>SKILL ${skill}<br>${ev.length} решений</span></div><div class="you20Trend">${you20Spark()||'<div class="small mut" style="padding:22px 12px">Нужно ещё несколько решений для графика.</div>'}</div></div>
   <div class="you20Quote"><span class="ey">ВЕРДИКТ ФРИКОВОЙ ДАМЫ</span><blockquote>${esc(you20Quote({pre,post,size}))}</blockquote></div>
   <div class="you20Grid">
@@ -937,7 +1035,7 @@ function renderProfile20(){
   </div>
   <div class="you20Section"><div class="you20SectionTitle"><h3>ГДЕ ЧАЩЕ ОШИБАЕШЬСЯ</h3><span>вся дистанция</span></div>${errs.length?errs.slice(0,5).map(x=>`<div class="you20Error"><div class="you20ErrorTop"><span>${x.name}</span><span class="${x.p>=45?'red':x.p<=20?'green':'yellow'}">${x.p}% ошибок</span></div><div class="you20Bar"><i style="width:${x.p}%"></i></div><div class="small mut" style="margin-top:5px">${x.r} из ${x.n}</div></div>`).join(''):'<div class="you20Error"><div class="small mut">Пока мало данных. Набери несколько решений.</div></div>'}</div>
   <div class="you20Section"><div class="you20SectionTitle"><h3>УВЕРЕННОСТЬ</h3><span>важнее одной ошибки</span></div><div class="you20Confidence"><div><span class="ey">УВЕРЕН И ПРАВ</span><b class="green">${cc}</b><small>хороший паттерн</small></div><div><span class="ey">УВЕРЕН И МИМО</span><b class="red">${wc}</b><small>самые дорогие слепые зоны</small></div></div></div>
-  <div class="you20Section"><div class="you20SectionTitle"><h3>ДИСТАНЦИЯ</h3><span>аватар растёт вместе с ней</span></div><div class="you20Distance"><div class="you20Stages">${a.icons.map((x,i)=>`<span class="${i>a.unlocked?'lock':''}">${x}</span>`).join('')}</div><div class="you20DistanceTrack"><i style="width:${pct}%"></i></div><div class="small mut">${a.n} решений · ${you20StageName(a.idx)}</div></div></div>
+  <div class="you20Section"><div class="you20SectionTitle"><h3>ДИСТАНЦИЯ</h3><span>аватар растёт вместе с ней</span></div><div class="you20Distance"><div class="you20Stages">${a.icons.map((x,i)=>`<span class="${i>a.unlocked?'lock':''}">${fishAvatarMarkup20(i,true)}</span>`).join('')}</div><div class="you20DistanceTrack"><i style="width:${pct}%"></i></div><div class="small mut">${a.n} решений · ${you20StageName(a.idx)}</div></div></div>
  </div>`;
  $('#youAvatar20').onclick=openAvatar20;
  $$('[data-u20]').forEach(b=>b.onclick=()=>{const k=b.dataset.u20,s=k==='pre'?pre:k==='post'?post:size;openModal(`<span class="ey">СТАТИСТИКА</span><h2>${k==='pre'?'ПРЕФЛОП':k==='post'?'ПОСТФЛОП':'САЙЗИНГ'}</h2><p>${s.n<3?'Пока мало данных. Я не буду изображать диагноз после двух решений.':`Оценка ${s.score}. Ошибок ${s.err} из ${s.n}. Чем больше выборка, тем надёжнее профиль.`}</p>`);});
@@ -955,7 +1053,7 @@ function renderHome20(){
   <button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки. Быстро, без лишней воды.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button>
   <button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Сужай диапазон по улицам и убирай невозможные руки.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button>
  </div>
- <button class="quick5" id="quick5"><div><span class="ey">⚡ ЕСТЬ 5 МИНУТ?</span><b>БЫСТРАЯ СЕССИЯ</b><div class="mut small">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong>05:00</strong></button>`;
+ <button class="quick5" id="quick5"><div class="quick5Copy21"><span class="ey">⚡ 5 МИНУТ</span><b class="quick5Title21">БЫСТРАЯ СЕССИЯ</b><div class="mut small quick5Desc21">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong class="quick5Timer21">05:00</strong></button>`;
  $('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick;
  if(typeof bindMetrics18==='function')setTimeout(bindMetrics18,0);
 }
@@ -1079,6 +1177,45 @@ renderDiagnostic=function(){
  });
 };
 document.body.classList.add('home-context');
+
+
+/* ================= V21.2 · CARD PICKER ================= */
+function prettyCard18(c){
+ if(!c)return'';
+ const suit={s:'♠',h:'♥',d:'♦',c:'♣'}[c[1]]||'', rank=c[0]==='T'?'10':c[0];
+ return rank+suit;
+}
+function cardButton18(id,placeholder,small=false){
+ return `<button type="button" id="${id}" class="cardPick18 empty ${small?'smallCardPick18':''}" data-card="" data-placeholder="${placeholder}"><span>${placeholder}</span></button>`;
+}
+function refreshCardButton18(id){
+ const b=$('#'+id);if(!b)return;const c=b.dataset.card||'';
+ b.innerHTML=`<span>${c?prettyCard18(c):(b.dataset.placeholder||'—')}</span>`;
+ b.classList.toggle('empty',!c);b.classList.toggle('red',!!c&&['h','d'].includes(c[1]));b.classList.toggle('black',!!c&&['s','c'].includes(c[1]));
+}
+function usedCards18(exceptId){
+ return [...document.querySelectorAll('.cardPick18[data-card]')].filter(x=>x.id!==exceptId&&x.dataset.card).map(x=>x.dataset.card);
+}
+function openCardPicker18(id,onDone){
+ let rank=null;
+ const render=()=>{
+  const used=usedCards18(id);
+  openModal(`<div class="cardPicker18"><span class="ey">ВЫБЕРИ КАРТУ</span><h2>${rank?'ТЕПЕРЬ МАСТЬ':'СНАЧАЛА НОМИНАЛ'}</h2>
+   <div class="cardRankGrid18">${['A','K','Q','J','T','9','8','7','6','5','4','3','2'].map(r=>`<button type="button" data-rank18="${r}" class="${rank===r?'on':''}">${r==='T'?'10':r}</button>`).join('')}</div>
+   ${rank?`<div class="cardSuitGrid18">${[['s','♠'],['h','♥'],['d','♦'],['c','♣']].map(([s,x])=>{const c=rank+s,u=used.includes(c);return`<button type="button" data-suit18="${s}" class="${['h','d'].includes(s)?'redSuit18':''} ${u?'used18':''}" ${u?'disabled':''}>${x}</button>`}).join('')}</div>`:''}
+   <button type="button" class="clear18" id="clearCard18">ОЧИСТИТЬ ЭТУ КАРТУ</button>
+  </div>`);
+  setTimeout(()=>{
+   $$('[data-rank18]').forEach(b=>b.onclick=()=>{rank=b.dataset.rank18;render()});
+   $$('[data-suit18]').forEach(b=>b.onclick=()=>{const el=$('#'+id);el.dataset.card=rank+b.dataset.suit18;refreshCardButton18(id);closeModal();if(onDone)onDone()});
+   const clear=$('#clearCard18');if(clear)clear.onclick=()=>{const el=$('#'+id);el.dataset.card='';refreshCardButton18(id);closeModal();if(onDone)onDone()};
+  },0);
+ };
+ render();
+}
+function bindCardPicker18(ids,onDone){
+ ids.forEach(id=>{const b=$('#'+id);if(b){refreshCardButton18(id);b.onclick=()=>openCardPicker18(id,onDone)}});
+}
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));

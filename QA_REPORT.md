@@ -1,8 +1,12 @@
-# V21.1 QA
-- Inline JavaScript syntax: OK
-- Diagnostic buttons rebound after final DOM render: OK
-- Double-tap protection: OK
-- Diagnostic tactile feedback: OK
-- Nickname wording changed to «Напиши свой никнейм»: OK
-- V21 visual layer preserved: OK
-- V20 Brain preserved: OK
+# QA V21.2
+
+- Inline JavaScript syntax: **OK**
+- Telegram width clamp: **OK**
+- ALL-IN picker: **OK**
+- Board picker: **OK**
+- Push picker: **OK**
+- Quick hierarchy: **OK**
+- Cartoon fish: **OK**
+- Pink avatar overlay removed: **OK**
+- Toxic quote stronger: **OK**
+- Diagnostic V21.1 preserved: **OK**
