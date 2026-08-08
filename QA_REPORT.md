@@ -1,16 +1,13 @@
-# QA REPORT — V16.2 PURPOSE POLISH
+# QA REPORT — V17 GTO BRAIN
 
-- JavaScript syntax: **OK**
-- js_syntax: **OK**
-- my_nav: **OK**
-- my_renderer: **OK**
-- home_my_cta: **OK**
-- showdown_result: **OK**
-- reg_recommendations: **OK**
-- creator_home_once: **OK**
-- profile_toxic_verdict: **OK**
-- profile_blockers_removed: **OK**
-- evidence_board: **OK**
-- unknown_course_not_fake: **OK**
-- creator_hand_removed: **OK**
-- global_signature_removed: **OK**
+- External Brain JS syntax: **OK**
+- Inline app JS syntax: **OK**
+- brain scripts loaded: **OK**
+- brain grading swipe: **OK**
+- brain sizing: **OK**
+- brain daily: **OK**
+- brain review: **OK**
+- brain myhands: **OK**
+- brain xray: **OK**
+- home status: **OK**
+- no old ref badge: **OK**

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V16.2 PURPOSE POLISH</title>
+<title>POKER SWIPE — V17 GTO BRAIN</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -219,11 +219,20 @@ main,.top,.nav{position:relative;z-index:1}
 
 @media(max-width:380px){.evidenceBoard{height:318px}.pinNote{width:43%;padding-left:8px;padding-right:8px}.pinTarget{width:45%}}
 
+
+/* ===== V17 POKER BRAIN ===== */
+.brainHome{margin:0 14px 11px;border:1px solid #3c3540;border-radius:18px;padding:10px 12px;background:linear-gradient(135deg,#101017,#15101a);display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:inset 0 1px rgba(255,255,255,.045)}
+.brainHome b{font-size:11px;letter-spacing:.08em}.brainHome span{font-size:9px;color:#9f98a3}.brainPulse{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 12px var(--g);display:inline-block;margin-right:6px;animation:brainPulse 2s ease-in-out infinite}@keyframes brainPulse{50%{opacity:.35;transform:scale(.8)}}
+.brainPanel{margin-top:10px;border:1px solid #47384a;border-radius:19px;padding:12px;background:radial-gradient(circle at 92% 0,rgba(255,46,132,.14),transparent 38%),#0d0d13;box-shadow:inset 0 1px rgba(255,255,255,.045)}
+.brainHead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:9px}.brainHead b{font-size:11px;letter-spacing:.08em}.brainSource{font-size:8px;border:1px solid #524653;border-radius:999px;padding:5px 7px;color:#c8c0c8}.brainPolicy{display:grid;gap:5px}.brainAction{display:grid;grid-template-columns:55px 1fr 34px;gap:7px;align-items:center;font-size:9px;font-weight:900}.brainAction i{height:7px;background:#25252f;border-radius:99px;overflow:hidden}.brainAction i span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7d244f,var(--pink))}.brainMath{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}.brainMath div{border:1px solid #2f2f39;border-radius:12px;padding:8px}.brainMath b{display:block;font-size:15px;margin-top:2px}.brainExplain{font-size:11px;color:#d4ced5;line-height:1.35;margin:9px 0 0}.brainTruth{font-size:8px;color:#6f6972;margin-top:7px}.brainScore{font-size:23px;font-weight:1000;color:var(--pink)}
+.refLabel{border-color:#553449;color:#f1d6e3;background:#1f1018}.refLabel:before{content:'●';color:var(--g);margin-right:5px}
+@media(max-width:390px){.brainMath{grid-template-columns:1fr 1fr}.brainAction{grid-template-columns:50px 1fr 30px}}
+
 </style>
 </head>
 <body>
 <div class="app">
-<div class="build">V16.2 · PURPOSE POLISH</div>
+<div class="build">V17 · GTO BRAIN</div>
 
 <section id="onboarding" class="onboard"><div id="story" class="story"></div></section>
 
@@ -250,6 +259,8 @@ main,.top,.nav{position:relative;z-index:1}
 <div id="modal" class="modal hidden"><div class="sheet"><button class="close" id="modalClose">×</button><div id="modalBody"></div></div></div>
 </div>
 
+<script src="brain/strategy_pack_v17.js"></script>
+<script src="brain/poker_brain.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
 'use strict';
@@ -287,7 +298,7 @@ function show(id){if(!document.getElementById(id))id='home';$$('.screen').forEac
 function openModal(s){$('#modalBody').innerHTML=s;$('#modal').classList.remove('hidden')};function closeModal(){$('#modal').classList.add('hidden')};$('#modalClose').onclick=closeModal;$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
 function card(c,small=false){return `<span class="pc ${/[♥♦]/.test(c)?'suit-red':''}" style="${small?'width:42px;height:58px;font-size:17px':''}">${c}</span>`};function hand(a){return `<div class="cards">${a.map(x=>card(x)).join('')}</div>`};function board(a){return `<div class="cards">${a.map(x=>card(x,true)).join('')}</div>`};
 function sampleText(n,score){if(n<5)return'МАЛО ДАННЫХ';if(n<15)return`${score} · мало данных`;return String(score)}
-function refBadge(){return '<span class="refLabel">УЧЕБНАЯ БАЗОВАЯ МОДЕЛЬ · НЕ SOLVER OUTPUT</span>'}
+function refBadge(){return '<span class="refLabel">GTO BRAIN · LOCAL ENGINE</span>'}
 
 /* DIAGNOSTIC ONBOARDING */
 const STORY=['ПРИВЕТ.','МЕНЯ ЗОВУТ<br><span class="pink">ФРИКОВАЯ ДАМА.</span>','ЗДЕСЬ Я БУДУ<br><span class="pink">ЛОВИТЬ ТВОИ ЛИКИ.</span>'];
@@ -471,6 +482,46 @@ function editNickname(){
     }
   },0)
 }
+
+
+/* ===== V17 BRAIN INTEGRATION ===== */
+function brainSourceLabel(s=''){return ({EXACT_REFERENCE_NODE:'EXACT NODE',PREFLOP_ATLAS:'PREFLOP ATLAS',POSTFLOP_ATLAS:'POSTFLOP MODEL',LINE_MODEL:'LINE MODEL',REPAIR_MODEL:'REPAIR MODEL',NO_MODEL:'NO MODEL'})[s]||s}
+function brainPanel(r){if(!r)return'';const pol=(r.topActions||[]).map(x=>`<div class="brainAction"><span>${x.action}</span><i><span style="width:${Math.round(x.freq*100)}%"></span></i><b>${Math.round(x.freq*100)}%</b></div>`).join('');const math=r.river?`<div class="brainMath"><div><span class="ey">POT ODDS</span><b>${r.river.requiredEquity.toFixed(1)}%</b></div><div><span class="ey">MDF</span><b>${r.river.mdf.toFixed(1)}%</b></div><div><span class="ey">BLUFF/VALUE</span><b>${r.river.bluffPerValue.toFixed(2)}</b></div></div>`:'';return `<div class="brainPanel"><div class="brainHead"><b>◉ GTO BRAIN</b><span class="brainSource">${brainSourceLabel(r.source)} · ${r.confidence}%</span></div>${r.score!=null?`<div class="brainScore">${r.score}</div>`:''}<div class="brainPolicy">${pol}</div>${math}<p class="brainExplain">${esc(r.explanation||'')}</p>${r.sizeBest!=null?`<p class="mut small">Ближайший size-family: ≈${r.sizeBest}%${Number.isFinite(r.sizeDistance)?` · отклонение ${Math.round(r.sizeDistance)} п.п.`:''}</p>`:''}<div class="brainTruth">Математика pot odds/MDF/combo removal считается точно. Policy — локальная GTO-reference модель; это не выгрузка GTO Wizard/Pio.</div></div>`}
+
+/* add brain metadata to every event without breaking existing concept labels */
+const _recordEventV16=recordEvent;
+recordEvent=function(e){const ev=_recordEventV16({...e,conceptId:e.conceptId||null,brainVersion:window.PokerBrain?.version||null});return ev}
+
+/* Poker Swipe: grading is now driven by PokerBrain, not preferred/live/sizeZone */
+finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'МИМО SIZE-FAMILY'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}${brainPanel(br)}<p class="pink"><b>${g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.'}</b></p><div id="holdArea"></div></div>`;const delay=g==='g'?2800:g==='y'?3800:5200;const schedule=()=>{swTimer=setTimeout(swipeNext,delay);$('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<span class="holdBadge">РАЗДАЧА ЗАДЕРЖАНА</span><button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext}};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НАСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
+
+/* Sizing: action + sizing family from Brain */
+renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · SIZING LAB</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">POT</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerBrain.gradeDecision({...s,spotId:s.id},action,v||null),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">SIZE FAMILY</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
+
+/* Review: culprit comes from line model, repair from Brain */
+reviewReveal=function(){const R=REVIEWS[rv%REVIEWS.length],bm=PokerBrain.reviewLine(R),pointOk=(bm.clean&&rvPick==='none')||(!bm.clean&&rvPick===bm.culpritIndex);if(bm.clean){recordEvent({spotId:R.id,mode:'review',concept:R.concept,conceptId:bm.concept,grade:pointOk?'g':'r',action:String(rvPick),why:bm.why,brainSource:bm.source,brainConfidence:bm.confidence});$('#reviewArea').innerHTML=`<div class="panel"><span class="ey">GTO BRAIN · LINE CHECK</span><h1 class="impact">${pointOk?'ЧИСТО.<br><span class="pink">ЛИНИЯ ЖИВЁТ.</span>':'ТЫ НАШЁЛ<br><span class="pink">ОШИБКУ ИЗ ВОЗДУХА.</span>'}</h1><div class="brainPanel"><div class="brainHead"><b>◉ LINE MODEL</b><span class="brainSource">${bm.confidence}%</span></div><p class="brainExplain">${esc(bm.why)}</p></div><button class="primary" id="rvNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'ЕЩЁ ДЕЛО'} →</button></div>`;$('#rvNext').onclick=()=>quick.active?quickAdvance():(rv++,renderReview());return}$('#reviewArea').innerHTML=`<div class="panel"><span class="ey">GTO BRAIN · LOSS MAP ${pointOk?'✓':'✕'}</span><h1 class="impact">${pointOk?'НАШЁЛ.<br><span class="pink">ОБОСНУЙ.</span>':'СОФТ ВИДИТ<br><span class="pink">ДРУГОЙ УЗЕЛ.</span>'}</h1><div class="brainPanel"><div class="brainHead"><b>◉ ПОТЕРИ ПО ЛИНИИ</b><span class="brainSource">LINE MODEL · ${bm.confidence}%</span></div><div class="brainPolicy">${(bm.losses||[]).map((x,i)=>`<div class="brainAction"><span>${R.nodes[i]?.[0]||i}</span><i><span style="width:${Math.min(100,Math.round(x*200))}%"></span></i><b>${x.toFixed(2)}</b></div>`).join('')}</div><p class="brainExplain">${esc(bm.why)}</p></div><div class="evidence">${R.reasons.map((x,i)=>`<button data-rr="${i}">${x}</button>`).join('')}</div><div id="rvReason"></div></div>`;$$('[data-rr]').forEach(b=>b.onclick=()=>reviewRepair(pointOk,+b.dataset.rr===R.correctReason))}
+reviewRepair=function(pointOk,reasonOk){const R=REVIEWS[rv%REVIEWS.length];$('#rvReason').innerHTML=`<div class="verdict"><span class="ey">ЛОГИКА ${reasonOk?'✓':'✕'} · ПОЧИНИ SIZE</span><div class="repairSlider"><input id="repair" class="range" type="range" min="0" max="125" value="50"><div class="sizeRead"><b id="repairV">50%</b><span>новый размер</span></div></div><button class="primary" id="repairGo">ПРОГНАТЬ ЧЕРЕЗ BRAIN →</button></div>`;const rr=$('#repair');rr.oninput=()=>$('#repairV').textContent=(+rr.value?rr.value+'%':'CHECK');$('#repairGo').onclick=()=>{const v=+rr.value,br=PokerBrain.gradeRepair(R,v),grade=pointOk&&reasonOk&&br.grade==='g'?'g':br.grade==='g'?'y':br.grade;recordEvent({spotId:R.id,mode:'review',concept:R.concept,grade,action:'repair',sizePct:v,why:PokerBrain.reviewLine(R).why,brainSource:br.source,policyScore:Math.round((br.fit||0)*100)});$('#rvReason').innerHTML=`<div class="verdict"><span class="ey">REPAIR · ${br.grade==='g'?'ПОПАЛ В КОРИДОР':br.grade==='y'?'ТОНКО':'НЕ ПОЧИНИЛ'}</span><div class="dualGrade"><div class="gradeBox"><span class="ey">БЫЛО</span><b>${R.nodes[R.bad]?.[1]||'LINE'}</b></div><div class="gradeBox ${br.grade}"><span class="ey">СТАЛО</span><b>${v?v+'%':'CHECK'}</b></div></div><p class="mut small">Ближайшая reference-точка: ${br.bestSize===0?'CHECK':br.bestSize+'%'}</p><button class="primary" id="rvNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'ЕЩЁ ДЕЛО'} →</button></div>`;$('#rvNext').onclick=()=>quick.active?quickAdvance():(rv++,renderReview())}}
+
+/* Daily: final grade now comes from Brain, arguments remain a separate reasoning score */
+dailyReveal=function(){const D=dailyToday();let argGood=0;D.args.forEach((a,i)=>{const expected=a[1]==='bet'?'bet':a[1]==='check'?'check':a[1];if(dArgs[i]===expected)argGood++});const br=PokerBrain.gradeDecision({...D,spotId:D.id,street:D.theme.includes('TURN')?'TURN':D.theme.includes('FLOP')?'FLOP':'RIVER'},dChoice,dSize);const argGrade=argGood===D.args.length?'g':argGood>=D.args.length-2?'y':'r';const grade=br.grade==='r'||argGrade==='r'?'r':br.grade==='y'||argGrade==='y'?'y':'g';recordEvent({spotId:D.id,mode:'daily',concept:D.concept,conceptId:br.concept,street:D.theme.includes('TURN')?'TURN':D.theme.includes('FLOP')?'FLOP':'RIVER',action:dChoice,sizePct:dSize,confidence:dConf,responseMs:now()-dStart,grade,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,argumentScore:argGood+'/'+D.args.length,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});S.dailyArchive=S.dailyArchive.filter(x=>x.date!==today());S.dailyArchive.push({date:today(),id:D.id,grade,confidence:dConf});save();$('#dailyArea').innerHTML=`<div class="panel dailyStage"><span class="ey">GTO BRAIN · ВСКРЫТИЕ · ${argGood}/${D.args.length} АРГУМЕНТОВ</span><h1 class="impact">${grade==='g'?'ЛОГИКА<br><span class="pink">СОШЛАСЬ.</span>':'ЕСТЬ ЧТО<br><span class="pink">ДОКРУТИТЬ.</span>'}</h1><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${dChoice}</b></div><div class="gradeBox ${br.sizeGrade||argGrade}"><span class="ey">SIZE / ЛОГИКА</span><b>${dSize?dSize+'% · ':''}${argGood}/${D.args.length}</b></div></div>${brainPanel(br)}<button class="primary" id="dHome">НА ГЛАВНУЮ →</button></div>`;$('#dHome').onclick=()=>show('home')}
+
+/* My Hands: add nearest-node software analysis */
+const _showHandV16=showHand;
+showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const html=a.result?`<div class="regReport"><span class="ey">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</span><h3>${brainSourceLabel(a.result.source)} · confidence ${a.result.confidence}%</h3>${brainPanel(a.result)}<p class="mut small">Если это POSTFLOP ATLAS, приложение нашло ближайшую структурную модель по улице, board texture, hand bucket, позиции и типу давления. Это не выдаётся за exact solver node.</p></div>`:`<div class="regReport"><span class="ey">◉ GTO BRAIN</span><p>${esc(a.summary||'Недостаточно данных.')}</p></div>`;if(back)back.insertAdjacentHTML('beforebegin',html)}
+
+/* X-Ray: surface brain status because combo engine already computes exact card removal */
+const _xrRevealV16=xrReveal;
+xrReveal=function(score){_xrRevealV16(score);const v=$('#xrayArea .verdict');if(v)v.insertAdjacentHTML('afterend',`<div class="brainPanel"><div class="brainHead"><b>◉ RANGE ENGINE</b><span class="brainSource">COMBO REMOVAL · EXACT</span></div><p class="brainExplain">В этом режиме score взвешивается количеством реально доступных combinations после board removal. Следующий слой Brain использует ту же range-модель для blocker и bluff-density проверки.</p></div>`)}
+
+/* Home + YOU: expose that Brain is actually online */
+const _renderHomeV16=renderHome;
+renderHome=function(){_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>GTO BRAIN ONLINE</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')} policy records · ${s.exactNodes} exact nodes</span></div></div><span>v${PokerBrain.version}</span></div>`)}
+const _renderProfileV16=renderProfile;
+renderProfile=function(){_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b>GTO Brain подключён:</b> ${s.totalPolicies.toLocaleString('ru-RU')} локальных policy records + exact poker math. YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
+
+/* Brain-based course routing when conceptId exists */
+const _courseForConceptV16=courseForConcept;
+courseForConcept=function(c=''){const byBrain=PokerBrain.courseForConcept(c);if(byBrain&&COURSE_META[byBrain])return byBrain;return _courseForConceptV16(c)}
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));if($('#editNickBtn'))$('#editNickBtn').onclick=editNickname;

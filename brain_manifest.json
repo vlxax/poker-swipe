@@ -1,0 +1,15 @@
+{
+  "version": "17.0",
+  "stats": {
+    "preflopPolicies": 18590,
+    "postflopPolicies": 2160,
+    "exactNodes": 29,
+    "reviewModels": 6,
+    "concepts": 21
+  },
+  "truth": {
+    "solverOutput": false,
+    "description": "Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed Pio/GTO Wizard/TexasSolver output dump.",
+    "riverModule": "Closed-form equilibrium math for polarized one-street river decisions."
+  }
+}
