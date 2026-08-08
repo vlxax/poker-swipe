@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "untouched_mode": "Poker Swipe",
+  "modes": {
+    "daily": {
+      "visual": "cinematic single-table replay",
+      "primary_gesture": "reveal + drag arguments",
+      "complexity": "medium"
+    },
+    "sizing": {
+      "visual": "chips + betting zones",
+      "primary_gesture": "chip slider/drag",
+      "complexity": "medium"
+    },
+    "review": {
+      "visual": "crime-scene street timeline",
+      "primary_gesture": "inspect node + replace action",
+      "complexity": "medium"
+    },
+    "heal": {
+      "visual": "poker lab",
+      "primary_gesture": "different microgame per skill",
+      "complexity": "medium"
+    },
+    "my_hands": {
+      "visual": "table-based hand builder",
+      "primary_gesture": "construct actions on table",
+      "complexity": "medium-high"
+    },
+    "battle": {
+      "visual": "opponent dossier / PvE table",
+      "primary_gesture": "read sliders + exploit plan",
+      "complexity": "medium"
+    },
+    "you": {
+      "visual": "poker dossier / skill constellation",
+      "primary_gesture": "explore nodes + time scrubber",
+      "complexity": "medium"
+    }
+  },
+  "shared_components": [
+    "chip-slider",
+    "range-grid",
+    "drag-zone",
+    "street-timeline",
+    "mini-chart"
+  ]
+}
