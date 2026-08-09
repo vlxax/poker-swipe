@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="29.3-asi-fix">
+<meta name="app-version" content="29.4-social-restored">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V29.3 START FIX</title>
+<title>POKER SWIPE — V29.4 SOCIAL RESTORED</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -2423,6 +2423,33 @@ renderProfile=function(){
  const box=p?`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>${p.overall}/100 · ${d25Level(p.overall)}</h3></div><button id="d25RetakeBtn">ПЕРЕПРОЙТИ</button></div><p>Префлоп ${p.dims.pre} · постфлоп ${p.dims.post} · сайзинг ${p.dims.size} · дисциплина ${p.dims.discipline}. После 20 реальных решений baseline перестаёт участвовать в текущей статистике.</p></div>`:`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>НОВАЯ ДИАГНОСТИКА</h3></div><button id="d25RetakeBtn">ПРОЙТИ</button></div><p>12 спотов: префлоп, постфлоп, размеры и river discipline.</p></div>`;
  root.insertAdjacentHTML('beforeend',box);$('#d25RetakeBtn').onclick=()=>d25Start(true);
 }
+
+
+/* ===== V29.4 · FINAL SOCIAL/RANK RESTORE =====
+   IMPORTANT: this wrapper is intentionally applied LAST, after V20/V23/V24/V25
+   profile overrides, so ranks, locks and shared player profiles cannot be lost. */
+const __renderProfileV294Base = renderProfile;
+renderProfile=function(){
+  __renderProfileV294Base();
+  const root=$('#profileArea');
+  if(!root)return;
+  /* avoid duplicates when later modules rerender YOU */
+  root.querySelectorAll('.rank28Hero,.rank28FinalSection,#players28Box').forEach(x=>x.remove());
+  const m=rankMetrics28(),ri=rankIndex28(),r=RANKS28[ri],next=RANKS28[ri+1];
+  const pct=next?Math.max(4,Math.min(100,Math.round(((Number(S.skill)||0)-r.skill)/Math.max(1,next.skill-r.skill)*100))):100;
+  const hero=document.createElement('div');
+  hero.className='rank28Hero';
+  hero.innerHTML=`<div class="rank28Top"><img class="rank28Avatar" src="${r.img}" onerror="this.style.opacity=.15"><div><span class="ey">ТВОЙ РАНГ</span><h2>${r.name}</h2><p class="mut small">${r.line}</p></div></div><div class="rank28Bar"><i style="width:${pct}%"></i></div><p class="mut small">${next?`Следующий — <b>${next.name}</b>. Нажми на закрытый ранг: покажу, чего именно не хватает.`:'Максимальный ранг. Можешь три секунды побыть довольной.'}</p>`;
+  const ranks=document.createElement('div');
+  ranks.className='section rank28FinalSection';
+  ranks.innerHTML=`<h3>ЛЕСТНИЦА РАНГОВ</h3><div class="rank28Road">${RANKS28.map((x,i)=>`<button class="rank28Card ${i>ri?'locked':''}" data-r28="${i}"><img src="${x.img}" onerror="this.style.opacity=.12">${i>ri?'<span class="rank28Lock">🔒</span>':''}<b>${x.name}</b><small>${i<=ri?'открыт':'СКИЛЛ '+x.skill+'+'}</small></button>`).join('')}</div>`;
+  root.prepend(ranks);
+  root.prepend(hero);
+  root.querySelectorAll('[data-r28]').forEach(b=>b.onclick=()=>openRank28(+b.dataset.r28));
+  renderPlayers28(root);
+  loadPlayers28().then(()=>renderPlayers28(root));
+  publishProfile28();
+};
 
 
 /* NAV / START */
