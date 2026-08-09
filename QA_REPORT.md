@@ -1,12 +1,15 @@
-# QA V21.2
+# QA V22
 
 - Inline JavaScript syntax: **OK**
-- Telegram width clamp: **OK**
-- ALL-IN picker: **OK**
-- Board picker: **OK**
-- Push picker: **OK**
-- Quick hierarchy: **OK**
-- Cartoon fish: **OK**
-- Pink avatar overlay removed: **OK**
-- Toxic quote stronger: **OK**
-- Diagnostic V21.1 preserved: **OK**
+- wizard: **OK**
+- visual table: **OK**
+- card picker: **OK**
+- street actions: **OK**
+- bet sliders: **OK**
+- showdown: **OK**
+- hero/opponent report: **OK**
+- pot odds: **OK**
+- toxic verdict: **OK**
+- saved reopen: **OK**
+- V21.2 card picker preserved: **OK**
+- V21.1 diagnostic preserved: **OK**

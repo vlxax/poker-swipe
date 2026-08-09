@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="21.2">
+<meta name="app-version" content="22.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V21.2 TELEGRAM UI</title>
+<title>POKER SWIPE — V22 HAND REVIEW</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -485,6 +485,38 @@ input[type=range]{height:28px}
  .you20Name h1{font-size:26px!important}
 }
 
+
+/* ================= V22 · РАЗБОР РАЗДАЧИ ================= */
+.hr22{padding:0 12px 112px;max-width:100%;overflow-x:hidden}
+.hr22Top{display:flex;align-items:center;gap:10px;margin:2px 0 11px}.hr22Top h2{font-size:24px;margin:0;letter-spacing:-.035em}.hr22Top small{display:block;color:#817a86;font-size:9px;margin-top:2px}
+.hr22Progress{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:9px 0 13px}.hr22Progress i{height:4px;background:#26262f;border-radius:99px}.hr22Progress i.on{background:#ff2e84;box-shadow:0 0 12px #ff2e8440}.hr22Progress i.done{background:#42e786}
+.hr22Hero{border:1px solid #ffffff12;border-radius:25px;padding:15px;background:radial-gradient(circle at 86% 0,#ff2e841e,transparent 36%),#111117;margin-bottom:10px;box-shadow:0 18px 44px #0005}
+.hr22Hero .ey{color:#ff92bd}.hr22Hero h1{font-size:31px;line-height:.92;margin:5px 0 7px}.hr22Hero p{font-size:10px;color:#9a939e;line-height:1.45;margin:0}
+.hr22Question{font-size:11px;font-weight:1000;letter-spacing:.08em;margin:0 0 8px}
+.hr22Pills{display:flex;flex-wrap:wrap;gap:6px}.hr22Pills button{border:1px solid #34343e;background:#0d0d12;color:#9c959f;border-radius:999px;padding:9px 11px;font-size:9px;font-weight:1000}.hr22Pills button.on{border-color:#ff2e84;background:#26121c;color:#fff;box-shadow:0 0 18px #ff2e8420}
+.hr22Seat{position:relative;height:195px;margin:6px 0 12px}.hr22Felt{position:absolute;inset:24px 9px;border:2px solid #463c47;border-radius:50%;background:radial-gradient(ellipse,#1e3b2e,#0e1813 68%,#090c0a);box-shadow:inset 0 0 35px #000b,0 18px 38px #0007}.hr22Felt:after{content:"OFFLINE HAND";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:8px;letter-spacing:.2em;color:#ffffff18;font-weight:1000}
+.hr22Pos{position:absolute;border:1px solid #383842;background:#0d0d12;color:#89838e;border-radius:999px;height:30px;min-width:50px;padding:0 9px;font-size:8px;font-weight:1000;display:grid;place-items:center;z-index:3}.hr22Pos.on{border-color:#ffd257;color:#fff;background:#2b220d;box-shadow:0 0 19px #ffd25724}.hr22Pos.vill{border-color:#ff2e8480;background:#25121b;color:#fff}
+.hrUTG{left:0;top:82px}.hrHJ{left:34px;top:3px}.hrCO{right:78px;top:0}.hrBTN{right:0;top:80px}.hrSB{right:37px;bottom:0}.hrBB{left:78px;bottom:0}
+.hr22Vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:9px;color:#7d7680;font-weight:1000}
+.hr22Cards{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.hr22Slider{margin-top:12px}.hr22SliderHead{display:flex;justify-content:space-between;align-items:flex-end}.hr22SliderHead span{font-size:9px;color:#8f8994}.hr22SliderHead b{font-size:29px}.hr22Slider input{width:100%;accent-color:#ff2e84}
+.hr22StepActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hr22StepActions button{min-width:0;border:1px solid #34343e;background:#0d0d12;color:#97919b;border-radius:14px;min-height:49px;padding:7px 3px;font-size:9px;font-weight:1000}.hr22StepActions button.on{border-color:#ff2e84;background:#26121b;color:#fff;box-shadow:0 0 18px #ff2e8420}
+.hr22StreetNav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:9px}.hr22StreetNav button{border:1px solid #30303a;background:#0d0d12;border-radius:12px;padding:9px 2px;font-size:8px;font-weight:1000;color:#77717c}.hr22StreetNav button.on{border-color:#42e786;color:#fff;background:#0e1b14}.hr22StreetNav button.has:after{content:"•";color:#42e786;margin-left:3px}
+.hr22Board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:8px 0 12px}.hr22Board .cardPick18{height:49px;font-size:15px}
+.hr22Who{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}.hr22Who>div{border:1px solid #30303a;border-radius:17px;padding:11px;background:#0d0d12}.hr22Who b{display:block;font-size:11px;margin-bottom:6px}.hr22Who small{font-size:8px;color:#807985}
+.hr22Toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hr22Toggle button{border:1px solid #34343e;background:#0d0d12;border-radius:13px;padding:11px;font-size:9px;font-weight:1000;color:#999}.hr22Toggle button.on{border-color:#42e786;background:#0e1a13;color:#fff}
+.hr22Questions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hr22Questions button{border:1px solid #34343e;background:#0d0d12;border-radius:14px;padding:11px 8px;text-align:left;font-size:9px;line-height:1.25;color:#a7a0aa;font-weight:900}.hr22Questions button.on{border-color:#ffd257;color:#fff;background:#1d190d}
+.hr22Note{width:100%;min-height:62px;border:1px solid #34343e;background:#0d0d12;color:#fff;border-radius:14px;padding:11px;font-size:11px;resize:vertical}
+.hr22Bottom{display:grid;grid-template-columns:auto 1fr;gap:7px;margin-top:10px}.hr22Bottom .primary,.hr22Bottom .secondary{margin:0!important}
+.hr22ReportHero{border:1px solid #ff2e845c;border-radius:26px;padding:16px;background:radial-gradient(circle at 85% 0,#ff2e842c,transparent 38%),#130e13;margin-bottom:10px}.hr22ReportHero h1{font-size:35px;line-height:.9;margin:6px 0 8px}.hr22ReportHero p{font-size:10px;line-height:1.45;color:#aaa3ad}
+.hr22ScoreRow{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}.hr22Score{border:1px solid #30303a;border-radius:18px;padding:12px;background:#0e0e13}.hr22Score span{font-size:8px;color:#8d8691;font-weight:1000;letter-spacing:.1em}.hr22Score b{display:block;font-size:28px;margin-top:3px}.hr22Score small{font-size:8px;color:#807985}.hr22Score.good{border-color:#42e78666}.hr22Score.bad{border-color:#ff4b6866}
+.hr22StreetReport{border:1px solid #30303a;border-radius:19px;padding:12px;margin:7px 0;background:#0e0e13;overflow:hidden}.hr22StreetReport.bad{border-color:#ff4b6866;background:#180d11}.hr22StreetReport.good{border-color:#42e78655}.hr22StreetReport.warn{border-color:#ffd25755}.hr22StreetHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.hr22StreetHead b{font-size:14px}.hr22Badge{border-radius:999px;padding:5px 7px;font-size:7px;font-weight:1000}.hr22Badge.bad{background:#351017;color:#ff7488}.hr22Badge.good{background:#0e2518;color:#62ef98}.hr22Badge.warn{background:#2a240d;color:#ffe17b}
+.hr22Duel{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}.hr22Duel div{border:1px solid #292932;border-radius:13px;padding:9px;background:#0b0b0f}.hr22Duel small{font-size:7px;color:#77717d}.hr22Duel b{font-size:10px;display:block;margin-top:3px}
+.hr22Math{margin-top:8px;border-left:2px solid #ffd257;padding:7px 0 7px 9px;font-size:9px;line-height:1.45;color:#bbb4bd}.hr22Why{margin-top:8px;font-size:10px;line-height:1.45;color:#a49da7}
+.hr22Verdict{border:1px solid #5d233d;border-radius:20px;padding:14px;margin-top:10px;background:#1a0d14}.hr22Verdict blockquote{margin:5px 0 0;font:italic 800 14px/1.35 Georgia,serif}
+.hr22Saved{width:100%;text-align:left;border:1px solid #292933;border-radius:15px;padding:10px;margin:6px 0;background:#0f0f14;color:#fff}.hr22Saved small{display:block;color:#8e8792;margin-top:4px}
+@media(max-width:370px){.hr22StepActions{grid-template-columns:repeat(2,minmax(0,1fr))}.hr22Questions{grid-template-columns:1fr}.hr22Hero h1{font-size:28px}}
+
 </style>
 <script src="poker_brain_v20.js"></script>
 </head>
@@ -903,7 +935,7 @@ function equity18(h,v,b){let k=[...h,...v,...b];if(new Set(k).size!==k.length)re
 function cls18(a,b){if(!a||!b)return'';if(a[0]===b[0])return a[0]+b[0];let hi=R18.indexOf(a[0])>R18.indexOf(b[0])?a:b,lo=hi===a?b:a;return hi[0]+lo[0]+(a[1]===b[1]?'s':'o')}
 function push18(h,pos,bb,stage,mode){let c=cls18(...h),pair=c.length===2,a=R18.indexOf(c[0]),b=R18.indexOf(c[1]||c[0]),x=pair?54+a*3.3:18+a*2.4+b*.75+(c.endsWith('s')?6:0)+(Math.abs(a-b)<=2?4:0)+(c[0]==='A'?5:0);x+=({UTG:-11,HJ:-6,CO:0,BTN:8,SB:12,BB:3}[pos]||0)+(12-bb)*3.4+(stage==='BUBBLE'?-5:stage==='FT'?-7:0)+(mode==='CALL'?-9:0);x=Math.max(3,Math.min(97,Math.round(x)));return{c,p:x,label:x>=66?(mode==='CALL'?'CALL':'PUSH'):x>=38?'MIX':'FOLD'}}
 function myGo18(v){window.myView18=v;renderMy()}
-function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Шансы руки + цена колла.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Восстанови офлайн-раздачу. Read до шоудауна хранится отдельно.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
+function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Шансы руки + цена колла.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
 function eqView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>ALL-IN</h2></div>
  <div class="panel18"><div class="label18">ТЫ</div><div class="cards18">${cardButton18('eh1','A♠')}${cardButton18('eh2','K♥')}</div>
  <div class="cardPickHint18">Тапни на карту → выбери номинал → выбери масть.</div>
@@ -931,7 +963,7 @@ function wireEq18(){
 }
 function pushView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>PUSH / FOLD</h2></div><div class="segs18"><button id="first18" class="on">Я ПЕРВЫЙ</button><button id="callmode18">В МЕНЯ ПУШ</button></div><div class="panel18"><div class="label18">ПОЗИЦИЯ</div><div class="pos18">${['UTG','HJ','CO','BTN','SB','BB'].map(x=>`<button data-pos18="${x}" class="${x==='BTN'?'on':''}">${x}</button>`).join('')}</div><div class="label18" style="margin-top:12px">РУКА</div><div class="cards18">${cardButton18("ph1","A♠")}${cardButton18("ph2","7♠")}</div><div class="cardPickHint18">Тапни на карту, чтобы выбрать номинал и масть.</div><div class="read18" style="margin-top:12px"><span>Стек</span><strong id="stackr">9 BB</strong></div><input id="stack18" class="range18" type="range" min="3" max="30" value="9"></div><div class="panel18"><div class="label18">СТАДИЯ</div><div class="stages18">${[['START','СТАРТ'],['MID','MID'],['BUBBLE','БАББЛ'],['ITM','ITM'],['FT','FT']].map((x,i)=>`<button data-stage18="${x[0]}" class="${i===1?'on':''}">${x[1]}</button>`).join('')}</div></div><div id="pout18" class="answer18"></div><div class="panel18"><div class="label18">НАЙДИ ГРАНИЦУ</div><p class="small mut">Двигай стек. Смотри, где решение переворачивается.</p><input id="bound18" class="range18" type="range" min="3" max="30" value="9"><div id="boundr" class="small"></div></div><div class="aggroRule"><b>Важно:</b> это быстрый ориентир. Баббл и финалка без выплат и всех стеков — не даёт точного ICM-ответа.</div></div>`}
 function wirePush18(){let pos='BTN',stage='MID',mode='PUSH',f=()=>{let h=[$('#ph1')?.dataset.card||null,$('#ph2')?.dataset.card||null],bb=+$('#stack18').value;if(!h.every(Boolean)){if($('#pout18'))$('#pout18').innerHTML='<p>Сначала выбери две карты.</p>';return;}$('#stackr').textContent=bb+' BB';let r=push18(h,pos,bb,stage,mode);$('#pout18').className='answer18 '+(r.label==='FOLD'?'bad18':r.label==='MIX'?'mix18':'good18');$('#pout18').innerHTML=`<span class="ey">${r.c} · ${pos} · ${bb} BB</span><h2>${r.label}</h2><p>${mode==='CALL'?'CALL':'PUSH'} ${r.p}% · альтернатива ${100-r.p}%</p>`;let q=+$('#bound18').value,z=push18(h,pos,q,stage,mode);$('#boundr').textContent=q+' BB → '+z.label+' · '+z.p+'%'};$$('[data-pos18]').forEach(b=>b.onclick=()=>{$$('[data-pos18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');pos=b.dataset.pos18;f()});$$('[data-stage18]').forEach(b=>b.onclick=()=>{$$('[data-stage18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');stage=b.dataset.stage18;f()});$('#first18').onclick=()=>{mode='PUSH';$('#first18').classList.add('on');$('#callmode18').classList.remove('on');f()};$('#callmode18').onclick=()=>{mode='CALL';$('#callmode18').classList.add('on');$('#first18').classList.remove('on');f()};bindCardPicker18(['ph1','ph2'],f);['stack18','bound18'].forEach(x=>$('#'+x).oninput=f);f()}
-function reconView18(){return`<div class="tool18 recon18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>РАЗОБРАТЬ РУКУ</h2></div><div class="panel18"><div class="label18">КОНТЕКСТ</div><select id="rf"><option>MTT</option><option>CASH</option></select><input id="rs" placeholder="Эффективный стек · BB"><input id="rp" placeholder="Твоя позиция · BTN"><input id="rvp" placeholder="Оппонент · BB"><input id="rh" placeholder="Твоя рука · AsQd"><input id="rv" placeholder="Рука оппа · если видел"><textarea id="rr" placeholder="Что ты думал о его диапазоне ДО шоудауна?"></textarea></div>${['PREFLOP','FLOP','TURN','RIVER'].map(x=>`<div class="street18"><b>${x}</b><input id="r${x}" placeholder="Борд / действия / сайзы как помнишь"></div>`).join('')}<div class="panel18"><div class="label18">ФАКТ ПОСЛЕ РУКИ</div><select id="rres"><option>Не помню / неважно</option><option>Я выиграл</option><option>Оппонент выиграл</option><option>Сплит</option></select><textarea id="rq" placeholder="Что хочешь понять? Например: он вообще имел право так коллить?"></textarea></div><button id="ran" class="primary">РАЗОБРАТЬ →</button><button id="rsave" class="secondary" style="margin-top:7px">НЕ ПОМНЮ БОЛЬШЕ · СОХРАНИТЬ</button><div id="rout"></div></div>`}
+function reconView18(){return`<div class="tool18 recon18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>РАЗБОР РАЗДАЧИ</h2></div><div class="panel18"><div class="label18">КОНТЕКСТ</div><select id="rf"><option>MTT</option><option>CASH</option></select><input id="rs" placeholder="Эффективный стек · BB"><input id="rp" placeholder="Твоя позиция · BTN"><input id="rvp" placeholder="Оппонент · BB"><input id="rh" placeholder="Твоя рука · AsQd"><input id="rv" placeholder="Рука оппа · если видел"><textarea id="rr" placeholder="Что ты думал о его диапазоне ДО шоудауна?"></textarea></div>${['PREFLOP','FLOP','TURN','RIVER'].map(x=>`<div class="street18"><b>${x}</b><input id="r${x}" placeholder="Борд / действия / сайзы как помнишь"></div>`).join('')}<div class="panel18"><div class="label18">ФАКТ ПОСЛЕ РУКИ</div><select id="rres"><option>Не помню / неважно</option><option>Я выиграл</option><option>Оппонент выиграл</option><option>Сплит</option></select><textarea id="rq" placeholder="Что хочешь понять? Например: он вообще имел право так коллить?"></textarea></div><button id="ran" class="primary">РАЗОБРАТЬ →</button><button id="rsave" class="secondary" style="margin-top:7px">НЕ ПОМНЮ БОЛЬШЕ · СОХРАНИТЬ</button><div id="rout"></div></div>`}
 function saveRecon18(part){let h={id:Date.now(),format:$('#rf').value,stack:$('#rs').value,pos:$('#rp').value,vpos:$('#rvp').value,hero:$('#rh').value,villain:$('#rv').value,read:$('#rr').value,pre:$('#rPREFLOP').value,flop:$('#rFLOP').value,turn:$('#rTURN').value,river:$('#rRIVER').value,result:$('#rres').value,question:$('#rq').value,partial:part};S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h}
 function wireRecon18(){$('#rsave').onclick=()=>{saveRecon18(true);$('#rout').innerHTML=`<div class="answer18 mix18"><h2>СОХРАНЕНО.</h2><p>Неполная реальная рука лучше идеально выдуманной.</p></div>`};$('#ran').onclick=()=>{let h=saveRecon18(false),n=[h.pre,h.flop,h.turn,h.river].filter(Boolean).length;$('#rout').innerHTML=`<div class="answer18 good18"><span class="ey">HAND SCAN</span><h2>${n}/4 УЛИЦЫ</h2><p>${h.read?'Read до шоудауна сохранён отдельно. ':''}Результат банка не используется как доказательство качества решения. Оппонента разбираем с его позиции.</p></div>`}}
 const oldMy18=renderMy;renderMy=function(){let a=$('#myArea');if(!a)return;let v=window.myView18||'hub';if(v==='hub')a.innerHTML=myHub18();if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0)}if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0)}if(v==='recon'){a.innerHTML=reconView18();setTimeout(wireRecon18,0)}}
@@ -1216,6 +1248,250 @@ function openCardPicker18(id,onDone){
 function bindCardPicker18(ids,onDone){
  ids.forEach(id=>{const b=$('#'+id);if(b){refreshCardButton18(id);b.onclick=()=>openCardPicker18(id,onDone)}});
 }
+
+
+/* ================= V22 · РАЗБОР РАЗДАЧИ ================= */
+const HR22_STREETS=['pre','flop','turn','river'];
+const HR22_NAMES={pre:'ПРЕФЛОП',flop:'ФЛОП',turn:'ТЁРН',river:'РИВЕР'};
+function hr22Fresh(){
+ return {step:0,format:'MTT',stack:30,heroPos:'BTN',villPos:'BB',hero:[null,null],street:'pre',
+  streets:{
+   pre:{villAction:'RAISE',villSize:2.2,heroAction:'CALL',heroSize:7.0,pot:1.5,board:[]},
+   flop:{villAction:'CHECK',villSize:33,heroAction:'CHECK',heroSize:33,pot:8,board:[null,null,null]},
+   turn:{villAction:'CHECK',villSize:50,heroAction:'CHECK',heroSize:50,pot:8,board:[null,null,null,null]},
+   river:{villAction:'CHECK',villSize:75,heroAction:'CHECK',heroSize:75,pot:8,board:[null,null,null,null,null]}
+  },
+  showdown:false,villain:[null,null],result:'Неважно',question:'Где я ошибся?',read:''
+ };
+}
+let HR22=hr22Fresh();
+function hr22Reset(){HR22=hr22Fresh();reconView18()}
+function hr22Set(key,val){HR22[key]=val;reconView18()}
+function hr22Step(n){HR22.step=Math.max(0,Math.min(3,n));reconView18()}
+function hr22Action(st,who,val){HR22.streets[st][who+'Action']=val;reconView18()}
+function hr22FormatAction(a){return ({FOLD:'ПАС',CALL:'КОЛЛ',RAISE:'РЕЙЗ',PUSH:'ОЛЛ-ИН',CHECK:'ЧЕК',BET:'БЕТ',LIMP:'ЛИМП',NONE:'—'}[a]||a)}
+function hr22PosButtons(){
+ return ['UTG','HJ','CO','BTN','SB','BB'].map(p=>`<button type="button" class="hr22Pos hr${p} ${HR22.heroPos===p?'on':''} ${HR22.villPos===p?'vill':''}" data-hrpos="${p}">${p}</button>`).join('');
+}
+function hr22BindPos(){
+ $$('[data-hrpos]').forEach(b=>b.onclick=()=>{
+  const p=b.dataset.hrpos;
+  if(HR22.heroPos===p){return}
+  if(HR22.villPos===p){HR22.villPos=HR22.heroPos}
+  HR22.heroPos=p;reconView18();
+ });
+}
+function hr22BindHeroCards(){
+ ['hrh1','hrh2'].forEach((id,i)=>{
+  const b=$('#'+id);if(!b)return;b.dataset.card=HR22.hero[i]||'';refreshCardButton18(id);
+  b.onclick=()=>openCardPicker18(id,()=>{HR22.hero[i]=$('#'+id).dataset.card||null;reconView18()});
+ });
+}
+function hr22BindVillCards(){
+ ['hrv1','hrv2'].forEach((id,i)=>{
+  const b=$('#'+id);if(!b)return;b.dataset.card=HR22.villain[i]||'';refreshCardButton18(id);
+  b.onclick=()=>openCardPicker18(id,()=>{HR22.villain[i]=$('#'+id).dataset.card||null;reconView18()});
+ });
+}
+function hr22BindBoard(st){
+ const s=HR22.streets[st],ids=s.board.map((_,i)=>'hrb'+i);
+ ids.forEach((id,i)=>{
+  const b=$('#'+id);if(!b)return;b.dataset.card=s.board[i]||'';refreshCardButton18(id);
+  b.onclick=()=>openCardPicker18(id,()=>{s.board[i]=$('#'+id).dataset.card||null;reconView18()});
+ });
+}
+function hr22Context(){
+ return `<div class="hr22Hero"><span class="ey">ШАГ 1 · КОНТЕКСТ</span><h1 class="impact">КТО ГДЕ<br><span class="pink">СИДЕЛ?</span></h1><p>Только то, что реально влияет на решение. Никакой анкеты на двадцать полей.</p></div>
+ <div class="panel18">
+  <div class="hr22Question">ФОРМАТ</div><div class="hr22Toggle"><button data-hrformat="MTT" class="${HR22.format==='MTT'?'on':''}">ТУРНИР</button><button data-hrformat="CASH" class="${HR22.format==='CASH'?'on':''}">КЭШ</button></div>
+  <div class="hr22Question" style="margin-top:13px">ТВОЯ ПОЗИЦИЯ</div><div class="hr22Seat"><div class="hr22Felt"></div>${hr22PosButtons()}<div class="hr22Vs">ТЫ</div></div>
+  <div class="hr22Question">ОППОНЕНТ</div><div class="hr22Pills">${['UTG','HJ','CO','BTN','SB','BB'].map(p=>`<button data-hrvill="${p}" class="${HR22.villPos===p?'on':''}" ${HR22.heroPos===p?'disabled style="opacity:.25"':''}>${p}</button>`).join('')}</div>
+  <div class="hr22Question" style="margin-top:13px">ТВОЯ РУКА</div><div class="hr22Cards">${cardButton18('hrh1','A♠')}${cardButton18('hrh2','K♥')}</div>
+  <div class="hr22Slider"><div class="hr22SliderHead"><span>Эффективный стек</span><b>${HR22.stack} BB</b></div><input id="hrstack" type="range" min="3" max="100" value="${HR22.stack}"></div>
+ </div>`;
+}
+function hr22StreetBody(){
+ const st=HR22.street,s=HR22.streets[st],post=st!=='pre';
+ const boardCount=st==='flop'?3:st==='turn'?4:st==='river'?5:0;
+ const villActs=post?['CHECK','BET']:['NONE','LIMP','RAISE','PUSH'];
+ const heroActs=post?(s.villAction==='BET'?['FOLD','CALL','RAISE']:['CHECK','BET']):['FOLD','CALL','RAISE','PUSH'];
+ return `<div class="hr22Hero"><span class="ey">ШАГ 2 · ЛИНИЯ</span><h1 class="impact">СОБЕРИ<br><span class="pink">РАЗДАЧУ.</span></h1><p>Одна улица за раз. Выбирай действия и размер — остальное приложение соберёт само.</p></div>
+ <div class="hr22StreetNav">${HR22_STREETS.map(x=>`<button data-hrstreet="${x}" class="${st===x?'on':''} ${HR22.streets[x].heroAction?'has':''}">${HR22_NAMES[x]}</button>`).join('')}</div>
+ <div class="panel18">
+  ${post?`<div class="hr22Question">БОРД</div><div class="hr22Board">${Array.from({length:boardCount},(_,i)=>cardButton18('hrb'+i,'—',true)).join('')}${Array.from({length:5-boardCount},()=>'<div></div>').join('')}</div>`:''}
+  <div class="hr22Question">${post?'БАНК ПЕРЕД ДЕЙСТВИЕМ':'ЧТО БЫЛО ДО ТЕБЯ'}</div>
+  ${post?`<div class="hr22Slider"><div class="hr22SliderHead"><span>Банк</span><b>${s.pot} BB</b></div><input id="hrpot" type="range" min="1" max="100" step=".5" value="${s.pot}"></div>`:''}
+  <div class="hr22Who">
+   <div><b>ОППОНЕНТ</b><div class="hr22StepActions">${villActs.map(a=>`<button data-hrva="${a}" class="${s.villAction===a?'on':''}">${hr22FormatAction(a)}</button>`).join('')}</div>
+   ${((post&&s.villAction==='BET')||(!post&&['RAISE','PUSH'].includes(s.villAction)))?`<div class="hr22Slider"><div class="hr22SliderHead"><span>${post?'Размер ставки':'Размер'}</span><b>${s.villSize}${post?'%':' BB'}</b></div><input id="hrvsize" type="range" min="${post?15:1.5}" max="${post?150:30}" step="${post?5:.1}" value="${s.villSize}"></div>`:''}</div>
+   <div><b>ТЫ</b><div class="hr22StepActions">${heroActs.map(a=>`<button data-hrha="${a}" class="${s.heroAction===a?'on':''}">${hr22FormatAction(a)}</button>`).join('')}</div>
+   ${(['BET','RAISE','PUSH'].includes(s.heroAction))?`<div class="hr22Slider"><div class="hr22SliderHead"><span>Твой размер</span><b>${s.heroSize}${post?'%':' BB'}</b></div><input id="hrhsize" type="range" min="${post?15:2}" max="${post?150:30}" step="${post?5:.1}" value="${s.heroSize}"></div>`:''}</div>
+  </div>
+ </div>`;
+}
+function hr22Finish(){
+ return `<div class="hr22Hero"><span class="ey">ШАГ 3 · ФАКТЫ</span><h1 class="impact">ЧЕМ ВСЁ<br><span class="pink">ЗАКОНЧИЛОСЬ?</span></h1><p>Результат банка не решает, кто сыграл хорошо. Но шоудаун даёт дополнительную математику.</p></div>
+ <div class="panel18">
+  <div class="hr22Question">БЫЛ ШОУДАУН?</div><div class="hr22Toggle"><button data-hrshow="0" class="${!HR22.showdown?'on':''}">НЕТ</button><button data-hrshow="1" class="${HR22.showdown?'on':''}">ДА</button></div>
+  ${HR22.showdown?`<div class="hr22Question" style="margin-top:13px">ЧТО ПОКАЗАЛ ОППОНЕНТ</div><div class="hr22Cards">${cardButton18('hrv1','Q♣')}${cardButton18('hrv2','Q♦')}</div>`:''}
+  <div class="hr22Question" style="margin-top:13px">РЕЗУЛЬТАТ</div><div class="hr22Pills">${['Я выиграл','Оппонент выиграл','Сплит','Неважно'].map(x=>`<button data-hrres="${x}" class="${HR22.result===x?'on':''}">${x}</button>`).join('')}</div>
+  <div class="hr22Question" style="margin-top:13px">ЧТО ХОЧЕШЬ ПОНЯТЬ?</div><div class="hr22Questions">${['Где я ошибся?','Опп нормально сыграл?','Стоил ли колл?','Где был плохой сайзинг?'].map(x=>`<button data-hrq="${x}" class="${HR22.question===x?'on':''}">${x}</button>`).join('')}</div>
+  <div class="hr22Question" style="margin-top:13px">ТВОЙ READ ДО ШОУДАУНА · НЕОБЯЗАТЕЛЬНО</div><textarea class="hr22Note" id="hrread" placeholder="Например: много блефует ривер, широко защищает BB...">${esc(HR22.read||'')}</textarea>
+ </div>`;
+}
+function hr22ActionKey(st,s,who){
+ const a=s[who+'Action'],size=s[who+'Size'];
+ if(a==='BET'){
+  if(size<=29)return'BET_25';if(size<=54)return'BET_33';return'BET_75';
+ }
+ return a;
+}
+function hr22BoardAt(st){
+ if(st==='pre')return[];
+ return HR22.streets[st].board.filter(Boolean);
+}
+function hr22BrainStreet(st,who='hero'){
+ const s=HR22.streets[st],isHero=who==='hero',cards=isHero?HR22.hero:HR22.villain,pos=isHero?HR22.heroPos:HR22.villPos;
+ if(!cards.every(Boolean)||!window.GTOBrainV20)return null;
+ let hand=GTOBrainV20.handClass(cards[0],cards[1]),spot='RFI',facing=0;
+ if(st==='pre'){
+  const opp=isHero?s.villAction:s.heroAction;
+  if(opp==='PUSH')spot='CALL_VS_SHOVE';else if(opp==='RAISE')spot='VS_OPEN';else spot='RFI';
+  const r=GTOBrainV20.analyze({street:'PREFLOP',spot,position:pos,stack:HR22.stack,stage:'MID',hand});
+  return r;
+ }
+ if(isHero&&s.villAction==='BET')facing=s.pot*(s.villSize/100);
+ if(!isHero&&s.heroAction==='BET')facing=s.pot*(s.heroSize/100);
+ return GTOBrainV20.analyze({street:st.toUpperCase(),position:pos,stack:HR22.stack,hand,board:hr22BoardAt(st),pot:s.pot,facing});
+}
+function hr22StreetEval(st){
+ const s=HR22.streets[st],r=hr22BrainStreet(st,'hero'),chosen=hr22ActionKey(st,s,'hero');
+ let freq=r?.actions?.[chosen];
+ const vals=r?.actions?Object.values(r.actions):[],best=vals.length?Math.max(...vals):null;
+ let status='warn',label='СПОРНО',score=65;
+ if(freq!=null&&best!=null){
+  const gap=best-freq;
+  if(gap<=8){status='good';label='ЧИСТО';score=90}
+  else if(gap<=25){status='warn';label='ТОНКО';score=68}
+  else{status='bad';label='ЗДЕСЬ ПРОБЛЕМА';score=38}
+ }
+ let math='',equity=null,need=null;
+ if(st!=='pre'&&HR22.showdown&&HR22.hero.every(Boolean)&&HR22.villain.every(Boolean)){
+  const b=hr22BoardAt(st);
+  if(b.length>=3){
+   const eq=equity18(HR22.hero,HR22.villain,b);
+   if(eq)equity=eq.h;
+  }
+ }
+ if(st!=='pre'&&s.villAction==='BET'){
+  const bet=s.pot*(s.villSize/100);need=bet/(s.pot+bet+bet)*100;
+  if(equity!=null)math=`Нужно ${need.toFixed(1)}% на колл. Против фактической руки оппа у тебя ${equity.toFixed(1)}% на этой улице.`;
+  else math=`Цена колла: нужно ${need.toFixed(1)}% equity. Точную equity без известной руки/диапазона оппа не выдумываем.`;
+ }
+ const top = r?.actions?Object.entries(r.actions).sort((a,b)=>b[1]-a[1])[0]:null;
+ let why='';
+ if(top){
+  why=`Твоя линия: ${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` ${s.heroSize}${st==='pre'?' BB':'%'}`:''}. По модели основной ориентир здесь — ${top[0].replace('BET_','BET ')} (${Math.round(top[1])}%).`;
+ }else why='Для этой точки данных пока недостаточно, поэтому приложение не рисует уверенный стратегический вывод.';
+ return{st,status,label,score,math,why,chosen,freq,r};
+}
+function hr22OpponentEval(st){
+ if(!HR22.showdown||!HR22.villain.every(Boolean))return null;
+ const s=HR22.streets[st],r=hr22BrainStreet(st,'villain'),chosen=hr22ActionKey(st,s,'vill');
+ let freq=r?.actions?.[chosen],vals=r?.actions?Object.values(r.actions):[],best=vals.length?Math.max(...vals):null,status='warn',score=65;
+ if(freq!=null&&best!=null){let gap=best-freq;if(gap<=8){status='good';score=90}else if(gap>25){status='bad';score=38}}
+ return{status,score,freq,r,chosen};
+}
+function hr22VerdictText(worst,heroAvg,oppAvg){
+ if(!worst)return'Рука сохранена. Данных пока мало, чтобы устраивать публичную казнь.';
+ if(worst.status==='bad'&&heroAvg<oppAvg)return`Банк мог уехать куда угодно, но главная проблема нашлась на ${HR22_NAMES[worst.st].toLowerCase()}. Опп тут хотя бы не единственный человек, который нажимал кнопки наугад.`;
+ if(worst.status==='bad')return`На ${HR22_NAMES[worst.st].toLowerCase()} ты устроил авторскую линию. Красиво только в том смысле, что статистика теперь точно знает, где тебя искать.`;
+ if(heroAvg>=82)return'Неприятно сообщать, но раздача в целом выглядит прилично. Результат можешь оставить себе, решения важнее.';
+ return'Катастрофы нет. Но несколько решений уже просят объяснить, зачем ты вообще это нажал.';
+}
+function hr22Save(){
+ const h={id:'hr22_'+Date.now(),version:22,createdAt:Date.now(),format:HR22.format,stack:HR22.stack,pos:HR22.heroPos,vpos:HR22.villPos,
+  hero:HR22.hero.map(prettyCard18).join(' '),villain:HR22.showdown?HR22.villain.map(prettyCard18).join(' '):'',raw:JSON.parse(JSON.stringify(HR22)),
+  result:HR22.result,question:HR22.question};
+ S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h;
+}
+function hr22Report(saveIt=true){
+ if(saveIt)hr22Save();
+ const streets=HR22_STREETS.map(hr22StreetEval),opp=HR22_STREETS.map(hr22OpponentEval).filter(Boolean);
+ const heroAvg=Math.round(streets.reduce((a,x)=>a+x.score,0)/streets.length),oppAvg=opp.length?Math.round(opp.reduce((a,x)=>a+x.score,0)/opp.length):null;
+ const worst=[...streets].sort((a,b)=>a.score-b.score)[0];
+ $('#myArea').innerHTML=`<div class="hr22">
+  <div class="hr22Top"><button class="back18" id="hr22BackHub">←</button><div><h2>РАЗБОР РАЗДАЧИ</h2><small>${prettyCard18(HR22.hero[0])||'—'} ${prettyCard18(HR22.hero[1])||'—'} · ${HR22.heroPos} vs ${HR22.villPos}</small></div></div>
+  <div class="hr22ReportHero"><span class="ey">ГЛАВНЫЙ ВЫВОД</span><h1 class="impact">${worst.status==='bad'?'ВОТ ЗДЕСЬ<br><span class="pink">СЛОМАЛОСЬ.</span>':'БЕЗ<br><span class="pink">КАТАСТРОФЫ.</span>'}</h1><p>${worst.status==='bad'?`${HR22_NAMES[worst.st]} — первая улица, где твоя выбранная линия заметно уходит от основного ориентира.`:'В этой реконструкции нет одной огромной красной точки. Смотри тонкие места по улицам ниже.'}</p></div>
+  <div class="hr22ScoreRow"><div class="hr22Score ${heroAvg>=75?'good':heroAvg<55?'bad':''}"><span>ТВОЯ ЛИНИЯ</span><b>${heroAvg}/100</b><small>качество решений по восстановленной линии</small></div><div class="hr22Score ${oppAvg==null?'':oppAvg>=75?'good':oppAvg<55?'bad':''}"><span>ОППОНЕНТ</span><b>${oppAvg==null?'—':oppAvg+'/100'}</b><small>${oppAvg==null?'нет известной руки':'оценка по известной руке/линии'}</small></div></div>
+  ${streets.map((x,i)=>{const s=HR22.streets[x.st],o=opp[i];return`<div class="hr22StreetReport ${x.status}"><div class="hr22StreetHead"><b>${HR22_NAMES[x.st]}</b><span class="hr22Badge ${x.status}">${x.label}</span></div><div class="hr22Duel"><div><small>ОПП</small><b>${hr22FormatAction(s.villAction)}${['BET','RAISE','PUSH'].includes(s.villAction)?` · ${s.villSize}${x.st==='pre'?' BB':'%'}`:''}</b></div><div><small>ТЫ</small><b>${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` · ${s.heroSize}${x.st==='pre'?' BB':'%'}`:''}</b></div></div>${x.math?`<div class="hr22Math">${x.math}</div>`:''}<div class="hr22Why">${x.why}</div>${o?`<div class="small mut" style="margin-top:7px">По фактической руке оппа его действие здесь выглядит ${o.status==='good'?'нормально':o.status==='bad'?'сомнительно':'погранично'} относительно той же модели.</div>`:''}</div>`}).join('')}
+  <div class="hr22Verdict"><span class="ey">ВЕРДИКТ ФРИКОВОЙ ДАМЫ</span><blockquote>${hr22VerdictText(worst,heroAvg,oppAvg??heroAvg)}</blockquote></div>
+  <div class="hr22Bottom"><button class="secondary" id="hr22Again">↻ ЕЩЁ РАЗ</button><button class="primary" id="hr22Hub">К МОИМ КАРТАМ →</button></div>
+ </div>`;
+ $('#hr22BackHub').onclick=$('#hr22Hub').onclick=()=>{window.myView18='hub';renderMy()};
+ $('#hr22Again').onclick=()=>{HR22=hr22Fresh();window.myView18='recon';renderMy()};
+}
+function hr22Bind(){
+ const area=$('#myArea');if(!area)return;
+ $$('[data-hrformat]').forEach(b=>b.onclick=()=>{HR22.format=b.dataset.hrformat;reconView18()});
+ hr22BindPos();
+ $$('[data-hrvill]').forEach(b=>b.onclick=()=>{HR22.villPos=b.dataset.hrvill;reconView18()});
+ hr22BindHeroCards();
+ const stack=$('#hrstack');if(stack)stack.oninput=()=>{HR22.stack=+stack.value;const b=stack.previousElementSibling?.querySelector('b');if(b)b.textContent=HR22.stack+' BB'};
+ $$('[data-hrstreet]').forEach(b=>b.onclick=()=>{HR22.street=b.dataset.hrstreet;reconView18()});
+ const st=HR22.street,s=HR22.streets[st];
+ if(HR22.step===1){
+  hr22BindBoard(st);
+  $$('[data-hrva]').forEach(b=>b.onclick=()=>{s.villAction=b.dataset.hrva;reconView18()});
+  $$('[data-hrha]').forEach(b=>b.onclick=()=>{s.heroAction=b.dataset.hrha;reconView18()});
+  const pot=$('#hrpot');if(pot)pot.oninput=()=>{s.pot=+pot.value;pot.previousElementSibling.querySelector('b').textContent=s.pot+' BB'};
+  const vs=$('#hrvsize');if(vs)vs.oninput=()=>{s.villSize=+vs.value;vs.previousElementSibling.querySelector('b').textContent=s.villSize+(st==='pre'?' BB':'%')};
+  const hs=$('#hrhsize');if(hs)hs.oninput=()=>{s.heroSize=+hs.value;hs.previousElementSibling.querySelector('b').textContent=s.heroSize+(st==='pre'?' BB':'%')};
+ }
+ $$('[data-hrshow]').forEach(b=>b.onclick=()=>{HR22.showdown=b.dataset.hrshow==='1';reconView18()});
+ if(HR22.showdown)hr22BindVillCards();
+ $$('[data-hrres]').forEach(b=>b.onclick=()=>{HR22.result=b.dataset.hrres;reconView18()});
+ $$('[data-hrq]').forEach(b=>b.onclick=()=>{HR22.question=b.dataset.hrq;reconView18()});
+ const read=$('#hrread');if(read)read.oninput=()=>HR22.read=read.value;
+ const prev=$('#hr22Prev'),next=$('#hr22Next');
+ if(prev)prev.onclick=()=>hr22Step(HR22.step-1);
+ if(next)next.onclick=()=>{
+  if(HR22.step===0&&!HR22.hero.every(Boolean)){openModal('<span class="ey">НЕ ХВАТАЕТ</span><h2>ВЫБЕРИ СВОЮ РУКУ</h2><p>Две карты — единственное обязательное поле на первом шаге.</p>');return}
+  if(HR22.step<2)hr22Step(HR22.step+1);else hr22Report(true);
+ };
+}
+reconView18=function(){
+ window.myView18='recon';
+ const progress=[0,1,2,3].map(i=>`<i class="${i<HR22.step?'done':i===HR22.step?'on':''}"></i>`).join('');
+ let body=HR22.step===0?hr22Context():HR22.step===1?hr22StreetBody():HR22.step===2?hr22Finish():'';
+ $('#myArea').innerHTML=`<div class="hr22"><div class="hr22Top"><button class="back18" id="hr22Back">←</button><div><h2>РАЗБОР РАЗДАЧИ</h2><small>восстанови → проверь → пойми</small></div></div><div class="hr22Progress">${progress}</div>${body}<div class="hr22Bottom">${HR22.step>0?'<button class="secondary" id="hr22Prev">НАЗАД</button>':'<button class="secondary" id="hr22Cancel">ОТМЕНА</button>'}<button class="primary" id="hr22Next">${HR22.step===2?'ПОКАЗАТЬ РАЗБОР →':'ДАЛЬШЕ →'}</button></div></div>`;
+ const back=$('#hr22Back'),cancel=$('#hr22Cancel');if(back)back.onclick=()=>{window.myView18='hub';renderMy()};if(cancel)cancel.onclick=()=>{window.myView18='hub';renderMy()};
+ setTimeout(hr22Bind,0);
+};
+wireRecon18=function(){};
+function openSaved22(id){
+ const h=(S.myHands18||[]).find(x=>String(x.id)===String(id));
+ if(!h||!h.raw)return;
+ HR22=JSON.parse(JSON.stringify(h.raw));hr22Report(false);
+}
+const __myHubV22=myHub18;
+myHub18=function(){
+ let a=(S.myHands18||[]).slice(-3).reverse();
+ return `<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Посчитать за столом. Принять решение. После катки — нормально разобрать спорную раздачу.</div><div class="my18Tools">
+ <button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Шансы руки и цена колла.</p><span class="go">СЧИТАТЬ →</span></button>
+ <button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек и граница решения.</p><span class="go">РЕШИТЬ →</span></button>
+ <button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">↯</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗБОР<br>РАЗДАЧИ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">РАЗОБРАТЬ →</span></button></div>
+ <div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>x.version===22?`<button class="hr22Saved" data-saved22="${x.id}"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')} → открыть разбор</small></button>`:`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`;
+}
+const __renderMyV22=renderMy;
+renderMy=function(){
+ const a=$('#myArea');if(!a)return;const v=window.myView18||'hub';
+ if(v==='hub'){a.innerHTML=myHub18();setTimeout(()=>$$('[data-saved22]').forEach(b=>b.onclick=()=>openSaved22(b.dataset.saved22)),0);return}
+ if(v==='recon'){reconView18();return}
+ if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0);return}
+ if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0);return}
+}
+window.openSaved22=openSaved22;
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
