@@ -1,15 +1,17 @@
-# QA V22.1
+# QA V23
 
 - Inline JavaScript syntax: **OK**
 - Poker Brain JavaScript syntax: **OK**
-- Telegram official bridge: **OK**
-- ready/expand: **OK**
-- content safe area: **OK**
-- stable viewport: **OK**
-- swipe actions hidden after verdict: **OK**
-- sticky actions above nav: **OK**
-- result autoscroll: **OK**
-- modal safe height: **OK**
-- developer brain note removed: **OK**
-- V22 hand review preserved: **OK**
-- V21 diagnostic fix preserved: **OK**
+- tournament screen: **OK**
+- 4-tab nav: **OK**
+- unlimited storage: **OK**
+- online offline: **OK**
+- buyin entries: **OK**
+- bounty count/won: **OK**
+- place/field: **OK**
+- profit ROI: **OK**
+- edit/delete: **OK**
+- YOU integration: **OK**
+- multi-currency: **OK**
+- Telegram layout preserved: **OK**
+- V22 review preserved: **OK**

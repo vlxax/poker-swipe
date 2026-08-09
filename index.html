@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="22.1">
+<meta name="app-version" content="23.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V22.1 TELEGRAM</title>
+<title>POKER SWIPE — V23 TOURNAMENTS</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -737,6 +737,54 @@ body{
  .actions .action{min-height:52px!important}
 }
 
+
+/* ================= V23 · ТУРНИРЫ ================= */
+.nav{grid-template-columns:repeat(4,minmax(0,1fr))!important;padding-left:8px!important;padding-right:8px!important}
+.nav button{font-size:8px!important;min-width:0!important}
+.nav button i{font-size:16px!important}
+.tourNav23{font-style:normal!important;font-size:18px!important;line-height:1}
+.t23{padding:0 max(12px,var(--tg-left-safe)) calc(118px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe));overflow-x:hidden}
+.t23Hero{position:relative;overflow:hidden;border:1px solid #ffffff10;border-radius:26px;padding:16px;background:
+ radial-gradient(circle at 88% 0,#ff2e8430,transparent 34%),
+ linear-gradient(145deg,#171119,#0d0d12);box-shadow:0 20px 48px #0006,inset 0 1px #ffffff06}
+.t23Hero:after{content:"♠";position:absolute;right:-3px;bottom:-47px;font-size:150px;color:#ffffff035;transform:rotate(-12deg);font-family:Georgia,serif}
+.t23HeroTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;position:relative;z-index:2}
+.t23Title h1{font-size:35px;line-height:.9;margin:4px 0 6px;letter-spacing:-.055em}.t23Title p{font-size:10px;color:#958e99;line-height:1.4;margin:0;max-width:245px}
+.t23AddMini{width:43px;height:43px;flex:0 0 43px;border:1px solid #ff2e846e;background:#27121d;color:#ff5a9e;border-radius:15px;font-size:25px;box-shadow:0 0 24px #ff2e8420;transition:.13s}
+.t23AddMini:active{transform:scale(.94)}
+.t23Filters{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:14px;position:relative;z-index:2}
+.t23Filters button{border:1px solid #34343e;background:#0d0d12;color:#817a85;border-radius:13px;padding:10px 3px;font-size:8px;font-weight:1000}.t23Filters button.on{border-color:#ff2e84;background:#25121b;color:#fff;box-shadow:0 0 17px #ff2e841c}
+.t23Stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+.t23Stat{border:1px solid #30303a;border-radius:19px;padding:12px;background:#101015;min-width:0;position:relative;overflow:hidden}
+.t23Stat:after{content:"";position:absolute;inset:auto -20% -55% -20%;height:75%;background:radial-gradient(ellipse,#ff2e8413,transparent 65%)}
+.t23Stat span{position:relative;z-index:2;font-size:8px;letter-spacing:.1em;color:#8c8590;font-weight:1000}.t23Stat b{position:relative;z-index:2;display:block;font-size:25px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.t23Stat small{position:relative;z-index:2;font-size:8px;color:#77717d}
+.t23Stat.good{border-color:#42e78655;background:#0d1712}.t23Stat.bad{border-color:#ff4b6855;background:#180d11}
+.t23Currency{display:flex;gap:5px;flex-wrap:wrap;margin:3px 0 12px}.t23Currency button{border:1px solid #30303a;background:#0e0e13;color:#8e8792;border-radius:999px;padding:6px 9px;font-size:8px;font-weight:1000}.t23Currency button.on{border-color:#ffd257;color:#fff;background:#211d0e}
+.t23SectionHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 2px 8px}.t23SectionHead h3{font-size:10px;letter-spacing:.13em;margin:0}.t23Sort{border:0;background:none;color:#7f7884;font-size:9px}
+.t23Empty{border:1px dashed #363640;border-radius:22px;padding:24px 15px;text-align:center;background:#0d0d12}.t23Empty .big{font-size:38px}.t23Empty h3{font-size:18px;margin:8px 0 5px}.t23Empty p{font-size:10px;line-height:1.4;color:#85808a;margin:0 auto 13px;max-width:270px}
+.t23Card{width:100%;text-align:left;color:#fff;border:1px solid #30303a;border-radius:21px;padding:12px;background:#101015;margin:7px 0;position:relative;overflow:hidden;box-shadow:0 13px 30px #0003;transition:transform .13s,border-color .13s}
+.t23Card:active{transform:scale(.985)}.t23Card.profit{border-color:#42e78642}.t23Card.loss{border-color:#ff4b6842}
+.t23Card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#ff2e84}.t23Card.offline:before{background:#6ca8ff}.t23Card.win:before{background:#ffd257;box-shadow:0 0 18px #ffd25760}
+.t23Row{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:10px;align-items:center;min-width:0}
+.t23Poster{width:54px;height:54px;border-radius:17px;background:radial-gradient(circle at 35% 30%,#ff82b7,#7e183f 45%,#170d13 70%);display:grid;place-items:center;font-size:20px;font-weight:1000;box-shadow:0 9px 18px #0006;position:relative;overflow:hidden}
+.t23Poster.offline{background:radial-gradient(circle at 35% 30%,#9ec9ff,#25578a 45%,#0b1119 70%)}.t23Poster:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 35%,#ffffff16 48%,transparent 60%);transform:translateX(-120%);animation:t23shine 5s ease-in-out infinite}
+@keyframes t23shine{45%,100%{transform:translateX(140%)}}
+.t23Main{min-width:0}.t23Main b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.t23Meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:8px;color:#837d87}
+.t23Tag{border:1px solid #ff2e8460;border-radius:999px;padding:3px 6px;color:#ff7eb4;font-size:7px;font-weight:1000}.t23Tag.offline{border-color:#6ca8ff65;color:#8fc0ff}
+.t23Money{text-align:right;min-width:76px}.t23Money b{font-size:15px}.t23Money small{display:block;font-size:7px;color:#807985;margin-top:4px}.t23Money .green{color:#42e786}.t23Money .red{color:#ff5b72}
+.t23Facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:10px}.t23Fact{border-top:1px solid #24242d;padding-top:8px;min-width:0}.t23Fact span{font-size:7px;color:#77717d;display:block}.t23Fact b{font-size:9px;display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t23Status{display:inline-flex;margin-top:7px;border-radius:999px;padding:4px 7px;font-size:7px;font-weight:1000}.t23Status.itm{background:#2b230c;color:#ffd257}.t23Status.ft{background:#1a1428;color:#c69cff}.t23Status.win{background:#2b230c;color:#ffe17b;border:1px solid #ffd25750}
+.t23Form h2{font-size:28px;margin:3px 0 5px}.t23Form p{font-size:10px;color:#817b85;line-height:1.4}
+.t23Field{margin-top:11px}.t23Field label{display:block;font-size:8px;letter-spacing:.1em;color:#827b86;font-weight:1000;margin:0 0 6px}.t23Field input,.t23Field select{width:100%;box-sizing:border-box;border:1px solid #d8d0d4;background:#fff;color:#171419;border-radius:13px;padding:12px;font-size:14px;font-weight:800}
+.t23FormGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.t23Type{display:grid;grid-template-columns:1fr 1fr;gap:6px}.t23Type button{border:1px solid #d5cdd1;background:#fff;color:#777078;border-radius:13px;padding:11px;font-weight:1000;font-size:9px}.t23Type button.on{background:#171419;color:#fff;border-color:#171419}
+.t23FormActions{display:grid;grid-template-columns:auto 1fr;gap:7px;margin-top:14px}.t23Delete{border:1px solid #e1c5cc;background:#fff;color:#c9284d;border-radius:14px;padding:12px;font-size:9px;font-weight:1000}
+.t23DetailTop{display:flex;gap:11px;align-items:center}.t23DetailPoster{width:64px;height:64px;border-radius:19px;background:radial-gradient(circle at 35% 30%,#ff82b7,#7e183f 45%,#170d13 70%);display:grid;place-items:center;font-size:23px;font-weight:1000}.t23DetailGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:12px 0}.t23DetailGrid div{border:1px solid #d8d1d5;border-radius:13px;padding:10px}.t23DetailGrid small{display:block;color:#8c8388;font-size:8px}.t23DetailGrid b{display:block;color:#171419;font-size:14px;margin-top:3px}
+.t23You{margin-top:16px;border:1px solid #30303a;border-radius:22px;padding:13px;background:radial-gradient(circle at 90% 0,#ffd25714,transparent 32%),#101015}.t23YouTop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.t23YouTop h3{font-size:11px;letter-spacing:.11em;margin:0}.t23YouTop button{border:0;background:none;color:#ff4d91;font-size:9px;font-weight:1000}.t23YouGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.t23YouGrid div{border:1px solid #292932;border-radius:14px;padding:9px}.t23YouGrid span{font-size:7px;color:#7d7680;display:block}.t23YouGrid b{font-size:18px;display:block;margin-top:2px}.t23CurrencyRows{margin-top:9px}.t23CurrencyRow{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #24242c;padding:8px 2px;font-size:9px}.t23CurrencyRow b.green{color:#42e786}.t23CurrencyRow b.red{color:#ff5b72}
+@media(max-width:370px){
+ .t23Stats{grid-template-columns:1fr 1fr}.t23Row{grid-template-columns:48px minmax(0,1fr) auto}.t23Poster{width:48px;height:48px}.t23Money{min-width:66px}.t23Money b{font-size:13px}
+ .t23FormGrid{grid-template-columns:1fr}.t23YouGrid{grid-template-columns:repeat(3,1fr)}.t23YouGrid b{font-size:16px}
+}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
@@ -762,11 +810,13 @@ body{
 <section id="heal" class="screen"><div id="healArea"></div></section>
 <section id="myhands" class="screen"><div id="myArea"></div></section>
 <section id="xray" class="screen"><div id="xrayArea"></div></section>
+<section id="tournaments" class="screen"><div id="tournamentsArea"></div></section>
 <section id="profile" class="screen"><div id="profileArea"></div></section>
 </main>
 <nav class="nav">
 <button class="on" data-nav="home"><i>⌂</i>PLAY</button>
 <button data-nav="myhands"><i>🃏</i>МОИ</button>
+<button data-nav="tournaments"><i class="tourNav23">♛</i>ТУРНИРЫ</button>
 <button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>YOU</button>
 </nav>
 </div>
@@ -1775,6 +1825,130 @@ window.addEventListener('resize',syncTelegramLayout22,{passive:true});
  requestAnimationFrame(watch);
 })();
 
+
+/* ================= V23 · ТУРНИРНЫЙ ЖУРНАЛ ================= */
+let T23_FILTER='all',T23_SORT='new',T23_CURRENCY=null;
+function t23List(){if(!Array.isArray(S.tournaments))S.tournaments=[];return S.tournaments}
+function t23Num(v){v=Number(v);return Number.isFinite(v)?v:0}
+function t23Sym(c){return c==='EUR'?'€':c==='RUB'?'₽':'$'}
+function t23Money(v,c){const s=t23Sym(c);const n=Math.abs(t23Num(v));const x=n>=1000000?(n/1000000).toFixed(n%1000000?1:0)+'m':n>=1000?(n/1000).toFixed(n%1000?1:0)+'k':Math.round(n).toLocaleString('ru-RU');return (v<0?'-':'')+s+x}
+function t23Cost(t){return t23Num(t.buyin)*Math.max(1,t23Num(t.entries)||1)}
+function t23Return(t){return t23Num(t.prize)+t23Num(t.bountyWon)}
+function t23Profit(t){return t23Return(t)-t23Cost(t)}
+function t23Status(t){const p=t23Num(t.place);if(p===1)return'win';if(p>1&&p<=9)return'ft';if(t23Num(t.prize)>0)return'itm';return''}
+function t23StatusLabel(t){const s=t23Status(t);return s==='win'?'♛ ПОБЕДА':s==='ft'?'ФИНАЛКА':s==='itm'?'ITM':''}
+function t23Initials(name){const a=String(name||'T').trim().split(/\s+/).filter(Boolean);return (a[0]?.[0]||'T')+(a[1]?.[0]||'')}
+function t23DateLabel(v){if(!v)return'';try{return new Date(v+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'})}catch(e){return v}}
+function t23Filtered(){
+ let a=[...t23List()];
+ if(T23_FILTER!=='all')a=a.filter(x=>x.type===T23_FILTER);
+ if(T23_CURRENCY)a=a.filter(x=>(x.currency||'USD')===T23_CURRENCY);
+ a.sort((x,y)=>{const ax=x.date||'',ay=y.date||'';return T23_SORT==='new'?ay.localeCompare(ax):ax.localeCompare(ay)});
+ return a;
+}
+function t23Currencies(){
+ const a=[...new Set(t23List().map(x=>x.currency||'USD'))];
+ if(!T23_CURRENCY||!a.includes(T23_CURRENCY))T23_CURRENCY=a[0]||'USD';
+ return a;
+}
+function t23Stats(){
+ const all=t23List().filter(x=>T23_FILTER==='all'||x.type===T23_FILTER);
+ const cur=T23_CURRENCY||'USD',a=all.filter(x=>(x.currency||'USD')===cur);
+ const invested=a.reduce((s,x)=>s+t23Cost(x),0),ret=a.reduce((s,x)=>s+t23Return(x),0),profit=ret-invested,roi=invested?profit/invested*100:0;
+ const bounty=a.reduce((s,x)=>s+t23Num(x.bountyWon),0);
+ const best=all.map(x=>t23Num(x.place)).filter(x=>x>0).sort((a,b)=>a-b)[0]||null;
+ return{count:all.length,invested,profit,roi,bounty,best,currency:cur};
+}
+function t23Card(t){
+ const p=t23Profit(t),status=t23Status(t),mode=t.type==='offline'?'offline':'online';
+ return `<button class="t23Card ${mode} ${p>0?'profit':p<0?'loss':''} ${status==='win'?'win':''}" data-t23open="${t.id}">
+  <div class="t23Row"><div class="t23Poster ${mode}">${esc(t23Initials(t.name))}</div><div class="t23Main"><b>${esc(t.name||'Без названия')}</b><div class="t23Meta"><span class="t23Tag ${mode}">${mode==='online'?'ОНЛАЙН':'ОФЛАЙН'}</span><span>${t23DateLabel(t.date)}</span>${t.field?`<span>· ${t.field} игроков</span>`:''}</div>${status?`<span class="t23Status ${status}">${t23StatusLabel(t)}</span>`:''}</div>
+  <div class="t23Money"><b class="${p>0?'green':p<0?'red':''}">${p===0?'0':(p>0?'+':'')+t23Money(p,t.currency)}</b><small>результат</small></div></div>
+  <div class="t23Facts"><div class="t23Fact"><span>БАЙ-ИН</span><b>${t23Money(t.buyin,t.currency)} × ${Math.max(1,t.entries||1)}</b></div><div class="t23Fact"><span>БАУНТИ</span><b>${t.bountyCount?`${t.bountyCount} шт. · `:''}${t23Money(t.bountyWon,t.currency)}</b></div><div class="t23Fact"><span>МЕСТО</span><b>${t.place||'—'}${t.field?'/'+t.field:''}</b></div></div>
+ </button>`;
+}
+function renderTournaments23(){
+ const currencies=t23Currencies(),st=t23Stats(),list=t23Filtered();
+ $('#tournamentsArea').innerHTML=`<div class="t23">
+  <div class="t23Hero"><div class="t23HeroTop"><div class="t23Title"><span class="ey">ТВОЯ РЕАЛЬНАЯ ИГРА</span><h1 class="impact">ТУРНИРЫ.</h1><p>История онлайна и офлайна: сколько вложил, где доехал и что осталось после дисперсии.</p></div><button class="t23AddMini" id="t23Add">+</button></div>
+   <div class="t23Filters"><button data-t23f="all" class="${T23_FILTER==='all'?'on':''}">ВСЕ</button><button data-t23f="online" class="${T23_FILTER==='online'?'on':''}">ОНЛАЙН</button><button data-t23f="offline" class="${T23_FILTER==='offline'?'on':''}">ОФЛАЙН</button></div></div>
+  ${currencies.length?`<div class="t23Currency">${currencies.map(c=>`<button data-t23cur="${c}" class="${T23_CURRENCY===c?'on':''}">${t23Sym(c)} ${c}</button>`).join('')}</div>`:''}
+  <div class="t23Stats">
+   <div class="t23Stat"><span>ТУРНИРОВ</span><b>${st.count}</b><small>${T23_FILTER==='all'?'вся история':T23_FILTER==='online'?'онлайн':'офлайн'}</small></div>
+   <div class="t23Stat"><span>ВЛОЖЕНО · ${st.currency}</span><b>${t23Money(st.invested,st.currency)}</b><small>бай-ины × пули</small></div>
+   <div class="t23Stat ${st.profit>0?'good':st.profit<0?'bad':''}"><span>ПРОФИТ · ${st.currency}</span><b class="${st.profit>0?'green':st.profit<0?'red':''}">${st.profit>0?'+':''}${t23Money(st.profit,st.currency)}</b><small>призы + баунти − входы</small></div>
+   <div class="t23Stat ${st.roi>0?'good':st.roi<0?'bad':''}"><span>ROI</span><b class="${st.roi>0?'green':st.roi<0?'red':''}">${st.invested?(st.roi>0?'+':'')+st.roi.toFixed(1)+'%':'—'}</b><small>${st.best?'лучшее место: '+st.best:'пока без результата'}</small></div>
+  </div>
+  <div class="t23SectionHead"><h3>ИСТОРИЯ ТУРНИРОВ</h3><button class="t23Sort" id="t23Sort">${T23_SORT==='new'?'Сначала новые ↓':'Сначала старые ↑'}</button></div>
+  <div id="t23List">${list.length?list.map(t23Card).join(''):`<div class="t23Empty"><div class="big">♛</div><h3>ПОКА ПУСТО</h3><p>Добавь первый турнир. Название может быть любым — от Triton Main до «турик у Саши».</p><button class="primary" id="t23EmptyAdd">+ ДОБАВИТЬ ТУРНИР</button></div>`}</div>
+ </div>`;
+ $('#t23Add').onclick=()=>openTournamentForm23();
+ const ea=$('#t23EmptyAdd');if(ea)ea.onclick=()=>openTournamentForm23();
+ $$('[data-t23f]').forEach(b=>b.onclick=()=>{T23_FILTER=b.dataset.t23f;renderTournaments23()});
+ $$('[data-t23cur]').forEach(b=>b.onclick=()=>{T23_CURRENCY=b.dataset.t23cur;renderTournaments23()});
+ $('#t23Sort').onclick=()=>{T23_SORT=T23_SORT==='new'?'old':'new';renderTournaments23()};
+ $$('[data-t23open]').forEach(b=>b.onclick=()=>openTournament23(b.dataset.t23open));
+}
+function tournamentFormHTML23(t={}){
+ const edit=!!t.id,type=t.type||'online',cur=t.currency||T23_CURRENCY||'USD';
+ return `<div class="t23Form"><span class="ey">${edit?'РЕДАКТИРОВАТЬ':'НОВЫЙ ТУРНИР'}</span><h2>${edit?'ОБНОВИ РЕЗУЛЬТАТ':'ДОБАВЬ В ИСТОРИЮ'}</h2><p>Только факты. Профит и ROI приложение посчитает само.</p>
+  <div class="t23Field"><label>ГДЕ ИГРАЛ</label><div class="t23Type"><button data-t23type="online" class="${type==='online'?'on':''}">ОНЛАЙН</button><button data-t23type="offline" class="${type==='offline'?'on':''}">ОФЛАЙН</button></div></div>
+  <div class="t23Field"><label>НАЗВАНИЕ</label><input id="t23Name" maxlength="60" value="${esc(t.name||'')}" placeholder="Triton $25K / Sunday Million / любое своё"></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>ДАТА</label><input id="t23Date" type="date" value="${esc(t.date||today())}"></div><div class="t23Field"><label>ВАЛЮТА</label><select id="t23Currency"><option value="USD" ${cur==='USD'?'selected':''}>$ USD</option><option value="EUR" ${cur==='EUR'?'selected':''}>€ EUR</option><option value="RUB" ${cur==='RUB'?'selected':''}>₽ RUB</option></select></div></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>БАЙ-ИН</label><input id="t23Buyin" inputmode="decimal" value="${t.buyin??''}" placeholder="1000"></div><div class="t23Field"><label>КОЛИЧЕСТВО ПУЛЬ</label><input id="t23Entries" inputmode="numeric" value="${t.entries??1}" placeholder="1"></div></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>БАУНТИ · ШТ.</label><input id="t23BCount" inputmode="numeric" value="${t.bountyCount??0}" placeholder="0"></div><div class="t23Field"><label>БАУНТИ · ВЫИГРАНО</label><input id="t23Bounty" inputmode="decimal" value="${t.bountyWon??0}" placeholder="0"></div></div>
+  <div class="t23Field"><label>ПРИЗОВЫЕ · БЕЗ БАУНТИ</label><input id="t23Prize" inputmode="decimal" value="${t.prize??0}" placeholder="0"></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>МЕСТО</label><input id="t23Place" inputmode="numeric" value="${t.place??''}" placeholder="17"></div><div class="t23Field"><label>ИГРОКОВ В ПОЛЕ</label><input id="t23Field" inputmode="numeric" value="${t.field??''}" placeholder="1842"></div></div>
+  <div class="t23FormActions">${edit?'<button class="t23Delete" id="t23Delete">УДАЛИТЬ</button>':'<span></span>'}<button class="primary" id="t23Save">${edit?'СОХРАНИТЬ':'ДОБАВИТЬ ТУРНИР'} →</button></div>
+ </div>`;
+}
+function openTournamentForm23(id=null){
+ const old=id?t23List().find(x=>String(x.id)===String(id)):null;
+ let type=old?.type||'online';
+ openModal(tournamentFormHTML23(old||{type}));
+ setTimeout(()=>{
+  $$('[data-t23type]').forEach(b=>b.onclick=()=>{type=b.dataset.t23type;$$('[data-t23type]').forEach(x=>x.classList.toggle('on',x.dataset.t23type===type))});
+  $('#t23Save').onclick=()=>{
+   const name=$('#t23Name').value.trim();if(!name){$('#t23Name').focus();return}
+   const rec={id:old?.id||('t23_'+Date.now()),type,name,date:$('#t23Date').value||today(),currency:$('#t23Currency').value||'USD',
+    buyin:Math.max(0,t23Num($('#t23Buyin').value)),entries:Math.max(1,Math.round(t23Num($('#t23Entries').value)||1)),
+    bountyCount:Math.max(0,Math.round(t23Num($('#t23BCount').value))),bountyWon:Math.max(0,t23Num($('#t23Bounty').value)),prize:Math.max(0,t23Num($('#t23Prize').value)),
+    place:Math.max(0,Math.round(t23Num($('#t23Place').value))),field:Math.max(0,Math.round(t23Num($('#t23Field').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};
+   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id));S.tournaments.push(rec);T23_CURRENCY=rec.currency;save();closeModal();renderTournaments23();
+  };
+  const del=$('#t23Delete');if(del)del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id));save();closeModal();renderTournaments23()};
+ },0);
+}
+function openTournament23(id){
+ const t=t23List().find(x=>String(x.id)===String(id));if(!t)return;
+ const p=t23Profit(t),cost=t23Cost(t),ret=t23Return(t),roi=cost?p/cost*100:0,status=t23Status(t),mode=t.type==='offline'?'offline':'online';
+ openModal(`<div class="t23Form"><div class="t23DetailTop"><div class="t23DetailPoster">${esc(t23Initials(t.name))}</div><div><span class="ey">${mode==='online'?'ОНЛАЙН':'ОФЛАЙН'} · ${t23DateLabel(t.date)}</span><h2 style="margin:3px 0">${esc(t.name)}</h2>${status?`<span class="t23Status ${status}">${t23StatusLabel(t)}</span>`:''}</div></div>
+  <div class="t23DetailGrid"><div><small>ВЛОЖЕНО</small><b>${t23Money(cost,t.currency)}</b></div><div><small>ВЕРНУЛОСЬ</small><b>${t23Money(ret,t.currency)}</b></div><div><small>ПРОФИТ</small><b class="${p>0?'green':p<0?'red':''}">${p>0?'+':''}${t23Money(p,t.currency)}</b></div><div><small>ROI</small><b>${cost?(roi>0?'+':'')+roi.toFixed(1)+'%':'—'}</b></div><div><small>БАУНТИ</small><b>${t.bountyCount||0} · ${t23Money(t.bountyWon,t.currency)}</b></div><div><small>МЕСТО</small><b>${t.place||'—'}${t.field?'/'+t.field:''}</b></div></div>
+  <button class="primary" id="t23Edit">РЕДАКТИРОВАТЬ →</button></div>`);
+ setTimeout(()=>$('#t23Edit').onclick=()=>{closeModal();setTimeout(()=>openTournamentForm23(id),80)},0);
+}
+function tournamentYouStats23(){
+ const a=t23List();if(!a.length)return null;
+ const itm=a.filter(x=>t23Num(x.prize)>0).length,ft=a.filter(x=>t23Num(x.place)>0&&t23Num(x.place)<=9).length,wins=a.filter(x=>t23Num(x.place)===1).length;
+ const currencies=[...new Set(a.map(x=>x.currency||'USD'))];
+ const rows=currencies.map(c=>{const x=a.filter(t=>(t.currency||'USD')===c),inv=x.reduce((s,t)=>s+t23Cost(t),0),pr=x.reduce((s,t)=>s+t23Profit(t),0),roi=inv?pr/inv*100:0;return{c,pr,roi}});
+ return{count:a.length,itm,ft,wins,itmPct:a.length?Math.round(itm/a.length*100):0,rows};
+}
+function appendTournamentYou23(){
+ const root=$('#profileArea .you20');if(!root||root.querySelector('.t23You'))return;
+ const s=tournamentYouStats23();
+ const html=s?`<div class="t23You"><div class="t23YouTop"><div><span class="ey">РЕАЛЬНАЯ ИГРА</span><h3>ТУРНИРНАЯ ДИСТАНЦИЯ</h3></div><button id="t23YouOpen">ОТКРЫТЬ →</button></div><div class="t23YouGrid"><div><span>ТУРНИРОВ</span><b>${s.count}</b></div><div><span>ITM</span><b>${s.itmPct}%</b></div><div><span>ФИНАЛОК</span><b>${s.ft}</b></div></div><div class="t23CurrencyRows">${s.rows.map(r=>`<div class="t23CurrencyRow"><span>${r.c} · ROI ${(r.roi>0?'+':'')+r.roi.toFixed(1)}%</span><b class="${r.pr>0?'green':r.pr<0?'red':''}">${r.pr>0?'+':''}${t23Money(r.pr,r.c)}</b></div>`).join('')}</div></div>`:
+ `<div class="t23You"><div class="t23YouTop"><div><span class="ey">РЕАЛЬНАЯ ИГРА</span><h3>ТУРНИРНАЯ ДИСТАНЦИЯ</h3></div><button id="t23YouOpen">ДОБАВИТЬ →</button></div><p class="small mut" style="margin:9px 0 0">Пока нет турниров. Когда появится история, YOU покажет ITM, финалки и результат по валютам.</p></div>`;
+ root.insertAdjacentHTML('beforeend',html);
+ $('#t23YouOpen').onclick=()=>show('tournaments');
+}
+const __renderProfileV23=renderProfile;
+renderProfile=function(){__renderProfileV23();setTimeout(appendTournamentYou23,0)};
+const __showV23=show;
+show=function(id){__showV23(id);if(id==='tournaments')renderTournaments23()};
+window.renderTournaments23=renderTournaments23;
+window.openTournamentForm23=openTournamentForm23;
+
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
 const _editNickBtn=$('#editNickBtn');
@@ -1789,7 +1963,7 @@ if(_editNickBtn){
     }
   };
 }
-function selfCheck(){const ids=['home','swipe','sizing','review','daily','heal','myhands','xray','profile'];const miss=ids.filter(x=>!document.getElementById(x));if(miss.length)throw new Error('Missing screens '+miss.join(','));if(typeof renderMy!=='function')throw new Error('My Cards module missing')}
+function selfCheck(){const ids=['home','swipe','sizing','review','daily','heal','myhands','xray','tournaments','profile'];const miss=ids.filter(x=>!document.getElementById(x));if(miss.length)throw new Error('Missing screens '+miss.join(','));if(typeof renderMy!=='function')throw new Error('My Cards module missing')}
 try{
   selfCheck();
   if(typeof window.PokerBrain!=='object' || typeof window.PokerBrain.gradeDecision!=='function'){
