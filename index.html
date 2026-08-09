@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V30 CONTEXT ENGINE</title>
+<title>POKER SWIPE — V31 УМНЫЙ МОЗГ</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -864,6 +864,77 @@ main{padding-bottom:96px}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
+
+<style id="v31-premium">
+/* ===== V31 · PREMIUM RUSSIAN UI ===== */
+:root{
+  --v31-bg:#07070a;--v31-card:#111116;--v31-card2:#16161d;--v31-line:rgba(255,255,255,.08);
+  --v31-muted:#aaa4ae;--v31-pink:#ff357f;--v31-pink2:#ff75ad;--v31-gold:#e8bf72;
+}
+body{background:#07070a!important}
+.app{background:
+  radial-gradient(circle at 92% 2%,rgba(255,53,127,.10),transparent 27%),
+  radial-gradient(circle at 8% 35%,rgba(93,63,255,.055),transparent 25%),#07070a!important}
+.top{border-bottom:1px solid rgba(255,255,255,.035)}
+.ey{font-size:10px!important;letter-spacing:.11em!important;color:#aaa4ae!important;line-height:1.35!important}
+.mut,.small{color:#aaa4ae!important}
+.small{font-size:12px!important;line-height:1.45!important}
+p{line-height:1.48}
+button{letter-spacing:-.01em}
+.nav{grid-template-columns:repeat(4,1fr)!important}
+.nav button{font-size:10px!important;min-width:0}
+#levelChip{font-size:9px!important}
+.v31Home{padding:0 14px 110px}
+.v31HomeTop{display:flex;justify-content:space-between;align-items:center;margin:5px 0 17px}
+.v31Wordmark{font-weight:1000;font-size:15px;letter-spacing:-.035em}
+.v31Wordmark span{color:var(--v31-pink)}
+.v31Kiss{font-size:10px;color:#d6b5c4}
+.v31Hero{position:relative;overflow:hidden;border-radius:30px;padding:20px 18px 18px;background:
+ radial-gradient(circle at 84% 18%,rgba(255,53,127,.23),transparent 30%),
+ linear-gradient(145deg,#19131a,#0c0c10 68%);box-shadow:0 22px 60px rgba(0,0,0,.4);margin-bottom:14px}
+.v31Hero:after{content:"";position:absolute;right:-48px;top:-55px;width:190px;height:190px;border-radius:50%;border:1px solid rgba(255,255,255,.06);box-shadow:0 0 0 30px rgba(255,255,255,.018),0 0 0 62px rgba(255,255,255,.012)}
+.v31Identity{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center;position:relative;z-index:1}
+.v31Avatar{width:88px;height:88px;object-fit:cover;border-radius:25px;box-shadow:0 12px 28px #0009}
+.v31Hero h1{font-size:31px;line-height:.95;margin:5px 0 9px;letter-spacing:-.055em}
+.v31Stats{display:flex;gap:6px;flex-wrap:wrap}
+.v31Stats span{background:rgba(255,255,255,.055);border-radius:999px;padding:7px 9px;font-size:9px;color:#bbb5be}
+.v31Stats b{font-size:13px;color:white}
+.v31Goal{position:relative;z-index:1;margin-top:18px;padding-top:15px;border-top:1px solid rgba(255,255,255,.08)}
+.v31GoalHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.v31Goal h2{font-size:22px;margin:4px 0}.v31GoalPct{font-size:29px;font-weight:1000;color:var(--v31-gold)}
+.v31Track{height:7px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:12px 0 9px}.v31Track i{display:block;height:100%;background:linear-gradient(90deg,var(--v31-pink),#ff87b5);border-radius:99px}
+.v31Primary{width:100%;border:0;border-radius:18px;padding:15px;background:#f4edf0;color:#161116;font-weight:1000;margin-top:13px;box-shadow:0 8px 0 #8f6e7d,0 17px 35px #0006}
+.v31SectionHead{display:flex;justify-content:space-between;align-items:end;margin:22px 2px 10px}.v31SectionHead h2{font-size:19px;margin:0}.v31SectionHead span{font-size:9px;color:#88818b}
+.v31Modes{display:grid;grid-template-columns:1.3fr .9fr;gap:9px}
+.v31Mode{border:0;border-radius:24px;padding:17px;text-align:left;min-height:158px;position:relative;overflow:hidden;background:#15151b;box-shadow:0 14px 34px #0005}
+.v31Mode.main{background:radial-gradient(circle at 88% 18%,rgba(255,53,127,.26),transparent 34%),linear-gradient(150deg,#23131b,#101015)}
+.v31Mode.quick{background:radial-gradient(circle at 78% 18%,rgba(232,191,114,.17),transparent 35%),linear-gradient(150deg,#191713,#101014)}
+.v31Mode b{display:block;font-size:23px;line-height:.92;margin:8px 0}.v31Mode small{font-size:10px;line-height:1.4;color:#aaa4ae;display:block;max-width:190px}.v31Mode .arrow{position:absolute;right:14px;bottom:13px;font-size:20px}
+.v31MiniGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v31Mini{border:0;background:#111116;border-radius:20px;padding:14px;text-align:left;min-height:102px}.v31Mini b{display:block;font-size:14px;margin:5px 0}.v31Mini span:last-child{font-size:10px;color:#98919c;line-height:1.35}
+.v31Insight{margin-top:10px;border-radius:24px;padding:17px;background:linear-gradient(145deg,#171217,#0f0f13);border-left:3px solid var(--v31-pink)}
+.v31Insight h2{font-size:21px;margin:5px 0}.v31Insight p{font-size:11px;color:#aaa4ae;margin-bottom:0}
+.v31Passport{margin:0 14px 10px;border-radius:22px;padding:13px;background:#111116}
+.v31PassportTop{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}.v31Chip{padding:6px 8px;background:#1d1d24;border-radius:999px;font-size:9px;font-weight:900;color:#d5d0d7}.v31Chip.hot{background:#341622;color:#ff9fc6}.v31Chip.gold{background:#292218;color:#e8bf72}
+.v31Line{padding:12px 13px;border-radius:15px;background:#09090d;font-size:11px;line-height:1.5;color:#e2dde3}.v31Line span{display:block;color:#918a95;font-size:9px;margin-bottom:3px;font-weight:900;letter-spacing:.08em}
+.v31Question{font-size:24px!important;line-height:1.06!important;margin:14px 0 10px!important}
+.v31DiagWrap{width:100%;max-width:430px;margin:auto}.v31DiagCard{background:#111116;color:#f7f3f5!important;border-radius:28px;padding:18px;box-shadow:0 26px 70px #0007}.v31DiagCard h2{color:white!important}.v31DiagCard .pc{width:48px;height:66px}
+.v31DiagChoice{width:100%;border:0;border-radius:16px;background:#1a1a21;color:#fff;padding:14px;margin:6px 0;font-weight:1000;text-align:left;display:flex;justify-content:space-between}.v31DiagChoice:active{background:#2a1720}
+.v31Result{width:100%;max-width:440px;margin:auto;color:#fff;background:#09090d;border-radius:30px;padding:20px;text-align:left;box-shadow:0 26px 90px #0009}
+.v31ResultHero{padding:20px;border-radius:25px;background:radial-gradient(circle at 88% 12%,rgba(255,53,127,.25),transparent 32%),#151116}
+.v31ResultHero h1{font-size:37px;margin:7px 0 8px}.v31RankBadge{display:inline-flex;padding:7px 10px;border-radius:999px;background:#f5edf0;color:#191116;font-size:10px;font-weight:1000}
+.v31Human{font-size:13px;line-height:1.5;color:#d7d1d8;margin:12px 0 0}
+.v31ResultBlock{padding:16px 2px;border-bottom:1px solid rgba(255,255,255,.08)}.v31ResultBlock:last-child{border-bottom:0}.v31ResultBlock h3{font-size:14px;margin:0 0 10px;color:white}
+.v31SkillRow{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;margin:9px 0}.v31SkillRow b{font-size:18px}.v31SkillRow small{display:block;color:#99929c;font-size:10px}.v31SkillBar{grid-column:1/-1;height:6px;background:#24242c;border-radius:99px;overflow:hidden}.v31SkillBar i{display:block;height:100%;border-radius:99px;background:#e7e1e4}.v31SkillRow.weak .v31SkillBar i{background:var(--v31-pink)}
+.v31Evidence{background:#121217;border-radius:17px;padding:12px;margin:8px 0;font-size:11px;line-height:1.45;color:#c3bdc6}.v31Evidence strong{color:white}
+.v31Freak{margin-top:14px;border-radius:22px;padding:16px;background:#f0e8ec;color:#171116}.v31Freak span{font-size:9px;font-weight:1000;color:#9a3a62}.v31Freak p{font-size:16px;line-height:1.24;font-weight:900;margin:8px 0 0;letter-spacing:-.025em}
+.v31Result .primary{box-shadow:none;transform:none;margin-top:12px}
+.swipeCardV{border:0!important;background:#111116!important;box-shadow:0 18px 46px #0006!important}.swipeContext{display:none!important}.swipeHint{font-size:10px!important}.actions{background:linear-gradient(transparent,#07070af7 30%)!important}
+#swipeCard .v31Passport{margin:0 0 11px}
+.v31DecisionBadge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:1000}.v31DecisionBadge.main{background:#153322;color:#75e6a3}.v31DecisionBadge.alt{background:#342c16;color:#ffd873}.v31DecisionBadge.exploit{background:#261a37;color:#c5a4ff}.v31DecisionBadge.error{background:#3a1720;color:#ff8ba0}
+.v31Why{font-size:11px;line-height:1.5;color:#d1cad2}.v31Why b{color:white}
+@media(max-width:370px){.v31Modes{grid-template-columns:1fr}.v31Identity{grid-template-columns:76px 1fr}.v31Avatar{width:76px;height:76px}.v31Hero h1{font-size:27px}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -890,10 +961,10 @@ main{padding-bottom:96px}
 <section id="profile" class="screen"><div id="profileArea"></div></section>
 </main>
 <nav class="nav">
-<button class="on" data-nav="home"><i>⌂</i>PLAY</button>
+<button class="on" data-nav="home"><i>⌂</i>ИГРАТЬ</button>
 <button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i>МОИ</button>
 <button data-nav="tournaments"><i class="tourNav23">♛</i>ТУРНИРЫ</button>
-<button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>YOU</button>
+<button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>ПРОФИЛЬ</button>
 </nav>
 </div>
 
@@ -2608,6 +2679,309 @@ const prevProfile30=window.renderProfile;window.renderProfile=function(){prevPro
 ensureQG30();
 // refresh currently visible home after patch loads
 if(!document.getElementById('mainApp')?.classList.contains('hidden') && document.getElementById('home')?.classList.contains('active')){try{renderHome()}catch(e){console.error('V30 home patch',e)}}
+})();
+</script>
+
+
+<script id="v31-brain-ui">
+(function(){
+'use strict';
+
+const V31_DIM = {pre:'Префлоп',post:'Постфлоп',size:'Размеры ставок',discipline:'Дисциплина'};
+const V31_RANK_BY_SCORE = [
+ [0,'Рыбуляр'],[35,'Игрок спортивного покера'],[50,'Крепкий любитель'],
+ [62,'Полурег'],[72,'Регуляр'],[82,'Агрорег'],[90,'Матёрый']
+];
+function v31Rank(score){
+ let name=V31_RANK_BY_SCORE[0][1];
+ V31_RANK_BY_SCORE.forEach(([n,x])=>{if(score>=n)name=x});
+ return name;
+}
+function v31DimPhrase(score){
+ if(score==null)return 'данных пока нет';
+ if(score>=82)return 'сильная зона';
+ if(score>=68)return 'уверенная база';
+ if(score>=55)return 'рабочий уровень';
+ if(score>=42)return 'нестабильно';
+ return 'явная зона роста';
+}
+function v31DiagConfidence(p){
+ if((p.sample||0)<10)return ['низкая','Слишком мало решений для жёстких выводов.'];
+ if((p.sample||0)<24)return ['средняя','Это стартовая гипотеза. Реальная игра ещё может заметно изменить профиль.'];
+ return ['высокая','Паттерн подтверждён на заметной выборке.'];
+}
+function v31ContextFor(d,i){
+ const stages=['РАННЯЯ','СЕРЕДИНА','ПОЗДНЯЯ','БАББЛ','ITM','ФИНАЛЬНЫЙ СТОЛ'];
+ const tables=['9-MAX','8-MAX','6-MAX','6-MAX','6-MAX','6-MAX'];
+ const opponents=['НЕИЗВЕСТНЫЙ','КРЕПКИЙ ЛЮБИТЕЛЬ','РЕГ','АГРО-РЕГ','НИТ','РЕГ'];
+ const fields=[
+  'МИНСК · СПОРТИВНЫЙ ПОКЕР','МИНСК · MAIN EVENT','СОЧИ · MAIN EVENT',
+  'МИНСК · HIGH ROLLER','ОНЛАЙН · MTT','МИНСК · HIGH ROLLER'
+ ];
+ const k=i%6;
+ let line=d.ctx||'';
+ if(d.street!=='ПРЕФЛОП'){
+   if(d.id==='F_A72_QJ') line='Префлоп: BTN открыл 2,2 ББ → BB колл. Флоп: BB чек → решение Hero.';
+   else if(d.id==='F_T98_AQ') line='Префлоп: BTN открыл 2,2 ББ → BB колл. Флоп: BB чек → решение Hero.';
+   else if(d.id==='F_K72_76') line='Префлоп: BTN открыл 2,2 ББ → Hero BB колл. Флоп: Hero чек → BTN ставит 125% банка.';
+   else if(d.id==='T_Q832_AQ') line='Префлоп: BTN открыл 2,2 ББ → BB колл. Флоп Q♦8♠3♣: BB чек → BTN 33% → BB колл. Тёрн 2♥: BB чек.';
+   else if(d.id==='T_JT85_KQ') line='Префлоп: BTN открыл 2,2 ББ → BB колл. Флоп J♠T♣8♦: чек → чек. Тёрн 5♥: BB чек.';
+   else if(d.id==='R_K9522_KQ') line='Префлоп: CO открыл 2,2 ББ → BB колл. Флоп/тёрн: Hero ставил на вэлью → BB колл. Ривер 2♣: BB чек.';
+   else if(d.id==='R_K947A_KJ') line='Префлоп: BTN открыл 2,2 ББ → Hero BB колл. Флоп и тёрн: Hero чек-колл. Ривер A♣: Hero чек → BTN ставит 140%.';
+   else if(d.id==='R_Q8432_Q9') line='Префлоп: BTN открыл 2,2 ББ → Hero BB колл. Флоп/тёрн: небольшие ставки → колл. Ривер 2♦: BTN ставит 25%.';
+ }
+ return {
+  field:fields[k], event:k===3||k===5?'HIGH ROLLER':'MTT',
+  stage:stages[k], table:tables[k], left:k===5?'6 ОСТАЛОСЬ':k===3?'12 ДО ДЕНЕГ':'—',
+  eff:`${d.stack} ББ`, opp:opponents[k], line
+ };
+}
+function v31PassportHTML(c){
+ return `<div class="v31Passport"><div class="v31PassportTop">
+  <span class="v31Chip hot">${c.field}</span><span class="v31Chip">${c.event}</span>
+  <span class="v31Chip gold">${c.stage}</span><span class="v31Chip">${c.table}</span>
+  ${c.left&&c.left!=='—'?`<span class="v31Chip">${c.left}</span>`:''}
+  <span class="v31Chip">ЭФФ. СТЕК ${c.eff}</span><span class="v31Chip">ОППОНЕНТ · ${c.opp}</span>
+ </div><div class="v31Line"><span>ЛИНИЯ ДО ТВОЕГО РЕШЕНИЯ</span>${c.line}</div></div>`;
+}
+function v31DecisionClass(br){
+ const max=Math.max(0,...(br?.topActions||[]).map(x=>Number(x.freq)||0));
+ const f=Number(br?.actionFrequency)||0;
+ if(!max||br?.source==='NO_MODEL')return {key:'alt',label:'НЕДОСТАТОЧНО МОДЕЛИ'};
+ const rel=f/max;
+ if(f>=.50||rel>=.80)return {key:'main',label:'ОСНОВНАЯ ЛИНИЯ'};
+ if(f>=.22||rel>=.48)return {key:'alt',label:'ХОРОШАЯ АЛЬТЕРНАТИВА'};
+ if(f>=.08||rel>=.20)return {key:'exploit',label:'НИЗКОЧАСТОТНАЯ / ЭКСПЛОЙТНАЯ'};
+ return {key:'error',label:'ОШИБКА'};
+}
+function v31Freaky(p){
+ const w=p.weakest,s=p.strongest,ws=p.dims[w]??0,ss=p.dims[s]??0;
+ if(w==='discipline')return `База уже есть. Но как только ставка становится большой, у тебя начинается внутреннее расследование и подозреваемый почему-то всегда «блеф». Лечим дисциплину.`;
+ if(w==='size')return `Действия ты чаще понимаешь лучше, чем размеры. Полбанка не является семейной традицией. Будем учиться ставить по причине.`;
+ if(w==='post')return `Префлоп пережили. На постфлопе иногда появляется вера в красивую историю вместо диапазона. Ничего, романтику оставим каналу, а здесь посчитаем.`;
+ if(w==='pre')return `До постфлопной философии пока рано: сначала перестанем заходить в раздачу так, будто позицию придумали маркетологи.`;
+ return `Рыбой назвать тебя уже сложно. Теперь будем искать не очевидную дичь, а мелкие места, где ты оставляешь EV и потом называешь это «по динамике».`;
+}
+function v31HumanSummary(p){
+ const st=V31_DIM[p.strongest]||'сильная сторона', wk=V31_DIM[p.weakest]||'слабая зона';
+ const sv=p.dims[p.strongest],wv=p.dims[p.weakest];
+ return `Сильнее всего сейчас выглядит ${st.toLowerCase()} (${sv ?? '—'}). Больше всего вопросов вызывает ${wk.toLowerCase()} (${wv ?? '—'}). Это стартовая модель, а не приговор: после реальных тренировочных решений веса будут пересчитаны.`;
+}
+function v31PatternEvidence(results,p){
+ const weak=results.filter(x=>x.dim===p.weakest).sort((a,b)=>a.score-b.score);
+ const hard=weak.filter(x=>x.score<55);
+ const over=weak.filter(x=>x.confidence>=90&&x.score<55);
+ let line=hard.length?`${hard.length} слабых решения в зоне «${V31_DIM[p.weakest]}»`:`Ни одной грубой повторяемости пока нет`;
+ if(over.length)line+=`, из них ${over.length} — при высокой уверенности`;
+ return line+'.';
+}
+
+/* Enrich all 12 onboarding spots with full poker context. */
+if(Array.isArray(window.DIAG25||DIAG25)){
+ DIAG25.forEach((d,i)=>{d.v31=v31ContextFor(d,i)});
+}
+
+/* Diagnostic UI: readable, Russian, full line before the decision. */
+window.d25RenderSpot = d25RenderSpot = function(){
+ const d=DIAG25[D25.index],progress=(D25.index/DIAG25.length)*100,c=d.v31||v31ContextFor(d,D25.index);
+ $('#story').onclick=null;
+ $('#story').innerHTML=`<div class="v31DiagWrap">
+   <div class="v31DiagCard">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <span class="ey">ВХОДНАЯ ДИАГНОСТИКА · ${D25.index+1}/${DIAG25.length}</span>
+      <b style="font-size:10px;color:#ff82b4">${V31_DIM[d.dim]}</b>
+    </div>
+    <div class="d25Bar" style="margin:10px 0 14px"><i style="width:${progress}%"></i></div>
+    ${v31PassportHTML(c)}
+    <div class="d25Meta"><span class="hot">${d.street}</span><span>${d.pos}</span><span>${d.stack} ББ</span></div>
+    <h2 class="v31Question">${d.q.replace('ТВОЁ РЕШЕНИЕ?','Какое действие выбираешь?').replace('ЧТО ДЕЛАЕШЬ?','Какое действие выбираешь?')}</h2>
+    ${d.board.length?`<div class="d25Board">${d.board.map(x=>card(x,true)).join('')}</div>`:''}
+    <div class="d25Cards">${d.hero.map(x=>card(x)).join('')}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:13px 0">
+      <div style="background:#0a0a0e;border-radius:14px;padding:10px"><span class="ey">БАНК</span><b style="display:block;font-size:18px">${d.pot} ББ</b></div>
+      <div style="background:#0a0a0e;border-radius:14px;padding:10px"><span class="ey">ЧТО ПРОВЕРЯЕМ</span><b style="display:block;font-size:12px;margin-top:4px">${d.concept}</b></div>
+    </div>
+    <div id="d25Choices">${d.choices.map((c,i)=>`<button class="v31DiagChoice" data-d25c="${i}"><span>${c[0]}</span><span>→</span></button>`).join('')}</div>
+    <div id="d25Confidence"></div>
+   </div>
+   <p style="font-size:10px;color:#7f7882;text-align:center;margin:10px 20px">До конца теста мы не раскрываем ответы. Иначе диагностика начнёт сама себя обучать.</p>
+ </div>`;
+ $$('[data-d25c]').forEach(b=>b.onclick=()=>{
+   const idx=+b.dataset.d25c,choice=d.choices[idx],br=d25Grade(d,choice);
+   $$('[data-d25c]').forEach(x=>{x.disabled=true;x.style.opacity=x===b?'1':'.35'});
+   D25.pending={spot:d,choice,br,score:br.score,responseMs:Math.round(performance.now()-D25.started)};
+   $('#d25Confidence').innerHTML=`<div style="margin-top:14px;padding-top:12px;border-top:1px solid #2a2a31">
+     <h3 style="font-size:14px;margin-bottom:5px">Насколько ты уверен?</h3>
+     <p class="mut small">Это не меняет оценку. Мы ищем места, где уверенность не совпадает с качеством решения.</p>
+     <div class="d25ConfGrid"><button data-d25conf="45">СОМНЕВАЛСЯ</button><button data-d25conf="70">СКОРЕЕ УВЕРЕН</button><button data-d25conf="95">УВЕРЕН</button></div>
+   </div>`;
+   $$('[data-d25conf]').forEach(cnf=>cnf.onclick=()=>{
+     const r=D25.pending;r.confidence=+cnf.dataset.d25conf;r.dim=d.dim;r.concept=d.concept;r.action=choice[0];
+     const cls=v31DecisionClass(r.br);r.decisionClass=cls.key;r.decisionLabel=cls.label;
+     D25.results.push(r);D25.pending=null;D25.index++;D25.started=performance.now();setTimeout(renderDiagnostic,100);
+   });
+ });
+};
+
+/* Diagnostic finale: human analysis first, numbers second. */
+window.d25Finish = d25Finish = function(){
+ const p=d25Profile(D25.results);
+ S.diagDone=true;S.diagVersion=31;S.diagnosticProfile25=p;S.diagnosticProfile31={...p,rank:v31Rank(p.overall)};
+ S.diagnostic=D25.results.map(x=>({concept:x.concept,ok:x.score>=72,score:x.score,confidence:x.confidence,dim:x.dim,action:x.action,source:x.br?.source||'',brainConfidence:x.br?.confidence||0,decisionClass:x.decisionClass}));
+ S.events=(S.events||[]).filter(e=>e.mode!=='diagnostic');
+ D25.results.forEach(x=>recordEvent({mode:'diagnostic',diagVersion:31,baseline:true,concept:x.concept,conceptId:x.br?.concept||null,street:x.spot.street,action:x.action,grade:x.score>=78?'g':x.score>=48?'y':'r',confidence:x.confidence,responseMs:x.responseMs,policyScore:x.score,why:x.br?.explanation||'',brainSource:x.br?.source||'',brainConfidence:x.br?.confidence||0}));
+ const real=(S.events||[]).filter(e=>e.mode!=='diagnostic').length;if(real<20)S.skill=p.overall;save();
+
+ const rank=v31Rank(p.overall), conf=v31DiagConfidence(p);
+ const dims=Object.entries(p.dims).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);
+ const strongest=dims.slice(0,2), weakest=[...dims].reverse().slice(0,2);
+ const nextAction=p.weakest==='discipline'?'Пройти 8 спотов на большие ставки и блеф-кетчи':
+                  p.weakest==='size'?'Пройти 8 задач на выбор размера ставки':
+                  p.weakest==='post'?'Пройти 8 постфлоп-спотов с полной линией':
+                  'Пройти 8 префлоп-спотов на позиции и защиту BB';
+
+ $('#story').innerHTML=`<div class="v31Result">
+   <div class="v31ResultHero">
+     <span class="ey">ПЕРВЫЙ ПОКЕРНЫЙ ПРОФИЛЬ · ${p.sample} РЕШЕНИЙ</span>
+     <h1>${rank}</h1><span class="v31RankBadge">УРОВЕНЬ ${p.overall}/100</span>
+     <p class="v31Human">${v31HumanSummary(p)}</p>
+   </div>
+   <div class="v31ResultBlock">
+     <h3>Что уже получается</h3>
+     ${strongest.map(([k,v])=>`<div class="v31SkillRow"><div><b>${V31_DIM[k]}</b><small>${v31DimPhrase(v)}</small></div><b>${v}</b><div class="v31SkillBar"><i style="width:${v}%"></i></div></div>`).join('')}
+   </div>
+   <div class="v31ResultBlock">
+     <h3>Где сейчас теряется больше всего</h3>
+     ${weakest.map(([k,v])=>`<div class="v31SkillRow weak"><div><b>${V31_DIM[k]}</b><small>${v31DimPhrase(v)}</small></div><b>${v}</b><div class="v31SkillBar"><i style="width:${v}%"></i></div></div>`).join('')}
+     <div class="v31Evidence"><strong>Почему мы так решили:</strong> ${v31PatternEvidence(D25.results,p)}</div>
+   </div>
+   <div class="v31ResultBlock">
+     <h3>Насколько этому можно верить</h3>
+     <div class="v31Evidence"><strong>${conf[0].toUpperCase()}.</strong> ${conf[1]} ${p.overconf?`Есть ${p.overconf} случай(я), где высокая уверенность совпала со слабым решением — это особенно полезный сигнал.`:''}</div>
+   </div>
+   <div class="v31ResultBlock">
+     <h3>С чего начать</h3>
+     <div class="v31Evidence"><strong>${nextAction}.</strong><br>После этого приложение проверит тот же навык на новых ситуациях и только тогда пересчитает профиль.</div>
+     <div class="v31Freak"><span>ФРИКОВАЯ ДАМА 💋</span><p>${v31Freaky(p)}</p></div>
+   </div>
+   <button class="primary" id="d25Enter">ВОЙТИ В POKER SWIPE →</button>
+ </div>`;
+ $('#d25Enter').onclick=()=>{$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');D25.active=false;renderHome();};
+};
+
+/* Smarter verdict wording for regular Swipe: no more "one magic correct answer". */
+const v31FinalizeBase = window.finalizeSwipe;
+window.finalizeSwipe = finalizeSwipe = function(s,a,size){
+ if(swLocked)return;
+ swLocked=true;
+ const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);
+ const cls=v31DecisionClass(br);
+ let g=cls.key==='error'?'r':(cls.key==='exploit'||cls.key==='alt'?'y':'g');
+ if(br.sizeGrade==='r')g='r';
+ const response=now()-swStart;
+ swSessionGrades.push({g,street:s.street,concept:s.concept});
+ const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score,decisionClass:cls.key});
+ $$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});
+ const alt=(br.topActions||[]).filter(x=>x.action!==br.action).slice(0,2);
+ const freq=Number.isFinite(br.actionFrequency)?Math.round(br.actionFrequency*100):null;
+ const v=$('#swipeVerdict');v.classList.remove('hidden');
+ v.innerHTML=`<div class="swipeFlash" id="swipeFlash">
+   <span class="v31DecisionBadge ${cls.key}">${cls.label}</span>
+   <h3 style="margin:9px 0 7px">${a}${size!=null?' · '+size+'%':''}</h3>
+   <p class="v31Why">${br.explanation||'Для этого узла пока недостаточно точной модели, поэтому жёсткий диагноз не ставим.'}</p>
+   ${freq!=null?`<p class="mut small">Частота выбранной линии в текущей reference-модели: <b>${freq}%</b>. ${alt.length?`Ближайшая альтернатива: ${alt.map(x=>`${x.action} ${Math.round(x.freq*100)}%`).join(' · ')}.`:''}</p>`:''}
+   ${br.source==='NO_MODEL'?`<p class="mut small">Данных недостаточно: это решение не будет превращено в «грубую ошибку» только потому, что модель не знает узел.</p>`:''}
+   <p class="pink"><b>${cls.key==='main'?'Редкий случай: даже мне придраться сложно.':cls.key==='alt'?'Нормальная линия. Покер всё ещё не тест ПДД.':cls.key==='exploit'?'Живёт, но требует причины. «Мне показалось» причиной не считается.':'Вот здесь уже есть что лечить.'}</b></p>
+   <div id="holdArea"></div>
+ </div>`;
+ const delay=g==='g'?2700:g==='y'?3600:4700;
+ swTimer=setTimeout(swipeNext,delay);
+ $('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<span class="holdBadge">РАЗДАЧА ЗАДЕРЖАНА</span><button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext};
+};
+
+/* Full passport in regular swipe, including preflop line for postflop decisions. */
+const v31RenderSwipeBase = window.renderSwipe;
+window.renderSwipe = renderSwipe = function(){
+ v31RenderSwipeBase.apply(this,arguments);
+ const s=swSession?.[swIndex]; if(!s)return;
+ const visual=document.getElementById('swipeVisual'); if(!visual)return;
+ let c={
+  field:'МИНСК · СПОРТИВНЫЙ ПОКЕР',event:'MTT',stage:s.street==='ПРЕФЛОП'?'СЕРЕДИНА':'ПОЗДНЯЯ',
+  table:'6-MAX',left:'42 ОСТАЛОСЬ',eff:`${s.stack} ББ`,opp:/BB/.test(s.pos||'')?'РЕГ':'НЕИЗВЕСТНЫЙ',
+  line:s.street==='ПРЕФЛОП'?(s.ctx||'Действие до Hero указано в условии.'):`Префлоп: BTN открыл 2,2 ББ → BB колл. ${s.street}: ${s.ctx||'решение Hero.'}`
+ };
+ const old=visual.querySelector('.v31Passport');if(old)old.remove();
+ visual.insertAdjacentHTML('afterbegin',v31PassportHTML(c));
+ const title=visual.querySelector('h2');if(title)title.textContent='Какое действие выбираешь?';
+};
+
+/* Premium home, Russian first. */
+window.renderHome = function(){
+ const h=document.getElementById('home');if(!h)return;
+ const m=typeof m30==='function'?m30():{sample:(S.events||[]).length},ri=typeof rankIndex28==='function'?rankIndex28():0;
+ const r=(window.RANKS28||RANKS28)?.[ri]||{name:v31Rank(S.skill),img:'assets/rank_01_rybulyar.jpg'};
+ const next=(window.RANKS28||RANKS28)?.[ri+1], np=next&&typeof rankPct30==='function'?rankPct30(ri+1,m):100;
+ const leak=typeof topLeak==='function'?topLeak():null, form=typeof formScore==='function'?formScore():50;
+ const leakName=leak?(typeof conceptLabel==='function'?conceptLabel(leak.concept):leak.concept):'ПОКА НЕТ ДОКАЗАННОГО ЛИКА';
+ h.innerHTML=`<div class="v31Home">
+  <div class="v31HomeTop"><div class="v31Wordmark">POKER <span>SWIPE</span></div><div class="v31Kiss">Фриковая Дама 💋</div></div>
+  <div class="v31Hero">
+   <div class="v31Identity"><img class="v31Avatar" src="${r.img}"><div><span class="ey">${esc(S.nick||'ИГРОК')} · ТВОЙ РАНГ</span><h1>${r.name}</h1><div class="v31Stats"><span><b>${S.skill}</b> навык</span><span><b>${form}</b> форма</span><span><b>${m.sample||0}</b> решений</span></div></div></div>
+   <div class="v31Goal"><div class="v31GoalHead"><div><span class="ey">СЛЕДУЮЩАЯ ЦЕЛЬ · МИНСК</span><h2>High Roller</h2><span class="small">Допуск открывается подтверждёнными навыками, а не фармом XP.</span></div><div class="v31GoalPct">${np}%</div></div><div class="v31Track"><i style="width:${np}%"></i></div><div class="small">${next&&typeof reqSummary30==='function'?`До «${next.name}»: ${reqSummary30(ri+1,m)}`:'Максимальный ранг открыт.'}</div><button class="v31Primary" id="v31Continue">ПРОДОЛЖИТЬ ТРЕНИРОВКУ →</button></div>
+  </div>
+  <div class="v31SectionHead"><h2>Что делать сейчас</h2><span>без меню из двадцати одинаковых кнопок</span></div>
+  <div class="v31Modes"><button class="v31Mode main" id="v31Swipe"><span class="ey">10 КОНТЕКСТНЫХ СПОТОВ</span><b>ПОКЕР<br>SWIPE</b><small>Поляна, стадия, стол, стек, оппонент и полная линия до решения.</small><span class="arrow">→</span></button><button class="v31Mode quick" id="v31Quick"><span class="ey">БЫСТРАЯ ИГРА</span><b>3-MAX<br>HYPER</b><small>Короткая сессия против AI. Решения сохраняются в профиль.</small><span class="arrow">→</span></button></div>
+  <div class="v31SectionHead"><h2>Точечно</h2><span>одна задача — одна причина</span></div>
+  <div class="v31MiniGrid"><button class="v31Mini" id="v31Daily"><span class="ey">СЕГОДНЯ</span><b>Раздача дня</b><span>Один сложный спот с полным контекстом.</span></button><button class="v31Mini" id="v31Sizing"><span class="ey">РАЗМЕРЫ СТАВОК</span><b>Сколько ставим?</b><span>Размер и причина, а не угадайка.</span></button><button class="v31Mini" id="v31Review"><span class="ey">РАЗБОР</span><b>Где сломалось?</b><span>Ищем первую существенную ошибку линии.</span></button><button class="v31Mini" id="v31Xray"><span class="ey">ДИАПАЗОН</span><b>Рентген</b><span>Как линия сужает реальные комбинации.</span></button></div>
+  <div class="v31Insight"><span class="ey">ЧТО ПРИЛОЖЕНИЕ СЕЙЧАС ДУМАЕТ О ТЕБЕ</span><h2>${esc(leakName)}</h2><p>${leak?`${leak.r} ошибок на ${leak.n} похожих решениях. Это уже сигнал, но статус лика изменится только после проверки на новых спотах.`:'Выборки пока недостаточно. Я лучше скажу «не знаю», чем нарисую тебе красивый диагноз из трёх рук.'}</p></div>
+ </div>`;
+ const goSwipe=()=>{swSession=[];show('swipe')};
+ $('#v31Continue').onclick=goSwipe;$('#v31Swipe').onclick=goSwipe;
+ $('#v31Quick').onclick=()=>typeof startQuickGame30==='function'?startQuickGame30():startQuick();
+ $('#v31Daily').onclick=()=>show('daily');$('#v31Sizing').onclick=()=>show('sizing');$('#v31Review').onclick=()=>show('review');$('#v31Xray').onclick=()=>show('xray');
+ document.body.classList.add('home-context');
+};
+
+/* Russian-first chrome. Keep only poker-native abbreviations untranslated. */
+function v31RussianChrome(){
+ const nav=[...document.querySelectorAll('.nav button')];
+ nav.forEach(b=>{
+   const key=b.dataset.nav;
+   if(key==='home') b.childNodes[b.childNodes.length-1].textContent=' ИГРАТЬ';
+   if(key==='myhands') b.childNodes[b.childNodes.length-1].textContent=' МОИ';
+   if(key==='tournaments') b.childNodes[b.childNodes.length-1].textContent=' ТУРНИРЫ';
+   if(key==='profile') b.childNodes[b.childNodes.length-1].textContent=' ПРОФИЛЬ';
+ });
+ const chip=document.getElementById('levelChip');if(chip)chip.textContent=`НАВЫК ${S.skill}`;
+}
+const v31UiBase=window.ui;
+window.ui=ui=function(){if(v31UiBase)v31UiBase.apply(this,arguments);v31RussianChrome()};
+v31RussianChrome();
+
+/* Profile: explain numbers instead of throwing four stats at the user. */
+const v31ProfileBase=window.renderProfile;
+window.renderProfile=renderProfile=function(){
+ v31ProfileBase.apply(this,arguments);
+ const root=document.getElementById('profileArea');if(!root)return;
+ const m=typeof m30==='function'?m30():null;
+ const stats=[
+  ['Префлоп',m?.pre?.score,m?.pre?.n],['Постфлоп',m?.post?.score,m?.post?.n],
+  ['Размеры ставок',m?.size?.score,m?.size?.n],['Дисциплина',m?.disc?.score,m?.disc?.n]
+ ].filter(x=>Number.isFinite(x[1]));
+ if(!stats.length)return;
+ const best=[...stats].sort((a,b)=>b[1]-a[1])[0],worst=[...stats].sort((a,b)=>a[1]-b[1])[0];
+ let old=root.querySelector('.v31ProfileExplain');if(old)old.remove();
+ const box=document.createElement('div');box.className='v31ProfileExplain panel';
+ box.innerHTML=`<span class="ey">ЧТО ОЗНАЧАЮТ ТВОИ ЦИФРЫ</span><h2 style="margin:6px 0">${best[0]} — сильнее всего</h2><p>${best[1]}/100 · ${v31DimPhrase(best[1])}. Самая слабая зона сейчас — <b>${worst[0]}</b> (${worst[1]}/100).</p><p class="mut small">Оценка строится по ${stats.reduce((a,x)=>a+(x[2]||0),0)} наблюдениям в этих категориях. Если выборка мала, приложение не должно делать жёстких выводов.</p>`;
+ const rank=root.querySelector('.rank28Hero,.rankHero26');if(rank)rank.insertAdjacentElement('afterend',box);else root.prepend(box);
+};
+
+/* visible build marker for QA */
+document.documentElement.dataset.pokerSwipeVersion='31.0';
+const build=document.querySelector('.build');if(build)build.textContent='V31 УМНЫЙ МОЗГ';
+if(!document.getElementById('mainApp')?.classList.contains('hidden') && document.getElementById('home')?.classList.contains('active')){
+ try{renderHome();ui()}catch(e){console.error('V31 patch',e)}
+}
 })();
 </script>
 
