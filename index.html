@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="24.0">
+<meta name="app-version" content="25.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V24 POLISH</title>
+<title>POKER SWIPE — V25 SMART DIAGNOSTIC</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -836,13 +836,30 @@ main{padding-bottom:96px}
 .t23EditGhost24{border:1px solid #3a3340;background:#17141b;color:#fff;border-radius:14px;padding:12px 14px;font-size:10px;font-weight:1000}
 @media(max-width:370px){.topRightMark24{gap:4px}.topRightMark24 b{font-size:8px}.dailyTile{grid-template-columns:1fr 88px}.dailyTile .dailyFan24{width:82px}}
 
+
+/* ================= V25 · SMART DIAGNOSTIC ================= */
+.d25{width:min(430px,100%);margin:0 auto;padding:18px 18px 32px;box-sizing:border-box;min-height:calc(var(--app-stable-height,100dvh) - 10px);display:flex;flex-direction:column;justify-content:center}
+.d25Top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.d25Top span{font-size:8px;font-weight:1000;letter-spacing:.14em;color:#948d98}.d25Top b{font-size:9px;color:#ff6aa8}
+.d25Bar{height:5px;border-radius:99px;background:#ffffff0d;overflow:hidden;margin-bottom:14px}.d25Bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff2e84,#ff7db2);box-shadow:0 0 14px #ff2e8450;transition:width .25s var(--v21-ease)}
+.d25Card{border:1px solid #ffffff12;border-radius:26px;padding:16px;background:radial-gradient(circle at 90% 0,#ff2e841a,transparent 34%),linear-gradient(155deg,#15151c,#0d0d12);box-shadow:0 24px 54px #0008,inset 0 1px #ffffff05;position:relative;overflow:hidden}
+.d25Card:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,#ffffff04,transparent 24%,transparent 70%,#ff2e8405)}
+.d25Meta{display:flex;flex-wrap:wrap;gap:5px;position:relative;z-index:2}.d25Meta span{border:1px solid #34343e;border-radius:999px;padding:5px 7px;color:#a49da7;font-size:7px;font-weight:1000;letter-spacing:.05em}.d25Meta span.hot{border-color:#ff2e845b;color:#ff80b6;background:#26121b}
+.d25Card h2{font-size:27px;line-height:1;margin:13px 0 6px;letter-spacing:-.04em;position:relative;z-index:2}.d25Context{font-size:11px;line-height:1.45;color:#aaa3ad;margin-bottom:10px;position:relative;z-index:2}.d25Cards{display:flex;gap:7px;align-items:center;justify-content:center;margin:12px 0;position:relative;z-index:2}.d25Cards .pc{width:58px;height:78px;font-size:22px;border-radius:13px}.d25Board{display:flex;gap:5px;align-items:center;justify-content:center;margin:7px 0 14px;position:relative;z-index:2}.d25Board .pc{width:43px!important;height:59px!important;font-size:16px!important;border-radius:11px}
+.d25Pot{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:11px 0;position:relative;z-index:2}.d25Pot div{border:1px solid #2d2d36;border-radius:14px;padding:9px 10px;background:#0c0c10}.d25Pot span{display:block;font-size:7px;color:#77717d;letter-spacing:.11em;font-weight:1000}.d25Pot b{display:block;font-size:15px;margin-top:2px}
+.d25Choices{display:grid;gap:7px;margin-top:10px}.d25Choices button{width:100%;border:1px solid #383842;border-radius:16px;background:linear-gradient(160deg,#17171e,#101015);color:#fff;min-height:55px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;font-size:13px;font-weight:1000;box-shadow:0 8px 18px #0004;transition:.12s var(--v21-ease)}.d25Choices button small{font-size:8px;color:#77717d;font-weight:900}.d25Choices button:active{transform:translateY(2px) scale(.987)}.d25Choices button.selected{border-color:#ff2e84;background:#26121b;box-shadow:0 0 0 1px #ff2e8444,0 0 25px #ff2e8422}.d25Choices button:disabled{opacity:1}
+.d25Confidence{margin-top:12px;border:1px solid #ffffff10;border-radius:18px;padding:12px;background:#0b0b0f;animation:verdict21 .22s var(--v21-ease) both}.d25Confidence h3{font-size:14px;margin:0 0 3px}.d25Confidence p{font-size:9px;color:#817a85;margin:0 0 9px}.d25ConfGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.d25ConfGrid button{border:1px solid #34343e;border-radius:13px;background:#131319;color:#fff;padding:10px 3px;font-size:9px;font-weight:1000}.d25ConfGrid button:active{border-color:#ff2e84;background:#25121b}
+.d25NoReveal{margin-top:10px;text-align:center;color:#69636d;font-size:8px;letter-spacing:.06em}.d25Result{width:min(430px,100%);margin:0 auto;padding:20px 18px 34px;box-sizing:border-box}.d25ResultHero{border:1px solid #ff2e8452;border-radius:28px;padding:17px;background:radial-gradient(circle at 88% 0,#ff2e8430,transparent 35%),#120e13;box-shadow:0 24px 58px #0008}.d25ResultHero h1{font-size:48px;line-height:.86;margin:4px 0 8px}.d25ResultHero p{font-size:10px;line-height:1.45;color:#a69fa8;margin:0}.d25GradeTag{display:inline-flex;margin-top:10px;border:1px solid #ff2e8468;border-radius:999px;padding:6px 9px;font-size:8px;color:#ff8cbd;font-weight:1000}
+.d25Skills{margin:10px 0}.d25Skill{border:1px solid #30303a;border-radius:17px;padding:10px 11px;background:#101015;margin:6px 0}.d25SkillTop{display:flex;justify-content:space-between;align-items:center;gap:8px}.d25SkillTop b{font-size:11px}.d25SkillTop strong{font-size:17px}.d25SkillBar{height:6px;border-radius:99px;background:#23232b;overflow:hidden;margin-top:7px}.d25SkillBar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff2e84,#ffd257);transform-origin:left;animation:barIn21 .6s var(--v21-ease) both}.d25Skill.good{border-color:#42e78648}.d25Skill.bad{border-color:#ff4b6855}.d25Skill.good .d25SkillBar i{background:#42e786}.d25Skill.bad .d25SkillBar i{background:#ff4b68}
+.d25Calibration{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}.d25Calibration div{border:1px solid #30303a;border-radius:17px;padding:11px;background:#0f0f14}.d25Calibration span{display:block;font-size:7px;color:#79727d;font-weight:1000;letter-spacing:.09em}.d25Calibration b{display:block;font-size:22px;margin-top:3px}.d25Evidence{border:1px solid #30303a;border-radius:20px;padding:12px;background:#101015;margin-top:9px}.d25Evidence h3{font-size:10px;letter-spacing:.1em;margin:0 0 8px}.d25Miss{border-top:1px solid #26262e;padding:9px 0}.d25Miss:first-of-type{border-top:0}.d25MissTop{display:flex;justify-content:space-between;gap:8px}.d25MissTop b{font-size:10px}.d25MissTop span{font-size:8px;color:#ff687e;font-weight:1000}.d25Miss p{font-size:9px;line-height:1.4;color:#96909a;margin:4px 0 0}.d25Plan{border-left:2px solid #ff2e84;margin-top:10px;padding:8px 0 8px 10px;font-size:10px;line-height:1.45;color:#b9b3bb}.d25Foot{font-size:8px;line-height:1.45;color:#6f6872;margin:11px 2px}.d25Retake{margin-top:12px;border:1px solid #30303a;border-radius:20px;padding:12px;background:#101015}.d25RetakeTop{display:flex;justify-content:space-between;align-items:center;gap:8px}.d25Retake h3{font-size:10px;letter-spacing:.09em;margin:0}.d25Retake button{border:1px solid #ff2e8458;background:#25121b;color:#ff82b7;border-radius:999px;padding:7px 9px;font-size:8px;font-weight:1000}.d25Retake p{font-size:9px;line-height:1.4;color:#817a85;margin:7px 0 0}
+@media(max-width:370px){.d25{padding-left:13px;padding-right:13px}.d25Card{padding:14px}.d25Card h2{font-size:24px}.d25Result{padding-left:13px;padding-right:13px}.d25ResultHero h1{font-size:42px}}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
 </head>
 <body>
 <div class="app">
-<div class="build" style="display:none">V24</div>
+<div class="build" style="display:none">V25</div>
 
 <section id="onboarding" class="onboard"><div id="story" class="story">
       <span class="ey">POKER SWIPE · STARTUP</span>
@@ -2162,6 +2179,137 @@ openTournament23=function(id){
    const eb=$('#t23Edit'); if(eb) eb.onclick=(e)=>{e.preventDefault(); closeModal(); setTimeout(()=>openTournamentForm23(id),80)};
    const db=$('#t23QuickDelete'); if(db) db.onclick=(e)=>{e.preventDefault(); S.tournaments=t23List().filter(x=>String(x.id)!==String(id)); save(); closeModal(); renderTournaments23();};
  },40);
+}
+
+
+
+/* ================= V25 · POKER INTELLIGENCE + DIAGNOSTIC ================= */
+const DIAG25=[
+ {id:'PF_BTN_A8S',dim:'pre',concept:'RFI BTN',street:'ПРЕФЛОП',pos:'BTN',stack:30,pot:1.5,hero:['A♠','8♠'],board:[],ctx:'До тебя все сфолдили.',q:'ТВОЁ РЕШЕНИЕ?',choices:[['ФОЛД','ФОЛД'],['РЕЙЗ','РЕЙЗ']]},
+ {id:'PF_BB_K8S',dim:'pre',concept:'BB DEFENCE',street:'ПРЕФЛОП',pos:'BB vs BTN',stack:40,pot:4.7,hero:['K♦','8♦'],board:[],ctx:'BTN открыл 2.2 BB, SB фолд.',q:'КАК ЗАЩИЩАЕМ BB?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ'],['3-БЕТ','3-БЕТ']]},
+ {id:'PF_SB_A5S',dim:'pre',concept:'POLAR 3-BET',street:'ПРЕФЛОП',pos:'SB vs CO',stack:45,pot:4.8,hero:['A♣','5♣'],board:[],ctx:'CO открыл 2.3 BB.',q:'ЧТО ДЕЛАЕШЬ?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ'],['3-БЕТ','3-БЕТ']]},
+ {id:'PF_BTN_QJO',dim:'pre',concept:'FLAT IP',street:'ПРЕФЛОП',pos:'BTN vs HJ',stack:28,pot:4.7,hero:['Q♠','J♦'],board:[],ctx:'HJ открыл 2.2 BB.',q:'ТВОЯ ЛИНИЯ?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ'],['3-БЕТ','3-БЕТ']]},
+ {id:'F_A72_QJ',dim:'size',concept:'DRY A-HIGH',street:'ФЛОП',pos:'BTN vs BB',stack:38,pot:5.2,hero:['Q♣','J♣'],board:['A♦','7♠','2♥'],ctx:'BB чек.',q:'КАК ИГРАЕМ ФЛОП?',choices:[['ЧЕК','ЧЕК'],['BET 25%','СТАВКА',25],['BET 75%','СТАВКА',75]]},
+ {id:'F_T98_AQ',dim:'post',concept:'DYNAMIC BOARD',street:'ФЛОП',pos:'BTN vs BB',stack:42,pot:5.4,hero:['A♦','Q♣'],board:['T♠','9♠','8♦'],ctx:'BB чек.',q:'АВТОМАТИЧЕСКИЙ CBET?',choices:[['ЧЕК','ЧЕК'],['BET 25%','СТАВКА',25],['BET 75%','СТАВКА',75]]},
+ {id:'F_K72_76',dim:'discipline',concept:'VS OVERBET',street:'ФЛОП',pos:'BB vs BTN',stack:40,pot:5.4,hero:['7♣','6♣'],board:['K♠','7♦','2♥'],ctx:'BTN ставит 125% банка.',q:'ЗАЩИЩАЕМ ПАРУ?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ'],['РЕЙЗ','РЕЙЗ']]},
+ {id:'T_Q832_AQ',dim:'size',concept:'TURN VALUE',street:'ТЁРН',pos:'BTN vs BB',stack:34,pot:8.8,hero:['A♣','Q♣'],board:['Q♦','8♠','3♣','2♥'],ctx:'Флоп bet 33% — call. BB снова чек.',q:'КАКОЙ ПЛАН НА ТЁРНЕ?',choices:[['ЧЕК','ЧЕК'],['BET 50%','СТАВКА',50],['BET 75%','СТАВКА',75],['BET 125%','СТАВКА',125]]},
+ {id:'T_JT85_KQ',dim:'post',concept:'SHOWDOWN VALUE',street:'ТЁРН',pos:'BTN vs BB',stack:40,pot:5.4,hero:['K♣','Q♦'],board:['J♠','T♣','8♦','5♥'],ctx:'Флоп check-check. BB чек.',q:'ДАВИМ ИЛИ БЕРЁМ ШОУДАУН?',choices:[['ЧЕК','ЧЕК'],['BET 33%','СТАВКА',33],['BET 75%','СТАВКА',75]]},
+ {id:'R_K9522_KQ',dim:'size',concept:'THIN VALUE',street:'РИВЕР',pos:'CO vs BB',stack:31,pot:18,hero:['K♥','Q♥'],board:['K♣','9♦','5♠','2♥','2♣'],ctx:'BB чекнул третью улицу.',q:'ЕСТЬ ЕЩЁ ДОБОР?',choices:[['ЧЕК','ЧЕК'],['BET 33%','СТАВКА',33],['BET 75%','СТАВКА',75]]},
+ {id:'R_K947A_KJ',dim:'discipline',concept:'BIG BET BLUFF-CATCH',street:'РИВЕР',pos:'BB vs BTN',stack:26,pot:20,hero:['K♠','J♦'],board:['K♥','9♣','4♦','7♠','A♣'],ctx:'BTN ставит 140% банка.',q:'ТОП-ПАРА. И ЧТО?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ']]},
+ {id:'R_Q8432_Q9',dim:'discipline',concept:'PRICE DEFENCE',street:'РИВЕР',pos:'BB vs BTN',stack:32,pot:24,hero:['Q♠','9♣'],board:['Q♥','8♦','4♣','3♠','2♦'],ctx:'BTN ставит 25% банка.',q:'ЦЕНА МАЛЕНЬКАЯ. ТВОЙ ОТВЕТ?',choices:[['ФОЛД','ФОЛД'],['КОЛЛ','КОЛЛ'],['РЕЙЗ','РЕЙЗ']]}
+];
+const D25_DIM={pre:'ПРЕФЛОП',post:'ПОСТФЛОП',size:'САЙЗИНГ',discipline:'ДИСЦИПЛИНА'};
+let D25={active:false,index:0,results:[],started:0,pending:null,force:false};
+
+function d25SpotObj(d){return {id:d.id,spotId:d.id,street:d.street,pos:d.pos,stack:d.stack,pot:d.pot,hero:d.hero,board:d.board,ctx:d.ctx,concept:d.concept}}
+function d25Grade(d,choice){
+ const br=PokerBrain.gradeDecision(d25SpotObj(d),choice[1],choice[2]??null);
+ const score=Number.isFinite(br.score)?br.score:(br.grade==='g'?92:br.grade==='y'?62:18);
+ return {...br,score:Math.max(0,Math.min(100,score))};
+}
+function d25TopAction(br){const a=br?.topActions?.[0];if(!a)return'—';return `${a.action}${Number.isFinite(a.freq)?' · '+Math.round(a.freq*100)+'%':''}`}
+function d25Level(s){return s>=86?'СИЛЬНЫЙ СТАРТ':s>=74?'РЕГОВЫЙ УРОВЕНЬ':s>=60?'КЛУБНЫЙ РЕГ':s>=45?'НЕСТАБИЛЬНАЯ БАЗА':'БАЗУ НАДО СОБИРАТЬ'}
+function d25Class(s){return s>=72?'good':s<50?'bad':''}
+function d25Profile(results){
+ const dims={}; Object.keys(D25_DIM).forEach(k=>{const a=results.filter(x=>x.dim===k);dims[k]=a.length?Math.round(a.reduce((s,x)=>s+x.score,0)/a.length):null});
+ const overall=Math.round(results.reduce((s,x)=>s+x.score,0)/Math.max(1,results.length));
+ const calib=Math.round(100-results.reduce((s,x)=>s+Math.abs((x.confidence||70)-x.score),0)/Math.max(1,results.length));
+ const overconf=results.filter(x=>(x.confidence||0)>=90&&x.score<55).length;
+ const weak=Object.entries(dims).filter(x=>x[1]!=null).sort((a,b)=>a[1]-b[1]);
+ const misses=[...results].sort((a,b)=>a.score-b.score).slice(0,3);
+ return {version:25,overall,dims,calibration:Math.max(0,calib),overconf,weakest:weak[0]?.[0]||null,strongest:weak.at(-1)?.[0]||null,misses,completedAt:Date.now(),sample:results.length};
+}
+function d25Plan(profile){
+ const k=profile.weakest;
+ return ({pre:'Первый приоритет — префлоп: позиции, защита BB и границы продолжения. Следующие сессии будут чаще давать тебе именно эти узлы.',post:'Первый приоритет — постфлоп: меньше автоматических ставок, больше внимания к текстуре, showdown value и взаимодействию диапазонов.',size:'Первый приоритет — размеры: тебе нужно отделить правильное действие от правильного size-family. Следующие задания будут чаще заставлять выбирать конкретный размер.',discipline:'Первый приоритет — дисциплина: большие ставки и дешёвая цена требуют разных continue-range. Будем чаще проверять bluff-catch и price defence.'}[k]||'Профиль пока ровный — будем собирать дистанцию и искать более узкие паттерны.');
+}
+function d25Why(r){
+ const br=r.br||{}; const d=r.spot;
+ if(br.explanation)return br.explanation;
+ if(d.dim==='discipline')return'Сначала цена и структура диапазона, потом абсолютная сила руки.';
+ return'Решение сравнивается с ближайшей reference-policy по позиции, стеку, текстуре и типу действия.';
+}
+function d25Start(force=false){
+ D25={active:true,index:0,results:[],started:performance.now(),pending:null,force};
+ $('#onboarding').classList.remove('hidden'); $('#mainApp').classList.add('hidden');
+ document.body.classList.remove('home-context'); renderDiagnostic();
+}
+window.startDiagnostic25=d25Start;
+
+function d25RenderSpot(){
+ const d=DIAG25[D25.index],progress=(D25.index/DIAG25.length)*100;
+ $('#story').onclick=null;
+ $('#story').innerHTML=`<div class="d25"><div class="d25Top"><span>СТАРТОВЫЙ СРЕЗ · ${D25.index+1}/${DIAG25.length}</span><b>${D25_DIM[d.dim]}</b></div><div class="d25Bar"><i style="width:${progress}%"></i></div>
+ <div class="d25Card"><div class="d25Meta"><span class="hot">${d.street}</span><span>${d.pos}</span><span>${d.stack} BB</span></div><h2>${d.q}</h2><div class="d25Context">${d.ctx}</div>${d.board.length?`<div class="d25Board">${d.board.map(x=>card(x,true)).join('')}</div>`:''}<div class="d25Cards">${d.hero.map(x=>card(x)).join('')}</div><div class="d25Pot"><div><span>POT</span><b>${d.pot} BB</b></div><div><span>НАВЫК</span><b>${d.concept}</b></div></div><div class="d25Choices" id="d25Choices">${d.choices.map((c,i)=>`<button type="button" data-d25c="${i}"><span>${c[0]}</span><small>→</small></button>`).join('')}</div><div id="d25Confidence"></div></div><div class="d25NoReveal">Ответы не показываем до конца — иначе тест сам себя обучит.</div></div>`;
+ $$('[data-d25c]').forEach(b=>b.onclick=()=>{
+   const idx=+b.dataset.d25c,choice=d.choices[idx],br=d25Grade(d,choice);
+   $$('[data-d25c]').forEach(x=>{x.disabled=true;x.classList.toggle('selected',x===b)});
+   D25.pending={spot:d,choice,br,score:br.score,responseMs:Math.round(performance.now()-D25.started)};
+   $('#d25Confidence').innerHTML=`<div class="d25Confidence"><h3>Насколько ты был уверен?</h3><p>Это не влияет на правильность. Я проверяю, где ты уверенно ошибаешься.</p><div class="d25ConfGrid"><button data-d25conf="45">СОМНЕВАЛСЯ</button><button data-d25conf="70">СКОРЕЕ ДА</button><button data-d25conf="95">УВЕРЕН</button></div></div>`;
+   $$('[data-d25conf]').forEach(c=>c.onclick=()=>{
+     const r=D25.pending;r.confidence=+c.dataset.d25conf;r.dim=d.dim;r.concept=d.concept;r.action=choice[0];D25.results.push(r);D25.pending=null;D25.index++;D25.started=performance.now();
+     setTimeout(renderDiagnostic,120);
+   });
+ });
+}
+function d25Finish(){
+ const p=d25Profile(D25.results); S.diagDone=true;S.diagVersion=25;S.diagnosticProfile25=p;S.diagnostic=D25.results.map(x=>({concept:x.concept,ok:x.score>=72,score:x.score,confidence:x.confidence,dim:x.dim,action:x.action,source:x.br?.source||'',brainConfidence:x.br?.confidence||0}));
+ // replace previous onboarding baseline so retests do not pollute YOU forever
+ S.events=(S.events||[]).filter(e=>e.mode!=='diagnostic');
+ D25.results.forEach(x=>recordEvent({mode:'diagnostic',diagVersion:25,baseline:true,concept:x.concept,conceptId:x.br?.concept||null,street:x.spot.street,action:x.action,grade:x.score>=78?'g':x.score>=48?'y':'r',confidence:x.confidence,responseMs:x.responseMs,policyScore:x.score,why:x.br?.explanation||'',brainSource:x.br?.source||'',brainConfidence:x.br?.confidence||0}));
+ const real=(S.events||[]).filter(e=>e.mode!=='diagnostic').length; if(real<20)S.skill=p.overall; save();
+ const weak=D25_DIM[p.weakest]||'—',strong=D25_DIM[p.strongest]||'—';
+ $('#story').innerHTML=`<div class="d25Result"><div class="d25ResultHero"><span class="ey">СТАРТОВЫЙ ПРОФИЛЬ · 12 СПОТОВ</span><h1 class="impact">${p.overall}<br><span class="pink">/ 100</span></h1><p>Это не «процент правильных ответов». Оценка учитывает, насколько выбранное действие близко к основной policy и насколько точно ты попал в size-family.</p><span class="d25GradeTag">${d25Level(p.overall)}</span></div>
+ <div class="d25Skills">${Object.entries(D25_DIM).map(([k,n])=>`<div class="d25Skill ${d25Class(p.dims[k])}"><div class="d25SkillTop"><b>${n}</b><strong>${p.dims[k]??'—'}</strong></div><div class="d25SkillBar"><i style="width:${p.dims[k]??0}%"></i></div></div>`).join('')}</div>
+ <div class="d25Calibration"><div><span>КАЛИБРОВКА УВЕРЕННОСТИ</span><b>${p.calibration}</b></div><div><span>УВЕРЕННО И МИМО</span><b class="${p.overconf?'red':'green'}">${p.overconf}</b></div></div>
+ <div class="d25Evidence"><h3>ЧТО Я УЖЕ ВИЖУ</h3><div class="d25Miss"><div class="d25MissTop"><b>Сильнее всего</b><span style="color:#42e786">${strong}</span></div></div><div class="d25Miss"><div class="d25MissTop"><b>Первый кандидат на leak</b><span>${weak}</span></div></div>${p.misses.map(x=>`<div class="d25Miss"><div class="d25MissTop"><b>${esc(x.concept)}</b><span>${x.score}/100</span></div><p>Ты выбрал: ${esc(x.action)}. Основной ориентир: ${esc(d25TopAction(x.br))}. ${esc(d25Why(x))}</p></div>`).join('')}</div>
+ <div class="d25Plan"><b>ЧТО БУДЕТ ДАЛЬШЕ</b><br>${d25Plan(p)}</div><div class="d25Foot">12 решений — это стартовый baseline, а не окончательный диагноз. После реальной дистанции стартовый тест постепенно перестаёт влиять на профиль. ICM здесь специально не оценивается: без полного payout/stack tree это была бы имитация точности.</div><button class="primary" id="d25Enter">ВОЙТИ В POKER SWIPE →</button></div>`;
+ $('#d25Enter').onclick=()=>{$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');D25.active=false;renderHome();};
+}
+renderDiagnostic=function(){if(!D25.active)D25={active:true,index:0,results:[],started:performance.now(),pending:null,force:false};if(D25.index>=DIAG25.length){d25Finish();return}d25RenderSpot();}
+
+/* Start-screen story now leads into the real assessment */
+const __renderStoryV25Base=renderStory;
+renderStory=function(){
+ if(S.onboarded&&S.diagDone){$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');renderHome();return}
+ if(!S.onboarded){
+   if(story<3){$('#story').onclick=()=>{story++;renderStory()};$('#story').innerHTML=storyScene21(story);return}
+   $('#story').onclick=null;$('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center"><div class="storyStep21">${[0,1,2].map(()=>'<i class="on"></i>').join('')}</div><div class="storyIdentity21"><span class="line"></span><b>СТАРТОВЫЙ ПРОФИЛЬ</b><span class="line"></span></div><h1 class="impact">НАПИШИ СВОЙ<br><span class="pink">НИКНЕЙМ.</span></h1><p>Дальше — 12 реальных решений примерно на две минуты. Префлоп, постфлоп, размеры и ривер.</p><input id="nickInput" maxlength="18" placeholder="Твой никнейм"><button class="primary" id="nickGo" style="margin-top:10px">НАЧАТЬ ТЕСТ →</button></div>`;
+   $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;save();d25Start(false)};return;
+ }
+ d25Start(false);
+}
+
+/* Smarter compatibility brain for modules that expected GTOBrainV20 */
+(function(){
+ const ranks='AKQJT98765432',suits=['♠','♥','♦','♣'];
+ function rep(hand,board=[]){
+   if(!hand)return[];const used=new Set(board);const pair=hand.length===2;const suited=hand.endsWith('s'),off=hand.endsWith('o');const r1=hand[0],r2=pair?hand[1]:hand[1];
+   if(pair){for(let i=0;i<suits.length;i++)for(let j=i+1;j<suits.length;j++){let a=r1+suits[i],b=r1+suits[j];if(!used.has(a)&&!used.has(b))return[a,b]}}
+   if(suited){for(const s of suits){let a=r1+s,b=r2+s;if(!used.has(a)&&!used.has(b))return[a,b]}}
+   for(const s1 of suits)for(const s2 of suits){if(s1===s2)continue;let a=r1+s1,b=r2+s2;if(!used.has(a)&&!used.has(b))return[a,b]}
+   return[];
+ }
+ function analyze(x={}){
+   const board=x.board||[],hero=rep(x.hand,board),street=String(x.street||'PREFLOP').toUpperCase();
+   let ctx='';
+   if(street==='PREFLOP'){ctx=x.spot==='RFI'?'До тебя все сфолдили.':x.spot==='CALL_VS_SHOVE'?'Facing shove':x.spot==='VS_OPEN'?'CO открыл 2.2 BB.':'До тебя все сфолдили.'}
+   else if(x.facing&&x.pot)ctx=`Facing bet ${Math.round(x.facing/x.pot*100)}%`;else ctx='Checked to';
+   const spot={street,pos:x.position||'BTN',stack:x.stack||30,pot:x.pot||0,hero,board,ctx};
+   const node=PokerBrain.nodeFor(spot);return node?{...node,modelVersion:'25.0'}:{actions:null,source:'NO_MODEL',confidence:0,why:'Недостаточно близкого reference-node.'};
+ }
+ window.PokerBrainV25={version:'25.0',analyze,diagnosticProfile:d25Profile,gradeDiagnostic:d25Grade,truth:'reference-policy + exact math; no fake solver dump'};
+ window.GTOBrainV20={handClass:(a,b)=>PokerBrain.classOf([a,b]),analyze};
+})();
+
+/* Diagnostic baseline appears in YOU, but fades out after real sample grows */
+you20Events=function(){const all=Array.isArray(S.events)?S.events:[],real=all.filter(e=>e.mode!=='diagnostic');if(real.length>=20)return real;const base=all.filter(e=>e.mode==='diagnostic'&&e.diagVersion===25).slice(-12);return [...base,...real];}
+const __renderProfileV25Base=renderProfile;
+renderProfile=function(){
+ __renderProfileV25Base();
+ const root=$('#profileArea .you20'),p=S.diagnosticProfile25;if(!root||root.querySelector('.d25Retake'))return;
+ const box=p?`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>${p.overall}/100 · ${d25Level(p.overall)}</h3></div><button id="d25RetakeBtn">ПЕРЕПРОЙТИ</button></div><p>Префлоп ${p.dims.pre} · постфлоп ${p.dims.post} · сайзинг ${p.dims.size} · дисциплина ${p.dims.discipline}. После 20 реальных решений baseline перестаёт участвовать в текущей статистике.</p></div>`:`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>НОВАЯ ДИАГНОСТИКА</h3></div><button id="d25RetakeBtn">ПРОЙТИ</button></div><p>12 спотов: префлоп, постфлоп, размеры и river discipline.</p></div>`;
+ root.insertAdjacentHTML('beforeend',box);$('#d25RetakeBtn').onclick=()=>d25Start(true);
 }
 
 
