@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V29.4 SOCIAL RESTORED</title>
+<title>POKER SWIPE — V29.5 YOU CLEAN</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -2481,5 +2481,38 @@ try{
 }
 });
 </script>
+
+<script>
+/* ===== V29.5 · YOU CLEANUP =====
+   Keep onboarding diagnostic as the one-time entry skill test.
+   Remove obsolete/duplicated YOU blocks: old fish profile/progress,
+   distance avatar ladder, diagnostic retake card, and tournament summary. */
+(function(){
+  const cleanYou295=()=>{
+    const root=document.querySelector('#profileArea');
+    if(!root)return;
+    root.querySelectorAll('.you20Profile,.d25Retake,.t23You').forEach(el=>el.remove());
+    root.querySelectorAll('.you20Section').forEach(el=>{
+      const title=(el.querySelector('.you20SectionTitle h3')?.textContent||'').trim().toUpperCase();
+      if(title==='ДИСТАНЦИЯ')el.remove();
+    });
+  };
+  const prevRender=window.renderProfile;
+  if(typeof prevRender==='function'){
+    window.renderProfile=function(){
+      prevRender.apply(this,arguments);
+      cleanYou295();
+      requestAnimationFrame(cleanYou295);
+      setTimeout(cleanYou295,30);
+    };
+  }
+  document.addEventListener('click',e=>{
+    const nav=e.target.closest?.('[data-nav="profile"]');
+    if(nav)setTimeout(cleanYou295,0);
+  });
+  window.cleanYou295=cleanYou295;
+})();
+</script>
+
 </body>
 </html>
