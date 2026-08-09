@@ -381,13 +381,47 @@ const DEVICE_ID=(()=>{try{let x=localStorage.getItem('pokerSwipeDeviceId');if(!x
 const USER_KEY=TG_USER_ID||DEVICE_ID;
 const STORAGE='pokerSwipeV26_user_'+USER_KEY;
 const PUBLIC_INDEX='pokerSwipeV26_public_profiles';
+/* Shared public profiles: Supabase. Publishable key is intentionally client-side; RLS protects the table. */
+const SUPABASE_URL='https://jtdwsnodmprueuwnlycq.supabase.co';
+const SUPABASE_KEY='sb_publishable_iLX6QkoecRtZ4X3C8ltRkA_8Rl_gbKk';
+const SUPABASE_HEADERS={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'};
+let REMOTE_PLAYERS26=[];
+let REMOTE_PLAYERS_LOADING26=false;
+function publicRow26(){
+ const m=rankMetrics26(),ri=rankIndex26();
+ return {telegram_id:USER_KEY,nickname:S.nick||'Игрок',rank_name:RANKS26[ri]?.name||'Рыбуляр',skill:S.skill,
+  preflop:m.pre?.score||0,postflop:m.post?.score||0,sizing:m.size?.score||0,discipline:m.disc?.score||0,
+  hands_count:m.sample||0,streak:S.streak||0,updated_at:new Date().toISOString()};
+}
+async function publishRemoteProfile26(){
+ if(!S.nick)return;
+ try{
+  const r=await fetch(SUPABASE_URL+'/rest/v1/player_profiles?on_conflict=telegram_id',{method:'POST',headers:{...SUPABASE_HEADERS,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(publicRow26())});
+  if(!r.ok)console.warn('Supabase profile save',r.status,await r.text());
+ }catch(e){console.warn('Supabase offline',e)}
+}
+async function loadRemotePlayers26(){
+ if(REMOTE_PLAYERS_LOADING26)return;
+ REMOTE_PLAYERS_LOADING26=true;
+ try{
+  const cols='telegram_id,nickname,rank_name,skill,preflop,postflop,sizing,discipline,hands_count,streak,updated_at';
+  const r=await fetch(SUPABASE_URL+'/rest/v1/player_profiles?select='+encodeURIComponent(cols)+'&order=skill.desc&limit=50',{headers:SUPABASE_HEADERS});
+  if(!r.ok)throw new Error(r.status+' '+await r.text());
+  const rows=await r.json();
+  REMOTE_PLAYERS26=rows.filter(x=>String(x.telegram_id)!==USER_KEY).map(x=>({id:String(x.telegram_id),nick:x.nickname||'Игрок',skill:x.skill||0,form:null,rankName:x.rank_name||'Рыбуляр',pre:x.preflop||0,post:x.postflop||0,size:x.sizing||0,discipline:x.discipline||0,hands:x.hands_count||0,streak:x.streak||0}));
+ }catch(e){console.warn('Supabase players load',e);REMOTE_PLAYERS26=[]}
+ REMOTE_PLAYERS_LOADING26=false;
+ if(document.getElementById('profile')?.classList.contains('active'))renderProfile();
+}
+
 const LEGACY=['pokerSwipeV14_4','pokerSwipeV14_3_stable','pokerSwipeV14_2_compat','pokerSwipeV14_1_clean'];
 const gradeScore=g=>g==='g'?1:g==='y'?.55:0;
 const DEFAULT={version:'16.2',nick:'',onboarded:false,diagDone:false,skill:50,streak:0,lastDay:'',events:[],hands:[],dailyArchive:[],snapshots:[],xray:{runs:0,pre:0,narrow:0,river:0,blockers:0,best:0,history:[]},healCourses:{river_bluffcatch:[0,0,0,0],sizing:[0,0,0,0],bb_defence:[0,0,0,0],thin_value:[0,0,0,0]},seenSwipe:[],diagnostic:[]};
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function load(){try{let raw=localStorage.getItem(STORAGE);if(!raw){for(const k of LEGACY){raw=localStorage.getItem(k);if(raw)break}}const old=raw?JSON.parse(raw):{};const s={...clone(DEFAULT),...old};s.events=Array.isArray(old.events)?old.events:[];if(!s.events.length&&old.played){for(let i=0;i<Math.min(old.played,30);i++)s.events.push({mode:'legacy',concept:'legacy',grade:i<(old.good||0)?'g':i<(old.good||0)+(old.mid||0)?'y':'r',ts:now()-i*1000})}s.hands=Array.isArray(old.hands)?old.hands:[];s.dailyArchive=Array.isArray(old.dailyArchive)?old.dailyArchive:[];s.snapshots=Array.isArray(old.snapshots)?old.snapshots:[];s.xray={...clone(DEFAULT.xray),...(old.xray||{})};s.healCourses={...clone(DEFAULT.healCourses),...(old.healCourses||{})};return s}catch(e){return clone(DEFAULT)}}
 let S=load();
-function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S));if(typeof publishLocalProfile26==='function')publishLocalProfile26()}catch(e){}ui()}
+setTimeout(()=>{publishRemoteProfile26();loadRemotePlayers26()},250);
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S));if(typeof publishLocalProfile26==='function')publishLocalProfile26();if(typeof publishRemoteProfile26==='function')publishRemoteProfile26()}catch(e){}ui()}
 function ui(){const h=$('#hello'),l=$('#levelChip');if(h)h.textContent=S.nick?`Привет, ${S.nick}`:'';if(l)l.textContent=`СКИЛЛ ${S.skill}`;const p=$('[data-nav="profile"]');if(p)p.classList.toggle('hasLeak',!!topLeak())}
 function touchDay(){const d=today();if(S.lastDay!==d){S.streak=S.lastDay?S.streak+1:1;S.lastDay=d}}
 function formScore(){const a=S.events.filter(e=>e.mode!=='diagnostic').slice(-20);if(!a.length)return 50;return Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/a.length*100)}
@@ -648,11 +682,10 @@ function publishLocalProfile26(){
   localStorage.setItem(PUBLIC_INDEX,JSON.stringify(all));
  }catch(e){}
 }
-function localPlayers26(){
- try{return Object.values(JSON.parse(localStorage.getItem(PUBLIC_INDEX)||'{}')).filter(x=>x.id!==USER_KEY).sort((a,b)=>(b.skill||0)-(a.skill||0)).slice(0,12)}catch(e){return[]}
-}
+function localPlayers26(){ return REMOTE_PLAYERS26.slice(0,12) }
+
 function publicProfile26(p){
- const r=RANKS26[Math.min(RANKS26.length-1,p.rank||0)];
+ const r=p.rankName?(RANKS26.find(x=>x.name===p.rankName)||RANKS26[0]):RANKS26[Math.min(RANKS26.length-1,p.rank||0)];
  openModal(`<span class="ey">ПУБЛИЧНЫЙ ПРОФИЛЬ</span><h1>${esc(p.nick||'Игрок')}</h1><img src="${r.img}" style="width:150px;height:150px;object-fit:cover;border-radius:24px;margin:8px auto;display:block"><h2>${r.name}</h2><p>Скилл ${p.skill} · Форма ${p.form}</p><div class="rankReq26"><div><span>Префлоп</span><b>${p.pre||'—'}</b></div><div><span>Постфлоп</span><b>${p.post||'—'}</b></div><div><span>Сайзинги</span><b>${p.size||'—'}</b></div><div><span>Дисциплина</span><b>${p.discipline||'—'}</b></div></div><p class="mut small">Лики, конкретные ошибки и история раздач остаются приватными.</p><button class="primary" id="pubClose26">ЗАКРЫТЬ</button>`);
  setTimeout(()=>{const b=$('#pubClose26');if(b)b.onclick=closeModal},0)
 }
@@ -669,7 +702,8 @@ renderProfile=function(){
  rankBlock.innerHTML=`<div class="rankHero26"><div class="rankHero26Top"><img class="rankAvatar26" src="${r.img}"><div><span class="ey">ТВОЙ РАНГ</span><h2>${r.name}</h2><p class="mut small">${r.line}</p></div></div><div class="rankProgress26"><i style="width:${pct}%"></i></div>${next?`<p class="mut small">Следующий: <b>${next.name}</b> · нажми на него и увидишь, чего не хватает.</p>`:'<p class="mut small">Максимальный ранг. Да, можно выдохнуть на три секунды.</p>'}</div><div class="section"><h3>ЛЕСТНИЦА РАНГОВ</h3><div class="rankRoad26">${RANKS26.map((x,i)=>`<button class="rankCard26 ${i>ri?'locked':''}" data-rank26="${i}"><img src="${x.img}">${i>ri?'<span class="rankLock26">🔒</span>':''}<b>${x.name}</b><small>${i<=ri?'открыт':'СКИЛЛ '+x.skill+'+'}</small></button>`).join('')}</div></div>`;
  root.prepend(...rankBlock.childNodes);
  const players=localPlayers26();
- root.insertAdjacentHTML('beforeend',`<div class="section players26"><h3>ДРУГИЕ ИГРОКИ</h3>${players.length?players.map((p,i)=>{const rr=RANKS26[Math.min(RANKS26.length-1,p.rank||0)];return `<button class="playerRow26" data-player26="${i}"><img src="${rr.img}"><div><b>${esc(p.nick)}</b><span>${rr.name}</span></div><strong>${p.skill}</strong></button>`}).join(''):`<div class="langRule26"><b>Пока здесь пусто.</b><br>Профили уже разделены по Telegram ID. Для настоящего списка игроков с разных телефонов нужен общий backend/база; GitHub Pages сам по себе не умеет принимать и хранить пользовательские данные. Здесь не подставляются фейковые пользователи.</div>`}<div class="langRule26"><b>Что видно другим:</b> ник, ранг, скилл и общие навыки. Конкретные лики, ошибки и твои раздачи — приватные.</div></div>`);
+ if(!REMOTE_PLAYERS_LOADING26) setTimeout(loadRemotePlayers26,0);
+ root.insertAdjacentHTML('beforeend',`<div class="section players26"><h3>ДРУГИЕ ИГРОКИ</h3>${players.length?players.map((p,i)=>{const rr=p.rankName?(RANKS26.find(x=>x.name===p.rankName)||RANKS26[0]):RANKS26[Math.min(RANKS26.length-1,p.rank||0)];return `<button class="playerRow26" data-player26="${i}"><img src="${rr.img}"><div><b>${esc(p.nick)}</b><span>${rr.name}</span></div><strong>${p.skill}</strong></button>`}).join(''):`<div class="langRule26"><b>${REMOTE_PLAYERS_LOADING26?'Загружаю игроков…':'Пока здесь пусто.'}</b><br>Список берётся из общей базы Poker Swipe. Как только другой игрок сохранит профиль, он появится здесь.</div>`}<div class="langRule26"><b>Что видно другим:</b> ник, ранг, скилл и общие навыки. Конкретные лики, ошибки и твои раздачи — приватные.</div></div>`);
  $$('[data-rank26]').forEach(b=>b.onclick=()=>rankModal26(+b.dataset.rank26));
  $$('[data-player26]').forEach(b=>b.onclick=()=>publicProfile26(players[+b.dataset.player26]));
 }
