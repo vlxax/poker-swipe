@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="25.0">
+<meta name="app-version" content="29.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -854,13 +854,24 @@ main{padding-bottom:96px}
 @media(max-width:370px){.d25{padding-left:13px;padding-right:13px}.d25Card{padding:14px}.d25Card h2{font-size:24px}.d25Result{padding-left:13px;padding-right:13px}.d25ResultHero h1{font-size:42px}}
 
 
-/* ===== V28 · RANKS + SOCIAL PROFILE ===== */
-.rank28Hero{margin:0 0 16px;padding:14px;border-radius:24px;border:1px solid #3a2937;background:radial-gradient(circle at 82% 14%,#4a1833 0,transparent 35%),linear-gradient(145deg,#171118,#0d0d11);overflow:hidden}
-.rank28Top{display:flex;align-items:center;gap:13px}.rank28Avatar{width:88px;height:88px;object-fit:cover;border-radius:20px;border:1px solid #5b3047;box-shadow:0 14px 34px #0009}.rank28Hero h2{margin:3px 0;font-size:21px}.rank28Hero p{margin:3px 0}.rank28Bar{height:8px;border-radius:99px;background:#2b252c;margin-top:11px;overflow:hidden}.rank28Bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ff1384,#ff5c9e)}
-.rank28Road{display:flex;gap:9px;overflow:auto;padding:4px 1px 10px;scroll-snap-type:x mandatory}.rank28Card{position:relative;flex:0 0 116px;background:#121217;border:1px solid #302a32;color:#fff;border-radius:19px;padding:7px;text-align:left;scroll-snap-align:start}.rank28Card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;display:block}.rank28Card b{font-size:10px;line-height:1.15;display:block;margin-top:7px}.rank28Card small{font-size:8px;color:#aaa}.rank28Card.locked img{filter:grayscale(.75) brightness(.38)}.rank28Lock{position:absolute;left:45px;top:43px;font-size:24px}
-.req28{display:grid;gap:7px;margin:10px 0}.req28>div{display:flex;justify-content:space-between;gap:8px;background:#0c0c10;border-radius:12px;padding:8px 10px;font-size:10px}.req28 .ok{color:#67e79c}.req28 .bad{color:#ff7095}
-.players28{margin-top:20px}.player28{display:grid;width:100%;grid-template-columns:50px 1fr auto;align-items:center;gap:10px;padding:9px;margin:7px 0;border:1px solid #302933;background:#131318;color:#fff;border-radius:17px;text-align:left}.player28 img{width:50px;height:50px;object-fit:cover;border-radius:14px}.player28 b{display:block;font-size:11px}.player28 small{display:block;color:#aaa;font-size:8px;margin-top:2px}.player28 strong{font-size:14px;color:#ff4f9a}.sync28{padding:10px 12px;border-radius:14px;border:1px solid #302b31;background:#0f0f13;color:#aaa;font-size:9px;line-height:1.4}
-.pub28Head{display:flex;gap:13px;align-items:center;margin:8px 0 13px}.pub28Head img{width:98px;height:98px;border-radius:22px;object-fit:cover}.pub28Head h2{margin:2px 0}.analysis28{margin:12px 0;padding:14px;border-radius:18px;border:1px solid #5a2840;background:linear-gradient(145deg,#281522,#111116)}.analysis28 .verdict{font-size:21px;line-height:1.05;font-weight:950;margin:5px 0 8px}.analysis28 .why{font-size:10px;line-height:1.45;color:#d9d0d5}.compare28{display:grid;gap:6px;margin:10px 0}.compare28>div{display:grid;grid-template-columns:78px 1fr 42px;align-items:center;gap:7px;font-size:9px}.compare28 i{height:6px;border-radius:99px;background:#28242a;overflow:hidden}.compare28 i span{height:100%;display:block;border-radius:99px;background:#ff348e}.sample28{padding:9px 10px;border-radius:12px;background:#0c0c10;font-size:9px;color:#aaa;line-height:1.4}.pub28Note{font-size:9px;color:#aaa;line-height:1.4;margin:10px 0}
+/* ===== V29 SAFE SOCIAL LAYER ===== */
+.v29RankHero{margin:14px 0;padding:14px;border:1px solid #392b36;border-radius:22px;background:linear-gradient(145deg,#171117,#0d0d12)}
+.v29RankTop{display:flex;align-items:center;gap:13px}
+.v29RankTop img{width:82px;height:82px;object-fit:cover;border-radius:20px;border:1px solid #4b3340;box-shadow:0 12px 30px #0008}
+.v29RankTop h2{margin:4px 0;font-size:20px}.v29RankTop p{margin:0;font-size:10px;color:#aaa}
+.v29RankRoad{display:flex;gap:9px;overflow-x:auto;padding:8px 0 4px}
+.v29RankCard{position:relative;min-width:108px;width:108px;background:#121217;color:#fff;border:1px solid #302a32;border-radius:18px;padding:7px;text-align:left}
+.v29RankCard img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:13px}.v29RankCard b{display:block;margin-top:6px;font-size:9px;line-height:1.15}.v29RankCard small{font-size:8px;color:#999}.v29RankCard.locked img{filter:grayscale(.7) brightness(.42)}
+.v29Lock{position:absolute;top:38px;left:42px;font-size:21px}
+.v29Players{margin-top:20px}.v29Player{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:10px;width:100%;margin:7px 0;padding:9px;background:#121217;color:#fff;border:1px solid #302a32;border-radius:16px;text-align:left}
+.v29Player img{width:48px;height:48px;border-radius:13px;object-fit:cover}.v29Player b{display:block;font-size:11px}.v29Player span{font-size:9px;color:#aaa}.v29Player strong{font-size:13px;color:#ff4d9b}
+.v29Status{padding:10px 12px;border-radius:14px;border:1px solid #302a32;background:#101014;font-size:10px;color:#aaa;line-height:1.45}
+.v29PublicHero{text-align:center}.v29PublicHero img{width:142px;height:142px;object-fit:cover;border-radius:24px;margin:8px auto;display:block}
+.v29Compare{margin:12px 0;padding:13px;border-radius:18px;border:1px solid #ff4d9b55;background:linear-gradient(145deg,#24131d,#111116)}
+.v29Compare .ey{color:#ff6cae}.v29Compare h3{margin:5px 0 6px;font-size:17px}.v29Compare p{font-size:10px;line-height:1.45;margin:0;color:#ccc}
+.v29Stats{display:grid;gap:7px;margin:12px 0}.v29Stat{display:grid;grid-template-columns:1fr auto;gap:8px;padding:9px 10px;border-radius:13px;background:#101014;border:1px solid #2d2830}
+.v29Stat b{font-size:11px}.v29Stat span{font-size:10px}.v29Stat small{grid-column:1/-1;color:#999;font-size:9px;line-height:1.35}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
@@ -984,45 +995,14 @@ const now=()=>Date.now();
 const TG_USER_ID=String(window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'');
 const DEVICE_ID=(()=>{try{let x=localStorage.getItem('pokerSwipeDeviceId');if(!x){x='dev_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('pokerSwipeDeviceId',x)}return x}catch(e){return 'browser'}})();
 const USER_KEY=TG_USER_ID||DEVICE_ID;
-const STORAGE='pokerSwipeV28_user_'+USER_KEY;
+const STORAGE='pokerSwipeV29_user_'+USER_KEY;
 const LEGACY=['pokerSwipeV15_reg','pokerSwipeV14_4','pokerSwipeV14_3_stable','pokerSwipeV14_2_compat','pokerSwipeV14_1_clean'];
 const gradeScore=g=>g==='g'?1:g==='y'?.55:0;
 const DEFAULT={version:'16.2',nick:'',onboarded:false,diagDone:false,skill:50,streak:0,lastDay:'',events:[],hands:[],dailyArchive:[],snapshots:[],xray:{runs:0,pre:0,narrow:0,river:0,blockers:0,best:0,history:[]},healCourses:{river_bluffcatch:[0,0,0,0],sizing:[0,0,0,0],bb_defence:[0,0,0,0],thin_value:[0,0,0,0]},seenSwipe:[],diagnostic:[]};
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function load(){try{let raw=localStorage.getItem(STORAGE);if(!raw){for(const k of LEGACY){raw=localStorage.getItem(k);if(raw)break}}const old=raw?JSON.parse(raw):{};const s={...clone(DEFAULT),...old};s.events=Array.isArray(old.events)?old.events:[];if(!s.events.length&&old.played){for(let i=0;i<Math.min(old.played,30);i++)s.events.push({mode:'legacy',concept:'legacy',grade:i<(old.good||0)?'g':i<(old.good||0)+(old.mid||0)?'y':'r',ts:now()-i*1000})}s.hands=Array.isArray(old.hands)?old.hands:[];s.dailyArchive=Array.isArray(old.dailyArchive)?old.dailyArchive:[];s.snapshots=Array.isArray(old.snapshots)?old.snapshots:[];s.xray={...clone(DEFAULT.xray),...(old.xray||{})};s.healCourses={...clone(DEFAULT.healCourses),...(old.healCourses||{})};return s}catch(e){return clone(DEFAULT)}}
 let S=load();
-
-/* ===== V28 · SHARED PLAYER DATABASE (SUPABASE) ===== */
-const SUPABASE_URL='https://jtdwsnodmprueuwnlycq.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_iLX6QkoecRtZ4X3C8ltRkA_8Rl_gbKk';
-const PLAYER_API=SUPABASE_URL+'/rest/v1/player_profiles';
-const sbHeaders28=(extra={})=>({'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...extra});
-let REMOTE_PLAYERS28=[];
-let REMOTE_STATUS28='idle';
-async function publishProfile28(){
-  if(!S?.nick||!S?.onboarded)return;
-  try{
-    const m=rankMetrics28(),r=RANKS28[rankIndex28()];
-    const body={telegram_id:USER_KEY,nickname:S.nick,rank_name:r.name,skill:Number(S.skill)||0,
-      preflop:m.pre.n>=5?m.pre.score:0,postflop:m.post.n>=5?m.post.score:0,
-      sizing:m.size.n>=5?m.size.score:0,discipline:Number.isFinite(m.disc.score)?m.disc.score:0,
-      hands_count:m.sample,streak:Number(S.streak)||0,updated_at:new Date().toISOString()};
-    const res=await fetch(PLAYER_API+'?on_conflict=telegram_id',{method:'POST',headers:sbHeaders28({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(body)});
-    if(!res.ok)throw new Error('Supabase save '+res.status+' '+await res.text());
-    REMOTE_STATUS28='saved';
-  }catch(e){REMOTE_STATUS28='save_error';console.warn('Public profile sync failed',e)}
-}
-async function loadPlayers28(){
-  REMOTE_STATUS28='loading';
-  try{
-    const res=await fetch(PLAYER_API+'?select=telegram_id,nickname,rank_name,skill,preflop,postflop,sizing,discipline,hands_count,streak,updated_at&order=skill.desc&limit=50',{headers:sbHeaders28()});
-    if(!res.ok)throw new Error('Supabase load '+res.status+' '+await res.text());
-    REMOTE_PLAYERS28=(await res.json()).filter(x=>String(x.telegram_id)!==String(USER_KEY));
-    REMOTE_STATUS28='ok'; return REMOTE_PLAYERS28;
-  }catch(e){REMOTE_PLAYERS28=[];REMOTE_STATUS28='load_error';console.warn('Players load failed',e);return []}
-}
-
-function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S))}catch(e){}ui();if(typeof publishProfile28==='function')setTimeout(()=>publishProfile28(),0)}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S))}catch(e){}ui()}
 function ui(){const h=$('#hello'),l=$('#levelChip');if(h)h.textContent=S.nick?`Привет, ${S.nick}`:'';if(l)l.textContent=`SKILL ${S.skill}`;const p=$('[data-nav="profile"]');if(p)p.classList.toggle('hasLeak',!!topLeak())}
 function touchDay(){const d=today();if(S.lastDay!==d){S.streak=S.lastDay?S.streak+1:1;S.lastDay=d}}
 function formScore(){const a=S.events.filter(e=>e.mode!=='diagnostic').slice(-20);if(!a.length)return 50;return Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/a.length*100)}
@@ -1242,76 +1222,6 @@ function freakyProfileVerdict(leak,conf){const form=formScore(),events=S.events.
 function evidenceBoardHtml(leak){if(!leak)return'';const bad=leak.events.filter(e=>e.grade==='r').slice(-3).reverse();if(bad.length<2)return'';const notes=bad.map((e,i)=>`<div class="pinNote n${i+1}"><b>${esc(e.spotId||e.mode||'SPOT')}</b><small>${esc(e.action||'решение')}${e.sizePct?` · ${e.sizePct}%`:''}${e.confidence?` · уверенность ${e.confidence}%`:''}<br>${new Date(e.ts).toLocaleDateString('ru-RU')}</small></div>`).join('');return `<div class="evidenceBoardWrap"><div class="evidenceBoardTitle"><div><span class="ey">ДОСКА УЛИК</span><h3>ПОЧЕМУ ЭТО ВООБЩЕ ЛИК</h3></div><p>Не декор. Здесь только реальные ошибки, на которых построен диагноз.</p></div><div class="evidenceBoard"><svg class="evidenceThreads" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="26" y1="24" x2="71" y2="72"/><line x1="76" y1="27" x2="71" y2="72"/><line x1="29" y1="78" x2="71" y2="72"/></svg>${notes}<div class="pinTarget"><span>ГИПОТЕЗА</span><b>${esc(conceptLabel(leak.concept))}</b><strong>${leak.score}</strong><span>score · ${leak.r}/${leak.n} ошибок</span></div></div></div>`}
 function startConceptSwipe(concept){const pool=SWIPE.filter(x=>x.concept===concept);swSession=(pool.length?pool:SWIPE).slice(0,Math.min(10,(pool.length||SWIPE.length)));swIndex=0;swSessionGrades=[];show('swipe')}
 function renderProfile(){const pre=categoryStat(e=>/RFI|BB defence|3-bet|flat IP|polar 3-bet/.test(e.concept||'')),post=categoryStat(e=>e.street&&e.street!=='ПРЕФЛОП'&&e.mode!=='sizing'),size=categoryStat(e=>e.mode==='sizing'||e.sizePct!=null),disc={n:S.events.length,score:disciplineScore()};const leak=topLeak(),course=courseForConcept(leak?.concept);const conf={cc:0,cu:0,wu:0,wc:0};for(const e of S.events.filter(x=>x.confidence)){if(e.grade==='g'&&e.confidence>=90)conf.cc++;else if(e.grade==='g')conf.cu++;else if(e.confidence>=90)conf.wc++;else conf.wu++}const nodes=[['PREFLOP',pre,'n1'],['POSTFLOP',post,'n2'],['SIZING',size,'n3'],['DISCIPLINE',disc,'n4']];const numeric=nodes.map(x=>x[1].n>=5?x[1].score:101),min=Math.min(...numeric);const focusLabel=leak?conceptLabel(leak.concept):'';$('#profileArea').innerHTML=`<div class="panel"><span class="ey">YOU · ${esc(S.nick||'REG')} · POKER DNA</span><h1 class="impact">ДОСЬЕ,<br><span class="pink">НЕ ТАБЕЛЬ.</span></h1><p class="mut">${S.events.length} решений · FORM ${formScore()} · Skill ${S.skill}</p><div class="dna"><div class="dnaCore"><div><span class="ey">SKILL</span><h2>${S.skill}</h2></div></div>${nodes.map((x,i)=>`<button class="skillNode ${x[2]} ${x[1].n>=5&&x[1].score===min?'leak':''}">${x[0]}<b>${sampleText(x[1].n,x[1].score)}</b></button>`).join('')}</div></div><div class="youMethod"><b>Что анализируется:</b> решения, размеры, повторяемость ошибок, уверенность, Daily/Review/Heal и история тренировок. Одна раздача не должна превращаться в диагноз.</div><div class="creatorVerdict"><span class="ey">ВЕРДИКТ ФРИКОВОЙ ДАМЫ</span><blockquote>${esc(freakyProfileVerdict(leak,conf))}</blockquote></div>${leak?`<div class="youFocus"><span class="ey">ГЛАВНЫЙ ЛИК СЕЙЧАС</span><h2>${esc(focusLabel)}</h2><div class="sampleTag">${leak.r} ошибок / ${leak.n} решений</div><p>Score ${leak.score}. ${leak.events.filter(e=>e.grade==='r'&&e.confidence>=90).length?'Есть уверенные ошибки — это blind spot, а не просто промах.':'Нужна проверка на новых картах, чтобы отличить паттерн от шума.'}</p>${course?`<button class="primary" id="healLeak">ЛЕЧИТЬ · ${COURSE_META[course].title} →</button>`:`<button class="primary" id="trainLeak">ТРЕНИРОВАТЬ ЭТО В SWIPE →</button>`}</div>${evidenceBoardHtml(leak)}`:`<div class="youFocus"><span class="ey">СЕГОДНЯ</span><h2>НАБРАТЬ ВЫБОРКУ</h2><p>До 3+ решений на концепт приложение не будет делать вид, что знает тебя лучше тебя.</p><button class="primary" id="youTrain">НАБРАТЬ УЛИКИ →</button></div>`}<div class="section"><h3>УВЕРЕННОСТЬ</h3><div class="confidenceGrid"><div><span class="ey">✓ УВЕРЕН</span><b>${conf.cc}</b></div><div><span class="ey">✓ СОМНЕВАЛСЯ</span><b>${conf.cu}</b></div><div><span class="ey">✕ СОМНЕВАЛСЯ</span><b>${conf.wu}</b></div><div style="border-color:#ff4b6866"><span class="ey">✕ УВЕРЕН</span><b class="red">${conf.wc}</b></div></div><h3>ЧЕМ ГОРДИТЬСЯ</h3>${prideHtml()}</div>`;if($('#healLeak'))$('#healLeak').onclick=()=>{activeCourse=course;show('heal')};if($('#trainLeak'))$('#trainLeak').onclick=()=>startConceptSwipe(leak.concept);if($('#youTrain'))$('#youTrain').onclick=()=>show('home')}
-
-/* ===== V28 · RANK LADDER / PUBLIC PLAYER ANALYSIS ===== */
-const RANKS28=[
- {name:'Рыбуляр',skill:0,sample:0,min:0,img:'assets/rank_01_rybulyar.jpg',line:'Пока карты нравятся чуть больше, чем причины нажимать кнопки.'},
- {name:'Игрок спортивного покера',skill:35,sample:20,min:28,img:'assets/rank_02_sport_poker.jpg',line:'Уже не просто играешь. Начинаешь понимать, почему.'},
- {name:'Крепкий любитель',skill:45,sample:45,min:38,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'База есть. Ошибки уже хотя бы содержательные.'},
- {name:'Полурег',skill:55,sample:70,min:48,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Почти работа. Пока ещё можно всем говорить, что это хобби.'},
- {name:'Регуляр',skill:62,sample:100,min:55,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Гринд, разборы и подозрительно много разговоров про сайзинг.'},
- {name:'Агрорег',skill:69,sample:140,min:61,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Давление уже не случайность. Поляна начинает замечать.'},
- {name:'Эксплойтер',skill:76,sample:190,min:68,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Смотришь не только в свои карты, но и в чужие привычки.'},
- {name:'Гриндер',skill:82,sample:250,min:74,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Объём перестал пугать. Теперь пугают только отчёты.'},
- {name:'Матёрый',skill:88,sample:340,min:80,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Одной раздачей тебя уже не переубедить.'},
- {name:'Хайстейкер',skill:93,sample:500,min:86,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Фриковая Дама официально делает вид, что не впечатлена.'}
-];
-function rankMetrics28(){
- const pre=categoryStat(e=>/RFI|BB defence|3-bet|flat IP|polar 3-bet/i.test(e.concept||''));
- const post=categoryStat(e=>e.street&&e.street!=='ПРЕФЛОП'&&e.mode!=='sizing');
- const size=categoryStat(e=>e.mode==='sizing'||e.sizePct!=null);
- const ds=disciplineScore(),disc={n:S.events.filter(e=>e.mode!=='diagnostic').length,score:Number.isFinite(ds)?ds:0};
- const vals=[pre,post,size,disc].filter(x=>x.n>=5&&Number.isFinite(x.score)).map(x=>x.score);
- return{sample:S.events.filter(e=>e.mode!=='diagnostic').length,min:vals.length?Math.min(...vals):0,pre,post,size,disc};
-}
-function rankUnlocked28(r,m){return Number(S.skill)>=r.skill&&m.sample>=r.sample&&(r.min===0||m.min>=r.min)}
-function rankIndex28(){const m=rankMetrics28();let idx=0;RANKS28.forEach((r,i)=>{if(rankUnlocked28(r,m))idx=i});return idx}
-function rankReq28(r,m){return `<div class="req28">${[['Общий скилл',Number(S.skill)||0,r.skill],['Решений',m.sample,r.sample],['Слабейший навык',m.min,r.min]].map(x=>`<div><span>${x[0]} · <b>${x[1]}</b></span><strong class="${x[1]>=x[2]?'ok':'bad'}">${x[1]>=x[2]?'✓':'нужно '+x[2]}</strong></div>`).join('')}</div>`}
-function openRank28(i){const m=rankMetrics28(),r=RANKS28[i],ok=rankUnlocked28(r,m);openModal(`<span class="ey">${ok?'РАНГ ОТКРЫТ':'РАНГ ЗАКРЫТ 🔒'}</span><h1>${r.name}</h1><img src="${r.img}" style="width:150px;height:150px;object-fit:cover;border-radius:24px;display:block;margin:8px auto"><p>${r.line}</p>${rankReq28(r,m)}<p class="mut small">Ранг даётся не за одну удачную сессию: нужен общий скилл, нормальная выборка и отсутствие огромной дыры в одном из базовых навыков.</p><button class="primary" id="rank28Close">ПОНЯЛ →</button>`);setTimeout(()=>{$('#rank28Close').onclick=closeModal},0)}
-function remoteAvatar28(p){const exact=RANKS28.findIndex(r=>r.name===p.rank_name);const idx=exact>=0?exact:(Number(p.skill)>=45?2:Number(p.skill)>=35?1:0);return RANKS28[Math.max(0,Math.min(RANKS28.length-1,idx))].img}
-function playerArchetype28(p){
- const dims=[['префлоп',+p.preflop||0],['постфлоп',+p.postflop||0],['сайзинги',+p.sizing||0],['дисциплина',+p.discipline||0]].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
- if(!dims.length)return {best:'пока неясно',weak:'пока неясно',text:'По навыкам ещё слишком мало данных, поэтому красивый диагноз был бы просто фантазией.'};
- const best=dims[0],weak=dims[dims.length-1],spread=best[1]-weak[1];
- if(spread<9)return {best:best[0],weak:weak[0],text:`Довольно ровный профиль: между лучшим и слабейшим навыком всего ${spread} пунктов. Явной дыры пока нет.`};
- return {best:best[0],weak:weak[0],text:`Сильнее всего выглядит ${best[0]} (${best[1]}), а больше всего проседает ${weak[0]} (${weak[1]}). Разница ${spread} — это уже заметный перекос профиля.`};
-}
-function compareVerdict28(p){
- const you=Number(S.skill)||0,them=Number(p.skill)||0,d=them-you,n=Number(p.hands_count)||0,a=playerArchetype28(p);
- let title,body;
- if(n<20){title='ПОКА РАНО МЕРИТЬСЯ.';body=`У ${esc(p.nickname)} всего ${n} публичных решений. Скилл ${them} уже есть, но выборки мало — не делаем из трёх удачных кнопок легенду.`}
- else if(d>=10){title=`ОН ВПЕРЕДИ НА ${d} СКИЛЛ.`;body=`Сейчас профиль ${esc(p.nickname)} объективно сильнее твоего по общей оценке приложения. Это не «лучше как игрок навсегда», а текущая дистанция по накопленным решениям.`}
- else if(d<=-10){title=`ТЫ ВПЕРЕДИ НА ${Math.abs(d)} СКИЛЛ.`;body=`По текущей выборке твой общий профиль сильнее. Но смотри на отдельные навыки: у соперника может быть конкретная зона сильнее твоей.`}
- else {title='ВЫ ПРИМЕРНО ОДНОГО УРОВНЯ.';body=`Разница всего ${Math.abs(d)}. Здесь интереснее не цифра SKILL, а форма профиля: где один из вас реально сильнее другого.`}
- return{title,body,arch:a};
-}
-function statMeaning28(k,v){if(!v)return 'мало данных';if(v>=80)return 'сильная зона';if(v>=65)return 'выше среднего';if(v>=50)return 'рабочий уровень';if(v>=35)return 'есть заметные ошибки';return 'явная зона роста'}
-function openPublic28(p){
- const c=compareVerdict28(p),img=remoteAvatar28(p),dims=[['Префлоп',+p.preflop||0],['Постфлоп',+p.postflop||0],['Сайзинги',+p.sizing||0],['Дисциплина',+p.discipline||0]];
- const sample=+p.hands_count||0,confidence=sample>=120?'достаточная выборка':sample>=40?'средняя выборка':'маленькая выборка';
- openModal(`<span class="ey">ПУБЛИЧНЫЙ ПРОФИЛЬ</span><div class="pub28Head"><img src="${img}"><div><h1>${esc(p.nickname||'Игрок')}</h1><h2>${esc(p.rank_name||'Рыбуляр')}</h2><p>СКИЛЛ ${+p.skill||0} · ${sample} решений</p></div></div><div class="analysis28"><span class="ey">КТО ЭТО ВООБЩЕ ПО СТАТЕ</span><div class="verdict">${c.title}</div><div class="why">${c.body}<br><br>${c.arch.text}</div></div><div class="compare28">${dims.map(x=>`<div><span>${x[0]}</span><i><span style="width:${Math.min(100,x[1])}%"></span></i><b>${x[1]||'—'}</b></div><small style="margin:-3px 0 2px 85px;color:#8f878d">${statMeaning28(x[0],x[1])}</small>`).join('')}</div><div class="sample28"><b>Насколько этому верить:</b> ${confidence}. ${sample<40?'Не делаем жёстких выводов — человек ещё не наиграл дистанцию.':'Цифры уже можно использовать как ориентир, но это всё равно профиль решений внутри Poker Swipe, а не Hendon Mob и не приговор.'}</div><p class="pub28Note">Лики, конкретные ошибки и история раздач остаются приватными. Публичная карточка отвечает только на три вопроса: какого он сейчас уровня, в чём силён и где проседает.</p><button class="primary" id="pub28Close">ЗАКРЫТЬ</button>`);setTimeout(()=>{$('#pub28Close').onclick=closeModal},0)
-}
-function renderPlayers28(root){
- let box=root.querySelector('#players28Box');if(!box){box=document.createElement('div');box.id='players28Box';box.className='section players28';root.appendChild(box)}
- if(REMOTE_STATUS28==='loading'){box.innerHTML='<h3>ДРУГИЕ ИГРОКИ</h3><div class="sync28">Загружаю публичные профили…</div>';return}
- if(REMOTE_STATUS28==='load_error'){box.innerHTML='<h3>ДРУГИЕ ИГРОКИ</h3><div class="sync28">Не удалось связаться с общей базой. Твоя локальная статистика при этом не потерялась.</div>';return}
- box.innerHTML=`<h3>ДРУГИЕ ИГРОКИ</h3>${REMOTE_PLAYERS28.length?REMOTE_PLAYERS28.map((p,i)=>`<button class="player28" data-p28="${i}"><img src="${remoteAvatar28(p)}"><div><b>${esc(p.nickname||'Игрок')}</b><small>${esc(p.rank_name||'Рыбуляр')} · ${+p.hands_count||0} решений</small></div><strong>${+p.skill||0}</strong></button>`).join(''):'<div class="sync28">Пока кроме тебя никто не сохранил публичный профиль. Открой приложение на другом телефоне/Telegram — после первого сохранения игрок появится здесь.</div>'}`;
- root.querySelectorAll('[data-p28]').forEach(b=>b.onclick=()=>openPublic28(REMOTE_PLAYERS28[+b.dataset.p28]));
-}
-const _renderProfileV25Master=renderProfile;
-renderProfile=function(){
- _renderProfileV25Master();
- const root=$('#profileArea');if(!root)return;
- const m=rankMetrics28(),ri=rankIndex28(),r=RANKS28[ri],next=RANKS28[ri+1],pct=next?Math.max(4,Math.min(100,Math.round(((Number(S.skill)||0)-r.skill)/Math.max(1,next.skill-r.skill)*100))):100;
- const wrap=document.createElement('div');
- wrap.innerHTML=`<div class="rank28Hero"><div class="rank28Top"><img class="rank28Avatar" src="${r.img}"><div><span class="ey">ТВОЙ РАНГ</span><h2>${r.name}</h2><p class="mut small">${r.line}</p></div></div><div class="rank28Bar"><i style="width:${pct}%"></i></div><p class="mut small">${next?`Следующий — <b>${next.name}</b>. Нажми на карточку ниже: покажу, чего именно не хватает.`:'Максимальный ранг. Можешь три секунды побыть довольной.'}</p></div><div class="section"><h3>ЛЕСТНИЦА РАНГОВ</h3><div class="rank28Road">${RANKS28.map((x,i)=>`<button class="rank28Card ${i>ri?'locked':''}" data-r28="${i}"><img src="${x.img}">${i>ri?'<span class="rank28Lock">🔒</span>':''}<b>${x.name}</b><small>${i<=ri?'открыт':'СКИЛЛ '+x.skill+'+'}</small></button>`).join('')}</div></div>`;
- root.prepend(...wrap.childNodes);
- root.querySelectorAll('[data-r28]').forEach(b=>b.onclick=()=>openRank28(+b.dataset.r28));
- renderPlayers28(root);
- loadPlayers28().then(()=>renderPlayers28(root));
- publishProfile28();
-}
-
 function prideHtml(){if(S.snapshots.length<2)return'<p class="mut">Нужно хотя бы два дня данных.</p>';const a=S.snapshots[0],b=S.snapshots.length?S.snapshots[S.snapshots.length-1]:undefined,d=b.skill-a.skill;return d>0?`<div class="pride"><b>SKILL ${a.skill} → ${b.skill}</b><p>+${d} с начала наблюдений. Маленькая победа, но хотя бы настоящая.</p></div>`:'<p class="mut">Пока устойчивого улучшения не зафиксировано.</p>'}
 
 /* QUICK 5 ORCHESTRATOR */
@@ -2425,6 +2335,142 @@ renderProfile=function(){
 }
 
 
+
+/* ===== V29 SAFE SOCIAL: installed ONLY AFTER original V25 boot succeeds ===== */
+function installSocialV29(){
+  if(window.__socialV29Installed)return;
+  window.__socialV29Installed=true;
+
+  const SUPABASE_URL='https://jtdwsnodmprueuwnlycq.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY='sb_publishable_iLX6QkoecRtZ4X3C8ltRkA_8Rl_gbKk';
+  const PLAYER_API=SUPABASE_URL+'/rest/v1/player_profiles';
+  const hdr=(extra={})=>({'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...extra});
+  let remotePlayers=[];
+
+  const ranks=[
+    {name:'Рыбуляр',skill:0,sample:0,min:0,img:'assets/rank_01_rybulyar.jpg',line:'Пока диапазоны смотрят на тебя с надеждой.'},
+    {name:'Игрок спортивного покера',skill:35,sample:20,min:28,img:'assets/rank_02_sport_poker.jpg',line:'Уже не просто нажимаешь кнопки — иногда даже по причине.'},
+    {name:'Крепкий любитель',skill:45,sample:45,min:38,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'База есть. Теперь можно портить жизнь поляне осознанно.'},
+    {name:'Полурег',skill:55,sample:70,min:48,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Почти работа. Пока ещё можно отрицать.'},
+    {name:'Регуляр',skill:62,sample:100,min:55,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Добро пожаловать в гринд и сомнения.'},
+    {name:'Агрорег',skill:69,sample:140,min:61,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Давление уже похоже на стратегию, а не на настроение.'},
+    {name:'Эксплойтер',skill:76,sample:190,min:68,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Видишь не только карты, но и чужие привычки.'},
+    {name:'Гриндер',skill:82,sample:250,min:74,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Объём больше не пугает. Пугает только красная линия.'},
+    {name:'Матёрый',skill:88,sample:340,min:80,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Слишком много видел, чтобы спорить из-за одной раздачи.'},
+    {name:'Хайстейкер',skill:93,sample:500,min:86,img:'assets/rank_03_krepkiy_lubitel.jpg',line:'Фриковая Дама делает вид, что не впечатлена.'}
+  ];
+
+  function metrics(){
+    const ev=typeof you20Events==='function'?you20Events():(Array.isArray(S.events)?S.events:[]);
+    const stat=f=>{const a=ev.filter(f),n=a.length;return {n,score:n?Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/n*100):0}};
+    const pre=stat(e=>/RFI|BB defence|3-bet|flat IP|polar 3-bet|preflop/i.test(e.concept||''));
+    const post=stat(e=>e.street&&e.street!=='ПРЕФЛОП'&&e.mode!=='sizing'&&e.mode!=='diagnostic');
+    const size=stat(e=>e.mode==='sizing'||e.sizePct!=null);
+    const ds=disciplineScore();
+    const disc={n:ev.length,score:Number.isFinite(ds)?ds:0};
+    const mature=[pre,post,size,disc].filter(x=>x.n>=5).map(x=>x.score);
+    return {sample:ev.filter(e=>e.mode!=='diagnostic').length,pre,post,size,disc,min:mature.length?Math.min(...mature):0};
+  }
+  function unlocked(r,m){return S.skill>=r.skill&&m.sample>=r.sample&&(r.min===0||m.min>=r.min)}
+  function rankIndex(){const m=metrics();let x=0;ranks.forEach((r,i)=>{if(unlocked(r,m))x=i});return x}
+  function labelScore(v){
+    v=Number(v)||0;
+    if(v>=80)return['Сильная зона','Здесь решения выглядят устойчиво сильными.'];
+    if(v>=65)return['Выше среднего','Хорошая рабочая зона, но ещё есть куда докручивать.'];
+    if(v>=50)return['Рабочий уровень','Нормальная база, ошибки пока заметно съедают качество.'];
+    if(v>=35)return['Зона роста','Ошибки повторяются достаточно часто, чтобы это было важно.'];
+    return['Просадка','Пока это самая уязвимая часть профиля.'];
+  }
+  function rankModal(i){
+    const m=metrics(),r=ranks[i];
+    const rows=[['Общий скилл',S.skill,r.skill],['Решений',m.sample,r.sample],['Слабейший навык',m.min,r.min]];
+    openModal(`<span class="ey">${unlocked(r,m)?'РАНГ ОТКРЫТ':'РАНГ ЗАКРЫТ 🔒'}</span><h1>${r.name}</h1>
+      <img src="${r.img}" style="width:150px;height:150px;object-fit:cover;border-radius:24px;display:block;margin:8px auto">
+      <p>${r.line}</p><div class="v29Stats">${rows.map(x=>`<div class="v29Stat"><b>${x[0]}</b><span>${x[1]} / нужно ${x[2]}</span></div>`).join('')}</div>
+      <p class="mut small">Ранг требует не только общего Skill, но и дистанции: одной удачной серией его не нафармить.</p>`);
+  }
+  async function publish(){
+    if(!S.nick||!S.onboarded)return;
+    try{
+      const m=metrics(),r=ranks[rankIndex()];
+      const body={
+        telegram_id:USER_KEY,nickname:S.nick,rank_name:r.name,skill:Number(S.skill)||0,
+        preflop:m.pre.n>=5?m.pre.score:0,postflop:m.post.n>=5?m.post.score:0,
+        sizing:m.size.n>=5?m.size.score:0,discipline:m.disc.n>=5?m.disc.score:0,
+        hands_count:m.sample,streak:Number(S.streak)||0,updated_at:new Date().toISOString()
+      };
+      const res=await fetch(PLAYER_API+'?on_conflict=telegram_id',{
+        method:'POST',headers:hdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(body)
+      });
+      if(!res.ok)throw new Error(await res.text());
+    }catch(e){console.warn('V29 profile sync failed',e)}
+  }
+  async function loadRemote(){
+    try{
+      const res=await fetch(PLAYER_API+'?select=telegram_id,nickname,rank_name,skill,preflop,postflop,sizing,discipline,hands_count,streak,updated_at&order=skill.desc&limit=50',{headers:hdr()});
+      if(!res.ok)throw new Error(await res.text());
+      remotePlayers=(await res.json()).filter(x=>String(x.telegram_id)!==String(USER_KEY));
+      return remotePlayers;
+    }catch(e){console.warn('V29 player load failed',e);remotePlayers=[];return[]}
+  }
+  function rankForRemote(p){
+    let i=ranks.findIndex(r=>r.name===p.rank_name);
+    if(i<0){i=0;ranks.forEach((r,j)=>{if((Number(p.skill)||0)>=r.skill)i=j})}
+    return ranks[Math.max(0,i)];
+  }
+  function publicProfile(p){
+    const r=rankForRemote(p),my=Number(S.skill)||0,his=Number(p.skill)||0,diff=his-my;
+    let title,explain;
+    if((Number(p.hands_count)||0)<20){title='ПОКА РАНО МЕРИТЬСЯ';explain=`У ${esc(p.nickname)} всего ${Number(p.hands_count)||0} решений. Профиль уже можно посмотреть, но вывод «кто сильнее» пока слишком шумный.`}
+    else if(diff>=10){title=`ОН ВПЕРЕДИ НА ${diff} СКИЛЛ`;explain='По накопленной выборке его общий профиль сейчас сильнее твоего. Смотри ниже, за счёт каких зон.'}
+    else if(diff<=-10){title=`ТЫ ВПЕРЕДИ НА ${Math.abs(diff)} СКИЛЛ`;explain='По текущей выборке твой общий профиль сильнее. Но отдельные навыки у него всё равно могут быть выше.'}
+    else {title='ВЫ ПРИМЕРНО ОДНОГО УРОВНЯ';explain='Разница в общем Skill небольшая. Полезнее сравнить конкретные зоны — префлоп, постфлоп, сайзинги и дисциплину.'}
+    const vals=[
+      ['Префлоп',p.prefl],['Постфлоп',p.postfl],['Сайзинги',p.sizing],['Дисциплина',p.discipline]
+    ];
+    const valid=vals.filter(x=>Number(x[1])>0).sort((a,b)=>b[1]-a[1]);
+    const strongest=valid[0],weakest=valid[valid.length-1];
+    const profileText=valid.length
+      ? `Сильнее всего выглядит ${strongest[0].toLowerCase()} — ${strongest[1]}. Больше всего проседает ${weakest[0].toLowerCase()} — ${weakest[1]}.`
+      : 'По отдельным навыкам пока недостаточно данных.';
+    openModal(`<div class="v29PublicHero"><span class="ey">ПУБЛИЧНЫЙ ПРОФИЛЬ</span><h1>${esc(p.nickname||'Игрок')}</h1>
+      <img src="${r.img}"><h2>${r.name}</h2><p>СКИЛЛ ${his} · ${Number(p.hands_count)||0} решений</p></div>
+      <div class="v29Compare"><span class="ey">ЧТО ЭТО ЗНАЧИТ ДЛЯ ТЕБЯ</span><h3>${title}</h3><p>${explain}<br><br>${profileText}</p></div>
+      <div class="v29Stats">${vals.map(([n,v])=>{const [lab,why]=labelScore(v);return `<div class="v29Stat"><b>${n}</b><span>${Number(v)||'—'} · ${Number(v)>0?lab:'мало данных'}</span><small>${Number(v)>0?why:'Нужно больше решений именно в этой зоне.'}</small></div>`}).join('')}</div>
+      <p class="mut small">Лики, конкретные ошибки и история раздач остаются приватными.</p>`);
+  }
+
+  // Wrap save only after successful V25 boot.
+  const baseSave=save;
+  save=function(){baseSave();setTimeout(publish,0)};
+
+  // Wrap the FINAL V25 profile only after successful boot.
+  const baseProfile=renderProfile;
+  renderProfile=function(){
+    baseProfile();
+    const root=$('#profileArea'); if(!root)return;
+    const m=metrics(),ri=rankIndex(),r=ranks[ri];
+    if(!root.querySelector('.v29RankHero')){
+      root.insertAdjacentHTML('afterbegin',`<div class="v29RankHero"><div class="v29RankTop"><img src="${r.img}"><div><span class="ey">ТВОЙ РАНГ</span><h2>${r.name}</h2><p>${r.line}</p></div></div>
+      <div class="v29RankRoad">${ranks.map((x,i)=>`<button class="v29RankCard ${i>ri?'locked':''}" data-v29rank="${i}"><img src="${x.img}">${i>ri?'<i class="v29Lock">🔒</i>':''}<b>${x.name}</b><small>${i<=ri?'открыт':'СКИЛЛ '+x.skill+'+'}</small></button>`).join('')}</div></div>`);
+    }
+    $$('[data-v29rank]').forEach(b=>b.onclick=()=>rankModal(+b.dataset.v29rank));
+    if(!root.querySelector('.v29Players')){
+      root.insertAdjacentHTML('beforeend',`<div class="section v29Players"><h3>ДРУГИЕ ИГРОКИ</h3><div id="v29PlayersList"><div class="v29Status">Загружаю реальные публичные профили…</div></div></div>`);
+    }
+    loadRemote().then(list=>{
+      const box=$('#v29PlayersList'); if(!box)return;
+      if(!list.length){box.innerHTML='<div class="v29Status">Пока никого не вижу в общей базе. Как только другой игрок откроет приложение и сохранит профиль, он появится здесь.</div>';return}
+      box.innerHTML=list.map((p,i)=>{const rr=rankForRemote(p);return `<button class="v29Player" data-v29p="${i}"><img src="${rr.img}"><div><b>${esc(p.nickname||'Игрок')}</b><span>${rr.name} · ${Number(p.hands_count)||0} решений</span></div><strong>${Number(p.skill)||0}</strong></button>`}).join('');
+      $$('[data-v29p]').forEach(b=>b.onclick=()=>publicProfile(list[+b.dataset.v29p]));
+    });
+  };
+
+  // First sync happens after original app has already booted.
+  setTimeout(publish,50);
+}
+
+
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
 const _editNickBtn=$('#editNickBtn');
@@ -2448,6 +2494,7 @@ try{
   ui();
   renderStory();
   window.__pokerBooted=true;
+  try{ installSocialV29(); }catch(e){ console.warn('V29 social install failed',e); }
 }catch(e){
   console.error('POKER SWIPE BOOT FAILED',e);
   if(window.__showPokerBootError) window.__showPokerBootError(e && e.message ? e.message : String(e));
