@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="23.0">
+<meta name="app-version" content="24.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V23 TOURNAMENTS</title>
+<title>POKER SWIPE — V24 POLISH</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -785,13 +785,64 @@ body{
  .t23FormGrid{grid-template-columns:1fr}.t23YouGrid{grid-template-columns:repeat(3,1fr)}.t23YouGrid b{font-size:16px}
 }
 
+
+/* ================= V24 · POLISH ================= */
+#levelChip,.creatorHomeMark21{display:none!important}
+main{padding-bottom:96px}
+.screen{padding-bottom:18px}
+.nav{z-index:90!important;position:fixed!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.topRightMark24{display:flex;align-items:center;gap:6px;align-self:flex-start;padding-top:4px;white-space:nowrap}
+.topRightMark24 span{font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,serif;font-style:italic;font-size:10px;color:#cabdca}
+.topRightMark24 b{font-size:9px;font-weight:1000;letter-spacing:.12em;text-transform:uppercase;color:#f4e7ee}
+.topRightMark24 i{font-style:normal;font-size:11px;filter:drop-shadow(0 0 8px rgba(255,46,132,.55))}
+.skillChip{display:none!important}
+.brandBlock{min-width:0}
+.myNavGlyph24{position:relative;display:inline-block;width:18px;height:18px;font-style:normal}
+.myNavGlyph24 span{position:absolute;display:block;width:11px;height:14px;border-radius:4px;border:1.5px solid #68636e;background:linear-gradient(180deg,#15151b,#0c0c10);box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.myNavGlyph24 span:first-child{left:1px;top:2px;transform:rotate(-7deg)}
+.myNavGlyph24 span:last-child{right:1px;top:1px;border-color:#8b4c68;transform:rotate(7deg)}
+.metric,.metrics .metric{cursor:pointer}
+.dailyTile{display:grid;grid-template-columns:1fr 105px;align-items:end;min-height:215px}
+.dailyTile .go{grid-column:1 / span 2;justify-self:end}
+.dailyTile .dailyFan24{align-self:center;justify-self:end;position:relative;width:92px;height:98px}
+.dailyTile .dailyFan24 .pc{position:absolute;top:8px;right:20px}
+.dailyTile .dailyFan24 .pc:nth-child(1){transform:rotate(-17deg);right:46px;top:28px}
+.dailyTile .dailyFan24 .pc:nth-child(2){transform:rotate(-3deg);right:26px;top:10px}
+.dailyTile .dailyFan24 .pc:nth-child(3){transform:rotate(13deg);right:4px;top:28px}
+.dailyTile .dailyText24{align-self:start;padding-right:8px}
+.dailyTile .dailyText24 .mut{display:block;max-width:195px}
+.chipsPreview{height:56px;display:flex;gap:8px;align-items:flex-end;padding-left:4px;margin-top:14px}
+.chipsPreview i{width:42px;height:14px;border:1px solid #ff8bc3;border-radius:50%;background:radial-gradient(circle at 50% 30%,#fff 0 11%,#ff91c6 12% 24%,#f03386 25% 52%,#921347 53% 74%,#ffb3d6 75% 82%,#74153d 83%);box-shadow:inset 0 2px 3px rgba(255,255,255,.5),inset 0 -3px 4px rgba(0,0,0,.25),0 6px 10px rgba(0,0,0,.45);transform:perspective(90px) rotateX(58deg)}
+.chipsPreview i:nth-child(2){transform:translateY(-8px) perspective(90px) rotateX(58deg)}
+.chipsPreview i:nth-child(3){transform:translateY(-15px) perspective(90px) rotateX(58deg)}
+.persona24{position:relative;width:72px;height:72px;border-radius:22px;border:1px solid #3f3c45;background:linear-gradient(180deg,#191920,#0e0e13);box-shadow:0 14px 26px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.05);overflow:hidden}
+.persona24.miniFish20{width:48px;height:48px;border-radius:16px}
+.persona24 .ring{position:absolute;inset:7px;border-radius:50%;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.09),transparent 40%),linear-gradient(180deg,#2b2730,#131319)}
+.persona24 .head{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:#f8e9ee;box-shadow:0 0 0 2px rgba(0,0,0,.1)}
+.persona24 .body{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:34px;height:20px;border-radius:16px 16px 10px 10px;background:#f8e9ee}
+.persona24 .badge{position:absolute;right:5px;bottom:5px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;display:grid;place-items:center;font-size:8px;font-weight:1000;color:#fff;background:#25131c;border:1px solid #ff4b99}
+.persona24.p0 .badge{background:#14151a;border-color:#6a6571}
+.persona24.p1 .badge{background:#1a1630;border-color:#8c7bff}
+.persona24.p2 .badge{background:#1c170f;border-color:#ffd257;color:#ffd257}
+.persona24.p3 .badge{background:#112018;border-color:#42e786;color:#42e786}
+.persona24.p4 .badge{background:#221708;border-color:#ffb347;color:#ffcf75}
+.persona24.miniFish20 .head{top:11px;width:16px;height:16px}.persona24.miniFish20 .body{bottom:7px;width:24px;height:14px}.persona24.miniFish20 .badge{right:3px;bottom:3px;min-width:16px;height:16px;font-size:6px;padding:0 3px}
+.you20Distance .you20SectionTitle span,.avatarTapHint21{letter-spacing:.02em}
+.pfWhy24{margin-top:10px;padding:12px 13px;border:1px solid #30303a;border-radius:16px;background:#101015;color:#d7d3d8;font-size:11px;line-height:1.45}
+.pfWhy24 b{display:block;color:#fff;margin-bottom:5px}
+.t23{padding-bottom:calc(158px + var(--tg-bottom-safe))!important}
+.t23CardEdit24{margin-top:8px;display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:1000;color:#ff7eb4}
+.t23DetailActions24{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px}
+.t23EditGhost24{border:1px solid #3a3340;background:#17141b;color:#fff;border-radius:14px;padding:12px 14px;font-size:10px;font-weight:1000}
+@media(max-width:370px){.topRightMark24{gap:4px}.topRightMark24 b{font-size:8px}.dailyTile{grid-template-columns:1fr 88px}.dailyTile .dailyFan24{width:82px}}
+
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
 </head>
 <body>
 <div class="app">
-<div class="build" style="display:none">V21</div>
+<div class="build" style="display:none">V24</div>
 
 <section id="onboarding" class="onboard"><div id="story" class="story">
       <span class="ey">POKER SWIPE · STARTUP</span>
@@ -800,7 +851,7 @@ body{
     </div></section>
 
 <div id="mainApp" class="hidden">
-<header class="top creatorTop"><div class="brandBlock"><div class="brand">POKER <span class="pink">SWIPE</span></div><button id="editNickBtn" class="nickEdit" aria-label="Изменить имя"><span id="hello"></span><i>✎</i></button></div><div class="chip skillChip" id="levelChip">SKILL 50</div></header>
+<header class="top creatorTop"><div class="brandBlock"><div class="brand">POKER <span class="pink">SWIPE</span></div><button id="editNickBtn" class="nickEdit" aria-label="Изменить имя"><span id="hello"></span><i>✎</i></button></div><div class="topRightMark24"><span>by</span><b>Фриковая Дама</b><i>💋</i></div><div class="chip skillChip" id="levelChip">SKILL 50</div></header>
 <main>
 <section id="home" class="screen active"></section>
 <section id="swipe" class="screen"><div id="swipeCard"></div><div id="swipeVerdict" class="verdict hidden"></div><div class="actions" id="swipeActions"></div></section>
@@ -815,7 +866,7 @@ body{
 </main>
 <nav class="nav">
 <button class="on" data-nav="home"><i>⌂</i>PLAY</button>
-<button data-nav="myhands"><i>🃏</i>МОИ</button>
+<button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i>МОИ</button>
 <button data-nav="tournaments"><i class="tourNav23">♛</i>ТУРНИРЫ</button>
 <button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>YOU</button>
 </nav>
@@ -1948,6 +1999,171 @@ const __showV23=show;
 show=function(id){__showV23(id);if(id==='tournaments')renderTournaments23()};
 window.renderTournaments23=renderTournaments23;
 window.openTournamentForm23=openTournamentForm23;
+
+
+/* ================= V24 · POLISH OVERRIDES ================= */
+function metricCard24(title,big,small,cls=''){return `<button class="metric ${cls}" type="button"><span class="ey">${title}</span><b>${big}</b><span class="mut small">${small}</span></button>`}
+
+const __renderHomeV24Base = renderHome;
+renderHome=function(){
+ const D=dailyToday(),done=dailyDone20();
+ $('#home').innerHTML=`<div class="metrics">${metricCard24('SKILL',`<span class="pink">${S.skill}</span>`,'общий уровень')}${metricCard24('FORM',formScore(),'последние 20')}${metricCard24('СЕРИЯ',S.streak,'дней')}</div>
+ <div class="grid2">
+  <button class="tile dailyTile" id="homeDaily">${done?'<span class="doneStamp20">DONE</span>':''}<div class="dailyText24"><span class="modeNumber">01</span><span class="ey">РАЗДАЧА ДНЯ</span><h2 class="impact">ОДНА<br><span class="pink">РУКА.</span></h2><span class="mut small">Один сложный спот в день: решение, размер и логика.</span></div><div class="dailyFan24"><div class="pc">Q♠</div><div class="pc">J♣</div><div class="pc">?</div></div><span class="go">→</span></button>
+  <button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Выбери размер ставки и пойми, зачем он здесь.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button>
+  <button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">РАЗБОР ЛИНИИ</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Найди первую реальную ошибку в раздаче.</span><div class="csiPreview">ПРЕ ●<br>ФЛОП ●<br>ТЁРН ⚠<br>РИВЕР ?</div><span class="go">→</span></button>
+  <button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки. Быстро, без лишней воды.</span><div style="font-size:28px;margin-top:10px">← <span style="display:inline-block;transform:translateY(1px)">▣</span> →</div><span class="go">→</span></button>
+  <button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Сужай диапазон по улицам и убирай невозможные руки.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button>
+ </div>
+ <button class="quick5" id="quick5"><div class="quick5Copy21"><span class="ey">⚡ 5 МИНУТ</span><b class="quick5Title21">БЫСТРАЯ СЕССИЯ</b><div class="mut small quick5Desc21">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong class="quick5Timer21">05:00</strong></button>`;
+ $('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick;
+ document.body.classList.add('home-context');
+ setTimeout(()=>{if(typeof bindMetrics18==='function')bindMetrics18();},0);
+}
+
+const PERSONA24=[
+ {short:'N',name:'НОВИЧОК'},
+ {short:'CL',name:'КЛУБНЫЙ ИГРОК'},
+ {short:'AR',name:'АГРО РЕГ'},
+ {short:'GR',name:'ГРИНДЕР'},
+ {short:'TR',name:'TRITON REG'}
+];
+fishAvatarMarkup20=function(i,mini=false){
+ const p=PERSONA24[i]||PERSONA24[0];
+ return `<div class="persona24 p${i} ${mini?'miniFish20':''}"><i class="ring"></i><i class="head"></i><i class="body"></i><span class="badge">${p.short}</span></div>`;
+}
+you20AvatarStage=function(){
+ const n=you20Events().length,t=[0,40,130,320,800],icons=PERSONA24.map(x=>x.short);let unlocked=0;
+ t.forEach((x,i)=>{if(n>=x)unlocked=i});
+ let idx=Number(S.avatarStage20);if(!Number.isFinite(idx)||idx>unlocked)idx=unlocked;
+ return{n,t,icons,idx,unlocked};
+}
+you20StageName=function(i){return (PERSONA24[i]||PERSONA24[0]).name}
+you20Quote=function(stats){
+ const e=you20Events(),n=e.length,form=formScore(),skill=S.skill||50,arr=[['префлоп',stats.pre],['постфлоп',stats.post],['сайзинг',stats.size]].filter(x=>x[1].n>=3).sort((a,b)=>a[1].score-b[1].score),bad=arr[0],wc=e.filter(x=>x.grade==='r'&&Number(x.confidence)>=80).length;
+ if(n<5)return'Пока рано вешать ярлык. Дай дистанцию, и станет видно: ты строишь игру или просто красиво жмёшь кнопки.';
+ if(wc>=5)return'Обожаю эту уверенность: нажать сомнительное решение с 90% confidence и пойти дальше как амбассадор дисперсии.';
+ if(bad&&bad[1].score<35)return`Сейчас у тебя проваливается ${bad[0]}. Не драма — просто зона, где приложение уже видит системный leak.`;
+ if(form<42)return'Форма просела. Такое ощущение, будто решения сейчас принимаются по настроению, а не по логике спота.';
+ if(form>=82&&skill>=70)return'Неприятно признавать, но здесь уже чувствуется рег. Чуть-чуть ещё — и придётся хвалить.';
+ if(skill<45)return'Пока это не рег, а человек на стадии клубного героя. Но уже не хаос — контур игры начинает собираться.';
+ if(stats.size.n>=5&&stats.size.score<50)return'Сайзинги пока пляшут сами по себе. Кнопка бет есть, а семейство размеров ещё не договорилось.';
+ if(stats.post.n>=5&&stats.post.score<55)return'До флопа всё прилично, а после флопа начинается авторская версия покера. Пора возвращать структуру.';
+ return'Уже похоже на человека, который что-то строит. Главное — не сорваться обратно в творческий режим на тёрне и ривере.';
+}
+openAvatar20=function(){
+ const a=you20AvatarStage();
+ openModal(`<span class="ey">СТАТУС ИГРОКА</span><h2>ВЫБЕРИ ОТКРЫТЫЙ УРОВЕНЬ</h2><p class="mut">Новые статусы открываются дистанцией. Можно выбрать любой уже разблокированный.</p><div class="avatarPicker20">${a.icons.map((x,i)=>`<button data-av20="${i}" class="${i>a.unlocked?'locked':''}" ${i>a.unlocked?'disabled':''}>${fishAvatarMarkup20(i,true)}</button>`).join('')}</div><p class="small mut" style="margin-top:10px">${a.n} решений в статистике.</p>`);
+ setTimeout(()=>$$('[data-av20]').forEach(b=>b.onclick=()=>{S.avatarStage20=+b.dataset.av20;save();closeModal();renderProfile()}),0);
+}
+const __renderProfileV24 = renderProfile;
+renderProfile=function(){
+ __renderProfileV24();
+ const hint=$('#profileArea .avatarTapHint21'); if(hint) hint.textContent='Тапни на статус, чтобы выбрать открытую форму.';
+ const distLabel=[...document.querySelectorAll('#profileArea .you20SectionTitle span')].find(x=>/аватар/i.test(x.textContent||'')); if(distLabel) distLabel.textContent='статус растёт вместе с дистанцией';
+ const quoteEy=[...document.querySelectorAll('#profileArea .ey')].find(x=>(x.textContent||'').includes('ВЕРДИКТ')); if(quoteEy) quoteEy.textContent='ВЕРДИКТ ФРИКОВОЙ ДАМЫ';
+}
+
+function pushWhy24(r,pos,bb,stage,mode){
+ const hand=r.c||'';
+ const stageText={START:'ранняя стадия',MID:'средняя стадия',BUBBLE:'баббл',ITM:'ITM',FT:'финалка'}[stage]||stage;
+ if(mode==='CALL'){
+   if(r.label==='CALL') return `При ${bb} BB и против пуша у ${hand} хватает equity, чтобы продолжать. Позиция ${pos} и ${stageText} не сужают решение до паса.`;
+   if(r.label==='MIX') return `Пограничный колл. ${hand} балансирует на границе: часть комбинаций продолжает, часть уходит в пас. Здесь уже важны нокауты, ридсы и ICM.`;
+   return `${hand} слишком низко в calling range. При ${bb} BB эта рука чаще не добирает нужную equity против пуша.`;
+ }
+ if(r.label==='PUSH' || r.label==='RAISE') return `При ${bb} BB эта рука слишком хороша, чтобы фолдить. ${hand} держит достаточно showdown value и fold equity, особенно с позиции ${pos}.`;
+ if(r.label==='MIX') return `Это смешанная граница. ${hand} не очевидный пас, но и не обязательный пуш: решение зависит от позиции, стадии и того, как часто поле переигрывает против пушей.`;
+ return `Здесь пас экономит стек. ${hand} не добирает ни по raw equity, ни по fold equity — слишком много доминации и мало хороших сценариев после выставления.`;
+}
+wirePush18=function(){
+ let pos='BTN',stage='MID',mode='PUSH';
+ const f=()=>{
+  let h=[$('#ph1')?.dataset.card||null,$('#ph2')?.dataset.card||null],bb=+$('#stack18').value;
+  if(!h.every(Boolean)){ if($('#pout18')) $('#pout18').innerHTML='<p>Сначала выбери две карты — тогда я объясню не только ответ, но и почему он такой.</p>'; return; }
+  $('#stackr').textContent=bb+' BB';
+  let r=push18(h,pos,bb,stage,mode), q=+$('#bound18').value, z=push18(h,pos,q,stage,mode);
+  const pct = r.p!=null ? `${mode==='CALL'?'Продолжение':'Пуш'} ${r.p}%` : '';
+  $('#pout18').className='answer18 '+(r.label==='FOLD'?'bad18':r.label==='MIX'?'mix18':'good18');
+  $('#pout18').innerHTML=`<span class="ey">${r.c} · ${pos} · ${bb} BB</span><h2>${r.label}</h2><p>${pct}${pct?' · ':''}альтернатива ${Math.max(0,100-(r.p||0))}%</p><div class="pfWhy24"><b>ПОЧЕМУ</b>${pushWhy24(r,pos,bb,stage,mode)}</div>`;
+  $('#boundr').textContent=q+' BB → '+z.label+' · '+z.p+'%';
+ };
+ $$('[data-pos18]').forEach(b=>b.onclick=()=>{$$('[data-pos18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');pos=b.dataset.pos18;f()});
+ $$('[data-stage18]').forEach(b=>b.onclick=()=>{$$('[data-stage18]').forEach(x=>x.classList.remove('on'));b.classList.add('on');stage=b.dataset.stage18;f()});
+ $('#first18').onclick=()=>{mode='PUSH';$('#first18').classList.add('on');$('#callmode18').classList.remove('on');f()};
+ $('#callmode18').onclick=()=>{mode='CALL';$('#callmode18').classList.add('on');$('#first18').classList.remove('on');f()};
+ bindCardPicker18(['ph1','ph2'],f); ['stack18','bound18'].forEach(x=>$('#'+x).oninput=f); f();
+}
+
+/* Tournaments: bounty count only, edit fix, stronger mobile bottom spacing */
+t23Return=function(t){return t23Num(t.prize)}
+t23Profit=function(t){return t23Return(t)-t23Cost(t)}
+t23Stats=function(){
+ const all=t23List().filter(x=>T23_FILTER==='all'||x.type===T23_FILTER);
+ const cur=T23_CURRENCY||'USD',a=all.filter(x=>(x.currency||'USD')===cur);
+ const invested=a.reduce((s,x)=>s+t23Cost(x),0),ret=a.reduce((s,x)=>s+t23Return(x),0),profit=ret-invested,roi=invested?profit/invested*100:0;
+ const bounty=a.reduce((s,x)=>s+t23Num(x.bountyCount),0);
+ const best=all.map(x=>t23Num(x.place)).filter(x=>x>0).sort((a,b)=>a-b)[0]||null;
+ return{count:all.length,invested,profit,roi,bounty,best,currency:cur};
+}
+t23Card=function(t){
+ const p=t23Profit(t),status=t23Status(t),mode=t.type==='offline'?'offline':'online';
+ return `<button class="t23Card ${mode} ${p>0?'profit':p<0?'loss':''} ${status==='win'?'win':''}" data-t23open="${t.id}">
+  <div class="t23Row"><div class="t23Poster ${mode}">${esc(t23Initials(t.name))}</div><div class="t23Main"><b>${esc(t.name||'Без названия')}</b><div class="t23Meta"><span class="t23Tag ${mode}">${mode==='online'?'ОНЛАЙН':'ОФЛАЙН'}</span><span>${t23DateLabel(t.date)}</span>${t.field?`<span>· ${t.field} игроков</span>`:''}</div>${status?`<span class="t23Status ${status}">${t23StatusLabel(t)}</span>`:''}<span class="t23CardEdit24">✎ РЕДАКТИРОВАТЬ</span></div>
+  <div class="t23Money"><b class="${p>0?'green':p<0?'red':''}">${p===0?'0':(p>0?'+':'')+t23Money(p,t.currency)}</b><small>результат</small></div></div>
+  <div class="t23Facts"><div class="t23Fact"><span>БАЙ-ИН</span><b>${t23Money(t.buyin,t.currency)} × ${Math.max(1,t.entries||1)}</b></div><div class="t23Fact"><span>BOUNTY</span><b>${t.bountyCount||0}</b></div><div class="t23Fact"><span>МЕСТО</span><b>${t.place||'—'}${t.field?'/'+t.field:''}</b></div></div>
+ </button>`;
+}
+const __renderTournaments23V24 = renderTournaments23;
+renderTournaments23=function(){
+ __renderTournaments23V24();
+ const nav=document.querySelector('.nav'); if(nav) nav.style.display='grid';
+ const stats=$('#tournamentsArea .t23Stats');
+ if(stats && !stats.querySelector('[data-extra="bounty"]')){
+   const st=t23Stats();
+   stats.insertAdjacentHTML('beforeend',`<div class="t23Stat" data-extra="bounty"><span>BOUNTY</span><b>${st.bounty}</b><small>всего выбито</small></div>`);
+ }
+}
+tournamentFormHTML23=function(t={}){
+ const edit=!!t.id,type=t.type||'online',cur=t.currency||T23_CURRENCY||'USD';
+ return `<div class="t23Form"><span class="ey">${edit?'РЕДАКТИРОВАТЬ':'НОВЫЙ ТУРНИР'}</span><h2>${edit?'ИСПРАВЬ ТУРНИР':'ДОБАВЬ ТУРНИР'}</h2><p>Минимум полей, максимум пользы. Профит и ROI приложение посчитает само.</p>
+  <div class="t23Field"><label>ГДЕ ИГРАЛ</label><div class="t23Type"><button data-t23type="online" class="${type==='online'?'on':''}">ОНЛАЙН</button><button data-t23type="offline" class="${type==='offline'?'on':''}">ОФЛАЙН</button></div></div>
+  <div class="t23Field"><label>НАЗВАНИЕ</label><input id="t23Name" maxlength="60" value="${esc(t.name||'')}" placeholder="Sunday Storm / Triton / любое своё"></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>ДАТА</label><input id="t23Date" type="date" value="${esc(t.date||today())}"></div><div class="t23Field"><label>ВАЛЮТА</label><select id="t23Currency"><option value="USD" ${cur==='USD'?'selected':''}>$ USD</option><option value="EUR" ${cur==='EUR'?'selected':''}>€ EUR</option><option value="RUB" ${cur==='RUB'?'selected':''}>₽ RUB</option></select></div></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>БАЙ-ИН</label><input id="t23Buyin" inputmode="decimal" value="${t.buyin??''}" placeholder="100"></div><div class="t23Field"><label>ПУЛЬ</label><input id="t23Entries" inputmode="numeric" value="${t.entries??1}" placeholder="1"></div></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>BOUNTY</label><input id="t23BCount" inputmode="numeric" value="${t.bountyCount??0}" placeholder="0"></div><div class="t23Field"><label>ПРИЗОВЫЕ</label><input id="t23Prize" inputmode="decimal" value="${t.prize??0}" placeholder="0"></div></div>
+  <div class="t23FormGrid"><div class="t23Field"><label>МЕСТО</label><input id="t23Place" inputmode="numeric" value="${t.place??''}" placeholder="17"></div><div class="t23Field"><label>ПОЛЕ</label><input id="t23Field" inputmode="numeric" value="${t.field??''}" placeholder="1842"></div></div>
+  <div class="t23FormActions">${edit?'<button class="t23Delete" id="t23Delete">УДАЛИТЬ</button>':'<span></span>'}<button class="primary" id="t23Save">${edit?'СОХРАНИТЬ':'ДОБАВИТЬ'} →</button></div>
+ </div>`;
+}
+openTournamentForm23=function(id=null){
+ const old=id?t23List().find(x=>String(x.id)===String(id)):null; let type=old?.type||'online';
+ openModal(tournamentFormHTML23(old||{type}));
+ setTimeout(()=>{
+  $$('[data-t23type]').forEach(b=>b.onclick=()=>{type=b.dataset.t23type;$$('[data-t23type]').forEach(x=>x.classList.toggle('on',x.dataset.t23type===type))});
+  const saveBtn=$('#t23Save'); if(saveBtn) saveBtn.onclick=()=>{
+   const name=$('#t23Name').value.trim(); if(!name){$('#t23Name').focus(); return}
+   const rec={id:old?.id||('t24_'+Date.now()),type,name,date:$('#t23Date').value||today(),currency:$('#t23Currency').value||'USD',
+    buyin:Math.max(0,t23Num($('#t23Buyin').value)),entries:Math.max(1,Math.round(t23Num($('#t23Entries').value)||1)),
+    bountyCount:Math.max(0,Math.round(t23Num($('#t23BCount').value))),prize:Math.max(0,t23Num($('#t23Prize').value)),
+    place:Math.max(0,Math.round(t23Num($('#t23Place').value))),field:Math.max(0,Math.round(t23Num($('#t23Field').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};
+   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id)); S.tournaments.push(rec); T23_CURRENCY=rec.currency; save(); closeModal(); renderTournaments23();
+  };
+  const del=$('#t23Delete'); if(del) del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id)); save(); closeModal(); renderTournaments23();};
+ },20);
+}
+openTournament23=function(id){
+ const t=t23List().find(x=>String(x.id)===String(id)); if(!t) return;
+ const p=t23Profit(t),cost=t23Cost(t),ret=t23Return(t),roi=cost?p/cost*100:0,status=t23Status(t),mode=t.type==='offline'?'offline':'online';
+ openModal(`<div class="t23Form"><div class="t23DetailTop"><div class="t23DetailPoster">${esc(t23Initials(t.name))}</div><div><span class="ey">${mode==='online'?'ОНЛАЙН':'ОФЛАЙН'} · ${t23DateLabel(t.date)}</span><h2 style="margin:3px 0">${esc(t.name)}</h2>${status?`<span class="t23Status ${status}">${t23StatusLabel(t)}</span>`:''}</div></div>
+  <div class="t23DetailGrid"><div><small>ВЛОЖЕНО</small><b>${t23Money(cost,t.currency)}</b></div><div><small>ПРИЗОВЫЕ</small><b>${t23Money(ret,t.currency)}</b></div><div><small>ПРОФИТ</small><b class="${p>0?'green':p<0?'red':''}">${p>0?'+':''}${t23Money(p,t.currency)}</b></div><div><small>ROI</small><b>${cost?(roi>0?'+':'')+roi.toFixed(1)+'%':'—'}</b></div><div><small>BOUNTY</small><b>${t.bountyCount||0}</b></div><div><small>МЕСТО</small><b>${t.place||'—'}${t.field?'/'+t.field:''}</b></div></div>
+  <div class="t23DetailActions24"><button class="primary" id="t23Edit">РЕДАКТИРОВАТЬ →</button>${t.id?'<button class="t23EditGhost24" id="t23QuickDelete">УДАЛИТЬ</button>':''}</div></div>`);
+ setTimeout(()=>{
+   const eb=$('#t23Edit'); if(eb) eb.onclick=(e)=>{e.preventDefault(); closeModal(); setTimeout(()=>openTournamentForm23(id),80)};
+   const db=$('#t23QuickDelete'); if(db) db.onclick=(e)=>{e.preventDefault(); S.tournaments=t23List().filter(x=>String(x.id)!==String(id)); save(); closeModal(); renderTournaments23();};
+ },40);
+}
+
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));

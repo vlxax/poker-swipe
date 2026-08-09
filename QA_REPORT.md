@@ -1,17 +1,10 @@
-# QA V23
+# QA V24
 
-- Inline JavaScript syntax: **OK**
-- Poker Brain JavaScript syntax: **OK**
-- tournament screen: **OK**
-- 4-tab nav: **OK**
-- unlimited storage: **OK**
-- online offline: **OK**
-- buyin entries: **OK**
-- bounty count/won: **OK**
-- place/field: **OK**
-- profit ROI: **OK**
-- edit/delete: **OK**
-- YOU integration: **OK**
-- multi-currency: **OK**
-- Telegram layout preserved: **OK**
-- V22 review preserved: **OK**
+- skill chip hidden: **OK**
+- tournament bounty count only: **MISS**
+- tournament edit button: **OK**
+- push explanation added: **OK**
+- persona avatar stages: **OK**
+- daily fan cards: **OK**
+- my nav glyph: **OK**
+- top right mark: **OK**
