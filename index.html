@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="22.0">
+<meta name="app-version" content="22.1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V22 HAND REVIEW</title>
+<title>POKER SWIPE — V22.1 TELEGRAM</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -517,7 +517,228 @@ input[type=range]{height:28px}
 .hr22Saved{width:100%;text-align:left;border:1px solid #292933;border-radius:15px;padding:10px;margin:6px 0;background:#0f0f14;color:#fff}.hr22Saved small{display:block;color:#8e8792;margin-top:4px}
 @media(max-width:370px){.hr22StepActions{grid-template-columns:repeat(2,minmax(0,1fr))}.hr22Questions{grid-template-columns:1fr}.hr22Hero h1{font-size:28px}}
 
+
+/* ================= V22.1 · TELEGRAM NATIVE LAYOUT ================= */
+:root{
+ --tg-top-safe:max(env(safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,var(--tg-js-content-top,0px)));
+ --tg-bottom-safe:max(env(safe-area-inset-bottom,0px),var(--tg-content-safe-area-inset-bottom,var(--tg-js-content-bottom,0px)));
+ --tg-left-safe:max(env(safe-area-inset-left,0px),var(--tg-content-safe-area-inset-left,0px));
+ --tg-right-safe:max(env(safe-area-inset-right,0px),var(--tg-content-safe-area-inset-right,0px));
+ --app-stable-height:var(--tg-viewport-stable-height,var(--tg-js-stable-height,100dvh));
+ --bottom-nav-height:82px;
+}
+html,body{
+ width:100%;max-width:100%;min-height:100%;
+ overflow-x:hidden!important;
+ overscroll-behavior-x:none;
+ -webkit-text-size-adjust:100%;
+}
+body{
+ min-height:var(--app-stable-height)!important;
+ padding:0!important;
+}
+.app,#mainApp{
+ width:100%!important;
+ max-width:480px!important;
+ min-height:var(--app-stable-height)!important;
+ margin:0 auto!important;
+ overflow-x:hidden!important;
+}
+.top{
+ top:0!important;
+ min-height:calc(54px + var(--tg-top-safe))!important;
+ padding:
+   calc(12px + var(--tg-top-safe))
+   max(14px,var(--tg-right-safe))
+   10px
+   max(14px,var(--tg-left-safe))!important;
+ background:linear-gradient(180deg,#08080c 0%,rgba(8,8,12,.96) 64%,rgba(8,8,12,.72) 86%,transparent 100%)!important;
+}
+.screen{
+ width:100%!important;
+ max-width:100%!important;
+ min-width:0!important;
+ padding-top:8px!important;
+ padding-left:0!important;
+ padding-right:0!important;
+ padding-bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 42px)!important;
+ overflow-x:hidden!important;
+}
+.screen>*{max-width:100%;min-width:0}
+.nav{
+ width:min(480px,100%)!important;
+ left:50%!important;
+ right:auto!important;
+ bottom:0!important;
+ padding:
+   8px max(10px,var(--tg-right-safe))
+   calc(8px + var(--tg-bottom-safe))
+   max(10px,var(--tg-left-safe))!important;
+ min-height:calc(var(--bottom-nav-height) + var(--tg-bottom-safe))!important;
+ background:rgba(9,9,13,.97)!important;
+ border-top:1px solid rgba(255,255,255,.06)!important;
+ box-shadow:0 -15px 40px rgba(0,0,0,.48)!important;
+}
+.nav button{
+ min-height:54px!important;
+ padding:6px 3px!important;
+}
+/* Swipe: keep actions reachable before choice, never cover the analysis afterwards. */
+#swipe{
+ position:relative;
+}
+#swipe .swipeShell,
+#swipe #swipeVerdict{
+ min-width:0!important;
+ max-width:100%!important;
+}
+.actions{
+ position:sticky!important;
+ bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 6px)!important;
+ z-index:32!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:7px!important;
+ padding:12px 12px 10px!important;
+ margin-top:4px!important;
+ background:linear-gradient(180deg,transparent 0%,rgba(8,8,12,.92) 24%,#08080c 62%)!important;
+ backdrop-filter:blur(12px);
+ -webkit-backdrop-filter:blur(12px);
+}
+.actions .action{
+ min-width:0!important;
+ min-height:58px!important;
+ padding:12px 4px!important;
+ font-size:16px!important;
+ border-radius:17px!important;
+}
+#swipeVerdict:not(.hidden) + #swipeActions{
+ display:none!important;
+}
+#swipeVerdict{
+ margin-bottom:18px!important;
+}
+.swipeCardV{
+ min-height:0!important;
+ padding:16px!important;
+}
+.swipeCardV h2{
+ font-size:26px!important;
+ line-height:1!important;
+ margin-bottom:15px!important;
+}
+.swipeContext{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.swipeContext>div{min-width:0!important}
+.brainPanel{
+ max-width:100%!important;
+ overflow:hidden!important;
+ padding:12px!important;
+}
+.brainHead{
+ flex-wrap:wrap!important;
+ align-items:flex-start!important;
+}
+.brainSource{
+ max-width:100%!important;
+ white-space:normal!important;
+ text-align:right;
+}
+.brainAction{
+ grid-template-columns:54px minmax(0,1fr) 36px!important;
+ min-width:0!important;
+}
+.brainMath{
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.brainMath div{
+ min-width:0!important;
+ padding:8px 6px!important;
+}
+.brainMath b{
+ font-size:14px!important;
+ white-space:nowrap;
+}
+.brainExplain{
+ overflow-wrap:anywhere;
+}
+.brainTruth{
+ display:none!important; /* internal implementation notes must not be user-facing */
+}
+/* Slider/result screens: no control may fall under the nav or another action row. */
+.swipeSizeDrawer,
+#sizeResult,
+#dDecision,
+.verdict{
+ max-width:100%!important;
+ min-width:0!important;
+}
+.swipeSizeDrawer .primary,
+#sizeResult .primary{
+ position:relative!important;
+ z-index:1!important;
+}
+.sizeRead{
+ gap:10px!important;
+ min-width:0!important;
+}
+.sizeRead>*{min-width:0}
+.range{
+ display:block!important;
+ width:100%!important;
+ max-width:100%!important;
+}
+.scale{
+ gap:2px!important;
+}
+/* Modal/card picker follows Telegram's visible stable height and safe bottom. */
+.modal{
+ padding-top:var(--tg-top-safe)!important;
+}
+.sheet{
+ max-height:calc(var(--app-stable-height) - var(--tg-top-safe) - 8px)!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain;
+ padding-bottom:calc(24px + var(--tg-bottom-safe))!important;
+}
+/* Hand review and My Cards */
+.hr22,.tool18,.my18{
+ max-width:100%!important;
+ overflow-x:hidden!important;
+ padding-left:max(12px,var(--tg-left-safe))!important;
+ padding-right:max(12px,var(--tg-right-safe))!important;
+}
+.panel18,.hr22Hero,.hr22ReportHero,.hr22StreetReport,.my18Tool{
+ max-width:100%!important;
+ min-width:0!important;
+}
+.cards18,.hr22Cards,.hr22Board{
+ min-width:0!important;
+}
+.cardPick18{min-width:0!important}
+/* Compact devices / Telegram split-height mode */
+@media(max-width:390px){
+ .top{padding-left:12px!important;padding-right:12px!important}
+ .brand{font-size:15px!important}
+ .chip{padding:6px 9px!important}
+ .swipeShell{margin-left:12px!important;margin-right:12px!important}
+ .swipeCardV{border-radius:23px!important}
+ .cards{gap:5px!important}
+ .pc{width:46px!important;height:64px!important;font-size:18px!important}
+ .brainMath{gap:4px!important}
+ .brainMath div{padding:7px 4px!important}
+ .brainMath .ey{font-size:7px!important;letter-spacing:.08em!important}
+ .brainMath b{font-size:13px!important}
+ .actions .action{font-size:15px!important}
+}
+@media(max-height:700px){
+ .swipeCardV{padding-top:14px!important;padding-bottom:14px!important}
+ .cards{margin-top:10px!important;margin-bottom:10px!important}
+ .actions .action{min-height:52px!important}
+}
+
 </style>
+<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <script src="poker_brain_v20.js"></script>
 </head>
 <body>
@@ -740,7 +961,7 @@ function newSwipeSession(){const seen=new Set(S.seenSwipe||[]);let pool=SWIPE.fi
 function swipeGrade(s,a){return s.preferred.includes(a)?'g':s.live.includes(a)?'y':'r'}
 function renderSwipe(){if(!swSession.length||swIndex>=swSession.length)newSwipeSession();const s=swSession[swIndex];swLocked=false;swStart=now();clearTimeout(swTimer);$('#swipeVerdict').classList.add('hidden');$('#swipeVerdict').innerHTML='';$('#swipeCard').innerHTML=`${quickBanner('swipe')}<div class="swipeShell"><div class="swipeTop"><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'MEMORY CHECK · ':''}${s.street} · ${s.pos}</span><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'ТОТ ЖЕ CONCEPT':'РУКА '+(swIndex+1)+'/10'}</span></div><div class="swipeProgress"><span style="width:${swIndex/10*100}%"></span></div><div class="swipeCardV in" id="swipeVisual">${refBadge()}<h2>ТВОЁ РЕШЕНИЕ?</h2>${s.board.length?board(s.board):''}${hand(s.hero)}<div class="swipeContext"><div><span class="ey">POT</span><b>${s.pot} BB</b></div><div><span class="ey">EFF STACK</span><b>${s.stack} BB</b></div></div><p>${s.ctx}</p><div class="swipeHint">${s.concept}</div></div></div>`;$('#swipeActions').innerHTML=s.actions.map((a,i)=>`<button class="action ${/ФОЛД/.test(a)?'fold':/КОЛЛ|ЧЕК/.test(a)?'call':'raise'}" data-sa="${a}">${a}</button>`).join('');$$('[data-sa]').forEach(b=>b.onclick=()=>swipeTap(s,b.dataset.sa,b))}
 function swipeTap(s,a,btn){if(swLocked)return;$$('[data-sa]').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');if((a==='СТАВКА'||(a==='РЕЙЗ'&&s.street!=='ПРЕФЛОП'))&&s.sizeZone){renderSwipeSize(s,a);return}finalizeSwipe(s,a,null)}
-function renderSwipeSize(s,a){$('#swipeVerdict').classList.remove('hidden');$('#swipeVerdict').innerHTML=`<div class="swipeSizeDrawer"><span class="ey">${a} · ВЫБЕРИ РАЗМЕР</span><div class="sizeRead"><div><b id="swSizePct">50%</b><span class="mut small">банка</span></div><strong id="swSizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input id="swSize" class="range" type="range" min="10" max="150" value="50"><div class="scale"><span>10</span><span>33</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="swSizeLock">ПОСТАВИТЬ 50% →</button></div>`;const r=$('#swSize');r.oninput=()=>{$('#swSizePct').textContent=r.value+'%';$('#swSizeBB').textContent=(s.pot*+r.value/100).toFixed(1)+' BB';$('#swSizeLock').textContent=`ПОСТАВИТЬ ${r.value}% →`};$('#swSizeLock').onclick=()=>finalizeSwipe(s,a,+r.value)}
+function renderSwipeSize(s,a){$('#swipeVerdict').classList.remove('hidden');$('#swipeVerdict').innerHTML=`<div class="swipeSizeDrawer"><span class="ey">${a} · ВЫБЕРИ РАЗМЕР</span><div class="sizeRead"><div><b id="swSizePct">50%</b><span class="mut small">банка</span></div><strong id="swSizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input id="swSize" class="range" type="range" min="10" max="150" value="50"><div class="scale"><span>10</span><span>33</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="swSizeLock">ПОСТАВИТЬ 50% →</button></div>`;requestAnimationFrame(()=>$('#swipeVerdict')?.scrollIntoView({behavior:'smooth',block:'nearest'}));const r=$('#swSize');r.oninput=()=>{$('#swSizePct').textContent=r.value+'%';$('#swSizeBB').textContent=(s.pot*+r.value/100).toFixed(1)+' BB';$('#swSizeLock').textContent=`ПОСТАВИТЬ ${r.value}% →`};$('#swSizeLock').onclick=()=>finalizeSwipe(s,a,+r.value)}
 function finalizeSwipe(s,a,size){if(swLocked)return;swLocked=true;const ga=swipeGrade(s,a);let gs=null;if(size!=null){const [lo,hi]=s.sizeZone;gs=size>=lo&&size<=hi?'g':size>=lo-15&&size<=hi+20?'y':'r'}const g=gs==='r'||ga==='r'?'r':gs==='y'||ga==='y'?'y':'g';const response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:s.why});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'ЖИВЁТ':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'ПЕРЕБОР'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}<p>${s.why}</p>${size!=null?`<p class="mut small">Рабочая учебная зона: ${s.sizeZone[0]}–${s.sizeZone[1]}%.</p>`:''}<p class="pink"><b>${g==='g'?'Даже придраться неприятно.':g==='y'?'Решение живёт, но адвокат уже приехал.':'Карты новые. Привычка почему-то та же.'}</b></p><div id="holdArea"></div></div>`;const delay=g==='g'?2500:g==='y'?3300:4500;const schedule=()=>{swTimer=setTimeout(swipeNext,delay);$('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<span class="holdBadge">РАЗДАЧА ЗАДЕРЖАНА</span><button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext}};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НAСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
 function swipeNext(){clearTimeout(swTimer);if(quick.active){quickAdvance();return}const c=$('#swipeVisual');if(c)c.classList.add('out');setTimeout(()=>{swIndex++;if(swIndex>=10)renderSwipeReport();else renderSwipe()},220)}
 function renderSwipeReport(){const g=swSessionGrades.filter(x=>x.g==='g').length,y=swSessionGrades.filter(x=>x.g==='y').length,r=swSessionGrades.filter(x=>x.g==='r').length;const badBy={};for(const x of swSessionGrades.filter(x=>x.g==='r'))badBy[x.concept]=(badBy[x.concept]||0)+1;const worst=Object.entries(badBy).sort((a,b)=>b[1]-a[1])[0];$('#swipeCard').innerHTML=`<div class="swipeReport"><span class="ey">SESSION REPORT · 10 РУК</span><h1 class="impact">ЛЕНТА<br><span class="pink">ЗАКОНЧЕНА.</span></h1><div class="swipeReportGrid"><div><span class="ey">ЧИСТО</span><b class="green">${g}</b></div><div><span class="ey">ЖИВЁТ</span><b class="yellow">${y}</b></div><div><span class="ey">ОШИБКА</span><b class="red">${r}</b></div></div><div class="verdict"><span class="ey">ЧТО Я УВИДЕЛА</span><h2>${worst?worst[0]:'ПОКА БЕЗ ЯВНОГО ЛИКА'}</h2><p>${worst?`${worst[1]} серьёзных ошибки в одной концепции.`:'Нужна ещё выборка.'}</p></div><button class="primary" id="swAgain">ЕЩЁ 10 →</button></div>`;$('#swipeActions').innerHTML='';$('#swipeVerdict').classList.add('hidden');$('#swAgain').onclick=()=>{swSession=[];renderSwipe()}}
@@ -873,14 +1094,14 @@ function renderHome(){const D=dailyToday();$('#home').innerHTML=`<div class="met
 
 /* ===== V17 BRAIN INTEGRATION ===== */
 function brainSourceLabel(s=''){return ({EXACT_REFERENCE_NODE:'EXACT NODE',PREFLOP_ATLAS:'PREFLOP ATLAS',POSTFLOP_ATLAS:'POSTFLOP MODEL',LINE_MODEL:'LINE MODEL',REPAIR_MODEL:'REPAIR MODEL',NO_MODEL:'NO MODEL'})[s]||s}
-function brainPanel(r){if(!r)return'';const pol=(r.topActions||[]).map(x=>`<div class="brainAction"><span>${x.action}</span><i><span style="width:${Math.round(x.freq*100)}%"></span></i><b>${Math.round(x.freq*100)}%</b></div>`).join('');const math=r.river?`<div class="brainMath"><div><span class="ey">POT ODDS</span><b>${r.river.requiredEquity.toFixed(1)}%</b></div><div><span class="ey">MDF</span><b>${r.river.mdf.toFixed(1)}%</b></div><div><span class="ey">BLUFF/VALUE</span><b>${r.river.bluffPerValue.toFixed(2)}</b></div></div>`:'';return `<div class="brainPanel"><div class="brainHead"><b>◉ GTO BRAIN</b><span class="brainSource">${brainSourceLabel(r.source)} · ${r.confidence}%</span></div>${r.score!=null?`<div class="brainScore">${r.score}</div>`:''}<div class="brainPolicy">${pol}</div>${math}<p class="brainExplain">${esc(r.explanation||'')}</p>${r.sizeBest!=null?`<p class="mut small">Ближайший size-family: ≈${r.sizeBest}%${Number.isFinite(r.sizeDistance)?` · отклонение ${Math.round(r.sizeDistance)} п.п.`:''}</p>`:''}<div class="brainTruth">Математика pot odds/MDF/combo removal считается точно. Policy — локальная GTO-reference модель; это не выгрузка GTO Wizard/Pio.</div></div>`}
+function brainPanel(r){if(!r)return'';const pol=(r.topActions||[]).map(x=>`<div class="brainAction"><span>${x.action}</span><i><span style="width:${Math.round(x.freq*100)}%"></span></i><b>${Math.round(x.freq*100)}%</b></div>`).join('');const math=r.river?`<div class="brainMath"><div><span class="ey">POT ODDS</span><b>${r.river.requiredEquity.toFixed(1)}%</b></div><div><span class="ey">MDF</span><b>${r.river.mdf.toFixed(1)}%</b></div><div><span class="ey">BLUFF/VALUE</span><b>${r.river.bluffPerValue.toFixed(2)}</b></div></div>`:'';return `<div class="brainPanel"><div class="brainHead"><b>◉ GTO BRAIN</b><span class="brainSource">${brainSourceLabel(r.source)} · ${r.confidence}%</span></div>${r.score!=null?`<div class="brainScore">${r.score}</div>`:''}<div class="brainPolicy">${pol}</div>${math}<p class="brainExplain">${esc(r.explanation||'')}</p>${r.sizeBest!=null?`<p class="mut small">Ближайший size-family: ≈${r.sizeBest}%${Number.isFinite(r.sizeDistance)?` · отклонение ${Math.round(r.sizeDistance)} п.п.`:''}</p>`:''}</div>`}
 
 /* add brain metadata to every event without breaking existing concept labels */
 const _recordEventV16=recordEvent;
 recordEvent=function(e){const ev=_recordEventV16({...e,conceptId:e.conceptId||null,brainVersion:window.PokerBrain?.version||null});return ev}
 
 /* Poker Swipe: grading is now driven by PokerBrain, not preferred/live/sizeZone */
-finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'МИМО SIZE-FAMILY'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}${brainPanel(br)}<p class="pink"><b>${g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.'}</b></p><div id="holdArea"></div></div>`;const delay=g==='g'?2800:g==='y'?3800:5200;const schedule=()=>{swTimer=setTimeout(swipeNext,delay);$('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<span class="holdBadge">РАЗДАЧА ЗАДЕРЖАНА</span><button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext}};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НАСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
+finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'МИМО SIZE-FAMILY'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}${brainPanel(br)}<p class="pink"><b>${g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.'}</b></p><div id="holdArea"></div></div>`;requestAnimationFrame(()=>v.scrollIntoView({behavior:'smooth',block:'nearest'}));const delay=g==='g'?2800:g==='y'?3800:5200;const schedule=()=>{swTimer=setTimeout(swipeNext,delay);$('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<span class="holdBadge">РАЗДАЧА ЗАДЕРЖАНА</span><button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext}};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НАСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
 
 /* Sizing: action + sizing family from Brain */
 renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · SIZING LAB</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">POT</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerBrain.gradeDecision({...s,spotId:s.id},action,v||null),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">SIZE FAMILY</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
@@ -1492,6 +1713,67 @@ renderMy=function(){
  if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0);return}
 }
 window.openSaved22=openSaved22;
+
+
+/* ================= V22.1 · TELEGRAM WEBAPP BRIDGE ================= */
+function syncTelegramLayout22(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg)return;
+ const root=document.documentElement;
+ try{
+   const stable=Number(tg.viewportStableHeight||tg.viewportHeight||0);
+   if(stable>0)root.style.setProperty('--tg-js-stable-height',stable+'px');
+   const content=tg.contentSafeAreaInset||{};
+   const safe=tg.safeAreaInset||{};
+   const top=Number(content.top||safe.top||0);
+   const bottom=Number(content.bottom||safe.bottom||0);
+   root.style.setProperty('--tg-js-content-top',Math.max(0,top)+'px');
+   root.style.setProperty('--tg-js-content-bottom',Math.max(0,bottom)+'px');
+ }catch(e){}
+}
+function initTelegram22(){
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ if(!tg)return;
+ try{tg.ready()}catch(e){}
+ try{tg.expand()}catch(e){}
+ try{tg.setHeaderColor('#08080c')}catch(e){}
+ try{tg.setBackgroundColor('#08080c')}catch(e){}
+ try{if(tg.setBottomBarColor)tg.setBottomBarColor('#08080c')}catch(e){}
+ syncTelegramLayout22();
+ try{
+   tg.onEvent('viewportChanged',syncTelegramLayout22);
+   tg.onEvent('safeAreaChanged',syncTelegramLayout22);
+   tg.onEvent('contentSafeAreaChanged',syncTelegramLayout22);
+   tg.onEvent('activated',syncTelegramLayout22);
+ }catch(e){}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initTelegram22,{once:true});
+else initTelegram22();
+window.addEventListener('resize',syncTelegramLayout22,{passive:true});
+
+
+(function(){
+ const watch=()=>{
+   const targets=['swipeVerdict','sizeResult'];
+   targets.forEach(id=>{
+     const el=document.getElementById(id);
+     if(!el||el.dataset.tgWatch22)return;
+     el.dataset.tgWatch22='1';
+     const mo=new MutationObserver(()=>{
+       if(el.id==='swipeVerdict'&&!el.classList.contains('hidden')&&el.textContent.trim()){
+         requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}));
+       }
+       if(el.id==='sizeResult'&&el.textContent.trim()){
+         requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}));
+       }
+     });
+     mo.observe(el,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+   });
+ };
+ const oldShow=show;
+ show=function(id){oldShow(id);requestAnimationFrame(()=>{syncTelegramLayout22();watch()})};
+ requestAnimationFrame(watch);
+})();
 
 /* NAV / START */
 $$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
