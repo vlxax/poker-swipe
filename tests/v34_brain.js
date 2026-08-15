@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'); const path=require('node:path'); const vm=require('node:vm');
+const root=path.resolve(__dirname,'..');
+const previous={version:'33.0',gradeDecision:(spot,action)=>({grade:'y',actionGrade:'y',sizeGrade:null,action:String(action).toUpperCase(),actionFrequency:.3,topActions:[{action:'BET',freq:.7},{action:'CHECK',freq:.3}],score:60,concept:spot.concept||'dynamic board',source:'STRUCTURAL_MODEL',confidence:82,explanation:'old'}),analyzeHand:()=>({result:{}})};
+const V33={cardCode:v=>{const m=String(v).replace('10','T').match(/^([2-9TJQKA])([shdc♠♥♦♣])$/i);if(!m)return'';return m[1].toUpperCase()+({s:'s',h:'h',d:'d',c:'c','♠':'s','♥':'h','♦':'d','♣':'c'}[m[2].toLowerCase?.()||m[2]]||{'♠':'s','♥':'h','♦':'d','♣':'c'}[m[2]])},cardLabel:v=>v,contextForSpot:s=>({street:String(s.street).toUpperCase().replace('ТЁРН','TURN'),pos:{hero:'BTN',villain:'BB'},hero:s.hero,board:s.board,stack:s.stack,pot:s.pot,current:s.ctx||'',preflop:'BTN открыл 2,2 ББ → BB колл.',score:90,missing:[],assumptions:[],stage:s.stage||''})};
+const context={window:{PokerBrain:previous,PokerBrainV33:V33},console};context.window.window=context.window;vm.createContext(context);vm.runInContext(fs.readFileSync(path.join(root,'poker_brain_v34.js'),'utf8'),context);
+const Brain=context.window.PokerBrainV34, PB=context.window.PokerBrain;
+assert.equal(Brain.version,'34.0');
+const f=Brain.handFeatures(['Kh','Qd'],['Js','Tc','8d','5h']);
+assert.equal(f.overcards,2); assert.ok(f.draw.includes('двустороннее стрит-дро')||f.draw.includes('двойной гатшот'));
+const r=PB.gradeDecision({id:'T_JT85_KQ_V1',street:'TURN',hero:['Kh','Qd'],board:['Js','Tc','8d','5h'],stack:40,pot:5.4,ctx:'Флоп check-check. BB чек.'},'CHECK');
+assert.equal(r.modelVersion,'34.0'); assert.ok(r.topActions[0].freq>=.8); assert.match(r.analysisDetails.sections.change,/Тёрн|TURN|5h/i); assert.match(r.analysisDetails.sections.hand,/оверкарты/i);
+const river=Brain.streetDelta('RIVER',['Ah','Qh'],['Js','Tc','8h','5h','2c']); assert.match(river,/не закрылось/i);
+console.log('PokerBrain V34 unit: OK');

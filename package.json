@@ -1,10 +1,12 @@
 {
   "name": "pokerswipe",
-  "version": "32.0.0",
+  "version": "34.0.0",
   "private": true,
   "description": "PokerSwipe static Telegram WebApp",
   "scripts": {
-    "test": "node tests/v32_regression.js"
+    "test": "npm run test:brain && npm run test:dom",
+    "test:brain": "node tests/v33_brain.js && node tests/v34_brain.js",
+    "test:dom": "node tests/v32_regression.js"
   },
   "devDependencies": {
     "jsdom": "^26.1.0"

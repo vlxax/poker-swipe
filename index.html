@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="32.0">
+<meta name="app-version" content="33.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -12,7 +12,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'">
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
-<title>POKER SWIPE — V32 STABLE</title>
+<link rel="stylesheet" href="poker_swipe_v33.css">
+<title>POKER SWIPE — V33 SMART LINE</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -2602,6 +2603,7 @@ function exposeV32(name,get,set){
   ['renderDaily',()=>renderDaily,v=>{renderDaily=v}],['renderHeal',()=>renderHeal,v=>{renderHeal=v}],
   ['renderMy',()=>renderMy,v=>{renderMy=v}],['renderXray',()=>renderXray,v=>{renderXray=v}],
   ['renderProfile',()=>renderProfile,v=>{renderProfile=v}],['renderDiagnostic',()=>renderDiagnostic,v=>{renderDiagnostic=v}],
+  ['brainSourceLabel',()=>brainSourceLabel,v=>{brainSourceLabel=v}],['brainPanel',()=>brainPanel,v=>{brainPanel=v}],
   ['finalizeSwipe',()=>finalizeSwipe,v=>{finalizeSwipe=v}],['swipeNext',()=>swipeNext,v=>{swipeNext=v}],
   ['card',()=>card,null],['board',()=>board,null],['topLeak',()=>topLeak,null],
   ['conceptLabel',()=>conceptLabel,null],['disciplineScore',()=>disciplineScore,v=>{disciplineScore=v}],
@@ -2622,6 +2624,7 @@ function exposeV32(name,get,set){
   ['hr22Save',()=>hr22Save,v=>{hr22Save=v}],['hr22Report',()=>hr22Report,v=>{hr22Report=v}],
   ['reconView18',()=>reconView18,v=>{reconView18=v}],['openSaved22',()=>openSaved22,v=>{openSaved22=v}],
   ['myHub18',()=>myHub18,v=>{myHub18=v}],['myGo18',()=>myGo18,null],
+  ['push18',()=>push18,v=>{push18=v}],['pushView18',()=>pushView18,v=>{pushView18=v}],['wirePush18',()=>wirePush18,v=>{wirePush18=v}],
   ['wireEq18',()=>wireEq18,v=>{wireEq18=v}],['bindCardPicker18',()=>bindCardPicker18,null],
   ['refreshCardButton18',()=>refreshCardButton18,null],['cardButton18',()=>cardButton18,null],
   ['equity18',()=>equity18,v=>{equity18=v}],['deck18',()=>deck18,null],
@@ -3093,6 +3096,11 @@ if(!document.getElementById('mainApp')?.classList.contains('hidden') && document
 </script>
 
 <script src="poker_swipe_v32.js"></script>
+<script src="poker_brain_v33.js"></script>
+<script src="poker_swipe_v33.js"></script>
+<link rel="stylesheet" href="poker_swipe_v34.css">
+<script src="poker_brain_v34.js"></script>
+<script src="poker_swipe_v34.js"></script>
 
 </body>
 </html>

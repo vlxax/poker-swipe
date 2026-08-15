@@ -83,7 +83,7 @@ async function boot({returning = false} = {}) {
   const fresh = await boot();
   assert.equal(fresh.window.__pokerBooted, true);
   assert.equal(fresh.window.__pokerReadyV32, true);
-  assert.equal(fresh.document.documentElement.dataset.pokerSwipeVersion, '32.0');
+  assert.equal(fresh.document.documentElement.dataset.pokerSwipeVersion, '33.0');
   assert.equal(fresh.errors.length, 0, fresh.errors.join('\n'));
   fresh.window.close();
 
@@ -102,12 +102,16 @@ async function boot({returning = false} = {}) {
   await wait(20);
   assert.equal(document.querySelector('#swipe').classList.contains('active'), true);
   assert.ok(document.querySelector('#swipeCard .v31Passport'));
+  assert.ok(document.querySelector('#swipeCard .v33Context'));
+  assert.match(document.querySelector('#swipeCard .v31Line').textContent, /Префлоп/i);
   assert.notEqual(window.getComputedStyle(document.querySelector('.swipeContext')).display, 'none');
 
   window.show('home');
   document.querySelector('#v31Sizing').click();
   await wait(20);
   const sizing = document.querySelector('#sizeLock');
+  assert.ok(document.querySelector('#sizeRange + .v33DirectInput'));
+  assert.ok(document.querySelector('.v33SizingContext'));
   sizing.click(); sizing.click();
   await wait(20);
   assert.equal(window.S.events.filter(e => e.mode === 'sizing').length, 1);
@@ -139,6 +143,11 @@ async function boot({returning = false} = {}) {
   await wait(30);
   assert.deepEqual(['eh1','eh2','ev1','ev2'].map(id => document.querySelector('#'+id).dataset.card), ['As','Kh','Qc','Qd']);
   assert.match(document.querySelector('#eqout').textContent, /46\.2%/);
+
+  window.myGo18('push');
+  await wait(40);
+  assert.equal(document.querySelectorAll('#v33PushMatrix .v33MatrixCell').length, 169);
+  assert.ok(document.querySelector('#stack18 + .v33DirectInput'));
 
   assert.equal(window.t23Num('10,5'), 10.5);
   assert.equal(window.t23Return({prize: 100, bountyWon: 25}), 125);
@@ -185,6 +194,22 @@ async function boot({returning = false} = {}) {
   window.hr22Save();
   assert.equal(window.S.drafts.hand, undefined);
 
+  window.HR22 = window.hr22Fresh();
+  window.HR22.hero = ['As', 'Kh'];
+  window.HR22.step = 1;
+  window.HR22.street = 'pre';
+  window.HR22.streets.pre.heroAction = 'RAISE';
+  window.reconView18();
+  await wait(30);
+  assert.ok(document.querySelector('#v33HistoryNote'));
+  assert.ok(document.querySelector('#hrhsize + .v33DirectInput'));
+
+  window.show('xray');
+  await wait(30);
+  document.querySelector('#v33XrayCustom').click();
+  document.querySelector('#v33XrStart').click();
+  assert.equal(document.querySelectorAll('#v33XrMatrix .v33MatrixCell').length, 169);
+
   window.quick.active = true; window.quick.index = 2;
   window.show('home');
   assert.equal(window.quick.active, false);
@@ -195,7 +220,7 @@ async function boot({returning = false} = {}) {
   assert.match(document.querySelector('#modalBody').textContent, /КУРС ЗАКРЫТ/);
 
   assert.equal(app.errors.length, 0, app.errors.join('\n'));
-  console.log('PokerSwipe V32 regression: OK');
+  console.log('PokerSwipe V33 DOM regression: OK');
   window.close();
 })().catch(error => {
   console.error(error);
