@@ -1,33 +1,30 @@
-POKER SWIPE V29 — SAFE SOCIAL PATCH
+# PokerSwipe V32 — GitHub-ready build
 
-BASE:
-- exact V25 SMART DIAGNOSTIC + POKER INTELLIGENCE from Лерочка.zip
+Это облегчённая production-сборка PokerSwipe V32 для GitHub Pages. В ней только активный runtime, используемые приложением rank-ассеты, тест и release notes. Старые HTML-сборки, Figma-исходник, превью и неиспользуемые изображения исключены; на работу приложения это не влияет.
 
-RULE:
-- original V25 boots first
-- social/Supabase layer installs only AFTER window.__pokerBooted=true
-- no V25 screen is replaced during startup
+## Как загрузить через сайт GitHub
 
-PRESERVED:
-- Smart Diagnostic 12 spots
-- Poker Intelligence / PokerBrain
-- МОИ КАРТЫ
-- tournaments
-- Push/Fold
-- sizing / daily / review / heal / x-ray
-- existing V25 YOU logic
+1. Распакуйте `PokerSwipe_V32_GITHUB_READY.zip`.
+2. Откройте репозиторий `poker-swipe` → **Add file** → **Upload files**.
+3. Откройте распакованную папку, выделите всё внутри (`⌘A`) и перетащите файлы в окно GitHub.
+4. Не загружайте сам ZIP: GitHub Pages не распаковывает архивы.
+5. Дождитесь списка файлов, затем нажмите **Commit changes**.
 
-ADDED SAFELY:
-- isolated local profile by Telegram user ID (device ID fallback)
-- Supabase public profile sync
-- real other players list in YOU
-- public profile with plain-language comparison: stronger/weaker/about equal
-- explanation of what Preflop/Postflop/Sizing/Discipline scores mean
-- rank ladder and first 3 character arts
-- no null 'Form' in public profiles
+Главная точка входа — `index.html`. Все файлы сборки меньше браузерного лимита GitHub.
 
-TEST ORDER:
-1. Page must boot exactly like V25.
-2. Open YOU.
-3. Rank block and Other Players should appear.
-4. Use another Telegram/device and verify second row in Supabase.
+## Локальная проверка
+
+```bash
+python3 -m http.server 8080
+```
+
+Откройте `http://localhost:8080/`.
+
+Автотест:
+
+```bash
+npm install
+npm test
+```
+
+Публичная синхронизация профилей отключена до появления backend-проверки Telegram и RLS. Kataly в эту сборку не входит.

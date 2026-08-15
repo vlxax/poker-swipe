@@ -3,12 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="app-version" content="30.0">
+<meta name="app-version" content="32.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#08080c">
-<title>POKER SWIPE — V31 УМНЫЙ МОЗГ</title>
+<meta name="description" content="PokerSwipe — покерный тренажёр решений от Фриковой Дамы">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'">
+<link rel="manifest" href="app.webmanifest">
+<link rel="stylesheet" href="poker_swipe_v32.css">
+<title>POKER SWIPE — V32 STABLE</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -1045,52 +1049,57 @@ window.PokerBrain={version:P.version,truth:P.truth,stats,gradeDecision,reviewLin
 })();
 </script>
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
+(()=>{
 'use strict';
 const esc=v=>String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]||c));
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`};
 const now=()=>Date.now();
 const TG_USER_ID=String(window.Telegram?.WebApp?.initDataUnsafe?.user?.id||'');
 const DEVICE_ID=(()=>{try{let x=localStorage.getItem('pokerSwipeDeviceId');if(!x){x='dev_'+Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('pokerSwipeDeviceId',x)}return x}catch(e){return 'browser'}})();
 const USER_KEY=TG_USER_ID||DEVICE_ID;
-const STORAGE='pokerSwipeV28_user_'+USER_KEY;
-const LEGACY=['pokerSwipeV15_reg','pokerSwipeV14_4','pokerSwipeV14_3_stable','pokerSwipeV14_2_compat','pokerSwipeV14_1_clean'];
+const STORAGE='pokerSwipeV32_user_'+USER_KEY;
+const USER_LEGACY=['pokerSwipeV28_user_'+USER_KEY];
+const SHARED_LEGACY=['pokerSwipeV15_reg','pokerSwipeV14_4','pokerSwipeV14_3_stable','pokerSwipeV14_2_compat','pokerSwipeV14_1_clean'];
 const gradeScore=g=>g==='g'?1:g==='y'?.55:0;
-const DEFAULT={version:'16.2',nick:'',onboarded:false,diagDone:false,skill:50,streak:0,lastDay:'',events:[],hands:[],dailyArchive:[],snapshots:[],xray:{runs:0,pre:0,narrow:0,river:0,blockers:0,best:0,history:[]},healCourses:{river_bluffcatch:[0,0,0,0],sizing:[0,0,0,0],bb_defence:[0,0,0,0],thin_value:[0,0,0,0]},seenSwipe:[],diagnostic:[]};
+const DEFAULT={version:'32.0',schemaVersion:32,nick:'',onboarded:false,diagDone:false,skill:50,streak:0,lastDay:'',events:[],hands:[],myHands18:[],tournaments:[],dailyArchive:[],snapshots:[],xray:{runs:0,pre:0,narrow:0,river:0,blockers:0,best:0,history:[],counts:{pre:0,narrow:0,river:0,blockers:0}},healCourses:{river_bluffcatch:[0,0,0,0],sizing:[0,0,0,0],bb_defence:[0,0,0,0],thin_value:[0,0,0,0]},seenSwipe:[],diagnostic:[]};
 function clone(x){return JSON.parse(JSON.stringify(x))}
-function load(){try{let raw=localStorage.getItem(STORAGE);if(!raw){for(const k of LEGACY){raw=localStorage.getItem(k);if(raw)break}}const old=raw?JSON.parse(raw):{};const s={...clone(DEFAULT),...old};s.events=Array.isArray(old.events)?old.events:[];if(!s.events.length&&old.played){for(let i=0;i<Math.min(old.played,30);i++)s.events.push({mode:'legacy',concept:'legacy',grade:i<(old.good||0)?'g':i<(old.good||0)+(old.mid||0)?'y':'r',ts:now()-i*1000})}s.hands=Array.isArray(old.hands)?old.hands:[];s.dailyArchive=Array.isArray(old.dailyArchive)?old.dailyArchive:[];s.snapshots=Array.isArray(old.snapshots)?old.snapshots:[];s.xray={...clone(DEFAULT.xray),...(old.xray||{})};s.healCourses={...clone(DEFAULT.healCourses),...(old.healCourses||{})};return s}catch(e){return clone(DEFAULT)}}
+function load(){
+ try{
+  let raw=localStorage.getItem(STORAGE);
+  if(!raw){for(const k of USER_LEGACY){raw=localStorage.getItem(k);if(raw)break}}
+  /* Shared legacy keys are imported only for an anonymous device profile.
+     A Telegram user must never silently inherit another person's browser data. */
+  if(!raw&&!TG_USER_ID){for(const k of SHARED_LEGACY){raw=localStorage.getItem(k);if(raw)break}}
+  const old=raw?JSON.parse(raw):{},s={...clone(DEFAULT),...old,version:'32.0',schemaVersion:32};
+  s.events=Array.isArray(old.events)?old.events:[];
+  if(!s.events.length&&old.played){for(let i=0;i<Math.min(old.played,30);i++)s.events.push({mode:'legacy',concept:'legacy',grade:i<(old.good||0)?'g':i<(old.good||0)+(old.mid||0)?'y':'r',ts:now()-i*1000,excludeFromRank:true})}
+  s.hands=Array.isArray(old.hands)?old.hands:[];s.myHands18=Array.isArray(old.myHands18)?old.myHands18:[];s.tournaments=Array.isArray(old.tournaments)?old.tournaments:[];
+  s.dailyArchive=Array.isArray(old.dailyArchive)?old.dailyArchive:[];s.snapshots=Array.isArray(old.snapshots)?old.snapshots:[];
+  s.xray={...clone(DEFAULT.xray),...(old.xray||{}),counts:{...clone(DEFAULT.xray.counts),...(old.xray?.counts||{})}};
+  s.healCourses={...clone(DEFAULT.healCourses),...(old.healCourses||{})};return s;
+ }catch(e){return clone(DEFAULT)}
+}
 let S=load();
 
-/* ===== V28 · SHARED PLAYER DATABASE (SUPABASE) ===== */
-const SUPABASE_URL='https://jtdwsnodmprueuwnlycq.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_iLX6QkoecRtZ4X3C8ltRkA_8Rl_gbKk';
-const PLAYER_API=SUPABASE_URL+'/rest/v1/player_profiles';
-const sbHeaders28=(extra={})=>({'apikey':SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json',...extra});
+/* ===== V32 · PUBLIC PLAYER DATABASE RELEASE BLOCKER =====
+   The former client-only Supabase writer is intentionally disconnected.
+   Re-enable only through a backend that verifies Telegram initData and RLS. */
+const SUPABASE_URL='';
+const SUPABASE_PUBLISHABLE_KEY='';
+const PLAYER_API='';
+const sbHeaders28=()=>({});
 let REMOTE_PLAYERS28=[];
 let REMOTE_STATUS28='idle';
 async function publishProfile28(){
-  if(!S?.nick||!S?.onboarded)return;
-  try{
-    const m=rankMetrics28(),r=RANKS28[rankIndex28()];
-    const body={telegram_id:USER_KEY,nickname:S.nick,rank_name:r.name,skill:Number(S.skill)||0,
-      preflop:m.pre.n>=5?m.pre.score:0,postflop:m.post.n>=5?m.post.score:0,
-      sizing:m.size.n>=5?m.size.score:0,discipline:Number.isFinite(m.disc.score)?m.disc.score:0,
-      hands_count:m.sample,streak:Number(S.streak)||0,updated_at:new Date().toISOString()};
-    const res=await fetch(PLAYER_API+'?on_conflict=telegram_id',{method:'POST',headers:sbHeaders28({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(body)});
-    if(!res.ok)throw new Error('Supabase save '+res.status+' '+await res.text());
-    REMOTE_STATUS28='saved';
-  }catch(e){REMOTE_STATUS28='save_error';console.warn('Public profile sync failed',e)}
+  REMOTE_STATUS28='disabled';
+  return false;
 }
 async function loadPlayers28(){
-  REMOTE_STATUS28='loading';
-  try{
-    const res=await fetch(PLAYER_API+'?select=telegram_id,nickname,rank_name,skill,preflop,postflop,sizing,discipline,hands_count,streak,updated_at&order=skill.desc&limit=50',{headers:sbHeaders28()});
-    if(!res.ok)throw new Error('Supabase load '+res.status+' '+await res.text());
-    REMOTE_PLAYERS28=(await res.json()).filter(x=>String(x.telegram_id)!==String(USER_KEY));
-    REMOTE_STATUS28='ok'; return REMOTE_PLAYERS28;
-  }catch(e){REMOTE_PLAYERS28=[];REMOTE_STATUS28='load_error';console.warn('Players load failed',e);return []}
+  REMOTE_PLAYERS28=[];
+  REMOTE_STATUS28='disabled';
+  return REMOTE_PLAYERS28;
 }
 
 function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S))}catch(e){}ui();if(typeof publishProfile28==='function')setTimeout(()=>publishProfile28(),0)}
@@ -1231,10 +1240,10 @@ const DAILY_TEMPLATES=[
  {theme:'DYNAMIC FLOP',hero:['A♦','Q♣'],board:['T♠','9♠','8♦','5♥','2♣'],pot:5.4,stack:42,line:['BTN open → BB call','BB check','',''],decision:['ЧЕК','СТАВКА'],zone:[20,35],preferred:'ЧЕК',concept:'dynamic board',key:'Кому текстура реально принадлежит сильнее?',args:[['BB имеет много pair+draw','check'],['BTN всё ещё имеет overpairs','bet'],['range bet теряет эффективность','check'],['маленькая ставка иногда живёт','bet'],['AQ имеет две overcards','bet']]},
  {theme:'BIG VALUE',hero:['Q♥','J♥'],board:['Q♠','J♣','6♦','2♥','2♠'],pot:31,stack:38,line:['BTN open → BB call','BTN 50% → call','BTN 75% → call','BB check'],decision:['ЧЕК','СТАВКА'],zone:[70,115],preferred:'СТАВКА',concept:'river value',key:'Насколько высоко рука находится в value-region?',args:[['две пары сильны','bet'],['часть Qx всё ещё bluff-catch','bet'],['check исключает value риска','check'],['крупный size требует сильного target','bet'],['board не закрыл obvious draw','bet']]}
 ];
-const DAILY=Array.from({length:30},(_,i)=>({...clone(DAILY_TEMPLATES[i%DAILY_TEMPLATES.length]),id:'DAILY_'+(i+1),number:i+1}));
+const DAILY=DAILY_TEMPLATES.map((x,i)=>({...clone(x),id:'DAILY_'+(i+1),number:i+1}));
 function dailyToday(){const n=Math.floor(Date.now()/86400000);return DAILY[n%DAILY.length]}
 let dStreet=0,dChoice=null,dSize=null,dConf=60,dArgs={},dStart=0;
-function renderDaily(){const D=dailyToday(),done=S.dailyArchive.find(x=>x.date===today());$('#dailyArea').innerHTML=`<div class="panel dailyStage">${refBadge()}<span class="ey">DAILY #${D.number} · ${D.theme}</span><h1 class="impact">${done?'СЕГОДНЯ УЖЕ<br><span class="pink">ВСКРЫВАЛИ.</span>':'ОДНА РУКА.<br><span class="pink">БЕЗ СПЕШКИ.</span>'}</h1><p class="mut">Новая раздача меняется по дню. Пакет: 30 Daily.</p>${hand(D.hero)}<button class="primary" id="dStart">${done?'ПЕРЕСМОТРЕТЬ':'СЕСТЬ ЗА СТОЛ'} →</button>${S.dailyArchive.length?`<h3 style="margin-top:16px">АРХИВ</h3>${S.dailyArchive.slice(-5).reverse().map(x=>`<div class="row"><span>${x.date}</span><b class="${x.grade==='g'?'green':x.grade==='y'?'yellow':'red'}">${x.grade==='g'?'ЧИСТО':x.grade==='y'?'ЖИВЁТ':'ОШИБКА'}</b></div>`).join('')}`:''}</div>`;$('#dStart').onclick=()=>{dStreet=0;dArgs={};dChoice=null;dSize=null;dStart=now();dailyStreet()}}
+function renderDaily(){const D=dailyToday(),done=S.dailyArchive.find(x=>x.date===today());$('#dailyArea').innerHTML=`<div class="panel dailyStage">${refBadge()}<span class="ey">DAILY #${D.number} · ${D.theme}</span><h1 class="impact">${done?'СЕГОДНЯ УЖЕ<br><span class="pink">ВСКРЫВАЛИ.</span>':'ОДНА РУКА.<br><span class="pink">БЕЗ СПЕШКИ.</span>'}</h1><p class="mut">Пять проверенных сценариев идут по календарю. Повторный просмотр не влияет на Skill и ранг.</p>${hand(D.hero)}<button class="primary" id="dStart">${done?'ПЕРЕСМОТРЕТЬ БЕЗ ПЕРЕСЧЁТА':'СЕСТЬ ЗА СТОЛ'} →</button>${S.dailyArchive.length?`<h3 style="margin-top:16px">АРХИВ</h3>${S.dailyArchive.slice(-5).reverse().map(x=>`<div class="row"><span>${x.date}</span><b class="${x.grade==='g'?'green':x.grade==='y'?'yellow':'red'}">${x.grade==='g'?'ЧИСТО':x.grade==='y'?'ЖИВЁТ':'ОШИБКА'}</b></div>`).join('')}`:''}</div>`;$('#dStart').onclick=()=>{dStreet=0;dArgs={};dChoice=null;dSize=null;dStart=now();dailyStreet()}}
 function dailyStreet(){const D=dailyToday(),n=dStreet===0?0:dStreet===1?3:dStreet===2?4:5;$('#dailyArea').innerHTML=`<div class="panel dailyStage"><span class="ey">${['PREFLOP','FLOP','TURN','RIVER'][dStreet]} · REPLAY</span><div class="streetDots">${['PRE','FLOP','TURN','RIVER'].map((x,i)=>`<span class="${i<dStreet?'done':i===dStreet?'on':''}">${x}</span>`).join('')}</div>${n?board(D.board.slice(0,n)):''}<div class="dailyPot"><div><span class="ey">POT</span><b>${dStreet===3?D.pot:(D.pot*[.12,.28,.55,1][dStreet]).toFixed(1)} BB</b></div><div><span class="ey">EFF</span><b>${D.stack} BB</b></div></div><h2>${D.line[dStreet]}</h2>${dStreet<3?'<button class="primary" id="dNext">ПРОДОЛЖИТЬ →</button>':`<h1 class="impact">ТВОЙ ХОД.</h1><div class="grid2">${D.decision.map(x=>`<button class="choice" data-dchoice="${x}">${x}</button>`).join('')}</div><div id="dDecision"></div>`}</div>`;if(dStreet<3)$('#dNext').onclick=()=>{dStreet++;dailyStreet()};else $$('[data-dchoice]').forEach(b=>b.onclick=()=>{dChoice=b.dataset.dchoice;$$('[data-dchoice]').forEach(x=>x.classList.toggle('selected',x===b));if(dChoice==='СТАВКА'&&D.zone)dailySize();else dailyConfidence()})}
 function dailySize(){const D=dailyToday();$('#dDecision').innerHTML=`<div class="swipeSizeDrawer"><span class="ey">СКОЛЬКО?</span><div class="sizeRead"><b id="dSizeV">60%</b><strong id="dSizeBB">${(D.pot*.6).toFixed(1)} BB</strong></div><input id="dSize" class="range" type="range" min="10" max="150" value="60"><button class="primary" id="dSizeGo">ПОСТАВИТЬ 60% →</button></div>`;const r=$('#dSize');r.oninput=()=>{$('#dSizeV').textContent=r.value+'%';$('#dSizeBB').textContent=(D.pot*+r.value/100).toFixed(1)+' BB';$('#dSizeGo').textContent=`ПОСТАВИТЬ ${r.value}% →`};$('#dSizeGo').onclick=()=>{dSize=+r.value;dailyConfidence()}}
 function dailyConfidence(){$('#dailyArea').innerHTML=`<div class="panel dailyStage"><span class="ey">УВЕРЕННОСТЬ</span><h1 class="impact">НАСКОЛЬКО<br><span class="pink">ТЫ В ЭТОМ УВЕРЕН?</span></h1><div class="grid2">${[30,60,90].map(x=>`<button class="choice" data-dconf="${x}">${x}%</button>`).join('')}</div></div>`;$$('[data-dconf]').forEach(b=>b.onclick=()=>{dConf=+b.dataset.dconf;dArgs={};renderDailyArguments()})}
@@ -1247,7 +1256,7 @@ function dailyReveal(){const D=dailyToday();let argGood=0;D.args.forEach((a,i)=>
 /* HEAL */
 const COURSE_META={river_bluffcatch:{title:'RIVER BLUFF-CATCH',steps:['POT ODDS','VALUE / BLUFF','BLOCKERS','CONTROL']},sizing:{title:'SIZING',steps:['ЦЕЛЬ','РАЗМЕР','RANGE SHAPE','CONTROL']},bb_defence:{title:'BB DEFENCE',steps:['PRICE','REALIZATION','VS SIZE','CONTROL']},thin_value:{title:'THIN VALUE',steps:['КТО ПЛАТИТ','TARGET','SIZE','CONTROL']}};let activeCourse=null;
 function renderHeal(){const leak=topLeak(),course=activeCourse||courseForConcept(leak?.concept)||'river_bluffcatch',M=COURSE_META[course],p=S.healCourses[course]||[0,0,0,0];activeCourse=course;$('#healArea').innerHTML=`<div class="panel"><div class="healHero"><span class="ey">СЕГОДНЯ ЛЕЧИМ</span><h2>${M.title}</h2><p>${leak?`${leak.r} ошибок / ${leak.n} решений · score ${leak.score}`:'Пока мало данных — начинаем с базового river курса.'}</p></div><div class="healCourseNav">${M.steps.map((x,i)=>`<div class="${p[i]?'done':i===p.findIndex(v=>!v)?'on':''}">${i+1}. ${x}</div>`).join('')}</div><button class="primary" id="healStart">ПРОДОЛЖИТЬ КУРС →</button><div class="section"><h3>ДРУГИЕ КУРСЫ</h3>${Object.entries(COURSE_META).filter(([k])=>k!==course).map(([k,v])=>`<button class="row choice" data-course="${k}"><b>${v.title}</b><span>→</span></button>`).join('')}</div></div>`;$('#healStart').onclick=()=>healStep(course);$$('[data-course]').forEach(b=>b.onclick=()=>{activeCourse=b.dataset.course;renderHeal()})}
-function healStep(course){const p=S.healCourses[course],i=Math.max(0,p.findIndex(v=>!v));if(i<0||i>3){openModal('<h2>КУРС ЗАКРЫТ ✓</h2><p>Теперь нужен отложенный Memory Check, а не ещё десять повторов подряд.</p>');return}if(course==='river_bluffcatch')return healRiver(i);if(course==='sizing')return healSizing(i);if(course==='bb_defence')return healBB(i);return healThin(i)}
+function healStep(course){const p=S.healCourses[course]||[0,0,0,0],i=p.findIndex(v=>!v);if(i<0||i>3){openModal('<h2>КУРС ЗАКРЫТ ✓</h2><p>Теперь нужен отложенный Memory Check, а не ещё десять повторов подряд.</p>');return}if(course==='river_bluffcatch')return healRiver(i);if(course==='sizing')return healSizing(i);if(course==='bb_defence')return healBB(i);return healThin(i)}
 function passHeal(course,i,grade='g'){recordEvent({mode:'heal',concept:course,grade,action:'microgame_'+i});if(grade==='g')S.healCourses[course][i]=1;save();closeModal();renderHeal()}
 function healRiver(i){if(i===0){openModal(`<span class="ey">POT ODDS</span><h2>POT 24 · BET 18</h2><input id="hDial" class="range" type="range" min="10" max="50" value="25"><h1 id="hDialV">25%</h1><button class="primary" id="hDialGo">ЗАФИКСИРОВАТЬ</button>`);setTimeout(()=>{const r=$('#hDial');r.oninput=()=>$('#hDialV').textContent=r.value+'%';$('#hDialGo').onclick=()=>{const ans=Math.round(18/(24+18+18)*100),ok=Math.abs(+r.value-ans)<=2;if(!ok){$('#modalBody').insertAdjacentHTML('beforeend',`<div class="verdict"><b>Нужно ≈ ${ans}%</b><p>18 / (24 + 18 + 18).</p></div>`);return}passHeal('river_bluffcatch',i)}},0);return}if(i===1){sortMini('river_bluffcatch',i,'K♣9♦4♠7♥A♣',['AA','AK','88','QJ','QT','JT'],new Set(['QJ','QT','JT']));return}if(i===2){openModal(`<span class="ey">БЛОКЕРЫ</span><h2>Какой bluff-catcher приятнее?</h2><button class="choice" id="br1">K♠J♦</button><button class="choice" id="br2">K♥J♠</button><p class="mut">Предположим, J♠ чаще входит в natural missed spade bluffs.</p>`);setTimeout(()=>{$('#br1').onclick=()=>passHeal('river_bluffcatch',i,'g');$('#br2').onclick=()=>passHeal('river_bluffcatch',i,'r')},0);return}controlMini('river_bluffcatch',i,'K♠J♦ vs river 140%','ФОЛД')}
 function sortMini(course,i,boardText,hands,bluffs){let sel=new Set();openModal(`<span class="ey">ВЕЛЬЮ / БЛЕФ</span><h2>${boardText}</h2>${hands.map(x=>`<button class="choice" data-sm="${x}">${x}</button>`).join('')}<button class="primary" id="smGo">ГОТОВО</button>`);setTimeout(()=>{$$('[data-sm]').forEach(b=>b.onclick=()=>{b.classList.toggle('selected');b.classList.contains('selected')?sel.add(b.dataset.sm):sel.delete(b.dataset.sm)});$('#smGo').onclick=()=>{const ok=hands.every(x=>bluffs.has(x)===sel.has(x));passHeal(course,i,ok?'g':'r')}},0)}
@@ -1299,14 +1308,14 @@ function weightedScore(user,ref,dead){let inter=0,u=0,r=0;for(const k of user){c
 function xrGrid(){const prev=xrCandidate;let o='<div class="xrGrid">';for(let r=0;r<13;r++)for(let c=0;c<13;c++){const k=xkey(r,c),alive=prev.has(k),keep=xrCurrent.has(k);o+=`<button class="xrCell ${alive?'alive':'dead'} ${keep?'keep':''}" data-xc="${k}" ${alive?'':'disabled'}>${k}</button>`}return o+'</div>'}
 function renderXray(){const s=XR[S.xray.runs%XR.length],pre=comboCount(s.ref[0],[]);$('#xrayArea').innerHTML=`${quickBanner('xray')}<div class="xrStage"><span class="ey">◎ РЕНТГЕН · ДИАПАЗОН</span><h1 class="impact">НЕ УГАДЫВАЙ РУКУ.<br><span class="pink">УБИРАЙ НЕВОЗМОЖНЫЕ.</span></h1><p>Отмечай, какие руки ещё могут быть у оппонента после каждого действия. Диапазон будет сужаться по улицам.</p><div class="shareCard"><span class="ey">СПОТ ДНЯ</span><h2>${s.title}</h2><div class="big">${pre} → ?</div><p class="mut">доступные комбинации</p></div><button class="primary" id="xrFull">РАЗОБРАТЬ ПО УЛИЦАМ →</button><button class="secondary" id="xrQuick">НАЧАТЬ С ТЁРНА →</button></div>`;$('#xrFull').onclick=()=>xrBegin(0);$('#xrQuick').onclick=()=>xrBegin(2)}
 function xrBegin(st){xrI=S.xray.runs%XR.length;xrStage=st;xrCurrent=new Set(XR[xrI].ref[st===0?0:st-1]);xrCandidate=new Set(xrCurrent);xrScores={pre:0,narrow:0,river:0,blockers:0};xrFunnel=[];renderXrayStage()}
-function renderXrayStage(){const s=XR[xrI],dead=xrDead(xrStage,false),ref=new Set(s.ref[xrStage]);const live=comboCount(xrCurrent,dead);$('#xrayArea').innerHTML=`<div class="xrStage">${refBadge()}<div class="xrayMeta"><div><span class="ey">${s.villain} · ${['PRE','FLOP','TURN','RIVER'][xrStage]}</span><h2>${s.line[xrStage]}</h2></div><div><span class="ey">ТВОЯ МОДЕЛЬ</span><b id="xrLive">${live}</b><span class="mut small"> combos</span></div></div>${xrStage?board(s.board.slice(0,xrStage===1?3:xrStage===2?4:5)):''}<div class="xrRule">То, что ты убил на прошлой улице, не воскресает.</div>${xrGrid()}<button class="primary" id="xrLock">ЗАФИКСИРОВАТЬ RANGE →</button></div>`;$$('[data-xc]').forEach(b=>b.onclick=()=>{const k=b.dataset.xc;xrCurrent.has(k)?xrCurrent.delete(k):xrCurrent.add(k);b.classList.toggle('keep',xrCurrent.has(k));$('#xrLive').textContent=comboCount(xrCurrent,dead)});$('#xrLock').onclick=()=>{const score=weightedScore(xrCurrent,ref,dead);if(xrStage===0)xrScores.pre=score;else xrScores.narrow=Math.round(((xrScores.narrow||score)+score)/2);xrFunnel[xrStage]=comboCount(xrCurrent,dead);xrReveal(score)}}
+function renderXrayStage(){const s=XR[xrI],dead=xrDead(xrStage,false),ref=new Set(s.ref[xrStage]);const live=comboCount(xrCurrent,dead);$('#xrayArea').innerHTML=`<div class="xrStage">${refBadge()}<div class="xrayMeta"><div><span class="ey">${s.villain} · ${['PRE','FLOP','TURN','RIVER'][xrStage]}</span><h2>${s.line[xrStage]}</h2></div><div><span class="ey">ТВОЯ МОДЕЛЬ</span><b id="xrLive">${live}</b><span class="mut small"> combos</span></div></div>${xrStage?board(s.board.slice(0,xrStage===1?3:xrStage===2?4:5)):''}<div class="xrRule">То, что ты убил на прошлой улице, не воскресает.</div>${xrGrid()}<button class="primary" id="xrLock">ЗАФИКСИРОВАТЬ RANGE →</button></div>`;$$('[data-xc]').forEach(b=>b.onclick=()=>{const k=b.dataset.xc;xrCurrent.has(k)?xrCurrent.delete(k):xrCurrent.add(k);b.classList.toggle('keep',xrCurrent.has(k));$('#xrLive').textContent=comboCount(xrCurrent,dead)});$('#xrLock').onclick=()=>{const score=weightedScore(xrCurrent,ref,dead);if(xrStage===0)xrScores.pre=score;else{xrScores.narrowSum=(xrScores.narrowSum||0)+score;xrScores.narrowCount=(xrScores.narrowCount||0)+1;xrScores.narrow=Math.round(xrScores.narrowSum/xrScores.narrowCount)}xrFunnel[xrStage]=comboCount(xrCurrent,dead);xrReveal(score)}}
 function xrReveal(score){const s=XR[xrI],ref=new Set(s.ref[xrStage]),dead=xrDead(xrStage,false),extra=[...xrCurrent].filter(k=>!ref.has(k)).length,miss=[...ref].filter(k=>!xrCurrent.has(k)).length;$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">СРАВНЕНИЕ</span><h1 class="impact">${score>=80?'ПОХОЖЕ.<br><span class="pink">ДАЛЬШЕ.</span>':'RANGE<br><span class="pink">ПЛЫВЁТ.</span>'}</h1><div class="grid2"><div class="lab"><span class="ey">ЛИШНИЕ КЛАССЫ</span><h2>${extra}</h2></div><div class="lab"><span class="ey">УБИЛ РАНО</span><h2>${miss}</h2></div></div><div class="verdict"><h2>WEIGHTED SCORE ${score}</h2><p>Классы взвешены реальным количеством доступных combos после board removal.</p></div><button class="primary" id="xrNext">${xrStage<3?'СЛЕДУЮЩАЯ УЛИЦА':'VALUE / BLUFF'} →</button></div>`;$('#xrNext').onclick=()=>{if(xrStage<3){xrStage++;xrCandidate=new Set(xrCurrent);renderXrayStage()}else xrRiver()}}
 function xrRiver(){const s=XR[xrI],available=s.river.filter(([k])=>xrCurrent.has(k));xrClass={};function rr(){const done=Object.keys(xrClass).length;$('#xrClassified').textContent=`РАЗОБРАНО ${done}/${available.length}`;$('#xrRiverGo').classList.toggle('disabledBtn',done!==available.length);$$('[data-xt]').forEach(b=>{b.classList.toggle('doneV',xrClass[b.dataset.xt]==='V');b.classList.toggle('doneB',xrClass[b.dataset.xt]==='B')})}$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">РИВЕР · VALUE / BLUFF</span><h1 class="impact">РАЗБЕРИ ВСЁ.<br><span class="pink">НЕ ДВЕ УДОБНЫЕ РУКИ.</span></h1>${board(s.board)}<div>${available.map(([k])=>`<button class="token" data-xt="${k}">${k}</button>`).join('')}</div><div class="xrClassified" id="xrClassified"></div><button class="primary disabledBtn" id="xrRiverGo">ВСКРЫТЬ →</button></div>`;$$('[data-xt]').forEach(b=>b.onclick=()=>{const k=b.dataset.xt;xrClass[k]=xrClass[k]==='V'?'B':xrClass[k]==='B'?undefined:'V';if(!xrClass[k])delete xrClass[k];rr()});rr();$('#xrRiverGo').onclick=()=>{if(Object.keys(xrClass).length!==available.length)return;let good=0;for(const [k,v] of available)if(xrClass[k]===v)good++;xrScores.river=Math.round(good/Math.max(1,available.length)*100);xrBlocker()}}
 function xrBlocker(){const s=XR[xrI],V=s.river.filter(x=>x[1]==='V').map(x=>x[0]),B=s.river.filter(x=>x[1]==='B').map(x=>x[0]),boardDead=s.board,beforeV=comboCount(V,boardDead),beforeB=comboCount(B,boardDead),afterV=comboCount(V,[...boardDead,...s.hero]),afterB=comboCount(B,[...boardDead,...s.hero]),vRemoved=beforeV-afterV,bRemoved=beforeB-afterB,expected=bRemoved>vRemoved?'bad':'good';$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">BLOCKER SCAN · REAL CARD REMOVAL</span><h1 class="impact">ТВОИ КАРТЫ<br><span class="pink">РЕЖУТ RANGE.</span></h1>${hand(s.hero)}<div class="balance"><div class="col v"><span class="ey">VALUE</span><h2>${beforeV} → ${afterV}</h2><p>−${vRemoved}</p></div><div class="col b"><span class="ey">BLUFF</span><h2>${beforeB} → ${afterB}</h2><p>−${bRemoved}</p></div></div><div class="grid2"><button class="choice" data-xb="good">ХОРОШИЙ BLOCKER</button><button class="choice" data-xb="bad">ПЛОХОЙ BLOCKER</button></div></div>`;$$('[data-xb]').forEach(b=>b.onclick=()=>{xrScores.blockers=b.dataset.xb===expected?100:40;xrReport()})}
-function xrReport(){const s=XR[xrI],parts=Object.values(xrScores).filter(x=>x>0),score=parts.length?Math.round(parts.reduce((a,b)=>a+b,0)/parts.length):0,n=S.xray.runs;for(const k of ['pre','narrow','river','blockers'])if(xrScores[k])S.xray[k]=Math.round((S.xray[k]*n+xrScores[k])/(n+1));S.xray.runs++;S.xray.best=Math.max(S.xray.best||0,score);S.xray.history.push({date:today(),title:s.title,score});S.xray.history=S.xray.history.slice(-20);recordEvent({mode:'xray',concept:'range narrowing',grade:score>=80?'g':score>=60?'y':'r',action:'full xray'});save();$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">ОТЧЁТ ПО ДИАПАЗОНУ</span><h1 class="impact">НЕ УГАДЫВАЛ.<br><span class="pink">СУЖАЛ.</span></h1><div class="grid2"><div class="lab"><span class="ey">СТАРТОВЫЙ ДИАПАЗОН</span><h2>${xrScores.pre||'—'}</h2></div><div class="lab"><span class="ey">СУЖЕНИЕ</span><h2>${xrScores.narrow||'—'}</h2></div><div class="lab"><span class="ey">ВЕЛЬЮ / БЛЕФ</span><h2>${xrScores.river||'—'}</h2></div><div class="lab"><span class="ey">БЛОКЕРЫ</span><h2>${xrScores.blockers}</h2></div></div><button class="primary" id="xrAgain">${quick.active?'ЗАКОНЧИТЬ 5 МИНУТ':'ЕЩЁ ОДИН'} →</button></div>`;$('#xrAgain').onclick=()=>quick.active?quickAdvance():xrBegin(0)}
+function xrReport(){const s=XR[xrI],parts=['pre','narrow','river','blockers'].map(k=>xrScores[k]).filter(x=>x>0),score=parts.length?Math.round(parts.reduce((a,b)=>a+b,0)/parts.length):0;S.xray.counts={pre:0,narrow:0,river:0,blockers:0,...(S.xray.counts||{})};for(const k of ['pre','narrow','river','blockers'])if(xrScores[k]){const n=S.xray.counts[k]||0;S.xray[k]=Math.round(((S.xray[k]||0)*n+xrScores[k])/(n+1));S.xray.counts[k]=n+1}S.xray.runs++;S.xray.best=Math.max(S.xray.best||0,score);S.xray.history.push({date:today(),title:s.title,score});S.xray.history=S.xray.history.slice(-20);recordEvent({mode:'xray',concept:'range narrowing',grade:score>=80?'g':score>=60?'y':'r',action:'full xray'});save();$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">ОТЧЁТ ПО ДИАПАЗОНУ</span><h1 class="impact">НЕ УГАДЫВАЛ.<br><span class="pink">СУЖАЛ.</span></h1><div class="grid2"><div class="lab"><span class="ey">СТАРТОВЫЙ ДИАПАЗОН</span><h2>${xrScores.pre||'—'}</h2></div><div class="lab"><span class="ey">СУЖЕНИЕ</span><h2>${xrScores.narrow||'—'}</h2></div><div class="lab"><span class="ey">ВЕЛЬЮ / БЛЕФ</span><h2>${xrScores.river||'—'}</h2></div><div class="lab"><span class="ey">БЛОКЕРЫ</span><h2>${xrScores.blockers}</h2></div></div><button class="primary" id="xrAgain">${quick.active?'ЗАКОНЧИТЬ 5 МИНУТ':'ЕЩЁ ОДИН'} →</button></div>`;$('#xrAgain').onclick=()=>quick.active?quickAdvance():xrBegin(0)}
 
 /* YOU */
-function categoryStat(test){const a=S.events.filter(test);const n=a.length,score=n?Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/n*100):0;return{n,score}}
+function categoryStat(test){const a=S.events.filter(e=>e.mode!=='diagnostic'&&!e.excludeFromProfile).filter(test);const n=a.length,score=n?Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/n*100):0;return{n,score}}
 function conceptLabel(c=''){const x=String(c||'').toLowerCase();const map={
  'dynamic board':'ДИНАМИЧНЫЕ ДОСКИ','dynamic board sizing':'ДИНАМИЧНЫЕ ДОСКИ / SIZING','river bluffcatch':'RIVER BLUFF-CATCH','thin value':'THIN VALUE','bb defence':'BB DEFENCE','dry board c-bet':'DRY BOARD C-BET','dry board sizing':'DRY BOARD SIZING','turn value sizing':'TURN VALUE SIZING','turn value barrel':'TURN VALUE BARREL','vs overbet':'VS OVERBET','polar 3-bet':'POLAR 3-BET','flat ip':'FLAT IP','rfi btn':'RFI BTN','price defence':'PRICE DEFENCE','small bet defence':'SMALL BET DEFENCE','river value':'RIVER VALUE'};return map[x]||String(c||'НЕИЗВЕСТНО').split('_').join(' ').toUpperCase()}
 function freakyProfileVerdict(leak,conf){const form=formScore(),events=S.events.filter(e=>e.mode!=='diagnostic'),reds=events.slice(-20).filter(e=>e.grade==='r').length,blind=conf.wc||0,label=conceptLabel(leak?.concept);if(!events.length)return'ПОКА ТЫ ЧИСТ. В ОСНОВНОМ ПОТОМУ, ЧТО У МЕНЯ НЕТ УЛИК.';if(blind>=3)return'САМАЯ ДОРОГАЯ ЧАСТЬ ЭТИХ ОШИБОК — НЕ ОШИБКИ. ЭТО 90% УВЕРЕННОСТИ ПЕРЕД НИМИ.';if(leak?.n>=6&&leak.score<40)return`${label} УЖЕ НЕ ЛИК. ЭТО ПРОПИСКА.`;if(form<40&&reds>=7)return'ЭТО НЕ ДАУНСТРИК, ЕСЛИ ПОЛОВИНУ ПОЖАРА ТЫ РАЗВОДИШЬ САМ.';if(form<50)return'ПОЛЕ ПОКА МОЖЕТ НЕ ЭКСПЛОЙТИТЬ ТЕБЯ. ТЫ НОРМАЛЬНО СПРАВЛЯЕШЬСЯ С ЭТИМ БЕЗ НЕГО.';if(leak?.r>=3)return`${label}: ТЫ НЕ ОШИБАЕШЬСЯ ИНОГДА. ТЫ ТУДА ВОЗВРАЩАЕШЬСЯ.`;if(form>=88&&(!leak||leak.score>=70))return'ЧИСТО. ДАЖЕ ТОКСИЧИТЬ ПОЧТИ НЕ ЗА ЧТО. НЕПРИЯТНАЯ ДИНАМИКА.';if(form>=75)return'УЖЕ ПОХОЖЕ НА РЕГА. ЕЩЁ НЕМНОГО — И ПРИДИРАТЬСЯ ПРИДЁТСЯ К ХАРАКТЕРУ.';return'КАТАСТРОФЫ НЕТ. НО ПАРА РЕШЕНИЙ УЖЕ ЛЕЖИТ У МЕНЯ В ПАПКЕ «НЕ ЗАБУДЕМ».'}
@@ -1517,7 +1526,7 @@ if(__renderHome19)renderHome=function(){let r=__renderHome19.apply(this,argument
 
 
 /* ============ V20 HOME + YOU OVERRIDES ============ */
-function you20Events(){return Array.isArray(S.events)?S.events:[]}
+function you20Events(){return Array.isArray(S.events)?S.events.filter(e=>e.mode!=='diagnostic'&&!e.excludeFromProfile):[]}
 function you20Score(e){return e.grade==='g'?100:e.grade==='y'?58:0}
 function you20Street(e){
  const s=String(e.street||'').toUpperCase();
@@ -1748,7 +1757,12 @@ function refreshCardButton18(id){
  b.classList.toggle('empty',!c);b.classList.toggle('red',!!c&&['h','d'].includes(c[1]));b.classList.toggle('black',!!c&&['s','c'].includes(c[1]));
 }
 function usedCards18(exceptId){
- return [...document.querySelectorAll('.cardPick18[data-card]')].filter(x=>x.id!==exceptId&&x.dataset.card).map(x=>x.dataset.card);
+ const dom=[...document.querySelectorAll('.cardPick18[data-card]')].filter(x=>x.id!==exceptId&&x.dataset.card).map(x=>x.dataset.card);
+ if(!document.querySelector('#myArea .hr22')||typeof HR22==='undefined')return dom;
+ const current=document.getElementById(exceptId)?.dataset.card||'';
+ const state=[...(HR22.hero||[]),...(HR22.showdown?HR22.villain||[]:[]),...Object.values(HR22.streets||{}).flatMap(x=>x.board||[])].filter(Boolean);
+ const withoutCurrent=current?state.filter((x,i)=>x!==current||i!==state.indexOf(current)):state;
+ return [...new Set([...dom,...withoutCurrent])];
 }
 function openCardPicker18(id,onDone){
  let rank=null;
@@ -1778,10 +1792,10 @@ const HR22_NAMES={pre:'ПРЕФЛОП',flop:'ФЛОП',turn:'ТЁРН',river:'Р
 function hr22Fresh(){
  return {step:0,format:'MTT',stack:30,heroPos:'BTN',villPos:'BB',hero:[null,null],street:'pre',
   streets:{
-   pre:{villAction:'RAISE',villSize:2.2,heroAction:'CALL',heroSize:7.0,pot:1.5,board:[]},
-   flop:{villAction:'CHECK',villSize:33,heroAction:'CHECK',heroSize:33,pot:8,board:[null,null,null]},
-   turn:{villAction:'CHECK',villSize:50,heroAction:'CHECK',heroSize:50,pot:8,board:[null,null,null,null]},
-   river:{villAction:'CHECK',villSize:75,heroAction:'CHECK',heroSize:75,pot:8,board:[null,null,null,null,null]}
+   pre:{villAction:'RAISE',villSize:2.2,heroAction:null,heroSize:7.0,pot:1.5,board:[]},
+   flop:{villAction:'CHECK',villSize:33,heroAction:null,heroSize:33,pot:8,board:[null,null,null]},
+   turn:{villAction:'CHECK',villSize:50,heroAction:null,heroSize:50,pot:8,board:[null,null,null,null]},
+   river:{villAction:'CHECK',villSize:75,heroAction:null,heroSize:75,pot:8,board:[null,null,null,null,null]}
   },
   showdown:false,villain:[null,null],result:'Неважно',question:'Где я ошибся?',read:''
  };
@@ -1819,7 +1833,13 @@ function hr22BindBoard(st){
  const s=HR22.streets[st],ids=s.board.map((_,i)=>'hrb'+i);
  ids.forEach((id,i)=>{
   const b=$('#'+id);if(!b)return;b.dataset.card=s.board[i]||'';refreshCardButton18(id);
-  b.onclick=()=>openCardPicker18(id,()=>{s.board[i]=$('#'+id).dataset.card||null;reconView18()});
+  b.onclick=()=>openCardPicker18(id,()=>{
+   const value=$('#'+id).dataset.card||null;
+   s.board[i]=value;
+   const order=['flop','turn','river'],from=order.indexOf(st);
+   order.slice(from+1).forEach(next=>{if(HR22.streets[next].board.length>i)HR22.streets[next].board[i]=value});
+   reconView18();
+  });
  });
 }
 function hr22Context(){
@@ -1889,9 +1909,10 @@ function hr22BrainStreet(st,who='hero'){
 function hr22StreetEval(st){
  const s=HR22.streets[st],r=hr22BrainStreet(st,'hero'),chosen=hr22ActionKey(st,s,'hero');
  let freq=r?.actions?.[chosen];
- const vals=r?.actions?Object.values(r.actions):[],best=vals.length?Math.max(...vals):null;
+ const vals=r?.actions?Object.values(r.actions):[];let best=vals.length?Math.max(...vals):null;
  let status='warn',label='СПОРНО',score=65;
  if(freq!=null&&best!=null){
+  if(best<=1){freq*=100;best*=100}
   const gap=best-freq;
   if(gap<=8){status='good';label='ЧИСТО';score=90}
   else if(gap<=25){status='warn';label='ТОНКО';score=68}
@@ -1913,7 +1934,8 @@ function hr22StreetEval(st){
  const top = r?.actions?Object.entries(r.actions).sort((a,b)=>b[1]-a[1])[0]:null;
  let why='';
  if(top){
-  why=`Твоя линия: ${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` ${s.heroSize}${st==='pre'?' BB':'%'}`:''}. По модели основной ориентир здесь — ${top[0].replace('BET_','BET ')} (${Math.round(top[1])}%).`;
+  const topPct=top[1]<=1?top[1]*100:top[1];
+  why=`Твоя линия: ${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` ${s.heroSize}${st==='pre'?' BB':'%'}`:''}. По модели основной ориентир здесь — ${top[0].replace('BET_','BET ')} (${Math.round(topPct)}%).`;
  }else why='Для этой точки данных пока недостаточно, поэтому приложение не рисует уверенный стратегический вывод.';
  return{st,status,label,score,math,why,chosen,freq,r};
 }
@@ -1921,7 +1943,7 @@ function hr22OpponentEval(st){
  if(!HR22.showdown||!HR22.villain.every(Boolean))return null;
  const s=HR22.streets[st],r=hr22BrainStreet(st,'villain'),chosen=hr22ActionKey(st,s,'vill');
  let freq=r?.actions?.[chosen],vals=r?.actions?Object.values(r.actions):[],best=vals.length?Math.max(...vals):null,status='warn',score=65;
- if(freq!=null&&best!=null){let gap=best-freq;if(gap<=8){status='good';score=90}else if(gap>25){status='bad';score=38}}
+ if(freq!=null&&best!=null){if(best<=1){freq*=100;best*=100}let gap=best-freq;if(gap<=8){status='good';score=90}else if(gap>25){status='bad';score=38}}
  return{status,score,freq,r,chosen};
 }
 function hr22VerdictText(worst,heroAvg,oppAvg){
@@ -1931,6 +1953,27 @@ function hr22VerdictText(worst,heroAvg,oppAvg){
  if(heroAvg>=82)return'Неприятно сообщать, но раздача в целом выглядит прилично. Результат можешь оставить себе, решения важнее.';
  return'Катастрофы нет. Но несколько решений уже просят объяснить, зачем ты вообще это нажал.';
 }
+function hr22Reached(){
+ const out=[];
+ for(const st of HR22_STREETS){const s=HR22.streets[st];if(!s?.heroAction)break;out.push(st);if(s.heroAction==='FOLD')break}
+ return out;
+}
+function hr22Validation(){
+ const errors=[],reached=hr22Reached();
+ if(!HR22.hero.every(Boolean))errors.push('Выбери две карты Hero.');
+ if(HR22.hero[0]&&HR22.hero[0]===HR22.hero[1])errors.push('Две карты Hero не могут совпадать.');
+ if(!reached.length)errors.push('Укажи хотя бы действие Hero на префлопе.');
+ const need={flop:3,turn:4,river:5};
+ reached.filter(x=>x!=='pre').forEach(st=>{const b=HR22.streets[st].board.filter(Boolean);if(b.length!==need[st])errors.push(`${HR22_NAMES[st]}: заполни весь board.`)});
+ if(reached.includes('turn'))for(let i=0;i<3;i++)if(HR22.streets.turn.board[i]!==HR22.streets.flop.board[i])errors.push('Карты флопа должны совпадать на тёрне.');
+ if(reached.includes('river'))for(let i=0;i<4;i++)if(HR22.streets.river.board[i]!==HR22.streets.turn.board[i])errors.push('Board тёрна должен без изменений перейти на ривер.');
+ if(reached.some(st=>HR22.streets[st].heroAction==='FOLD')&&HR22.showdown)errors.push('После фолда Hero шоудаун невозможен.');
+ const finalStreet=[...reached].reverse().find(x=>x!=='pre'),finalBoard=finalStreet?HR22.streets[finalStreet].board.filter(Boolean):[];
+ const known=[...HR22.hero,...finalBoard,...(HR22.showdown?HR22.villain:[])].filter(Boolean);
+ if(new Set(known).size!==known.length)errors.push('Одна и та же карта указана дважды.');
+ if(HR22.showdown&&!HR22.villain.every(Boolean))errors.push('Для шоудауна выбери две карты оппонента.');
+ return{ok:!errors.length,errors:[...new Set(errors)],reached};
+}
 function hr22Save(){
  const h={id:'hr22_'+Date.now(),version:22,createdAt:Date.now(),format:HR22.format,stack:HR22.stack,pos:HR22.heroPos,vpos:HR22.villPos,
   hero:HR22.hero.map(prettyCard18).join(' '),villain:HR22.showdown?HR22.villain.map(prettyCard18).join(' '):'',raw:JSON.parse(JSON.stringify(HR22)),
@@ -1938,8 +1981,10 @@ function hr22Save(){
  S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h;
 }
 function hr22Report(saveIt=true){
+ const validation=hr22Validation();
+ if(!validation.ok){openModal(`<span class="ey">РАЗДАЧА НЕ СОШЛАСЬ</span><h2>ИСПРАВЬ ФАКТЫ</h2><div class="v32ErrorList">${validation.errors.map(x=>`<p>• ${esc(x)}</p>`).join('')}</div>`);return}
  if(saveIt)hr22Save();
- const streets=HR22_STREETS.map(hr22StreetEval),opp=HR22_STREETS.map(hr22OpponentEval).filter(Boolean);
+ const streets=validation.reached.map(hr22StreetEval),opp=validation.reached.map(hr22OpponentEval).filter(Boolean);
  const heroAvg=Math.round(streets.reduce((a,x)=>a+x.score,0)/streets.length),oppAvg=opp.length?Math.round(opp.reduce((a,x)=>a+x.score,0)/opp.length):null;
  const worst=[...streets].sort((a,b)=>a.score-b.score)[0];
  $('#myArea').innerHTML=`<div class="hr22">
@@ -2486,12 +2531,12 @@ renderStory=function(){
 })();
 
 /* Diagnostic baseline appears in YOU, but fades out after real sample grows */
-you20Events=function(){const all=Array.isArray(S.events)?S.events:[],real=all.filter(e=>e.mode!=='diagnostic');if(real.length>=20)return real;const base=all.filter(e=>e.mode==='diagnostic'&&e.diagVersion===25).slice(-12);return [...base,...real];}
+you20Events=function(){const all=Array.isArray(S.events)?S.events:[];return all.filter(e=>e.mode!=='diagnostic'&&!e.excludeFromProfile);}
 const __renderProfileV25Base=renderProfile;
 renderProfile=function(){
  __renderProfileV25Base();
  const root=$('#profileArea .you20'),p=S.diagnosticProfile25;if(!root||root.querySelector('.d25Retake'))return;
- const box=p?`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>${p.overall}/100 · ${d25Level(p.overall)}</h3></div><button id="d25RetakeBtn">ПЕРЕПРОЙТИ</button></div><p>Префлоп ${p.dims.pre} · постфлоп ${p.dims.post} · сайзинг ${p.dims.size} · дисциплина ${p.dims.discipline}. После 20 реальных решений baseline перестаёт участвовать в текущей статистике.</p></div>`:`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>НОВАЯ ДИАГНОСТИКА</h3></div><button id="d25RetakeBtn">ПРОЙТИ</button></div><p>12 спотов: префлоп, постфлоп, размеры и river discipline.</p></div>`;
+ const box=p?`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>${p.overall}/100 · ${d25Level(p.overall)}</h3></div><button id="d25RetakeBtn">ПЕРЕПРОЙТИ</button></div><p>Префлоп ${p.dims?.pre??'—'} · постфлоп ${p.dims?.post??'—'} · сайзинг ${p.dims?.size??'—'} · дисциплина ${p.dims?.discipline??'—'}. Диагностика задаёт baseline, но не подмешивается в текущую статистику решений.</p></div>`:`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>НОВАЯ ДИАГНОСТИКА</h3></div><button id="d25RetakeBtn">ПРОЙТИ</button></div><p>12 спотов: префлоп, постфлоп, размеры и river discipline.</p></div>`;
  root.insertAdjacentHTML('beforeend',box);$('#d25RetakeBtn').onclick=()=>d25Start(true);
 }
 
@@ -2537,7 +2582,69 @@ if(_editNickBtn){
     }
   };
 }
-function selfCheck(){const ids=['home','swipe','sizing','review','daily','heal','myhands','xray','tournaments','profile'];const miss=ids.filter(x=>!document.getElementById(x));if(miss.length)throw new Error('Missing screens '+miss.join(','));if(typeof renderMy!=='function')throw new Error('My Cards module missing')}
+/* V32: one synchronous boot plus a live public bridge for feature modules.
+   The application markup is already above this script, so waiting for
+   DOMContentLoaded only made V30/V31 execute before the core existed. */
+function exposeV32(name,get,set){
+  try{Object.defineProperty(window,name,{configurable:true,enumerable:false,get,set:set||undefined})}
+  catch(e){try{window[name]=get()}catch(_){}}
+}
+[
+  ['$',()=> $,null],['$$',()=> $$,null],['esc',()=>esc,null],['clamp',()=>clamp,null],
+  ['today',()=>today,null],['now',()=>now,null],['S',()=>S,v=>{S=v}],
+  ['save',()=>save,v=>{save=v}],['ui',()=>ui,v=>{ui=v}],
+  ['recordEvent',()=>recordEvent,v=>{recordEvent=v}],['overallSkill',()=>overallSkill,v=>{overallSkill=v}],
+  ['formScore',()=>formScore,v=>{formScore=v}],['touchDay',()=>touchDay,v=>{touchDay=v}],
+  ['snapshot',()=>snapshot,v=>{snapshot=v}],['show',()=>show,v=>{show=v}],
+  ['openModal',()=>openModal,v=>{openModal=v}],['closeModal',()=>closeModal,v=>{closeModal=v}],
+  ['renderHome',()=>renderHome,v=>{renderHome=v}],['renderSwipe',()=>renderSwipe,v=>{renderSwipe=v}],
+  ['renderSizing',()=>renderSizing,v=>{renderSizing=v}],['renderReview',()=>renderReview,v=>{renderReview=v}],
+  ['renderDaily',()=>renderDaily,v=>{renderDaily=v}],['renderHeal',()=>renderHeal,v=>{renderHeal=v}],
+  ['renderMy',()=>renderMy,v=>{renderMy=v}],['renderXray',()=>renderXray,v=>{renderXray=v}],
+  ['renderProfile',()=>renderProfile,v=>{renderProfile=v}],['renderDiagnostic',()=>renderDiagnostic,v=>{renderDiagnostic=v}],
+  ['finalizeSwipe',()=>finalizeSwipe,v=>{finalizeSwipe=v}],['swipeNext',()=>swipeNext,v=>{swipeNext=v}],
+  ['card',()=>card,null],['board',()=>board,null],['topLeak',()=>topLeak,null],
+  ['conceptLabel',()=>conceptLabel,null],['disciplineScore',()=>disciplineScore,v=>{disciplineScore=v}],
+  ['rankMetrics28',()=>rankMetrics28,v=>{rankMetrics28=v}],
+  ['rankIndex28',()=>rankIndex28,v=>{rankIndex28=v}],['rankUnlocked28',()=>rankUnlocked28,v=>{rankUnlocked28=v}],
+  ['rankReq28',()=>rankReq28,v=>{rankReq28=v}],['openRank28',()=>openRank28,v=>{openRank28=v}],
+  ['RANKS28',()=>RANKS28,null],['DIAG25',()=>DIAG25,null],['D25',()=>D25,v=>{D25=v}],
+  ['D25_DIM',()=>D25_DIM,null],['d25Start',()=>d25Start,null],['d25Grade',()=>d25Grade,null],['d25Profile',()=>d25Profile,null],
+  ['d25RenderSpot',()=>d25RenderSpot,v=>{d25RenderSpot=v}],['d25Finish',()=>d25Finish,v=>{d25Finish=v}],
+  ['quick',()=>quick,v=>{quick=v}],['quickBanner',()=>quickBanner,v=>{quickBanner=v}],
+  ['quickAdvance',()=>quickAdvance,null],['startQuick',()=>startQuick,null],
+  ['swSession',()=>swSession,v=>{swSession=v}],['swIndex',()=>swIndex,v=>{swIndex=v}],
+  ['swStart',()=>swStart,v=>{swStart=v}],['swTimer',()=>swTimer,v=>{swTimer=v}],
+  ['swLocked',()=>swLocked,v=>{swLocked=v}],['swSessionGrades',()=>swSessionGrades,v=>{swSessionGrades=v}],
+  ['HR22',()=>HR22,v=>{HR22=v}],['hr22Fresh',()=>hr22Fresh,null],
+  ['hr22BindBoard',()=>hr22BindBoard,v=>{hr22BindBoard=v}],['hr22BoardAt',()=>hr22BoardAt,v=>{hr22BoardAt=v}],
+  ['hr22StreetEval',()=>hr22StreetEval,v=>{hr22StreetEval=v}],['hr22OpponentEval',()=>hr22OpponentEval,v=>{hr22OpponentEval=v}],
+  ['hr22Save',()=>hr22Save,v=>{hr22Save=v}],['hr22Report',()=>hr22Report,v=>{hr22Report=v}],
+  ['reconView18',()=>reconView18,v=>{reconView18=v}],['openSaved22',()=>openSaved22,v=>{openSaved22=v}],
+  ['myHub18',()=>myHub18,v=>{myHub18=v}],['myGo18',()=>myGo18,null],
+  ['wireEq18',()=>wireEq18,v=>{wireEq18=v}],['bindCardPicker18',()=>bindCardPicker18,null],
+  ['refreshCardButton18',()=>refreshCardButton18,null],['cardButton18',()=>cardButton18,null],
+  ['equity18',()=>equity18,v=>{equity18=v}],['deck18',()=>deck18,null],
+  ['t23List',()=>t23List,null],['t23Cost',()=>t23Cost,null],['t23Money',()=>t23Money,null],
+  ['t23Status',()=>t23Status,null],['t23StatusLabel',()=>t23StatusLabel,null],
+  ['t23Initials',()=>t23Initials,null],['t23DateLabel',()=>t23DateLabel,null],
+  ['T23_CURRENCY',()=>T23_CURRENCY,v=>{T23_CURRENCY=v}],
+  ['t23Num',()=>t23Num,v=>{t23Num=v}],['t23Return',()=>t23Return,v=>{t23Return=v}],
+  ['t23Profit',()=>t23Profit,v=>{t23Profit=v}],['t23Stats',()=>t23Stats,v=>{t23Stats=v}],
+  ['t23Card',()=>t23Card,v=>{t23Card=v}],['renderTournaments23',()=>renderTournaments23,v=>{renderTournaments23=v}],
+  ['openTournamentForm23',()=>openTournamentForm23,v=>{openTournamentForm23=v}],
+  ['openTournament23',()=>openTournament23,v=>{openTournament23=v}],
+  ['bindMetrics18',()=>bindMetrics18,null],['publishProfile28',()=>publishProfile28,v=>{publishProfile28=v}],
+  ['loadPlayers28',()=>loadPlayers28,v=>{loadPlayers28=v}]
+].forEach(x=>exposeV32(x[0],x[1],x[2]));
+window.PokerSwipeCore={
+  version:'32.0',storageKey:STORAGE,userKey:USER_KEY,
+  store:{getState:()=>S,replaceState:v=>{S=v;save()},save:()=>save()},
+  router:{open:id=>show(id)},
+  analytics:{recordDecision:e=>recordEvent(e)},
+  modal:{open:html=>openModal(html),close:()=>closeModal()}
+};
+function selfCheck(){const ids=['home','swipe','sizing','review','daily','heal','myhands','xray','tournaments','profile'];const miss=ids.filter(x=>!document.getElementById(x));if(miss.length)throw new Error('Missing screens '+miss.join(','));if(typeof renderMy!=='function')throw new Error('My Cards module missing');if(!window.PokerSwipeCore)throw new Error('Core API missing')}
 try{
   selfCheck();
   if(typeof window.PokerBrain!=='object' || typeof window.PokerBrain.gradeDecision!=='function'){
@@ -2550,7 +2657,7 @@ try{
   console.error('POKER SWIPE BOOT FAILED',e);
   if(window.__showPokerBootError) window.__showPokerBootError(e && e.message ? e.message : String(e));
 }
-});
+})();
 </script>
 
 <script>
@@ -2607,7 +2714,7 @@ const V30_RULES=[
  {name:'Матёрый',skill:88,sample:750,pre:80,post:80,size:78,disc:78,red:.14},
  {name:'Хайстейкер',skill:93,sample:1000,pre:86,post:86,size:84,disc:84,red:.11}
 ];
-function m30(){const m=rankMetrics28();const real=(S.events||[]).filter(e=>e.mode!=='diagnostic'),last=real.slice(-30),red=last.length?last.filter(e=>e.grade==='r').length/last.length:1;return{...m,skill:Number(S.skill)||0,preN:m.pre?.n||0,postN:m.post?.n||0,sizeN:m.size?.n||0,preScore:m.pre?.score||0,postScore:m.post?.score||0,sizeScore:m.size?.score||0,discScore:m.disc?.score||0,redRate:red,lastN:last.length}}
+function m30(){const m=rankMetrics28();const real=(S.events||[]).filter(e=>e.mode!=='diagnostic'&&!e.excludeFromRank),last=real.slice(-30),red=last.length?last.filter(e=>e.grade==='r').length/last.length:1;return{...m,skill:Number(S.skill)||0,preN:m.pre?.n||0,postN:m.post?.n||0,sizeN:m.size?.n||0,preScore:m.pre?.score||0,postScore:m.post?.score||0,sizeScore:m.size?.score||0,discScore:m.disc?.score||0,redRate:red,lastN:last.length}}
 function rule30(i){return V30_RULES[Math.max(0,Math.min(V30_RULES.length-1,i))]}
 function checks30(r,m){return[
  ['СКИЛЛ',m.skill,r.skill],['РЕШЕНИЯ',m.sample,r.sample],['ПРЕФЛОП',m.preScore,r.pre],['ПОСТФЛОП',m.postScore,r.post],['САЙЗИНГ',m.sizeScore,r.size],['ДИСЦИПЛИНА',m.discScore,r.disc],['ОШИБКИ / 30',Math.round(m.redRate*100),Math.round(r.red*100),true]
@@ -2662,7 +2769,7 @@ function startQuickGame30(){ensureQG30();QG30={i:0,chips:1500,good:0,alt:0,bad:0
 function qgGrade30(spot,a){const freq=spot.policy[a]||0,max=Math.max(...Object.values(spot.policy));const [label,cl]=labelPolicy30(freq,max);let grade=cl==='error'?'r':cl==='exploit'?'y':'g';return{freq,max,label,cl,grade}}
 function renderQuickGame30(){ensureQG30();const area=document.getElementById('quickgame30Area');if(!area)return;if(QG30.i>=QG30_SPOTS.length){const total=QG30_SPOTS.length;area.innerHTML=`<div class="qg30"><div class="qg30Hero"><span class="ey">СЕССИЯ ЗАКОНЧЕНА</span><h1 class="impact">3-MAX<br><span class="pink">РАЗОБРАН.</span></h1><div class="qg30Score"><div><span class="ey">СИЛЬНО</span><b class="green">${QG30.good}</b></div><div><span class="ey">ДОПУСТИМО</span><b class="yellow">${QG30.alt}</b></div><div><span class="ey">ОШИБКА</span><b class="red">${QG30.bad}</b></div></div><p>Фишки: <b>${QG30.chips}</b>. Poker Brain сохранил решения в твой профиль: эта сессия теперь является доказательной базой, а не отдельной игрушкой.</p><button class="primary" id="qgAgain30">ЕЩЁ СЕССИЮ →</button><button class="secondary" id="qgYou30">ПОСМОТРЕТЬ YOU →</button></div></div>`;document.getElementById('qgAgain30').onclick=startQuickGame30;document.getElementById('qgYou30').onclick=()=>show('profile');return}
  const s=QG30_SPOTS[QG30.i],level=Math.floor(QG30.i/2),blind=[[10,20],[15,30],[20,40],[30,60]][Math.min(3,level)];QG30.locked=false;
- area.innerHTML=`<div class="qg30">${passport30(s.ctx)}<div class="qg30Hero"><div class="spot30Top"><span class="ey">⚡ QUICK GAME · ${QG30.i+1}/${QG30_SPOTS.length}</span><span class="spot30Tag">BLINDS ${blind[0]}/${blind[1]}</span></div><h1>${s.hand}</h1><p>${s.pos} · виртуальный стек <b>${QG30.chips}</b> · против двух AI</p><div class="qg30Actions"><button data-qga="FOLD">ФОЛД</button><button data-qga="CALL">КОЛЛ</button><button data-qga="RAISE">РЕЙЗ</button></div><div id="qg30Verdict"></div></div></div>`;
+ area.innerHTML=`<div class="qg30">${passport30(s.ctx)}<div class="qg30Hero"><div class="spot30Top"><span class="ey">⚡ POLICY SPRINT · ${QG30.i+1}/${QG30_SPOTS.length}</span><span class="spot30Tag">BLINDS ${blind[0]}/${blind[1]}</span></div><h1>${s.hand}</h1><p>${s.pos} · учебный стек <b>${QG30.chips}</b> · восемь статических preflop policy-спотов, не симуляция игры с ботами</p><div class="qg30Actions"><button data-qga="FOLD">ФОЛД</button><button data-qga="CALL">КОЛЛ</button><button data-qga="RAISE">РЕЙЗ</button></div><div id="qg30Verdict"></div></div></div>`;
  area.querySelectorAll('[data-qga]').forEach(b=>b.onclick=()=>{if(QG30.locked)return;QG30.locked=true;const a=b.dataset.qga,g=qgGrade30(s,a);const delta=g.grade==='g'?blind[1]*2:g.grade==='y'?0:-blind[1]*2;QG30.chips=Math.max(0,QG30.chips+delta);if(g.cl==='main')QG30.good++;else if(g.cl==='alt'||g.cl==='exploit')QG30.alt++;else QG30.bad++;recordEvent({spotId:'QG30_'+QG30.i,mode:'quickgame',concept:s.concept,street:'ПРЕФЛОП',action:a,grade:g.grade,policyScore:Math.round(g.freq/g.max*100),why:s.ctx.note,brainSource:'V30_CONTEXT_POLICY',brainConfidence:82});const v=document.getElementById('qg30Verdict');v.innerHTML=`<div class="qg30Verdict ${g.grade==='r'?'bad':g.grade==='y'?'alt':'good'}"><span class="multi30 ${g.cl}">${g.label}</span><h3>${a}</h3><p class="qg30Policy">Частота линии в этом учебном policy: ${Math.round(g.freq*100)}%. ${s.ctx.note}</p><button class="primary" id="qgNext30">ДАЛЬШЕ →</button></div>`;document.getElementById('qgNext30').onclick=()=>{QG30.i++;renderQuickGame30()};});}
 window.startQuickGame30=startQuickGame30;
 
@@ -2906,8 +3013,8 @@ window.renderSwipe = renderSwipe = function(){
  const s=swSession?.[swIndex]; if(!s)return;
  const visual=document.getElementById('swipeVisual'); if(!visual)return;
  let c={
-  field:'МИНСК · СПОРТИВНЫЙ ПОКЕР',event:'MTT',stage:s.street==='ПРЕФЛОП'?'СЕРЕДИНА':'ПОЗДНЯЯ',
-  table:'6-MAX',left:'42 ОСТАЛОСЬ',eff:`${s.stack} ББ`,opp:/BB/.test(s.pos||'')?'РЕГ':'НЕИЗВЕСТНЫЙ',
+  field:'УЧЕБНЫЙ DATASET',event:'POKER SWIPE',stage:s.street||'СПОТ',
+  table:'ФОРМАТ НЕ ЗАДАН',left:'БЕЗ ICM-ДАННЫХ',eff:`${s.stack} ББ`,opp:'ПРОФИЛЬ НЕ ЗАДАН',
   line:s.street==='ПРЕФЛОП'?(s.ctx||'Действие до Hero указано в условии.'):`Префлоп: BTN открыл 2,2 ББ → BB колл. ${s.street}: ${s.ctx||'решение Hero.'}`
  };
  const old=visual.querySelector('.v31Passport');if(old)old.remove();
@@ -2930,7 +3037,7 @@ window.renderHome = function(){
    <div class="v31Goal"><div class="v31GoalHead"><div><span class="ey">СЛЕДУЮЩАЯ ЦЕЛЬ · МИНСК</span><h2>High Roller</h2><span class="small">Допуск открывается подтверждёнными навыками, а не фармом XP.</span></div><div class="v31GoalPct">${np}%</div></div><div class="v31Track"><i style="width:${np}%"></i></div><div class="small">${next&&typeof reqSummary30==='function'?`До «${next.name}»: ${reqSummary30(ri+1,m)}`:'Максимальный ранг открыт.'}</div><button class="v31Primary" id="v31Continue">ПРОДОЛЖИТЬ ТРЕНИРОВКУ →</button></div>
   </div>
   <div class="v31SectionHead"><h2>Что делать сейчас</h2><span>без меню из двадцати одинаковых кнопок</span></div>
-  <div class="v31Modes"><button class="v31Mode main" id="v31Swipe"><span class="ey">10 КОНТЕКСТНЫХ СПОТОВ</span><b>ПОКЕР<br>SWIPE</b><small>Поляна, стадия, стол, стек, оппонент и полная линия до решения.</small><span class="arrow">→</span></button><button class="v31Mode quick" id="v31Quick"><span class="ey">БЫСТРАЯ ИГРА</span><b>3-MAX<br>HYPER</b><small>Короткая сессия против AI. Решения сохраняются в профиль.</small><span class="arrow">→</span></button></div>
+  <div class="v31Modes"><button class="v31Mode main" id="v31Swipe"><span class="ey">10 ПРОВЕРЕННЫХ СПОТОВ</span><b>ПОКЕР<br>SWIPE</b><small>Позиция, фактическая линия, банк, effective stack и карты входят в решение.</small><span class="arrow">→</span></button><button class="v31Mode quick" id="v31Quick"><span class="ey">POLICY SPRINT</span><b>3-MAX<br>HYPER</b><small>Восемь быстрых preflop-спотов. Это тренировка policy, не игра против AI.</small><span class="arrow">→</span></button></div>
   <div class="v31SectionHead"><h2>Точечно</h2><span>одна задача — одна причина</span></div>
   <div class="v31MiniGrid"><button class="v31Mini" id="v31Daily"><span class="ey">СЕГОДНЯ</span><b>Раздача дня</b><span>Один сложный спот с полным контекстом.</span></button><button class="v31Mini" id="v31Sizing"><span class="ey">РАЗМЕРЫ СТАВОК</span><b>Сколько ставим?</b><span>Размер и причина, а не угадайка.</span></button><button class="v31Mini" id="v31Review"><span class="ey">РАЗБОР</span><b>Где сломалось?</b><span>Ищем первую существенную ошибку линии.</span></button><button class="v31Mini" id="v31Xray"><span class="ey">ДИАПАЗОН</span><b>Рентген</b><span>Как линия сужает реальные комбинации.</span></button></div>
   <div class="v31Insight"><span class="ey">ЧТО ПРИЛОЖЕНИЕ СЕЙЧАС ДУМАЕТ О ТЕБЕ</span><h2>${esc(leakName)}</h2><p>${leak?`${leak.r} ошибок на ${leak.n} похожих решениях. Это уже сигнал, но статус лика изменится только после проверки на новых спотах.`:'Выборки пока недостаточно. Я лучше скажу «не знаю», чем нарисую тебе красивый диагноз из трёх рук.'}</p></div>
@@ -2984,6 +3091,8 @@ if(!document.getElementById('mainApp')?.classList.contains('hidden') && document
 }
 })();
 </script>
+
+<script src="poker_swipe_v32.js"></script>
 
 </body>
 </html>
