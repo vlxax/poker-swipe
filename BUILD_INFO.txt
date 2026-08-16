@@ -1,15 +1,37 @@
-POKER SWIPE — V53 ART DIRECTION
+POKER SWIPE — V54 CONSOLIDATED
 
-Functional base: V52. No sections removed.
-Visual pass:
-- premium black/surface system; lime = intelligence/action, pink = error/emotion;
-- calmer 5-item bottom nav;
-- editorial home hierarchy;
-- cinematic diagnostic test with larger cards and actions;
-- My Hands prioritizes price of mistake;
-- My Tournaments styled as personal P&L journal;
-- Polyana uses full-width regional photography and stronger CLUB -> tournament hierarchy;
-- Moscow clubs use editorial numbering instead of Excel-card feel;
-- YOU moved toward Poker DNA visual language;
-- secondary copy increased for real phone readability;
-- reduced borders/glow/pills and visual noise.
+Built from the exact ezyZip 5.zip downloaded from GitHub.
+
+VISIBLE BOTTOM NAV:
+1. ГЛАВНАЯ
+2. РАЗДАЧИ
+3. МОИ ТУРНИРЫ
+4. ПОЛЯНА
+5. ТЫ
+
+МОИ ТУРНИРЫ:
+- real old functional ONLINE/OFFLINE journal
+- add/edit tournament
+- buy-in
+- bullets/entries
+- bounty
+- prize
+- place/field
+- invested
+- profit
+- ROI
+- filters and saves stay inside this section
+
+ПОЛЯНА:
+- Moscow schedule / clubs
+- CLUB name first, large bold lime
+- tournament second
+- Level / Straddle / Quantum highlighted
+- region photography: Moscow, Kaliningrad, Sochi, Altai, Primorye, Minsk
+- clickable series/trip planner
+- current data files preserved
+- GitHub Actions updater included
+
+DESIGN:
+- V54 targets the REAL V48 classes actually used by the screen.
+- no conflicting V49/V50/V51/V52/V53 UI layers.

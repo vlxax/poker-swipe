@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V53 ART DIRECTION</title>
+<title>POKER SWIPE — V54 CONSOLIDATED</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3305,658 +3305,292 @@ document.documentElement.dataset.pokerSwipeVersion='48-master';
 </script>
 
 
-<script id="v49-build-marker">
-(function(){
-  const BUILD='V49 MASTER';
-  document.documentElement.dataset.pokerSwipeVersion='49-master';
-  window.POKER_SWIPE_BUILD=BUILD;
-  if(new URLSearchParams(location.search).get('build')==='1'){
-    window.addEventListener('DOMContentLoaded',()=>{
-      const b=document.createElement('div');
-      b.textContent=BUILD;
-      b.style.cssText='position:fixed;right:8px;top:8px;z-index:99999;background:#c8ff3d;color:#0b0b0e;font:900 10px/1 Arial;padding:7px 9px;border-radius:999px;box-shadow:0 4px 18px #0008';
-      document.body.appendChild(b);
-    });
-  }
-})();
-</script>
 
+<style id="v54-consolidated-style">
+:root{
+ --v54-bg:#08080b;--v54-surface:#111116;--v54-surface2:#17171d;
+ --v54-line:rgba(255,255,255,.09);--v54-white:#f5f2f4;--v54-muted:#aaa3ad;
+ --v54-lime:#c8ff3d;--v54-pink:#ff4f98;
+}
+html,body{background:var(--v54-bg)!important;color:var(--v54-white)!important}
+.screen{padding-bottom:126px!important}
 
-<style id="v50-five-nav">
-/* V50 — restore 5-item bottom navigation */
+/* FIVE REAL SECTIONS */
 .nav{
-  display:grid!important;
-  grid-template-columns:repeat(5,1fr)!important;
-  gap:0!important;
+ display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:0!important;
+ padding:8px max(7px,var(--tg-right-safe)) calc(8px + var(--tg-bottom-safe)) max(7px,var(--tg-left-safe))!important;
+ background:rgba(8,8,11,.92)!important;backdrop-filter:blur(24px)!important;
+ border-top:1px solid rgba(255,255,255,.07)!important
 }
 .nav button{
-  min-width:0!important;
-  padding-left:4px!important;
-  padding-right:4px!important;
+ position:relative!important;min-width:0!important;border:0!important;background:transparent!important;
+ border-radius:0!important;color:#746e78!important;padding:8px 1px 5px!important;
+ font-size:8px!important;font-weight:900!important;line-height:1.05!important;box-shadow:none!important;text-align:center!important
 }
-.nav button .label,
-.nav button span,
-.nav button{
-  font-size:9px!important;
+.nav button i{display:block!important;margin:0 auto 5px!important;font-size:19px!important;opacity:.72}
+.nav button.on,.nav button.active{color:#fff!important}
+.nav button.on:before,.nav button.active:before{
+ content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+ width:22px;height:2px;border-radius:999px;background:var(--v54-lime);
+ box-shadow:0 0 12px rgba(200,255,61,.45)
 }
-@media(max-width:390px){
-  .nav button{font-size:8px!important}
+.nav [data-nav="mytournaments"] span{display:block;max-width:60px;margin:auto}
+
+/* EXPENSIVE EDITORIAL BASE */
+.panel,.tile,.metric,.t23Card,.v48ClubCard,.v48Event,.v48Series{box-shadow:none!important}
+.mut,.small,.my18Intro,.my18Tool p,.saved18 small{font-size:12px!important;line-height:1.5!important;color:var(--v54-muted)!important}
+
+/* HOME */
+#home .metrics{display:grid!important;grid-template-columns:1.35fr .85fr .85fr!important;gap:7px!important}
+#home .metric{border:1px solid var(--v54-line)!important;background:var(--v54-surface)!important;border-radius:18px!important;padding:12px 10px!important}
+#home .metric b{font-size:30px!important;letter-spacing:-.06em!important}
+#home .metric:first-child b{font-size:39px!important;color:var(--v54-lime)!important}
+#home .grid2{grid-template-columns:1fr!important;gap:9px!important}
+#home .tile{
+ min-height:132px!important;border:1px solid var(--v54-line)!important;border-radius:24px!important;padding:17px 16px!important;
+ background:radial-gradient(circle at 98% 0,rgba(200,255,61,.08),transparent 35%),linear-gradient(145deg,#141419,#0c0c10)!important
+}
+#home .tile h2,#home .tile>b{font-size:25px!important;line-height:.95!important;letter-spacing:-.045em!important}
+#home .tile .pink{color:var(--v54-lime)!important}
+
+/* DIAGNOSTIC */
+.story{border:1px solid var(--v54-line)!important;border-radius:28px!important;box-shadow:none!important;background:radial-gradient(circle at 90% 0,rgba(200,255,61,.10),transparent 32%),linear-gradient(150deg,#15151b,#09090d)!important}
+.d25Card{border:0!important;border-radius:24px!important;background:#0e0e13!important}
+.d25Card h2{font-size:29px!important;line-height:.98!important;letter-spacing:-.045em!important}
+.d25Context{font-size:13px!important;line-height:1.5!important;color:#bdb6c0!important}
+.d25Choices{display:grid!important;grid-template-columns:1fr!important;gap:7px!important}
+.d25Choices button{min-height:54px!important;border-radius:16px!important;background:#15151b!important;border:1px solid #34343d!important;font-size:16px!important;text-align:left!important;padding:0 15px!important}
+.d25Choices button.selected{border-color:var(--v54-lime)!important;background:#18200f!important;box-shadow:none!important}
+.v48TestBack{position:absolute!important;left:12px!important;top:12px!important;border-radius:999px!important;background:#111117ed!important;color:#fff!important;border:1px solid #45414a!important;padding:8px 11px!important;z-index:99!important}
+
+/* MY TOURNAMENTS = PERSONAL P&L, NOT POLYANA */
+.v54JournalHero{
+ border:0;border-radius:27px;padding:17px 15px;margin:0 0 11px;
+ background:radial-gradient(circle at 96% 0,rgba(200,255,61,.15),transparent 38%),linear-gradient(145deg,#15151b,#0c0c10)
+}
+.v54JournalHero .ey{color:#99929c}.v54JournalHero h1{font-size:35px;line-height:.9;letter-spacing:-.055em;margin:5px 0 8px}
+.v54JournalHero h1 span{color:var(--v54-lime)}
+.v54JournalHero p{font-size:12px;color:#b9b2bc;line-height:1.45;margin:0}
+.v54JournalHero .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.v54JournalHero .chips span{font-size:7px;border:1px solid #373741;border-radius:999px;padding:5px 7px;color:#bbb4be}
+.t23{padding-top:0!important}
+.t23Card{border:1px solid var(--v54-line)!important;border-radius:20px!important;background:var(--v54-surface)!important}
+.t23Stat{border-color:var(--v54-line)!important;background:var(--v54-surface)!important}
+.t23Stat b{font-size:21px!important}.t23Stat small,.t23Stat span{font-size:9px!important}
+.t23Add,.t23 button.primary,#t23Add,#t23EmptyAdd{background:var(--v54-lime)!important;color:#10120d!important}
+.t23 .green{color:var(--v54-lime)!important}.t23 .red{color:var(--v54-pink)!important}
+
+/* POLYANA - full width destination photography */
+.v48{padding-bottom:128px!important}
+.v48Hero{
+ border:0!important;border-radius:28px!important;padding:19px 16px!important;
+ background:radial-gradient(circle at 92% 0,rgba(200,255,61,.15),transparent 34%),linear-gradient(145deg,#15151b,#0c0c10)!important
+}
+.v48Hero h1{font-size:52px!important;line-height:.84!important;letter-spacing:-.07em!important}
+.v48Hero h1 span{color:var(--v54-lime)!important}
+.v48Hero p{font-size:13px!important;line-height:1.45!important;color:#c0b9c3!important;max-width:320px!important}
+.v48Tabs{grid-template-columns:repeat(3,1fr)!important}
+.v48Tabs [data-top="journal"]{display:none!important}
+.v48Tabs button,.v48Sub button,.v48Day,.v48Filter{box-shadow:none!important}
+.v48Tabs button.on,.v48Sub button.on,.v48Day.on,.v48Filter.on{border-color:var(--v54-lime)!important;background:#18200f!important;color:#fff!important}
+
+.v48Regions{grid-template-columns:1fr!important;gap:11px!important}
+.v48Region{min-height:235px!important;border:0!important;border-radius:27px!important}
+.v48Region img{filter:brightness(.76) saturate(.94) contrast(1.05)!important}
+.v48Region:after{background:linear-gradient(180deg,transparent 18%,rgba(5,5,7,.12) 42%,rgba(5,5,7,.94) 100%)!important}
+.v48RegionText{left:15px!important;right:15px!important;bottom:15px!important}
+.v48RegionText b{font-size:31px!important;line-height:.9!important;letter-spacing:-.055em!important}
+.v48RegionText span{font-size:11px!important;color:#f1edf0!important;margin-top:7px!important}
+
+/* CLUB MUST BE FIRST, BRIGHT, LARGE, DIFFERENT */
+.v48Event{
+ grid-template-columns:52px minmax(0,1fr) 38px!important;border:0!important;border-radius:22px!important;padding:15px!important;
+ background:radial-gradient(circle at 100% 0,rgba(200,255,61,.10),transparent 36%),var(--v54-surface)!important
+}
+.v48Time{font-size:18px!important}
+.v48Club{
+ font-family:Arial Narrow,Inter,-apple-system,BlinkMacSystemFont,sans-serif!important;
+ font-size:27px!important;line-height:.93!important;font-weight:1000!important;
+ letter-spacing:-.055em!important;color:var(--v54-lime)!important;text-transform:none!important
+}
+.v48Tournament{font-size:15px!important;line-height:1.15!important;font-weight:850!important;color:#fff!important;margin-top:7px!important}
+.v48Meta span{font-size:8px!important;background:transparent!important}
+
+/* Moscow club directory */
+.v48ClubList{gap:9px!important}
+.v48ClubCard{
+ min-height:125px!important;border:0!important;border-radius:23px!important;padding:15px!important;
+ background:radial-gradient(circle at 98% 0,rgba(200,255,61,.08),transparent 36%),linear-gradient(145deg,#141419,#0d0d12)!important
+}
+.v48ClubCard.key{box-shadow:inset 3px 0 0 var(--v54-lime)!important}
+.v48ClubName{
+ font-family:Arial Narrow,Inter,-apple-system,BlinkMacSystemFont,sans-serif!important;
+ font-size:28px!important;line-height:.94!important;font-weight:1000!important;letter-spacing:-.055em!important;color:var(--v54-lime)!important
+}
+.v48ClubAddress{font-size:13px!important;line-height:1.45!important;color:#c5bec8!important;max-width:84%!important}
+.v48ClubStats span{font-size:8px!important}
+.v48ClubNo{font-size:78px!important;color:#ffffff04!important}
+.v48Source{font-size:12px!important;line-height:1.45!important;color:#b8b1bb!important}
+.v48Source b{font-size:13px!important;color:#fff!important}
+
+/* SERIES - clickable editorial cards */
+.v48Series{
+ border:0!important;border-radius:24px!important;padding:16px!important;
+ background:radial-gradient(circle at 96% 0,rgba(255,79,152,.11),transparent 36%),linear-gradient(145deg,#141419,#0d0d12)!important
+}
+.v48Series h2{font-size:27px!important;line-height:.95!important;letter-spacing:-.045em!important}
+.v48Series p{font-size:12px!important;line-height:1.45!important}
+.v48Primary{background:var(--v54-lime)!important;color:#10120d!important;min-height:45px!important;font-size:10px!important}
+
+/* YOU / Poker DNA */
+#profileArea h1.impact{font-size:48px!important;line-height:.86!important;letter-spacing:-.065em!important}
+#profileArea h1 .pink{color:var(--v54-lime)!important}
+.dnaCore{border-color:var(--v54-lime)!important;box-shadow:0 0 40px rgba(200,255,61,.08)!important}
+.dnaCore h2{color:var(--v54-lime)!important;font-size:46px!important}
+.skillNode{border:1px solid var(--v54-line)!important;background:var(--v54-surface)!important}
+.skillNode.leak{border-color:rgba(255,79,152,.55)!important;background:#1a1016!important}
+
+@media(max-width:380px){
+ .v48Club{font-size:24px!important}.v48ClubName{font-size:25px!important}
+ .v48Region{min-height:210px!important}
 }
 </style>
-<script id="v50-five-nav-script">
+
+<script id="v54-consolidated-script">
 (function(){
 'use strict';
 
-function findNav(){
-  return document.querySelector('.nav');
-}
+/* The uploaded GitHub build already contains one coherent V48 Polyana renderer and
+   the original functional tournament journal. This script is the ONLY router above them. */
+let V54_MODE='polyana';
+const V54_POLYANA_RENDER = window.renderTournaments23;
+const V54_JOURNAL_RENDER = (typeof __renderTournaments23V24==='function') ? __renderTournaments23V24 : null;
 
-function makeMyTournamentsButton(){
-  const b=document.createElement('button');
-  b.type='button';
-  b.dataset.nav='mytournaments';
-  b.innerHTML='<i style="font-style:normal;font-size:20px;line-height:1">♛</i><span>МОИ ТУРНИРЫ</span>';
-  b.onclick=()=>{
-    try{
-      if(typeof showScreen==='function') showScreen('tournaments');
-      const area=document.getElementById('tournamentsArea');
-      if(typeof __renderTournaments23V24==='function'){
-        __renderTournaments23V24();
-        const root=area&&area.querySelector('.t23');
-        if(root){
-          root.insertAdjacentHTML('afterbegin','<div class="v47Source"><b>МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ</b>Добавляй турниры, веди бай-ины, пули, призовые, bounty, profit и ROI.</div>');
-        }
-      } else if(typeof renderTournaments23==='function') {
-        renderTournaments23();
-      }
-      document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active','on'));
-      b.classList.add('active');
-    }catch(e){}
-  };
-  return b;
-}
-
-function restoreFiveNav(){
-  const nav=findNav();
-  if(!nav) return;
-
-  // Remove accidental duplicate from previous reloads.
-  nav.querySelectorAll('[data-nav="mytournaments"]').forEach(x=>x.remove());
-
-  const buttons=[...nav.querySelectorAll('button')];
-  const polyana=buttons.find(x=>x.dataset.nav==='tournaments');
-  const you=buttons.find(x=>x.dataset.nav==='you' || /ТЫ|ПРОФИЛЬ/i.test(x.textContent||''));
-
-  const myBtn=makeMyTournamentsButton();
-
-  // Order: Главная / Раздачи / Мои турниры / Поляна / Ты
-  if(polyana) nav.insertBefore(myBtn, polyana);
-  else if(you) nav.insertBefore(myBtn, you);
-  else nav.appendChild(myBtn);
-
-  // Make labels explicit.
-  const home=nav.querySelector('[data-nav="home"]');
-  const hands=nav.querySelector('[data-nav="myhands"]');
-  const field=nav.querySelector('[data-nav="tournaments"]');
-  if(home && home.lastChild) home.lastChild.textContent=' ГЛАВНАЯ';
-  if(hands && hands.lastChild) hands.lastChild.textContent=' РАЗДАЧИ';
-  if(field && field.lastChild) field.lastChild.textContent=' ПОЛЯНА';
-
-  document.documentElement.dataset.pokerSwipeVersion='50-five-nav';
-}
-
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',restoreFiveNav);
-else restoreFiveNav();
-
-window.addEventListener('load',restoreFiveNav);
-})();
-</script>
-
-
-<style id="v51-auto-polyana">
-.v51LiveStamp{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #c8ff3d3d;background:#12190e;border-radius:15px;padding:10px 11px;margin:9px 0}
-.v51LiveStamp b{font-size:10px;color:#dfff9f}.v51LiveStamp span{font-size:8px;color:#918b94;text-align:right}
-.v51DayTabs{display:flex;gap:6px;overflow:auto;padding:8px 0 4px;scrollbar-width:none}.v51DayTabs::-webkit-scrollbar{display:none}
-.v51DayTabs button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#8e8792;border-radius:13px;padding:8px 10px;font-size:8px;font-weight:1000}
-.v51DayTabs button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
-.v51AutoEvent{border:1px solid #30303a;border-radius:19px;background:radial-gradient(circle at 100% 0,#c8ff3d12,transparent 35%),#111117;padding:12px;margin:7px 0}
-.v51AutoClub{font-size:21px;line-height:1;color:#c8ff3d;font-weight:1000;letter-spacing:-.04em}
-.v51AutoTournament{font-size:13px;color:#fff;font-weight:850;margin-top:6px}
-.v51AutoMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.v51AutoMeta span{border:1px solid #383842;border-radius:999px;padding:5px 7px;font-size:7px;color:#bcb5bf}
-.v51Empty{border:1px dashed #383842;border-radius:18px;padding:15px;color:#9b949e;font-size:11px;line-height:1.45;margin:8px 0}
-</style>
-<script id="v51-auto-polyana-script">
-(function(){
-'use strict';
-let V51_DATA=null;
-let V51_DAY=null;
-
-function isoLocalDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function nextDays(){
- const a=[]; const now=new Date();
- for(let i=0;i<7;i++){const d=new Date(now);d.setDate(now.getDate()+i);a.push(isoLocalDate(d))}
- return a;
-}
-function prettyDay(iso,i){
- const d=new Date(iso+'T12:00:00'); const wd=['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'][d.getDay()];
- return i===0?'СЕГОДНЯ':wd+' '+d.getDate();
-}
-function sourceStamp(){
- if(!V51_DATA)return '';
- const u=V51_DATA.updated_at?new Date(V51_DATA.updated_at):null;
- const t=u&&!isNaN(u)?u.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
- return `<div class="v51LiveStamp"><b>● АВТООБНОВЛЕНИЕ POLYANA</b><span>${V51_DATA.club_count||0} клубов · обновлено ${t}</span></div>`;
-}
-function eventsFor(day){return (V51_DATA&&Array.isArray(V51_DATA.events)?V51_DATA.events:[]).filter(e=>e.date===day)}
-function dayTabs(){
- const days=nextDays(); if(!V51_DAY)V51_DAY=days[0];
- return `<div class="v51DayTabs">${days.map((d,i)=>`<button data-v51day="${d}" class="${V51_DAY===d?'on':''}">${prettyDay(d,i)}</button>`).join('')}</div>`;
-}
-function eventCards(){
- const ev=eventsFor(V51_DAY);
- if(!ev.length)return `<div class="v51Empty">На выбранную дату в текущем фиде нет турниров. PokerSwipe ничего не выдумывает: новые события появятся после следующего автоматического обновления.</div>`;
- return ev.map(e=>`<div class="v51AutoEvent">
-  <div class="v51AutoClub">${e.club||'КЛУБ'}</div>
-  <div class="v51AutoTournament">${e.tournament||'Турнир'}</div>
-  <div class="v51AutoMeta"><span>${e.time||'—'}</span>${e.fee_rub?`<span>${Number(e.fee_rub).toLocaleString('ru-RU')} ₽</span>`:''}<span>POKERNOMONEY</span></div>
- </div>`).join('');
-}
-function mountAuto(){
- const area=document.getElementById('tournamentsArea'); if(!area || !V51_DATA)return;
- // We only augment the Polya/Afisha view, never the independent My Tournaments journal.
- const txt=(area.textContent||'').toUpperCase();
- if(!txt.includes('ПОЛЯНА') || txt.includes('МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ'))return;
-
- const old=[...area.querySelectorAll('.v47Event,.p46LiveEvent,.p45Event')]; old.forEach(x=>x.remove());
- const source=area.querySelector('.v47Source,.p45Source');
- const host=document.createElement('div');
- host.id='v51AutoHost';
- host.innerHTML=sourceStamp()+dayTabs()+eventCards();
- if(source)source.insertAdjacentElement('afterend',host);
- else area.querySelector('.v47Hero,.p45Hero,.p41Hero')?.insertAdjacentElement('afterend',host);
-
- host.querySelectorAll('[data-v51day]').forEach(b=>b.onclick=()=>{V51_DAY=b.dataset.v51day;mountAutoFresh()});
-}
-function mountAutoFresh(){
- const old=document.getElementById('v51AutoHost'); if(old)old.remove();
- mountAuto();
-}
-async function load(){
- try{
-   const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});
-   if(!r.ok)throw new Error('HTTP '+r.status);
-   V51_DATA=await r.json();
-   mountAutoFresh();
- }catch(e){ console.warn('V51 live data unavailable, current snapshot remains',e); }
-}
-const oldRender=window.renderTournaments23;
-if(typeof oldRender==='function'){
- window.renderTournaments23=function(){const r=oldRender.apply(this,arguments);setTimeout(mountAutoFresh,0);return r}
-}
-window.addEventListener('DOMContentLoaded',load);
-window.addEventListener('focus',()=>{load()});
-setInterval(load,15*60*1000);
-document.documentElement.dataset.pokerSwipeVersion='51-auto-polyana';
-})();
-</script>
-
-
-<style id="v52-my-tournaments-fixed">
-/* V52 — the old functional tournament journal is a real independent bottom-nav section again */
-.v52JournalIntro{
-  margin:0 0 10px;
-  border:1px solid #c8ff3d33;
-  background:linear-gradient(145deg,#13190f,#0d0d11 60%);
-  border-radius:18px;
-  padding:12px 13px;
-}
-.v52JournalIntro b{display:block;color:#c8ff3d;font-size:13px;letter-spacing:-.02em;margin-bottom:4px}
-.v52JournalIntro p{margin:0;color:#b9b2bc;font-size:11px;line-height:1.45}
-.v52JournalIntro .v52tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
-.v52JournalIntro .v52tags span{border:1px solid #383842;border-radius:999px;padding:5px 7px;font-size:7px;color:#c9c2cc}
-.nav [data-nav="mytournaments"] span{display:block;max-width:62px;line-height:1.05;text-align:center}
-</style>
-
-<script id="v52-my-tournaments-fixed-script">
-(function(){
-'use strict';
-
-/*
-  Why the button existed but the section did not:
-  previous builds added a fifth nav button, but journal filters called the
-  current renderTournaments23(), which had already been replaced by Polyana.
-  So the old journal immediately got overwritten. V52 introduces an explicit
-  routing mode: journal and polyana use the same legacy screen safely.
-*/
-let V52_TOURNAMENT_MODE='polyana';
-
-const V52_POLYANA_RENDER = window.renderTournaments23;
-const V52_JOURNAL_RENDER =
-  (typeof __renderTournaments23V24==='function')
-    ? __renderTournaments23V24
-    : null;
-
-function v52ShowTournamentScreen(){
-  if(typeof show==='function'){
-    show('tournaments');
-  } else {
+function tournamentScreen(){
+  if(typeof show==='function') show('tournaments');
+  else{
     document.querySelectorAll('.screen').forEach(x=>x.classList.toggle('active',x.id==='tournaments'));
     try{window.scrollTo(0,0)}catch(e){}
   }
 }
-
-function v52MarkNav(which){
+function markNav(key){
   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
-  const b=document.querySelector('.nav [data-nav="'+which+'"]');
+  const b=document.querySelector('.nav [data-nav="'+key+'"]');
   if(b)b.classList.add('on');
 }
-
-function v52DecorateJournal(){
+function decorateJournal(){
   const root=document.querySelector('#tournamentsArea .t23');
   if(!root)return;
-  const old=root.querySelector('.v52JournalIntro');
-  if(old)old.remove();
-  root.insertAdjacentHTML('afterbegin',`
-    <div class="v52JournalIntro">
-      <b>МОИ ТУРНИРЫ · ONLINE / OFFLINE</b>
-      <p>Это твой личный журнал игры. Добавляй турнир вручную, указывай стоимость и количество входов — PokerSwipe сам считает вложено, результат, профит и ROI.</p>
-      <div class="v52tags">
-        <span>ONLINE</span><span>OFFLINE</span><span>BUY-IN</span><span>BULLETS</span>
-        <span>PRIZE</span><span>BOUNTY</span><span>PROFIT</span><span>ROI</span>
-      </div>
-    </div>`);
+  root.querySelectorAll('.v48JournalBack,.v48Source').forEach(el=>{
+    if((el.textContent||'').includes('МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ') || el.classList.contains('v48JournalBack')) el.remove();
+  });
+  if(!root.querySelector('.v54JournalHero')){
+    root.insertAdjacentHTML('afterbegin',`
+      <div class="v54JournalHero">
+        <span class="ey">ТВОЯ ИГРА · P&L</span>
+        <h1>МОИ <span>ТУРНИРЫ.</span></h1>
+        <p>ONLINE и OFFLINE в одном журнале. Добавляй стоимость, пули и призовые — PokerSwipe считает вложено, профит и ROI.</p>
+        <div class="chips"><span>ONLINE</span><span>OFFLINE</span><span>BUY-IN</span><span>BULLETS</span><span>PRIZE</span><span>BOUNTY</span><span>PROFIT</span><span>ROI</span></div>
+      </div>`);
+  }
 }
-
-function v52RenderJournal(){
-  if(!V52_JOURNAL_RENDER){
+function openJournal(){
+  V54_MODE='journal';
+  tournamentScreen();
+  if(V54_JOURNAL_RENDER){
+    V54_JOURNAL_RENDER();
+    decorateJournal();
+  }else{
     const a=document.getElementById('tournamentsArea');
     if(a)a.innerHTML='<div class="v48"><div class="v48Source"><b>ОШИБКА</b>Старый журнал турниров не найден.</div></div>';
-    return;
   }
-  V52_JOURNAL_RENDER();
-  v52DecorateJournal();
-  v52MarkNav('mytournaments');
+  markNav('mytournaments');
+}
+function openPolyana(){
+  V54_MODE='polyana';
+  tournamentScreen();
+  if(typeof V54_POLYANA_RENDER==='function')V54_POLYANA_RENDER();
+  markNav('tournaments');
 }
 
-function v52OpenMyTournaments(){
-  V52_TOURNAMENT_MODE='journal';
-  v52ShowTournamentScreen();
-  v52RenderJournal();
-}
-
-function v52OpenPolyana(){
-  V52_TOURNAMENT_MODE='polyana';
-  v52ShowTournamentScreen();
-  if(typeof V52_POLYANA_RENDER==='function')V52_POLYANA_RENDER();
-  v52MarkNav('tournaments');
-}
-
-/* Critical fix:
-   all old journal callbacks (ALL / ONLINE / OFFLINE / currency / sort)
-   call renderTournaments23(). This router keeps them inside the journal.
-*/
+/* Critical fix: old journal filters and SAVE call renderTournaments23().
+   They now stay inside the journal instead of falling back to Polyana. */
 window.renderTournaments23 = renderTournaments23 = function(){
-  if(V52_TOURNAMENT_MODE==='journal'){
-    v52RenderJournal();
+  if(V54_MODE==='journal'){
+    if(V54_JOURNAL_RENDER){
+      V54_JOURNAL_RENDER();
+      decorateJournal();
+      markNav('mytournaments');
+    }
     return;
   }
-  if(typeof V52_POLYANA_RENDER==='function')return V52_POLYANA_RENDER();
+  if(typeof V54_POLYANA_RENDER==='function'){
+    const r=V54_POLYANA_RENDER();
+    markNav('tournaments');
+    return r;
+  }
 };
 
-function v52FixBottomNav(){
-  const nav=document.querySelector('.nav');
-  if(!nav)return;
-
-  let my=nav.querySelector('[data-nav="mytournaments"]');
-  if(!my){
-    my=document.createElement('button');
-    my.type='button';
-    my.dataset.nav='mytournaments';
-    my.innerHTML='<i style="font-style:normal;font-size:19px;line-height:1">▤</i><span>МОИ ТУРНИРЫ</span>';
-    const field=nav.querySelector('[data-nav="tournaments"]');
-    if(field)nav.insertBefore(my,field); else nav.appendChild(my);
-  }
-
-  my.onclick=function(e){e.preventDefault();e.stopPropagation();v52OpenMyTournaments()};
+function buildFiveNav(){
+  const nav=document.querySelector('.nav');if(!nav)return;
+  nav.querySelectorAll('[data-nav="mytournaments"]').forEach(x=>x.remove());
 
   const field=nav.querySelector('[data-nav="tournaments"]');
-  if(field){
-    if(field.lastChild)field.lastChild.textContent=' ПОЛЯНА';
-    field.onclick=function(e){e.preventDefault();e.stopPropagation();v52OpenPolyana()};
-  }
+  const my=document.createElement('button');
+  my.type='button';my.dataset.nav='mytournaments';
+  my.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
+  if(field)nav.insertBefore(my,field);else nav.appendChild(my);
 
-  /* Any other bottom tab leaves journal mode. */
-  nav.querySelectorAll('button:not([data-nav="mytournaments"]):not([data-nav="tournaments"])').forEach(b=>{
-    const old=b.onclick;
+  const home=nav.querySelector('[data-nav="home"]');
+  const hands=nav.querySelector('[data-nav="myhands"]');
+  const profile=nav.querySelector('[data-nav="profile"]');
+  if(home)home.childNodes[home.childNodes.length-1].textContent=' ГЛАВНАЯ';
+  if(hands)hands.childNodes[hands.childNodes.length-1].textContent=' РАЗДАЧИ';
+  if(field)field.childNodes[field.childNodes.length-1].textContent=' ПОЛЯНА';
+  if(profile)profile.childNodes[profile.childNodes.length-1].textContent=' ТЫ';
+
+  my.onclick=function(e){e.preventDefault();e.stopPropagation();openJournal()};
+  if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
+
+  [home,hands,profile].filter(Boolean).forEach(b=>{
+    const id=b.dataset.nav;
     b.onclick=function(e){
-      V52_TOURNAMENT_MODE='polyana';
-      if(typeof old==='function')return old.call(this,e);
-      if(typeof show==='function')show(this.dataset.nav);
-    };
+      V54_MODE='polyana';
+      if(typeof show==='function')show(id);
+    }
   });
 }
 
-/* When adding/editing/saving/deleting a tournament, remain in MY TOURNAMENTS.
-   The existing functions keep working because their rerender now goes through our router.
-*/
-window.openMyTournamentsV52=v52OpenMyTournaments;
-window.openPolyanaV52=v52OpenPolyana;
+/* Polyana does NOT need a duplicate "My tournaments" tab anymore. */
+function removeDuplicateJournalTab(){
+  document.querySelectorAll('.v48Tabs [data-top="journal"]').forEach(x=>x.remove());
+}
+
+/* Ensure current club/tournament hierarchy is visually and semantically obvious. */
+function polishDynamic(){
+  removeDuplicateJournalTab();
+  document.querySelectorAll('.v48Event').forEach(card=>{
+    const club=card.querySelector('.v48Club');
+    const tournament=card.querySelector('.v48Tournament');
+    if(club)club.setAttribute('aria-label','Клуб: '+club.textContent.trim());
+    if(tournament)tournament.setAttribute('aria-label','Турнир: '+tournament.textContent.trim());
+  });
+}
 
 if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',v52FixBottomNav);
+  document.addEventListener('DOMContentLoaded',()=>{buildFiveNav();polishDynamic()});
 }else{
-  v52FixBottomNav();
+  buildFiveNav();polishDynamic();
 }
-window.addEventListener('load',v52FixBottomNav);
+window.addEventListener('load',()=>{buildFiveNav();polishDynamic()});
 
-document.documentElement.dataset.pokerSwipeVersion='52-my-tournaments-fixed';
-})();
-</script>
+const mo=new MutationObserver(polishDynamic);
+document.addEventListener('DOMContentLoaded',()=>mo.observe(document.body,{childList:true,subtree:true}));
 
-
-<style id="v53-art-direction">
-/* =========================================================
-   POKER SWIPE V53 — ART DIRECTION
-   Goal: less "AI neon dashboard", more premium editorial product.
-   Functional architecture from V52 stays intact.
-   ========================================================= */
-:root{
- --ps-bg:#08080b;
- --ps-surface:#111116;
- --ps-surface2:#17171d;
- --ps-line:rgba(255,255,255,.09);
- --ps-white:#f4f1f3;
- --ps-muted:#aaa3ad;
- --ps-lime:#c8ff3d;
- --ps-pink:#ff4f98;
- --ps-r:22px;
-}
-html,body{background:var(--ps-bg)!important;color:var(--ps-white)!important}
-body{letter-spacing:-.005em}
-.screen{padding-bottom:124px!important}
-.panel,.tile,.metric,.quick5,.my18Tool,.saved18,.t23Card,.v47ClubCard,.v47Event,.v51AutoEvent{
- box-shadow:none!important;
-}
-.mut,.small,.my18Intro,.my18Tool p,.saved18 small,.youMethod,.analysisNote{
- color:var(--ps-muted)!important;
- font-size:12px!important;
- line-height:1.5!important;
-}
-
-/* Brand: quieter chrome, stronger product */
-.top.creatorTop{
- border-bottom:0!important;
- background:linear-gradient(180deg,rgba(8,8,11,.98),rgba(8,8,11,.76),transparent)!important;
-}
-.brand{font-size:20px!important;letter-spacing:-.04em!important}
-.brand .pink{color:var(--ps-lime)!important}
-.topRightMark24{opacity:.58}
-.skillChip{background:#101015!important;border:1px solid var(--ps-line)!important;color:#fff!important}
-
-/* ---------- Bottom nav: 5 equal destinations, no giant capsules ---------- */
-.nav{
- grid-template-columns:repeat(5,1fr)!important;
- gap:0!important;
- padding:9px max(8px,var(--tg-right-safe)) calc(8px + var(--tg-bottom-safe)) max(8px,var(--tg-left-safe))!important;
- background:rgba(8,8,11,.9)!important;
- backdrop-filter:blur(24px)!important;
- border-top:1px solid rgba(255,255,255,.07)!important;
-}
-.nav button{
- position:relative!important;
- min-width:0!important;
- border:0!important;
- border-radius:0!important;
- background:transparent!important;
- color:#716b75!important;
- font-size:8px!important;
- font-weight:850!important;
- letter-spacing:.01em!important;
- padding:8px 2px 5px!important;
- box-shadow:none!important;
-}
-.nav button i{font-size:19px!important;margin-bottom:5px!important;opacity:.72}
-.nav button.on,.nav button.active{color:#fff!important;background:transparent!important}
-.nav button.on:before,.nav button.active:before{
- content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);
- width:22px;height:2px;border-radius:999px;background:var(--ps-lime);box-shadow:0 0 12px rgba(200,255,61,.48)
-}
-.nav button.on i,.nav button.active i{opacity:1!important}
-.nav [data-nav="mytournaments"] span{max-width:58px!important}
-
-/* ---------- HOME: editorial cover, not a dashboard ---------- */
-#home .metrics{
- display:grid!important;grid-template-columns:1.35fr .85fr .85fr!important;gap:7px!important;margin-bottom:11px!important
-}
-#home .metric{
- border:1px solid var(--ps-line)!important;background:var(--ps-surface)!important;border-radius:18px!important;padding:12px 10px!important;text-align:left!important
-}
-#home .metric b{font-size:31px!important;line-height:.9!important;letter-spacing:-.06em!important}
-#home .metric:first-child b{color:var(--ps-lime)!important;font-size:40px!important}
-#home .metric .ey{font-size:8px!important}
-#home .grid2{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
-#home .tile{
- position:relative!important;min-height:132px!important;
- border:1px solid var(--ps-line)!important;border-radius:24px!important;
- background:
- radial-gradient(circle at 98% 0,rgba(200,255,61,.09),transparent 35%),
- linear-gradient(145deg,#141419,#0c0c10)!important;
- padding:17px 16px!important;text-align:left!important;overflow:hidden!important
-}
-#home .tile:nth-child(even){
- background:radial-gradient(circle at 98% 0,rgba(255,79,152,.07),transparent 35%),linear-gradient(145deg,#141419,#0c0c10)!important
-}
-#home .tile .modeNumber{
- position:absolute!important;right:8px!important;bottom:-23px!important;
- font-size:86px!important;line-height:1!important;color:rgba(255,255,255,.035)!important;
- font-weight:1000!important;letter-spacing:-.09em!important
-}
-#home .tile h2,#home .tile>b{
- display:block!important;font-size:25px!important;line-height:.95!important;letter-spacing:-.045em!important;max-width:75%!important
-}
-#home .tile .pink{color:var(--ps-lime)!important}
-#home .tile .go{position:absolute!important;right:15px!important;top:15px!important;font-size:20px!important;color:var(--ps-lime)!important}
-#home .quick5{
- margin-top:10px!important;border:0!important;border-radius:22px!important;
- background:var(--ps-lime)!important;color:#10120c!important;padding:15px 16px!important
-}
-#home .quick5 .mut,#home .quick5 .ey{color:#263015!important}
-#home .quick5 strong{font-size:25px!important}
-
-/* ---------- Diagnostic: cinematic decision scene ---------- */
-.onboard{background:var(--ps-bg)!important}
-.story{border:1px solid var(--ps-line)!important;border-radius:28px!important;background:
- radial-gradient(circle at 90% 0,rgba(200,255,61,.10),transparent 31%),
- linear-gradient(150deg,#15151b,#09090d)!important;box-shadow:none!important}
-.d25{padding-top:4px!important}
-.d25Top span{font-size:9px!important;color:#aaa3ad!important}.d25Top b{color:var(--ps-lime)!important;font-size:11px!important}
-.d25Bar{height:4px!important;background:#ffffff0d!important}.d25Bar i{background:linear-gradient(90deg,var(--ps-lime),#eaffaa)!important;box-shadow:none!important}
-.d25Card{border:0!important;border-radius:24px!important;background:#0e0e13!important;padding:17px 14px!important}
-.d25Card h2{font-size:29px!important;line-height:.98!important;letter-spacing:-.045em!important;margin:14px 0 9px!important}
-.d25Context{font-size:13px!important;line-height:1.5!important;color:#bbb4be!important}
-.d25Cards{margin:16px 0!important}
-.d25Cards .card,.d25Board .card{transform:scale(1.08);transform-origin:center}
-.d25Pot{gap:7px!important}.d25Pot div{background:#141419!important;border:1px solid var(--ps-line)!important;border-radius:15px!important}
-.d25Pot span{font-size:7px!important}.d25Pot b{font-size:15px!important}
-.d25Choices{display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin-top:13px!important}
-.d25Choices button{
- min-height:54px!important;border:1px solid #34343d!important;border-radius:16px!important;
- background:#15151b!important;color:#fff!important;font-size:16px!important;text-align:left!important;padding:0 15px!important
-}
-.d25Choices button.selected{border-color:var(--ps-lime)!important;background:#18200f!important;box-shadow:none!important}
-.v47TestBack,.v52TestBack{
- position:absolute!important;left:12px!important;top:12px!important;background:rgba(10,10,14,.88)!important;
- border:1px solid rgba(255,255,255,.12)!important;color:#fff!important;border-radius:999px!important;padding:8px 11px!important
-}
-
-/* ---------- MY HANDS: price of mistake first ---------- */
-.my18>h1.impact{font-size:48px!important;line-height:.86!important;letter-spacing:-.065em!important;margin-bottom:10px!important}
-.my18>h1 .pink{color:var(--ps-lime)!important}
-.my18Intro{max-width:330px!important;margin-bottom:16px!important}
-.my18Tools{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
-.my18Tool{
- min-height:150px!important;border:1px solid var(--ps-line)!important;border-radius:24px!important;
- background:linear-gradient(145deg,#141419,#0d0d12)!important;padding:16px!important;position:relative!important;overflow:hidden!important
-}
-.my18Tool:after{
- content:"BB";position:absolute;right:-5px;bottom:-30px;font-size:92px;font-weight:1000;letter-spacing:-.1em;color:#ffffff035
-}
-.my18Tool h2{font-size:29px!important;line-height:.9!important;letter-spacing:-.05em!important;margin:8px 0!important}
-.my18Tool .vis18{color:var(--ps-lime)!important;font-size:27px!important}
-.my18Tool .go{color:var(--ps-lime)!important;font-size:9px!important}
-.saved18{border:0!important;border-top:1px solid rgba(255,255,255,.07)!important;border-radius:0!important;background:transparent!important;padding:12px 2px!important}
-
-/* ---------- MY TOURNAMENTS: poker P&L journal ---------- */
-.t23{padding-top:0!important}
-.v52JournalIntro{
- border:0!important;border-radius:24px!important;padding:17px 15px!important;margin-bottom:11px!important;
- background:
- radial-gradient(circle at 98% 0,rgba(200,255,61,.14),transparent 37%),
- linear-gradient(145deg,#141419,#0d0d12)!important
-}
-.v52JournalIntro b{font-size:24px!important;line-height:.95!important;letter-spacing:-.045em!important}
-.v52JournalIntro p{font-size:12px!important;max-width:330px!important}
-.v52JournalIntro .v52tags{display:none!important}
-.t23 .t23Stats,.t23 .t23Summary,.t23 [class*="Stats"],.t23 [class*="Summary"]{gap:7px!important}
-.t23 button,.t23 select,.t23 input{font-size:12px}
-.t23 .t23Card,.t23 [class*="t23Card"]{
- border:1px solid var(--ps-line)!important;border-radius:20px!important;background:var(--ps-surface)!important
-}
-.t23 .positive,.t23 .profit.positive{color:var(--ps-lime)!important}
-.t23 .negative,.t23 .loss{color:var(--ps-pink)!important}
-
-/* ---------- POLYANA: editorial city guide ---------- */
-.v47Hero,.p45Hero,.p41Hero{
- border:0!important;border-radius:28px!important;padding:19px 16px!important;
- background:
- radial-gradient(circle at 92% 0,rgba(200,255,61,.15),transparent 33%),
- linear-gradient(145deg,#15151b,#0c0c10)!important
-}
-.v47Hero h1,.p45Hero h1,.p41Hero h1{font-size:52px!important;line-height:.85!important;letter-spacing:-.07em!important}
-.v47Hero p,.p45Hero p,.p41Hero p{font-size:13px!important;line-height:1.45!important;color:#beb7c1!important;max-width:320px!important}
-.v47Top button,.v47Sub button,.p45MainTabs button,.p45Quick button{
- box-shadow:none!important;border-color:#34343d!important;background:#101015!important
-}
-.v47Top button.on,.v47Sub button.on,.p45MainTabs button.on,.p45Quick button.on{border-color:var(--ps-lime)!important;background:#18200f!important}
-
-.v47Regions,.p45Regions,.p42RegionGrid{grid-template-columns:1fr!important;gap:10px!important}
-.v47Region,.p45Region,.p42Region{
- min-height:235px!important;border:0!important;border-radius:26px!important;box-shadow:none!important
-}
-.v47Region img,.p45Region img,.p42Region img{filter:brightness(.76) saturate(.92) contrast(1.05)!important}
-.v47Region:after,.p45Region:after,.p42Region:after{background:linear-gradient(180deg,transparent 18%,rgba(5,5,7,.12) 42%,rgba(5,5,7,.94) 100%)!important}
-.v47RegionText b,.p45RegionText b,.p42RegionText b{font-size:31px!important;line-height:.9!important;letter-spacing:-.055em!important}
-.v47RegionText span,.p45RegionStats span,.p42RegionText span{font-size:10px!important;color:#f1edf0!important}
-
-/* live/current event: CLUB is the visual brand */
-.v47Event,.v51AutoEvent,.p45Event{
- border:0!important;border-radius:22px!important;background:
- radial-gradient(circle at 100% 0,rgba(200,255,61,.10),transparent 36%),
- var(--ps-surface)!important;padding:15px!important
-}
-.v47Club,.v51AutoClub,.p45Club{
- font-size:27px!important;line-height:.93!important;color:var(--ps-lime)!important;font-weight:1000!important;letter-spacing:-.055em!important
-}
-.v47Tournament,.v51AutoTournament,.p45Tournament{font-size:15px!important;line-height:1.15!important;margin-top:7px!important;color:#fff!important}
-.v47Meta span,.v51AutoMeta span,.p45Meta span{font-size:8px!important;background:transparent!important}
-
-/* club directory: no Excel feeling */
-.v47ClubList,.p45ClubList{gap:9px!important}
-.v47ClubCard,.p45ClubCard{
- min-height:125px!important;border:0!important;border-radius:23px!important;padding:15px!important;
- background:
- radial-gradient(circle at 98% 0,rgba(200,255,61,.08),transparent 36%),
- linear-gradient(145deg,#141419,#0d0d12)!important
-}
-.v47ClubCard.key,.p45ClubCard.key{box-shadow:inset 3px 0 0 var(--ps-lime)!important}
-.v47ClubName,.p45ClubName{font-size:27px!important;line-height:.95!important;color:var(--ps-lime)!important}
-.v47ClubAddress,.p45Address{font-size:12px!important;line-height:1.45!important;color:#bcb5bf!important;max-width:82%!important}
-.v47ClubNum,.p45ClubCard:before{color:#ffffff04!important;font-size:78px!important}
-.v47ClubStats span,.p45ClubBottom span{font-size:8px!important}
-
-/* ---------- YOU: Poker DNA ---------- */
-#profileArea>.panel:first-child{
- border:0!important;border-radius:28px!important;background:
- radial-gradient(circle at 96% 0,rgba(200,255,61,.13),transparent 36%),
- linear-gradient(145deg,#15151b,#0c0c10)!important
-}
-#profileArea h1.impact{font-size:49px!important;line-height:.86!important;letter-spacing:-.065em!important}
-#profileArea h1 .pink{color:var(--ps-lime)!important}
-.dna{min-height:270px!important}
-.dnaCore{border-color:var(--ps-lime)!important;box-shadow:0 0 0 1px rgba(200,255,61,.13),0 0 40px rgba(200,255,61,.08)!important}
-.dnaCore h2{font-size:47px!important;color:var(--ps-lime)!important}
-.skillNode{
- border:1px solid rgba(255,255,255,.10)!important;background:#111116!important;color:#aaa3ad!important;border-radius:16px!important
-}
-.skillNode b{font-size:16px!important;color:#fff!important}
-.skillNode.leak{border-color:rgba(255,79,152,.55)!important;background:#1a1016!important}
-.youFocus{
- border:0!important;border-radius:25px!important;background:
- radial-gradient(circle at 100% 0,rgba(255,79,152,.13),transparent 38%),#111116!important;padding:16px!important
-}
-.youFocus h2{font-size:29px!important;line-height:.95!important;letter-spacing:-.045em!important}
-.creatorVerdict{border-left:2px solid var(--ps-pink)!important;background:transparent!important;border-radius:0!important;padding-left:13px!important}
-
-/* Modal sheets */
-.sheet{border-radius:30px 30px 0 0!important;border:1px solid rgba(255,255,255,.08)!important;background:#0d0d11!important}
-.close{background:#17171d!important;color:#fff!important}
-
-/* motion: restrained */
-@media(prefers-reduced-motion:no-preference){
- .tile,.v47ClubCard,.p45ClubCard,.v47Region,.p45Region{transition:transform .18s ease,filter .18s ease}
- .tile:active,.v47ClubCard:active,.p45ClubCard:active,.v47Region:active,.p45Region:active{transform:scale(.985)}
-}
-</style>
-
-<script id="v53-art-direction-script">
-(function(){
-'use strict';
-
-/* Add editorial helper line to home without changing navigation/functionality. */
-const _v53Home=window.renderHome;
-if(typeof _v53Home==='function'){
-  window.renderHome=renderHome=function(){
-    const r=_v53Home.apply(this,arguments);
-    const h=document.getElementById('home');
-    if(h && !h.querySelector('.v53HomeEditorial')){
-      const metrics=h.querySelector('.metrics');
-      if(metrics){
-        metrics.insertAdjacentHTML('beforebegin',
-          '<div class="v53HomeEditorial" style="margin:6px 2px 14px"><span class="ey">POKER INTELLIGENCE</span><h1 style="font-size:44px;line-height:.88;letter-spacing:-.065em;margin:6px 0 8px">ИГРАЙ.<br><span style="color:#c8ff3d">ПОНИМАЙ.</span></h1><p style="margin:0;color:#aaa3ad;font-size:12px;line-height:1.45;max-width:310px">Тренировка, реальные раздачи и твои игровые паттерны в одном месте.</p></div>');
-      }
-    }
-    return r;
-  };
-}
-
-/* Add one compact "price of mistake" header to My Hands. */
-const _v53MyHub=window.myHub18;
-if(typeof _v53MyHub==='function'){
-  window.myHub18=myHub18=function(){
-    const base=_v53MyHub.apply(this,arguments);
-    const ev=(window.S&&Array.isArray(S.events)?S.events:[]).slice(-40);
-    const bad=ev.filter(x=>x.grade==='r').length;
-    const label=bad?`${bad} ДОРОГИХ РЕШЕНИЙ`:'ИЩЕМ ГЛАВНЫЙ ЛИК';
-    return `<div style="margin:0 0 12px;padding:14px 15px;border-radius:22px;background:radial-gradient(circle at 100% 0,rgba(255,79,152,.14),transparent 38%),#111116"><span class="ey">ЦЕНА ОШИБКИ</span><div style="font-size:27px;line-height:.95;font-weight:1000;letter-spacing:-.045em;margin-top:5px">${label}</div><div style="font-size:11px;color:#aaa3ad;margin-top:6px">Сначала разбираем то, что действительно стоит тебе качества решений.</div></div>`+base;
-  };
-}
-
-/* Give key club names a stronger editorial treatment in current dynamically rendered views. */
-function v53Decorate(){
-  document.querySelectorAll('.v47ClubCard,.p45ClubCard').forEach((c,i)=>{
-    if(!c.dataset.v53){
-      c.dataset.v53='1';
-      const n=document.createElement('span');
-      n.textContent=String(i+1).padStart(2,'0');
-      n.style.cssText='position:absolute;right:9px;bottom:-15px;font-size:74px;line-height:1;font-weight:1000;letter-spacing:-.08em;color:rgba(255,255,255,.035);pointer-events:none';
-      c.appendChild(n);
-    }
-  });
-}
-const obs=new MutationObserver(()=>v53Decorate());
-document.addEventListener('DOMContentLoaded',()=>{v53Decorate();obs.observe(document.body,{childList:true,subtree:true})});
-
-document.documentElement.dataset.pokerSwipeVersion='53-art-direction';
+window.openMyTournamentsV54=openJournal;
+window.openPolyanaV54=openPolyana;
+document.documentElement.dataset.pokerSwipeVersion='54-consolidated';
+window.POKER_SWIPE_BUILD='V54 CONSOLIDATED';
 })();
 </script>
 
