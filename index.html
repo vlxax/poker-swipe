@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V58 TRIPS + MY TOURNAMENTS</title>
+<title>POKER SWIPE — V60 TRIP BUILDER</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -4152,6 +4152,569 @@ document.addEventListener('DOMContentLoaded',()=>{
 window.addEventListener('load',()=>{wireMyTournaments();hookTripButtons()});
 window.POKER_SWIPE_BUILD='V58 TRIPS + MY TOURNAMENTS';
 document.documentElement.dataset.pokerSwipeVersion='58-trips-my-tournaments';
+})();
+</script>
+
+
+<style id="v59-poker-core">
+/* =========================
+   V59 · MY TOURNAMENTS
+   ========================= */
+.v59Journal{padding:0 max(12px,var(--tg-left-safe)) calc(145px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v59Hero{
+  border-radius:28px;padding:18px 16px;
+  background:radial-gradient(circle at 96% 0,rgba(200,255,61,.15),transparent 35%),linear-gradient(145deg,#15151b,#0c0c10)
+}
+.v59Hero h1{font-size:42px;line-height:.86;letter-spacing:-.06em;margin:5px 0 8px}
+.v59Hero h1 span{color:#c8ff3d}
+.v59Hero p{font-size:12px;line-height:1.45;color:#bcb5bf;margin:0}
+.v59Tabs{display:flex;gap:6px;margin-top:13px}
+.v59Tabs button{flex:1;border:1px solid #34343d;background:#111116;color:#8f8893;border-radius:14px;padding:10px 6px;font-size:8px;font-weight:1000}
+.v59Tabs button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v59Stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.v59Stat{padding:12px;border-radius:18px;background:#111116;border:1px solid rgba(255,255,255,.07)}
+.v59Stat span{display:block;font-size:8px;color:#8f8893}.v59Stat b{display:block;font-size:22px;line-height:1;margin-top:4px}.v59Stat.good b{color:#c8ff3d}.v59Stat.bad b{color:#ff4f98}
+.v59Add{width:100%;min-height:46px;border:0;border-radius:15px;background:#c8ff3d;color:#10120d;font-size:10px;font-weight:1000;margin:2px 0 12px}
+.v59Card{display:block;width:100%;text-align:left;color:#fff;border:1px solid rgba(255,255,255,.07);border-radius:21px;background:#111116;padding:14px;margin:8px 0}
+.v59CardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.v59CardClub{font-family:"Arial Narrow",Arial,sans-serif;font-size:23px;line-height:.92;font-weight:1000;letter-spacing:-.05em;color:#c8ff3d}
+.v59CardTour{font-size:14px;font-weight:850;margin-top:6px}.v59CardMeta{font-size:9px;color:#9d96a0;margin-top:5px}
+.v59Pnl{font-size:20px;font-weight:1000;white-space:nowrap}.v59Pnl.good{color:#c8ff3d}.v59Pnl.bad{color:#ff4f98}
+.v59Facts{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:11px}.v59Facts div{background:#17171d;border-radius:12px;padding:8px}.v59Facts small{display:block;font-size:7px;color:#827b84}.v59Facts b{display:block;font-size:11px;margin-top:3px}
+.v59Empty{padding:18px;border:1px dashed #3a3942;border-radius:20px;color:#9b949e;font-size:12px;line-height:1.45}
+.v59Form .row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.v59Field{margin:9px 0}.v59Field label{display:block;font-size:8px;color:#918a95;margin-bottom:6px}.v59Field input,.v59Field select{width:100%;box-sizing:border-box;border:0;border-radius:13px;background:#fff;color:#181419;padding:12px;font-size:13px}
+.v59Type{display:flex;gap:6px}.v59Type button{flex:1;border:1px solid #363640;background:#17171d;color:#918a95;border-radius:13px;padding:10px;font-size:9px;font-weight:1000}.v59Type button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v59Form .hint{font-size:10px;color:#928b95;line-height:1.4;margin-top:4px}
+
+/* =========================
+   V59 · HAND HISTORY
+   ========================= */
+.v59HH{padding-bottom:30px}
+.v59HHHero{border-radius:26px;padding:16px;background:radial-gradient(circle at 96% 0,rgba(255,79,152,.13),transparent 35%),#111116}
+.v59HHHero h1{font-size:36px;line-height:.9;letter-spacing:-.055em;margin:5px 0 8px}.v59HHHero h1 span{color:#c8ff3d}.v59HHHero p{font-size:12px;color:#aaa3ad;line-height:1.45;margin:0}
+.v59HHSteps{display:flex;gap:5px;margin:10px 0}.v59HHSteps button{flex:1;border:1px solid #34343d;background:#111116;color:#8e8792;border-radius:13px;padding:9px 4px;font-size:8px;font-weight:1000}.v59HHSteps button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v59Panel{padding:14px;border-radius:20px;background:#111116;border:1px solid rgba(255,255,255,.07);margin:8px 0}
+.v59Label{font-size:8px;color:#918a95;margin-bottom:7px}
+.v59Actions{display:grid;gap:6px}.v59ActionRow{display:grid;grid-template-columns:78px 1fr 70px 34px;gap:6px;align-items:center}
+.v59ActionRow select,.v59ActionRow input{width:100%;box-sizing:border-box;border:0;border-radius:11px;background:#fff;color:#181419;padding:9px;font-size:11px}
+.v59ActionRow button{height:34px;border:0;border-radius:10px;background:#21151b;color:#ff8ab8;font-weight:1000}
+.v59AddAction{width:100%;min-height:40px;border:1px dashed #44414a;background:#17171d;color:#fff;border-radius:13px;font-size:9px;font-weight:1000;margin-top:7px}
+.v59PotBox{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-radius:15px;background:#17171d;margin-top:8px}.v59PotBox span{font-size:8px;color:#918a95}.v59PotBox b{font-size:18px;color:#c8ff3d}
+.v59BoardRow{display:flex;gap:6px;flex-wrap:wrap}.v59BoardRow .cardPick18{min-width:48px}
+.v59HHResult{padding:14px;border-radius:18px;background:#10150e;border:1px solid rgba(200,255,61,.25);margin-top:10px}.v59HHResult h3{margin:0 0 6px;font-size:18px}.v59HHResult p{margin:0;font-size:11px;line-height:1.5;color:#bcb5bf}
+.v59Warn{padding:12px;border-radius:15px;background:#171217;color:#c7b6c0;font-size:10px;line-height:1.45;margin-top:8px}
+
+/* Global readability bump for tiny legacy labels */
+.v48Meta span,.v56Meta span,.v58Chips button,.v58ToggleRow button,.v59Tabs button,.v59Field label{font-size:9px!important}
+</style>
+
+<script id="v59-poker-core-script">
+(function(){
+'use strict';
+
+/* =========================
+   MY TOURNAMENTS — clean independent implementation
+   ========================= */
+let V59_TF='all';
+const v59List=()=>Array.isArray(S?.tournaments)?S.tournaments:[];
+const v59Num=x=>{const n=Number(String(x??0).replace(',','.'));return Number.isFinite(n)?n:0};
+const v59Cost=t=>v59Num(t.buyin)*Math.max(1,Math.round(v59Num(t.entries)||1));
+const v59Return=t=>v59Num(t.prize)+v59Num(t.bountyWon);
+const v59Profit=t=>v59Return(t)-v59Cost(t);
+const v59Money=(n,c)=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(v59Num(n))+' '+({RUB:'₽',USD:'$',EUR:'€'}[c]||c||'');
+function v59Stats(){
+ const a=v59List().filter(t=>V59_TF==='all'||t.type===V59_TF);
+ const byCur={};
+ a.forEach(t=>{const c=t.currency||'RUB';byCur[c]??={invested:0,ret:0,profit:0};byCur[c].invested+=v59Cost(t);byCur[c].ret+=v59Return(t);byCur[c].profit+=v59Profit(t)});
+ return {count:a.length,byCur};
+}
+function v59Title(t){return t.tournamentName||t.name||'Без названия'}
+function v59Place(t){return t.clubOrRoom||t.club||t.room||''}
+function v59RenderJournal(){
+ if(typeof show==='function')show('tournaments');
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ const stats=v59Stats(),list=v59List().filter(t=>V59_TF==='all'||t.type===V59_TF).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+ const curRows=Object.entries(stats.byCur);
+ area.innerHTML=`<div class="v59Journal">
+   <div class="v59Hero"><span class="ey">ТВОЯ РЕАЛЬНАЯ ИГРА</span><h1>МОИ <span>ТУРНИРЫ.</span></h1><p>ONLINE и OFFLINE отдельно. Бай-ин, пули, призовые и bounty учитываются в реальном profit и ROI.</p>
+   <div class="v59Tabs"><button data-v59tf="all" class="${V59_TF==='all'?'on':''}">ВСЕ</button><button data-v59tf="online" class="${V59_TF==='online'?'on':''}">ONLINE</button><button data-v59tf="offline" class="${V59_TF==='offline'?'on':''}">OFFLINE</button></div></div>
+   <div class="v59Stats">
+    <div class="v59Stat"><span>ТУРНИРОВ</span><b>${stats.count}</b></div>
+    ${curRows.length?curRows.slice(0,3).map(([c,s])=>{const roi=s.invested?s.profit/s.invested*100:0;return `<div class="v59Stat ${s.profit>0?'good':s.profit<0?'bad':''}"><span>${c} · PROFIT / ROI</span><b>${s.profit>0?'+':''}${v59Money(s.profit,c)} · ${s.invested?(roi>0?'+':'')+roi.toFixed(1)+'%':'—'}</b></div>`}).join(''):'<div class="v59Stat"><span>ПРОФИТ</span><b>—</b></div>'}
+   </div>
+   <button class="v59Add" id="v59AddTournament">+ ДОБАВИТЬ ТУРНИР</button>
+   <div>${list.length?list.map(t=>v59TournamentCard(t)).join(''):`<div class="v59Empty">Пока пусто. Добавь первый online или offline турнир — приложение само посчитает вложено, profit и ROI.</div>`}</div>
+ </div>`;
+ area.querySelectorAll('[data-v59tf]').forEach(b=>b.onclick=()=>{V59_TF=b.dataset.v59tf;v59RenderJournal()});
+ document.getElementById('v59AddTournament')?.addEventListener('click',()=>v59OpenTournamentForm());
+ area.querySelectorAll('[data-v59open]').forEach(b=>b.onclick=()=>v59OpenTournamentForm(b.dataset.v59open));
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+ document.querySelector('.nav [data-nav="mytournaments"]')?.classList.add('on');
+}
+function v59TournamentCard(t){
+ const p=v59Profit(t),cost=v59Cost(t),roi=cost?p/cost*100:0,place=v59Place(t),title=v59Title(t),mode=t.type==='offline'?'OFFLINE':'ONLINE';
+ return `<button class="v59Card" data-v59open="${t.id}">
+  <div class="v59CardTop"><div><div class="v59CardClub">${place||mode}</div><div class="v59CardTour">${title}</div><div class="v59CardMeta">${mode} · ${t.date||'без даты'}${t.field?' · поле '+t.field:''}</div></div><div class="v59Pnl ${p>0?'good':p<0?'bad':''}">${p>0?'+':''}${v59Money(p,t.currency||'RUB')}</div></div>
+  <div class="v59Facts"><div><small>ВЛОЖЕНО</small><b>${v59Money(cost,t.currency||'RUB')}</b></div><div><small>PRIZE</small><b>${v59Money(t.prize,t.currency||'RUB')}</b></div><div><small>BOUNTY ₽</small><b>${v59Money(t.bountyWon,t.currency||'RUB')}</b></div><div><small>ROI</small><b>${cost?(roi>0?'+':'')+roi.toFixed(1)+'%':'—'}</b></div></div>
+ </button>`;
+}
+function v59OpenTournamentForm(id=null){
+ const old=id?v59List().find(x=>String(x.id)===String(id)):null;
+ let type=old?.type||'offline';
+ const cur=old?.currency||'RUB';
+ const form=()=>`<div class="v59Form"><span class="ey">${old?'РЕДАКТИРОВАТЬ':'НОВЫЙ ТУРНИР'}</span><h2>${old?'ОБНОВИ РЕЗУЛЬТАТ':'ДОБАВЬ ТУРНИР'}</h2>
+  <div class="v59Field"><label>ФОРМАТ</label><div class="v59Type"><button data-v59type="offline" class="${type==='offline'?'on':''}">OFFLINE</button><button data-v59type="online" class="${type==='online'?'on':''}">ONLINE</button></div></div>
+  <div class="v59Field"><label>${type==='offline'?'КЛУБ':'РУМ'}</label><input id="v59Place" value="${esc(v59Place(old||{}))}" placeholder="${type==='offline'?'Straddle / Level / Heads Up':'PokerOK / GG / Stars'}"></div>
+  <div class="v59Field"><label>НАЗВАНИЕ ТУРНИРА</label><input id="v59Name" value="${esc(v59Title(old||{}))}" placeholder="Sunday Deepstack / Mystery Bounty"></div>
+  <div class="row"><div class="v59Field"><label>ДАТА</label><input id="v59Date" type="date" value="${esc(old?.date||today())}"></div><div class="v59Field"><label>ВАЛЮТА</label><select id="v59Cur"><option value="RUB" ${cur==='RUB'?'selected':''}>₽ RUB</option><option value="USD" ${cur==='USD'?'selected':''}>$ USD</option><option value="EUR" ${cur==='EUR'?'selected':''}>€ EUR</option></select></div></div>
+  <div class="row"><div class="v59Field"><label>БАЙ-ИН</label><input id="v59Buy" inputmode="decimal" value="${old?.buyin??''}"></div><div class="v59Field"><label>ПУЛЬ</label><input id="v59Entries" inputmode="numeric" value="${old?.entries??1}"></div></div>
+  <div class="row"><div class="v59Field"><label>ПРИЗОВЫЕ</label><input id="v59Prize" inputmode="decimal" value="${old?.prize??0}"></div><div class="v59Field"><label>BOUNTY · ДЕНЬГИ</label><input id="v59BWon" inputmode="decimal" value="${old?.bountyWon??0}"></div></div>
+  <div class="row"><div class="v59Field"><label>BOUNTY · КОЛ-ВО</label><input id="v59BCount" inputmode="numeric" value="${old?.bountyCount??0}"></div><div class="v59Field"><label>МЕСТО / ПОЛЕ</label><input id="v59PlaceNum" inputmode="numeric" placeholder="17" value="${old?.place??''}"></div></div>
+  <div class="v59Field"><label>ИГРОКОВ В ПОЛЕ</label><input id="v59FieldN" inputmode="numeric" value="${old?.field??''}"></div>
+  <div class="hint">Profit = призовые + bounty winnings − (buy-in × bullets). ROI = profit / invested.</div>
+  <button class="primary" id="v59SaveTournament">${old?'СОХРАНИТЬ':'ДОБАВИТЬ'} →</button>
+  ${old?'<button class="secondary" id="v59DeleteTournament" style="margin-top:7px">УДАЛИТЬ</button>':''}
+ </div>`;
+ openModal(form());
+ setTimeout(()=>{
+   $$('[data-v59type]').forEach(b=>b.onclick=()=>{type=b.dataset.v59type;closeModal();setTimeout(()=>v59OpenTournamentForm(id),60)});
+   $('#v59SaveTournament').onclick=()=>{
+     const title=$('#v59Name').value.trim(); if(!title){$('#v59Name').focus();return}
+     const rec={
+       ...(old||{}),id:old?.id||('v59t_'+Date.now()),type,
+       clubOrRoom:$('#v59Place').value.trim(),tournamentName:title,name:title,
+       date:$('#v59Date').value||today(),currency:$('#v59Cur').value||'RUB',
+       buyin:Math.max(0,v59Num($('#v59Buy').value)),entries:Math.max(1,Math.round(v59Num($('#v59Entries').value)||1)),
+       prize:Math.max(0,v59Num($('#v59Prize').value)),bountyWon:Math.max(0,v59Num($('#v59BWon').value)),
+       bountyCount:Math.max(0,Math.round(v59Num($('#v59BCount').value))),place:Math.max(0,Math.round(v59Num($('#v59PlaceNum').value))),
+       field:Math.max(0,Math.round(v59Num($('#v59FieldN').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()
+     };
+     S.tournaments=v59List().filter(x=>String(x.id)!==String(rec.id));S.tournaments.push(rec);save();closeModal();v59RenderJournal();
+   };
+   const del=$('#v59DeleteTournament');if(del)del.onclick=()=>{S.tournaments=v59List().filter(x=>String(x.id)!==String(old.id));save();closeModal();v59RenderJournal()};
+ },0);
+}
+window.openMyTournamentsV59=v59RenderJournal;
+
+/* =========================
+   HAND HISTORY — action sequence with auto pot
+   ========================= */
+let HH59=null;
+function hh59Fresh(){
+ return {
+  step:'context',format:'MTT',heroPos:'BTN',villPos:'BB',heroStack:40,villStack:40,hero:[null,null],
+  streets:{
+   pre:{board:[],actions:[{who:'villain',action:'RAISE',amount:2.2},{who:'hero',action:'CALL',amount:2.2}]},
+   flop:{board:[null,null,null],actions:[]},
+   turn:{board:[null,null,null,null],actions:[]},
+   river:{board:[null,null,null,null,null],actions:[]}
+  },question:'Где я ошибся?',showdown:false,villain:[null,null]
+ }
+}
+function hh59Ensure(){if(!HH59)HH59=hh59Fresh()}
+function hh59Eff(){return Math.min(Number(HH59.heroStack)||0,Number(HH59.villStack)||0)}
+function hh59PotBefore(st){
+ let pot=1.5; // SB + BB baseline
+ const order=['pre','flop','turn','river'];
+ for(const x of order){
+  if(x===st)break;
+  for(const a of HH59.streets[x].actions){
+   const amt=Number(a.amount)||0;
+   if(a.action==='BET'||a.action==='CALL'||a.action==='RAISE'||a.action==='PUSH'||a.action==='LIMP')pot+=amt;
+  }
+ }
+ return Math.max(0,pot);
+}
+function hh59PotAfter(st){
+ let pot=hh59PotBefore(st);
+ for(const a of HH59.streets[st].actions){
+  const amt=Number(a.amount)||0;
+  if(a.action==='BET'||a.action==='CALL'||a.action==='RAISE'||a.action==='PUSH'||a.action==='LIMP')pot+=amt;
+ }
+ return Math.max(0,pot);
+}
+function hh59ActionOptions(st){
+ return st==='pre'?['NONE','LIMP','RAISE','CALL','FOLD','PUSH']:['CHECK','BET','CALL','RAISE','FOLD','PUSH'];
+}
+function hh59ActionRow(st,a,i){
+ return `<div class="v59ActionRow">
+  <select data-hhwho="${st}:${i}"><option value="hero" ${a.who==='hero'?'selected':''}>ТЫ</option><option value="villain" ${a.who==='villain'?'selected':''}>ОПП</option></select>
+  <select data-hhact="${st}:${i}">${hh59ActionOptions(st).map(x=>`<option value="${x}" ${a.action===x?'selected':''}>${x}</option>`).join('')}</select>
+  <input data-hhamt="${st}:${i}" inputmode="decimal" value="${a.amount??0}">
+  <button data-hhdel="${st}:${i}">×</button>
+ </div>`;
+}
+function hh59Board(st){
+ const b=HH59.streets[st].board;
+ return `<div class="v59BoardRow">${b.map((c,i)=>cardButton18('hh59_'+st+'_'+i,'—',true)).join('')}</div>`;
+}
+function hh59Render(){
+ hh59Ensure();
+ const st=HH59.step;
+ const root=`<div class="v59HH">
+  <div class="v59HHHero"><span class="ey">РАЗБОР РЕАЛЬНОЙ РАЗДАЧИ</span><h1>СОБЕРИ <span>ЛИНИЮ.</span></h1><p>Теперь вводим действия по порядку, а банк приложение считает само. Не надо вручную угадывать pot на каждой улице.</p></div>
+  <div class="v59HHSteps">${['context','pre','flop','turn','river','finish'].map(x=>`<button data-hhstep="${x}" class="${st===x?'on':''}">${({context:'КОНТЕКСТ',pre:'ПРЕ',flop:'ФЛОП',turn:'ТЁРН',river:'РИВЕР',finish:'ИТОГ'})[x]}</button>`).join('')}</div>
+  ${st==='context'?hh59Context():st==='finish'?hh59Finish():hh59Street(st)}
+ </div>`;
+ $('#myArea').innerHTML=root;setTimeout(hh59Bind,0);
+}
+function hh59Context(){
+ return `<div class="v59Panel">
+  <div class="v59Label">ФОРМАТ</div><div class="v59Type"><button data-hhformat="MTT" class="${HH59.format==='MTT'?'on':''}">MTT</button><button data-hhformat="CASH" class="${HH59.format==='CASH'?'on':''}">CASH</button></div>
+  <div class="v59Field"><label>ПОЗИЦИИ</label><div class="row"><select id="hh59HeroPos">${['UTG','HJ','CO','BTN','SB','BB'].map(x=>`<option ${HH59.heroPos===x?'selected':''}>${x}</option>`).join('')}</select><select id="hh59VillPos">${['UTG','HJ','CO','BTN','SB','BB'].map(x=>`<option ${HH59.villPos===x?'selected':''}>${x}</option>`).join('')}</select></div></div>
+  <div class="v59Field"><label>СТЕКИ · BB</label><div class="row"><input id="hh59HeroStack" inputmode="decimal" value="${HH59.heroStack}"><input id="hh59VillStack" inputmode="decimal" value="${HH59.villStack}"></div></div>
+  <div class="v59PotBox"><span>ЭФФЕКТИВНЫЙ СТЕК</span><b>${hh59Eff()} BB</b></div>
+  <div class="v59Field"><label>ТВОЯ РУКА</label><div class="cards18">${cardButton18('hh59h1','A♠')}${cardButton18('hh59h2','K♥')}</div></div>
+  <button class="primary" data-hhstep="pre">ДАЛЬШЕ →</button>
+ </div>`;
+}
+function hh59Street(st){
+ const s=HH59.streets[st];
+ return `<div class="v59Panel">
+  <div class="v59Label">${st.toUpperCase()} · БАНК ДО УЛИЦЫ</div>
+  <div class="v59PotBox"><span>POT BEFORE</span><b>${hh59PotBefore(st).toFixed(1)} BB</b></div>
+  ${st!=='pre'?`<div class="v59Field"><label>БОРД</label>${hh59Board(st)}</div>`:''}
+  <div class="v59Label" style="margin-top:12px">ДЕЙСТВИЯ ПО ПОРЯДКУ</div>
+  <div class="v59Actions">${s.actions.map((a,i)=>hh59ActionRow(st,a,i)).join('')}</div>
+  <button class="v59AddAction" data-hhadd="${st}">+ ДОБАВИТЬ ДЕЙСТВИЕ</button>
+  <div class="v59PotBox"><span>POT AFTER</span><b>${hh59PotAfter(st).toFixed(1)} BB</b></div>
+  <div class="v59Warn">Сейчас это честный reconstruction layer: приложение автоматически считает банк из введённых действий. Следующий слой анализа сравнивает ключевые решения с ближайшими reference nodes, но не выдаёт approximate node за exact solver.</div>
+ </div>`;
+}
+function hh59Finish(){
+ return `<div class="v59Panel"><div class="v59Label">ЧТО ХОЧЕШЬ ПОНЯТЬ?</div>
+  <select id="hh59Question"><option ${HH59.question==='Где я ошибся?'?'selected':''}>Где я ошибся?</option><option>Опп нормально сыграл?</option><option>Стоил ли колл?</option><option>Где был плохой сайзинг?</option></select>
+  <div class="v59HHResult"><h3>РАЗДАЧА СОБРАНА</h3><p>Эффективный стек: ${hh59Eff()} BB. Финальный рассчитанный банк: ${hh59PotAfter('river').toFixed(1)} BB. Сохраняем именно последовательность действий, чтобы позже можно было считать EV и анализировать Villain range без ручной бухгалтерии.</p></div>
+  <button class="primary" id="hh59Save">СОХРАНИТЬ РАЗДАЧУ →</button></div>`;
+}
+function hh59Bind(){
+ document.querySelectorAll('[data-hhstep]').forEach(b=>b.onclick=()=>{HH59.step=b.dataset.hhstep;hh59Render()});
+ document.querySelectorAll('[data-hhformat]').forEach(b=>b.onclick=()=>{HH59.format=b.dataset.hhformat;hh59Render()});
+ const hp=$('#hh59HeroPos'),vp=$('#hh59VillPos'),hs=$('#hh59HeroStack'),vs=$('#hh59VillStack');
+ if(hp)hp.onchange=()=>{HH59.heroPos=hp.value};if(vp)vp.onchange=()=>{HH59.villPos=vp.value};
+ if(hs)hs.oninput=()=>{HH59.heroStack=+hs.value||0};if(vs)vs.oninput=()=>{HH59.villStack=+vs.value||0};
+ ['hh59h1','hh59h2'].forEach((id,i)=>{const b=$('#'+id);if(b){b.dataset.card=HH59.hero[i]||'';refreshCardButton18(id);b.onclick=()=>openCardPicker18(id,()=>{HH59.hero[i]=$('#'+id).dataset.card||null;hh59Render()})}});
+ ['flop','turn','river'].forEach(st=>HH59.streets[st].board.forEach((_,i)=>{const id='hh59_'+st+'_'+i,b=$('#'+id);if(b){b.dataset.card=HH59.streets[st].board[i]||'';refreshCardButton18(id);b.onclick=()=>openCardPicker18(id,()=>{HH59.streets[st].board[i]=$('#'+id).dataset.card||null;hh59Render()})}}));
+ document.querySelectorAll('[data-hhadd]').forEach(b=>b.onclick=()=>{HH59.streets[b.dataset.hhadd].actions.push({who:'hero',action:b.dataset.hhadd==='pre'?'RAISE':'BET',amount:b.dataset.hhadd==='pre'?2.2:1});hh59Render()});
+ document.querySelectorAll('[data-hhdel]').forEach(b=>b.onclick=()=>{const [st,i]=b.dataset.hhdel.split(':');HH59.streets[st].actions.splice(+i,1);hh59Render()});
+ document.querySelectorAll('[data-hhwho]').forEach(b=>b.onchange=()=>{const [st,i]=b.dataset.hhwho.split(':');HH59.streets[st].actions[+i].who=b.value});
+ document.querySelectorAll('[data-hhact]').forEach(b=>b.onchange=()=>{const [st,i]=b.dataset.hhact.split(':');HH59.streets[st].actions[+i].action=b.value});
+ document.querySelectorAll('[data-hhamt]').forEach(b=>b.oninput=()=>{const [st,i]=b.dataset.hhamt.split(':');HH59.streets[st].actions[+i].amount=+b.value||0;const box=b.closest('.v59Panel')?.querySelector('.v59PotBox:last-of-type b');if(box)box.textContent=hh59PotAfter(st).toFixed(1)+' BB'});
+ const saveBtn=$('#hh59Save');if(saveBtn)saveBtn.onclick=()=>{
+   HH59.question=$('#hh59Question')?.value||HH59.question;
+   S.myHands18=S.myHands18||[];
+   S.myHands18.push({id:'v59hh_'+Date.now(),createdAt:Date.now(),format:HH59.format,hero:HH59.hero.map(prettyCard18).join(' '),pos:HH59.heroPos,vpos:HH59.villPos,stack:hh59Eff(),question:HH59.question,raw59:JSON.parse(JSON.stringify(HH59)),result:'Сохранено как последовательность действий'});
+   save();openModal('<span class="ey">СОХРАНЕНО</span><h2>РАЗДАЧА ЗАПИСАНА.</h2><p>Теперь банк считается из последовательности действий. Это база для следующего слоя EV/range анализа.</p>');
+ };
+}
+window.openHandHistoryV59=function(){HH59=hh59Fresh();hh59Render()};
+
+/* Replace only "Разобрать руку" action with the new reconstruction engine. */
+const oldMyGo59=window.myGo18;
+window.myGo18=myGo18=function(v){
+ if(v==='recon'){window.myView18='recon59';HH59=hh59Fresh();hh59Render();return}
+ return oldMyGo59?oldMyGo59(v):undefined;
+};
+
+/* Hard-wire the bottom nav to the clean V59 tournament journal. */
+function wire59(){
+ const b=document.querySelector('.nav [data-nav="mytournaments"]');
+ if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();v59RenderJournal()};
+}
+document.addEventListener('DOMContentLoaded',()=>{wire59();new MutationObserver(wire59).observe(document.body,{childList:true,subtree:true})});
+window.addEventListener('load',wire59);
+
+window.POKER_SWIPE_BUILD='V59 POKER CORE';
+document.documentElement.dataset.pokerSwipeVersion='59-poker-core';
+})();
+</script>
+
+
+<style id="v60-trip-builder">
+:root{
+ --v60-bg:#08080b;--v60-card:#111116;--v60-card2:#17171d;
+ --v60-line:rgba(255,255,255,.09);--v60-white:#f5f2f4;--v60-muted:#9f98a3;
+ --v60-lime:#c8ff3d;--v60-pink:#ff4f98;--v60-purple:#9d58ff;--v60-blue:#4c87ff;--v60-orange:#ff9d2e;
+}
+.v60Wrap{padding:0 max(12px,var(--tg-left-safe)) calc(150px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v60Top{
+ position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+ padding:8px 0 12px;background:linear-gradient(180deg,var(--v60-bg) 70%,transparent)
+}
+.v60Back,.v60IconBtn{width:40px;height:40px;border:1px solid var(--v60-line);border-radius:14px;background:#111116;color:#fff;font-size:20px}
+.v60TopTitle{text-align:center;min-width:0}.v60TopTitle b{display:block;font-size:20px;line-height:1}.v60TopTitle b span{color:var(--v60-lime)}.v60TopTitle small{display:block;margin-top:4px;color:var(--v60-muted);font-size:10px}
+.v60Hero{margin-top:4px}
+.v60Hero h1{font-size:35px;line-height:.9;letter-spacing:-.055em;margin:7px 0 8px}
+.v60Hero p{margin:0;color:#b8b1bb;font-size:12px;line-height:1.45}
+.v60Block{margin-top:12px;padding:14px;border:1px solid var(--v60-line);border-radius:23px;background:linear-gradient(145deg,#131319,#0d0d11)}
+.v60BlockHead{display:flex;align-items:center;gap:8px;margin-bottom:12px}.v60BlockHead i{font-style:normal;color:var(--v60-lime);font-size:16px}.v60BlockHead b{font-size:12px;letter-spacing:.035em}
+.v60Cities{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.v60City{position:relative;overflow:hidden;min-height:102px;border:1px solid #35343d;border-radius:16px;background:#111116;color:#fff;padding:0}
+.v60City img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.72) saturate(.9)}
+.v60City:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 25%,rgba(5,5,7,.85) 100%)}
+.v60City span{position:absolute;left:9px;right:9px;bottom:8px;z-index:2;font-size:10px;font-weight:1000;text-align:left}
+.v60City.on{border-color:var(--v60-lime);box-shadow:0 0 0 1px rgba(200,255,61,.22),0 0 25px rgba(200,255,61,.08)}
+.v60City.more{display:grid;place-items:center;background:#15151b}.v60City.more span{position:static;text-align:center;font-size:9px}
+.v60Dates{display:grid;grid-template-columns:1fr 90px 1fr;gap:6px;margin-top:10px}
+.v60DateBox{padding:11px;border-radius:15px;background:#111116;border:1px solid var(--v60-line)}.v60DateBox small{display:block;font-size:8px;color:var(--v60-muted)}.v60DateBox b{display:block;margin-top:4px;font-size:13px}.v60DateBox input{width:100%;background:transparent;border:0;color:#fff;font-size:12px;margin-top:5px}
+.v60Nights{display:grid;place-items:center;text-align:center;color:#bcb5bf;font-size:9px}.v60Nights b{display:block;color:#fff;font-size:13px}
+.v60BudgetValue{font-size:31px;font-weight:1000;letter-spacing:-.04em}.v60Range{width:100%;accent-color:var(--v60-lime);margin:12px 0 3px}
+.v60RangeLabels{display:flex;justify-content:space-between;color:#7f7983;font-size:8px}
+.v60BudgetGrid{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;margin-top:12px}
+.v60Donut{width:108px;height:108px;border-radius:50%;position:relative;background:conic-gradient(var(--v60-lime) 0 60%,var(--v60-purple) 60% 76%,var(--v60-blue) 76% 90%,var(--v60-orange) 90% 96%,#7c7780 96% 100%)}
+.v60Donut:after{content:"";position:absolute;inset:24px;border-radius:50%;background:#111116}
+.v60BudgetLegend{display:grid;gap:7px}.v60BudgetLegend div{display:grid;grid-template-columns:8px 1fr auto auto;gap:6px;align-items:center;font-size:9px}.v60BudgetLegend i{width:7px;height:7px;border-radius:50%}.v60BudgetLegend span{color:#aaa3ad}.v60BudgetLegend b{font-size:9px}
+.v60Group{margin-top:11px}.v60GroupLabel{font-size:10px;color:#fff;margin-bottom:7px}.v60Chips{display:flex;gap:6px;flex-wrap:wrap}.v60Chip{border:1px solid #373641;background:#111116;color:#948d97;border-radius:999px;padding:8px 11px;font-size:9px;font-weight:900}.v60Chip.on{background:var(--v60-lime);border-color:var(--v60-lime);color:#10120d}
+.v60SwitchRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;margin-top:12px;background:#111116;border:1px solid var(--v60-line);border-radius:16px}.v60SwitchRow span{font-size:10px;color:#b8b1bb}.v60Switch{width:42px;height:24px;border:0;border-radius:999px;background:#35343d;position:relative}.v60Switch:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.18s}.v60Switch.on{background:var(--v60-lime)}.v60Switch.on:after{left:21px}
+.v60Primary{width:100%;min-height:50px;margin-top:12px;border:0;border-radius:16px;background:var(--v60-lime);color:#10120d;font-size:11px;font-weight:1000;box-shadow:0 0 30px rgba(200,255,61,.13)}
+.v60Summary{padding:13px;border:1px solid var(--v60-line);border-radius:18px;background:#111116}.v60Summary b{display:block;font-size:13px}.v60Summary small{display:block;margin-top:4px;font-size:9px;color:#aaa3ad;line-height:1.4}
+.v60Found{margin-top:10px;padding:13px;border-radius:18px;background:radial-gradient(circle at 100% 0,rgba(200,255,61,.11),transparent 38%),#11160e}.v60Found b{font-size:17px}.v60Found b span{color:var(--v60-lime)}.v60Found small{display:block;margin-top:4px;color:#a9a2ac;font-size:9px}
+.v60ResultTabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:10px 0;border-bottom:1px solid var(--v60-line)}.v60ResultTabs button{border:0;background:transparent;color:#8d8690;padding:10px 4px;font-size:9px;font-weight:1000}.v60ResultTabs button.on{color:var(--v60-lime);border-bottom:2px solid var(--v60-lime)}
+.v60Plan{position:relative;padding:14px;margin:8px 0;border:1px solid var(--v60-line);border-radius:21px;background:#111116;color:#fff;text-align:left;width:100%}.v60Plan.on{border-color:var(--v60-lime);background:radial-gradient(circle at 100% 0,rgba(200,255,61,.10),transparent 38%),#11160e}.v60PlanStar{position:absolute;right:12px;top:10px;font-size:20px;color:var(--v60-lime)}.v60Plan h3{font-size:17px;margin:0}.v60Plan p{font-size:10px;color:#aaa3ad;margin:4px 0 11px}.v60PlanStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.v60PlanStats small{display:block;font-size:7px;color:#827b85}.v60PlanStats b{display:block;font-size:12px;margin-top:3px}.v60Risk{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:8px;color:#aaa3ad}.v60Risk i{font-style:normal;color:var(--v60-lime)}
+.v60TripHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin:8px 0}.v60TripHead h2{font-size:23px;margin:0}.v60TripBudget{text-align:right}.v60TripBudget b{font-size:20px}.v60TripBudget small{display:block;font-size:8px;color:#aaa3ad}
+.v60BudgetBar{display:flex;height:5px;border-radius:999px;overflow:hidden;margin:9px 0 12px}.v60BudgetBar i:nth-child(1){background:var(--v60-lime)}.v60BudgetBar i:nth-child(2){background:var(--v60-purple)}.v60BudgetBar i:nth-child(3){background:var(--v60-blue)}.v60BudgetBar i:nth-child(4){background:var(--v60-orange)}.v60BudgetBar i:nth-child(5){background:#7c7780}
+.v60Day{margin-top:10px}.v60DayHead{display:flex;gap:8px;align-items:center;margin:10px 0 6px}.v60DayHead b{font-size:15px;color:var(--v60-lime)}.v60DayHead span{font-size:9px;color:#a59ea8}
+.v60TourRow{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}.v60TourRow:first-of-type{border-top:0}.v60TourTime{font-size:13px;font-weight:1000}.v60TourMain strong{display:block;font-size:12px}.v60TourMain small{display:block;margin-top:3px;font-size:8px;color:#8f8892}.v60TourClub{color:var(--v60-lime)!important}.v60TourPrice{text-align:right}.v60TourPrice b{display:block;font-size:11px}.v60TourPrice small{display:block;font-size:7px;color:#8f8892;margin-top:2px}
+.v60Save{width:100%;min-height:48px;margin-top:12px;border:0;border-radius:15px;background:var(--v60-lime);color:#10120d;font-size:10px;font-weight:1000}
+@media(max-width:390px){
+ .v60Cities{grid-template-columns:repeat(4,1fr)}.v60City{min-height:92px}.v60BudgetGrid{grid-template-columns:100px 1fr}.v60Donut{width:94px;height:94px}.v60PlanStats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+
+<script id="v60-trip-builder-script">
+(function(){
+'use strict';
+
+const V60_TRIP_KEY='ps_v60_saved_trips';
+let V60_VIEW='builder';
+let V60_RESULT_TAB='plans';
+let V60_PLAN='balanced';
+let V60_STATE={
+ city:'Калининград',from:'2026-09-12',to:'2026-09-16',budget:50000,
+ games:['NLH','PLO'],formats:['Bounty','PKO','Deepstack'],buyins:['any'],reentries:'any',noOverlap:true
+};
+
+const V60_CATALOG=[
+ {city:'Калининград',date:'2026-09-12',time:'19:00',club:'LEVEL Autumn Series',name:'Welcome Bounty',game:'NLH',format:'Bounty',buyin:2000,reentries:1},
+ {city:'Калининград',date:'2026-09-13',time:'14:00',club:'STRADDLE Poker Series',name:'PLO Deepstack',game:'PLO',format:'Deepstack',buyin:3500,reentries:2},
+ {city:'Калининград',date:'2026-09-13',time:'20:00',club:'QUANTUM Series',name:'Mystery Bounty',game:'NLH',format:'Mystery',buyin:4000,reentries:1},
+ {city:'Калининград',date:'2026-09-14',time:'16:00',club:'LEVEL Autumn Series',name:'Main Event Day 1A',game:'NLH',format:'Deepstack',buyin:10000,reentries:2},
+ {city:'Калининград',date:'2026-09-15',time:'15:00',club:'HEADS UP Series',name:'High Roller Bounty',game:'NLH',format:'Bounty',buyin:8000,reentries:1},
+ {city:'Калининград',date:'2026-09-15',time:'21:00',club:'STRADDLE Poker Series',name:'Turbo Knockout',game:'NLH',format:'PKO',buyin:3000,reentries:1},
+ {city:'Калининград',date:'2026-09-16',time:'13:00',club:'QUANTUM Series',name:'PLO Closer',game:'PLO',format:'Deepstack',buyin:3000,reentries:1},
+
+ {city:'Сочи',date:'2026-09-12',time:'18:00',club:'SOCHI Poker Series',name:'Opening Event',game:'NLH',format:'Deepstack',buyin:5000,reentries:2},
+ {city:'Сочи',date:'2026-09-13',time:'15:00',club:'SOCHI Poker Series',name:'PLO Championship',game:'PLO',format:'Deepstack',buyin:7000,reentries:2},
+ {city:'Сочи',date:'2026-09-14',time:'18:00',club:'SOCHI Poker Series',name:'Mystery Bounty',game:'NLH',format:'Mystery',buyin:6000,reentries:1},
+ {city:'Сочи',date:'2026-09-15',time:'14:00',club:'SOCHI Poker Series',name:'Main Event',game:'NLH',format:'Deepstack',buyin:12000,reentries:2},
+
+ {city:'Минск',date:'2026-09-12',time:'19:00',club:'MINSK Poker Week',name:'Welcome PKO',game:'NLH',format:'PKO',buyin:3000,reentries:1},
+ {city:'Минск',date:'2026-09-13',time:'16:00',club:'MINSK Poker Week',name:'PLO Event',game:'PLO',format:'Deepstack',buyin:3500,reentries:2},
+ {city:'Минск',date:'2026-09-14',time:'17:00',club:'MINSK Poker Week',name:'Main Event',game:'NLH',format:'Deepstack',buyin:8000,reentries:2},
+];
+
+const cityImg={
+ 'Калининград':'assets/regions/kaliningrad.webp','Сочи':'assets/regions/sochi.webp','Минск':'assets/regions/minsk.webp'
+};
+const fmt=x=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(x)+' ₽';
+const dateTxt=iso=>{
+ try{return new Date(iso+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'})}catch(e){return iso}
+};
+const dayTxt=iso=>{
+ try{return new Date(iso+'T12:00:00').toLocaleDateString('ru-RU',{weekday:'short'}).replace('.','')}catch(e){return ''}
+};
+function daysBetween(){
+ const a=new Date(V60_STATE.from+'T12:00:00'),b=new Date(V60_STATE.to+'T12:00:00');
+ const d=Math.max(1,Math.round((b-a)/86400000)); return {nights:d,days:d+1};
+}
+function pokerBudget(){return Math.round(V60_STATE.budget*.60)}
+function alloc(){
+ const b=V60_STATE.budget;return {poker:Math.round(b*.60),road:Math.round(b*.16),stay:Math.round(b*.14),food:Math.round(b*.06),local:b-Math.round(b*.60)-Math.round(b*.16)-Math.round(b*.14)-Math.round(b*.06)}
+}
+function eligible(){
+ return V60_CATALOG.filter(t=>{
+   if(t.city!==V60_STATE.city)return false;
+   if(t.date<V60_STATE.from||t.date>V60_STATE.to)return false;
+   if(V60_STATE.games.length && !V60_STATE.games.includes(t.game))return false;
+   if(V60_STATE.formats.length && !V60_STATE.formats.includes(t.format))return false;
+   if(V60_STATE.buyins.includes('under3') && t.buyin>3000)return false;
+   if(V60_STATE.buyins.includes('3to10') && (t.buyin<3000||t.buyin>10000))return false;
+   if(V60_STATE.buyins.includes('10plus') && t.buyin<10000)return false;
+   if(V60_STATE.reentries!=='any' && t.reentries>Number(V60_STATE.reentries))return false;
+   return true;
+ });
+}
+function conflict(a,b){
+ if(a.date!==b.date)return false;
+ const [ah,am]=a.time.split(':').map(Number),[bh,bm]=b.time.split(':').map(Number);
+ const ma=ah*60+am,mb=bh*60+bm;
+ return Math.abs(ma-mb)<240;
+}
+function buildPlans(){
+ const pool=eligible().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ const budget=pokerBudget();
+ function pick(maxCount,cheap=false){
+   const list=[...pool].sort((a,b)=>cheap?a.buyin-b.buyin:(a.date+a.time).localeCompare(b.date+b.time));
+   const out=[];let spent=0;
+   for(const t of list){
+     const projected=spent+t.buyin*(1+(t.reentries?Math.min(t.reentries,1):0));
+     if(projected>budget)continue;
+     if(V60_STATE.noOverlap && out.some(x=>conflict(x,t)))continue;
+     out.push(t);spent=projected;if(out.length>=maxCount)break;
+   }
+   return out;
+ }
+ const balanced=pick(5,false);
+ const more=pick(7,false);
+ const economy=pick(3,true);
+ const mk=(id,label,sub,list,risk)=>{
+   const buyins=list.reduce((s,t)=>s+t.buyin,0),re=list.reduce((s,t)=>s+t.reentries,0),total=Math.min(V60_STATE.budget,Math.round(buyins*1.3)+alloc().road+alloc().stay+alloc().food+alloc().local);
+   return {id,label,sub,list,risk,buyins,re,total};
+ };
+ return [
+   mk('balanced','СБАЛАНСИРОВАННАЯ','Оптимум турниров и бюджета',balanced,'Средний риск'),
+   mk('more','БОЛЬШЕ ПОКЕРА','Максимум игры, выше дисперсия',more,'Высокий риск'),
+   mk('economy','ЭКОНОМ','Бюджетно, меньше волатильности',economy,'Низкий риск')
+ ];
+}
+function renderTripBuilder(){
+ if(typeof show==='function')show('tournaments');
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ area.innerHTML='<div class="v60Wrap">'+topbar()+builderBody()+'</div>';
+ bindBuilder();markTripsNav();
+}
+function topbar(){
+ return `<div class="v60Top"><button class="v60Back" id="v60Back">‹</button><div class="v60TopTitle"><b>${V60_VIEW==='builder'?'СОБРАТЬ <span>ПОЕЗДКУ</span>':'РЕЗУЛЬТАТЫ ПОДБОРА'}</b><small>${V60_VIEW==='builder'?'Планируй покерную серию':'Сетка турниров под твой бюджет'}</small></div><button class="v60IconBtn">▣</button></div>`;
+}
+function builderBody(){
+ const d=daysBetween(),a=alloc();
+ return `<div class="v60Hero"><h1>СОБЕРИ ПОЕЗДКУ ПОД <span style="color:#c8ff3d">СВОЮ ИГРУ.</span></h1><p>Выбери направление, даты и бюджет — PokerSwipe соберёт подходящие серии и непересекающуюся сетку турниров.</p></div>
+ <div class="v60Block"><div class="v60BlockHead"><i>⌖</i><b>1. КУДА И КОГДА?</b></div>
+  <div class="v60Cities">
+   ${['Калининград','Сочи','Минск'].map(c=>`<button class="v60City ${V60_STATE.city===c?'on':''}" data-v60city="${c}"><img src="${cityImg[c]}"><span>${c}</span></button>`).join('')}
+   <button class="v60City more"><span>•••<br>ЕЩЁ</span></button>
+  </div>
+  <div class="v60Dates"><div class="v60DateBox"><small>ЗАЕЗД</small><b>${dateTxt(V60_STATE.from)}</b><input id="v60From" type="date" value="${V60_STATE.from}"></div><div class="v60Nights"><div><b>${d.nights} ночи</b>${d.days} дней</div></div><div class="v60DateBox"><small>ВЫЕЗД</small><b>${dateTxt(V60_STATE.to)}</b><input id="v60To" type="date" value="${V60_STATE.to}"></div></div>
+ </div>
+ <div class="v60Block"><div class="v60BlockHead"><i>♟</i><b>2. БЮДЖЕТ ПОЕЗДКИ</b></div>
+  <div class="v60BudgetValue">${fmt(V60_STATE.budget)}</div>
+  <input id="v60BudgetRange" class="v60Range" type="range" min="10000" max="200000" step="5000" value="${V60_STATE.budget}">
+  <div class="v60RangeLabels"><span>10 000 ₽</span><span>200 000 ₽</span></div>
+  <div class="v60BudgetGrid"><div class="v60Donut"></div><div class="v60BudgetLegend">
+   <div><i style="background:#c8ff3d"></i><span>Покер</span><b>${fmt(a.poker)}</b><b>60%</b></div>
+   <div><i style="background:#9d58ff"></i><span>Дорога</span><b>${fmt(a.road)}</b><b>16%</b></div>
+   <div><i style="background:#4c87ff"></i><span>Жильё</span><b>${fmt(a.stay)}</b><b>14%</b></div>
+   <div><i style="background:#ff9d2e"></i><span>Еда</span><b>${fmt(a.food)}</b><b>6%</b></div>
+   <div><i style="background:#7c7780"></i><span>На месте</span><b>${fmt(a.local)}</b><b>4%</b></div>
+  </div></div>
+ </div>
+ <div class="v60Block"><div class="v60BlockHead"><i>♠</i><b>3. ТВОИ ПРЕДПОЧТЕНИЯ</b></div>
+  ${chipGroup('Дисциплины',['NLH','PLO','HU','OFC'],'games')}
+  ${chipGroup('Форматы турниров',['Bounty','PKO','Mystery','Deepstack','Turbo'],'formats')}
+  ${chipGroup('Вход в турниры',['Любой','До 3 000 ₽','3 000 – 10 000 ₽','10 000+'],'buyins')}
+  ${chipGroup('Количество re-entry',['Любое','0','1','2','3+'],'reentries')}
+ </div>
+ <div class="v60SwitchRow"><span>Исключить пересечения по времени</span><button id="v60Overlap" class="v60Switch ${V60_STATE.noOverlap?'on':''}"></button></div>
+ <button class="v60Primary" id="v60BuildTrip">♠ СОБРАТЬ ПОЕЗДКУ</button>`;
+}
+function chipGroup(label,items,key){
+ const values=key==='buyins'?['any','under3','3to10','10plus']:key==='reentries'?['any','0','1','2','3']:items;
+ const cur=V60_STATE[key];
+ return `<div class="v60Group"><div class="v60GroupLabel">${label}</div><div class="v60Chips">${items.map((x,i)=>{
+   const val=values[i],on=Array.isArray(cur)?cur.includes(val):cur===val;
+   return `<button class="v60Chip ${on?'on':''}" data-v60chip="${key}:${val}">${x}</button>`;
+ }).join('')}</div></div>`;
+}
+function bindBuilder(){
+ document.getElementById('v60Back')?.addEventListener('click',()=>{if(typeof openPolyanaV56==='function')openPolyanaV56()});
+ document.querySelectorAll('[data-v60city]').forEach(b=>b.onclick=()=>{V60_STATE.city=b.dataset.v60city;renderTripBuilder()});
+ document.getElementById('v60From').onchange=e=>{V60_STATE.from=e.target.value;renderTripBuilder()};
+ document.getElementById('v60To').onchange=e=>{V60_STATE.to=e.target.value;renderTripBuilder()};
+ document.getElementById('v60BudgetRange').oninput=e=>{V60_STATE.budget=+e.target.value;renderTripBuilder()};
+ document.querySelectorAll('[data-v60chip]').forEach(b=>b.onclick=()=>{
+  const [key,val]=b.dataset.v60chip.split(':');
+  if(key==='games'||key==='formats'){
+    let a=V60_STATE[key];
+    a=a.includes(val)?a.filter(x=>x!==val):[...a,val];
+    if(!a.length)a=[val];V60_STATE[key]=a;
+  }else if(key==='buyins'){V60_STATE.buyins=[val]}
+  else V60_STATE.reentries=val;
+  renderTripBuilder();
+ });
+ document.getElementById('v60Overlap').onclick=()=>{V60_STATE.noOverlap=!V60_STATE.noOverlap;renderTripBuilder()};
+ document.getElementById('v60BuildTrip').onclick=()=>{V60_VIEW='results';renderResults()};
+}
+function renderResults(){
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ const plans=buildPlans(),chosen=plans.find(x=>x.id===V60_PLAN)||plans[0],count=eligible().length;
+ area.innerHTML='<div class="v60Wrap">'+topbar()+`
+  <div class="v60Summary"><b>${V60_STATE.city}, ${dateTxt(V60_STATE.from)} – ${dateTxt(V60_STATE.to)}</b><small>Бюджет ${fmt(V60_STATE.budget)} · ${V60_STATE.games.join(', ')} · ${V60_STATE.formats.join(', ')}</small></div>
+  <div class="v60Found"><b>МЫ НАШЛИ <span>${count} ТУРНИРОВ</span></b><small>в подходящих сериях и форматах</small></div>
+  <div class="v60ResultTabs"><button class="${V60_RESULT_TAB==='plans'?'on':''}" data-v60rt="plans">ВАРИАНТЫ ПОЕЗДКИ</button><button class="${V60_RESULT_TAB==='all'?'on':''}" data-v60rt="all">ВСЕ ТУРНИРЫ</button></div>
+  ${V60_RESULT_TAB==='plans'?plans.map(p=>planCard(p)).join(''):allTournamentList()}
+  <div class="v60TripHead"><div><span class="ey">ТВОЯ ПОЕЗДКА</span><h2>${chosen.label}</h2></div><div class="v60TripBudget"><b>${fmt(chosen.total)}</b><small>общий бюджет</small></div></div>
+  ${tripBudgetSummary(chosen)}
+  ${itinerary(chosen)}
+  <button class="v60Save" id="v60SaveTrip">СОХРАНИТЬ ПОЕЗДКУ В МОИ ПОЕЗДКИ</button>
+ </div>`;
+ bindResults(plans);
+ markTripsNav();
+}
+function planCard(p){
+ return `<button class="v60Plan ${V60_PLAN===p.id?'on':''}" data-v60plan="${p.id}">
+  ${V60_PLAN===p.id?'<span class="v60PlanStar">★</span>':''}<h3>${p.label}</h3><p>${p.sub}</p>
+  <div class="v60PlanStats"><div><small>ТУРНИРОВ</small><b>${p.list.length}</b></div><div><small>БАЙ-ИНЫ</small><b>${fmt(p.buyins)}</b></div><div><small>RE-ENTRY</small><b>${p.re}</b></div><div><small>БЮДЖЕТ</small><b>${fmt(p.total)}</b></div></div>
+  <div class="v60Risk"><i>◫</i><span>${daysBetween().days} дней</span><i>◈</i><span>${new Set(p.list.map(x=>x.club)).size} серии</span><i>◉</i><span>${p.risk}</span></div>
+ </button>`;
+}
+function allTournamentList(){
+ const list=eligible(); if(!list.length)return '<div class="v59Empty">Нет турниров под текущие параметры.</div>';
+ return `<div class="v60Block">${list.map(t=>tourRow(t)).join('')}</div>`;
+}
+function tripBudgetSummary(p){
+ const a=alloc(),poker=Math.min(a.poker,Math.round(p.buyins*1.1));
+ const vals=[poker,a.road,a.stay,a.food,a.local],sum=vals.reduce((s,x)=>s+x,0);
+ return `<div class="v60Block">
+  <div class="v60PlanStats"><div><small>БАЙ-ИНЫ</small><b>${fmt(poker)}</b></div><div><small>ДОРОГА</small><b>${fmt(a.road)}</b></div><div><small>ЖИЛЬЁ</small><b>${fmt(a.stay)}</b></div><div><small>ЕДА + ТРАНСПОРТ</small><b>${fmt(a.food+a.local)}</b></div></div>
+  <div class="v60BudgetBar"><i style="width:${poker/sum*100}%"></i><i style="width:${a.road/sum*100}%"></i><i style="width:${a.stay/sum*100}%"></i><i style="width:${a.food/sum*100}%"></i><i style="width:${a.local/sum*100}%"></i></div>
+ </div>`;
+}
+function itinerary(p){
+ const groups={};p.list.forEach(t=>(groups[t.date]??=[]).push(t));
+ return `<div class="v60Block"><div class="v60BlockHead"><i>▦</i><b>ПЛАН ТУРНИРОВ</b></div>${Object.keys(groups).sort().map(d=>`<div class="v60Day"><div class="v60DayHead"><b>${new Date(d+'T12:00:00').getDate()}</b><span>${dayTxt(d).toUpperCase()}</span></div>${groups[d].sort((a,b)=>a.time.localeCompare(b.time)).map(t=>tourRow(t)).join('')}</div>`).join('')}</div>`;
+}
+function tourRow(t){
+ return `<div class="v60TourRow"><div class="v60TourTime">${t.time}</div><div class="v60TourMain"><strong>${t.name}</strong><small><span class="v60TourClub">${t.club}</span> · ${t.game} · ${t.format}</small></div><div class="v60TourPrice"><b>${fmt(t.buyin)}</b><small>${t.reentries} re-entry</small></div></div>`;
+}
+function bindResults(plans){
+ document.getElementById('v60Back')?.addEventListener('click',()=>{V60_VIEW='builder';renderTripBuilder()});
+ document.querySelectorAll('[data-v60rt]').forEach(b=>b.onclick=()=>{V60_RESULT_TAB=b.dataset.v60rt;renderResults()});
+ document.querySelectorAll('[data-v60plan]').forEach(b=>b.onclick=()=>{V60_PLAN=b.dataset.v60plan;renderResults()});
+ document.getElementById('v60SaveTrip')?.addEventListener('click',()=>{
+   const p=plans.find(x=>x.id===V60_PLAN)||plans[0];
+   let a=[];try{a=JSON.parse(localStorage.getItem(V60_TRIP_KEY)||'[]')||[]}catch(e){}
+   a.unshift({id:'trip_'+Date.now(),createdAt:Date.now(),city:V60_STATE.city,from:V60_STATE.from,to:V60_STATE.to,budget:V60_STATE.budget,plan:p.id,label:p.label,tournaments:p.list,total:p.total});
+   localStorage.setItem(V60_TRIP_KEY,JSON.stringify(a));
+   if(typeof openModal==='function')openModal('<span class="ey">СОХРАНЕНО</span><h2>ПОЕЗДКА В «МОИХ ПОЕЗДКАХ».</h2><p>Сетка, бюджет и выбранные турниры сохранены на этом устройстве.</p>');
+ });
+}
+function markTripsNav(){
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+ document.querySelector('.nav [data-nav="tournaments"]')?.classList.add('on');
+}
+window.openTripBuilderV60=renderTripBuilder;
+
+/* Hook every trip-related CTA from Polyana to this exact new builder. */
+function wireTripCtas(){
+ document.querySelectorAll('[data-top="trips"],#v48NewTrip,[data-v56trip],[data-v58trip],#v58Build').forEach(b=>{
+   b.onclick=e=>{e.preventDefault();e.stopPropagation();V60_VIEW='builder';renderTripBuilder()};
+ });
+}
+document.addEventListener('DOMContentLoaded',()=>{wireTripCtas();new MutationObserver(wireTripCtas).observe(document.body,{childList:true,subtree:true})});
+window.addEventListener('load',wireTripCtas);
+
+window.POKER_SWIPE_BUILD='V60 TRIP BUILDER';
+document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 })();
 </script>
 

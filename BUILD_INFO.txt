@@ -1,26 +1,25 @@
-POKER SWIPE — V58 TRIPS + MY TOURNAMENTS
+POKER SWIPE — V60 TRIP BUILDER
 
-MY TOURNAMENTS:
-- forced back as a real independent section
-- old working Online / Offline journal
-- add/edit tournament
-- buy-in
-- bullets/entries
-- bounty
-- prize
-- place/field
-- invested
-- profit
-- ROI
+Built on V59 Poker Core.
 
-MY TRIPS / BUILD A TRIP:
-- Aviasales/Ostrovok-inspired search pattern
-- destination
-- dates
-- budget
-- hotel preference
-- transport
-- disciplines NLH/PLO/HU/OFC
-- save trips locally
-- edit/delete saved trips
-- hooked from Polyana trip buttons
+TRIP BUILDER
+- visually follows the approved reference
+- destination cards with regional photography
+- arrival / departure dates
+- travel budget slider
+- live budget allocation donut
+- discipline filters: NLH / PLO / HU / OFC
+- tournament-format filters
+- buy-in filters
+- re-entry filters
+- conflict toggle
+- dynamic tournament matching
+- three trip strategies: Balanced / More Poker / Economy
+- detailed itinerary by day
+- travel budget breakdown
+- save trip locally to My Trips
+
+IMPORTANT
+- Hotels are NOT a catalog in this section.
+- Housing, road, food and local transport are only budget categories.
+- Existing V59 My Tournaments / hand-history / Polyana / clubs are preserved.
