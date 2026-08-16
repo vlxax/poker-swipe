@@ -1,15 +1,26 @@
-POKER SWIPE — V57 CLUB INTELLIGENCE
+POKER SWIPE — V58 TRIPS + MY TOURNAMENTS
 
-USER-FACING:
-- no mentions of the upstream site/source
-- club name remains the primary visual object
-- tap club from search/list or tournament card -> rich club profile
-- club profile: venue, address, age, min fee, description, useful facts, next games and the ACTUAL tournament list
-- favorite star on every club
-- favorites are stored locally and automatically pinned above other clubs for that user
+MY TOURNAMENTS:
+- forced back as a real independent section
+- old working Online / Offline journal
+- add/edit tournament
+- buy-in
+- bullets/entries
+- bounty
+- prize
+- place/field
+- invested
+- profit
+- ROI
 
-DATA:
-- updater now opens every discovered club page
-- captures name, venue, address, club age, long description, useful structured facts, contacts and full published schedule
-- all tournament rows are attached to the corresponding club
-- data-source URL remains internal JSON metadata only, not displayed to users
+MY TRIPS / BUILD A TRIP:
+- Aviasales/Ostrovok-inspired search pattern
+- destination
+- dates
+- budget
+- hotel preference
+- transport
+- disciplines NLH/PLO/HU/OFC
+- save trips locally
+- edit/delete saved trips
+- hooked from Polyana trip buttons

@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V57 CLUB INTELLIGENCE</title>
+<title>POKER SWIPE — V58 TRIPS + MY TOURNAMENTS</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3971,6 +3971,187 @@ window.addEventListener('focus',async()=>{await load57();decorate57()});
 window.openRichClubV57=openRichClub;
 window.POKER_SWIPE_BUILD='V57 CLUB INTELLIGENCE';
 document.documentElement.dataset.pokerSwipeVersion='57-club-intelligence';
+})();
+</script>
+
+
+<style id="v58-trips-my-tournaments">
+/* ===== MY TOURNAMENTS: guaranteed independent screen ===== */
+.v58JournalHero{
+  margin:0 0 12px;padding:17px 15px;border-radius:27px;
+  background:radial-gradient(circle at 96% 0,rgba(200,255,61,.14),transparent 36%),linear-gradient(145deg,#15151b,#0d0d12)
+}
+.v58JournalHero h1{font-size:36px;line-height:.9;letter-spacing:-.055em;margin:5px 0 8px}
+.v58JournalHero h1 span{color:#c8ff3d}
+.v58JournalHero p{margin:0;color:#b9b2bc;font-size:12px;line-height:1.45}
+.v58JournalPills{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.v58JournalPills span{font-size:7px;border:1px solid #373741;border-radius:999px;padding:5px 7px;color:#bbb4be}
+
+/* ===== TRIPS / AVIASALES-OSTROVOK STYLE ===== */
+.v58Trips{padding:0 max(12px,var(--tg-left-safe)) calc(145px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v58TripsHero{
+  border-radius:28px;padding:18px 16px;
+  background:
+    radial-gradient(circle at 96% 0,rgba(200,255,61,.16),transparent 32%),
+    radial-gradient(circle at 0 100%,rgba(255,79,152,.10),transparent 35%),
+    linear-gradient(145deg,#15151b,#0b0b10)
+}
+.v58TripsHero h1{font-size:46px;line-height:.86;letter-spacing:-.065em;margin:5px 0 8px}
+.v58TripsHero h1 span{color:#c8ff3d}.v58TripsHero p{font-size:12px;line-height:1.45;color:#bcb5bf;margin:0}
+.v58SearchBox{margin-top:14px;display:grid;gap:7px}
+.v58Field{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  min-height:58px;padding:0 14px;border-radius:17px;background:#fff;color:#181419
+}
+.v58Field .left{min-width:0}.v58Field small{display:block;font-size:8px;color:#817981;margin-bottom:3px}.v58Field b{display:block;font-size:15px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v58Field i{font-style:normal;color:#6e666d;font-size:17px}
+.v58SearchBtn{min-height:52px;border:0;border-radius:17px;background:#c8ff3d;color:#10120d;font-size:11px;font-weight:1000}
+.v58Chips{display:flex;gap:6px;overflow:auto;padding:10px 0 2px;scrollbar-width:none}.v58Chips::-webkit-scrollbar{display:none}
+.v58Chips button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#918a95;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.v58Chips button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v58Section{display:flex;justify-content:space-between;align-items:end;margin:18px 2px 9px}.v58Section h3{font-size:12px;letter-spacing:.08em;margin:0}.v58Section span{font-size:9px;color:#8f8892}
+.v58TripCard{position:relative;overflow:hidden;border-radius:24px;background:#111116;margin:8px 0;padding:15px}
+.v58TripCard .city{font-size:29px;line-height:.92;font-weight:1000;letter-spacing:-.055em;color:#fff}
+.v58TripCard .city span{color:#c8ff3d}.v58TripCard .meta{font-size:11px;color:#aaa3ad;margin-top:7px}
+.v58TripStats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}.v58TripStat{padding:9px;border-radius:14px;background:#17171d}.v58TripStat small{display:block;font-size:7px;color:#817b84}.v58TripStat b{display:block;font-size:14px;margin-top:3px}
+.v58TripActions{display:flex;gap:7px;margin-top:11px}.v58TripActions button{flex:1;min-height:40px;border-radius:13px;font-size:9px;font-weight:1000}.v58TripActions .ghost{background:#17171d;color:#fff;border:1px solid #34343d}.v58TripActions .go{background:#c8ff3d;color:#10120d;border:0}
+.v58Planner{display:grid;gap:8px;margin-top:10px}
+.v58PlannerCard{padding:14px;border-radius:19px;background:#111116;border:1px solid rgba(255,255,255,.07)}
+.v58PlannerCard label{display:block;font-size:8px;color:#918a95;margin-bottom:7px}.v58PlannerCard input,.v58PlannerCard select{width:100%;box-sizing:border-box;border:0;border-radius:13px;background:#fff;color:#181419;padding:12px;font-size:13px}
+.v58Budget{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.v58ToggleRow{display:flex;gap:6px;flex-wrap:wrap}.v58ToggleRow button{border:1px solid #34343d;background:#17171d;color:#918a95;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}.v58ToggleRow button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v58Primary{width:100%;min-height:48px;border:0;border-radius:15px;background:#c8ff3d;color:#10120d;font-size:10px;font-weight:1000}
+</style>
+
+<script id="v58-trips-my-tournaments-script">
+(function(){
+'use strict';
+const TRIP_KEY='ps_v58_trips';
+
+/* ---------- HARD GUARANTEE: MY TOURNAMENTS ---------- */
+function renderMyTournaments58(){
+ if(typeof show==='function') show('tournaments');
+ const area=document.getElementById('tournamentsArea'); if(!area)return;
+ if(typeof __renderTournaments23V24==='function'){
+   __renderTournaments23V24();
+   const root=area.querySelector('.t23');
+   if(root && !root.querySelector('.v58JournalHero')){
+     root.insertAdjacentHTML('afterbegin',`<div class="v58JournalHero">
+       <span class="ey">ТВОЯ ИГРА · P&L</span>
+       <h1>МОИ <span>ТУРНИРЫ.</span></h1>
+       <p>ONLINE и OFFLINE. Добавляй турнир, стоимость входа, количество пуль, prize и bounty — приложение считает вложено, profit и ROI.</p>
+       <div class="v58JournalPills"><span>ВСЕ</span><span>ONLINE</span><span>OFFLINE</span><span>BUY-IN</span><span>BULLETS</span><span>PRIZE</span><span>PROFIT</span><span>ROI</span></div>
+     </div>`);
+   }
+ } else {
+   area.innerHTML='<div class="v58JournalHero"><h1>МОИ <span>ТУРНИРЫ.</span></h1><p>Журнал турниров не найден в сборке.</p></div>';
+ }
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+ document.querySelector('.nav [data-nav="mytournaments"]')?.classList.add('on');
+}
+window.openMyTournamentsV58=renderMyTournaments58;
+
+/* Old journal rerenders itself via renderTournaments23(). Keep journal stable when this nav is active. */
+const _prevRender=window.renderTournaments23;
+window.renderTournaments23=renderTournaments23=function(){
+ const active=document.querySelector('.nav [data-nav="mytournaments"].on,.nav [data-nav="mytournaments"].active');
+ if(active && typeof __renderTournaments23V24==='function'){
+   __renderTournaments23V24();
+   const root=document.querySelector('#tournamentsArea .t23');
+   if(root && !root.querySelector('.v58JournalHero')){
+    root.insertAdjacentHTML('afterbegin',`<div class="v58JournalHero"><span class="ey">ТВОЯ ИГРА · P&L</span><h1>МОИ <span>ТУРНИРЫ.</span></h1><p>ONLINE и OFFLINE · Buy-in · bullets · prize · profit · ROI.</p></div>`);
+   }
+   return;
+ }
+ if(typeof _prevRender==='function') return _prevRender.apply(this,arguments);
+};
+
+/* Force the third bottom nav button to the real journal. */
+function wireMyTournaments(){
+ const b=document.querySelector('.nav [data-nav="mytournaments"]');
+ if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();renderMyTournaments58()};
+}
+
+/* ---------- TRIP BUILDER ---------- */
+function loadTrips(){try{return JSON.parse(localStorage.getItem(TRIP_KEY)||'[]')||[]}catch(e){return[]}}
+function saveTrips(a){localStorage.setItem(TRIP_KEY,JSON.stringify(a))}
+let DRAFT={city:'Калининград',dates:'Выбрать даты',budget:'50 000 ₽',games:['NLH'],hotel:'Любой',transport:'Самолёт'};
+
+function tripsHTML(){
+ const trips=loadTrips();
+ return `<div class="v58Trips">
+   <div class="v58TripsHero">
+    <span class="ey">ПОКЕРНАЯ ПОЕЗДКА</span><h1>СОБРАТЬ <span>ПОЕЗДКУ.</span></h1>
+    <p>Как бронирование отеля или билета: выбери город, даты, дисциплины и бюджет — дальше собери свою сетку турниров.</p>
+    <div class="v58SearchBox">
+      <button class="v58Field" id="v58City"><div class="left"><small>КУДА</small><b>${DRAFT.city}</b></div><i>⌄</i></button>
+      <button class="v58Field" id="v58Dates"><div class="left"><small>ДАТЫ</small><b>${DRAFT.dates}</b></div><i>⌄</i></button>
+      <button class="v58Field" id="v58Budget"><div class="left"><small>БЮДЖЕТ</small><b>${DRAFT.budget}</b></div><i>⌄</i></button>
+      <button class="v58SearchBtn" id="v58Build">НАЙТИ ТУРНИРЫ →</button>
+    </div>
+   </div>
+   <div class="v58Chips">${['NLH','PLO','HU','OFC'].map(x=>`<button data-v58game="${x}" class="${DRAFT.games.includes(x)?'on':''}">${x}</button>`).join('')}</div>
+   <div class="v58Section"><h3>МОИ ПОЕЗДКИ</h3><span>${trips.length} сохранено</span></div>
+   ${trips.length?trips.map((t,i)=>tripCard(t,i)).join(''):`<div class="v56Empty">Пока нет сохранённых поездок. Собери первую — например, Калининград на неделю с бюджетом 50 000 ₽.</div>`}
+ </div>`;
+}
+function tripCard(t,i){
+ return `<div class="v58TripCard"><div class="city">${t.city.split(' ')[0]} <span>${t.city.split(' ').slice(1).join(' ')}</span></div><div class="meta">${t.dates} · ${t.games.join(' / ')}</div>
+  <div class="v58TripStats"><div class="v58TripStat"><small>БЮДЖЕТ</small><b>${t.budget}</b></div><div class="v58TripStat"><small>ЖИЛЬЁ</small><b>${t.hotel}</b></div><div class="v58TripStat"><small>ДОРОГА</small><b>${t.transport}</b></div></div>
+  <div class="v58TripActions"><button class="ghost" data-v58del="${i}">УДАЛИТЬ</button><button class="go" data-v58edit="${i}">ОТКРЫТЬ →</button></div></div>`;
+}
+function renderTrips58(){
+ if(typeof show==='function')show('tournaments');
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ area.innerHTML=tripsHTML();
+ bindTrips();
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+ document.querySelector('.nav [data-nav="tournaments"]')?.classList.add('on');
+}
+window.openTripsV58=renderTrips58;
+
+function chooseCity(){
+ if(typeof openModal!=='function')return;
+ const cities=['Калининград','Сочи','Минск','Приморье','Алтайский край'];
+ openModal(`<div class="p41SheetHead"><span class="ey">КУДА</span><h2>ВЫБЕРИ ГОРОД.</h2></div><div class="v58Planner">${cities.map(c=>`<button class="v58Field" data-v58citypick="${c}"><div class="left"><b>${c}</b></div><i>›</i></button>`).join('')}</div>`);
+ setTimeout(()=>document.querySelectorAll('[data-v58citypick]').forEach(b=>b.onclick=()=>{DRAFT.city=b.dataset.v58citypick;closeModal();renderTrips58()}),0);
+}
+function chooseDates(){
+ if(typeof openModal!=='function')return;
+ openModal(`<div class="p41SheetHead"><span class="ey">ДАТЫ</span><h2>КОГДА ЕДЕМ.</h2></div><div class="v58Planner"><div class="v58PlannerCard"><label>ЗАЕЗД</label><input id="v58From" type="date"></div><div class="v58PlannerCard"><label>ВЫЕЗД</label><input id="v58To" type="date"></div><button class="v58Primary" id="v58DatesSave">ГОТОВО</button></div>`);
+ setTimeout(()=>{document.getElementById('v58DatesSave').onclick=()=>{const a=document.getElementById('v58From').value,b=document.getElementById('v58To').value;DRAFT.dates=(a||'—')+' — '+(b||'—');closeModal();renderTrips58()}},0);
+}
+function chooseBudget(){
+ if(typeof openModal!=='function')return;
+ openModal(`<div class="p41SheetHead"><span class="ey">БЮДЖЕТ</span><h2>СКОЛЬКО ТРАТИМ.</h2></div><div class="v58Planner"><div class="v58PlannerCard"><label>ОБЩИЙ БЮДЖЕТ</label><input id="v58BudgetInput" value="${DRAFT.budget}"></div><div class="v58Budget"><div class="v58PlannerCard"><label>ЖИЛЬЁ</label><select id="v58Hotel"><option>Любой</option><option>До 5K/ночь</option><option>До 10K/ночь</option><option>Без ограничений</option></select></div><div class="v58PlannerCard"><label>ДОРОГА</label><select id="v58Transport"><option>Самолёт</option><option>Поезд</option><option>Авто</option></select></div></div><button class="v58Primary" id="v58BudgetSave">ГОТОВО</button></div>`);
+ setTimeout(()=>{document.getElementById('v58BudgetSave').onclick=()=>{DRAFT.budget=document.getElementById('v58BudgetInput').value;DRAFT.hotel=document.getElementById('v58Hotel').value;DRAFT.transport=document.getElementById('v58Transport').value;closeModal();renderTrips58()}},0);
+}
+function buildTrip(){
+ const trips=loadTrips();trips.push({...DRAFT});saveTrips(trips);renderTrips58();
+}
+function bindTrips(){
+ document.getElementById('v58City')?.addEventListener('click',chooseCity);
+ document.getElementById('v58Dates')?.addEventListener('click',chooseDates);
+ document.getElementById('v58Budget')?.addEventListener('click',chooseBudget);
+ document.getElementById('v58Build')?.addEventListener('click',buildTrip);
+ document.querySelectorAll('[data-v58game]').forEach(b=>b.onclick=()=>{const g=b.dataset.v58game;DRAFT.games=DRAFT.games.includes(g)?DRAFT.games.filter(x=>x!==g):[...DRAFT.games,g];if(!DRAFT.games.length)DRAFT.games=['NLH'];renderTrips58()});
+ document.querySelectorAll('[data-v58del]').forEach(b=>b.onclick=()=>{const a=loadTrips();a.splice(Number(b.dataset.v58del),1);saveTrips(a);renderTrips58()});
+ document.querySelectorAll('[data-v58edit]').forEach(b=>b.onclick=()=>{const t=loadTrips()[Number(b.dataset.v58edit)];if(t)DRAFT={...t};renderTrips58()});
+}
+
+/* Hook existing "МОИ ПОЕЗДКИ" buttons inside Polyana to the new product-style trip builder. */
+function hookTripButtons(){
+ document.querySelectorAll('[data-top="trips"],#v48NewTrip,[data-v56trip]').forEach(b=>{
+   b.onclick=e=>{e.preventDefault();e.stopPropagation();renderTrips58()};
+ });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+ wireMyTournaments();hookTripButtons();
+ new MutationObserver(()=>{wireMyTournaments();hookTripButtons()}).observe(document.body,{childList:true,subtree:true});
+});
+window.addEventListener('load',()=>{wireMyTournaments();hookTripButtons()});
+window.POKER_SWIPE_BUILD='V58 TRIPS + MY TOURNAMENTS';
+document.documentElement.dataset.pokerSwipeVersion='58-trips-my-tournaments';
 })();
 </script>
 
