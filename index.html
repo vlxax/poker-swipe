@@ -1467,7 +1467,7 @@ function equity18(h,v,b){let k=[...h,...v,...b];if(new Set(k).size!==k.length)re
 function cls18(a,b){if(!a||!b)return'';if(a[0]===b[0])return a[0]+b[0];let hi=R18.indexOf(a[0])>R18.indexOf(b[0])?a:b,lo=hi===a?b:a;return hi[0]+lo[0]+(a[1]===b[1]?'s':'o')}
 function push18(h,pos,bb,stage,mode){let c=cls18(...h),pair=c.length===2,a=R18.indexOf(c[0]),b=R18.indexOf(c[1]||c[0]),x=pair?54+a*3.3:18+a*2.4+b*.75+(c.endsWith('s')?6:0)+(Math.abs(a-b)<=2?4:0)+(c[0]==='A'?5:0);x+=({UTG:-11,HJ:-6,CO:0,BTN:8,SB:12,BB:3}[pos]||0)+(12-bb)*3.4+(stage==='BUBBLE'?-5:stage==='FT'?-7:0)+(mode==='CALL'?-9:0);x=Math.max(3,Math.min(97,Math.round(x)));return{c,p:x,label:x>=66?(mode==='CALL'?'CALL':'PUSH'):x>=38?'MIX':'FOLD'}}
 function myGo18(v){window.myView18=v;renderMy()}
-function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Шансы руки + цена колла.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
+function myHub18(){let a=(S.myHands18||[]).slice(-3).reverse();return`<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">РАЗДАЧИ.</span></h1><div class="my18Intro">Не ещё один тест. Это мост между приложением и твоей реальной офлайн-игрой: посчитать, решить, принести спорную руку домой.</div><div class="my18Tools"><button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Твоя рука против конкретной руки оппа. Шансы руки + цена колла.</p><span class="go">СЧИТАТЬ →</span></button><button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек, стадия и интерактивная граница решения.</p><span class="go">РЕШИТЬ →</span></button><button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">📌</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗОБРАТЬ<br>РУКУ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">СОБРАТЬ →</span></button></div><div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`}
 function eqView18(){return`<div class="tool18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>ALL-IN</h2></div>
  <div class="panel18"><div class="label18">ТЫ</div><div class="cards18">${cardButton18('eh1','A♠')}${cardButton18('eh2','K♥')}</div>
  <div class="cardPickHint18">Тапни на карту → выбери номинал → выбери масть.</div>
@@ -1791,7 +1791,7 @@ function bindCardPicker18(ids,onDone){
 const HR22_STREETS=['pre','flop','turn','river'];
 const HR22_NAMES={pre:'ПРЕФЛОП',flop:'ФЛОП',turn:'ТЁРН',river:'РИВЕР'};
 function hr22Fresh(){
- return {step:0,format:'MTT',stack:30,heroPos:'BTN',villPos:'BB',hero:[null,null],street:'pre',
+ return {step:0,format:'MTT',heroStack:30,villStack:30,stack:30,heroPos:'BTN',villPos:'BB',hero:[null,null],street:'pre',
   streets:{
    pre:{villAction:'RAISE',villSize:2.2,heroAction:null,heroSize:7.0,pot:1.5,board:[]},
    flop:{villAction:'CHECK',villSize:33,heroAction:null,heroSize:33,pot:8,board:[null,null,null]},
@@ -1844,13 +1844,19 @@ function hr22BindBoard(st){
  });
 }
 function hr22Context(){
- return `<div class="hr22Hero"><span class="ey">ШАГ 1 · КОНТЕКСТ</span><h1 class="impact">КТО ГДЕ<br><span class="pink">СИДЕЛ?</span></h1><p>Только то, что реально влияет на решение. Никакой анкеты на двадцать полей.</p></div>
+ const hs=Number(HR22.heroStack??HR22.stack??30),vs=Number(HR22.villStack??HR22.stack??30);
+ HR22.heroStack=hs;HR22.villStack=vs;HR22.stack=Math.min(hs,vs);
+ return `<div class="hr22Hero"><span class="ey">ШАГ 1 · КОНТЕКСТ</span><h1 class="impact">СНАЧАЛА<br><span class="pink">ФАКТЫ.</span></h1><p>Hero и оппонент вводятся отдельно. Эффективный стек PokerSwipe считает сам — это меньший из двух стеков.</p></div>
  <div class="panel18">
   <div class="hr22Question">ФОРМАТ</div><div class="hr22Toggle"><button data-hrformat="MTT" class="${HR22.format==='MTT'?'on':''}">ТУРНИР</button><button data-hrformat="CASH" class="${HR22.format==='CASH'?'on':''}">КЭШ</button></div>
   <div class="hr22Question" style="margin-top:13px">ТВОЯ ПОЗИЦИЯ</div><div class="hr22Seat"><div class="hr22Felt"></div>${hr22PosButtons()}<div class="hr22Vs">ТЫ</div></div>
   <div class="hr22Question">ОППОНЕНТ</div><div class="hr22Pills">${['UTG','HJ','CO','BTN','SB','BB'].map(p=>`<button data-hrvill="${p}" class="${HR22.villPos===p?'on':''}" ${HR22.heroPos===p?'disabled style="opacity:.25"':''}>${p}</button>`).join('')}</div>
   <div class="hr22Question" style="margin-top:13px">ТВОЯ РУКА</div><div class="hr22Cards">${cardButton18('hrh1','A♠')}${cardButton18('hrh2','K♥')}</div>
-  <div class="hr22Slider"><div class="hr22SliderHead"><span>Эффективный стек</span><b>${HR22.stack} BB</b></div><input id="hrstack" type="range" min="3" max="100" value="${HR22.stack}"></div>
+  <div class="hr39Stacks">
+   <div class="hr22Slider"><div class="hr22SliderHead"><span>ТВОЙ СТЕК</span><b>${hs} BB</b></div><input id="hrHeroStack" type="range" min="3" max="200" value="${hs}"></div>
+   <div class="hr22Slider"><div class="hr22SliderHead"><span>СТЕК ОППОНЕНТА</span><b>${vs} BB</b></div><input id="hrVillStack" type="range" min="3" max="200" value="${vs}"></div>
+  </div>
+  <div class="hr39Effective"><span>ЭФФЕКТИВНЫЙ СТЕК</span><b id="hrEffStack">${HR22.stack} BB</b><small>считается автоматически</small></div>
  </div>`;
 }
 function hr22StreetBody(){
@@ -1976,28 +1982,121 @@ function hr22Validation(){
  return{ok:!errors.length,errors:[...new Set(errors)],reached};
 }
 function hr22Save(){
- const h={id:'hr22_'+Date.now(),version:22,createdAt:Date.now(),format:HR22.format,stack:HR22.stack,pos:HR22.heroPos,vpos:HR22.villPos,
+ const h={id:'hr22_'+Date.now(),version:39,createdAt:Date.now(),format:HR22.format,heroStack:HR22.heroStack,villStack:HR22.villStack,stack:HR22.stack,pos:HR22.heroPos,vpos:HR22.villPos,
   hero:HR22.hero.map(prettyCard18).join(' '),villain:HR22.showdown?HR22.villain.map(prettyCard18).join(' '):'',raw:JSON.parse(JSON.stringify(HR22)),
   result:HR22.result,question:HR22.question};
  S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h;
+}
+
+function hr39Pct(v){v=Number(v);return !Number.isFinite(v)?null:(v<=1?v*100:v)}
+function hr39ActionLabel(k){return String(k||'').replace('BET_','BET ').replaceAll('_',' ')}
+function hr39BoardTexture(st){
+ const b=hr22BoardAt(st);if(b.length<3)return null;
+ const ranks=b.map(x=>x?.[0]),suits=b.map(x=>x?.[1]),uniq=new Set(ranks).size;
+ const suitCount={};suits.forEach(x=>suitCount[x]=(suitCount[x]||0)+1);
+ const maxSuit=Math.max(...Object.values(suitCount));
+ const paired=uniq<b.length;
+ const mono=maxSuit>=3, twoTone=maxSuit===2;
+ const vals={'A':14,'K':13,'Q':12,'J':11,'T':10,'9':9,'8':8,'7':7,'6':6,'5':5,'4':4,'3':3,'2':2};
+ const nums=[...new Set(ranks.map(r=>vals[r]).filter(Boolean))].sort((a,b)=>a-b);
+ let connected=false;for(let i=0;i<nums.length-1;i++)if(nums[i+1]-nums[i]<=2)connected=true;
+ return {paired,mono,twoTone,connected,label:[paired?'спаренный':'неспаренный',mono?'монотонный':twoTone?'двухмастный':'радуга',connected?'связанный':'разрозненный'].join(' · ')};
+}
+function hr39StrategyRows(x){
+ const a=x?.r?.actions;if(!a)return '';
+ return Object.entries(a).map(([k,v])=>[k,hr39Pct(v)]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]).slice(0,4)
+  .map(([k,v],i)=>`<div class="hr39MixRow ${i===0?'best':''}"><span>${hr39ActionLabel(k)}</span><div><i style="width:${Math.max(2,Math.min(100,v))}%"></i></div><b>${Math.round(v)}%</b></div>`).join('');
+}
+function hr39Alternatives(x){
+ const a=x?.r?.actions;if(!a)return '<p>Для этой точки нет достаточно надёжной частотной модели. Не придумываем solver-цифры.</p>';
+ const chosen=x.chosen;
+ const rows=Object.entries(a).map(([k,v])=>[k,hr39Pct(v)]).filter(z=>z[1]!=null).sort((a,b)=>b[1]-a[1]).slice(0,3);
+ return rows.map(([k,v],i)=>{
+  const same=k===chosen;
+  return `<div class="hr39Alt ${same?'chosen':''}"><b>${same?'ТВОЯ ЛИНИЯ · ':i===0?'ОСНОВНАЯ АЛЬТЕРНАТИВА · ':'ЕЩЁ МОЖНО · '}${hr39ActionLabel(k)}</b><span>${Math.round(v)}%</span><small>${same?'Сравни её частоту с лучшими доступными действиями.':i===0?'Это действие модель выбирает чаще всего в ближайшем структурном узле.':'Это не обязательно ошибка: смешанная стратегия допускает несколько действий.'}</small></div>`;
+ }).join('');
+}
+function hr39StreetDeep(x){
+ const s=HR22.streets[x.st],tex=x.st==='pre'?null:hr39BoardTexture(x.st);
+ const pos=`${HR22.heroPos} vs ${HR22.villPos} · ${HR22.stack} BB eff`;
+ const facing=x.st!=='pre'&&s.villAction==='BET'?`Перед Hero ставка ${s.villSize}% банка.`:x.st!=='pre'?'Hero не сталкивается со ставкой перед решением.':'Префлоп-контекст определяется позициями, стеком и действием до Hero.';
+ const sizeNote=['BET','RAISE'].includes(s.heroAction)&&x.st!=='pre'
+   ?(s.heroSize<=30?'Малый сайзинг сохраняет широкий betting range и дешёво реализует давление.':s.heroSize<=60?'Средний сайзинг требует уже более отобранного value/bluff состава.':'Крупный сайзинг сильнее поляризует диапазон: value должно выдерживать большой банк, а блефам нужны хорошие blockers/deny properties.')
+   :'';
+ const texture=tex?`Текстура: ${tex.label}. ${tex.paired?'На спаренной доске меняется плотность сильных комбинаций и часть рук теряет необходимость в защите. ':''}${tex.mono?'Три карты одной масти резко усиливают роль suit blockers и nut advantage. ':''}${tex.connected?'Связанная доска сильнее взаимодействует с диапазонами колла и повышает значение turn/river runout. ':''}`:'';
+ return `<div class="hr39Deep">
+   <div class="hr39DeepTitle"><span>ПОЧЕМУ</span><b>${pos}</b></div>
+   <p>${facing} ${texture} ${sizeNote}</p>
+   ${x.math?`<div class="hr39Math">${x.math}</div>`:''}
+   <div class="hr39Mix"><span>СТРАТЕГИЯ БЛИЖАЙШЕЙ МОДЕЛИ</span>${hr39StrategyRows(x)}</div>
+   <div class="hr39Alternatives"><span>КАК МОЖНО БЫЛО СЫГРАТЬ</span>${hr39Alternatives(x)}</div>
+  </div>`;
+}
+function hr39OpponentBlock(st,o){
+ const s=HR22.streets[st];
+ if(!o)return `<div class="hr39Opp"><span>ОППОНЕНТ · ${HR22_NAMES[st]}</span><p>Карты соперника неизвестны. Поэтому PokerSwipe оценивает линию и диапазон, но не делает вид, что знает его конкретную руку.</p></div>`;
+ const pct=hr39Pct(o.freq);
+ return `<div class="hr39Opp ${o.status}"><span>ОППОНЕНТ · ${HR22_NAMES[st]}</span><b>${hr22FormatAction(s.villAction)}${pct!=null?` · около ${Math.round(pct)}% в ближайшей модели`:''}</b><p>${o.status==='good'?'Его действие хорошо укладывается в доступную модель.':o.status==='bad'?'С известной рукой это действие заметно отклоняется от основной стратегии.':'Линия пограничная или смешанная — здесь нельзя честно назвать её чистой ошибкой.'}</p></div>`;
+}
+function hr39Takeaways(streets){
+ const worst=[...streets].sort((a,b)=>a.score-b.score)[0], out=[];
+ if(worst){
+  out.push(`Пересмотри ${HR22_NAMES[worst.st].toLowerCase()}: это самое слабое решение в восстановленной линии.`);
+  const s=HR22.streets[worst.st];
+  if(['BET','RAISE'].includes(s.heroAction))out.push('Сравни не только действие, но и размер: один и тот же bet с другим sizing может представлять другой диапазон.');
+  if(worst.st!=='pre')out.push('На постфлопе думай диапазон против диапазона: board texture, nut advantage, blockers и SPR важнее названия твоей комбинации.');
+ }
+ return out.slice(0,3);
 }
 function hr22Report(saveIt=true){
  const validation=hr22Validation();
  if(!validation.ok){openModal(`<span class="ey">РАЗДАЧА НЕ СОШЛАСЬ</span><h2>ИСПРАВЬ ФАКТЫ</h2><div class="v32ErrorList">${validation.errors.map(x=>`<p>• ${esc(x)}</p>`).join('')}</div>`);return}
  if(saveIt)hr22Save();
- const streets=validation.reached.map(hr22StreetEval),opp=validation.reached.map(hr22OpponentEval).filter(Boolean);
- const heroAvg=Math.round(streets.reduce((a,x)=>a+x.score,0)/streets.length),oppAvg=opp.length?Math.round(opp.reduce((a,x)=>a+x.score,0)/opp.length):null;
+ const streets=validation.reached.map(hr22StreetEval),oppMap={};
+ validation.reached.forEach(st=>oppMap[st]=hr22OpponentEval(st));
+ const knownOpp=Object.values(oppMap).filter(Boolean);
+ const heroAvg=Math.round(streets.reduce((a,x)=>a+x.score,0)/streets.length);
+ const oppAvg=knownOpp.length?Math.round(knownOpp.reduce((a,x)=>a+x.score,0)/knownOpp.length):null;
  const worst=[...streets].sort((a,b)=>a.score-b.score)[0];
- $('#myArea').innerHTML=`<div class="hr22">
-  <div class="hr22Top"><button class="back18" id="hr22BackHub">←</button><div><h2>РАЗБОР РАЗДАЧИ</h2><small>${prettyCard18(HR22.hero[0])||'—'} ${prettyCard18(HR22.hero[1])||'—'} · ${HR22.heroPos} vs ${HR22.villPos}</small></div></div>
-  <div class="hr22ReportHero"><span class="ey">ГЛАВНЫЙ ВЫВОД</span><h1 class="impact">${worst.status==='bad'?'ВОТ ЗДЕСЬ<br><span class="pink">СЛОМАЛОСЬ.</span>':'БЕЗ<br><span class="pink">КАТАСТРОФЫ.</span>'}</h1><p>${worst.status==='bad'?`${HR22_NAMES[worst.st]} — первая улица, где твоя выбранная линия заметно уходит от основного ориентира.`:'В этой реконструкции нет одной огромной красной точки. Смотри тонкие места по улицам ниже.'}</p></div>
-  <div class="hr22ScoreRow"><div class="hr22Score ${heroAvg>=75?'good':heroAvg<55?'bad':''}"><span>ТВОЯ ЛИНИЯ</span><b>${heroAvg}/100</b><small>качество решений по восстановленной линии</small></div><div class="hr22Score ${oppAvg==null?'':oppAvg>=75?'good':oppAvg<55?'bad':''}"><span>ОППОНЕНТ</span><b>${oppAvg==null?'—':oppAvg+'/100'}</b><small>${oppAvg==null?'нет известной руки':'оценка по известной руке/линии'}</small></div></div>
-  ${streets.map((x,i)=>{const s=HR22.streets[x.st],o=opp[i];return`<div class="hr22StreetReport ${x.status}"><div class="hr22StreetHead"><b>${HR22_NAMES[x.st]}</b><span class="hr22Badge ${x.status}">${x.label}</span></div><div class="hr22Duel"><div><small>ОПП</small><b>${hr22FormatAction(s.villAction)}${['BET','RAISE','PUSH'].includes(s.villAction)?` · ${s.villSize}${x.st==='pre'?' BB':'%'}`:''}</b></div><div><small>ТЫ</small><b>${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` · ${s.heroSize}${x.st==='pre'?' BB':'%'}`:''}</b></div></div>${x.math?`<div class="hr22Math">${x.math}</div>`:''}<div class="hr22Why">${x.why}</div>${o?`<div class="small mut" style="margin-top:7px">По фактической руке оппа его действие здесь выглядит ${o.status==='good'?'нормально':o.status==='bad'?'сомнительно':'погранично'} относительно той же модели.</div>`:''}</div>`}).join('')}
-  <div class="hr22Verdict"><span class="ey">ВЕРДИКТ ФРИКОВОЙ ДАМЫ</span><blockquote>${hr22VerdictText(worst,heroAvg,oppAvg??heroAvg)}</blockquote></div>
-  <div class="hr22Bottom"><button class="secondary" id="hr22Again">↻ ЕЩЁ РАЗ</button><button class="primary" id="hr22Hub">К МОИМ КАРТАМ →</button></div>
+ const take=hr39Takeaways(streets);
+ $('#myArea').innerHTML=`<div class="hr22 hr39Report">
+  <div class="hr22Top"><button class="back18" id="hr22BackHub">←</button><div><h2>ПОЛНЫЙ РАЗБОР</h2><small>${prettyCard18(HR22.hero[0])||'—'} ${prettyCard18(HR22.hero[1])||'—'} · ${HR22.heroPos} vs ${HR22.villPos} · ${HR22.stack} BB eff</small></div></div>
+
+  <section class="hr39Summary">
+   <span class="ey">ДИАГНОЗ РАЗДАЧИ</span>
+   <h1>${worst.status==='bad'?`ПЕРВАЯ БОЛЬШАЯ ПРОБЛЕМА — <em>${HR22_NAMES[worst.st]}</em>`:'БОЛЬШОГО ПРОВАЛА НЕТ. ИЩЕМ ТОНКИЕ ПОТЕРИ.'}</h1>
+   <p>${worst.status==='bad'?`${HR22_NAMES[worst.st]} — самая дорогая по качеству точка в восстановленной линии. Ниже не просто вердикт, а причина, альтернативы и разбор соперника.`:'Линия близка к допустимой по доступным моделям. Ниже всё равно разбираем каждую улицу и альтернативные ветки.'}</p>
+   <div class="hr22ScoreRow"><div class="hr22Score ${heroAvg>=75?'good':heroAvg<55?'bad':''}"><span>HERO</span><b>${heroAvg}/100</b><small>качество линии</small></div><div class="hr22Score ${oppAvg==null?'':oppAvg>=75?'good':oppAvg<55?'bad':''}"><span>VILLAIN</span><b>${oppAvg==null?'—':oppAvg+'/100'}</b><small>${oppAvg==null?'рука неизвестна':'известная рука + линия'}</small></div></div>
+  </section>
+
+  <div class="hr39StreetTabs">${streets.map(x=>`<button data-jump39="${x.st}" class="${x.status}">${HR22_NAMES[x.st]}<small>${x.label}</small></button>`).join('')}</div>
+
+  ${streets.map(x=>{const s=HR22.streets[x.st],o=oppMap[x.st];return`
+   <section class="hr22StreetReport hr39Street ${x.status}" id="hr39-${x.st}">
+    <div class="hr22StreetHead"><b>${HR22_NAMES[x.st]}</b><span class="hr22Badge ${x.status}">${x.label}</span></div>
+    <div class="hr22Duel"><div><small>ОППОНЕНТ</small><b>${hr22FormatAction(s.villAction)}${['BET','RAISE','PUSH'].includes(s.villAction)?` · ${s.villSize}${x.st==='pre'?' BB':'%'}`:''}</b></div><div><small>HERO</small><b>${hr22FormatAction(s.heroAction)}${['BET','RAISE','PUSH'].includes(s.heroAction)?` · ${s.heroSize}${x.st==='pre'?' BB':'%'}`:''}</b></div></div>
+    <div class="hr22Why">${x.why}</div>
+    ${hr39StreetDeep(x)}
+    ${hr39OpponentBlock(x.st,o)}
+   </section>`}).join('')}
+
+  <section class="hr39Lesson">
+   <span class="ey">ЧТО ЗАБРАТЬ ИЗ РАЗДАЧИ</span>
+   <h2>НЕ ЗАПОМИНАЙ ОТВЕТ. ЗАПОМНИ ПРИЧИНУ.</h2>
+   ${take.map((x,i)=>`<div><b>0${i+1}</b><p>${x}</p></div>`).join('')}
+   <button class="primary" id="hr39Train">ПОТРЕНИРОВАТЬ ПОХОЖИЕ СПОТЫ →</button>
+  </section>
+
+  <div class="hr22Verdict"><span class="ey">КОРОТКО</span><blockquote>${hr22VerdictText(worst,heroAvg,oppAvg??heroAvg)}</blockquote></div>
+  <div class="hr22Bottom"><button class="secondary" id="hr22Again">↻ НОВАЯ РУКА</button><button class="primary" id="hr22Hub">К МОИМ РАЗДАЧАМ →</button></div>
  </div>`;
  $('#hr22BackHub').onclick=$('#hr22Hub').onclick=()=>{window.myView18='hub';renderMy()};
  $('#hr22Again').onclick=()=>{HR22=hr22Fresh();window.myView18='recon';renderMy()};
+ $$('[data-jump39]').forEach(b=>b.onclick=()=>document.getElementById('hr39-'+b.dataset.jump39)?.scrollIntoView({behavior:'smooth',block:'start'}));
+ const train=$('#hr39Train');if(train)train.onclick=()=>{
+   const concept=worst?.r?.concept||worst?.r?.spot||null;
+   if(concept&&typeof startConceptSwipe==='function')startConceptSwipe(concept);else{try{swSession=[]}catch(e){};show('swipe')}
+ };
 }
 function hr22Bind(){
  const area=$('#myArea');if(!area)return;
@@ -2005,7 +2104,12 @@ function hr22Bind(){
  hr22BindPos();
  $$('[data-hrvill]').forEach(b=>b.onclick=()=>{HR22.villPos=b.dataset.hrvill;reconView18()});
  hr22BindHeroCards();
- const stack=$('#hrstack');if(stack)stack.oninput=()=>{HR22.stack=+stack.value;const b=stack.previousElementSibling?.querySelector('b');if(b)b.textContent=HR22.stack+' BB'};
+ const syncEff39=()=>{
+   HR22.stack=Math.min(Number(HR22.heroStack||30),Number(HR22.villStack||30));
+   const e=$('#hrEffStack');if(e)e.textContent=HR22.stack+' BB';
+  };
+  const heroStack=$('#hrHeroStack');if(heroStack)heroStack.oninput=()=>{HR22.heroStack=+heroStack.value;heroStack.previousElementSibling?.querySelector('b')&&(heroStack.previousElementSibling.querySelector('b').textContent=HR22.heroStack+' BB');syncEff39()};
+  const villStack=$('#hrVillStack');if(villStack)villStack.oninput=()=>{HR22.villStack=+villStack.value;villStack.previousElementSibling?.querySelector('b')&&(villStack.previousElementSibling.querySelector('b').textContent=HR22.villStack+' BB');syncEff39()};
  $$('[data-hrstreet]').forEach(b=>b.onclick=()=>{HR22.street=b.dataset.hrstreet;reconView18()});
  const st=HR22.street,s=HR22.streets[st];
  if(HR22.step===1){
@@ -2045,7 +2149,7 @@ function openSaved22(id){
 const __myHubV22=myHub18;
 myHub18=function(){
  let a=(S.myHands18||[]).slice(-3).reverse();
- return `<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">КАРТЫ.</span></h1><div class="my18Intro">Посчитать за столом. Принять решение. После катки — нормально разобрать спорную раздачу.</div><div class="my18Tools">
+ return `<div class="my18"><span class="ey">ИНСТРУМЕНТЫ ДЛЯ ОФЛАЙНА</span><h1 class="impact">МОИ<br><span class="pink">РАЗДАЧИ.</span></h1><div class="my18Intro">Посчитать за столом. Принять решение. После катки — нормально разобрать спорную раздачу.</div><div class="my18Tools">
  <button class="my18Tool eqCard" onclick="myGo18('eq')"><span class="vis18">A♠ Q♥</span><span class="ey">5 СЕКУНД</span><h2>ALL-IN</h2><p>Шансы руки и цена колла.</p><span class="go">СЧИТАТЬ →</span></button>
  <button class="my18Tool pushCard" onclick="myGo18('push')"><span class="vis18">8 BB</span><span class="ey">ТУРНИР</span><h2>PUSH<br>/ FOLD</h2><p>Позиция, стек и граница решения.</p><span class="go">РЕШИТЬ →</span></button>
  <button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">↯</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗБОР<br>РАЗДАЧИ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">РАЗОБРАТЬ →</span></button></div>
@@ -3101,8 +3205,8 @@ if(!document.getElementById('mainApp')?.classList.contains('hidden') && document
 <link rel="stylesheet" href="poker_swipe_v34.css">
 <script src="poker_brain_v34.js"></script>
 <script src="poker_swipe_v34.js"></script>
-<link rel="stylesheet" href="poker_swipe_v38.css">
-<script src="poker_swipe_v38.js"></script>
+<link rel="stylesheet" href="poker_swipe_v39.css">
+<script src="poker_swipe_v39.js"></script>
 
 </body>
 </html>

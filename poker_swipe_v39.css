@@ -1,0 +1,338 @@
+/* PokerSwipe V35 — UX reset / electric lime system */
+:root{
+  --bg:#070908;
+  --panel:#101310;
+  --panel2:#151915;
+  --line:#2a302a;
+  --text:#f7faf5;
+  --mut:#9aa39a;
+  --pink:#c8ff3d;
+  --pink2:#e2ff87;
+  --g:#63e6a6;
+  --y:#ffd76a;
+  --r:#ff6276;
+  --v35-accent:#c8ff3d;
+  --v35-accent-soft:#e8ffab;
+  --v35-bg:#070908;
+  --v35-card:#111511;
+  --v35-card-2:#151a15;
+  --v35-line:rgba(226,255,135,.14);
+  --v35-muted:#9ca69c;
+  --v35-shadow:0 20px 56px rgba(0,0,0,.34);
+}
+
+html,body{background:var(--v35-bg)!important}
+body,.app{color:var(--text)}
+.app{
+  background:
+    radial-gradient(circle at 82% -10%,rgba(200,255,61,.11),transparent 28%),
+    radial-gradient(circle at -10% 42%,rgba(99,230,166,.045),transparent 28%),
+    var(--v35-bg)!important;
+}
+.pink{color:var(--v35-accent)!important}
+.primary{background:var(--v35-accent)!important;color:#0b0d08!important;box-shadow:0 10px 28px rgba(200,255,61,.16)!important}
+.choice.selected,.node.selected{border-color:rgba(200,255,61,.7)!important;box-shadow:0 0 0 1px rgba(200,255,61,.12),0 12px 28px rgba(0,0,0,.22)!important}
+.range{accent-color:var(--v35-accent)!important}
+.bar>span,.builderProgress i.on{background:linear-gradient(90deg,var(--v35-accent),var(--v35-accent-soft))!important}
+.nav button.on i{color:var(--v35-accent)!important;filter:drop-shadow(0 0 10px rgba(200,255,61,.26))!important}
+.build{background:var(--v35-accent)!important;color:#0a0d07!important}
+
+/* Type scale: stop hiding important information in 8–9px labels. */
+.ey{font-size:10px!important;line-height:1.25;letter-spacing:.105em!important}
+.small{font-size:12px!important;line-height:1.45}
+.panel p,.hero p,.lab p{font-size:13px;line-height:1.52}
+.choice,.action,.primary,.secondary{font-size:14px}
+.nav button{font-size:9px!important;letter-spacing:.02em}
+
+/* V35 HOME */
+.v35Home{padding:4px 14px 34px}
+.v35BrandRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 2px 16px}
+.v35Wordmark{font-weight:1000;font-size:18px;letter-spacing:-.055em}
+.v35Wordmark span{color:var(--v35-accent)}
+.v35Status{display:flex;align-items:center;gap:7px;color:#b7c1b7;font-size:10px;font-weight:850;letter-spacing:.03em}
+.v35Status i{display:block;width:7px;height:7px;border-radius:50%;background:var(--v35-accent);box-shadow:0 0 13px rgba(200,255,61,.55)}
+
+.v35Today{position:relative;overflow:hidden;border:1px solid rgba(200,255,61,.17);border-radius:29px;padding:21px 20px 19px;background:linear-gradient(145deg,#151b12 0%,#0d110d 58%,#0a0d0a 100%);box-shadow:var(--v35-shadow)}
+.v35Today:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-112px;top:-104px;background:radial-gradient(circle,rgba(200,255,61,.14),rgba(200,255,61,0) 69%);pointer-events:none}
+.v35TodayLabel{display:flex;align-items:center;gap:8px;color:var(--v35-accent);font-size:10px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase}
+.v35TodayLabel:before{content:"";width:18px;height:2px;border-radius:99px;background:var(--v35-accent)}
+.v35Today h1{position:relative;z-index:1;font-size:31px;line-height:.98;letter-spacing:-.06em;margin:13px 0 10px;max-width:330px;text-transform:none}
+.v35Today p{position:relative;z-index:1;color:#bbc4ba;font-size:13px;line-height:1.5;margin:0 0 17px;max-width:330px}
+.v35TodayMeta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px;position:relative;z-index:1}
+.v35TodayMeta span{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);padding:7px 9px;border-radius:999px;font-size:10px;color:#c4cdc3}
+.v35TodayMeta b{color:#fff}
+.v35Start{position:relative;z-index:1;width:100%;border:0;border-radius:17px;background:var(--v35-accent);color:#0b0d08;padding:15px 16px;font-weight:1000;font-size:14px;text-align:left;display:flex;justify-content:space-between;align-items:center;box-shadow:0 9px 0 #607c15,0 17px 34px rgba(0,0,0,.24)}
+.v35Start:active{transform:translateY(4px);box-shadow:0 5px 0 #607c15,0 12px 26px rgba(0,0,0,.2)}
+
+.v35Snapshot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 19px}
+.v35Stat{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.028);border-radius:17px;padding:11px 10px;min-width:0}
+.v35Stat span{display:block;color:#858f85;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.v35Stat b{display:block;font-size:20px;letter-spacing:-.045em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v35Stat:first-child b{color:var(--v35-accent)}
+
+.v35Section{margin-top:19px}
+.v35SectionHead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:0 2px 9px}
+.v35SectionHead h2{font-size:20px;line-height:1.05;margin:0;letter-spacing:-.045em}
+.v35SectionHead span{font-size:10px;color:#7f897f;text-align:right;max-width:150px;line-height:1.25}
+
+.v35Leak{border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,#121612,#0c0f0c);border-radius:22px;padding:15px 15px 14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.v35Leak .v35LeakKicker{font-size:9px;color:#879287;text-transform:uppercase;letter-spacing:.085em;font-weight:900}
+.v35Leak h3{font-size:18px;margin:5px 0 5px;letter-spacing:-.035em}
+.v35Leak p{font-size:11px!important;line-height:1.42;color:#9da69d;margin:0}
+.v35LeakBadge{min-width:68px;height:68px;border-radius:19px;border:1px solid rgba(200,255,61,.16);background:rgba(200,255,61,.055);display:grid;place-items:center;text-align:center;color:var(--v35-accent)}
+.v35LeakBadge b{display:block;font-size:18px;line-height:1}
+.v35LeakBadge span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.07em;margin-top:3px;color:#aabd81}
+
+.v35Hand{width:100%;border:1px solid rgba(255,255,255,.075);background:#101410;border-radius:22px;padding:15px;text-align:left;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center}
+.v35HandIcon{width:44px;height:50px;border-radius:13px;background:#f4f6f0;color:#10130e;display:grid;place-items:center;font-weight:1000;font-size:17px;transform:rotate(-3deg);box-shadow:5px 5px 0 rgba(200,255,61,.18)}
+.v35Hand b{display:block;font-size:15px;margin-bottom:3px}.v35Hand span{display:block;color:#8e998e;font-size:11px;line-height:1.35}.v35Hand strong{color:var(--v35-accent);font-size:21px}
+
+.v35Tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v35Tool{min-height:112px;border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,#121612,#0d100d);border-radius:21px;padding:14px;text-align:left;position:relative;overflow:hidden}
+.v35Tool:before{content:"";position:absolute;width:75px;height:75px;border-radius:50%;right:-32px;top:-34px;border:1px solid rgba(200,255,61,.09)}
+.v35Tool span{font-size:9px;color:#7f8a7f;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.v35Tool b{display:block;font-size:16px;line-height:1.06;margin-top:7px;letter-spacing:-.025em;max-width:115px}.v35Tool i{position:absolute;right:13px;bottom:12px;font-style:normal;color:var(--v35-accent);font-weight:1000;font-size:17px}
+
+.v35Career{margin-top:8px;border-top:1px solid rgba(255,255,255,.07);padding:13px 2px 0}
+.v35CareerTop{display:flex;justify-content:space-between;align-items:center;gap:12px}.v35CareerTop div span{font-size:9px;color:#778177;text-transform:uppercase;font-weight:900;letter-spacing:.08em}.v35CareerTop div b{display:block;font-size:13px;margin-top:3px}.v35CareerTop strong{font-size:14px;color:var(--v35-accent)}
+.v35CareerTrack{height:5px;background:#1b211b;border-radius:99px;margin-top:9px;overflow:hidden}.v35CareerTrack i{display:block;height:100%;background:var(--v35-accent);border-radius:99px}
+
+/* Existing V31 home must not flash if render timing overlaps. */
+.v31Home{display:none!important}
+
+/* Global card clean-up. */
+.hero,.panel,.lab{border-color:rgba(255,255,255,.075)!important;background:linear-gradient(155deg,#131713,#0d100d)!important;box-shadow:0 16px 38px rgba(0,0,0,.18)}
+.tile,.metric,.quick5{border-color:rgba(255,255,255,.075)!important;background:#101410!important}
+.v34ExplainStep,.v34StreetReview,.v34Missing{background:#0d110d!important;border-color:rgba(255,255,255,.08)!important}
+.v34ExplainStep>span,.v34StreetHead span{color:var(--v35-accent)!important}
+
+/* Bottom navigation feels like an app, not a debug toolbar. */
+.nav{background:rgba(7,9,8,.93)!important;border-top:1px solid rgba(255,255,255,.075)!important;box-shadow:0 -16px 42px rgba(0,0,0,.35)!important}
+.nav button{color:#737d73!important;min-height:54px}
+.nav button.on{color:#f5f8f2!important;background:rgba(200,255,61,.045)!important}
+.nav button.on i{color:var(--v35-accent)!important}
+
+/* Replace the remaining obvious pink-specific presentation from older layers. */
+.homeCreator,.creatorVerdict{border-color:rgba(200,255,61,.24)!important;background:linear-gradient(145deg,rgba(200,255,61,.07),#0d100d 72%)!important}
+.creatorVerdict .ey{color:#dfff87!important}
+.v31ProfileExplain{border-color:rgba(255,255,255,.075)!important}
+
+@media (max-width:360px){
+ .v35Today h1{font-size:28px}
+ .v35Snapshot{gap:6px}.v35Stat{padding:10px 8px}.v35Stat b{font-size:18px}
+ .v35Tools{grid-template-columns:1fr}
+ .v35Tool{min-height:92px}
+}
+
+/* PokerSwipe V36 — hybrid of the original PLAY personality + V35 UX hierarchy */
+:root{--v36-accent:#c8ff3d;--v36-card:#121318;--v36-border:rgba(255,255,255,.10);--v36-muted:#a7a6b0}
+.v35Home{display:none!important}.v36Home{padding:6px 14px 34px;color:#f8f8f6}
+.v36Top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:8px 2px 14px}
+.v36Wordmark{font-size:19px;font-weight:1000;letter-spacing:-.055em}.v36Wordmark span{color:var(--v36-accent)}
+.v36Top h1{font-size:30px;line-height:1;margin:12px 0 10px;letter-spacing:-.055em}.v36Creator{font-size:11px;color:#aaaab1;font-style:italic}.v36Creator b{font-style:normal;color:#fff;letter-spacing:.15em;font-size:10px;margin:0 5px}
+.v36SkillChip{border:1px solid var(--v36-border);background:#15161b;border-radius:999px;padding:10px 12px;font-size:11px;font-weight:900;white-space:nowrap}.v36SkillChip b{color:var(--v36-accent)}
+.v36Stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.v36Stat{min-width:0;text-align:left;border:1px solid var(--v36-border);background:linear-gradient(145deg,#15161c,#101115);border-radius:21px;padding:14px 12px}
+.v36Stat span{display:block;color:#a4a3ad;font-size:11px;font-weight:1000;letter-spacing:.13em}.v36Stat b{display:block;font-size:30px;line-height:1;margin:10px 0 8px;letter-spacing:-.06em}.v36Stat:first-child b{color:var(--v36-accent)}.v36Stat small{display:block;color:#9897a1;font-size:11px;line-height:1.2}
+.v36Daily{position:relative;min-height:245px;border:1px solid rgba(200,255,61,.18);border-radius:28px;padding:20px;overflow:hidden;background:radial-gradient(circle at 78% 32%,rgba(51,155,92,.34),transparent 35%),linear-gradient(140deg,#15151b 0%,#102118 100%);box-shadow:0 18px 44px rgba(0,0,0,.25);margin-bottom:10px}
+.v36DailyCopy{position:relative;z-index:2;max-width:67%}.v36Eyebrow,.v36Personal span,.v36Tile>span,.v36Quick span,.v36Hand span{display:block;font-size:11px;line-height:1.2;font-weight:1000;letter-spacing:.14em;color:#b0afb8}
+.v36Daily h2{font-size:34px;line-height:.94;margin:9px 0 14px;letter-spacing:-.06em}.v36Daily h2 em{font-style:normal;color:var(--v36-accent)}.v36Daily p{font-size:14px;line-height:1.45;color:#aaaab1;margin:0}
+.v36Cards{position:absolute;right:23px;bottom:28px;width:145px;height:95px}.v36Cards i{position:absolute;width:55px;height:76px;border-radius:10px;background:#f5f5f2;color:#111216;display:grid;place-items:center;font-style:normal;font-size:20px;font-weight:1000;box-shadow:0 8px 20px rgba(0,0,0,.22)}
+.v36Cards i:nth-child(1){left:3px;top:10px;transform:rotate(-7deg)}.v36Cards i:nth-child(2){left:45px;top:1px;transform:rotate(2deg)}.v36Cards i:nth-child(3){left:84px;top:14px;transform:rotate(8deg)}.v36Arrow,.v36Tile>strong{position:absolute;right:17px;bottom:14px;color:var(--v36-accent);font-size:23px}
+.v36Personal{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid rgba(200,255,61,.17);border-radius:22px;padding:15px;background:linear-gradient(135deg,rgba(200,255,61,.07),#111317 55%);margin:10px 0}
+.v36Personal h3{font-size:17px;margin:6px 0 5px;letter-spacing:-.03em}.v36Personal p{font-size:12px;line-height:1.42;color:#9d9da6;margin:0}.v36Personal button{border:0;border-radius:14px;background:var(--v36-accent);color:#0a0d07;padding:12px 11px;font-size:11px;font-weight:1000}
+.v36Grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.v36Tile{position:relative;min-height:205px;text-align:left;border:1px solid var(--v36-border);border-radius:24px;padding:17px 15px;background:linear-gradient(145deg,#16171c,#111217);overflow:hidden}
+.v36Tile h3{font-size:23px;line-height:.96;margin:8px 0 9px;letter-spacing:-.045em}.v36Tile p{font-size:13px;line-height:1.42;color:#aaa9b1;margin:0;max-width:150px}.v36Sizing{background:radial-gradient(circle at 75% 8%,rgba(200,255,61,.10),transparent 38%),linear-gradient(145deg,#17171c,#111217)}
+.v36Chips{position:absolute;left:15px;bottom:23px;width:125px;height:38px}.v36Chips i{position:absolute;width:38px;height:12px;border-radius:50%;background:repeating-linear-gradient(90deg,#c8ff3d 0 3px,#f2f5e8 3px 5px);border:1px solid rgba(255,255,255,.55);box-shadow:0 3px 8px rgba(0,0,0,.35)}.v36Chips i:nth-child(2){left:42px;top:-8px}.v36Chips i:nth-child(3){left:82px;top:-17px}
+.v36Streets{position:absolute;left:18px;bottom:22px;border-left:3px solid #5d5d68;padding-left:12px;font-size:12px;line-height:1.55;color:#e9e9e7}.v36SwipeMark{position:absolute;left:16px;bottom:24px;font-size:27px;font-weight:900;word-spacing:10px}.v36SwipeMark i{display:inline-grid;place-items:center;width:32px;height:43px;border-radius:5px;background:#f3f1e9;color:#17171a;font-style:normal;font-size:13px;word-spacing:0}
+.v36Matrix{position:absolute;left:16px;bottom:24px;width:116px;display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.v36Matrix i{aspect-ratio:1;border-radius:2px;background:rgba(200,255,61,.17)}.v36Matrix i:nth-child(3n){background:rgba(200,255,61,.06)}
+.v36Quick{width:100%;margin-top:10px;border:1px solid rgba(200,255,61,.22);border-radius:25px;padding:18px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;background:radial-gradient(circle at 92% 40%,rgba(200,255,61,.11),transparent 28%),#121318}.v36Quick h3{font-size:23px;margin:7px 0 5px;letter-spacing:-.045em}.v36Quick p{font-size:12px;color:#a4a3ab;margin:0}.v36Quick b{font-size:30px;letter-spacing:-.05em;color:#fff}
+.v36Hand{width:100%;margin-top:10px;border:1px solid var(--v36-border);border-radius:20px;padding:13px 14px;background:#101116;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;text-align:left}.v36HandCard{width:39px;height:48px;border-radius:8px;background:#f5f5f1;color:#111216;display:grid;place-items:center;font-size:15px;font-weight:1000;transform:rotate(-4deg)}
+.v36Hand b{display:block;font-size:15px;margin:4px 0 2px}.v36Hand small{display:block;font-size:11px;color:#96969f}.v36Hand strong{font-size:21px;color:var(--v36-accent)}
+.nav button{font-size:10px!important}.nav button i{font-size:19px!important}
+@media(max-width:360px){.v36Top h1{font-size:27px}.v36Daily{min-height:225px}.v36Daily h2{font-size:31px}.v36Cards{transform:scale(.9);transform-origin:right bottom}.v36Tile{min-height:195px;padding:15px 13px}.v36Tile h3{font-size:21px}.v36Tile p{font-size:12px}.v36Quick h3{font-size:20px}.v36Quick b{font-size:26px}}
+
+
+/* =========================================================
+   V37 CLEAN HYBRID — corrective pass
+   One header only. No stacked V35/V36 chrome. Restores motion,
+   glow and readable card spacing from the original PLAY screen.
+   ========================================================= */
+
+/* The original application header is the single source of truth. */
+body.home-context .creatorTop{
+  display:grid!important;
+  grid-template-columns:1fr auto;
+  grid-template-areas:"brand skill" "creator creator";
+  align-items:center;
+  gap:8px 12px;
+  padding:10px 16px 13px!important;
+  margin:0 auto!important;
+  max-width:520px;
+  background:linear-gradient(180deg,rgba(7,9,8,.98),rgba(7,9,8,.88))!important;
+  border-bottom:1px solid rgba(255,255,255,.06)!important;
+}
+body.home-context .creatorTop .brandBlock{grid-area:brand;min-width:0}
+body.home-context .creatorTop .brand{font-size:18px!important;letter-spacing:-.045em!important}
+body.home-context .creatorTop .brand .pink{color:var(--v36-accent)!important}
+body.home-context .creatorTop .nickEdit{margin-top:7px!important}
+body.home-context .creatorTop #hello{font-size:27px!important;line-height:1!important;font-weight:950!important;letter-spacing:-.05em!important;color:#f5f5f3!important}
+body.home-context .creatorTop .topRightMark24{
+  grid-area:creator!important;position:static!important;justify-self:start!important;
+  transform:none!important;margin:0!important;font-size:10px!important;opacity:.86
+}
+body.home-context .creatorTop .topRightMark24 b{letter-spacing:.14em!important}
+body.home-context .creatorTop .skillChip{grid-area:skill;position:static!important;align-self:start!important;margin-top:2px!important}
+.v36Top{display:none!important}
+
+/* Main home starts cleanly under the single header. */
+.v36Home{padding-top:4px!important;max-width:520px;margin:0 auto}
+.v36Stats{margin-top:0!important}
+
+/* Cards get enough vertical room: text and illustrations never collide. */
+.v36Tile{min-height:232px!important;padding:18px 16px 72px!important}
+.v36Tile h3{font-size:22px!important;line-height:1!important;margin:8px 0 10px!important}
+.v36Tile p{font-size:13px!important;line-height:1.4!important;max-width:100%!important;margin:0!important;color:#aaaab2!important}
+.v36Streets{bottom:20px!important;left:17px!important;font-size:11px!important;line-height:1.45!important}
+.v36Chips{bottom:24px!important}
+.v36SwipeMark{bottom:23px!important}
+.v36Matrix{bottom:22px!important}
+.v36Tile>strong{z-index:5}
+
+/* Restore the old tactile/glowing feel without bringing pink back. */
+.v36Daily{
+  border-color:rgba(200,255,61,.22)!important;
+  box-shadow:0 16px 40px rgba(0,0,0,.28),inset 0 0 34px rgba(200,255,61,.025)!important;
+}
+.v36Daily::after{
+  content:"";position:absolute;width:180px;height:180px;right:-55px;top:-60px;
+  border-radius:50%;background:rgba(200,255,61,.08);filter:blur(28px);pointer-events:none
+}
+.v36Sizing::after{
+  content:"";position:absolute;width:115px;height:90px;right:-20px;bottom:-18px;
+  background:rgba(200,255,61,.08);filter:blur(24px);pointer-events:none
+}
+.v36Chips i{
+  box-shadow:0 0 9px rgba(200,255,61,.5),0 3px 8px rgba(0,0,0,.38)!important;
+  animation:v37ChipPulse 2.4s ease-in-out infinite
+}
+.v36Chips i:nth-child(2){animation-delay:.18s}.v36Chips i:nth-child(3){animation-delay:.36s}
+@keyframes v37ChipPulse{0%,100%{filter:brightness(.92);transform:translateY(0)}50%{filter:brightness(1.28);transform:translateY(-2px)}}
+
+/* X-ray is a scanner again: cells light in sequence instead of a dead grid. */
+.v36Matrix i{
+  background:rgba(200,255,61,.075)!important;
+  box-shadow:inset 0 0 0 1px rgba(200,255,61,.035);
+  animation:v37Scan 2.8s ease-in-out infinite;
+  animation-delay:calc(var(--i,0) * 55ms)
+}
+@keyframes v37Scan{
+  0%,58%,100%{background:rgba(200,255,61,.07);box-shadow:none;transform:scale(1)}
+  68%{background:rgba(200,255,61,.62);box-shadow:0 0 11px rgba(200,255,61,.45);transform:scale(1.06)}
+  80%{background:rgba(200,255,61,.18);box-shadow:0 0 4px rgba(200,255,61,.18);transform:scale(1)}
+}
+.v36Tile:hover,.v36Daily:hover,.v36Quick:hover,.v36Hand:hover{border-color:rgba(200,255,61,.32)}
+.v36Tile:active,.v36Daily:active,.v36Quick:active,.v36Hand:active{transform:scale(.985)}
+
+/* Personal block: quieter than Daily, but still visibly interactive. */
+.v36Personal button{
+  box-shadow:0 0 20px rgba(200,255,61,.22)!important;
+  min-width:96px
+}
+
+/* Desktop/tablet: preserve mobile composition instead of stretching internals. */
+@media(min-width:700px){
+  #mainApp{max-width:560px!important;margin:0 auto!important}
+  body.home-context .creatorTop{max-width:520px!important}
+  .v36Home{max-width:520px!important}
+  .v36Tile{min-height:240px!important}
+}
+
+/* Small iPhone: keep two-column identity but prevent collisions. */
+@media(max-width:380px){
+  body.home-context .creatorTop #hello{font-size:24px!important}
+  .v36Stat{padding:12px 10px!important}.v36Stat b{font-size:27px!important}
+  .v36Tile{min-height:220px!important;padding:15px 13px 68px!important}
+  .v36Tile h3{font-size:20px!important}.v36Tile p{font-size:12px!important}
+  .v36Personal{grid-template-columns:1fr!important}
+  .v36Personal button{width:100%!important}
+}
+
+
+/* =========================================================
+   V38 — PLAYER DASHBOARD / YOU
+   ========================================================= */
+#profileArea{padding:0 14px 120px!important}
+.v38You{max-width:520px;margin:0 auto;color:#f7f7f4}
+.v38Eyebrow{display:block;color:#aaaab2;font-size:11px;font-weight:1000;letter-spacing:.14em;line-height:1.2}
+.v38Hero{border:1px solid rgba(255,255,255,.10);border-radius:28px;padding:20px;background:
+ radial-gradient(circle at 90% 4%,rgba(200,255,61,.12),transparent 30%),
+ linear-gradient(145deg,#15171a,#0f1113);box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.v38Hero h1{font-size:34px;line-height:.92;letter-spacing:-.055em;margin:9px 0 12px}
+.v38Hero h1 em{font-style:normal;color:var(--v36-accent,#c8ff3d)}
+.v38Hero>p{font-size:14px;line-height:1.5;color:#aaaab1;max-width:440px;margin:0 0 17px}
+.v38HeroGrid{display:grid;grid-template-columns:1.05fr .95fr;gap:9px}
+.v38MainScore,.v38HeroMeta>div{border:1px solid rgba(255,255,255,.08);background:#0d0f11;border-radius:20px;padding:14px}
+.v38MainScore span,.v38HeroMeta span{display:block;color:#96969f;font-size:10px;font-weight:1000;letter-spacing:.12em}
+.v38MainScore b{display:block;color:var(--v36-accent,#c8ff3d);font-size:48px;line-height:.9;letter-spacing:-.07em;margin:12px 0 7px}
+.v38MainScore small,.v38HeroMeta small{display:block;color:#898991;font-size:11px;line-height:1.3}
+.v38HeroMeta{display:grid;gap:9px}.v38HeroMeta>div{min-height:76px}
+.v38HeroMeta b{display:inline-block;font-size:21px;margin-top:8px;letter-spacing:-.035em}
+.v38Trend{display:inline-block;font-size:11px!important;margin-left:5px!important}.v38Trend.up{color:#68e89b}.v38Trend.down{color:#ff6578}.v38Trend.neutral{color:#8f8f98}
+.v38TextButton{margin-top:13px;border:0;background:transparent;color:#d2d2cf;font-size:11px;font-weight:950;padding:5px 0}
+.v38Method{margin-top:10px;border-left:2px solid var(--v36-accent,#c8ff3d);padding:9px 0 9px 11px;font-size:12px;line-height:1.48;color:#aaaab1}.v38Method b{color:#fff}
+.v38Method.hidden{display:none!important}
+
+.v38Focus{margin-top:10px;border:1px solid rgba(200,255,61,.20);border-radius:25px;padding:18px;background:
+ radial-gradient(circle at 93% 20%,rgba(200,255,61,.11),transparent 32%),#111316}
+.v38FocusTop{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.v38Focus h2{font-size:25px;line-height:1;margin:7px 0 8px;letter-spacing:-.045em;max-width:360px}
+.v38Focus p{font-size:13px;line-height:1.48;color:#a6a6ae;margin:0 0 14px}
+.v38Danger{border:1px solid rgba(255,101,120,.35);background:rgba(255,101,120,.08);color:#ff8291;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:1000;white-space:nowrap}
+.v38Primary,.v38Secondary{border-radius:15px;padding:13px 14px;font-size:11px;font-weight:1000}
+.v38Primary{border:0;background:var(--v36-accent,#c8ff3d);color:#090c07;box-shadow:0 0 20px rgba(200,255,61,.14)}
+.v38Secondary{border:1px solid rgba(255,255,255,.11);background:#141519;color:#f4f4f1}
+
+.v38Section,.v38Recent,.v38Next{margin-top:10px;border:1px solid rgba(255,255,255,.09);border-radius:25px;padding:18px;background:#111216}
+.v38SectionTitle{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.v38SectionTitle h2{font-size:20px;line-height:1;margin:6px 0 0;letter-spacing:-.04em}.v38SectionTitle>small{font-size:9px;line-height:1.3;color:#767680;text-align:right;margin-top:3px;max-width:100px}
+.v38SkillRow{padding:12px 0;border-top:1px solid rgba(255,255,255,.07)}.v38SkillRow:first-of-type{border-top:0}
+.v38SkillHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-end}.v38SkillHead b{display:block;font-size:14px}.v38SkillHead small{display:block;color:#888892;font-size:10px;margin-top:3px}
+.v38SkillScore{font-size:19px;font-weight:1000;white-space:nowrap}
+.v38Bar{height:7px;background:#24262a;border-radius:99px;overflow:hidden;margin-top:9px}.v38Bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7fa426,var(--v36-accent,#c8ff3d));box-shadow:0 0 8px rgba(200,255,61,.12)}
+
+.v38RecentGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.v38RecentGrid>div{border:1px solid rgba(255,255,255,.08);border-radius:17px;padding:11px;background:#0d0f11;min-width:0}
+.v38RecentGrid span{display:block;color:#8f8f98;font-size:9px;font-weight:1000;letter-spacing:.09em}.v38RecentGrid b{display:block;font-size:25px;margin:8px 0 4px}.v38RecentGrid b.good{color:#68e89b}.v38RecentGrid b.bad{color:#ff6578}.v38RecentGrid small{display:block;color:#777781;font-size:9px;line-height:1.25}
+.v38RecentText{font-size:12px;line-height:1.48;color:#aaaab1;margin:13px 0 0}
+
+.v38Next{border-color:rgba(200,255,61,.15);background:linear-gradient(145deg,rgba(200,255,61,.045),#111216 45%)}
+.v38Next h2{font-size:22px;line-height:1;margin:7px 0 8px;letter-spacing:-.04em}.v38Next p{font-size:13px;line-height:1.48;color:#a5a5ad}
+.v38Actions{display:grid;grid-template-columns:1fr;gap:7px;margin-top:12px}
+
+.v38Foot{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:15px 4px 0;color:#777780;font-size:10px}.v38Foot button{border:0;background:transparent;color:#c8c8c5;font-size:10px;font-weight:900}
+
+@media(max-width:380px){
+  #profileArea{padding-left:12px!important;padding-right:12px!important}
+  .v38Hero{padding:17px}.v38Hero h1{font-size:30px}
+  .v38HeroGrid{grid-template-columns:1fr}
+  .v38HeroMeta{grid-template-columns:1fr 1fr}.v38HeroMeta>div{min-height:72px}
+  .v38Focus,.v38Section,.v38Recent,.v38Next{padding:16px}
+  .v38RecentGrid{gap:5px}.v38RecentGrid>div{padding:9px}
+}
+
+/* =========================================================
+   V39 — MY HANDS / DEEP POSTFLOP REVIEW
+   ========================================================= */
+.hr39Stacks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.hr39Stacks .hr22Slider{margin:0!important}
+.hr39Effective{margin-top:9px;border:1px solid rgba(200,255,61,.20);background:rgba(200,255,61,.055);border-radius:18px;padding:13px 14px;display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:center}
+.hr39Effective span{font-size:10px;font-weight:1000;letter-spacing:.11em;color:#aaaab2}.hr39Effective b{font-size:20px;color:var(--v36-accent,#c8ff3d)}.hr39Effective small{grid-column:1/-1;color:#7f7f88;font-size:10px}
+.hr39Report{padding-bottom:30px}.hr39Summary{border:1px solid rgba(200,255,61,.18);border-radius:25px;padding:18px;background:radial-gradient(circle at 90% 0,rgba(200,255,61,.10),transparent 35%),#111316;margin-bottom:10px}
+.hr39Summary h1{font-size:27px;line-height:.98;letter-spacing:-.045em;margin:8px 0 10px}.hr39Summary h1 em{font-style:normal;color:var(--v36-accent,#c8ff3d)}.hr39Summary>p{font-size:13px;line-height:1.48;color:#a6a6ae}
+.hr39StreetTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;position:sticky;top:0;z-index:8;background:rgba(7,9,8,.93);backdrop-filter:blur(12px);padding:7px 0;margin-bottom:7px}
+.hr39StreetTabs button{border:1px solid rgba(255,255,255,.09);background:#131418;color:#eee;border-radius:12px;padding:9px 4px;font-size:9px;font-weight:1000}.hr39StreetTabs button small{display:block;font-size:7px;color:#85858e;margin-top:3px}.hr39StreetTabs button.bad{border-color:rgba(255,101,120,.32)}.hr39StreetTabs button.good{border-color:rgba(104,232,155,.24)}
+.hr39Street{scroll-margin-top:65px;margin-bottom:9px!important}.hr39Deep{margin-top:11px;border-top:1px solid rgba(255,255,255,.07);padding-top:11px}.hr39DeepTitle{display:flex;justify-content:space-between;gap:8px;align-items:center}.hr39DeepTitle span,.hr39Mix>span,.hr39Alternatives>span,.hr39Opp>span{font-size:9px;letter-spacing:.11em;font-weight:1000;color:#8f8f98}.hr39DeepTitle b{font-size:10px;color:#d8d8d4}.hr39Deep>p{font-size:12px;line-height:1.5;color:#a5a5ad;margin:8px 0}
+.hr39Math{border-left:2px solid #79a2ff;padding:8px 10px;margin:9px 0;background:rgba(121,162,255,.055);font-size:11px;line-height:1.45;color:#c5c8d0}
+.hr39Mix{margin-top:12px}.hr39MixRow{display:grid;grid-template-columns:76px 1fr 36px;gap:7px;align-items:center;margin-top:7px}.hr39MixRow>span{font-size:10px;font-weight:900}.hr39MixRow>div{height:6px;border-radius:99px;background:#25262b;overflow:hidden}.hr39MixRow i{display:block;height:100%;background:#6f747a;border-radius:99px}.hr39MixRow.best i{background:var(--v36-accent,#c8ff3d);box-shadow:0 0 7px rgba(200,255,61,.2)}.hr39MixRow>b{font-size:10px;text-align:right}
+.hr39Alternatives{margin-top:13px}.hr39Alt{display:grid;grid-template-columns:1fr auto;gap:3px 8px;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:10px;margin-top:6px;background:#0e1012}.hr39Alt>b{font-size:10px}.hr39Alt>span{font-size:11px;font-weight:1000;color:#ddd}.hr39Alt>small{grid-column:1/-1;color:#85858e;font-size:9px;line-height:1.35}.hr39Alt.chosen{border-color:rgba(200,255,61,.18)}
+.hr39Opp{margin-top:12px;border-radius:15px;padding:11px;background:#0d0f11;border:1px solid rgba(255,255,255,.07)}.hr39Opp>b{display:block;font-size:12px;margin:6px 0}.hr39Opp p{font-size:10px;line-height:1.42;color:#8f8f98;margin:0}.hr39Opp.bad{border-color:rgba(255,101,120,.20)}.hr39Opp.good{border-color:rgba(104,232,155,.17)}
+.hr39Lesson{border:1px solid rgba(200,255,61,.17);border-radius:24px;padding:17px;background:linear-gradient(145deg,rgba(200,255,61,.045),#111216);margin:10px 0}.hr39Lesson h2{font-size:20px;line-height:1;margin:7px 0 13px}.hr39Lesson>div{display:grid;grid-template-columns:30px 1fr;gap:8px;border-top:1px solid rgba(255,255,255,.07);padding:10px 0}.hr39Lesson>div>b{color:var(--v36-accent,#c8ff3d);font-size:11px}.hr39Lesson>div>p{font-size:11px;line-height:1.45;color:#aaaab1;margin:0}.hr39Lesson .primary{width:100%;margin-top:8px}
+@media(max-width:380px){.hr39Stacks{grid-template-columns:1fr}.hr39Summary h1{font-size:24px}.hr39StreetTabs button{font-size:8px}.hr39MixRow{grid-template-columns:66px 1fr 32px}}
