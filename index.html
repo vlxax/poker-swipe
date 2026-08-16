@@ -3598,5 +3598,453 @@ document.documentElement.dataset.pokerSwipeVersion='42-polyana-clubs';
 })();
 </script>
 
+
+<style id="v43-readable-copy">
+/* V43 — secondary copy must be readable on an actual phone */
+.p41Hero p,
+.p42Intro,
+.p42RegionText span,
+.p42Source div,
+.p42ClubAddr,
+.p42ClubMeta span,
+.p42EventMeta span,
+.p41TripHero p,
+.p42JournalHead .p42Intro{
+  font-size:12px!important;
+  line-height:1.5!important;
+  letter-spacing:0!important;
+}
+.p42RegionText span{color:#e1dce3!important;font-weight:650!important}
+.p42ClubAddr{font-size:12px!important;color:#c5bec8!important}
+.p42ClubMeta span,.p42EventMeta span{font-size:10px!important;padding:6px 8px!important}
+.p42Source div{font-size:11px!important;color:#bcb5bf!important}
+.p42Source b{font-size:12px!important}
+.p42Source span{font-size:10px!important}
+.p41Hero p{font-size:13px!important;line-height:1.48!important;color:#bcb5bf!important}
+.p42Intro{font-size:12px!important;color:#bdb6c0!important}
+.p42SubTabs button,.p42TopSwitch button{font-size:10px!important}
+
+/* Older cards / hand sections: kill microscopic helper text globally without blowing up labels */
+.t23 p,.t23 .sub,.t23 .muted,.t23 small,
+.handCard p,.handCard small,.handCard .muted,
+[class*="hand"] p,[class*="Hand"] p,
+[class*="desc"],[class*="Desc"],
+[class*="hint"],[class*="Hint"]{
+  font-size:max(12px, .78rem)!important;
+  line-height:1.48!important;
+}
+@media(max-width:430px){
+  .p41Hero p{font-size:14px!important}
+  .p42Intro,.p42ClubAddr,.p42RegionText span{font-size:13px!important}
+}
+</style>
+
+
+<style id="v44-polyana-visual-fix">
+/* Region photography: user-supplied visual layer must be obvious */
+.p42Region{
+  min-height:180px!important;
+  background-size:cover!important;
+  background-position:center!important;
+  overflow:hidden!important;
+}
+.p42Region:before{
+  background:linear-gradient(180deg,rgba(5,5,8,.06) 0%,rgba(5,5,8,.18) 42%,rgba(5,5,8,.88) 100%)!important;
+}
+.p42RegionText{position:relative!important;z-index:3!important}
+.p42RegionText b{
+  font-size:24px!important;line-height:1!important;font-weight:950!important;
+  letter-spacing:-.04em!important;color:#fff!important;text-shadow:0 2px 14px #000!important
+}
+.p42RegionText span{
+  font-size:13px!important;line-height:1.35!important;color:#fff!important;
+  font-weight:750!important;text-shadow:0 2px 10px #000!important
+}
+
+/* CLUB NAME is now the strongest, unmistakable line on every Moscow/region card */
+.p42ClubName{
+  display:block!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:22px!important;
+  line-height:1.05!important;
+  font-weight:950!important;
+  letter-spacing:-.035em!important;
+  text-transform:none!important;
+  color:#baff21!important;
+  margin:0 0 8px!important;
+  text-shadow:0 0 16px rgba(186,255,33,.16)!important;
+}
+.p42EventName{
+  font-size:17px!important;line-height:1.18!important;font-weight:850!important;
+  color:#fff!important;letter-spacing:-.02em!important
+}
+.p42ClubAddr{font-size:13px!important;line-height:1.45!important;color:#d5ced8!important}
+@media(max-width:430px){
+ .p42Region{min-height:165px!important}
+ .p42ClubName{font-size:23px!important}
+ .p42EventName{font-size:18px!important}
+ .p42ClubAddr{font-size:14px!important}
+}
+</style>
+
+
+<style id="v45-reg-ux">
+/* =========================================================
+   V45 — PRODUCT PASS: designer + offline reg
+   Hierarchy: AFISHA / SERIES / MINE
+   Club -> tournament -> poker decision data
+   ========================================================= */
+:root{
+ --v45-lime:#c8ff3d;
+ --v45-pink:#ff4f98;
+ --v45-bg:#07070a;
+ --v45-card:#111117;
+ --v45-line:#30303a;
+ --v45-muted:#a59ea9;
+}
+.p45{padding:0 max(12px,var(--tg-left-safe)) calc(150px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe));}
+.p45Hero{
+ position:relative;overflow:hidden;border:1px solid #ffffff14;border-radius:28px;padding:18px 16px 15px;
+ background:
+ radial-gradient(circle at 91% -5%,rgba(200,255,61,.18),transparent 34%),
+ radial-gradient(circle at -8% 115%,rgba(255,79,152,.14),transparent 38%),
+ linear-gradient(150deg,#15151c,#09090d 72%);
+ box-shadow:0 22px 60px #0008,inset 0 1px rgba(255,255,255,.05);
+}
+.p45Hero:after{content:"♠";position:absolute;right:-16px;bottom:-74px;font:180px Georgia,serif;color:#ffffff035;transform:rotate(-11deg)}
+.p45Hero .ey,.p45Hero h1,.p45Hero p,.p45MainTabs{position:relative;z-index:2}
+.p45Hero h1{font-size:46px;line-height:.9;letter-spacing:-.065em;margin:5px 0 9px}
+.p45Hero h1 span{color:var(--v45-lime)}
+.p45Hero p{font-size:13px;line-height:1.48;color:#c2bbc5;max-width:315px;margin:0}
+.p45MainTabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:15px}
+.p45MainTabs button{
+ border:1px solid #34343f;background:#0b0b10;color:#8c8590;border-radius:15px;
+ padding:11px 5px;font-size:9px;font-weight:1000;letter-spacing:.02em
+}
+.p45MainTabs button.on{border-color:var(--v45-lime);background:#18200f;color:#fff;box-shadow:0 0 21px rgba(200,255,61,.11)}
+.p45Quick{display:flex;gap:6px;overflow:auto;padding:10px 1px 2px;scrollbar-width:none}
+.p45Quick::-webkit-scrollbar{display:none}
+.p45Quick button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#938c97;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.p45Quick button.on{color:#fff;border-color:#66616b;background:#17171d}
+.p45Section{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:18px 2px 9px}
+.p45Section h3{margin:0;font-size:12px;letter-spacing:.1em}
+.p45Section span{font-size:9px;color:#8e8792;text-align:right}
+.p45Source{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;margin:10px 0;
+ border:1px solid #2d2d36;border-radius:16px;background:#0c0c10;
+}
+.p45Source b{display:block;color:#fff;font-size:11px;margin-bottom:2px}
+.p45Source div{color:#a7a0aa;font-size:10px;line-height:1.4}
+.p45SourceTag{font-size:8px!important;font-weight:1000;color:var(--v45-lime)!important;white-space:nowrap}
+.p45SourceTag.demo{color:#ff8bb9!important}
+
+/* Regions: photo is useful nav, not decoration */
+.p45Regions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.p45Region{
+ position:relative;min-height:178px;border:1px solid #34343d;border-radius:22px;overflow:hidden;
+ background:#111117;color:#fff;text-align:left;padding:0;transform:translateZ(0)
+}
+.p45Region img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.95) contrast(1.08) brightness(.8);transition:transform .3s ease,filter .3s ease}
+.p45Region:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,8,.04) 10%,rgba(5,5,8,.16) 42%,rgba(5,5,8,.94) 100%)}
+.p45RegionGlow{position:absolute;width:90px;height:90px;right:-30px;top:-25px;border-radius:50%;background:radial-gradient(circle,rgba(200,255,61,.28),transparent 70%);z-index:1}
+.p45RegionText{position:absolute;left:12px;right:12px;bottom:11px;z-index:2}
+.p45RegionText b{display:block;font-size:22px;line-height:1;font-weight:1000;letter-spacing:-.04em;text-shadow:0 2px 14px #000}
+.p45RegionStats{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.p45RegionStats span{font-size:8px;border:1px solid #ffffff2a;background:#0007;border-radius:999px;padding:5px 7px;color:#fff;backdrop-filter:blur(5px)}
+@media(hover:hover){.p45Region:hover img{transform:scale(1.045);filter:saturate(1.08) contrast(1.08) brightness(.9)}}
+
+/* Today's card: club dominates, tournament second, decisions third */
+.p45Event{
+ position:relative;overflow:hidden;border:1px solid #30303a;border-radius:22px;padding:14px;margin:8px 0;
+ background:
+ radial-gradient(circle at 100% 0,rgba(200,255,61,.11),transparent 35%),
+ linear-gradient(145deg,#14141b,#0c0c11);
+}
+.p45Event:before{content:attr(data-suit);position:absolute;right:8px;top:-17px;font:76px Georgia,serif;color:#ffffff035;transform:rotate(7deg)}
+.p45Club{position:relative;z-index:2;color:var(--v45-lime);font-size:23px;line-height:1;font-weight:1000;letter-spacing:-.045em;margin-right:70px}
+.p45Tournament{position:relative;z-index:2;color:#fff;font-size:17px;line-height:1.15;font-weight:900;margin-top:6px}
+.p45Meta{position:relative;z-index:2;display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.p45Meta span{font-size:8px;color:#c2bbc5;border:1px solid #393943;border-radius:999px;padding:5px 7px;background:#0a0a0e99}
+.p45PokerDecision{
+ position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px
+}
+.p45DecisionBox{border:1px solid #34343e;border-radius:13px;padding:9px;background:#0b0b10}
+.p45DecisionBox span{display:block;color:#8f8993;font-size:7px;letter-spacing:.09em}
+.p45DecisionBox b{display:block;color:#fff;font-size:14px;margin-top:3px}
+.p45DecisionBox.hot{border-color:rgba(200,255,61,.38);background:#131a0e}
+.p45DecisionBox.hot b{color:var(--v45-lime)}
+.p45EventFoot{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.p45Fresh{font-size:8px;color:#8d8691}.p45Fresh.demo{color:#ff91bd}
+.p45Add{width:42px;height:42px;border:0;border-radius:14px;background:var(--v45-lime);color:#10120d;font-size:22px;font-weight:1000}
+
+/* Club finder — more useful + creative without becoming casino kitsch */
+.p45ClubTools{display:flex;gap:6px;overflow:auto;padding:2px 0 8px;scrollbar-width:none}
+.p45ClubTools::-webkit-scrollbar{display:none}
+.p45ClubTools button{flex:0 0 auto;border:1px solid #31313a;background:#0d0d12;color:#8d8691;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.p45ClubTools button.on{border-color:var(--v45-lime);background:#18200f;color:#fff}
+.p45Search{width:100%;box-sizing:border-box;border:1px solid #383842;background:#0d0d12;color:#fff;border-radius:15px;padding:12px 13px;font-size:12px}
+.p45ClubList{display:grid;gap:8px;margin-top:9px}
+.p45ClubCard{
+ --clubGlow:rgba(200,255,61,.16);
+ position:relative;overflow:hidden;border:1px solid #30303a;border-radius:20px;padding:13px 13px 12px 16px;text-align:left;color:#fff;
+ background:radial-gradient(circle at 96% 3%,var(--clubGlow),transparent 34%),linear-gradient(145deg,#14141a,#0d0d12);
+ min-height:112px
+}
+.p45ClubCard:nth-child(3n+2){--clubGlow:rgba(255,79,152,.13)}
+.p45ClubCard:before{content:attr(data-index);position:absolute;right:10px;bottom:-13px;font-size:63px;line-height:1;font-weight:1000;color:#ffffff035;letter-spacing:-.08em}
+.p45ClubCard:after{content:"♣";position:absolute;right:13px;top:6px;font:37px Georgia,serif;color:#ffffff06;transform:rotate(9deg)}
+.p45ClubTop{position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.p45ClubName{color:var(--v45-lime);font-size:22px;line-height:1.02;font-weight:1000;letter-spacing:-.04em}
+.p45LiveDot{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;color:#c8c2cb;font-size:7px;border:1px solid #3a3a44;border-radius:999px;padding:5px 7px;background:#09090d99}
+.p45LiveDot i{width:6px;height:6px;border-radius:50%;background:#5a555e}
+.p45LiveDot.on i{background:var(--v45-lime);box-shadow:0 0 10px rgba(200,255,61,.75);animation:p45Pulse 1.9s infinite}
+@keyframes p45Pulse{0%,100%{opacity:.55;transform:scale(.85)}50%{opacity:1;transform:scale(1.2)}}
+.p45Address{position:relative;z-index:2;color:#c1bac4;font-size:12px;line-height:1.42;margin-top:6px;max-width:82%}
+.p45ClubBottom{position:relative;z-index:2;display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.p45ClubBottom span{font-size:8px;color:#b0a9b3;border:1px solid #383842;border-radius:999px;padding:5px 7px}
+.p45ClubBottom .hot{border-color:rgba(200,255,61,.35);color:#dcffa0;background:#151c0f}
+.p45ClubBottom .partner{border-color:rgba(255,79,152,.35);color:#ff9bc3;background:#1b1016}
+@media(hover:hover){.p45ClubCard{transition:transform .18s ease,border-color .18s ease}.p45ClubCard:hover{transform:translateY(-2px);border-color:#56515c}}
+
+/* Mine */
+.p45MineGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.p45MineCard{border:1px solid #30303a;border-radius:20px;padding:14px;text-align:left;color:#fff;background:linear-gradient(145deg,#14141b,#0c0c11)}
+.p45MineCard span{display:block;color:#8e8792;font-size:8px;letter-spacing:.08em}
+.p45MineCard b{display:block;font-size:23px;margin-top:5px;letter-spacing:-.04em}
+.p45MineCard p{font-size:10px;color:#aba4ae;line-height:1.4;margin:7px 0 0}
+.p45MineCard.acid{background:radial-gradient(circle at 100% 0,rgba(200,255,61,.16),transparent 40%),#111117}
+.p45MineCard.pink{background:radial-gradient(circle at 100% 0,rgba(255,79,152,.15),transparent 40%),#111117}
+
+/* Leak preview in hands */
+.p45Leaks{border:1px solid #30303a;border-radius:21px;background:radial-gradient(circle at 100% 0,rgba(255,79,152,.11),transparent 38%),#101015;padding:13px;margin:0 0 12px}
+.p45LeaksHead{display:flex;justify-content:space-between;align-items:center}.p45LeaksHead b{font-size:14px}.p45LeaksHead span{font-size:8px;color:#ff8fbb}
+.p45LeakRow{display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;border-top:1px solid #ffffff0d;padding:9px 0}
+.p45LeakRow:first-of-type{margin-top:8px}.p45LeakRow b{font-size:11px}.p45LeakRow small{display:block;color:#8d8691;font-size:8px;margin-top:2px}.p45LeakLoss{font-size:11px;color:#ff7eae;font-weight:1000}
+
+/* Global readable helper copy — concise, not microscopic */
+.p45 .sub,.p45 small{font-size:10px;line-height:1.4}
+@media(max-width:360px){.p45Regions{grid-template-columns:1fr}.p45Region{min-height:150px}.p45Hero h1{font-size:42px}}
+</style>
+
+<script id="v45-reg-ux-script">
+(function(){
+'use strict';
+
+let P45_MAIN='afisha';
+let P45_AFISHA='today';
+let P45_CLUB_FILTER='active';
+let P45_CLUBS=[];
+const P45_OLD_RENDER = (typeof __renderTournaments23V24==='function') ? __renderTournaments23V24 : null;
+
+const P45_REGIONS=[
+ {id:'moscow',name:'МОСКВА',img:'assets/regions/moscow.webp',stats:['60 клубов','СПРАВОЧНИК'],target:'clubs'},
+ {id:'kal',name:'КАЛИНИНГРАД',img:'assets/regions/kaliningrad.webp',stats:['СЕРИИ','ПОЕЗДКА'],target:'series'},
+ {id:'sochi',name:'СОЧИ',img:'assets/regions/sochi.webp',stats:['СЕРИИ','LIVE POKER'],target:'series'},
+ {id:'altai',name:'АЛТАЙ',img:'assets/regions/altai.webp',stats:['ИГОРНАЯ ЗОНА','ПОЕЗДКА'],target:'series'},
+ {id:'primorye',name:'ПРИМОРЬЕ',img:'assets/regions/primorye.webp',stats:['TIGRE DE CRISTAL','СЕРИИ'],target:'series'},
+ {id:'minsk',name:'МИНСК',img:'assets/regions/minsk.webp',stats:['БЕЛАРУСЬ','СЕРИИ'],target:'series'}
+];
+
+/* DEMO events until schedule feed is connected.
+   Cards deliberately show the information a reg needs to decide whether to go. */
+const P45_EVENTS=[
+ {id:'straddle',club:'Straddle poker club',tournament:'Sunday Deepstack',time:'19:00',buyin:'1 000 ₽',format:'NLH',levels:'30 MIN',start:'100 BB',now:'~73 BB',late:'до 22:10',suit:'♠'},
+ {id:'check',club:'Check-Check Club',tournament:'Mystery Night',time:'19:00',buyin:'1 200 ₽',format:'MYSTERY',levels:'20 MIN',start:'125 BB',now:'~58 BB',late:'до 22:20',suit:'♦'},
+ {id:'river',club:'River Room',tournament:'Classic Holdem',time:'20:00',buyin:'1 000 ₽',format:'NLH',levels:'25 MIN',start:'100 BB',now:'~82 BB',late:'до 23:00',suit:'♥'},
+ {id:'barrel',club:'БАРРЕЛЬ',tournament:'Poker Night',time:'21:00',buyin:'1 500 ₽',format:'NLH',levels:'20 MIN',start:'100 BB',now:'~91 BB',late:'до 00:10',suit:'♣'}
+];
+
+function p45Nav(){
+ const n=document.querySelector('.nav [data-nav="tournaments"]');
+ if(n&&n.childNodes.length)n.childNodes[n.childNodes.length-1].textContent=' ПОЛЯНА';
+}
+function p45Hero(){
+ return `<div class="p45Hero">
+  <span class="ey">ЖИВОЙ ПОКЕР</span>
+  <h1>ПОЛЯНА<span>.</span></h1>
+  <p>Клубы, турниры и серии рядом. Быстро понять, куда ехать и есть ли ещё смысл входить.</p>
+  <div class="p45MainTabs">
+   <button data-p45main="afisha" class="${P45_MAIN==='afisha'?'on':''}">АФИША</button>
+   <button data-p45main="series" class="${P45_MAIN==='series'?'on':''}">СЕРИИ</button>
+   <button data-p45main="mine" class="${P45_MAIN==='mine'?'on':''}">МОЁ</button>
+  </div>
+ </div>`;
+}
+function p45AfishaQuick(){
+ return `<div class="p45Quick">
+  <button data-p45af="today" class="${P45_AFISHA==='today'?'on':''}">СЕГОДНЯ</button>
+  <button data-p45af="regions" class="${P45_AFISHA==='regions'?'on':''}">РЕГИОНЫ</button>
+  <button data-p45af="clubs" class="${P45_AFISHA==='clubs'?'on':''}">КЛУБЫ МОСКВЫ</button>
+ </div>`;
+}
+function p45Source(kind){
+ if(kind==='demo') return `<div class="p45Source"><div><b>ТЕСТОВАЯ АФИША</b>Структура карточек рабочая. Время и турниры ниже — демо до подключения live-расписания.</div><span class="p45SourceTag demo">DEMO</span></div>`;
+ return `<div class="p45Source"><div><b>СПРАВОЧНИК КЛУБОВ · МОСКВА</b>Статический снимок PokerNoMoney.ru. Не выдаём его за live API.</div><span class="p45SourceTag">16.08.2026</span></div>`;
+}
+function p45Regions(){
+ return `${p45AfishaQuick()}
+ <div class="p45Section"><h3>КУДА ИГРАТЬ</h3><span>регион → клуб → турнир</span></div>
+ <div class="p45Regions">${P45_REGIONS.map(r=>`<button class="p45Region" data-p45region="${r.target}">
+  <img src="${r.img}" alt="${r.name}"><i class="p45RegionGlow"></i>
+  <div class="p45RegionText"><b>${r.name}</b><div class="p45RegionStats">${r.stats.map(x=>`<span>${x}</span>`).join('')}</div></div>
+ </button>`).join('')}</div>`;
+}
+function p45EventCard(e){
+ return `<article class="p45Event" data-suit="${e.suit}">
+   <div class="p45Club">${e.club}</div>
+   <div class="p45Tournament">${e.tournament}</div>
+   <div class="p45Meta"><span>${e.time}</span><span>${e.buyin}</span><span>${e.format}</span><span>${e.levels}</span></div>
+   <div class="p45PokerDecision">
+    <div class="p45DecisionBox"><span>СТАРТОВЫЙ СТЕК</span><b>${e.start}</b></div>
+    <div class="p45DecisionBox hot"><span>ЕСЛИ ВОЙТИ СЕЙЧАС</span><b>${e.now}</b></div>
+    <div class="p45DecisionBox"><span>LATE REG</span><b>${e.late}</b></div>
+    <div class="p45DecisionBox"><span>СТАТУС</span><b>ИДЁТ</b></div>
+   </div>
+   <div class="p45EventFoot"><span class="p45Fresh demo">DEMO · не live</span><button class="p45Add" data-p45add="${e.id}">+</button></div>
+ </article>`;
+}
+function p45Today(){
+ return `${p45AfishaQuick()}${p45Source('demo')}
+ <div class="p45Section"><h3>МОСКВА · СЕГОДНЯ</h3><span>сначала клуб, потом турнир</span></div>
+ ${P45_EVENTS.map(p45EventCard).join('')}`;
+}
+function p45ClubsFiltered(){
+ let arr=P45_CLUBS.slice();
+ if(P45_CLUB_FILTER==='active') arr=arr.filter(x=>Number(x.upcoming)>0).sort((a,b)=>Number(b.upcoming)-Number(a.upcoming)||a.name.localeCompare(b.name,'ru'));
+ else if(P45_CLUB_FILTER==='many') arr=arr.filter(x=>Number(x.upcoming)>=5).sort((a,b)=>Number(b.upcoming)-Number(a.upcoming));
+ else if(P45_CLUB_FILTER==='cheap') arr=arr.sort((a,b)=>Number(a.min_fee_rub)-Number(b.min_fee_rub)||Number(b.upcoming)-Number(a.upcoming));
+ else arr=arr.sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+ return arr;
+}
+function p45ClubCard(c,i){
+ const active=Number(c.upcoming)>0;
+ const fee=Number(c.min_fee_rub)===0?'ВХОД СВОБОДНЫЙ':'ОТ '+Number(c.min_fee_rub).toLocaleString('ru-RU')+' ₽';
+ return `<button class="p45ClubCard" data-index="${String(i+1).padStart(2,'0')}">
+  <div class="p45ClubTop"><div class="p45ClubName">${c.name}</div><span class="p45LiveDot ${active?'on':''}"><i></i>${active?c.upcoming+' АНОНСОВ':'НЕТ АНОНСОВ'}</span></div>
+  <div class="p45Address">${c.address}</div>
+  <div class="p45ClubBottom">${active?`<span class="hot">${c.upcoming} БЛИЖАЙШИХ</span>`:'<span>АРХИВ / СПРАВОЧНИК</span>'}<span>${fee}</span>${c.partner?'<span class="partner">★ ПАРТНЁР ИСТОЧНИКА</span>':''}</div>
+ </button>`;
+}
+function p45Clubs(){
+ const list=p45ClubsFiltered();
+ return `${p45AfishaQuick()}${p45Source('clubs')}
+ <div class="p45Section"><h3>КЛУБЫ МОСКВЫ</h3><span>${P45_CLUBS.length||'…'} в базе</span></div>
+ <input id="p45Search" class="p45Search" placeholder="Название клуба или адрес…">
+ <div class="p45ClubTools">
+  <button data-p45cf="active" class="${P45_CLUB_FILTER==='active'?'on':''}">ЕСТЬ АНОНСЫ</button>
+  <button data-p45cf="many" class="${P45_CLUB_FILTER==='many'?'on':''}">5+ ТУРНИРОВ</button>
+  <button data-p45cf="cheap" class="${P45_CLUB_FILTER==='cheap'?'on':''}">ПО ВХОДУ</button>
+  <button data-p45cf="all" class="${P45_CLUB_FILTER==='all'?'on':''}">ВСЕ 60</button>
+ </div>
+ <div id="p45ClubList" class="p45ClubList">${list.length?list.map(p45ClubCard).join(''):'<div class="p45Source"><div>Загружаю справочник…</div></div>'}</div>`;
+}
+function p45Series(){
+ return `<div class="p45Section"><h3>СЕРИИ</h3><span>поездка как единый план</span></div>
+ <div class="p45Regions">${P45_REGIONS.filter(r=>r.id!=='moscow').map(r=>`<button class="p45Region" data-p45series="${r.id}">
+  <img src="${r.img}" alt="${r.name}"><i class="p45RegionGlow"></i>
+  <div class="p45RegionText"><b>${r.name}</b><div class="p45RegionStats"><span>ДАТЫ</span><span>ДИСЦИПЛИНЫ</span><span>БЮДЖЕТ</span></div></div>
+ </button>`).join('')}</div>
+ <div class="p45Source"><div><b>РЕЖИМ СЕРИИ</b>Выбираешь даты, NLH / PLO / HU / OFC, лимит входа и бюджет. Потом собираешь сетку A/B/C.</div><span class="p45SourceTag">TRIP</span></div>`;
+}
+function p45Mine(){
+ return `<div class="p45Section"><h3>МОЯ ИГРА</h3><span>до игры и после игры</span></div>
+ <div class="p45MineGrid">
+  <button class="p45MineCard acid" id="p45MyJournal"><span>ИСТОРИЯ</span><b>ТУРНИРЫ</b><p>Онлайн / офлайн, бай-ины, пули, места, профит и ROI.</p></button>
+  <button class="p45MineCard pink" id="p45MyTrip"><span>ПЛАН</span><b>ПОЕЗДКА</b><p>Сетка A/B/C, бюджет, жильё, дорога и логистика.</p></button>
+ </div>
+ <div class="p45Source"><div><b>ОДНА ИСТОРИЯ</b>Поездка и сыгранные турниры больше не разнесены по разным сущностям.</div><span class="p45SourceTag">МОЁ</span></div>`;
+}
+function p45TripModal(){
+ const chosen=(()=>{try{return JSON.parse(localStorage.getItem('ps_polyana_v41')||'[]')||[]}catch(e){return[]}})();
+ openModal(`<div class="p41SheetHead"><span class="ey">МОЯ ИГРА · ПОЕЗДКА</span><h2>${chosen.length?'СЕТКА СОБРАНА.':'ПОКА ПУСТО.'}</h2><p>${chosen.length?chosen.length+' турнира в плане.':'Выбери серию, даты и дисциплины — PokerSwipe соберёт поездку.'}</p></div>
+ <div class="p41Stats"><div class="p41Stat"><span>СЕТКА</span><b>${chosen.length}</b></div><div class="p41Stat"><span>БЮДЖЕТ</span><b>—</b></div><div class="p41Stat"><span>ДОРОГА</span><b>—</b></div><div class="p41Stat"><span>ЖИЛЬЁ</span><b>—</b></div></div>`);
+}
+function p45OpenSeries(){
+ if(typeof p42TripBuilder==='function'){
+   const s={city:'КАЛИНИНГРАД',dates:'12—20 СЕН',name:'SERIES'};
+   p42TripBuilder(s);
+ } else {
+   p45TripModal();
+ }
+}
+function p45AddEvent(id){
+ const e=P45_EVENTS.find(x=>x.id===id); if(!e)return;
+ try{
+  S.tournaments=S.tournaments||[];
+  S.tournaments.push({id:'p45_'+Date.now(),type:'offline',name:e.tournament,club:e.club,date:today(),currency:'RUB',buyin:Number(String(e.buyin).replace(/\D/g,''))||0,entries:1,bountyCount:0,bountyWon:0,prize:0,place:0,field:0,createdAt:Date.now(),updatedAt:Date.now()});
+  save();
+  openModal(`<div class="p41SheetHead"><span class="ey">ДОБАВЛЕНО В МОЮ ИГРУ</span><h2>${e.club}</h2><p>${e.tournament} · ${e.time}</p></div><div class="p41Depth"><span>ЕСЛИ ВОЙТИ СЕЙЧАС</span><b>${e.now}</b></div>`);
+ }catch(err){}
+}
+async function p45LoadClubs(){
+ if(P45_CLUBS.length)return;
+ try{
+  const r=await fetch('data/moscow_clubs_pokernomoney.json',{cache:'no-store'});
+  const j=await r.json();P45_CLUBS=Array.isArray(j.clubs)?j.clubs:[];
+  if(P45_MAIN==='afisha'&&P45_AFISHA==='clubs')renderTournaments23();
+ }catch(e){}
+}
+function p45Bind(){
+ p45Nav();
+ document.querySelectorAll('[data-p45main]').forEach(b=>b.onclick=()=>{P45_MAIN=b.dataset.p45main;renderTournaments23()});
+ document.querySelectorAll('[data-p45af]').forEach(b=>b.onclick=()=>{P45_AFISHA=b.dataset.p45af;renderTournaments23()});
+ document.querySelectorAll('[data-p45region]').forEach(b=>b.onclick=()=>{P45_AFISHA=b.dataset.p45region;renderTournaments23()});
+ document.querySelectorAll('[data-p45series]').forEach(b=>b.onclick=p45OpenSeries);
+ document.querySelectorAll('[data-p45add]').forEach(b=>b.onclick=()=>p45AddEvent(b.dataset.p45add));
+ document.querySelectorAll('[data-p45cf]').forEach(b=>b.onclick=()=>{P45_CLUB_FILTER=b.dataset.p45cf;renderTournaments23()});
+ const search=document.getElementById('p45Search');
+ if(search)search.oninput=()=>{
+  const q=search.value.trim().toLowerCase();
+  const arr=p45ClubsFiltered().filter(c=>(c.name+' '+c.address).toLowerCase().includes(q));
+  const list=document.getElementById('p45ClubList');
+  if(list)list.innerHTML=arr.map(p45ClubCard).join('')||'<div class="p45Source"><div>Ничего не найдено.</div></div>';
+ };
+ const journal=document.getElementById('p45MyJournal');
+ if(journal)journal.onclick=()=>p45Journal();
+ const trip=document.getElementById('p45MyTrip');
+ if(trip)trip.onclick=p45TripModal;
+}
+function p45Journal(){
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ if(P45_OLD_RENDER){
+   P45_OLD_RENDER();
+   const root=area.querySelector('.t23');
+   if(root){
+    root.insertAdjacentHTML('afterbegin',`<div style="margin-bottom:12px"><button class="p41Ghost" id="p45BackMine">← МОЯ ИГРА</button><div class="p42Intro" style="margin-top:8px">Твоя полная история сохранена: онлайн / офлайн, входы, пули, призовые, профит и ROI.</div></div>`);
+    const back=document.getElementById('p45BackMine');if(back)back.onclick=()=>{P45_MAIN='mine';renderTournaments23()};
+   }
+ } else {
+   area.innerHTML=`<div class="p45">${p45Hero()}<div class="p45Source"><div>Старый журнал не найден.</div></div></div>`;
+ }
+ p45Nav();
+}
+window.renderTournaments23=renderTournaments23=function(){
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ let body='';
+ if(P45_MAIN==='afisha') body=P45_AFISHA==='today'?p45Today():P45_AFISHA==='regions'?p45Regions():p45Clubs();
+ else if(P45_MAIN==='series') body=p45Series();
+ else body=p45Mine();
+ area.innerHTML=`<div class="p45">${p45Hero()}${body}</div>`;
+ p45Bind();p45LoadClubs();
+};
+p45Nav();
+
+/* Hand section: surface "price of mistake" concept without destroying the existing tools. */
+if(typeof window.myHub18==='function'){
+ const p45OldMyHub=window.myHub18;
+ window.myHub18=myHub18=function(){
+  const leak=`<div class="p45Leaks"><div class="p45LeaksHead"><b>НА ЧТО СМОТРЕТЬ</b><span>ЦЕНА ОШИБКИ</span></div>
+   <div class="p45LeakRow"><div><b>КРИТИЧНЫЕ</b><small>дорогие решения, которые надо разобрать первыми</small></div><div class="p45LeakLoss">−8.4 BB</div></div>
+   <div class="p45LeakRow"><div><b>ПОВТОРЯЮТСЯ</b><small>паттерны, которые уже встречались несколько раз</small></div><div class="p45LeakLoss">4 СПОТА</div></div>
+   <div class="p45LeakRow"><div><b>ПОСЛЕДНИЕ</b><small>свежие руки из офлайна</small></div><div class="p45LeakLoss">→</div></div>
+  </div>`;
+  return leak+p45OldMyHub();
+ };
+}
+
+document.documentElement.dataset.pokerSwipeVersion='45-reg-ux';
+})();
+</script>
+
 </body>
 </html>
