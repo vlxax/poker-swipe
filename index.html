@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V56 LIVE POLYANA FIXED</title>
+<title>POKER SWIPE — V57 CLUB INTELLIGENCE</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3809,6 +3809,168 @@ window.addEventListener('load',hookNav);
 window.openPolyanaV56=()=>{if(typeof show==='function')show('tournaments');load()};
 document.documentElement.dataset.pokerSwipeVersion='56-live-polyana-fixed';
 window.POKER_SWIPE_BUILD='V56 LIVE POLYANA FIXED';
+})();
+</script>
+
+
+<style id="v57-club-intelligence">
+.v57Star{
+ width:38px;height:38px;display:grid;place-items:center;border-radius:12px;
+ border:1px solid #3b3a43;background:#17171d;color:#77717a;font-size:20px;line-height:1
+}
+.v57Star.on{color:#c8ff3d;border-color:#c8ff3d66;background:#18200f}
+.v56ClubCard{padding-right:58px!important}
+.v57CardStar{position:absolute;right:12px;top:12px;z-index:5;width:34px;height:34px;border-radius:11px;border:1px solid #383842;background:#17171d;color:#77717a;font-size:17px}
+.v57CardStar.on{color:#c8ff3d;border-color:#c8ff3d66;background:#18200f}
+.v57FavBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:7px 0 10px;padding:10px 12px;border-radius:16px;background:#101015;border:1px solid rgba(255,255,255,.07)}
+.v57FavBar b{font-size:10px;color:#fff}.v57FavBar span{font-size:9px;color:#8f8892}
+.v57ClubSheet h2{font-family:"Arial Narrow",Arial,sans-serif!important;font-size:36px!important;line-height:.9!important;letter-spacing:-.06em!important;color:#c8ff3d!important;margin:6px 0 8px!important}
+.v57Venue{font-size:13px;color:#fff;margin-bottom:4px}.v57Address{font-size:12px;color:#aaa3ad;line-height:1.45}
+.v57InfoGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:13px 0}
+.v57Info{padding:11px;border-radius:15px;background:#fff;color:#181419}.v57Info span{display:block;font-size:7px;color:#837b82}.v57Info b{display:block;font-size:17px;margin-top:3px}
+.v57About{padding:13px 14px;border-radius:18px;background:#111116;color:#bcb5bf;font-size:12px;line-height:1.55;margin:9px 0}.v57About b{display:block;color:#fff;font-size:11px;margin-bottom:6px}
+.v57Facts{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}.v57Facts span{padding:6px 8px;border-radius:999px;border:1px solid #393943;font-size:8px;color:#c4bdc7}
+.v57ScheduleTitle{display:flex;justify-content:space-between;align-items:end;margin:17px 1px 8px}.v57ScheduleTitle b{font-size:12px;color:#fff}.v57ScheduleTitle span{font-size:9px;color:#8f8892}
+.v57ScheduleItem{display:grid;grid-template-columns:50px 1fr;gap:10px;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
+.v57ScheduleItem:first-of-type{border-top:0}.v57ScheduleTime{font-size:17px;font-weight:1000;color:#fff}.v57ScheduleItem strong{display:block;font-size:14px;color:#fff;line-height:1.2}.v57ScheduleItem small{display:block;font-size:9px;color:#99929c;margin-top:4px}
+.v57NoSchedule{padding:12px;border-radius:15px;background:#111116;color:#8f8892;font-size:11px;line-height:1.45}
+</style>
+
+<script id="v57-club-intelligence-script">
+(function(){
+'use strict';
+
+const FAV_KEY='ps_polyana_favorite_clubs_v1';
+function favs(){try{return JSON.parse(localStorage.getItem(FAV_KEY)||'[]')||[]}catch(e){return[]}}
+function isFav(name){return favs().includes(name)}
+function toggleFav(name){
+ let a=favs();a=a.includes(name)?a.filter(x=>x!==name):[...a,name];
+ localStorage.setItem(FAV_KEY,JSON.stringify(a));
+ return a.includes(name);
+}
+function esc57(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function prettyDate57(iso){
+ if(!iso)return '';
+ try{return new Date(iso+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}catch(e){return iso}
+}
+
+/* Favorites automatically rise to the top of every club list. */
+const oldFiltered=window.filteredClubs;
+window.v57SortFavorites=function(arr){
+ const f=favs();
+ return arr.slice().sort((a,b)=>{
+   const ai=f.indexOf(a.name),bi=f.indexOf(b.name),af=ai>=0,bf=bi>=0;
+   if(af!==bf)return af?-1:1;
+   if(af&&bf)return ai-bi;
+   return 0;
+ });
+};
+
+/* We augment V56 after every render instead of exposing data-source internals. */
+function getData(){
+ // V56 keeps data inside closure, so use the rendered live JSON cache in our own loader.
+ return window.__V57_DATA||{clubs:[],events:[]};
+}
+async function load57(){
+ try{
+  const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});
+  if(r.ok)window.__V57_DATA=await r.json();
+ }catch(e){}
+}
+function clubByName(name){return (getData().clubs||[]).find(c=>c.name===name)}
+
+function scheduleFor(c){
+ const all=(getData().events||[]).filter(e=>e.club===c.name);
+ const own=Array.isArray(c.schedule)?c.schedule:[];
+ const m=new Map();
+ [...own,...all].forEach(e=>m.set([e.date,e.time,e.tournament].join('|'),e));
+ return [...m.values()].sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''));
+}
+
+function openRichClub(name){
+ const c=clubByName(name);if(!c||typeof openModal!=='function')return;
+ const sc=scheduleFor(c);
+ const facts=[...(c.details||[]),...(c.facts||[])].filter((x,i,a)=>x&&a.indexOf(x)===i);
+ const contact=c.contacts||{};
+ openModal(`<div class="v57ClubSheet">
+   <span class="ey">КЛУБ · МОСКВА</span>
+   <div style="display:flex;align-items:flex-start;gap:10px;justify-content:space-between">
+    <div style="min-width:0"><h2>${esc57(c.name)}</h2>${c.venue?`<div class="v57Venue">${esc57(c.venue)}</div>`:''}<div class="v57Address">${esc57(c.address||'')}</div></div>
+    <button class="v57Star ${isFav(c.name)?'on':''}" id="v57SheetStar">★</button>
+   </div>
+   <div class="v57InfoGrid">
+    <div class="v57Info"><span>ОРГВЗНОС</span><b>${c.min_fee_rub?'от '+Number(c.min_fee_rub).toLocaleString('ru-RU')+' ₽':'—'}</b></div>
+    <div class="v57Info"><span>БЛИЖАЙШИЕ ИГРЫ</span><b>${sc.length}</b></div>
+    <div class="v57Info"><span>ВОЗРАСТ КЛУБА</span><b>${esc57(c.age||'—')}</b></div>
+    <div class="v57Info"><span>БЛИЖАЙШАЯ</span><b>${sc[0]?esc57((sc[0].time||'')+' '+prettyDate57(sc[0].date)):'—'}</b></div>
+   </div>
+   ${c.description?`<div class="v57About"><b>О КЛУБЕ</b>${esc57(c.description)}</div>`:''}
+   ${facts.length?`<div class="v57Facts">${facts.map(x=>`<span>${esc57(x)}</span>`).join('')}</div>`:''}
+   <div class="v57ScheduleTitle"><b>БЛИЖАЙШИЕ ТУРНИРЫ</b><span>${sc.length?sc.length+' в афише':'пока нет анонсов'}</span></div>
+   ${sc.length?sc.map(e=>`<div class="v57ScheduleItem"><div class="v57ScheduleTime">${esc57(e.time||'—')}</div><div><strong>${esc57(e.tournament||'Турнир')}</strong><small>${esc57(prettyDate57(e.date))}${e.fee_rub?' · '+Number(e.fee_rub).toLocaleString('ru-RU')+' ₽':''}</small></div></div>`).join(''):`<div class="v57NoSchedule">Сейчас в календаре клуба нет опубликованных ближайших турниров.</div>`}
+ </div>`);
+ setTimeout(()=>{
+  const b=document.getElementById('v57SheetStar');
+  if(b)b.onclick=()=>{const on=toggleFav(c.name);b.classList.toggle('on',on);decorate57()};
+ },0);
+}
+
+/* Remove all user-facing mentions of the upstream source. */
+function hideSourceLanguage(){
+ document.querySelectorAll('.v56Fresh').forEach(x=>{
+  const d=getData(),count=(d.events||[]).length,clubs=(d.clubs||[]).length;
+  x.innerHTML=`<b>● АФИША ОБНОВЛЕНА</b><span>${clubs} клубов · ${count} событий</span>`;
+ });
+ document.querySelectorAll('.v56Source').forEach(x=>x.remove());
+ document.querySelectorAll('.v48Source,.v55SourceLink').forEach(x=>{
+  const t=(x.textContent||'').toLowerCase();
+  if(t.includes('pokernomoney')||t.includes('источник'))x.remove();
+ });
+}
+
+/* Put star controls on every rendered club and pin favorites. */
+function decorateCards(){
+ const grid=document.getElementById('v56ClubGrid');
+ if(grid){
+  const cards=[...grid.querySelectorAll('.v56ClubCard')];
+  cards.forEach(card=>{
+   const name=card.querySelector('b')?.textContent?.trim();if(!name)return;
+   if(!card.querySelector('.v57CardStar')){
+    const star=document.createElement('button');star.type='button';star.className='v57CardStar'+(isFav(name)?' on':'');star.textContent='★';
+    star.onclick=e=>{e.preventDefault();e.stopPropagation();toggleFav(name);decorate57()};
+    card.appendChild(star);
+   }
+   card.onclick=e=>{if(e.target.closest('.v57CardStar'))return;e.preventDefault();openRichClub(name)};
+  });
+  // physically reorder DOM: favorites first, preserving user's chosen order
+  const order=favs();
+  cards.sort((a,b)=>{
+   const an=a.querySelector('b')?.textContent?.trim(),bn=b.querySelector('b')?.textContent?.trim();
+   const ai=order.indexOf(an),bi=order.indexOf(bn),af=ai>=0,bf=bi>=0;
+   if(af!==bf)return af?-1:1;if(af&&bf)return ai-bi;return 0;
+  }).forEach(c=>grid.appendChild(c));
+  let bar=grid.previousElementSibling;
+  if(!bar||!bar.classList.contains('v57FavBar')){
+    bar=document.createElement('div');bar.className='v57FavBar';grid.insertAdjacentElement('beforebegin',bar);
+  }
+  bar.innerHTML=`<b>★ ИЗБРАННЫЕ КЛУБЫ</b><span>${order.length?order.length+' в приоритете':'нажми ★ у нужного клуба'}</span>`;
+ }
+ /* Events can also open the same rich club card. */
+ document.querySelectorAll('.v56Event').forEach(card=>{
+  const name=card.querySelector('.v56Club')?.textContent?.trim();
+  if(name){card.style.cursor='pointer';card.onclick=()=>openRichClub(name)}
+ });
+}
+function decorate57(){hideSourceLanguage();decorateCards()}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+ await load57();decorate57();
+ new MutationObserver(decorate57).observe(document.body,{childList:true,subtree:true});
+});
+window.addEventListener('focus',async()=>{await load57();decorate57()});
+window.openRichClubV57=openRichClub;
+window.POKER_SWIPE_BUILD='V57 CLUB INTELLIGENCE';
+document.documentElement.dataset.pokerSwipeVersion='57-club-intelligence';
 })();
 </script>
 

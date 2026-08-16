@@ -1,183 +1,172 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, re, sys, time
+import json, re, time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-BASE = "https://pokernomoney.ru"
-ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data"
-DATA.mkdir(exist_ok=True)
-
-S = requests.Session()
+BASE="https://pokernomoney.ru"
+ROOT=Path(__file__).resolve().parents[1]
+DATA=ROOT/"data"; DATA.mkdir(exist_ok=True)
+S=requests.Session()
 S.headers.update({
-    "User-Agent": "PokerSwipe/1.0 (+public schedule aggregator; contact via repository)",
-    "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.7",
+ "User-Agent":"PokerSwipe/1.0",
+ "Accept-Language":"ru-RU,ru;q=0.9,en;q=0.7",
 })
+MONTHS={"янв":1,"фев":2,"мар":3,"апр":4,"май":5,"мая":5,"июн":6,"июл":7,"авг":8,"сен":9,"сент":9,"окт":10,"ноя":11,"дек":12}
 
-MONTHS = {
- "янв":1,"фев":2,"мар":3,"апр":4,"май":5,"мая":5,"июн":6,"июл":7,"авг":8,
- "сен":9,"сент":9,"окт":10,"ноя":11,"дек":12,
-}
-
-def get(url, timeout=25):
-    r = S.get(url, timeout=timeout)
-    r.raise_for_status()
-    return r.text
-
-def clean(s):
-    return re.sub(r"\s+", " ", (s or "")).strip()
-
+def clean(s): return re.sub(r"\s+"," ",s or "").strip()
+def get(url,timeout=25):
+ r=S.get(url,timeout=timeout); r.raise_for_status(); return r.text
 def money(s):
-    m = re.search(r"(\d[\d\s]*)\s*₽", s or "")
-    return int(m.group(1).replace(" ","")) if m else 0
+ m=re.search(r"(\d[\d\s]*)\s*₽",s or "")
+ return int(m.group(1).replace(" ","")) if m else 0
+def normalize_date(raw,now):
+ t=clean(raw).lower().replace(".","")
+ m=re.search(r"(\d{1,2})\s+([а-яё]{3,5})",t)
+ if not m:return ""
+ d=int(m.group(1)); mon=MONTHS.get(m.group(2)[:3])
+ if not mon:return ""
+ year=now.year
+ try:
+  candidate=datetime(year,mon,d)
+  if (candidate-now.replace(tzinfo=None)).days < -180: year+=1
+ except: return ""
+ return f"{year:04d}-{mon:02d}-{d:02d}"
 
-def normalize_date(raw, now):
-    t = clean(raw).lower().replace(".", "")
-    # "вс, 7 июн" / "7 июн"
-    m = re.search(r"(\d{1,2})\s+([а-яё]{3,5})", t)
-    if not m: return ""
-    d = int(m.group(1)); mon = MONTHS.get(m.group(2)[:3])
-    if not mon: return ""
-    year = now.year
-    dt = datetime(year, mon, d)
-    # If page is around new year and parsed date is far in past, assume next year.
-    if (dt - now.replace(tzinfo=None)).days < -180:
-        year += 1
-    return f"{year:04d}-{mon:02d}-{d:02d}"
+def find_after_label(lines,label):
+ for i,x in enumerate(lines):
+  if clean(x).lower()==label.lower() and i+1<len(lines): return clean(lines[i+1])
+ return ""
 
-def parse_club_links(html):
-    soup = BeautifulSoup(html, "html.parser")
-    found = {}
-    for a in soup.find_all("a", href=True):
-        href = a["href"]
-        if "/club/" in href or href.startswith("/club/c~"):
-            url = urljoin(BASE, href)
-            name = clean(a.get_text(" ", strip=True))
-            if name and name.lower() not in {"подробнее","перейти","расписание"}:
-                found[url] = name
-    # fallback regex
-    for href in re.findall(r'href=["\']([^"\']*?/club/c~[^"\']+)["\']', html, re.I):
-        found.setdefault(urljoin(BASE, href), "")
-    return found
+def club_links(html):
+ soup=BeautifulSoup(html,"html.parser"); out={}
+ for a in soup.find_all("a",href=True):
+  href=a["href"]
+  if "/club/c~" not in href: continue
+  url=urljoin(BASE,href)
+  txt=clean(a.get_text(" ",strip=True))
+  out.setdefault(url,txt)
+ return out
 
-def parse_club(url, hinted_name, now):
-    html = get(url)
-    soup = BeautifulSoup(html, "html.parser")
-    h1 = soup.find("h1")
-    name = clean(h1.get_text(" ", strip=True) if h1 else hinted_name) or hinted_name or url.rsplit("/",1)[-1]
-    text = soup.get_text("\n", strip=True)
+def parse_schedule(soup,name,url,now):
+ result=[]
+ for table in soup.find_all("table"):
+  for tr in table.find_all("tr"):
+   cells=[clean(x.get_text(" ",strip=True)) for x in tr.find_all(["td","th"])]
+   if len(cells)<3:continue
+   joined=" | ".join(cells)
+   tm=re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b",joined)
+   date=next((normalize_date(c,now) for c in cells if normalize_date(c,now)),"")
+   if not tm or not date:continue
+   candidates=[c for c in cells if c and not normalize_date(c,now) and not re.fullmatch(r"\d{1,2}:\d{2}",c) and "₽" not in c and c.lower() not in {"дата","время","турнир","орг. взнос","оргвзнос"}]
+   tournament=candidates[-1] if candidates else "Турнир"
+   result.append({"date":date,"time":tm.group(0).zfill(5),"club":name,"tournament":tournament,"fee_rub":money(joined),"source_url":url})
+ # fallback from visible text
+ if not result:
+  lines=[clean(x) for x in soup.get_text("\n",strip=True).splitlines() if clean(x)]
+  for i,line in enumerate(lines):
+   date=normalize_date(line,now)
+   if not date:continue
+   window=lines[i:i+10]
+   tm=next((re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b",x) for x in window if re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b",x)),None)
+   if not tm:continue
+   candidates=[x for x in window[1:] if not normalize_date(x,now) and not re.search(r"\b\d{1,2}:\d{2}\b",x) and "₽" not in x and len(x)>3]
+   result.append({"date":date,"time":tm.group(0).zfill(5),"club":name,"tournament":candidates[0] if candidates else "Турнир","fee_rub":next((money(x) for x in window if "₽" in x),0),"source_url":url})
+ uniq={}
+ for e in result: uniq[(e["date"],e["time"],e["tournament"])]=e
+ return list(uniq.values())
 
-    address = ""
-    m = re.search(r"Адрес\s*\n+\s*([^\n]+)", text, re.I)
-    if m: address = clean(m.group(1))
+def parse_club(url,hint,now):
+ html=get(url); soup=BeautifulSoup(html,"html.parser")
+ h1=soup.find("h1"); name=clean(h1.get_text(" ",strip=True) if h1 else hint) or hint
+ lines=[clean(x) for x in soup.get_text("\n",strip=True).splitlines() if clean(x)]
+ address=find_after_label(lines,"Адрес")
+ age=find_after_label(lines,"Возраст клуба")
 
-    # Parse schedule from tables first.
-    events = []
-    for table in soup.find_all("table"):
-        headers = [clean(x.get_text(" ", strip=True)).lower() for x in table.find_all("th")]
-        for tr in table.find_all("tr"):
-            cells = [clean(x.get_text(" ", strip=True)) for x in tr.find_all(["td","th"])]
-            if len(cells) < 3: continue
-            joined = " | ".join(cells)
-            time_m = re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b", joined)
-            date = ""
-            for c in cells:
-                date = normalize_date(c, now)
-                if date: break
-            if not date or not time_m: continue
-            # heuristically choose tournament text: non-date, non-time, non-money, not header
-            candidates = [c for c in cells if c and not normalize_date(c,now) and not re.fullmatch(r"\d{1,2}:\d{2}",c) and "₽" not in c]
-            tournament = candidates[-1] if candidates else "Турнир"
-            fee = money(joined)
-            events.append({"date":date,"time":time_m.group(0).zfill(5),"club":name,"tournament":tournament,"fee_rub":fee,"source_url":url})
+ # Venue is typically the compact line immediately after H1 and before "Контакты и адрес".
+ venue=""
+ if h1:
+  n=h1.find_next()
+  while n and getattr(n,"name",None):
+   txt=clean(n.get_text(" ",strip=True))
+   if txt and txt not in {name,"Контакты и адрес"}:
+    if len(txt)<100: venue=txt
+    break
+   n=n.find_next()
 
-    # Fallback: page text blocks can still contain date/time/name/fee.
-    if not events:
-        lines = [clean(x) for x in text.splitlines() if clean(x)]
-        for i,line in enumerate(lines):
-            date = normalize_date(line, now)
-            if not date: continue
-            window = lines[i:i+8]
-            tm = next((re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b", x) for x in window if re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b", x)), None)
-            if not tm: continue
-            fee = next((money(x) for x in window if "₽" in x), 0)
-            tournament = next((x for x in window[1:] if x and not normalize_date(x,now) and not re.search(r"\b\d{1,2}:\d{2}\b",x) and "₽" not in x and len(x)>3), "Турнир")
-            events.append({"date":date,"time":tm.group(0).zfill(5),"club":name,"tournament":tournament,"fee_rub":fee,"source_url":url})
+ # Description: all meaningful paragraphs before tournament schedule.
+ desc_parts=[]
+ schedule_heading=soup.find(lambda tag:getattr(tag,"name",None) in ["h2","h3"] and "Расписание турниров" in clean(tag.get_text(" ",strip=True)))
+ for p in soup.find_all(["p","div"]):
+  if schedule_heading and p.sourceline and schedule_heading.sourceline and p.sourceline>=schedule_heading.sourceline: break
+  txt=clean(p.get_text(" ",strip=True))
+  if len(txt)>=80 and "Вся представленная информация" not in txt and "Связаться с администратором" not in txt:
+   desc_parts.append(txt)
+ description=max(desc_parts,key=len,default="")
+ if len(description)>1600: description=description[:1597]+"…"
 
-    # Deduplicate
-    uniq={}
-    for e in events:
-        uniq[(e["date"],e["time"],e["club"],e["tournament"])]=e
-    events=list(uniq.values())
+ # Telegram / phone / external links if present.
+ contacts={}
+ for a in soup.find_all("a",href=True):
+  href=a["href"]; label=clean(a.get_text(" ",strip=True))
+  if "t.me/" in href: contacts.setdefault("telegram",href)
+  if href.startswith("tel:"): contacts.setdefault("phone",href[4:])
+  if href.startswith("http") and "pokernomoney.ru" not in href and "t.me/" not in href:
+   contacts.setdefault("website",href)
 
-    fee_vals=[e["fee_rub"] for e in events if e["fee_rub"]]
-    return {
-        "name":name,
-        "address":address,
-        "source_url":url,
-        "min_fee_rub": min(fee_vals) if fee_vals else 0,
-        "upcoming":len(events),
-        "events":events,
-    }
+ schedule=parse_schedule(soup,name,url,now)
+ fees=[e["fee_rub"] for e in schedule if e.get("fee_rub")]
+
+ # Extract useful structured facts from description.
+ facts=[]
+ dlow=description.lower()
+ checks=[
+  ("18+","18+"),("tda","Правила TDA"),("ребай","Ребаи"),("ре-энтри","Re-entry"),
+  ("поздн","Поздняя регистрация"),("обуч","Обучение"),("бесплат","Есть бесплатный формат"),
+  ("баунти","Bounty"),("омах","Омаха"),("mtt","MTT")
+ ]
+ for needle,label in checks:
+  if needle in dlow and label not in facts:facts.append(label)
+
+ return {
+  "name":name,"venue":venue,"address":address,"age":age,
+  "description":description,"details":facts,"contacts":contacts,
+  "source_url":url,"min_fee_rub":min(fees) if fees else 0,
+  "upcoming":len(schedule),"schedule":schedule,
+ }
 
 def main():
-    now = datetime.now(timezone.utc).astimezone()
-    candidates = ["/clubs", "/club"]
-    directory_html = None
-    directory_url = None
-    errors=[]
-    for path in candidates:
-        try:
-            directory_html = get(BASE+path)
-            directory_url = BASE+path
-            if directory_html: break
-        except Exception as e:
-            errors.append(f"{path}: {e}")
-    if not directory_html:
-        raise RuntimeError("Could not fetch PokerNoMoney directory: " + "; ".join(errors))
+ now=datetime.now(timezone.utc).astimezone()
+ directory_url=BASE+"/club"
+ directory=get(directory_url)
+ links=club_links(directory)
+ if len(links)<10:
+  directory_url=BASE+"/clubs";directory=get(directory_url);links=club_links(directory)
+ if len(links)<10: raise RuntimeError(f"Only {len(links)} club links found; refusing overwrite")
 
-    links = parse_club_links(directory_html)
-    clubs=[]; all_events=[]; failures=[]
-    for idx,(url,hint) in enumerate(links.items(),1):
-        try:
-            c=parse_club(url,hint,now)
-            clubs.append({k:v for k,v in c.items() if k!="events"})
-            all_events.extend(c["events"])
-        except Exception as e:
-            failures.append({"url":url,"error":str(e)})
-        time.sleep(0.08)
+ clubs=[]; events=[]; failures=[]
+ for url,hint in links.items():
+  try:
+   c=parse_club(url,hint,now);clubs.append(c);events.extend(c["schedule"])
+  except Exception as e: failures.append({"url":url,"error":str(e)})
+  time.sleep(.08)
 
-    # If discovery was sparse, don't overwrite good existing data with garbage.
-    if len(clubs) < 10:
-        raise RuntimeError(f"Only {len(clubs)} club pages parsed; refusing to overwrite data")
+ if len(clubs)<10: raise RuntimeError(f"Only {len(clubs)} clubs parsed; refusing overwrite")
+ clubs.sort(key=lambda x:x["name"].lower())
+ events.sort(key=lambda e:(e["date"],e["time"],e["club"].lower()))
 
-    clubs.sort(key=lambda x:x["name"].lower())
-    all_events.sort(key=lambda e:(e["date"],e["time"],e["club"].lower()))
+ payload={
+  "source":directory_url,"updated_at":now.isoformat(timespec="seconds"),
+  "club_count":len(clubs),"event_count":len(events),"failures":failures,
+  "clubs":clubs,"events":events
+ }
+ (DATA/"live_polyana.json").write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
+ (DATA/"moscow_clubs_pokernomoney.json").write_text(json.dumps({"source":directory_url,"retrieved_at":payload["updated_at"],"city":"Москва","count":len(clubs),"clubs":clubs},ensure_ascii=False,indent=2),encoding="utf-8")
+ today=now.strftime("%Y-%m-%d")
+ (DATA/"moscow_schedule_today.json").write_text(json.dumps({"source":directory_url,"updated_at":payload["updated_at"],"date":today,"city":"Москва","events":[e for e in events if e["date"]==today]},ensure_ascii=False,indent=2),encoding="utf-8")
+ print(f"Updated rich club data: {len(clubs)} clubs, {len(events)} events, failures={len(failures)}")
 
-    payload={
-        "source":directory_url,
-        "updated_at":now.isoformat(timespec="seconds"),
-        "club_count":len(clubs),
-        "event_count":len(all_events),
-        "failures":failures,
-        "clubs":clubs,
-        "events":all_events,
-    }
-    (DATA/"live_polyana.json").write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
-    (DATA/"moscow_clubs_pokernomoney.json").write_text(json.dumps({
-        "source":directory_url,"retrieved_at":payload["updated_at"],"city":"Москва","count":len(clubs),"clubs":clubs
-    },ensure_ascii=False,indent=2),encoding="utf-8")
-
-    today=now.strftime("%Y-%m-%d")
-    today_events=[e for e in all_events if e["date"]==today]
-    (DATA/"moscow_schedule_today.json").write_text(json.dumps({
-        "source":directory_url,"updated_at":payload["updated_at"],"date":today,"city":"Москва","events":today_events
-    },ensure_ascii=False,indent=2),encoding="utf-8")
-    print(f"Updated: {len(clubs)} clubs, {len(all_events)} future events, {len(today_events)} today; failures={len(failures)}")
-
-if __name__=="__main__":
-    main()
+if __name__=="__main__": main()
