@@ -1,0 +1,7 @@
+POKER SWIPE — V51 AUTO POLYANA
+Bottom nav preserved: Главная / Раздачи / Мои турниры / Поляна / Ты.
+Polya data updater: .github/workflows/update_polyana.yml
+Runs every 6 hours and can also be started manually in GitHub Actions.
+Scraper: scripts/update_polyana.py
+UI loads data/live_polyana.json with cache disabled and refreshes every 15 minutes while open.
+If source parsing fails, updater refuses to overwrite the last good snapshot.

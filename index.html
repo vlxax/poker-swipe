@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V35 UX RESET</title>
+<title>POKER SWIPE — V51 AUTO POLYANA</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -939,6 +939,12 @@ button{letter-spacing:-.01em}
 .v31Why{font-size:11px;line-height:1.5;color:#d1cad2}.v31Why b{color:white}
 @media(max-width:370px){.v31Modes{grid-template-columns:1fr}.v31Identity{grid-template-columns:76px 1fr}.v31Avatar{width:76px;height:76px}.v31Hero h1{font-size:27px}}
 </style>
+
+
+<meta name="poker-swipe-build" content="V49-MASTER-2026-08-16">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 </head>
 <body>
@@ -3295,6 +3301,202 @@ nav();load();
 /* Diagnostic BACK: real state rollback, not decorative button. */
 const obs=new MutationObserver(()=>{try{const story=document.getElementById('story');if(!story||!story.querySelector('.d25')||story.querySelector('.v48TestBack'))return;if(typeof D25==='undefined'||(!D25.pending&&D25.index<=0))return;story.style.position='relative';const b=document.createElement('button');b.className='v48TestBack';b.textContent='← НАЗАД';b.onclick=e=>{e.stopPropagation();if(D25.pending){D25.pending=null}else if(D25.index>0){D25.index--;if(D25.results&&D25.results.length)D25.results.pop()}D25.started=performance.now();renderDiagnostic()};story.appendChild(b)}catch(e){}});const story=document.getElementById('story');if(story)obs.observe(story,{childList:true,subtree:true});
 document.documentElement.dataset.pokerSwipeVersion='48-master';
+})();
+</script>
+
+
+<script id="v49-build-marker">
+(function(){
+  const BUILD='V49 MASTER';
+  document.documentElement.dataset.pokerSwipeVersion='49-master';
+  window.POKER_SWIPE_BUILD=BUILD;
+  if(new URLSearchParams(location.search).get('build')==='1'){
+    window.addEventListener('DOMContentLoaded',()=>{
+      const b=document.createElement('div');
+      b.textContent=BUILD;
+      b.style.cssText='position:fixed;right:8px;top:8px;z-index:99999;background:#c8ff3d;color:#0b0b0e;font:900 10px/1 Arial;padding:7px 9px;border-radius:999px;box-shadow:0 4px 18px #0008';
+      document.body.appendChild(b);
+    });
+  }
+})();
+</script>
+
+
+<style id="v50-five-nav">
+/* V50 — restore 5-item bottom navigation */
+.nav{
+  display:grid!important;
+  grid-template-columns:repeat(5,1fr)!important;
+  gap:0!important;
+}
+.nav button{
+  min-width:0!important;
+  padding-left:4px!important;
+  padding-right:4px!important;
+}
+.nav button .label,
+.nav button span,
+.nav button{
+  font-size:9px!important;
+}
+@media(max-width:390px){
+  .nav button{font-size:8px!important}
+}
+</style>
+<script id="v50-five-nav-script">
+(function(){
+'use strict';
+
+function findNav(){
+  return document.querySelector('.nav');
+}
+
+function makeMyTournamentsButton(){
+  const b=document.createElement('button');
+  b.type='button';
+  b.dataset.nav='mytournaments';
+  b.innerHTML='<i style="font-style:normal;font-size:20px;line-height:1">♛</i><span>МОИ ТУРНИРЫ</span>';
+  b.onclick=()=>{
+    try{
+      if(typeof showScreen==='function') showScreen('tournaments');
+      const area=document.getElementById('tournamentsArea');
+      if(typeof __renderTournaments23V24==='function'){
+        __renderTournaments23V24();
+        const root=area&&area.querySelector('.t23');
+        if(root){
+          root.insertAdjacentHTML('afterbegin','<div class="v47Source"><b>МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ</b>Добавляй турниры, веди бай-ины, пули, призовые, bounty, profit и ROI.</div>');
+        }
+      } else if(typeof renderTournaments23==='function') {
+        renderTournaments23();
+      }
+      document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active','on'));
+      b.classList.add('active');
+    }catch(e){}
+  };
+  return b;
+}
+
+function restoreFiveNav(){
+  const nav=findNav();
+  if(!nav) return;
+
+  // Remove accidental duplicate from previous reloads.
+  nav.querySelectorAll('[data-nav="mytournaments"]').forEach(x=>x.remove());
+
+  const buttons=[...nav.querySelectorAll('button')];
+  const polyana=buttons.find(x=>x.dataset.nav==='tournaments');
+  const you=buttons.find(x=>x.dataset.nav==='you' || /ТЫ|ПРОФИЛЬ/i.test(x.textContent||''));
+
+  const myBtn=makeMyTournamentsButton();
+
+  // Order: Главная / Раздачи / Мои турниры / Поляна / Ты
+  if(polyana) nav.insertBefore(myBtn, polyana);
+  else if(you) nav.insertBefore(myBtn, you);
+  else nav.appendChild(myBtn);
+
+  // Make labels explicit.
+  const home=nav.querySelector('[data-nav="home"]');
+  const hands=nav.querySelector('[data-nav="myhands"]');
+  const field=nav.querySelector('[data-nav="tournaments"]');
+  if(home && home.lastChild) home.lastChild.textContent=' ГЛАВНАЯ';
+  if(hands && hands.lastChild) hands.lastChild.textContent=' РАЗДАЧИ';
+  if(field && field.lastChild) field.lastChild.textContent=' ПОЛЯНА';
+
+  document.documentElement.dataset.pokerSwipeVersion='50-five-nav';
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',restoreFiveNav);
+else restoreFiveNav();
+
+window.addEventListener('load',restoreFiveNav);
+})();
+</script>
+
+
+<style id="v51-auto-polyana">
+.v51LiveStamp{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #c8ff3d3d;background:#12190e;border-radius:15px;padding:10px 11px;margin:9px 0}
+.v51LiveStamp b{font-size:10px;color:#dfff9f}.v51LiveStamp span{font-size:8px;color:#918b94;text-align:right}
+.v51DayTabs{display:flex;gap:6px;overflow:auto;padding:8px 0 4px;scrollbar-width:none}.v51DayTabs::-webkit-scrollbar{display:none}
+.v51DayTabs button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#8e8792;border-radius:13px;padding:8px 10px;font-size:8px;font-weight:1000}
+.v51DayTabs button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v51AutoEvent{border:1px solid #30303a;border-radius:19px;background:radial-gradient(circle at 100% 0,#c8ff3d12,transparent 35%),#111117;padding:12px;margin:7px 0}
+.v51AutoClub{font-size:21px;line-height:1;color:#c8ff3d;font-weight:1000;letter-spacing:-.04em}
+.v51AutoTournament{font-size:13px;color:#fff;font-weight:850;margin-top:6px}
+.v51AutoMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.v51AutoMeta span{border:1px solid #383842;border-radius:999px;padding:5px 7px;font-size:7px;color:#bcb5bf}
+.v51Empty{border:1px dashed #383842;border-radius:18px;padding:15px;color:#9b949e;font-size:11px;line-height:1.45;margin:8px 0}
+</style>
+<script id="v51-auto-polyana-script">
+(function(){
+'use strict';
+let V51_DATA=null;
+let V51_DAY=null;
+
+function isoLocalDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nextDays(){
+ const a=[]; const now=new Date();
+ for(let i=0;i<7;i++){const d=new Date(now);d.setDate(now.getDate()+i);a.push(isoLocalDate(d))}
+ return a;
+}
+function prettyDay(iso,i){
+ const d=new Date(iso+'T12:00:00'); const wd=['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'][d.getDay()];
+ return i===0?'СЕГОДНЯ':wd+' '+d.getDate();
+}
+function sourceStamp(){
+ if(!V51_DATA)return '';
+ const u=V51_DATA.updated_at?new Date(V51_DATA.updated_at):null;
+ const t=u&&!isNaN(u)?u.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+ return `<div class="v51LiveStamp"><b>● АВТООБНОВЛЕНИЕ POLYANA</b><span>${V51_DATA.club_count||0} клубов · обновлено ${t}</span></div>`;
+}
+function eventsFor(day){return (V51_DATA&&Array.isArray(V51_DATA.events)?V51_DATA.events:[]).filter(e=>e.date===day)}
+function dayTabs(){
+ const days=nextDays(); if(!V51_DAY)V51_DAY=days[0];
+ return `<div class="v51DayTabs">${days.map((d,i)=>`<button data-v51day="${d}" class="${V51_DAY===d?'on':''}">${prettyDay(d,i)}</button>`).join('')}</div>`;
+}
+function eventCards(){
+ const ev=eventsFor(V51_DAY);
+ if(!ev.length)return `<div class="v51Empty">На выбранную дату в текущем фиде нет турниров. PokerSwipe ничего не выдумывает: новые события появятся после следующего автоматического обновления.</div>`;
+ return ev.map(e=>`<div class="v51AutoEvent">
+  <div class="v51AutoClub">${e.club||'КЛУБ'}</div>
+  <div class="v51AutoTournament">${e.tournament||'Турнир'}</div>
+  <div class="v51AutoMeta"><span>${e.time||'—'}</span>${e.fee_rub?`<span>${Number(e.fee_rub).toLocaleString('ru-RU')} ₽</span>`:''}<span>POKERNOMONEY</span></div>
+ </div>`).join('');
+}
+function mountAuto(){
+ const area=document.getElementById('tournamentsArea'); if(!area || !V51_DATA)return;
+ // We only augment the Polya/Afisha view, never the independent My Tournaments journal.
+ const txt=(area.textContent||'').toUpperCase();
+ if(!txt.includes('ПОЛЯНА') || txt.includes('МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ'))return;
+
+ const old=[...area.querySelectorAll('.v47Event,.p46LiveEvent,.p45Event')]; old.forEach(x=>x.remove());
+ const source=area.querySelector('.v47Source,.p45Source');
+ const host=document.createElement('div');
+ host.id='v51AutoHost';
+ host.innerHTML=sourceStamp()+dayTabs()+eventCards();
+ if(source)source.insertAdjacentElement('afterend',host);
+ else area.querySelector('.v47Hero,.p45Hero,.p41Hero')?.insertAdjacentElement('afterend',host);
+
+ host.querySelectorAll('[data-v51day]').forEach(b=>b.onclick=()=>{V51_DAY=b.dataset.v51day;mountAutoFresh()});
+}
+function mountAutoFresh(){
+ const old=document.getElementById('v51AutoHost'); if(old)old.remove();
+ mountAuto();
+}
+async function load(){
+ try{
+   const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});
+   if(!r.ok)throw new Error('HTTP '+r.status);
+   V51_DATA=await r.json();
+   mountAutoFresh();
+ }catch(e){ console.warn('V51 live data unavailable, current snapshot remains',e); }
+}
+const oldRender=window.renderTournaments23;
+if(typeof oldRender==='function'){
+ window.renderTournaments23=function(){const r=oldRender.apply(this,arguments);setTimeout(mountAutoFresh,0);return r}
+}
+window.addEventListener('DOMContentLoaded',load);
+window.addEventListener('focus',()=>{load()});
+setInterval(load,15*60*1000);
+document.documentElement.dataset.pokerSwipeVersion='51-auto-polyana';
 })();
 </script>
 
