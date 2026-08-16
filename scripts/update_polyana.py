@@ -126,7 +126,7 @@ def parse_club(url, hinted_name, now):
 
 def main():
     now = datetime.now(timezone.utc).astimezone()
-    candidates = ["/club", "/clubs"]
+    candidates = ["/clubs", "/club"]
     directory_html = None
     directory_url = None
     errors=[]

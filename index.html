@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V54 CONSOLIDATED</title>
+<title>POKER SWIPE — V55 REAL SECTIONS</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3591,6 +3591,62 @@ window.openMyTournamentsV54=openJournal;
 window.openPolyanaV54=openPolyana;
 document.documentElement.dataset.pokerSwipeVersion='54-consolidated';
 window.POKER_SWIPE_BUILD='V54 CONSOLIDATED';
+})();
+</script>
+
+
+<style id="v55-real-sections">
+.v55SourceLink{margin:8px 0 12px;padding:11px 12px;border:1px solid rgba(200,255,61,.22);border-radius:17px;background:#11160e;font-size:10px;color:#b8b1bb;line-height:1.45}.v55SourceLink b{display:block;color:#c8ff3d;font-size:12px;margin-bottom:3px}
+.v55ClubGrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.v55ClubCard{position:relative;overflow:hidden;padding:15px;min-height:96px;border-radius:21px;background:radial-gradient(circle at 100% 0,rgba(200,255,61,.08),transparent 35%),#111116;border:1px solid rgba(255,255,255,.07)}
+.v55ClubCard b{display:block;font-family:"Arial Narrow",Arial,sans-serif;font-size:27px;line-height:.92;font-weight:1000;letter-spacing:-.055em;color:#c8ff3d;padding-right:50px}
+.v55ClubCard small{display:block;margin-top:8px;font-size:11px;line-height:1.4;color:#aaa3ad}
+.v55ClubCard i{position:absolute;right:9px;bottom:-14px;font-style:normal;font-size:65px;font-weight:1000;color:rgba(255,255,255,.035)}
+.v55JournalHero{padding:17px 15px;margin-bottom:11px;border-radius:26px;background:radial-gradient(circle at 96% 0,rgba(200,255,61,.15),transparent 38%),#111116}
+.v55JournalHero h1{font-size:35px;line-height:.9;letter-spacing:-.055em;margin:5px 0 8px}.v55JournalHero h1 span{color:#c8ff3d}.v55JournalHero p{font-size:12px;line-height:1.45;color:#b8b1bb;margin:0}
+.v55JournalHero .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.v55JournalHero .chips span{font-size:7px;border:1px solid #373741;border-radius:999px;padding:5px 7px;color:#bbb4be}
+/* non-negotiable tournament hierarchy */
+.v48Club{font-family:"Arial Narrow",Arial,sans-serif!important;font-size:29px!important;line-height:.9!important;font-weight:1000!important;letter-spacing:-.06em!important;color:#c8ff3d!important;display:block!important;order:1!important}
+.v48Tournament{font-size:15px!important;line-height:1.18!important;font-weight:850!important;color:#fff!important;margin-top:8px!important;display:block!important;order:2!important}
+</style>
+<script id="v55-real-sections-script">
+(function(){
+'use strict';
+let DATA=null;
+async function loadData(){
+ try{const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});if(r.ok)DATA=await r.json()}catch(e){}
+}
+function mark(k){document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));document.querySelector('.nav [data-nav="'+k+'"]')?.classList.add('on')}
+function decorateJournal(){
+ const root=document.querySelector('#tournamentsArea .t23');if(!root)return;
+ if(!root.querySelector('.v55JournalHero'))root.insertAdjacentHTML('afterbegin',`<div class="v55JournalHero"><span class="ey">ТВОЯ ИГРА · P&L</span><h1>МОИ <span>ТУРНИРЫ.</span></h1><p>ONLINE и OFFLINE. Добавляй стоимость, количество входов, призовые и bounty — PokerSwipe считает вложено, profit и ROI.</p><div class="chips"><span>ВСЕ</span><span>ONLINE</span><span>OFFLINE</span><span>BUY-IN</span><span>BULLETS</span><span>PRIZE</span><span>PROFIT</span><span>ROI</span></div></div>`);
+}
+function openJournal(){
+ if(typeof window.openMyTournamentsV54==='function'){window.openMyTournamentsV54();decorateJournal();mark('mytournaments');return}
+ if(typeof show==='function')show('tournaments');
+ if(typeof __renderTournaments23V24==='function'){__renderTournaments23V24();decorateJournal()}
+ mark('mytournaments');
+}
+function fullDirectory(){
+ if(!DATA)return;
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ const text=(area.textContent||'').toUpperCase();
+ if(!text.includes('КЛУБ'))return;
+ if(area.querySelector('.v55ClubGrid'))return;
+ const clubs=Array.isArray(DATA.clubs)?DATA.clubs:[];if(!clubs.length)return;
+ const source=document.createElement('div');source.className='v55SourceLink';source.innerHTML='<b>66 КЛУБОВ МОСКВЫ</b>Источник афиши и справочника: PokerNoMoney · данные обновляются отдельным GitHub workflow.';
+ const grid=document.createElement('div');grid.className='v55ClubGrid';
+ grid.innerHTML=clubs.map((c,i)=>`<div class="v55ClubCard"><b>${c.name||'КЛУБ'}</b><small>${c.address||''}${c.min_fee_rub?' · от '+Number(c.min_fee_rub).toLocaleString('ru-RU')+' ₽':''}${typeof c.upcoming==='number'?' · '+c.upcoming+' анонсов':''}</small><i>${String(i+1).padStart(2,'0')}</i></div>`).join('');
+ const anchor=area.querySelector('.v48Source')||area.querySelector('.v48ClubList');
+ if(anchor){anchor.insertAdjacentElement('afterend',source);source.insertAdjacentElement('afterend',grid)}else{area.append(source,grid)}
+}
+function wire(){
+ const b=document.querySelector('.nav [data-nav="mytournaments"]');if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();openJournal()};
+ fullDirectory();
+}
+document.addEventListener('DOMContentLoaded',async()=>{await loadData();wire();new MutationObserver(wire).observe(document.body,{childList:true,subtree:true})});
+window.addEventListener('focus',async()=>{await loadData();wire()});
+window.POKER_SWIPE_BUILD='V55 REAL SECTIONS';document.documentElement.dataset.pokerSwipeVersion='55-real-sections';
 })();
 </script>
 
