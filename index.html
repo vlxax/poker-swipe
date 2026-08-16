@@ -3419,5 +3419,184 @@ document.documentElement.dataset.pokerSwipeVersion='41-polyana';
 })();
 </script>
 
+
+<style id="v42-polya-fixes">
+/* ================= V42 · NAV + ONBOARDING + POLYANA ================= */
+:root{--v42-pink:#ff4d91;--v42-lime:#c8ff3d;--v42-ink:#09090d}
+.nav button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important}
+.nav button i{margin-left:auto!important;margin-right:auto!important}
+.myNavGlyph24{display:block!important;width:24px!important;height:22px!important;margin:0 auto 5px!important;left:auto!important;right:auto!important;transform:none!important}
+.myNavGlyph24 span:first-child{left:3px!important;top:3px!important}.myNavGlyph24 span:last-child{right:3px!important;top:2px!important}
+.nav button[data-nav="myhands"]{text-align:center!important}
+.nav button[data-nav="myhands"] .myNavGlyph24{transform:translateX(0)!important}
+
+/* Initial test: same DNA as current PokerSwipe — black, acid lime, controlled pink. */
+.onboard{background:
+ radial-gradient(circle at 88% 8%,rgba(200,255,61,.14),transparent 28%),
+ radial-gradient(circle at 0 85%,rgba(255,77,145,.15),transparent 34%),
+ linear-gradient(165deg,#09090d,#050507 72%)!important}
+.story{background:
+ radial-gradient(circle at 92% 0,rgba(200,255,61,.11),transparent 31%),
+ radial-gradient(circle at 0 100%,rgba(255,77,145,.11),transparent 36%),
+ linear-gradient(155deg,#15151b,#09090d)!important;
+ border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 28px 80px #000a,inset 0 1px rgba(255,255,255,.05)!important}
+.storyCinema21 .impact .pink{color:var(--v42-lime)!important}
+.storyIdentity21 b{color:#aaa4ae!important}.storyIdentity21 .line{background:linear-gradient(90deg,transparent,var(--v42-pink),transparent)!important}
+.storyStep21 i.on{background:var(--v42-lime)!important;box-shadow:0 0 13px rgba(200,255,61,.5)!important}
+#nickInput{background:#0e0e13!important;border:1px solid #383842!important;color:#fff!important;border-radius:16px!important}
+.d25{background:transparent!important}
+.d25Top b{color:var(--v42-lime)!important}.d25Bar{height:6px!important;background:#ffffff12!important}
+.d25Bar i{background:linear-gradient(90deg,var(--v42-lime),var(--v42-pink))!important;box-shadow:0 0 18px rgba(200,255,61,.42)!important}
+.d25Card{border-color:#ffffff14!important;background:
+ radial-gradient(circle at 92% 0,rgba(200,255,61,.18),transparent 33%),
+ radial-gradient(circle at 0 100%,rgba(255,77,145,.10),transparent 35%),
+ linear-gradient(155deg,#17171e,#0b0b0f)!important}
+.d25Meta span.hot{border-color:rgba(255,77,145,.55)!important;color:#ff8cba!important;background:rgba(255,77,145,.08)!important}
+.d25Pot div{background:#101015!important;border-color:#34343e!important}
+.d25Choices button{background:linear-gradient(160deg,#191920,#101015)!important;border-color:#3a3a45!important}
+.d25Choices button.selected{border-color:var(--v42-lime)!important;background:#18200f!important;box-shadow:0 0 0 1px rgba(200,255,61,.3),0 0 28px rgba(200,255,61,.13)!important}
+
+/* Polyana top switcher: the old tournament journal is preserved as MY TOURNAMENTS. */
+.p42TopSwitch{display:grid;grid-template-columns:1.1fr .9fr;gap:7px;margin:12px 0 8px}
+.p42TopSwitch button{border:1px solid #31313a;background:#0d0d12;color:#7e7883;border-radius:15px;padding:11px 7px;font-size:8px;font-weight:1000}
+.p42TopSwitch button.on{background:#19210f;border-color:var(--v42-lime);color:#fff}
+.p42SubTabs{display:flex;gap:6px;overflow:auto;padding:6px 0 4px;scrollbar-width:none}.p42SubTabs::-webkit-scrollbar{display:none}
+.p42SubTabs button{flex:0 0 auto;border:1px solid #30303a;background:#0e0e13;color:#827c87;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.p42SubTabs button.on{border-color:var(--v42-lime);color:#fff;background:#18200f}
+.p42Intro{margin:8px 1px 12px;color:#8f8994;font-size:9px;line-height:1.45}
+.p42RegionGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.p42Region{position:relative;min-height:145px;border:1px solid #30303a;border-radius:22px;overflow:hidden;background:#111117;text-align:left;color:#fff;padding:0}
+.p42Region img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.82) contrast(1.08) brightness(.62)}
+.p42Region:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 25%,rgba(5,5,7,.88) 100%)}
+.p42RegionText{position:absolute;left:12px;right:10px;bottom:11px;z-index:2}.p42RegionText b{font-size:17px;display:block;letter-spacing:-.02em}.p42RegionText span{display:block;color:#c8c3cb;font-size:7px;margin-top:3px;line-height:1.25}
+.p42Source{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #292932;border-radius:16px;padding:10px 11px;background:#0c0c10;margin:10px 0}
+.p42Source div{font-size:8px;color:#8a838e;line-height:1.35}.p42Source b{display:block;color:#fff;font-size:9px;margin-bottom:2px}.p42Source span{color:var(--v42-lime);font-size:8px;white-space:nowrap}
+.p42ClubSearch{width:100%;box-sizing:border-box;border:1px solid #34343e;background:#0d0d12;color:#fff;border-radius:15px;padding:12px 13px;font-size:11px;margin:8px 0 10px}
+.p42ClubList{display:grid;gap:7px}
+.p42Club{border:1px solid #30303a;border-radius:18px;background:linear-gradient(145deg,#14141a,#0d0d12);padding:12px;text-align:left;color:#fff}
+.p42ClubName{font-size:17px;line-height:1.02;color:var(--v42-lime);font-weight:1000;letter-spacing:-.03em}
+.p42ClubAddr{font-size:8px;color:#8c858f;margin-top:5px;line-height:1.35}
+.p42ClubMeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.p42ClubMeta span{border:1px solid #34343e;border-radius:999px;padding:5px 7px;font-size:7px;color:#b1aab4}
+.p42ClubMeta .partner{border-color:rgba(255,77,145,.45);color:#ff86b6;background:rgba(255,77,145,.07)}
+.p42Event{border:1px solid #30303a;border-radius:21px;background:
+ radial-gradient(circle at 95% 0,rgba(200,255,61,.10),transparent 33%),#111117;padding:14px;margin:8px 0}
+.p42ClubPrimary{font-size:20px;color:var(--v42-lime);font-weight:1000;letter-spacing:-.035em;line-height:1}
+.p42TournamentSecondary{font-size:14px;color:#fff;font-weight:950;margin-top:6px;line-height:1.1}
+.p42EventMeta{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.p42EventMeta span{font-size:7px;color:#a49da7;border:1px solid #34343e;border-radius:999px;padding:5px 7px}
+.p42JournalHead{margin:0 0 10px}.p42JournalHead .p42TopSwitch{margin-top:0}
+@media(max-width:360px){.p42RegionGrid{grid-template-columns:1fr}.p42Region{min-height:125px}}
+</style>
+
+<script id="v42-polyana-clubs">
+(function(){
+'use strict';
+let P42_MODE='field';
+let P42_TAB='regions';
+let P42_CLUBS=[];
+
+const P42_REGIONS=[
+ {id:'moscow',name:'МОСКВА',img:'assets/regions/moscow.webp',desc:'Спортивные клубы, афиша и твоя история турниров.'},
+ {id:'kaliningrad',name:'КАЛИНИНГРАД',img:'assets/regions/kaliningrad.webp',desc:'Серии и поездки в игорную зону Янтарная.'},
+ {id:'sochi',name:'СОЧИ',img:'assets/regions/sochi.webp',desc:'Живой покер, серии и курортная поездка.'},
+ {id:'altai',name:'АЛТАЙ',img:'assets/regions/altai.webp',desc:'Игорная зона Сибирская монета.'},
+ {id:'primorye',name:'ПРИМОРЬЕ',img:'assets/regions/primorye.webp',desc:'Tigre de Cristal и дальневосточные серии.'},
+ {id:'minsk',name:'МИНСК',img:'assets/regions/minsk.webp',desc:'Серии в Беларуси и отдельная сетка поездки.'}
+];
+
+const P42_EVENTS=[
+ {club:'Straddle poker club',tournament:'Sunday Deep / турнир из афиши',time:'19:00',fee:'от 1 000 ₽',tags:['МОСКВА','NLH']},
+ {club:'Check-Check Club',tournament:'X2 Mystery',time:'19:00',fee:'1 200 ₽',tags:['МОСКВА','MYSTERY']},
+ {club:'River Room',tournament:'Classic Holdem',time:'19:00',fee:'1 000 ₽',tags:['МОСКВА','КЛАССИКА']},
+ {club:'БАРРЕЛЬ',tournament:'Classic Poker Night',time:'19:00',fee:'1 000 ₽',tags:['МОСКВА','NLH']},
+ {club:'Pocket Rockets Club',tournament:'Freezeout Tournament',time:'19:00',fee:'1 500 ₽',tags:['МОСКВА','FREEZEOUT']}
+];
+
+function p42Nav(){
+ const n=document.querySelector('.nav [data-nav="tournaments"]');
+ if(n&&n.childNodes.length)n.childNodes[n.childNodes.length-1].textContent=' ПОЛЯНА';
+}
+function p42Switch(){
+ return `<div class="p42TopSwitch"><button data-p42mode="field" class="${P42_MODE==='field'?'on':''}">ПОЛЯНА</button><button data-p42mode="journal" class="${P42_MODE==='journal'?'on':''}">МОИ ТУРНИРЫ</button></div>`;
+}
+function p42Sub(){
+ return `<div class="p42SubTabs">
+  <button data-p42tab="regions" class="${P42_TAB==='regions'?'on':''}">РЕГИОНЫ</button>
+  <button data-p42tab="today" class="${P42_TAB==='today'?'on':''}">СЕГОДНЯ</button>
+  <button data-p42tab="clubs" class="${P42_TAB==='clubs'?'on':''}">КЛУБЫ МОСКВЫ</button>
+  <button data-p42tab="series" class="${P42_TAB==='series'?'on':''}">СЕРИИ</button>
+  <button data-p42tab="trip" class="${P42_TAB==='trip'?'on':''}">МОЯ ПОЕЗДКА</button>
+ </div>`;
+}
+function p42Hero(){
+ return `<div class="p41Hero"><span class="ey">ТВОЯ ЖИВАЯ ИГРА</span><h1>ПОЛЯНА<span>.</span></h1><p>Сначала понимаешь, куда идёшь. Потом — какой турнир играешь. Клубы, серии, поездки и твоя личная турнирная история не смешаны в одну кашу.</p>${p42Switch()}${p42Sub()}</div>`;
+}
+function p42Regions(){
+ return `<div class="p42Intro">Выбери регион. Картинки работают только как визуальная навигация — конкретные клубы и турниры дальше идут текстом.</div>
+ <div class="p42RegionGrid">${P42_REGIONS.map(r=>`<button class="p42Region" data-p42region="${r.id}"><img src="${r.img}" alt=""><div class="p42RegionText"><b>${r.name}</b><span>${r.desc}</span></div></button>`).join('')}</div>`;
+}
+function p42Today(){
+ return `<div class="p42Intro">Карточка теперь читается в правильном порядке: <b style="color:#c8ff3d">КЛУБ</b> → турнир → время / формат / вход.</div>
+ ${P42_EVENTS.map(e=>`<div class="p42Event"><div class="p42ClubPrimary">${e.club}</div><div class="p42TournamentSecondary">${e.tournament}</div><div class="p42EventMeta"><span>${e.time}</span><span>${e.fee}</span>${e.tags.map(t=>`<span>${t}</span>`).join('')}</div></div>`).join('')}
+ <div class="p42Source"><div><b>Источник афиши</b>PokerNoMoney.ru · спортивный покер, без денежных выигрышей</div><span>SNAPSHOT</span></div>`;
+}
+function p42ClubCard(c){
+ return `<button class="p42Club"><div class="p42ClubName">${c.name}</div><div class="p42ClubAddr">${c.address}</div><div class="p42ClubMeta">${c.partner?'<span class="partner">★ ПАРТНЁР ИСТОЧНИКА</span>':''}<span>${c.min_fee_rub===0?'ВХОД СВОБОДНЫЙ':'ОТ '+c.min_fee_rub.toLocaleString('ru-RU')+' ₽'}</span><span>${c.upcoming?c.upcoming+' ТУРНИРОВ':'НЕТ АНОНСОВ'}</span></div></button>`;
+}
+function p42Clubs(){
+ return `<div class="p42Source"><div><b>МОСКВА · СПРАВОЧНИК КЛУБОВ</b>Данные выгружены из PokerNoMoney.ru/clubs. Это статический снимок, не live API.</div><span id="p42ClubCount">${P42_CLUBS.length||'…'}</span></div>
+ <input id="p42ClubSearch" class="p42ClubSearch" placeholder="Найти клуб или адрес…">
+ <div id="p42ClubList" class="p42ClubList">${P42_CLUBS.length?P42_CLUBS.map(p42ClubCard).join(''):'<div class="p42Intro">Загружаю справочник…</div>'}</div>`;
+}
+function p42Series(){
+ return `<div class="p42Intro">Серии — отдельный режим: даты, дисциплины, лимит входа и бюджет. Здесь не смешиваем обычную московскую афишу и поездки.</div>
+ ${['KALININGRAD SERIES','SOCHI POKER SERIES','MINSK POKER SERIES'].map((n,i)=>`<div class="p42Event"><div class="p42ClubPrimary">${['КАЛИНИНГРАД','СОЧИ','МИНСК'][i]}</div><div class="p42TournamentSecondary">${n}</div><div class="p42EventMeta"><span>СЕРИЯ</span><span>NLH</span><span>PLO</span><span>НАСТРОИТЬ ПОЕЗДКУ →</span></div></div>`).join('')}`;
+}
+function p42Trip(){
+ const selected=(()=>{try{return JSON.parse(localStorage.getItem('ps_polyana_v41')||'[]')||[]}catch(e){return[]}})();
+ return `<div class="p42Intro">Твой план серии: сетка турниров, A/B/C, бюджет и логистика. Это не заменяет историю сыгранных турниров.</div>
+ <div class="p41TripHero"><span class="ey">МОЯ ПОЕЗДКА</span><h2>${selected.length?'СЕТКА СОБРАНА.':'ПОКА ПУСТО.'}</h2><p>${selected.length?selected.length+' турнира в плане.':'Открой серию и добавь турниры по приоритетам A/B/C.'}</p>
+ <div class="p41TripGrid"><button><span>СЕТКА</span><b>${selected.length}</b></button><button><span>БЮДЖЕТ</span><b>—</b></button><button><span>ЛОГИСТИКА</span><b>—</b></button></div></div>`;
+}
+function p42Bind(){
+ p42Nav();
+ document.querySelectorAll('[data-p42mode]').forEach(b=>b.onclick=()=>{P42_MODE=b.dataset.p42mode;renderTournaments23()});
+ document.querySelectorAll('[data-p42tab]').forEach(b=>b.onclick=()=>{P42_TAB=b.dataset.p42tab;renderTournaments23()});
+ const q=document.getElementById('p42ClubSearch');
+ if(q)q.oninput=()=>{
+   const x=q.value.trim().toLowerCase();
+   const list=P42_CLUBS.filter(c=>(c.name+' '+c.address).toLowerCase().includes(x));
+   const el=document.getElementById('p42ClubList');if(el)el.innerHTML=list.map(p42ClubCard).join('')||'<div class="p42Intro">Ничего не найдено.</div>';
+ };
+ document.querySelectorAll('[data-p42region]').forEach(b=>b.onclick=()=>{
+   if(b.dataset.p42region==='moscow'){P42_TAB='clubs';renderTournaments23()}
+   else {P42_TAB='series';renderTournaments23()}
+ });
+}
+async function p42LoadClubs(){
+ if(P42_CLUBS.length)return;
+ try{
+  const r=await fetch('data/moscow_clubs_pokernomoney.json',{cache:'no-store'});
+  const j=await r.json();P42_CLUBS=j.clubs||[];
+  if(P42_MODE==='field'&&P42_TAB==='clubs')renderTournaments23();
+ }catch(e){}
+}
+window.renderTournaments23=renderTournaments23=function(){
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ if(P42_MODE==='journal'){
+   /* Restore the full old journal: online/offline, add/edit, profit, ROI, filters. */
+   try{__renderTournaments23V24()}catch(e){area.innerHTML='<div class="t23"><div class="t23Empty"><h3>ЖУРНАЛ НЕ ЗАГРУЗИЛСЯ</h3></div></div>'}
+   const root=area.querySelector('.t23');
+   if(root)root.insertAdjacentHTML('afterbegin',`<div class="p42JournalHead">${p42Switch()}<div class="p42Intro">Твоя реальная история: онлайн и офлайн, бай-ины, пули, призовые, профит и ROI. Ничего из старого раздела не удалено.</div></div>`);
+   document.querySelectorAll('[data-p42mode]').forEach(b=>b.onclick=()=>{P42_MODE=b.dataset.p42mode;renderTournaments23()});
+   p42Nav();return;
+ }
+ area.innerHTML=`<div class="p41">${p42Hero()}${P42_TAB==='regions'?p42Regions():P42_TAB==='today'?p42Today():P42_TAB==='clubs'?p42Clubs():P42_TAB==='series'?p42Series():p42Trip()}</div>`;
+ p42Bind();p42LoadClubs();
+};
+p42Nav();
+document.documentElement.dataset.pokerSwipeVersion='42-polyana-clubs';
+})();
+</script>
+
 </body>
 </html>
