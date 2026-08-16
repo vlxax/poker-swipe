@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PokerSwipe — Поляна TEST</title>
+<style>
+:root{--bg:#050607;--card:#111217;--text:#f7f7f2;--muted:#92939d;--line:#2b2e37;--acid:#b7ff22;--pink:#d04f94}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(800px 500px at 90% 0%,rgba(183,255,34,.08),transparent 55%),radial-gradient(700px 600px at 0% 30%,rgba(208,79,148,.08),transparent 60%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial,sans-serif;font-weight:700}
+button,input{font:inherit}.app{max-width:760px;margin:auto;min-height:100vh;padding:26px 20px 110px}.brand{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:30px}.brand b{font-size:28px;letter-spacing:-1.5px}.brand b span{color:var(--acid)}.by{font-size:11px;letter-spacing:2.5px;color:#ded9df}.eyebrow{font-size:13px;letter-spacing:3.2px;color:#a9a7b0;margin-bottom:8px}.hero h1{font-size:58px;line-height:.92;letter-spacing:-3px;margin:0 0 12px}.hero h1 span,.accent{color:var(--acid)}.hero p{color:var(--muted);font-size:18px;line-height:1.35;margin:0 0 26px;font-weight:650}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 18px}.tab,.chip,.ghost,.primary,.plus{border:1px solid var(--line);background:#0d0f13;color:var(--text);border-radius:18px;padding:14px 16px;cursor:pointer}.tab.active,.chip.active{border-color:var(--acid);box-shadow:0 0 0 1px rgba(183,255,34,.2) inset}.filters{display:flex;gap:8px;overflow:auto;padding-bottom:10px}.chip{white-space:nowrap;padding:10px 13px;font-size:12px}.sectionTitle{font-size:13px;letter-spacing:2.5px;margin:18px 4px 10px}.card{position:relative;overflow:hidden;background:linear-gradient(135deg,#12131a,#171923 72%,rgba(183,255,34,.11));border:1px solid var(--line);border-radius:26px;padding:22px;margin:12px 0}.card:after{content:"♠";position:absolute;right:18px;top:8px;font-size:96px;color:rgba(255,255,255,.05);transform:rotate(8deg)}.meta{font-size:11px;letter-spacing:2.2px;color:#aaa8b2;margin-bottom:8px}.title{font-size:34px;line-height:.96;letter-spacing:-1.8px;margin-bottom:12px}.price{font-size:28px;margin:8px 0}.sub{font-size:14px;color:var(--muted);font-weight:650}.tags{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.tag{font-size:10px;letter-spacing:1.3px;border:1px solid #353943;padding:7px 9px;border-radius:999px;color:#c8c7ce}.row{display:flex;justify-content:space-between;align-items:end;gap:14px}.plus{width:54px;height:54px;padding:0;border-radius:18px;color:#111;background:var(--acid);border-color:var(--acid);font-size:30px;line-height:1}.seriesCard{background:linear-gradient(135deg,#17131d,#171923 58%,rgba(183,255,34,.16))}.seriesCard .title{font-size:42px}.primary{width:100%;background:var(--acid);color:#111;border-color:var(--acid);font-size:15px;padding:16px}.ghost{width:100%;font-size:14px}
+.sheetWrap{position:fixed;inset:0;background:rgba(0,0,0,.62);display:none;align-items:flex-end;z-index:20}.sheetWrap.show{display:flex}.sheet{width:min(760px,100%);margin:auto;background:#0c0d11;border:1px solid #2f323a;border-radius:30px 30px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}.sheet .title{font-size:36px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}.stat{background:#14161d;border:1px solid var(--line);border-radius:18px;padding:15px}.stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.6px;margin-bottom:6px}.stat b{font-size:20px}.stackHero{border:1px solid rgba(183,255,34,.35);background:rgba(183,255,34,.07);border-radius:22px;padding:18px;margin:12px 0}.stackHero small{color:#c3c6bd;letter-spacing:2px}.stackHero b{display:block;font-size:38px;color:var(--acid);margin-top:4px}
+.tripForm label{display:block;font-size:10px;letter-spacing:2px;color:#a7a6af;margin:16px 0 7px}.field{width:100%;background:#12141a;color:#fff;border:1px solid #2d3038;border-radius:18px;padding:15px}.multi{display:flex;flex-wrap:wrap;gap:8px}.priority{display:grid;gap:9px}.prio{padding:16px;border-radius:18px;background:#15171d;border:1px solid #30333b;color:#fff;text-align:left}.prio b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:#252832}.prio.a b{background:var(--acid);color:#111}.prio.b b{background:#8051ca}.prio.c b{background:#3a3c45}.floating{position:sticky;bottom:86px;background:var(--acid);color:#111;border-radius:20px;padding:14px 16px;margin-top:14px;display:flex;justify-content:space-between}.budgetGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none!important}
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(5,6,7,.94);backdrop-filter:blur(18px);border-top:1px solid #24262d;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;z-index:10}.navin{width:min(760px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.navbtn{padding:11px 3px;border:0;background:transparent;color:#7d807f;font-size:10px;letter-spacing:1px}.navbtn.active{background:#12180e;color:#fff;border-radius:20px}.navbtn.active b{color:var(--acid)}
+@media(min-width:700px){.app{padding-top:40px}.hero h1{font-size:72px}.card{padding:28px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand"><b>POKER <span>SWIPE</span></b><div class="by">by ФРИКОВАЯ ДАМА 💋</div></div>
+  <section class="hero"><div class="eyebrow">ТВОЯ ЖИВАЯ ИГРА</div><h1>ПОЛЯНА<span>.</span></h1><p>Турниры рядом, серии и твой следующий выезд.</p></section>
+  <div class="tabs"><button class="tab active" data-tab="today">СЕГОДНЯ</button><button class="tab" data-tab="series">СЕРИИ</button></div>
+
+  <div id="todayView">
+    <div class="filters"><button class="chip active">ВСЕ</button><button class="chip">NLH</button><button class="chip">PLO</button><button class="chip">БАУНТИ</button><button class="chip">DEEP</button></div>
+    <div class="sectionTitle">МОСКВА · 16 АВГУСТА</div>
+    <article class="card tour" data-name="NLH DEEP" data-time="19:00" data-price="1 000 ₽" data-stack="~73 BB">
+      <div class="meta">СЕГОДНЯ · 19:00</div><div class="title">NLH DEEP</div>
+      <div class="tags"><span class="tag">NLH</span><span class="tag">9-MAX</span><span class="tag">DEEP</span></div>
+      <div class="row"><div><div class="price">1 000 ₽</div><div class="sub">30 min · 1 re-entry</div></div><button class="plus">+</button></div>
+    </article>
+    <article class="card tour" data-name="PLO 6-MAX" data-time="21:00" data-price="3 000 ₽" data-stack="~48 BB">
+      <div class="meta">СЕГОДНЯ · 21:00</div><div class="title">PLO 6-MAX</div>
+      <div class="tags"><span class="tag">PLO</span><span class="tag">6-MAX</span></div>
+      <div class="row"><div><div class="price">3 000 ₽</div><div class="sub">20 min · 2 re-entry</div></div><button class="plus">+</button></div>
+    </article>
+  </div>
+
+  <div id="seriesView" class="hidden">
+    <div class="filters"><button class="chip active">ВСЕ ГОРОДА</button><button class="chip">МОСКВА</button><button class="chip">МИНСК</button><button class="chip">КАЛИНИНГРАД</button><button class="chip">СОЧИ</button></div>
+    <article class="card seriesCard" id="kalSeries">
+      <div class="meta">12—20 СЕН · КАЛИНИНГРАД</div><div class="title">KALININGRAD<br>SERIES.</div>
+      <div class="tags"><span class="tag">NLH</span><span class="tag">PLO</span><span class="tag">HU</span><span class="tag">OFC</span></div>
+      <div class="row"><div><div class="price">47 ТУРНИРОВ</div><div class="sub">от 1 000 ₽</div></div><button class="plus">→</button></div>
+    </article>
+  </div>
+  <div id="tripView" class="hidden"></div>
+</div>
+
+<div class="nav"><div class="navin">
+<button class="navbtn">⌂<br>ГЛАВНАЯ</button><button class="navbtn">▣<br>РАЗДАЧИ</button><button class="navbtn active"><b>♛</b><br>ПОЛЯНА</button><button class="navbtn">•••<br>ТЫ</button>
+</div></div>
+
+<div class="sheetWrap" id="sheetWrap"><div class="sheet" id="sheet"></div></div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let selected=[];
+function showSheet(html){$('#sheet').innerHTML=html;$('#sheetWrap').classList.add('show')}
+$('#sheetWrap').onclick=e=>{if(e.target.id==='sheetWrap')e.currentTarget.classList.remove('show')}
+
+$$('.tab').forEach(b=>b.onclick=()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  $('#todayView').classList.toggle('hidden',b.dataset.tab!=='today');
+  $('#seriesView').classList.toggle('hidden',b.dataset.tab!=='series');
+  $('#tripView').classList.add('hidden')
+})
+
+$$('.tour').forEach(c=>c.onclick=()=>showSheet(`
+<div class="meta">${c.dataset.time} · МОСКВА</div><div class="title">${c.dataset.name}</div><div class="price">${c.dataset.price}</div>
+<div class="stats"><div class="stat"><small>СТАРТ</small><b>100 BB</b></div><div class="stat"><small>УРОВНИ</small><b>30 min</b></div><div class="stat"><small>RE-ENTRY</small><b>1</b></div><div class="stat"><small>LATE REG</small><b>до L8</b></div></div>
+<div class="stackHero"><small>СЕЙЧАС МОЖНО ВОЙТИ</small><b>${c.dataset.stack}</b></div>
+<button class="primary" onclick="addQuick('${c.dataset.name}')">+ В ПЛАН</button>`))
+
+function addQuick(n){localStorage.setItem('ps_quick',n);$('#sheetWrap').classList.remove('show');alert('✓ Добавлено в план')}
+$('#kalSeries').onclick=()=>showSheet(`<div class="meta">КАЛИНИНГРАД · 12—20 СЕН</div><div class="title">KALININGRAD<br>SERIES.</div><div class="sub">47 турниров · NLH · PLO · HU · OFC</div><div style="height:14px"></div><button class="ghost">РАСПИСАНИЕ</button><div style="height:10px"></div><button class="primary" onclick="openTripBuilder()">+ МОЯ ПОЕЗДКА</button>`)
+
+function openTripBuilder(){
+  $('#sheetWrap').classList.remove('show');$('#todayView').classList.add('hidden');$('#seriesView').classList.add('hidden');$('#tripView').classList.remove('hidden');
+  $('#tripView').innerHTML=`<div class="eyebrow">СОБЕРЁМ ТВОЮ СЕТКУ</div><div class="title" style="font-size:52px">МОЯ<br><span class="accent">ПОЕЗДКА.</span></div>
+  <div class="tripForm"><label>КОГДА</label><input class="field" value="14 СЕН → 20 СЕН">
+  <label>ИГРАЮ</label><div class="multi">${['NLH','PLO','HU','OFC','PINEAPPLE','MIXED'].map((x,i)=>`<button class="chip ${i<3?'active':''}" onclick="this.classList.toggle('active')">${x}${i<3?' ✓':''}</button>`).join('')}</div>
+  <label>ВХОД ДО</label><input class="field" value="5 000 ₽"><label>БЮДЖЕТ</label><input class="field" value="50 000 ₽"><div style="height:18px"></div><button class="primary" onclick="showMatches()">НАЙТИ ТУРНИРЫ →</button></div>`
+}
+
+function showMatches(){
+  const v=$('#tripView');
+  const data=[['PLO CHAMPIONSHIP','15 СЕН · 16:00','5K + 500','PLO'],['NLH DEEP','16 СЕН · 18:00','4K + 400','NLH'],['HEADS-UP NIGHT','17 СЕН · 20:00','3K + 300','HU']];
+  v.innerHTML=`<div class="eyebrow">ПОДХОДИТ</div><div class="title" style="font-size:50px">23 ТУРНИРА.</div><div class="sub">14–20 сентября · NLH + PLO + HU · до 5K</div>
+  ${data.map(t=>`<article class="card"><div class="meta">${t[1]}</div><div class="title">${t[0]}</div><div class="tags"><span class="tag">${t[3]}</span><span class="tag">6-MAX</span></div><div class="row"><div><div class="price">${t[2]}</div><div class="sub">30 min · 1 re-entry</div></div><button class="plus" onclick="event.stopPropagation();pickPriority('${t[0]}','${t[2]}')">+</button></div></article>`).join('')}
+  <div id="float"></div>`;
+  renderFloat()
+}
+
+function pickPriority(name,price){showSheet(`<div class="meta">КУДА СТАВИМ?</div><div class="title">ПРИОРИТЕТ</div><div class="priority">
+<button class="prio a" onclick="savePick('${name}','${price}','A')"><b>A</b> ГЛАВНЫЙ</button>
+<button class="prio b" onclick="savePick('${name}','${price}','B')"><b>B</b> ХОЧУ</button>
+<button class="prio c" onclick="savePick('${name}','${price}','C')"><b>C</b> ЗАПАСНОЙ</button></div>`)}
+
+function savePick(name,price,p){selected.push({name,price,p});localStorage.setItem('ps_polyana',JSON.stringify(selected));$('#sheetWrap').classList.remove('show');renderFloat()}
+function renderFloat(){const f=$('#float');if(!f)return;f.innerHTML=selected.length?`<div class="floating" onclick="showGrid()"><b>МОЯ СЕТКА · ${selected.length}</b><b>ОТКРЫТЬ →</b></div>`:''}
+
+function showGrid(){
+  const v=$('#tripView');
+  v.innerHTML=`<div class="eyebrow">КАЛИНИНГРАД · ТВОЙ ПЛАН</div><div class="title" style="font-size:52px">СЕТКА.</div>
+  ${selected.map((x,i)=>`<article class="card"><div class="meta">${['14 СЕН','15 СЕН','16 СЕН'][i%3]} · ${x.p==='A'?'ГЛАВНЫЙ':x.p==='B'?'ХОЧУ':'ПЛАН B'}</div><div class="title"><span class="accent">${x.p}</span> · ${x.name}</div><div class="price">${x.price}</div><div class="sub">${x.p==='C'?'окно входа до ~22:45':'1 bullet'}</div></article>`).join('')}
+  <div class="budgetGrid"><button class="ghost" onclick="showBudget()">БЮДЖЕТ</button><button class="ghost" onclick="showLogistics()">ЛОГИСТИКА</button></div>`
+}
+function showBudget(){showSheet(`<div class="meta">КАЛИНИНГРАД · ПЛАН</div><div class="title">БЮДЖЕТ.</div><div class="stackHero"><small>ПОКЕР</small><b>19 700 ₽</b><div class="sub">до 29 700 ₽ с выбранными bullets</div></div><div class="stats"><div class="stat"><small>ВХОДЫ</small><b>17K</b></div><div class="stat"><small>FEE</small><b>2.7K</b></div><div class="stat"><small>BULLETS</small><b>10K</b></div><div class="stat"><small>ЛИМИТ</small><b>30K</b></div></div>`)}
+function showLogistics(){showSheet(`<div class="meta">КАЛИНИНГРАД</div><div class="title">ПОЕЗДКА.</div><div class="stats"><div class="stat"><small>ДОРОГА</small><b>8 200 ₽</b></div><div class="stat"><small>ЖИЛЬЁ</small><b>12 000 ₽</b></div><div class="stat"><small>ЕДА</small><b>6 000 ₽</b></div><div class="stat"><small>НА МЕСТЕ</small><b>3 000 ₽</b></div></div><div class="stackHero"><small>ПЛАН ПОЕЗДКИ</small><b>29 200 ₽</b></div>`)}
+try{selected=JSON.parse(localStorage.getItem('ps_polyana')||'[]')}catch(e){}
+</script>
+</body>
+</html>
