@@ -1,7 +1,18 @@
-POKER SWIPE — V55 REAL SECTIONS
-MY TOURNAMENTS: restored functional old journal ONLINE/OFFLINE + add/edit + buy-in + bullets + prize + bounty + profit + ROI.
-POLYANA source: https://pokernomoney.ru/clubs
-Club directory packaged: 66
-Schedule events packaged in current snapshot: 65
-Club name hierarchy: club FIRST / 29px / bold / lime; tournament SECOND / white.
-GitHub updater remains included.
+POKER SWIPE — V56 LIVE POLYANA FIXED
+
+THIS BUILD FIXES THE SCREEN FROM THE USER'S SCREENSHOT.
+
+POLYANA:
+- removes the visible test tournament renderer from the real Polyana entry point
+- reads data/live_polyana.json with cache disabled
+- fallback: moscow_clubs_pokernomoney.json + moscow_schedule_today.json
+- packaged clubs: 66
+- packaged events: 65
+- tournament hierarchy is CLUB first (29px / bold / lime), tournament second (white)
+- all clubs directory is available through КЛУБЫ
+- region photos preserved
+- fresh-data label is visible in the UI
+
+MY TOURNAMENTS:
+- V54/V55 independent functional journal is preserved
+- Online / Offline / add / buy-in / bullets / prize / profit / ROI stay separate from Polyana

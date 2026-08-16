@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V55 REAL SECTIONS</title>
+<title>POKER SWIPE — V56 LIVE POLYANA FIXED</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3647,6 +3647,168 @@ function wire(){
 document.addEventListener('DOMContentLoaded',async()=>{await loadData();wire();new MutationObserver(wire).observe(document.body,{childList:true,subtree:true})});
 window.addEventListener('focus',async()=>{await loadData();wire()});
 window.POKER_SWIPE_BUILD='V55 REAL SECTIONS';document.documentElement.dataset.pokerSwipeVersion='55-real-sections';
+})();
+</script>
+
+
+<style id="v56-live-polyana-fixed">
+.v56{padding:0 max(12px,var(--tg-left-safe)) calc(142px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v56Hero{border-radius:28px;padding:19px 16px;background:
+ radial-gradient(circle at 93% 0,rgba(200,255,61,.15),transparent 34%),
+ radial-gradient(circle at 0 100%,rgba(255,79,152,.10),transparent 38%),
+ linear-gradient(145deg,#15151b,#0c0c10)}
+.v56Hero h1{font-size:52px;line-height:.84;letter-spacing:-.07em;margin:6px 0 8px}
+.v56Hero h1 span{color:#c8ff3d}.v56Hero p{font-size:13px;line-height:1.45;color:#c0b9c3;max-width:320px;margin:0}
+.v56Tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:15px}
+.v56Tabs button{border:1px solid #34343d;background:#101015;color:#8f8893;border-radius:14px;padding:11px 5px;font-size:8px;font-weight:1000}
+.v56Tabs button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v56Sub{display:flex;gap:6px;overflow:auto;padding:10px 0 3px;scrollbar-width:none}.v56Sub::-webkit-scrollbar{display:none}
+.v56Sub button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#928b96;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.v56Sub button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v56Fresh{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:10px 0;padding:11px 12px;border:1px solid rgba(200,255,61,.22);border-radius:17px;background:#11160e}
+.v56Fresh b{font-size:11px;color:#dfff9b}.v56Fresh span{font-size:8px;color:#918a94;text-align:right;line-height:1.35}
+.v56Title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:17px 2px 9px}.v56Title h3{font-size:12px;letter-spacing:.08em;margin:0}.v56Title span{font-size:9px;color:#8f8892}
+.v56Event{display:grid;grid-template-columns:52px minmax(0,1fr);gap:11px;padding:15px;margin:7px 0;border-radius:22px;background:radial-gradient(circle at 100% 0,rgba(200,255,61,.10),transparent 35%),#111116}
+.v56Time{font-size:18px;font-weight:1000;color:#fff}
+.v56Club{font-family:"Arial Narrow",Arial,sans-serif;font-size:29px;line-height:.90;font-weight:1000;letter-spacing:-.06em;color:#c8ff3d}
+.v56Tournament{font-size:15px;line-height:1.18;font-weight:850;color:#fff;margin-top:8px}
+.v56Meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.v56Meta span{border:1px solid #383842;border-radius:999px;padding:5px 7px;font-size:8px;color:#bbb4be}
+.v56Source{margin-top:7px;font-size:8px;color:#7f7982}
+.v56Empty{padding:16px;border:1px dashed #3a3942;border-radius:18px;color:#9b949e;font-size:11px;line-height:1.45}
+.v56Search{width:100%;box-sizing:border-box;background:#0d0d12;color:#fff;border:1px solid #383842;border-radius:15px;padding:12px 13px;font-size:12px}
+.v56Filters{display:flex;gap:6px;overflow:auto;padding:8px 0;scrollbar-width:none}.v56Filters::-webkit-scrollbar{display:none}
+.v56Filters button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#918a95;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}.v56Filters button.on{border-color:#c8ff3d;background:#18200f;color:#fff}
+.v56ClubGrid{display:grid;grid-template-columns:1fr;gap:8px}
+.v56ClubCard{position:relative;overflow:hidden;min-height:102px;padding:15px;border-radius:22px;background:radial-gradient(circle at 98% 0,rgba(200,255,61,.08),transparent 36%),#111116;border:1px solid rgba(255,255,255,.07);text-align:left;color:#fff}
+.v56ClubCard.key{box-shadow:inset 3px 0 0 #c8ff3d}
+.v56ClubCard b{display:block;font-family:"Arial Narrow",Arial,sans-serif;font-size:27px;line-height:.92;font-weight:1000;letter-spacing:-.055em;color:#c8ff3d;padding-right:55px}
+.v56ClubCard small{display:block;margin-top:8px;font-size:11px;line-height:1.4;color:#aaa3ad;max-width:86%}
+.v56ClubCard i{position:absolute;right:9px;bottom:-14px;font-style:normal;font-size:67px;font-weight:1000;color:rgba(255,255,255,.035)}
+.v56Regions{display:grid;grid-template-columns:1fr;gap:11px;margin-top:10px}
+.v56Region{position:relative;min-height:235px;border:0;border-radius:27px;overflow:hidden;text-align:left;color:#fff;background:#111116;padding:0}
+.v56Region img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.76) saturate(.94) contrast(1.05)}
+.v56Region:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 18%,rgba(5,5,7,.12) 42%,rgba(5,5,7,.94) 100%)}
+.v56RegionText{position:absolute;z-index:2;left:15px;right:15px;bottom:15px}.v56RegionText b{display:block;font-size:31px;line-height:.9;font-weight:1000;letter-spacing:-.055em}.v56RegionText span{display:block;font-size:11px;color:#f1edf0;margin-top:7px}
+.v56Series{border-radius:24px;padding:16px;margin:8px 0;background:radial-gradient(circle at 96% 0,rgba(255,79,152,.11),transparent 36%),#111116}
+.v56Series h2{font-size:27px;line-height:.95;letter-spacing:-.045em;margin:5px 0 9px}.v56Series p{font-size:12px;line-height:1.45;color:#aaa3ad}
+.v56Primary{width:100%;min-height:45px;border:0;border-radius:14px;background:#c8ff3d;color:#10120d;font-size:10px;font-weight:1000}
+</style>
+
+<script id="v56-live-polyana-fixed-script">
+(function(){
+'use strict';
+
+let V56_DATA=null;
+let V56_TAB='today';
+let V56_FILTER='all';
+
+const REGIONS=[
+ {name:'МОСКВА',sub:'Спортивный покер · все клубы и афиша',img:'assets/regions/moscow.webp',go:'clubs'},
+ {name:'КАЛИНИНГРАД',sub:'Игорная зона Янтарная',img:'assets/regions/kaliningrad.webp',go:'series'},
+ {name:'СОЧИ / КРАСНАЯ ПОЛЯНА',sub:'Игорная зона Краснодарского края',img:'assets/regions/sochi.webp',go:'series'},
+ {name:'АЛТАЙСКИЙ КРАЙ',sub:'Сибирская монета',img:'assets/regions/altai.webp',go:'series'},
+ {name:'ПРИМОРЬЕ',sub:'Tigre de Cristal',img:'assets/regions/primorye.webp',go:'series'},
+ {name:'МИНСК',sub:'Беларусь · живой покер и серии',img:'assets/regions/minsk.webp',go:'series'}
+];
+
+function area(){return document.getElementById('tournamentsArea')}
+function markNav(){
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+ document.querySelector('.nav [data-nav="tournaments"]')?.classList.add('on');
+}
+function hero(){
+ return `<div class="v56Hero"><span class="ey">ТВОЯ ЖИВАЯ ИГРА</span><h1>ПОЛЯНА<span>.</span></h1><p>Актуальная афиша Москвы, клубы, серии и поездки. Без тестовых турниров.</p>
+ <div class="v56Tabs"><button data-v56tab="today" class="${V56_TAB==='today'?'on':''}">СЕГОДНЯ</button><button data-v56tab="clubs" class="${V56_TAB==='clubs'?'on':''}">КЛУБЫ</button><button data-v56tab="regions" class="${V56_TAB==='regions'?'on':''}">СЕРИИ / РЕГИОНЫ</button></div></div>`;
+}
+function fresh(){
+ const count=(V56_DATA?.events||[]).length, clubs=(V56_DATA?.clubs||[]).length;
+ const dt=V56_DATA?.updated_at?new Date(V56_DATA.updated_at):null;
+ const label=dt&&!isNaN(dt)?dt.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'snapshot';
+ return `<div class="v56Fresh"><b>● POKERNOMONEY</b><span>${clubs} клубов · ${count} событий<br>обновлено ${label}</span></div>`;
+}
+function today(){
+ const ev=(V56_DATA?.events||[]);
+ return `${fresh()}<div class="v56Title"><h3>МОСКВА · СЕГОДНЯ</h3><span>${ev.length} событий</span></div>`+
+ (ev.length?ev.map(e=>`<div class="v56Event"><div class="v56Time">${e.time||'—'}</div><div><div class="v56Club">${e.club||'КЛУБ'}</div><div class="v56Tournament">${e.tournament||'Турнир из афиши PokerNoMoney'}</div><div class="v56Meta">${e.fee_rub?`<span>${Number(e.fee_rub).toLocaleString('ru-RU')} ₽</span>`:''}<span>МОСКВА</span></div><div class="v56Source">источник: PokerNoMoney</div></div></div>`).join(''):
+ `<div class="v56Empty">Источник сейчас не вернул события. PokerSwipe не показывает тестовую афишу — остаётся последний сохранённый snapshot.</div>`);
+}
+function filteredClubs(){
+ let a=(V56_DATA?.clubs||[]).slice();
+ if(V56_FILTER==='key')a=a.filter(c=>['Level','Straddle poker club','Quantum'].includes(c.name));
+ if(V56_FILTER==='active')a=a.filter(c=>Number(c.upcoming)>0).sort((x,y)=>Number(y.upcoming)-Number(x.upcoming));
+ if(V56_FILTER==='all')a.sort((x,y)=>(x.name||'').localeCompare(y.name||'','ru'));
+ return a;
+}
+function clubs(){
+ const a=filteredClubs();
+ return `${fresh()}<div class="v56Title"><h3>КЛУБЫ МОСКВЫ</h3><span>${(V56_DATA?.clubs||[]).length} в базе</span></div>
+ <input id="v56Search" class="v56Search" placeholder="Найти клуб или адрес…">
+ <div class="v56Filters"><button data-v56filter="all" class="${V56_FILTER==='all'?'on':''}">ВСЕ</button><button data-v56filter="active" class="${V56_FILTER==='active'?'on':''}">ЕСТЬ АНОНСЫ</button><button data-v56filter="key" class="${V56_FILTER==='key'?'on':''}">LEVEL / STRADDLE / QUANTUM</button></div>
+ <div id="v56ClubGrid" class="v56ClubGrid">${a.map((c,i)=>clubCard(c,i)).join('')}</div>`;
+}
+function clubCard(c,i){
+ const key=['Level','Straddle poker club','Quantum'].includes(c.name);
+ const bits=[];
+ if(c.address)bits.push(c.address);
+ if(c.min_fee_rub)bits.push('от '+Number(c.min_fee_rub).toLocaleString('ru-RU')+' ₽');
+ if(typeof c.upcoming==='number')bits.push(c.upcoming+' анонсов');
+ return `<button class="v56ClubCard ${key?'key':''}" data-v56club="${encodeURIComponent(c.name||'')}"><b>${c.name||'КЛУБ'}</b><small>${bits.join(' · ')}</small><i>${String(i+1).padStart(2,'0')}</i></button>`;
+}
+function regions(){
+ return `<div class="v56Regions">${REGIONS.map(r=>`<button class="v56Region" data-v56region="${r.go}" data-v56name="${r.name}"><img src="${r.img}" alt="${r.name}"><div class="v56RegionText"><b>${r.name}</b><span>${r.sub}</span></div></button>`).join('')}</div>`;
+}
+function series(){
+ return REGIONS.filter(r=>r.name!=='МОСКВА').map(r=>`<div class="v56Series"><span class="ey">${r.name}</span><h2>${r.sub}</h2><p>Даты, дисциплины, бюджет и собственная сетка турниров A/B/C.</p><button class="v56Primary" data-v56trip="${r.name}">СОБРАТЬ ПОЕЗДКУ →</button></div>`).join('');
+}
+function openTrip(region){
+ if(typeof openModal!=='function')return;
+ openModal(`<div class="p41SheetHead"><span class="ey">${region}</span><h2>МОЯ ПОЕЗДКА.</h2><p>Собери минимальный план серии.</p></div><div class="p41Form"><label>ДАТЫ</label><input class="p41Field" value="Выбрать даты"><label>ДИСЦИПЛИНЫ</label><div class="p41Multi">${['NLH','PLO','HU','OFC'].map(x=>`<button type="button">${x}</button>`).join('')}</div><label>БЮДЖЕТ</label><input class="p41Field" value="50 000 ₽"></div>`);
+}
+function openClub(name){
+ const c=(V56_DATA?.clubs||[]).find(x=>x.name===name);if(!c||typeof openModal!=='function')return;
+ openModal(`<div class="p41SheetHead"><span class="ey">КЛУБ · МОСКВА</span><h2 style="color:#c8ff3d">${c.name}</h2><p>${c.address||''}</p></div><div class="v48StatGrid"><div class="v48Stat"><span>ОРГВЗНОС</span><b>${c.min_fee_rub?'от '+Number(c.min_fee_rub).toLocaleString('ru-RU')+' ₽':'—'}</b></div><div class="v48Stat"><span>АНОНСОВ</span><b>${c.upcoming??'—'}</b></div></div><div class="v48Source"><b>ИСТОЧНИК</b>PokerNoMoney · данные из текущего snapshot.</div>`);
+}
+function bind(){
+ document.querySelectorAll('[data-v56tab]').forEach(b=>b.onclick=()=>{V56_TAB=b.dataset.v56tab;render()});
+ document.querySelectorAll('[data-v56filter]').forEach(b=>b.onclick=()=>{V56_FILTER=b.dataset.v56filter;render()});
+ document.querySelectorAll('[data-v56region]').forEach(b=>b.onclick=()=>{if(b.dataset.v56region==='clubs'){V56_TAB='clubs';render()}else{const a=area();a.innerHTML='<div class="v56">'+hero()+series()+'</div>';bind()}});
+ document.querySelectorAll('[data-v56trip]').forEach(b=>b.onclick=()=>openTrip(b.dataset.v56trip));
+ document.querySelectorAll('[data-v56club]').forEach(b=>b.onclick=()=>openClub(decodeURIComponent(b.dataset.v56club)));
+ const s=document.getElementById('v56Search');
+ if(s)s.oninput=()=>{
+   const q=s.value.trim().toLowerCase(),a=filteredClubs().filter(c=>((c.name||'')+' '+(c.address||'')).toLowerCase().includes(q));
+   const g=document.getElementById('v56ClubGrid');if(g){g.innerHTML=a.map((c,i)=>clubCard(c,i)).join('');g.querySelectorAll('[data-v56club]').forEach(b=>b.onclick=()=>openClub(decodeURIComponent(b.dataset.v56club)))}
+ };
+}
+function render(){
+ const a=area();if(!a)return;
+ let body=V56_TAB==='today'?today():V56_TAB==='clubs'?clubs():regions();
+ a.innerHTML='<div class="v56">'+hero()+body+'</div>';
+ bind();markNav();
+}
+async function load(){
+ try{
+   const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});
+   if(r.ok)V56_DATA=await r.json();
+ }catch(e){}
+ if(!V56_DATA){
+   try{
+     const [cr,sr]=await Promise.all([fetch('data/moscow_clubs_pokernomoney.json?v='+Date.now(),{cache:'no-store'}),fetch('data/moscow_schedule_today.json?v='+Date.now(),{cache:'no-store'})]);
+     const c=cr.ok?await cr.json():{clubs:[]},s=sr.ok?await sr.json():{events:[]};
+     V56_DATA={clubs:c.clubs||[],events:s.events||[],updated_at:s.updated_at||c.retrieved_at||''};
+   }catch(e){V56_DATA={clubs:[],events:[]}}
+ }
+ render();
+}
+function hookNav(){
+ const field=document.querySelector('.nav [data-nav="tournaments"]');
+ if(field)field.onclick=e=>{e.preventDefault();e.stopPropagation();if(typeof show==='function')show('tournaments');load()};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hookNav);else hookNav();
+window.addEventListener('load',hookNav);
+window.openPolyanaV56=()=>{if(typeof show==='function')show('tournaments');load()};
+document.documentElement.dataset.pokerSwipeVersion='56-live-polyana-fixed';
+window.POKER_SWIPE_BUILD='V56 LIVE POLYANA FIXED';
 })();
 </script>
 
