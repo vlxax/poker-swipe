@@ -4046,5 +4046,271 @@ document.documentElement.dataset.pokerSwipeVersion='45-reg-ux';
 })();
 </script>
 
+
+<style id="v46-zlotnikov">
+.p46Week{display:flex;gap:6px;overflow:auto;padding:10px 0 2px;scrollbar-width:none}.p46Week::-webkit-scrollbar{display:none}
+.p46Week button{flex:0 0 auto;min-width:58px;border:1px solid #30303a;background:#0d0d12;color:#918a95;border-radius:14px;padding:8px 9px;font-size:8px;font-weight:1000}
+.p46Week button.on{border-color:#c8ff3d;background:#18200f;color:#fff}.p46Week button small{display:block;font-size:7px;color:#77717a;margin-top:2px}
+.p46LiveEvent{display:flex;align-items:center;gap:11px;border:1px solid #30303a;border-radius:17px;background:#101015;padding:11px 12px;margin:7px 0}
+.p46Time{font-size:18px;font-weight:1000;color:#fff;min-width:52px}.p46LiveClub{font-size:15px;font-weight:1000;color:#c8ff3d;line-height:1.05}
+.p46LiveEvent small{display:block;color:#8f8993;font-size:8px;margin-top:4px}.p46Badge{margin-left:auto;border:1px solid #c8ff3d55;color:#dfff9b;border-radius:999px;padding:5px 7px;font-size:7px;font-weight:1000}
+.p46Honest{border-left:3px solid #ff4f98;padding-left:10px;color:#aaa3ad;font-size:10px;line-height:1.45;margin:11px 1px}
+</style>
+<script id="v46-zlotnikov-script">
+(function(){
+let P46_SCHEDULE=[];
+let P46_DAY='2026-08-16';
+const days=[
+ ['2026-08-16','СЕГОДНЯ','16 АВГ'],['2026-08-17','ПН','17 АВГ'],['2026-08-18','ВТ','18 АВГ'],
+ ['2026-08-19','СР','19 АВГ'],['2026-08-20','ЧТ','20 АВГ'],['2026-08-21','ПТ','21 АВГ'],['2026-08-22','СБ','22 АВГ']
+];
+function week(){
+ return `<div class="p46Week">${days.map(d=>`<button data-p46day="${d[0]}" class="${P46_DAY===d[0]?'on':''}">${d[1]}<small>${d[2]}</small></button>`).join('')}</div>`;
+}
+function liveList(){
+ if(P46_DAY!=='2026-08-16') return `<div class="p46Honest">Интерфейс недели готов. Для ${P46_DAY.split('-').reverse().slice(0,2).join('.')} расписание не подставляем из головы: оно появится после подключения автоматического фида PokerNoMoney.</div>`;
+ if(!P46_SCHEDULE.length) return `<div class="p46Honest">Загружаю актуальную афишу…</div>`;
+ return `<div class="p45Source"><div><b>МОСКВА · СЕГОДНЯ</b>Актуальный snapshot публичной афиши PokerNoMoney на 16.08.2026.</div><span class="p45SourceTag">LIVE SNAPSHOT</span></div>`+
+ P46_SCHEDULE.map(e=>`<div class="p46LiveEvent"><div class="p46Time">${e.time}</div><div><div class="p46LiveClub">${e.club}</div><small>спортивный покер · Москва</small></div><span class="p46Badge">АФИША</span></div>`).join('');
+}
+const oldRender=window.renderTournaments23;
+window.renderTournaments23=function(){
+ oldRender();
+ if(P45_MAIN==='afisha'&&P45_AFISHA==='today'){
+   const root=document.querySelector('#tournamentsArea .p45');
+   if(!root)return;
+   const hero=root.querySelector('.p45Hero');
+   const quick=root.querySelector('.p45Quick');
+   const oldSource=root.querySelector('.p45Source');
+   const oldEvents=[...root.querySelectorAll('.p45Event')];
+   if(oldSource)oldSource.remove(); oldEvents.forEach(x=>x.remove());
+   const holder=document.createElement('div');
+   holder.id='p46Schedule';
+   holder.innerHTML=week()+liveList();
+   (quick||hero).insertAdjacentElement('afterend',holder);
+   bind46();
+ }
+};
+function bind46(){
+ document.querySelectorAll('[data-p46day]').forEach(b=>b.onclick=()=>{P46_DAY=b.dataset.p46day;window.renderTournaments23()});
+}
+fetch('data/moscow_schedule_today.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{P46_SCHEDULE=j.events||[]; if(P45_MAIN==='afisha'&&P45_AFISHA==='today')window.renderTournaments23()}).catch(()=>{});
+document.documentElement.dataset.pokerSwipeVersion='46-zlotnikov';
+})();
+</script>
+
+
+<style id="v47-normal">
+:root{--v47-lime:#c8ff3d;--v47-pink:#ff4f98;--v47-bg:#08080b;--v47-card:#121217;--v47-line:#30303a;--v47-muted:#a69faa}
+.v47{padding:0 max(12px,var(--tg-left-safe)) calc(150px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v47Hero{border:1px solid #ffffff13;border-radius:27px;padding:18px 16px;background:
+radial-gradient(circle at 92% 0,rgba(200,255,61,.15),transparent 33%),
+radial-gradient(circle at 0 100%,rgba(255,79,152,.12),transparent 38%),
+linear-gradient(150deg,#15151c,#09090d 72%)}
+.v47Hero h1{font-size:46px;line-height:.9;margin:5px 0 8px;letter-spacing:-.06em}.v47Hero h1 span{color:var(--v47-lime)}
+.v47Hero p{font-size:13px;line-height:1.45;color:#c4bdc7;margin:0}
+.v47Top{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.v47Top button{border:1px solid #34343f;background:#0c0c10;color:#8c8590;border-radius:15px;padding:11px 7px;font-size:9px;font-weight:1000}
+.v47Top button.on{border-color:var(--v47-lime);background:#18200f;color:#fff}
+.v47Sub{display:flex;gap:6px;overflow:auto;padding:10px 0 3px;scrollbar-width:none}.v47Sub::-webkit-scrollbar{display:none}
+.v47Sub button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#928b96;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.v47Sub button.on{border-color:#77717c;color:#fff;background:#17171d}
+.v47Section{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:18px 2px 9px}
+.v47Section h3{font-size:12px;letter-spacing:.1em;margin:0}.v47Section span{font-size:9px;color:#8d8791}
+.v47Source{border:1px solid #2e2e37;background:#0d0d11;border-radius:16px;padding:11px 12px;font-size:10px;color:#aaa3ad;line-height:1.4;margin:10px 0}
+.v47Source b{display:block;color:#fff;font-size:11px;margin-bottom:2px}.v47Source em{color:var(--v47-lime);font-style:normal}
+.v47Daybar{display:flex;gap:6px;overflow:auto;padding:4px 0 9px;scrollbar-width:none}.v47Daybar::-webkit-scrollbar{display:none}
+.v47Daybar button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#8d8691;border-radius:14px;padding:8px 9px;font-size:8px;font-weight:1000}
+.v47Daybar button.on{border-color:var(--v47-lime);background:#18200f;color:#fff}
+.v47Event{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:start;border:1px solid #30303a;border-radius:19px;background:
+radial-gradient(circle at 100% 0,rgba(200,255,61,.09),transparent 35%),#111117;padding:12px;margin:7px 0}
+.v47Time{font-size:19px;font-weight:1000;color:#fff}
+.v47Club{font-size:20px;line-height:1;color:var(--v47-lime);font-weight:1000;letter-spacing:-.04em}
+.v47Tournament{font-size:12px;line-height:1.25;color:#fff;font-weight:850;margin-top:5px}
+.v47Meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.v47Meta span{border:1px solid #383842;border-radius:999px;padding:5px 7px;font-size:7px;color:#bbb4be}
+.v47Meta .free{border-color:#c8ff3d55;color:#dcffa0}.v47Go{width:38px;height:38px;border:1px solid #44414a;background:#17171d;color:#fff;border-radius:13px;font-size:18px}
+.v47Regions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v47Region{position:relative;min-height:170px;border:1px solid #34343d;border-radius:22px;overflow:hidden;text-align:left;color:#fff;background:linear-gradient(145deg,#15151b,#0c0c11);padding:0}
+.v47Region img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.68) saturate(.92)}
+.v47Region:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(5,5,7,.92) 100%)}
+.v47RegionText{position:absolute;z-index:2;left:12px;right:12px;bottom:12px}.v47RegionText b{display:block;font-size:21px;line-height:1;font-weight:1000;letter-spacing:-.04em}
+.v47RegionText span{display:block;font-size:9px;color:#ded8e0;margin-top:5px;line-height:1.3}
+.v47RegionNoImg{position:absolute;inset:0;background:
+radial-gradient(circle at 90% 0,rgba(200,255,61,.16),transparent 34%),
+radial-gradient(circle at 0 100%,rgba(255,79,152,.13),transparent 36%),#101015}
+.v47Search{width:100%;box-sizing:border-box;background:#0d0d12;color:#fff;border:1px solid #383842;border-radius:15px;padding:12px 13px;font-size:12px}
+.v47Filters{display:flex;gap:6px;overflow:auto;padding:8px 0;scrollbar-width:none}.v47Filters::-webkit-scrollbar{display:none}
+.v47Filters button{flex:0 0 auto;border:1px solid #30303a;background:#0d0d12;color:#918a95;border-radius:999px;padding:8px 10px;font-size:8px;font-weight:1000}
+.v47Filters button.on{border-color:var(--v47-lime);background:#18200f;color:#fff}
+.v47ClubList{display:grid;gap:8px;margin-top:7px}
+.v47ClubCard{position:relative;overflow:hidden;border:1px solid #30303a;border-radius:20px;background:
+radial-gradient(circle at 96% 0,rgba(200,255,61,.12),transparent 34%),linear-gradient(145deg,#15151b,#0d0d12);padding:13px;text-align:left;color:#fff}
+.v47ClubCard.key{border-color:#c8ff3d55;box-shadow:0 0 0 1px rgba(200,255,61,.08) inset,0 0 28px rgba(200,255,61,.06)}
+.v47ClubName{font-size:23px;line-height:1;color:var(--v47-lime);font-weight:1000;letter-spacing:-.045em;padding-right:72px}
+.v47ClubAddress{font-size:12px;color:#c4bdc7;line-height:1.4;margin-top:7px}
+.v47ClubStats{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.v47ClubStats span{border:1px solid #393943;border-radius:999px;padding:5px 7px;font-size:7px;color:#b6afb9}
+.v47ClubStats .hot{border-color:#c8ff3d55;color:#dcffa0}.v47ClubNum{position:absolute;right:10px;bottom:-14px;font-size:60px;font-weight:1000;color:#ffffff035}
+.v47StatGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.v47Stat{border:1px solid #d8d1d5;border-radius:14px;background:#fff;padding:11px}
+.v47Stat span{display:block;color:#8b8389;font-size:7px}.v47Stat b{display:block;color:#181419;font-size:17px;margin-top:3px}
+.v47SeriesCard{border:1px solid #30303a;border-radius:21px;background:radial-gradient(circle at 95% 0,rgba(255,79,152,.12),transparent 35%),#111117;padding:14px;margin:8px 0}
+.v47SeriesCard h2{font-size:24px;line-height:1;margin:3px 0 8px}.v47SeriesCard p{font-size:10px;color:#a69faa;line-height:1.4;margin:0 0 10px}
+.v47SeriesCard button{width:100%;border:0;border-radius:14px;background:var(--v47-lime);color:#11140d;padding:12px;font-size:9px;font-weight:1000}
+.v47JournalHead{margin-bottom:12px}.v47BackJournal{width:100%;border:1px solid #3b3740;background:#141419;color:#fff;border-radius:14px;padding:12px;font-size:9px;font-weight:1000}
+.v47TestBack{position:absolute!important;left:12px!important;top:12px!important;z-index:10!important;border:1px solid #3b3a44!important;background:#111117e8!important;color:#fff!important;border-radius:12px!important;padding:8px 10px!important;font-size:9px!important;font-weight:1000!important}
+@media(max-width:360px){.v47Regions{grid-template-columns:1fr}.v47Event{grid-template-columns:50px 1fr auto}.v47Club{font-size:19px}}
+</style>
+
+<script id="v47-normal-script">
+(function(){
+'use strict';
+let V47_TOP='afisha';
+let V47_A='today';
+let V47_DAY='2026-08-16';
+let V47_CF='active';
+let V47_CLUBS=[];
+let V47_SCHED=[];
+
+const V47_ORIGINAL_JOURNAL = (typeof __renderTournaments23V24==='function') ? __renderTournaments23V24 : null;
+
+const REGIONS=[
+ {name:'МОСКВА',sub:'Спортивный покер · 66 клубов',img:'assets/regions/moscow.webp',action:'clubs'},
+ {name:'КАЛИНИНГРАД',sub:'Игорная зона · Янтарная',img:'assets/regions/kaliningrad.webp',action:'series'},
+ {name:'СОЧИ',sub:'Краснодарский край · игорная зона',img:'assets/regions/sochi.webp',action:'series'},
+ {name:'АЛТАЙСКИЙ КРАЙ',sub:'Игорная зона · Сибирская монета',img:'assets/regions/altai.webp',action:'series'},
+ {name:'ПРИМОРЬЕ',sub:'Игорная зона · Tigre de Cristal',img:'assets/regions/primorye.webp',action:'series'},
+ {name:'МИНСК',sub:'Беларусь · живой покер и серии',img:'assets/regions/minsk.webp',action:'series'},
+ {name:'РЕСПУБЛИКА АЛТАЙ',sub:'Игорная зона · добавлена в 2026',img:'',action:'series'},
+ {name:'КРЫМ',sub:'Игорная зона · раздел подготовлен',img:'',action:'series'}
+];
+
+function navLabel(){
+ const n=document.querySelector('.nav [data-nav="tournaments"]');
+ if(n&&n.childNodes.length)n.childNodes[n.childNodes.length-1].textContent=' ПОЛЯНА';
+}
+function hero(){
+ return `<div class="v47Hero"><span class="ey">ЖИВОЙ ПОКЕР</span><h1>ПОЛЯНА<span>.</span></h1><p>Афиша Москвы, клубы, серии и твоя собственная история онлайн/офлайн турниров.</p>
+ <div class="v47Top">
+  <button data-v47top="afisha" class="${V47_TOP==='afisha'?'on':''}">АФИША</button>
+  <button data-v47top="series" class="${V47_TOP==='series'?'on':''}">СЕРИИ / ЗОНЫ</button>
+  <button data-v47top="journal" class="${V47_TOP==='journal'?'on':''}">МОИ ТУРНИРЫ</button>
+  <button data-v47top="trips" class="${V47_TOP==='trips'?'on':''}">МОИ ПОЕЗДКИ</button>
+ </div></div>`;
+}
+function sub(){
+ return `<div class="v47Sub"><button data-v47a="today" class="${V47_A==='today'?'on':''}">СЕГОДНЯ</button><button data-v47a="week" class="${V47_A==='week'?'on':''}">НЕДЕЛЯ</button><button data-v47a="clubs" class="${V47_A==='clubs'?'on':''}">КЛУБЫ МОСКВЫ</button><button data-v47a="regions" class="${V47_A==='regions'?'on':''}">РЕГИОНЫ</button></div>`;
+}
+function daybar(){
+ const d=[['2026-08-16','СЕГОДНЯ'],['2026-08-17','ПН'],['2026-08-18','ВТ'],['2026-08-19','СР'],['2026-08-20','ЧТ'],['2026-08-21','ПТ'],['2026-08-22','СБ']];
+ return `<div class="v47Daybar">${d.map(x=>`<button data-v47day="${x[0]}" class="${V47_DAY===x[0]?'on':''}">${x[1]}</button>`).join('')}</div>`;
+}
+function today(){
+ const arr=V47_DAY==='2026-08-16'?V47_SCHED:[];
+ return `${sub()}${daybar()}<div class="v47Source"><b>МОСКВА · АФИША</b>${V47_DAY==='2026-08-16'?'Актуальный snapshot PokerNoMoney на 16.08.2026. Название клуба всегда идёт первым.':'Интерфейс недели готов. Будущие даты не заполняем выдуманными данными до подключения live-feed.'}</div>
+ ${arr.length?arr.map((e,i)=>`<div class="v47Event"><div class="v47Time">${e.time}</div><div><div class="v47Club">${e.club}</div><div class="v47Tournament">${e.tournament}</div><div class="v47Meta">${e.free?'<span class="free">FREE</span>':''}<span>СПОРТИВНЫЙ ПОКЕР</span><span>МОСКВА</span></div></div><button class="v47Go" data-v47club="${e.club}">›</button></div>`).join(''):'<div class="v47Source"><b>НЕТ ПОДСТАВНЫХ ДАННЫХ</b>Как только подключим автоматическую загрузку расписания, здесь появится реальная афиша выбранного дня.</div>'}`;
+}
+function regions(){
+ return `${sub()}<div class="v47Section"><h3>ЛОКАЦИИ</h3><span>Москва + легальные игорные зоны + Минск</span></div><div class="v47Regions">${REGIONS.map(r=>`<button class="v47Region" data-v47region="${r.action}">${r.img?`<img src="${r.img}" alt="${r.name}">`:'<i class="v47RegionNoImg"></i>'}<div class="v47RegionText"><b>${r.name}</b><span>${r.sub}</span></div></button>`).join('')}</div>`;
+}
+function filteredClubs(){
+ let a=V47_CLUBS.slice();
+ if(V47_CF==='active')a=a.filter(c=>Number(c.upcoming)>0).sort((x,y)=>Number(y.upcoming)-Number(x.upcoming));
+ if(V47_CF==='today')a=a.filter(c=>Number(c.today_events)>0).sort((x,y)=>Number(y.today_events)-Number(x.today_events)||String(x.today_first_time).localeCompare(String(y.today_first_time)));
+ if(V47_CF==='popular')a=a.filter(c=>['Level','Straddle poker club','Quantum'].includes(c.name)).sort((a,b)=>['Quantum','Level','Straddle poker club'].indexOf(a.name)-['Quantum','Level','Straddle poker club'].indexOf(b.name));
+ if(V47_CF==='all')a=a.sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+ return a;
+}
+function clubCard(c,i){
+ const key=['Level','Straddle poker club','Quantum'].includes(c.name);
+ return `<button class="v47ClubCard ${key?'key':''}" data-v47club="${c.name}"><div class="v47ClubName">${c.name}</div><div class="v47ClubAddress">${c.address}</div><div class="v47ClubStats">${c.today_events?`<span class="hot">${c.today_events} СЕГОДНЯ</span>`:''}${c.today_first_time?`<span>С ${c.today_first_time}</span>`:''}<span>${c.min_fee_rub?`ОТ ${Number(c.min_fee_rub).toLocaleString('ru-RU')} ₽`:'ВХОД СВОБОДНЫЙ'}</span><span>${c.upcoming?`${c.upcoming} ВПЕРЕДИ`:'НЕТ АНОНСОВ'}</span></div><i class="v47ClubNum">${String(i+1).padStart(2,'0')}</i></button>`;
+}
+function clubs(){
+ const a=filteredClubs();
+ return `${sub()}<div class="v47Source"><b>66 КЛУБОВ МОСКВЫ</b>Адреса, минимальный оргвзнос, число анонсов и сегодняшняя активность из публичного справочника PokerNoMoney. <em>Level / Straddle / Quantum выделены отдельно.</em></div>
+ <input id="v47Search" class="v47Search" placeholder="Найти клуб или адрес…">
+ <div class="v47Filters"><button data-v47cf="popular" class="${V47_CF==='popular'?'on':''}">LEVEL / STRADDLE / QUANTUM</button><button data-v47cf="today" class="${V47_CF==='today'?'on':''}">ИГРАЮТ СЕГОДНЯ</button><button data-v47cf="active" class="${V47_CF==='active'?'on':''}">ЕСТЬ АНОНСЫ</button><button data-v47cf="all" class="${V47_CF==='all'?'on':''}">ВСЕ 66</button></div>
+ <div id="v47ClubList" class="v47ClubList">${a.map(clubCard).join('')}</div>`;
+}
+function series(){
+ return `<div class="v47Section"><h3>СЕРИИ И ИГОРНЫЕ ЗОНЫ</h3><span>все карточки кликабельны</span></div>
+ ${REGIONS.filter(r=>r.name!=='МОСКВА').map(r=>`<div class="v47SeriesCard"><span class="ey">${r.name}</span><h2>${r.sub}</h2><p>Выбери даты, дисциплины, лимит входа и бюджет. Дальше собери собственную сетку турниров A/B/C.</p><button data-v47series="${r.name}">СОБРАТЬ ПОЕЗДКУ →</button></div>`).join('')}`;
+}
+function trips(){
+ return `<div class="v47Section"><h3>МОИ ПОЕЗДКИ</h3><span>план серии</span></div><div class="v47SeriesCard"><span class="ey">ПЛАНИРОВЩИК</span><h2>СОБЕРИ СЕРИЮ.</h2><p>Город, даты, NLH / PLO / HU / OFC, бюджет, жильё, дорога и сетка A/B/C.</p><button id="v47TripNew">НОВАЯ ПОЕЗДКА →</button></div>`;
+}
+function openClub(name){
+ const c=V47_CLUBS.find(x=>x.name===name); if(!c)return;
+ const facts=(c.facts||[]).map(x=>`<span class="v47Meta"><span>${x}</span></span>`).join('');
+ openModal(`<div class="p41SheetHead"><span class="ey">КЛУБ · МОСКВА</span><h2 style="color:#c8ff3d">${c.name}</h2><p>${c.address}</p></div>
+ <div class="v47StatGrid"><div class="v47Stat"><span>ОРГВЗНОС</span><b>${c.min_fee_rub?`от ${Number(c.min_fee_rub).toLocaleString('ru-RU')} ₽`:'FREE'}</b></div><div class="v47Stat"><span>АНОНСЫ</span><b>${c.upcoming||0}</b></div><div class="v47Stat"><span>СЕГОДНЯ</span><b>${c.today_events||0}</b></div><div class="v47Stat"><span>ПЕРВАЯ ИГРА</span><b>${c.first_game||'—'}</b></div></div>
+ ${c.description?`<div class="v47Source"><b>О КЛУБЕ</b>${c.description}</div>`:''}
+ ${c.venue?`<div class="v47Source"><b>ПЛОЩАДКА</b>${c.venue}</div>`:''}
+ <div class="v47Source"><b>ДАННЫЕ</b>Snapshot PokerNoMoney на 16.08.2026. Это не live API.</div>`);
+}
+function openSeries(name){
+ openModal(`<div class="p41SheetHead"><span class="ey">${name}</span><h2>МОЯ ПОЕЗДКА.</h2><p>Настрой серию под себя.</p></div>
+ <div class="p41Form"><label>ДАТЫ</label><input class="p41Field" value="Выбрать даты"><label>ДИСЦИПЛИНЫ</label><div class="p41Multi">${['NLH','PLO','HU','OFC'].map(x=>`<button type="button">${x}</button>`).join('')}</div><label>БЮДЖЕТ</label><input class="p41Field" value="50 000 ₽"></div><button class="p41Primary" id="v47BuildTrip">СОБРАТЬ СЕТКУ →</button>`);
+ setTimeout(()=>{document.querySelectorAll('.p41Multi button').forEach(b=>b.onclick=()=>b.classList.toggle('on'));const x=document.getElementById('v47BuildTrip');if(x)x.onclick=()=>{closeModal();V47_TOP='trips';renderTournaments23()};},0);
+}
+function journal(){
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ if(V47_ORIGINAL_JOURNAL){
+   V47_ORIGINAL_JOURNAL();
+   const root=area.querySelector('.t23');
+   if(root)root.insertAdjacentHTML('afterbegin',`<div class="v47JournalHead"><button class="v47BackJournal" id="v47BackJournal">← НАЗАД В ПОЛЯНУ</button><div class="v47Source"><b>МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ</b>Добавление и редактирование турниров, бай-ины, пули, призовые, профит и ROI — старый функциональный журнал возвращён полностью.</div></div>`);
+   setTimeout(()=>{const b=document.getElementById('v47BackJournal');if(b)b.onclick=()=>{V47_TOP='afisha';V47_A='today';renderTournaments23()}},0);
+ } else {
+   area.innerHTML=`<div class="v47">${hero()}<div class="v47Source"><b>ОШИБКА</b>Не найден старый журнал турниров.</div></div>`;
+ }
+ navLabel();
+}
+async function loadData(){
+ if(!V47_CLUBS.length){try{const j=await (await fetch('data/moscow_clubs_pokernomoney.json',{cache:'no-store'})).json();V47_CLUBS=j.clubs||[]}catch(e){}}
+ if(!V47_SCHED.length){try{const j=await (await fetch('data/moscow_schedule_today.json',{cache:'no-store'})).json();V47_SCHED=j.events||[]}catch(e){}}
+ if(V47_TOP==='afisha')renderTournaments23();
+}
+function bind(){
+ navLabel();
+ document.querySelectorAll('[data-v47top]').forEach(b=>b.onclick=()=>{V47_TOP=b.dataset.v47top;if(V47_TOP==='journal'){journal();return}renderTournaments23()});
+ document.querySelectorAll('[data-v47a]').forEach(b=>b.onclick=()=>{V47_A=b.dataset.v47a;renderTournaments23()});
+ document.querySelectorAll('[data-v47day]').forEach(b=>b.onclick=()=>{V47_DAY=b.dataset.v47day;renderTournaments23()});
+ document.querySelectorAll('[data-v47region]').forEach(b=>b.onclick=()=>{if(b.dataset.v47region==='clubs'){V47_TOP='afisha';V47_A='clubs'}else{V47_TOP='series'}renderTournaments23()});
+ document.querySelectorAll('[data-v47club]').forEach(b=>b.onclick=()=>openClub(b.dataset.v47club));
+ document.querySelectorAll('[data-v47cf]').forEach(b=>b.onclick=()=>{V47_CF=b.dataset.v47cf;renderTournaments23()});
+ document.querySelectorAll('[data-v47series]').forEach(b=>b.onclick=()=>openSeries(b.dataset.v47series));
+ const s=document.getElementById('v47Search');if(s)s.oninput=()=>{const q=s.value.toLowerCase().trim();const a=filteredClubs().filter(c=>(c.name+' '+c.address).toLowerCase().includes(q));const l=document.getElementById('v47ClubList');if(l)l.innerHTML=a.map(clubCard).join('');document.querySelectorAll('[data-v47club]').forEach(b=>b.onclick=()=>openClub(b.dataset.v47club))};
+ const t=document.getElementById('v47TripNew');if(t)t.onclick=()=>openSeries('ВЫБЕРИ РЕГИОН');
+}
+window.renderTournaments23=renderTournaments23=function(){
+ if(V47_TOP==='journal'){journal();return}
+ const area=document.getElementById('tournamentsArea');if(!area)return;
+ let body='';
+ if(V47_TOP==='afisha') body=V47_A==='today'||V47_A==='week'?today():V47_A==='clubs'?clubs():regions();
+ if(V47_TOP==='series') body=series();
+ if(V47_TOP==='trips') body=trips();
+ area.innerHTML=`<div class="v47">${hero()}${body}</div>`;
+ bind();
+};
+navLabel();
+loadData();
+
+/* BACK BUTTON IN INITIAL DIAGNOSTIC */
+if(typeof d25RenderSpot==='function'){
+ const __v47OldD25=d25RenderSpot;
+ d25RenderSpot=function(){
+   __v47OldD25();
+   const story=document.getElementById('story'); if(!story)return;
+   if(D25.index>0 || D25.pending){
+     story.style.position='relative';
+     const b=document.createElement('button');
+     b.className='v47TestBack'; b.textContent='← НАЗАД';
+     b.onclick=(ev)=>{ev.stopPropagation();if(D25.pending){D25.pending=null}else if(D25.index>0){D25.index--;D25.results.pop()}D25.started=performance.now();renderDiagnostic()};
+     story.appendChild(b);
+   }
+ };
+}
+document.documentElement.dataset.pokerSwipeVersion='47-normal';
+})();
+</script>
+
 </body>
 </html>
