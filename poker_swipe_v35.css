@@ -1,0 +1,124 @@
+/* PokerSwipe V35 — UX reset / electric lime system */
+:root{
+  --bg:#070908;
+  --panel:#101310;
+  --panel2:#151915;
+  --line:#2a302a;
+  --text:#f7faf5;
+  --mut:#9aa39a;
+  --pink:#c8ff3d;
+  --pink2:#e2ff87;
+  --g:#63e6a6;
+  --y:#ffd76a;
+  --r:#ff6276;
+  --v35-accent:#c8ff3d;
+  --v35-accent-soft:#e8ffab;
+  --v35-bg:#070908;
+  --v35-card:#111511;
+  --v35-card-2:#151a15;
+  --v35-line:rgba(226,255,135,.14);
+  --v35-muted:#9ca69c;
+  --v35-shadow:0 20px 56px rgba(0,0,0,.34);
+}
+
+html,body{background:var(--v35-bg)!important}
+body,.app{color:var(--text)}
+.app{
+  background:
+    radial-gradient(circle at 82% -10%,rgba(200,255,61,.11),transparent 28%),
+    radial-gradient(circle at -10% 42%,rgba(99,230,166,.045),transparent 28%),
+    var(--v35-bg)!important;
+}
+.pink{color:var(--v35-accent)!important}
+.primary{background:var(--v35-accent)!important;color:#0b0d08!important;box-shadow:0 10px 28px rgba(200,255,61,.16)!important}
+.choice.selected,.node.selected{border-color:rgba(200,255,61,.7)!important;box-shadow:0 0 0 1px rgba(200,255,61,.12),0 12px 28px rgba(0,0,0,.22)!important}
+.range{accent-color:var(--v35-accent)!important}
+.bar>span,.builderProgress i.on{background:linear-gradient(90deg,var(--v35-accent),var(--v35-accent-soft))!important}
+.nav button.on i{color:var(--v35-accent)!important;filter:drop-shadow(0 0 10px rgba(200,255,61,.26))!important}
+.build{background:var(--v35-accent)!important;color:#0a0d07!important}
+
+/* Type scale: stop hiding important information in 8–9px labels. */
+.ey{font-size:10px!important;line-height:1.25;letter-spacing:.105em!important}
+.small{font-size:12px!important;line-height:1.45}
+.panel p,.hero p,.lab p{font-size:13px;line-height:1.52}
+.choice,.action,.primary,.secondary{font-size:14px}
+.nav button{font-size:9px!important;letter-spacing:.02em}
+
+/* V35 HOME */
+.v35Home{padding:4px 14px 34px}
+.v35BrandRow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 2px 16px}
+.v35Wordmark{font-weight:1000;font-size:18px;letter-spacing:-.055em}
+.v35Wordmark span{color:var(--v35-accent)}
+.v35Status{display:flex;align-items:center;gap:7px;color:#b7c1b7;font-size:10px;font-weight:850;letter-spacing:.03em}
+.v35Status i{display:block;width:7px;height:7px;border-radius:50%;background:var(--v35-accent);box-shadow:0 0 13px rgba(200,255,61,.55)}
+
+.v35Today{position:relative;overflow:hidden;border:1px solid rgba(200,255,61,.17);border-radius:29px;padding:21px 20px 19px;background:linear-gradient(145deg,#151b12 0%,#0d110d 58%,#0a0d0a 100%);box-shadow:var(--v35-shadow)}
+.v35Today:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-112px;top:-104px;background:radial-gradient(circle,rgba(200,255,61,.14),rgba(200,255,61,0) 69%);pointer-events:none}
+.v35TodayLabel{display:flex;align-items:center;gap:8px;color:var(--v35-accent);font-size:10px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase}
+.v35TodayLabel:before{content:"";width:18px;height:2px;border-radius:99px;background:var(--v35-accent)}
+.v35Today h1{position:relative;z-index:1;font-size:31px;line-height:.98;letter-spacing:-.06em;margin:13px 0 10px;max-width:330px;text-transform:none}
+.v35Today p{position:relative;z-index:1;color:#bbc4ba;font-size:13px;line-height:1.5;margin:0 0 17px;max-width:330px}
+.v35TodayMeta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px;position:relative;z-index:1}
+.v35TodayMeta span{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);padding:7px 9px;border-radius:999px;font-size:10px;color:#c4cdc3}
+.v35TodayMeta b{color:#fff}
+.v35Start{position:relative;z-index:1;width:100%;border:0;border-radius:17px;background:var(--v35-accent);color:#0b0d08;padding:15px 16px;font-weight:1000;font-size:14px;text-align:left;display:flex;justify-content:space-between;align-items:center;box-shadow:0 9px 0 #607c15,0 17px 34px rgba(0,0,0,.24)}
+.v35Start:active{transform:translateY(4px);box-shadow:0 5px 0 #607c15,0 12px 26px rgba(0,0,0,.2)}
+
+.v35Snapshot{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 19px}
+.v35Stat{border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.028);border-radius:17px;padding:11px 10px;min-width:0}
+.v35Stat span{display:block;color:#858f85;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.v35Stat b{display:block;font-size:20px;letter-spacing:-.045em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v35Stat:first-child b{color:var(--v35-accent)}
+
+.v35Section{margin-top:19px}
+.v35SectionHead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:0 2px 9px}
+.v35SectionHead h2{font-size:20px;line-height:1.05;margin:0;letter-spacing:-.045em}
+.v35SectionHead span{font-size:10px;color:#7f897f;text-align:right;max-width:150px;line-height:1.25}
+
+.v35Leak{border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,#121612,#0c0f0c);border-radius:22px;padding:15px 15px 14px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.v35Leak .v35LeakKicker{font-size:9px;color:#879287;text-transform:uppercase;letter-spacing:.085em;font-weight:900}
+.v35Leak h3{font-size:18px;margin:5px 0 5px;letter-spacing:-.035em}
+.v35Leak p{font-size:11px!important;line-height:1.42;color:#9da69d;margin:0}
+.v35LeakBadge{min-width:68px;height:68px;border-radius:19px;border:1px solid rgba(200,255,61,.16);background:rgba(200,255,61,.055);display:grid;place-items:center;text-align:center;color:var(--v35-accent)}
+.v35LeakBadge b{display:block;font-size:18px;line-height:1}
+.v35LeakBadge span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.07em;margin-top:3px;color:#aabd81}
+
+.v35Hand{width:100%;border:1px solid rgba(255,255,255,.075);background:#101410;border-radius:22px;padding:15px;text-align:left;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center}
+.v35HandIcon{width:44px;height:50px;border-radius:13px;background:#f4f6f0;color:#10130e;display:grid;place-items:center;font-weight:1000;font-size:17px;transform:rotate(-3deg);box-shadow:5px 5px 0 rgba(200,255,61,.18)}
+.v35Hand b{display:block;font-size:15px;margin-bottom:3px}.v35Hand span{display:block;color:#8e998e;font-size:11px;line-height:1.35}.v35Hand strong{color:var(--v35-accent);font-size:21px}
+
+.v35Tools{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.v35Tool{min-height:112px;border:1px solid rgba(255,255,255,.075);background:linear-gradient(145deg,#121612,#0d100d);border-radius:21px;padding:14px;text-align:left;position:relative;overflow:hidden}
+.v35Tool:before{content:"";position:absolute;width:75px;height:75px;border-radius:50%;right:-32px;top:-34px;border:1px solid rgba(200,255,61,.09)}
+.v35Tool span{font-size:9px;color:#7f8a7f;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.v35Tool b{display:block;font-size:16px;line-height:1.06;margin-top:7px;letter-spacing:-.025em;max-width:115px}.v35Tool i{position:absolute;right:13px;bottom:12px;font-style:normal;color:var(--v35-accent);font-weight:1000;font-size:17px}
+
+.v35Career{margin-top:8px;border-top:1px solid rgba(255,255,255,.07);padding:13px 2px 0}
+.v35CareerTop{display:flex;justify-content:space-between;align-items:center;gap:12px}.v35CareerTop div span{font-size:9px;color:#778177;text-transform:uppercase;font-weight:900;letter-spacing:.08em}.v35CareerTop div b{display:block;font-size:13px;margin-top:3px}.v35CareerTop strong{font-size:14px;color:var(--v35-accent)}
+.v35CareerTrack{height:5px;background:#1b211b;border-radius:99px;margin-top:9px;overflow:hidden}.v35CareerTrack i{display:block;height:100%;background:var(--v35-accent);border-radius:99px}
+
+/* Existing V31 home must not flash if render timing overlaps. */
+.v31Home{display:none!important}
+
+/* Global card clean-up. */
+.hero,.panel,.lab{border-color:rgba(255,255,255,.075)!important;background:linear-gradient(155deg,#131713,#0d100d)!important;box-shadow:0 16px 38px rgba(0,0,0,.18)}
+.tile,.metric,.quick5{border-color:rgba(255,255,255,.075)!important;background:#101410!important}
+.v34ExplainStep,.v34StreetReview,.v34Missing{background:#0d110d!important;border-color:rgba(255,255,255,.08)!important}
+.v34ExplainStep>span,.v34StreetHead span{color:var(--v35-accent)!important}
+
+/* Bottom navigation feels like an app, not a debug toolbar. */
+.nav{background:rgba(7,9,8,.93)!important;border-top:1px solid rgba(255,255,255,.075)!important;box-shadow:0 -16px 42px rgba(0,0,0,.35)!important}
+.nav button{color:#737d73!important;min-height:54px}
+.nav button.on{color:#f5f8f2!important;background:rgba(200,255,61,.045)!important}
+.nav button.on i{color:var(--v35-accent)!important}
+
+/* Replace the remaining obvious pink-specific presentation from older layers. */
+.homeCreator,.creatorVerdict{border-color:rgba(200,255,61,.24)!important;background:linear-gradient(145deg,rgba(200,255,61,.07),#0d100d 72%)!important}
+.creatorVerdict .ey{color:#dfff87!important}
+.v31ProfileExplain{border-color:rgba(255,255,255,.075)!important}
+
+@media (max-width:360px){
+ .v35Today h1{font-size:28px}
+ .v35Snapshot{gap:6px}.v35Stat{padding:10px 8px}.v35Stat b{font-size:18px}
+ .v35Tools{grid-template-columns:1fr}
+ .v35Tool{min-height:92px}
+}

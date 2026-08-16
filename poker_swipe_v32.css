@@ -1,15 +1,15 @@
 /* V32 stability/accessibility additions. Existing visual assets are untouched. */
 .v32StorageWarning{position:fixed;z-index:10000;left:50%;top:max(10px,env(safe-area-inset-top));transform:translateX(-50%);width:min(430px,calc(100% - 24px));padding:12px 14px;border:1px solid #ff4b68;border-radius:16px;background:#35141b;color:#fff;box-shadow:0 18px 55px #000b}
 .v32StorageWarning b,.v32StorageWarning span{display:block}.v32StorageWarning b{font-size:12px}.v32StorageWarning span{font-size:11px;line-height:1.4;margin-top:3px}
-.v32Metric{cursor:pointer;transition:background .15s,transform .15s;outline:none}.v32Metric:active{transform:scale(.97)}.v32Metric:focus-visible{box-shadow:0 0 0 2px #ff75ad}
+.v32Metric{cursor:pointer;transition:background .15s,transform .15s;outline:none}.v32Metric:active{transform:scale(.97)}.v32Metric:focus-visible{box-shadow:0 0 0 2px #dfff82}
 #swipeCard .swipeContext{display:grid!important}
 .v32ProfileTools{margin-top:18px!important}.v32ToolGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.v32ToolGrid button{min-height:48px;border:1px solid #3a343c;border-radius:14px;background:#17171d;color:#fff;font-size:11px;font-weight:900;padding:10px}
-.v32QuickBanner{gap:8px}.v32QuickBanner>button{border:1px solid #67314c;border-radius:999px;background:#0f0f14;color:#ff9fc6;padding:7px 9px;font-size:9px;font-weight:950}
-.v32Calculating{padding:18px;text-align:center;font-size:12px;font-weight:950;letter-spacing:.08em;color:#ff75ad}
-.v32HandsHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:19px 0 9px}.v32HandsHead button{border:1px solid #44333d;border-radius:999px;background:#171219;color:#ff9fc6;padding:7px 9px;font-size:9px;font-weight:950}
+.v32QuickBanner{gap:8px}.v32QuickBanner>button{border:1px solid #67314c;border-radius:999px;background:#0f0f14;color:#efffbd;padding:7px 9px;font-size:9px;font-weight:950}
+.v32Calculating{padding:18px;text-align:center;font-size:12px;font-weight:950;letter-spacing:.08em;color:#dfff82}
+.v32HandsHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:19px 0 9px}.v32HandsHead button{border:1px solid #44333d;border-radius:999px;background:#171219;color:#efffbd;padding:7px 9px;font-size:9px;font-weight:950}
 .v32HandsList{display:grid;gap:8px}.v32HandRow{border:1px solid #303039;border-radius:17px;background:#101015;padding:10px}.v32HandOpen{width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:0}.v32HandOpen b,.v32HandOpen small{display:block}.v32HandOpen b{font-size:12px}.v32HandOpen small{color:#99929c;font-size:10px;margin-top:4px}.v32HandRow>div{display:flex;justify-content:flex-end;gap:6px;margin-top:9px}.v32HandRow>div button{border:1px solid #39343c;border-radius:999px;background:#17171c;color:#bdb6bf;padding:6px 8px;font-size:8px;font-weight:950}.v32HandRow>div button:last-child{color:#ff829c;border-color:#5a2935}
 .v32FormError{margin:8px 0 12px;border:1px solid #ff4b68;border-radius:13px;background:#35141b;color:#ffb2c0;padding:10px;font-size:11px;line-height:1.4}.v32ErrorList p{margin:7px 0;font-size:12px}
-#eqout .mut{display:block;text-align:center;margin:8px 0 0}.cardPick18:focus-visible,button:focus-visible{outline:2px solid #ff75ad;outline-offset:2px}
+#eqout .mut{display:block;text-align:center;margin:8px 0 0}.cardPick18:focus-visible,button:focus-visible{outline:2px solid #dfff82;outline-offset:2px}
 @media(min-width:760px){
   body{background:radial-gradient(circle at 50% 0,#24111a,#07070a 55%)}
   .app{max-width:680px;box-shadow:0 0 90px #0009}
