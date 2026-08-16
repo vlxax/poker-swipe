@@ -1,7 +1,15 @@
-POKER SWIPE — V51 AUTO POLYANA
-Bottom nav preserved: Главная / Раздачи / Мои турниры / Поляна / Ты.
-Polya data updater: .github/workflows/update_polyana.yml
-Runs every 6 hours and can also be started manually in GitHub Actions.
-Scraper: scripts/update_polyana.py
-UI loads data/live_polyana.json with cache disabled and refreshes every 15 minutes while open.
-If source parsing fails, updater refuses to overwrite the last good snapshot.
+POKER SWIPE — V53 ART DIRECTION
+
+Functional base: V52. No sections removed.
+Visual pass:
+- premium black/surface system; lime = intelligence/action, pink = error/emotion;
+- calmer 5-item bottom nav;
+- editorial home hierarchy;
+- cinematic diagnostic test with larger cards and actions;
+- My Hands prioritizes price of mistake;
+- My Tournaments styled as personal P&L journal;
+- Polyana uses full-width regional photography and stronger CLUB -> tournament hierarchy;
+- Moscow clubs use editorial numbering instead of Excel-card feel;
+- YOU moved toward Poker DNA visual language;
+- secondary copy increased for real phone readability;
+- reduced borders/glow/pills and visual noise.
