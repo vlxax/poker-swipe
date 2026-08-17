@@ -64,7 +64,14 @@ All methods are async and return either a result object or a structured error
 - `analyzeDecision({ ... })` — full decision: per-action EV, best line, severity
   (GOOD/INACCURACY/MISTAKE/BLUNDER), confidence, and a rendered explanation.
   Pass `{ mode: 'solver' }` (with `heroRange` + `villainRange` and a postflop
-  board) to run the CFR core instead of the heuristic path.
+  board) to run the CFR core instead of the heuristic path. In solver mode it
+  returns a production analysis: `strategy` + `actionEV` (root actor, legal
+  actions only), `recommendedAction` + `recommendedFrequency`, `evLossBB`,
+  `exploitabilityBB`/`exploitabilityPerPlayerBB`, `convergence`, a private
+  `rangeEquilibration` check, solver-aware `confidence`, `abstractions`, a
+  rendered `explanation`, and `calculation.mistakeSeverity` on the
+  negligible/small/medium/large/severe scale. Set `adaptive: true` (or
+  `iterations: 'adaptive'`) to use automated convergence detection.
 
 ### Strategic (CFR) methods
 
@@ -87,11 +94,17 @@ All take a heads-up postflop config and are seedable/deterministic:
 - `buildTree(input)` — builds the game tree and returns a summary plus the root
   action set (no CFR run). Use it to inspect the abstraction before solving.
 - `solveCFR(input, options)` — Vanilla CFR solve. Options: `{ iterations, seed,
-  algorithm: 'cfr'|'cfr_plus', linearAveraging }`. Returns `{ algorithm,
-  iterations, game, rootStrategy, aggregateStrategy, actionEV, bestAction,
-  heroAction, heroEV, bestEV, evLossBB, exploitability, convergence, tree, meta }`.
-  The internal `_trainer`/`_tree` fields are included so `getStrategy` /
-  `getActionEV` can reuse a solve.
+  algorithm: 'cfr'|'cfr_plus', linearAveraging }`. For **adaptive** (automated
+  convergence detection) use `{ adaptive: true }` or `iterations: 'adaptive'`,
+  plus optional `{ minIterations, maxIterations, checkEvery,
+  exploitabilityTargetBB, strategyDeltaTarget, evDeltaTargetBB,
+  rangeDeltaTarget, stableChecksRequired }`. Safety limits: `{ maxSolveMs }`
+  stops at a time budget (`stopReason: 'time_limit'`), and `{ signal }` (an
+  AbortSignal-like `{ aborted }`) aborts with a `CANCELLED` error. Returns
+  `{ algorithm, iterations, adaptive, game, rootStrategy, aggregateStrategy,
+  actionEV, bestAction, heroAction, heroEV, bestEV, evLossBB, exploitability,
+  convergence, tree, meta }`. The internal `_trainer`/`_tree` fields are included
+  so `getStrategy` / `getActionEV` can reuse a solve.
 - `solve(input, options)` — dispatcher (currently aliases CFR; normalizes the
   `algorithm` option).
 - `getStrategy(resultOrInput, options?)` — `{ rootStrategy, aggregateStrategy }`
@@ -105,9 +118,40 @@ Result highlights:
 - `evLossBB` — `bestEV - heroEV` when `heroAction` is provided (mistake metric).
 - `exploitability` — `{ heroBR, villainBR, heroEV, villainEV, exploitabilityBB,
   exploitabilityPerPlayerBB }` via best response against the average strategy.
-- `convergence` — `{ status: 'early'|'approximate'|'converged', delta, samples }`.
+- `convergence` — fixed mode: `{ status: 'early'|'approximate'|'converged',
+  delta, samples }`. Adaptive mode also returns `{ converged, iterationsRun,
+  stopReason: 'converged'|'max_iterations'|'time_limit', exploitabilityBB,
+  exploitabilityHistory, strategyDelta, evDeltaBB, regretDelta, meanAbsRegret,
+  stableChecks, lastRangeDelta }`.
 - `meta` — `analysisMethod`, `treeAbstraction`, `betAbstraction`, `chanceMode:
-  'enumerated'`, `rangeAbstraction`, `durationMs`.
+  'enumerated'|'capped'`, `rangeAbstraction`, `adaptive`, `iterationsRun`,
+  `minIterations`, `rangeDeltaTarget`, `stopReason`, `durationMs`.
+
+### Adaptive convergence
+
+Set `adaptive: true` (or `iterations: 'adaptive'`) to stop as soon as several
+**consecutive** checkpoints are stable, instead of running a fixed iteration
+count. Every `checkEvery` iterations (past `minIterations`) the solver samples
+several independent signals together — strategy delta, action-EV delta, per-player
+exploitability, and a range-equilibration (reach-stability) check — and only
+declares convergence after `stableChecksRequired` consecutive checkpoints where
+**all** signals are within their targets. Convergence is never declared on a
+single metric. The run is bounded by `minIterations`/`maxIterations` and the
+optional `maxSolveMs` time budget, and can be aborted via `signal`.
+
+`rangeEquilibration` is an **internal validation metric**: it measures how stable
+each combo's (private) reach weight into its decision nodes has become. It never
+exposes private ranges — it only verifies the reach profile has stopped moving,
+which is a signal that the CFR strategies have equilibrated.
+
+### Solver confidence & explanations
+
+Solver results use a solver-aware confidence (`meta.confidence` /
+`confidence.level`) that only reports `high` when the solver **converged** and the
+abstraction is fine enough; non-converged or coarse-abstraction runs are capped
+below `high`. The rendered `explanation` (solver mode) is a PokerSwipe prose
+structure `{ summary, why, alternative, reliability }` and never claims "exact
+GTO" or "perfect play".
 
 ## Abstractions (honesty flags)
 
@@ -115,10 +159,10 @@ The solver solves the *abstracted* game exactly, and every result is labelled:
 
 - `treeAbstraction: true` — depth/count caps (`maxDepth`, `maxNodes`) can prune.
 - `betAbstraction: true` — only the sizes in `betSizes`/`raiseSizes` are legal.
-- `chanceMode: 'enumerated'` — cards are dealt enumeratively (no sampling). When
-  `maxChanceBranches` is finite, only that many cards per street are dealt, and
-  **all-in EV is marginalized over the same capped branches** so the tree and its
-  payoffs stay consistent.
+- `chanceMode: 'enumerated'|'capped'` — cards are dealt enumeratively (no
+  sampling). When `maxChanceBranches` is finite the mode is `'capped'`: only that
+  many cards per street are dealt, and **all-in EV is marginalized over the same
+  capped branches** so the tree and its payoffs stay consistent.
 - `rangeAbstraction: true` — ranges are weighted classes; per-combo granularity
   is kept internally but reach is weighted by combo weight.
 
@@ -143,7 +187,9 @@ npm run benchmark:cfr
 ```
 
 Prints solve time, tree size, iterations/sec and exploitability for a river,
-turn and flop scenario, showing exploitability decreasing with iterations.
+turn and flop scenario, showing exploitability decreasing with iterations, and
+a fixed-vs-adaptive comparison showing how many iterations automated convergence
+detection saves.
 
 ## Running tests
 
