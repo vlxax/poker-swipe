@@ -1,0 +1,16 @@
+PokerSwipe V68 PRESERVE DESIGN
+
+Exact existing application design preserved.
+Technical patch: guarded V57 MutationObserver to prevent recursive DOM mutation freeze.
+Removed from delivery: legacy index copies, home.jpg, home.png, match.png, previews/docs/dev artifacts.
+Added correct .nojekyll.
+Solver not included or modified.
+
+{
+  "index_bytes": 2064673,
+  "index_lines": 4734,
+  "mutation_observers": 8,
+  "decorate57_unsafe_pattern": 0,
+  "old_index_copies_in_zip": [],
+  "forbidden_assets_present": []
+}

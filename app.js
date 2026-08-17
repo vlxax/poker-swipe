@@ -1,92 +1,117 @@
-(()=>{
-'use strict';
-const BUILD='POKERSWIPE V67 CLEAN';
-const state={screen:location.hash.replace('#','')||'home', polyTab:'today', query:'', data:null};
-const validScreens=new Set(['home','hands','tournaments','polyana','you']);
-if(!validScreens.has(state.screen)) state.screen='home';
-const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const num=v=>Number.isFinite(Number(v))?Number(v):0;
 
-function navigate(screen,{push=true}={}){
- if(!validScreens.has(screen)) return;
- state.screen=screen;
- $$('[data-screen]').forEach(el=>el.classList.toggle('active',el.dataset.screen===screen));
- $$('.bottomNav [data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav===screen));
- if(push && location.hash!==`#${screen}`) history.pushState({screen},'',`#${screen}`);
- window.scrollTo({top:0,behavior:'instant'});
- if(screen==='polyana') ensurePolyana();
- if(screen==='tournaments') renderTournaments();
- if(screen==='home'||screen==='you') renderStats();
-}
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-function readJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'')||fallback}catch{return fallback}}
-function renderStats(){
- const hands=num(localStorage.getItem('ps_saved_hands'));
- const tours=readJSON('ps_tournaments',[]).length;
- $('#homeHands').textContent=hands; $('#savedHands').textContent=hands; $('#homeTournaments').textContent=tours;
- const skill=localStorage.getItem('ps_skill')||'не определён'; $('#homeSkill').textContent=skill; $('#profileSkill').textContent=skill.toUpperCase();
-}
+const state = { index:0, score:0, yellow:0, red:0, history:[] };
 
-function handleDecision(action){
- const copy={check:'Допустимый контроль банка. Для реального verdict нужен solver result.',bet33:'Небольшой c-bet выглядит естественно, но это демо без solver claim.',bet75:'Крупный сайзинг требует сильного диапазонного обоснования. Это демо, не GTO verdict.'};
- const out=$('#decisionResult'); out.textContent=copy[action]||'Решение сохранено.'; out.classList.remove('hidden');
- localStorage.setItem('ps_saved_hands',String(num(localStorage.getItem('ps_saved_hands'))+1)); renderStats();
-}
+const toxicWrong = [
+  "Ты сейчас не просто ошибся — ты взял нормальную ситуацию и добровольно сделал из неё благотворительный фонд для регуляров. Рука была играбельная, позиция была, стек был, кнопки перед тобой тоже были. Не было только причины выбирать именно это.",
+  "Вот это решение — классика жанра «я чувствую стол». Стол, к сожалению, тебя не чувствует. Он просто забирает EV маленькими аккуратными кусочками, пока ты называешь это эксплуатацией.",
+  "Солвер в этот момент ничего не говорит. Он просто молча закрывает ноутбук. Потому что объяснять взрослому человеку, зачем диапазоны существуют, уже как-то неловко.",
+  "Ты выбрал действие так уверенно, будто где-то есть график, который это оправдывает. Графика нет. Есть только твой банкролл, который сейчас сделал вид, что вас не знакомили.",
+  "Это было не «нестандартно». Нестандартно — это найти хороший эксплойт. А здесь ты просто поставил табуретку посреди дороги и сам же об неё споткнулся."
+];
 
-function renderTournaments(){
- const list=$('#tournamentList'); const items=readJSON('ps_tournaments',[]);
- if(!items.length){list.innerHTML='<div class="emptyState"><b>ПОКА ПУСТО</b><p>Когда появятся сыгранные турниры, здесь будет история, результат и точки для разбора.</p></div>';return}
- list.innerHTML=items.map(t=>`<article class="tCard"><div class="tCardTop"><div><small>${esc(t.date)}</small><strong>${esc(t.name)}</strong></div><b>${esc(t.place)}</b></div><small>${esc(t.note)}</small></article>`).join('');
-}
-function addDemoTournament(){const a=readJSON('ps_tournaments',[]);a.unshift({date:new Date().toLocaleDateString('ru-RU'),name:'6-MAX · TEST',place:'3 место',note:'Демо-запись. Можно удалить очисткой localStorage.'});localStorage.setItem('ps_tournaments',JSON.stringify(a));renderTournaments();renderStats()}
+const toxicYellow = [
+  "Не ужасно. Но это именно тот тип решения, после которого люди говорят «ну я же не сильно ошибся» и потом удивляются, почему винрейт выглядит как кардиограмма уставшего человека.",
+  "Жить можно. Богато — пока рано. Тут есть решение чище и прибыльнее, а ты выбрал уютный компромисс между покером и нежеланием принимать ответственность.",
+  "Фриковая Дама пока не вызывает полицию, но записывает номер машины. Решение пограничное: не катастрофа, но потенциал руки ты реализовал так, будто он тебе мешал."
+];
 
-async function ensurePolyana(){
- if(state.data){renderPolyana();return}
- const sources=['data/live_polyana.json','data/moscow_schedule_today.json','data/polyana_verified.json','data/moscow_clubs.json'];
- const loaded={};
- await Promise.all(sources.map(async src=>{try{const r=await fetch(src,{cache:'no-store'});if(r.ok)loaded[src]=await r.json()}catch(e){console.warn(BUILD,'data load',src,e)}}));
- state.data=loaded; renderPolyana();
-}
-function events(){
- const live=state.data?.['data/live_polyana.json']; const sched=state.data?.['data/moscow_schedule_today.json']; const verified=state.data?.['data/polyana_verified.json'];
- let arr=(live?.events?.length?live.events:(sched?.events?.length?sched.events:verified?.events))||[];
- return arr.map(x=>({...x,fee_rub:x.fee_rub??x.fee??null}));
-}
-function clubs(){
- const live=state.data?.['data/live_polyana.json']; const mc=state.data?.['data/moscow_clubs.json']; return (live?.clubs?.length?live.clubs:mc?.clubs)||[];
-}
-function renderPolyana(){
- const root=$('#polyanaContent'); const ev=events(); const cl=clubs(); $('#eventCount').textContent=ev.length||0;
- const q=state.query.trim().toLowerCase();
- if(state.polyTab==='today'){
-  const filtered=ev.filter(e=>!q||`${e.club} ${e.tournament} ${e.format||''}`.toLowerCase().includes(q)).slice(0,60);
-  root.innerHTML=`<div class="eventSectionTitle">МОСКВА · СЕГОДНЯ</div><div class="eventGrid">${filtered.map(e=>`<article class="eventCard"><div class="eventTime">${esc(e.time||'—')}</div><div class="eventName">${esc(e.tournament||'Турнир')}</div><div class="eventClub">${esc(e.club||'Клуб')}</div><div class="eventMeta">${e.format?`<span class="tag">${esc(e.format)}</span>`:''}${e.free?'<span class="tag">FREE</span>':e.fee_rub!=null?`<span class="tag">${esc(e.fee_rub)} ₽</span>`:''}${e.address?`<span class="tag">МОСКВА</span>`:''}</div></article>`).join('')}</div>${filtered.length?'':'<div class="polyEmpty">Ничего не найдено.</div>'}`;
- } else if(state.polyTab==='clubs'){
-  const filtered=cl.filter(c=>!q||`${c.name} ${c.address||''}`.toLowerCase().includes(q)).slice(0,60);
-  root.innerHTML=`<div class="eventSectionTitle">КЛУБЫ МОСКВЫ</div>${filtered.map(c=>`<article class="clubCard"><b>${esc(c.name)}</b><p>${esc(c.address||'Москва')}</p></article>`).join('')||'<div class="polyEmpty">Нет данных.</div>'}`;
- } else if(state.polyTab==='series'){
-  root.innerHTML='<div class="eventSectionTitle">СЕРИИ</div><div class="polyEmpty">Серии будут появляться здесь отдельными карточками. В V67 раздел не подменяет данные выдуманными событиями.</div>';
- } else {
-  const regs=[['Москва','Основная афиша'],['Сочи','Серии и поездки'],['Калининград','Серии и поездки'],['Минск','Серии и поездки']];
-  root.innerHTML='<div class="eventSectionTitle">РЕГИОНЫ</div>'+regs.map(r=>`<article class="regionCard"><b>${r[0]}</b><p>${r[1]}</p></article>`).join('');
- }
+const praise = [
+  "Надо же. Сегодня кнопки нажимаются не наугад. Продолжай, пока никто не заметил.",
+  "Очень неприятно это признавать, но решение правильное. Где-то тихо улыбается один солвер.",
+  "Ладно, красиво. Рука получила уважение, а не очередную семейную драму."
+];
+
+const finals = {
+  excellent: [
+    `15 рук позади, и самая неприятная новость вечера в том, что ты действительно начал думать до клика. Ты уже не просто человек, который выучил слова «диапазон», «эквити» и «ICM», чтобы произносить их за столом с серьёзным лицом. Ты иногда ещё и применяешь их по назначению. Ошибки остались, но они хотя бы перестали выглядеть как регулярные пожертвования в фонд поддержки чужого банкролла. Самое опасное теперь — решить, что ты уже всё понял. Не понял. Но впервые это выглядит как путь рега, а не как серия эмоциональных решений под вывеской «я так чувствую». Продолжай. Ещё немного — и мне придётся искать другие причины тебя оскорблять.`,
+    `Поздравляю, ты прошёл 15 рук и каким-то образом не превратил тест в документальный фильм о банкротстве. Более того — большую часть времени ты выбирал действия, которые имеют смысл не только в твоей голове. Это уже подозрительно. У тебя начинает появляться структура: где открыть шире, где выкинуть мусор, где не бояться агрессии и где не изображать героя без причины. Главное теперь — не перепутать несколько хороших решений с бессмертием. Поле особенно любит людей, которые после одной нормальной сессии начинают считать себя избранными. Пока всё хорошо. Не испорти.`
+  ],
+  good: [
+    `В целом ты жив, банкролл жив, а солвер пока не подал заявление на расторжение отношений. Уже успех. Проблема в другом: ты периодически принимаешь правильные решения, а потом будто пугаешься собственной адекватности и срочно компенсируешь это каким-нибудь странным коллом или героическим рейзом. У тебя есть понимание диапазонов, но дисциплина пока приходит на работу через день. Если перестанешь путать «интересно» с «прибыльно», график скажет спасибо. Потенциал есть. Стабильности пока примерно как у человека, который обещал больше никогда не играть уставшим в четыре утра.`,
+    `Ты играешь заметно лучше, чем человек, который просто тыкает в кнопки. Но до нормального рега ещё мешает одна маленькая деталь: иногда ты всё-таки тыкаешь в кнопки. Причём особенно уверенно в тех местах, где стоило бы остановиться на три секунды и подумать. Хорошие решения у тебя есть, логика есть, база есть. Теперь надо убрать романтику. Карты не знают, что ты сегодня чувствуешь себя смелым. Диапазоны тоже.`
+  ],
+  medium: [
+    `Поздравляю, ты прошёл 15 рук и сохранил часть достоинства. Где-то ты думаешь как рег, где-то как человек, который увидел две красивые карты и решил, что судьба подаёт знак. Самая большая проблема — не незнание. Ты довольно часто понимаешь, что происходит, а потом всё равно выбираешь вариант «ну вроде норм». Вот это «вроде норм» и съедает EV по чайной ложке. Ты не безнадёжен. Просто тебе пора перестать договариваться с самим собой в каждой спорной раздаче и начать уважать собственную стратегию.`,
+    `Пока диагноз такой: перспективный, но эмоционально нестабильный рег. Иногда ты играешь очень прилично, иногда будто одалживаешь аккаунт человеку, который впервые увидел покер вчера вечером. Тебе не нужно знать ещё сто терминов. Тебе нужно научиться одинаково хорошо принимать скучные решения. Потому что нормальный покер — это не постоянный героизм. Это много раз подряд не делать очевидную хуйню.`
+  ],
+  bad: [
+    `15 рук закончились. Банкролл каким-то чудом тоже пока не закончился. Ты нажимал кнопки с такой уверенностью, будто где-то существует солвер, который всё это одобряет. Спойлер: не существует. Половина решений выглядела как попытка доказать столу характер, вторая половина — как просьба забрать твои фишки побыстрее. Ты слишком часто выбираешь действие не потому, что оно лучше, а потому, что оно эмоционально приятнее прямо сейчас. Фолд кажется трусостью, колл — безопасностью, рейз — характером. А это просто кнопки. Начни относиться к ним как к математике, а не как к тесту личности. Хорошая новость: это чинится. Плохая: придётся думать.`,
+    `Сегодня ты сыграл так, словно основной покерный навык — убедительно выглядеть, пока принимаешь плохое решение. К сожалению, EV не впечатляется уверенностью. Он просто уходит. У тебя есть привычка сначала выбирать действие, а потом задним числом придумывать ему объяснение. Это очень удобно психологически и очень дорого финансово. Поэтому следующий цикл тебе нужен не для того, чтобы «набить руку», а чтобы хотя бы несколько раз подряд сделать скучное правильное действие и не попытаться превратить его в кино.`
+  ],
+  disaster: [
+    `Ну что, гений. 15 рук позади, и теперь у нас есть статистическое подтверждение того, что «похуй call» — это не стратегия, а образ жизни. Ты умудрился смотреть на позиции, стеки, диапазоны и всё равно периодически выбирать действие так, будто главная цель — порадовать остальных за столом. Ты не эксплуатировал поле. Поле эксплуатировало твою любовь к красивым историям. Где надо было фолдить — ты искал подвиг. Где надо было рейзить — внезапно становился философом ненасилия. Где можно было спокойно коллировать — включал режиссёра блокбастера. Это не приговор. Но прежде чем снова садиться играть, попробуй одну революционную вещь: сначала подумать, потом нажать.`,
+    `Я бы написала тебе мягкий разбор, но ты уже достаточно мягко сыграл эти 15 рук. Поэтому нет. Ты сейчас не «нестандартный игрок», не «эксплойтный гений» и не «человек, который чувствует динамику». Ты просто слишком часто платишь за желание быть интересным. Покер вообще неприятная игра: ему плевать на твою харизму. Он любит скучных людей, которые умеют фолдить, считать и повторять прибыльные действия. Возвращайся ещё раз. И в следующий заход попробуй хотя бы не воевать с каждой раздачей лично.`
+  ]
+};
+
+function rand(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+
+function show(id){
+  $$(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
+  window.scrollTo(0,0);
 }
 
-function onClick(e){
- const nav=e.target.closest('[data-nav]'); if(nav){navigate(nav.dataset.nav);return}
- const dec=e.target.closest('[data-decision]'); if(dec){handleDecision(dec.dataset.decision);return}
- const pt=e.target.closest('[data-poly-tab]'); if(pt){state.polyTab=pt.dataset.polyTab;$$('[data-poly-tab]').forEach(b=>b.classList.toggle('on',b===pt));renderPolyana();return}
- if(e.target.closest('#searchToggle')){$('#polyanaSearch').classList.toggle('hidden');$('#polyanaSearchInput')?.focus();return}
- if(e.target.closest('#filterToggle')){state.polyTab='clubs';$$('[data-poly-tab]').forEach(b=>b.classList.toggle('on',b.dataset.polyTab==='clubs'));renderPolyana();return}
- if(e.target.closest('#addDemoTournament')) addDemoTournament();
+function cardHTML([rank,suit]){
+  const red = suit==="♥" || suit==="♦";
+  return `<div class="card ${red?"red":""}"><div class="rank">${rank}</div><div class="suit">${suit}</div></div>`;
 }
 
-document.addEventListener('click',onClick);
-document.addEventListener('input',e=>{if(e.target.id==='polyanaSearchInput'){state.query=e.target.value;renderPolyana()}});
-window.addEventListener('popstate',()=>navigate(location.hash.replace('#','')||'home',{push:false}));
-window.addEventListener('hashchange',()=>{const s=location.hash.replace('#','');if(validScreens.has(s)&&s!==state.screen)navigate(s,{push:false})});
+function render(){
+  const h = HANDS[state.index];
+  $("#handCount").textContent = `${state.index+1} / ${HANDS.length}`;
+  $("#cards").innerHTML = h.cards.map(cardHTML).join("");
+  $("#pot").textContent = h.pot;
+  $("#stack").textContent = h.stack;
+  $("#position").textContent = h.position;
+  $("#stage").textContent = h.stage;
+  $("#situation").textContent = h.situation;
+}
 
-renderStats(); renderTournaments(); navigate(state.screen,{push:false});
-window.PokerSwipeV67={build:BUILD,navigate,state};
-})();
+function start(){
+  Object.assign(state,{index:0,score:0,yellow:0,red:0,history:[]});
+  render();
+  show("game");
+}
+
+function choose(action){
+  const h = HANDS[state.index];
+  const r = h.actions[action];
+  state.history.push({id:h.id,action,grade:r.grade});
+  if(r.grade==="match") state.score++;
+  if(r.grade==="yellow") state.yellow++;
+  if(r.grade==="red") state.red++;
+
+  $("#resultCards").innerHTML = h.cards.map(cardHTML).join("");
+  $("#flag").className = `flag ${r.grade}`;
+  $("#flag").textContent = r.grade==="match" ? "MATCH ❤️" : r.grade==="yellow" ? "YELLOW FLAG 🚩" : "RED FLAG 🚩";
+  $("#resultTitle").textContent = r.grade==="match" ? "Правильное решение" : r.grade==="yellow" ? "Среднее решение" : "Неправильное решение";
+  $("#explain").textContent = r.explain;
+  $("#ladyText").textContent = r.grade==="match" ? rand(praise) : r.grade==="yellow" ? rand(toxicYellow) : rand(toxicWrong);
+  show("result");
+}
+
+function next(){
+  state.index++;
+  if(state.index>=HANDS.length){ finish(); return; }
+  render(); show("game");
+}
+
+function finish(){
+  const s = state.score;
+  let tier = s>=13 ? "excellent" : s>=10 ? "good" : s>=7 ? "medium" : s>=4 ? "bad" : "disaster";
+  $("#bigRoast").textContent = rand(finals[tier]);
+  $("#score").textContent = `${state.score} / 15`;
+  $("#yellowCount").textContent = state.yellow;
+  $("#redCount").textContent = state.red;
+  show("verdict");
+}
+
+$("#homeTap").addEventListener("click", start);
+$("#backHome").addEventListener("click", ()=>show("home"));
+$$(".action").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.action)));
+$("#nextHand").addEventListener("click",next);
+$("#again").addEventListener("click",start);
+$("#homeBtn").addEventListener("click",()=>show("home"));
