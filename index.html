@@ -4770,7 +4770,7 @@ function renderPolyanaV63(){const area=document.getElementById('tournamentsArea'
 async function loadP63(){try{const r=await fetch('data/polyana_verified.json?v=63',{cache:'no-store'});if(r.ok)P63_DATA=await r.json()}catch(e){console.warn('Polyana data unavailable',e)}if(document.getElementById('tournamentsArea'))renderPolyanaV63()}
 window.renderPolyanaV63=renderPolyanaV63;
 window.openPolyanaV63=function(){renderPolyanaV63()};
-window.renderTournaments23=renderTournaments23=renderPolyanaV63;
+window.renderTournaments23=renderPolyanaV63;
 /* Replace visible source labels defensively without observers. */
 document.addEventListener('DOMContentLoaded',loadP63,{once:true});
 window.addEventListener('load',()=>{loadP63()},{once:true});
@@ -4830,9 +4830,9 @@ function bind(){
  document.getElementById('p64Trips')?.addEventListener('click',()=>{if(typeof window.openTripBuilderV60==='function')window.openTripBuilderV60()});
 }
 async function load(){try{const r=await fetch('data/polyana_verified.json?v=64',{cache:'no-store'});if(r.ok)D=await r.json()}catch(e){console.warn('P64 data unavailable',e)}if(document.getElementById('tournamentsArea'))render()}
-window.renderPolyanaV64=render;window.openPolyanaV64=render;window.renderTournaments23=renderTournaments23=render;
+window.renderPolyanaV64=render;window.openPolyanaV64=render;window.renderTournaments23=render;
 /* Final route guard: any later legacy renderer is immediately replaced when Poliana is entered. */
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-nav="tournaments"]');if(!b)return;setTimeout(()=>{window.renderTournaments23=renderTournaments23=render;render()},0)},false);
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-nav="tournaments"]');if(!b)return;setTimeout(()=>{window.renderTournaments23=render;render()},0)},false);
 document.addEventListener('DOMContentLoaded',load,{once:true});window.addEventListener('load',load,{once:true});
 window.POKER_SWIPE_BUILD='V64 PREMIUM POLYANA';document.documentElement.dataset.pokerSwipeVersion='64-premium-polyana';
 })();
