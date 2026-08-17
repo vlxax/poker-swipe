@@ -1,398 +1,272 @@
 {
-  "source": "https://pokernomoney.ru/clubs",
-  "date": "2026-08-16",
+  "source": "https://pokernomoney.ru/club",
+  "updated_at": "2026-08-17T22:40:14+03:00",
+  "date": "2026-08-17",
   "city": "Москва",
-  "note": "Публичный snapshot афиши PokerNoMoney на 16.08.2026. FREE означает бесплатный вход по отметке источника.",
   "events": [
     {
-      "time": "16:00",
-      "club": "Joker Poker Club Moscow",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "POKER FACE Сlub",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Aura Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Straddle poker club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Nuts poker club Moscow",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Ace Poker Club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:45",
-      "club": "MASK OFF POKER",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Level",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Straddle poker club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Check-Check Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "GARAGE Game Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "СТРИТ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Восьмёрка Кикер",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "КАРЕТА",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "CHECK-RAISE CLUB MOSCOW",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Всё могут Короли!",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ФИШ.КА POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Quantum",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ХАРТС",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:10",
-      "club": "Friendly Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "QQ POKER CLUB",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "ХАРТС",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Magnum Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "SRP EQUITY",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "MASK OFF POKER",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "CARTEL POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "МАКСИМУМ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Ocean's Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Комьюнити Компас",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Quantum",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-08-17",
       "time": "18:00",
       "club": "Raise Club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Raise Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~raise"
     },
     {
+      "date": "2026-08-17",
       "time": "18:00",
-      "club": "River Room",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Raise Club",
+      "tournament": "Dealer's choice FREEROLL",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~raise"
     },
     {
+      "date": "2026-08-17",
       "time": "18:00",
-      "club": "SNAP CALL CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Straddle poker club",
+      "tournament": "Straddle poker club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
     },
     {
+      "date": "2026-08-17",
       "time": "18:00",
-      "club": "BLEF BET",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "Клуб спортивного покера RIVER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~river"
     },
     {
-      "time": "18:00",
-      "club": "Покерный клуб ALL-IN",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "EMPIRE POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "ХРОНИКИ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "БЛЕФ?",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "PLAYWAY",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Aura Poker Club",
+      "tournament": "Aura Poker Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~aura"
     },
     {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Check-Check Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Бесплатный понедельник",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "GARAGE Game Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "TRIPLE CHANCE TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "JOKER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "FREEROLL BOMB POT",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "MASK OFF POKER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds Monday day 2",
+      "fee_rub": 500,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts poker club Moscow",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "ПОКЕР НЕ НА ДЕНЬГИ В МОСКВЕ",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-17",
       "time": "19:00",
       "club": "Pocket Rockets Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Pocket Rockets Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
     },
     {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "HEADS UP",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Pocket Rockets Club",
+      "tournament": "Smoke Bounty Tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
     },
     {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "БАРРЕЛЬ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "POKER FACE Сlub",
+      "tournament": "POKER FACE Сlub",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~face"
     },
     {
-      "time": "19:00",
-      "club": "DUCKS POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "НУАР",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Free Poker Moscow",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "AURUM",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "EMPIRE POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-08-17",
       "time": "19:00",
       "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "PRIDE",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
     },
     {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Quantum",
+      "tournament": "Quantum",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
     },
     {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "SHOWDOWN",
+      "tournament": "SHOWDOWN",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
     },
     {
+      "date": "2026-08-17",
       "time": "19:00",
-      "club": "Showdown",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Дойл (Doyle poker club)",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
     },
     {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "МАКСИМУМ",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Maximum Classic Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Покерный клуб ALL-IN",
+      "tournament": "Покерный клуб ALL-IN",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~allin"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Покерный клуб ALL-IN",
+      "tournament": "KNOCKOUT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~allin"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Friendly Poker Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Classic Knockout",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-17",
       "time": "19:30",
-      "club": "Hi, Jack Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Checkpoint | Lobnya",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
     },
     {
-      "time": "19:30",
-      "club": "BLEF BET",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "PRESTIG POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "Poker Room GTO",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-08-17",
       "time": "20:00",
       "club": "BlackWood",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "BlackWood",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
     },
     {
+      "date": "2026-08-17",
       "time": "20:00",
-      "club": "MIDNIGHT POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "Showdown",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "23:00",
-      "club": "AK77",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "BlackWood",
+      "tournament": "Freeroll Classic",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
     }
   ]
 }

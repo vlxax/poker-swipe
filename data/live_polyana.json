@@ -1,2001 +1,2950 @@
 {
-  "source": "https://pokernomoney.ru/clubs",
-  "club_count": 66,
-  "event_count": 65,
+  "source": "https://pokernomoney.ru/club",
+  "updated_at": "2026-08-17T22:40:14+03:00",
+  "club_count": 24,
+  "event_count": 148,
+  "failures": [
+    {
+      "url": "https://pokernomoney.ru/club/c~oceans",
+      "error": "404 Client Error: Not Found for url: https://pokernomoney.ru/clubs/oceans"
+    },
+    {
+      "url": "https://pokernomoney.ru/club/c~parliament",
+      "error": "404 Client Error: Not Found for url: https://pokernomoney.ru/clubs/parliament"
+    },
+    {
+      "url": "https://pokernomoney.ru/club/c~ducks",
+      "error": "404 Client Error: Not Found for url: https://pokernomoney.ru/clubs/ducks"
+    },
+    {
+      "url": "https://pokernomoney.ru/club/c~residence",
+      "error": "404 Client Error: Not Found for url: https://pokernomoney.ru/clubs/residence"
+    },
+    {
+      "url": "https://pokernomoney.ru/club/c~prestig",
+      "error": "404 Client Error: Not Found for url: https://pokernomoney.ru/clubs/prestig"
+    }
+  ],
   "clubs": [
     {
-      "name": "PRIDE",
-      "address": "ул. Ладожская, д. 11",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "partner": true,
-      "description": "Клуб живого спортивного покера с регулярными турнирами, разными форматами, обучением и клубным комьюнити.",
-      "venue": "Continental Lounge",
-      "first_game": "",
-      "facts": [],
-      "today_events": 3,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "1 год 1 месяц",
-      "details": [
-        "MTT",
-        "нокаут",
-        "мистери-баунти",
-        "обучающие сессии",
-        "клубное комьюнити"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "20:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "МАКСИМУМ",
-      "address": "Большая Никитская 43",
-      "min_fee_rub": 1200,
-      "upcoming": 2,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
+      "name": "AK77",
+      "venue": "Издаётся с 20 июня 2026 · Ak47 · ул. Софьи Ковалевской, 2",
+      "address": "ул. Софьи Ковалевской, 2",
       "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "МАКСИМУМ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club Moscow",
-      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Joker Poker Club Moscow",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Ocean's Poker Club",
-      "address": "Нижняя Красносельская улица, 35 с. 59",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Ocean's Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "PARLIAMENT",
-      "address": "Вешняковская ул., д. 22А",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "DUCKS POKER CLUB",
-      "address": "проспект Мира, 102с25",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "DUCKS POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Minds",
-      "address": "Новочеремушкинская ул., д. 21а",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "partner": true,
-      "description": "Клуб спортивного покера с правилами на базе TDA. Игра не на деньги, есть рейтинг, ребаи и поздняя регистрация.",
-      "venue": "Империя дыма",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "6 месяцев",
+      "description": "Сегодня 18:00 Raise Club FREE ♠ 18:00 ХАРТС FREE ♠ 19:00 CHECK-RAISE CLUB MOSCOW ♠ 19:00 Check-Check Club ♠ 19:00 QQ POKER CLUB FREE ♠ 19:00 Minds ♠ 19:00 BLEF BET ♠ 19:00 Magnum Club ♠ 19:00 Joker Poker Club Moscow ♠ 19:00 ХАРТС ♠ 19:00 Nuts poker club Moscow ♠ 19:00 HEADS UP FREE ♠ 19:00 EMPIRE POKER CLUB FREE ♠ 19:00 НУАР FREE ♠ 19:00 БАРРЕЛЬ ♠ 19:00 МАКСИМУМ FREE ♠ 19:00 Pocket Rockets Club ♠ 19:00 БЛЕФ? ♠ 19:00 SRP EQUITY FREE ♠ 19:00 CARTEL POKER CLUB ♠ 19:00 Покерный клуб ALL-IN ♠ 19:00 Ocean's Poker Club FREE ♠ 19:00 GARAGE Game Club ♠ 19:10 Moscow Poker Club ♠ 19:10 Friendly Poker Club ♠ 19:30 BLEF BET ♠ 20:00 Poker Room GTO ♠ 20:00 BlackWood FREE ♠ 20:00 Showdown ♠ 18:00 Raise Club FREE ♠ 18:00 ХАРТС FREE ♠ 19:00 CHECK-RAISE CLUB MOSCOW ♠ 19:00 Check-Check Club ♠ 19:00 QQ POKER CLUB FREE ♠ 19:00 Minds ♠ 19:00 BLEF BET ♠ 19:00 Magnum Club ♠ 19:00 Joker Poker Club Moscow ♠ 19:00 ХАРТС ♠ 19:00 Nuts poker club Moscow ♠ 19:00 HEADS UP FREE ♠ 19:00 EMPIRE POKER CLUB FREE ♠ 19:00 НУАР FREE ♠ 19:00 БАРРЕЛЬ ♠ 19:00 МАКСИМУМ FREE ♠ 19:00 Pocket Rockets Club ♠ 19:00 БЛЕФ? ♠ 19:00 SRP EQUITY FREE ♠ 19:00 CARTEL POKER CLUB ♠ 19:00 Покерный клуб ALL-IN ♠ 19:00 Ocean's Poker Club FREE ♠ 19:00 GARAGE Game Club ♠ 19:10 Moscow Poker Club ♠ 19:10 Friendly Poker Club ♠ 19:30 BLEF BET ♠ 20:00 Poker Room GTO ♠ 20:00 BlackWood FREE ♠ 20:00 Showdown ♠",
       "details": [
         "18+",
-        "правила на базе TDA",
-        "ребай до 4 раз",
-        "турнир около 5–6 часов",
-        "поздняя регистрация до 2,5 часов"
+        "Есть бесплатный формат"
       ],
       "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Minds",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Minds",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Moscow Poker Club",
-      "address": "Малый Гнездниковский переулок, 9, стр. 2",
-      "min_fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~ak77",
+      "min_fee_rub": 0,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
       "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
       "schedule": []
-    },
-    {
-      "name": "Резиденция ПОКЕР",
-      "address": "Денисовский пер., 30, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Резиденция ПОКЕР",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "Резиденция ПОКЕР",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "MASK OFF POKER",
-      "address": "Сущевский вал, д.16с1",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "16:45",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:45",
-          "club": "MASK OFF POKER",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "18:00",
-          "club": "MASK OFF POKER",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Nuts poker club Moscow",
-      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Nuts poker club Moscow",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Дойл (Doyle poker club)",
-      "address": "Б. Сухаревская пл. д. 14/7",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Восьмерка Кикер",
-      "address": "ул. Каретный ряд, д. 10",
-      "min_fee_rub": 1000,
-      "upcoming": 6,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Check-Check Club",
-      "address": "Нижний Сусальный пер., д. 5с1",
-      "min_fee_rub": 1200,
-      "upcoming": 6,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Check-Check Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Покерный клуб ALL-IN",
-      "address": "ул. Таганская, 29, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Покерный клуб ALL-IN",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Straddle poker club",
-      "address": "Валовая улица, 32/75с2 (2 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "Клуб спортивного покера в центре Москвы. Живые игры для игроков любого уровня, обучение для новичков, профессиональное оснащение и клубное комьюнити.",
-      "venue": "PLn Lounge",
-      "first_game": "6 августа 2025",
-      "facts": [
-        "игра не на деньги",
-        "карты Fournier",
-        "керамические фишки",
-        "10 минут от м. Добрынинская"
-      ],
-      "today_events": 2,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "10 месяцев",
-      "details": [
-        "игры несколько раз в неделю",
-        "профессиональные столы",
-        "карты Fournier",
-        "керамические фишки",
-        "обучение для новичков"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Straddle poker club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Straddle poker club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "POKER FACE Сlub",
-      "address": "Звенигородское ш., 18/20, к. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "POKER FACE Сlub",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Ace Poker Club",
-      "address": "улица Сергия Радонежского, 9с5",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 3,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Ace Poker Club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Ace Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "Ace Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "GARAGE Game Club",
-      "address": "пр. Аэропорта, 8, стр. 7",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "Живой спортивный покер без денежных выплат: клуб делает акцент на игре, эмоциях и общении.",
-      "venue": "ТРИУМФ ЛАУНЖ-БАР",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "8 месяцев",
-      "details": [
-        "живой покер",
-        "спортивный формат",
-        "клубное комьюнити"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "GARAGE Game Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "BLEF BET",
-      "address": "Измайловское ш., д. 73Ж",
-      "min_fee_rub": 1000,
-      "upcoming": 9,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "BLEF BET",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:30",
-          "club": "BLEF BET",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Pocket Rockets Club",
-      "address": "Шелепихинская наб., 34к2зд1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "Pocket Rockets Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Level",
-      "address": "просп. Вернадского, д. 14А, 3 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 10,
-      "description": "Level Poker Club — клуб спортивного покера в Москве, где играют не на деньги. Акцент на стратегии, атмосфере и клубном рейтинге.",
-      "venue": "МСК lounge",
-      "first_game": "21 декабря 2025",
-      "facts": [
-        "одно из самых больших количеств проведённых турниров",
-        "турниры по NLH",
-        "игра не на деньги"
-      ],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [
-        "одно из самых больших количеств проведённых турниров",
-        "турниры по NLH",
-        "игра не на деньги"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Level",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Aria Royale",
-      "address": "ул. Братиславская, д. 28 (2 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Magnum Club",
-      "address": "Большая Новодмитровская ул., д. 36с13",
-      "min_fee_rub": 1000,
-      "upcoming": 4,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Magnum Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Poker Spot",
-      "address": "Краснопролетарская ул., д. 7",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Hi, Jack Club",
-      "address": "Люсиновская улица, 53к2",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:30",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:30",
-          "club": "Hi, Jack Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Bubble Club",
-      "address": "Комсомольский просп., 28",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "River Room",
-      "address": "Сретенский бульвар, д. 6 с. 1/1",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "River Room",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Raise Club",
-      "address": "ул. Азовская 18 (4 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Raise Club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "SRP EQUITY",
-      "address": "Новолесная улица, д. 8/12",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "SRP EQUITY",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Poker Room GTO",
-      "address": "Даев пер., д. 2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "Poker Room GTO",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club (Кутузовская)",
-      "address": "ул. Киевская, д. 20 (метро Студенческая)",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Два туза",
-      "address": "ул. Александры Монаховой, 98, корп. 3",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "HEADS UP",
-      "address": "проспект Мира, 26с2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "HEADS UP",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Московский Покерный Зал",
-      "address": "Нижегородская ул., 9Г",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "БАРРЕЛЬ",
-      "address": "Доброслободская ул., д. 3",
-      "min_fee_rub": 1500,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "БАРРЕЛЬ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "MIDNIGHT POKER CLUB",
-      "address": "Новослободская дом 39",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "MIDNIGHT POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
     },
     {
       "name": "Aura Poker Club",
+      "venue": "Издаётся с 18 апреля 2026 · Гастро-лаундж-бар «Барвиха Lounge» · Новоясеневский проспект, 1",
       "address": "Новоясеневский проспект, 1",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 49 · 17 августа 2026 Aura Poker Club Издаётся с 18 апреля 2026 · Гастро-лаундж-бар «Барвиха Lounge» · Новоясеневский проспект, 1 ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в Aura Poker Club 1 турнир в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа Aura Guard Game 1 000 ₽ 19:00 Регулярные турниры Aura Guard Game → О клубе ▫️Наша команда искренне любит эту игру - за глубину, за характер, за умение принимать решения под давлением, и главное - за эмоции! ▫️Поэтому мы захотели создать такую атмосферу для вас, чтобы каждый смог прочувствовать настоящий покерный азарт! Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ ❗️Самое главное правило — мы НЕ играем на деньги, у нас нет денежных ставок, призовых фондов, рейка и иных атрибутов азартных игр. Турниры носят исключительно развлекательный характер. Всё в строгом соответствии с законодательством. Перед первым участием все игроки обязаны ознакомиться с данными правилами. Цель наших игр – приятно провести время, получить максимум положительных эмоций от игры и общения, а таже улучшить навыки. Поэтому в нашем клубе мы не приветствуем: ❗️вызывающее поведение за столом и злоупотребление нецензурной лексикой; ❗️чрезмерное употребление алкоголя; ❗️создание конфликтных ситуаций, в т.ч. оскорбление участников, споры на политические, национальные и другие острые тематики; ❗️приглашения участников в другие покерные сообщества ❗️агитацию участников играть на деньги или иные материальные ценн…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {
+        "phone": "+79859963590"
+      },
+      "source_url": "https://pokernomoney.ru/club/c~aura",
       "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Aura Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "CARTEL POKER CLUB",
-      "address": "Волоколамское шоссе, 124",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "CARTEL POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "НУАР",
-      "address": "ул. Краснопрудная 24с1",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "НУАР",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "TROYA покер",
-      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Комьюнити «Компас»",
-      "address": "Дмитровское ш., 81",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Всё могут Короли!",
-      "address": "Мытная 46/2с3",
-      "min_fee_rub": 3000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Всё могут Короли!",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "СТРИТ",
-      "address": "Средняя первомайская ул, дом 4",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "СТРИТ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Free Poker Moscow",
-      "address": "м. 1905 года, Звенигородское шоссе 18/20к1",
-      "min_fee_rub": 0,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "Free Poker Moscow",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "AURUM",
-      "address": "Алтуфьевское ш., д. 22Б",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "AURUM",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "YAKUDZA POKER COMMUNITY",
-      "address": "Оружейный переулок 15А, 11 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Friendly Poker Club",
-      "address": "Русаковская набережная, д. 1А, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:10",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:10",
-          "club": "Friendly Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "QQ POKER CLUB",
-      "address": "Нагатинская улица, 16",
-      "min_fee_rub": 1000,
-      "upcoming": 18,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "QQ POKER CLUB",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "CHECK-RAISE CLUB MOSCOW",
-      "address": "Старопетровский проезд, 1с1",
-      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
       "upcoming": 4,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
       "schedule": [
         {
-          "time": "17:00",
-          "club": "CHECK-RAISE CLUB MOSCOW",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "КАРЕТА",
-      "address": "Гороховский переулок, 19",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Aura Poker Club",
+          "tournament": "Aura Poker Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~aura"
+        },
         {
-          "time": "17:00",
-          "club": "КАРЕТА",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club (Беломорская)",
-      "address": "Ул Петрозаводская 11 корп.3 стр.1",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "ФИШ.КА POKER CLUB",
-      "address": "Нижегородская, 32сБ",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
+          "date": "2026-04-18",
+          "time": "19:00",
+          "club": "Aura Poker Club",
+          "tournament": "Гастро-лаундж-бар «Барвиха Lounge»",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~aura"
+        },
         {
-          "time": "17:00",
-          "club": "ФИШ.КА POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "SNAP CALL CLUB",
-      "address": "Проспект Андропова 48с2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Aura Poker Club",
+          "tournament": "Aura Guard Game",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~aura"
+        },
         {
-          "time": "18:00",
-          "club": "SNAP CALL CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-04-18",
+          "time": "19:00",
+          "club": "Aura Poker Club",
+          "tournament": "Орг. взнос",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~aura"
         }
       ]
     },
     {
       "name": "BlackWood",
+      "venue": "Издаётся с 12 июня 2026 · BlackWood Poker · Олимпийский проспект, 12",
       "address": "Олимпийский проспект, 12",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 68 · 17 августа 2026 BlackWood Издаётся с 12 июня 2026 · BlackWood Poker · Олимпийский проспект, 12 ☆ В избранное Следующая игра понедельник 20:00 Расписание турниров в BlackWood 1 турнир в ближайшие две недели · ближайший — понедельник, 17 августа , 20:00 понедельник, 17 августа Freeroll Classic Бесплатно 20:00 Регулярные турниры Bounty → Double Rating → Freeroll Classic → Win the Button → О клубе Blackwood — премиальный клуб спортивного покера в Москве, где играют не на деньги: денежных ставок, выигрышей, призов и любых форм вознаграждения нет. Находится по адресу Олимпийский проспект, 12, с подземным паркингом. Турниры по техасскому холдему проходят каждый день в разных форматах: Freeroll Classic по понедельникам, Double Rating по вторникам, Win the Button по средам, Mystery по четвергам, Deep Stack по пятницам, Bounty и стол Omaha по субботам, «М vs Ж» по воскресеньям (девушкам бесплатно). Большинство турниров 1500 ₽, Bomb Pot 500 ₽, фриролл бесплатный. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Расписание недели построено по фирменным форматам: Freeroll Classic (бесплатный классический холдем), One Shot (один вход), Double Rating (двойные очки рейтинга) и Win the Button. В формате Win the Button победитель раздачи забирает не только банк, но и позицию баттона. Отзывы о BlackWood Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до BlackWood Горо…",
+      "details": [
+        "18+",
+        "Правила TDA",
+        "Обучение",
+        "Есть бесплатный формат"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~blackwood",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 4,
       "schedule": [
         {
+          "date": "2026-08-17",
           "time": "20:00",
           "club": "BlackWood",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "PRESTIG POKER CLUB",
-      "address": "Козицкий переулок, 3",
-      "min_fee_rub": 1000,
-      "upcoming": 7,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
+          "tournament": "BlackWood",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~blackwood"
+        },
         {
+          "date": "2026-06-12",
           "time": "20:00",
-          "club": "PRESTIG POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "club": "BlackWood",
+          "tournament": "BlackWood Poker",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~blackwood"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "20:00",
+          "club": "BlackWood",
+          "tournament": "Freeroll Classic",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~blackwood"
+        },
+        {
+          "date": "2026-06-12",
+          "time": "20:00",
+          "club": "BlackWood",
+          "tournament": "Орг. взнос",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~blackwood"
         }
       ]
     },
     {
-      "name": "AK77",
-      "address": "ул. Софьи Ковалевской, 2",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "23:00",
-      "today_free_events": 0,
+      "name": "Check-Check Club",
+      "venue": "Издаётся с 9 ноября 2024 · Дом Check-Check · Нижний Сусальный пер., д. 5с1",
+      "address": "Нижний Сусальный пер., д. 5с1",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 2 · 17 августа 2026 Check-Check Club Издаётся с 9 ноября 2024 · Дом Check-Check · Нижний Сусальный пер., д. 5с1 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в Check-Check Club 10 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа Бесплатный понедельник Freezeout 1 200 ₽ 19:00 вторник, 18 августа FREEROLL Tournament 1 200 ₽ 19:00 среда, 19 августа WANTED Event 1 200 ₽ 19:00 четверг, 20 августа Phoenix XL 1 200 ₽ 19:00 пятница, 21 августа Bounty Tournament Баунти / Нокаут 1 200 ₽ 19:00 суббота, 22 августа Main Event 1 200 ₽ 17:00 воскресенье, 23 августа Воскресный классик Mystery Bounty 1 200 ₽ 18:00 понедельник, 24 августа Бесплатный понедельник Бесплатно 19:00 воскресенье, 30 августа Воскресный классик 1 200 ₽ 18:00 понедельник, 31 августа Бесплатный понедельник Бесплатно 19:00 Регулярные турниры Bounty Tournament → FREEROLL Tournament → Main Event → Old Fashion Tournament → Phoenix XL → Бесплатный понедельник → Воскресный классик → О клубе Check-Check Club — клуб спортивного покера в Москве, где играют не на деньги. Цель клуба — вывести покер не на деньги на новый уровень и собрать крепкое коммьюнити единомышленников, где комфортно и новичку, и опытному игроку. Турниры по техасскому холдему проходят на фишки и клубный рейтинг, без денежных ставок. Приходите играть в спортивный покер в Москве ради атмосферы, общения и спортивного азарта. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Регистрация на турн…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~check",
+      "min_fee_rub": 1200,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 12,
       "schedule": [
         {
-          "time": "23:00",
-          "club": "AK77",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Check-Check Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-11-09",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Дом Check-Check",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Бесплатный понедельник",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "FREEROLL Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "WANTED Event",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Phoenix XL",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Bounty Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "17:00",
+          "club": "Check-Check Club",
+          "tournament": "Main Event",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "Check-Check Club",
+          "tournament": "Воскресный классик",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-24",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Бесплатный понедельник",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-30",
+          "time": "18:00",
+          "club": "Check-Check Club",
+          "tournament": "Воскресный классик",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~check"
+        },
+        {
+          "date": "2026-08-31",
+          "time": "19:00",
+          "club": "Check-Check Club",
+          "tournament": "Бесплатный понедельник",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~check"
         }
       ]
     },
     {
-      "name": "Oasis Poker Club",
-      "address": "Садовая-Самотечная ул. д. 13, стр. 1",
-      "min_fee_rub": 0,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
+      "name": "Checkpoint | Lobnya",
+      "venue": "Издаётся с 20 декабря 2025 · Два Дракона · МО, г. Лобня, ул. Батарейная, дом 7а",
+      "address": "МО, г. Лобня, ул. Батарейная, дом 7а",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Московская область Газета о спортивном покере · Московская область Выпуск № 24 · 17 августа 2026 Checkpoint | Lobnya Издаётся с 20 декабря 2025 · Два Дракона · МО, г. Лобня, ул. Батарейная, дом 7а ☆ В избранное Следующая игра вторник 19:30 ★ Клуб-партнёр Расписание турниров в Checkpoint | Lobnya 2 турнира в ближайшие две недели · ближайший — вторник, 18 августа , 19:30 Запись на месте в один клик — прямо здесь, без звонков и переписки с администратором. Подтверждение придёт на почту, отменить можно тоже одним нажатием. вторник, 18 августа Double stack 1 000 ₽ 19:30 Записаться свободно 40 из 40 четверг, 20 августа Chill Day 1 000 ₽ 19:30 Записаться свободно 40 из 40 Регулярные турниры Double stack → О клубе Вы много слышали о покере, но ни разу не играли? Вы - любитель - и хотите классно провести вечер или улучшить свои навыки? Вы - профи, и устали от игр в онлайне? Тогда вам - в наш Клуб. Мы - Клуб спортивного покера Sport Poker Club и мы проводим живые игры. Да - в покер, прямо в центре г. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Первый вход для новых игроков — бесплатный. Игры проходят по вторникам, четвергам и субботам, старт обычно в 19:30 (по субботам — в 17:00). Регистрация открывается заранее в канале клуба на каждый турнир недели. Отзывы о Checkpoint | Lobnya Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до Checkpoint | Lobnya Город Московская область Адрес МО, г. Лобня, ул. Батарейная, …",
+      "details": [
+        "18+",
+        "Обучение",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {
+        "phone": "+79654489258"
+      },
+      "source_url": "https://pokernomoney.ru/club/c~spc",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 5,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:30",
+          "club": "Checkpoint | Lobnya",
+          "tournament": "Checkpoint | Lobnya",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~spc"
+        },
+        {
+          "date": "2026-12-20",
+          "time": "19:30",
+          "club": "Checkpoint | Lobnya",
+          "tournament": "Два Дракона",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~spc"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:30",
+          "club": "Checkpoint | Lobnya",
+          "tournament": "Запись на месте в один клик",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~spc"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:30",
+          "club": "Checkpoint | Lobnya",
+          "tournament": "Double stack",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~spc"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:30",
+          "club": "Checkpoint | Lobnya",
+          "tournament": "Chill Day",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~spc"
+        }
+      ]
+    },
+    {
+      "name": "Friendly Poker Club",
+      "venue": "Издаётся с 30 мая 2026 · Friendly Poker Club · Русаковская набережная, д. 1А, стр. 1",
+      "address": "Русаковская набережная, д. 1А, стр. 1",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 61 · 17 августа 2026 Friendly Poker Club Издаётся с 30 мая 2026 · Friendly Poker Club · Русаковская набережная, д. 1А, стр. 1 ☆ В избранное Следующая игра понедельник 19:10 ★ Клуб-партнёр Расписание турниров в Friendly Poker Club 8 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:10 понедельник, 17 августа Classic Knockout Баунти / Нокаут 1 000 ₽ 19:10 вторник, 18 августа Bounty Hunter: Gold Edition Баунти / Нокаут 1 000 ₽ 19:10 среда, 19 августа High Hand Knockout Баунти / Нокаут 1 000 ₽ 19:10 четверг, 20 августа Friendly Cards 1 000 ₽ 19:10 пятница, 21 августа Knockout Lucky Nine Баунти / Нокаут 1 000 ₽ 19:10 суббота, 22 августа Mystery Bounty Mystery Bounty 1 000 ₽ 17:10 воскресенье, 23 августа Обучение по Омахе Бесплатно 16:00 5-Card Omaha 1 000 ₽ 18:10 Регулярные турниры 5-Card Omaha → Bounty Hunter: Gold Edition → Classic Holdem → Classic Knockout → Friendly Cards → Mystery Bounty → Обучение по Омахе → О клубе Приветствуем всех любителей восхитительной игры — покер! Только в нашем клубе вы можете совершенно легально и абсолютно законно поиграть в живой покер с такими же любителями покера, как и вы сами. В России играть в офлайн-покер на деньги можно только в легальных игорных зонах, где разрешена азартная деятельность. В других регионах России офлайн-покер на деньги запрещен, подпольные клубы вне игорных зон нелегальны! Мы не рекомендуем вам посещать такие клубы. В них всегда высок риск облав и проблем с законом. В нашем клубе офлайн игра в покер абсолютно легальна, пот…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Обучение",
+        "Есть бесплатный формат",
+        "Bounty",
+        "Омаха"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~friendly",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 10,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Friendly Poker Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-05-30",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Friendly Poker Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Classic Knockout",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Bounty Hunter: Gold Edition",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "High Hand Knockout",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Friendly Cards",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Knockout Lucky Nine",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "17:10",
+          "club": "Friendly Poker Club",
+          "tournament": "Mystery Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "16:00",
+          "club": "Friendly Poker Club",
+          "tournament": "Обучение по Омахе",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        },
+        {
+          "date": "2026-05-30",
+          "time": "18:00",
+          "club": "Friendly Poker Club",
+          "tournament": "Орг. взнос",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~friendly"
+        }
+      ]
+    },
+    {
+      "name": "GARAGE Game Club",
+      "venue": "Издаётся с 1 октября 2025 · ТРИУМФ ЛАУНЖ-БАР · пр. Аэропорта, 8, стр. 7",
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 20 · 17 августа 2026 GARAGE Game Club Издаётся с 1 октября 2025 · ТРИУМФ ЛАУНЖ-БАР · пр. Аэропорта, 8, стр. 7 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в GARAGE Game Club 7 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа TRIPLE CHANCE TOURNAMENT Классика 1 000 ₽ 19:00 вторник, 18 августа DOBERMAN 1 000 ₽ 19:00 среда, 19 августа MYSTERY DOGS 1 000 ₽ 19:00 четверг, 20 августа OMAHA DOG 1 500 ₽ 19:00 пятница, 21 августа CRAZY FRIDAY 1 000 ₽ 19:00 суббота, 22 августа DOGMAN Баунти / Нокаут 1 000 ₽ 19:00 воскресенье, 23 августа ONE DOG FREEZEOUT Freezeout 1 500 ₽ 19:00 Регулярные турниры CRAZY FRIDAY → DOBERMAN → DOGMAN → MYSTERY DOGS → ONE DOG FREEZEOUT → TRIPLE CHANCE TOURNAMENT → О клубе Мы предлагаем вам взглянуть на вашу любимую игру по-новому! 💫Мы играем в покер в рамках закона — у нас нет призового фонда и выплат. Нас объединяет любовь к игре, спорт, яркие эмоции и дружеское общение с единомышленниками! 💫Присоединяйся к нам и покажи, на что ты способен за покерным столом! Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Запись на игру — через приложение или ссылку в анонсе турнира. Сбор гостей обычно в 19:00, поздняя регистрация закрывается около 21:30. В формате с бонусными очками (DOBERMAN) рейтинг зарабатывается не только за место, но и за результативность (баунти). Фоторепортаж Отзывы о GARAGE Game Club Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором.…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~garage",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 9,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "GARAGE Game Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-10-01",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "ТРИУМФ ЛАУНЖ-БАР",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "TRIPLE CHANCE TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "DOBERMAN",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "MYSTERY DOGS",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "OMAHA DOG",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "CRAZY FRIDAY",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "DOGMAN",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "19:00",
+          "club": "GARAGE Game Club",
+          "tournament": "ONE DOG FREEZEOUT",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~garage"
+        }
+      ]
+    },
+    {
+      "name": "JOKER",
+      "venue": "JOKER · ул. Красных Партизан, 1/3 корп. 3, Краснодар",
+      "address": "ул. Красных Партизан, 1/3 корп. 3, Краснодар",
+      "age": "",
+      "description": "← Все клубы города Краснодар Газета о спортивном покере · Краснодар Выпуск № 91 · 17 августа 2026 JOKER JOKER · ул. Красных Партизан, 1/3 корп. 3, Краснодар ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в JOKER 6 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа FREEROLL BOMB POT Фрирол Бесплатно 19:00 вторник, 18 августа FREEROLL PROGRESSIVE BOUNTY PKO Бесплатно 19:00 четверг, 20 августа FREEROLL BOUNTY HUNTER Баунти / Нокаут Бесплатно 19:00 пятница, 21 августа FRIDAY POKER CUP Турбо Бесплатно 23:00 суббота, 22 августа JOKER FREEROLL Турбо Бесплатно 23:00 воскресенье, 23 августа FREEROLL BOUNTY HUNTER Турбо Бесплатно 23:00 Регулярные турниры FREEROLL BOMB POT → FREEROLL BOUNTY HUNTER → FREEROLL PROGRESSIVE BOUNTY → FRIDAY POKER CUP → JOKER FREEROLL → О клубе Joker — клуб спортивного покера в Краснодаре, где играют без финансовых ставок, не на деньги. Здесь профессиональные дилеры и оборудование, лаунж-зона для отдыха, чай, кофе и снэки, кубки за призовые места и бесплатное обучение для старта. Турниры по техасскому холдему проходят в комфортной атмосфере и приятном общении. Приходите играть в спортивный покер в Краснодаре ради азарта, рейтинга и общения. Отзывы о JOKER Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до JOKER Город Краснодар Адрес ул. Красных Партизан, 1/3 корп. 3, Краснодар Площадка JOKER Орг. взнос вход свободный Объявления Написать администратору → Telegram…",
+      "details": [
+        "18+",
+        "Обучение",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~joker",
+      "min_fee_rub": 0,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 7,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "JOKER",
+          "tournament": "JOKER",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "JOKER",
+          "tournament": "FREEROLL BOMB POT",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "JOKER",
+          "tournament": "FREEROLL PROGRESSIVE BOUNTY",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "JOKER",
+          "tournament": "FREEROLL BOUNTY HUNTER",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "23:00",
+          "club": "JOKER",
+          "tournament": "FRIDAY POKER CUP",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "23:00",
+          "club": "JOKER",
+          "tournament": "JOKER FREEROLL",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "23:00",
+          "club": "JOKER",
+          "tournament": "FREEROLL BOUNTY HUNTER",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~joker"
+        }
+      ]
+    },
+    {
+      "name": "Joker Poker Club (Мытищи)",
+      "venue": "Издаётся с 28 февраля 2026 · Heavy Haze · Мытищи, ул.Селезнёва, 33, этаж 3",
+      "address": "Мытищи, ул.Селезнёва, 33, этаж 3",
+      "age": "",
+      "description": "← Все клубы города Московская область Газета о спортивном покере · Московская область Выпуск № 31 · 17 августа 2026 Joker Poker Club (Мытищи) Издаётся с 28 февраля 2026 · Heavy Haze · Мытищи, ул.Селезнёва, 33, этаж 3 ☆ В избранное Игра не на деньги ★ Клуб-партнёр Расписание турниров в Joker Poker Club (Мытищи) Клуб пока не анонсировал турниры на ближайшие две недели О клубе ♠️ Джокер - клуб любителей спортивного покера не на деньги в Мытищах Добро пожаловать в «Джокер» - клуб любителей спортивного покера! Мы рады предложить вам уникальную атмосферу, где каждый, независимо от уровня подготовки, сможет насладиться игрой в покер. Мы играем без азарта, не на деньги. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ ПРАВИЛА КЛУБА ЛЮБИТЕЛЕЙ СПОРТИВНОГО ПОКЕРА «ДЖОКЕР» Мы играем НЕ на деньги, у нас нет азартной игры, нет денежных ставок, нет призового фонда, нет рейка и нет иных атрибутов азартных игр. Турниры носят исключительно развлекательный характер. Всё в строгом соответствии с Законодательством. Перед первым участием Вам необходимо будет подписать согласие с данными правилами. Цель наших игр – приятно провести время, получить максимум положительных эмоций от игры и общения, а таже улучшить имеющиеся навыки или научиться игре (если вы не умеете). В нашем клубе запрещено: 🔴вызывающее поведение за столом и злоупотребление нецензурной лексикой; 🔴чрезмерное употребление алкоголя; 🔴создание конфликтных ситуаций, в т.ч. оскорбление участников, споры на политические, национальные и другие острые тематики; 🔴приглашения участников в другие покерные сообщест…",
+      "details": [
+        "18+",
+        "Обучение",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {
+        "phone": "+79660632737"
+      },
+      "source_url": "https://pokernomoney.ru/club/c~jocker_m",
+      "min_fee_rub": 0,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 0,
       "schedule": []
     },
     {
-      "name": "PLAYWAY",
-      "address": "Москва, Винницкая, 8, корпус 2.",
-      "min_fee_rub": 1300,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
+      "name": "Level",
+      "venue": "Издаётся с 21 декабря 2025 · МСК lounge · просп. Вернадского, д. 14А, 3 этаж",
+      "address": "просп. Вернадского, д. 14А, 3 этаж",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 19 · 17 августа 2026 Level Издаётся с 21 декабря 2025 · МСК lounge · просп. Вернадского, д. 14А, 3 этаж ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в Level 9 турниров в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа Classic Level Knockout Баунти / Нокаут 1 000 ₽ 19:00 четверг, 20 августа Level Bounty Progressive PKO 1 000 ₽ 19:00 пятница, 21 августа Classic Level Knockout+ Баунти / Нокаут Бесплатно 19:00 суббота, 22 августа Zlotnikov Mistery Bounty Баунти / Нокаут 1 000 ₽ 17:00 вторник, 25 августа Classic Level Knockout Баунти / Нокаут 1 000 ₽ 19:00 четверг, 27 августа Level Split Life Tournament 1 000 ₽ 19:00 пятница, 28 августа Level Bounty Progressive PKO 1 000 ₽ 19:00 суббота, 29 августа Level Mystery Bounty Mystery Bounty 1 000 ₽ 19:00 воскресенье, 30 августа Final Summer Level Series 1 000 ₽ 19:00 Регулярные турниры Classic Level Knockout → Level Bounty Progressive → Level Mystery Bounty → Level Split Life Tournament → О клубе Level Poker Club — сообщество любителей спортивного покера в Москве, где играют не на деньги. Клуб для тех, кому близки стратегия, эмоции и хорошая компания: здесь собираются в атмосферной локации, чтобы сыграть в спортивный покер по техасскому холдему — на фишки и клубный рейтинг, без денежных ставок. Приходите играть в спортивный покер в Москве ради азарта, общения и места в клубном рейтинге. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ В LЕVEL мы ценим комфорт и атмосферу. Хотим, чтобы к…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~level",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 11,
       "schedule": [
         {
+          "date": "2026-08-17",
           "time": "19:00",
-          "club": "PLAYWAY",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "club": "Level",
+          "tournament": "Level",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-12-21",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "МСК lounge",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Classic Level Knockout",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Level Bounty Progressive",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Classic Level Knockout+",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "17:00",
+          "club": "Level",
+          "tournament": "Zlotnikov Mistery Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-25",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Classic Level Knockout",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-27",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Level Split Life Tournament",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-28",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Level Bounty Progressive",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-29",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Level Mystery Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        },
+        {
+          "date": "2026-08-30",
+          "time": "19:00",
+          "club": "Level",
+          "tournament": "Final Summer Level Series",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~level"
+        }
+      ]
+    },
+    {
+      "name": "MASK OFF POKER",
+      "venue": "Издаётся с 11 февраля 2024 · Остров Lounge · Сущевский вал, д.16с1",
+      "address": "Сущевский вал, д.16с1",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 17 · 17 августа 2026 MASK OFF POKER Издаётся с 11 февраля 2024 · Остров Lounge · Сущевский вал, д.16с1 ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в MASK OFF POKER 8 турниров в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа FREEROLL TOURNAMENT Бесплатно 19:00 среда, 19 августа DOUBLE RATING POINTS TOURNAMENT 1 000 ₽ 19:00 четверг, 20 августа PHOENIX DOUBLE STACK TOURNAMENT Феникс 1 000 ₽ 19:00 пятница, 21 августа EVENING POKER TOURNAMENT 1 000 ₽ 19:00 суббота, 22 августа ОБУЧЕНИЕ ПОКЕРУ Бесплатно 16:45 FREEZOUT Freezeout 1 500 ₽ 19:00 воскресенье, 23 августа FREEZOUT DEEP STACK TOURNAMENT 1 500 ₽ 19:00 понедельник, 31 августа MPT Summer Championship 2026 1 000 ₽ 19:00 Регулярные турниры BOUNTY TOURNAMENT POKER → DOUBLE RATING POINTS POKER → EVENING POKER TOURNAMENT → FREEROLL TOURNAMENT → FREEZOUT DEEP STACK TOURNAMENT → PHOENIX DOUBLE STACK TOURNAMENT → ОБУЧЕНИЕ ПОКЕРУ → О клубе Mask Off Poker — клуб спортивного покера в Москве, где играют не на деньги, без денежных призов (18+): здесь играют ради удовольствия, общения и атмосферы. Находится по адресу Сущевский вал, 16ст1, рядом с метро Савёловская и Марьина Роща. Турниры по техасскому холдему проходят каждый день в разных форматах: Freeroll по вторникам, Double Rating по средам, Phoenix Double Stack по четвергам, Win The Button по пятницам, Bounty по субботам и Freezeout Deep Stack по воскресеньям. Вход на фрироллы бесплатный, стандартные турниры 1000 ₽, воскресный Freezeout 1500 ₽. Регламент и …",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Обучение",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~mask",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 9,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "MASK OFF POKER",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2027-02-11",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "Остров Lounge",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "FREEROLL TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "DOUBLE RATING POINTS TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "PHOENIX DOUBLE STACK TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "EVENING POKER TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "16:45",
+          "club": "MASK OFF POKER",
+          "tournament": "ОБУЧЕНИЕ ПОКЕРУ",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "FREEZOUT DEEP STACK TOURNAMENT",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        },
+        {
+          "date": "2026-08-31",
+          "time": "19:00",
+          "club": "MASK OFF POKER",
+          "tournament": "MPT Summer Championship 2026",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~mask"
+        }
+      ]
+    },
+    {
+      "name": "Minds",
+      "venue": "Издаётся с 22 ноября 2025 · Империя дыма · Новочеремушкинская ул., д. 21а",
+      "address": "Новочеремушкинская ул., д. 21а",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 18 · 17 августа 2026 Minds Издаётся с 22 ноября 2025 · Империя дыма · Новочеремушкинская ул., д. 21а ☆ В избранное Следующая игра понедельник 19:00 ★ Клуб-партнёр Расписание турниров в Minds 3 турнира в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа Minds Monday day 2 Дип-стек 500 ₽ 19:00 четверг, 20 августа Minds deep stack turbo Дип-стек 1 000 ₽ 19:00 пятница, 21 августа Minds bounty tournament Баунти / Нокаут 1 000 ₽ 19:00 Регулярные турниры Minds bounty tournament → Minds deep stack turbo → О клубе Minds Club — покерное комьюнити в Москве для людей, которые любят спокойные, атмосферные вечера и живое общение без пафоса. Даже если ты новичок, тебя быстро погрузят в игру опытные дилеры. И ты не будешь чувствовать себя чужим. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ ИГРА У НАС 18+ ▪️ ФОРМАТ Наша игра основана на своде правил (https://docs.google.com/document/d/1hxUiGBpVhTaL5fQg1Tt45ESt2VyG_p8BjVGRoPoZ21I/edit?usp=drivesdk) TDA (Poker Tournament Directors Association) и адаптированы под наш клуб. ▪️СТОИМОСТЬ Организационный сбор составляет 1000 рублей, в него входит весь необходимый инвентарь и работа организаторов. ▪️ ИГРАЕМ НЕ НА ДЕНЬГИ Денежные призы не предусмотрены, в клубе играют только на рейтинг и повышение уровня. Мы про любовь к minds game, а не про азартные игры. ▪️ РЕБАЙ Если фишки закончились до конца поздней регистрации, можно взять дополнительный стек. • Стоимость - 1000 рублей. • Использовать ребай можно не бо…",
+      "details": [
+        "18+",
+        "Правила TDA",
+        "Ребаи",
+        "Поздняя регистрация",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~minds",
+      "min_fee_rub": 500,
+      "reentry_limit": 4,
+      "reentry_cost_rub": 1000,
+      "late_reg_minutes": 150,
+      "duration_minutes": 330,
+      "upcoming": 5,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Minds",
+          "tournament": "Minds",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~minds"
+        },
+        {
+          "date": "2026-11-22",
+          "time": "19:00",
+          "club": "Minds",
+          "tournament": "Империя дыма",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~minds"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Minds",
+          "tournament": "Minds Monday day 2",
+          "fee_rub": 500,
+          "source_url": "https://pokernomoney.ru/club/c~minds"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Minds",
+          "tournament": "Minds deep stack turbo",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~minds"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Minds",
+          "tournament": "Minds bounty tournament",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~minds"
+        }
+      ]
+    },
+    {
+      "name": "Nuts poker club Moscow",
+      "venue": "Издаётся с 3 августа 2024 · Mos lounge & bar · Б. Спасоглинищевский пер., д. 3, стр. 5",
+      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 6 · 17 августа 2026 Nuts poker club Moscow Издаётся с 3 августа 2024 · Mos lounge & bar · Б. Спасоглинищевский пер., д. 3, стр. 5 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в Nuts poker club Moscow 5 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа ПОКЕР НЕ НА ДЕНЬГИ В МОСКВЕ 1 000 ₽ 19:00 вторник, 18 августа Nuts Classic Классика 1 000 ₽ 19:00 четверг, 20 августа Nuts Discipline 1R+1R(A) 1 000 ₽ 19:00 пятница, 21 августа Nuts Bounty Баунти / Нокаут 1 000 ₽ 19:00 воскресенье, 23 августа Nuts Mystery Bounty Mystery Bounty 1 000 ₽ 17:00 Регулярные турниры CLASSIC TOURNAMENT → DOUBLE NUTS → NUTS Road to the Star → Nuts Bounty → Nuts Classic → Nuts Discipline 1R+1R(A) → Nuts Mystery Bounty → SPECIAL NUTS → Покер не на деньги в Москве → О клубе Мы здесь, чтобы сделать каждую игру в техасский холдем комфортной. Напоминаем, что покер проводится НЕ на деньги 🙅‍♂️ С нами вы получите профессиональный рост, сильное комьюнити и приятные эмоции! Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Регистрация — реакцией в чате клуба или личным сообщением администратору. Сбор игроков в 18:30, старт в 19:00, поздняя регистрация закрывается в 21:40. Игра не считается азартной: призового фонда и денежных выплат нет, только рейтинговые очки. Фоторепортаж Отзывы о Nuts poker club Moscow Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~nuts",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 7,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Nuts poker club Moscow",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-03",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Mos lounge & bar",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "ПОКЕР НЕ НА ДЕНЬГИ В МОСКВЕ",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Nuts Classic",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Nuts Discipline 1R+1R(A)",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Nuts Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "17:00",
+          "club": "Nuts poker club Moscow",
+          "tournament": "Nuts Mystery Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~nuts"
+        }
+      ]
+    },
+    {
+      "name": "Pocket Rockets Club",
+      "venue": "Издаётся с 7 ноября 2025 · Цокольный этаж · Шелепихинская наб., 34к2зд1",
+      "address": "Шелепихинская наб., 34к2зд1",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 23 · 17 августа 2026 Pocket Rockets Club Издаётся с 7 ноября 2025 · Цокольный этаж · Шелепихинская наб., 34к2зд1 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в Pocket Rockets Club 4 турнира в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа Smoke Bounty Tournament Баунти / Нокаут 1 000 ₽ 19:00 вторник, 18 августа ⭐️Звездный феникс⭐️ Феникс 1 000 ₽ 19:00 среда, 19 августа Freezeout Tournament Freezeout 1 500 ₽ 19:00 Poker Tournament: Boom Pot 1 500 ₽ 20:00 Регулярные турниры Freezeout Tournament → Poker Tournament: Boom Pot → Smoke Bounty Tournament → ВЕЧЕРНИЙ ПОКЕР → Звездный феникс → Пьяный покер «Dealer's choice» → О клубе Pocket Rockets Club — клуб спортивного покера в Москве легального формата, где играют не на деньги: без денежных выигрышей и поощрительных призов. Это пространство для спокойного интеллектуального досуга, где соблюдение правил сообщества делает игру комфортной и справедливой. Турниры по техасскому холдему проходят на фишки и клубный рейтинг. Приходите играть в спортивный покер в Москве ради стратегии, общения и спортивного результата. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Запись — через приложение клуба или напрямую администратору. Обычно к докупке доступно не больше 2 re-entry за игру. Поздняя регистрация закрывается примерно в 22:15. Участие в турнире означает согласие с публичной офертой клуба. В некоторых турнирах есть уникальные механики — например, формат «выбей дилера», где з…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Обучение",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~pocket",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 5,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Pocket Rockets Club",
+          "tournament": "Pocket Rockets Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~pocket"
+        },
+        {
+          "date": "2026-11-07",
+          "time": "19:00",
+          "club": "Pocket Rockets Club",
+          "tournament": "Цокольный этаж",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~pocket"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Pocket Rockets Club",
+          "tournament": "Smoke Bounty Tournament",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~pocket"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Pocket Rockets Club",
+          "tournament": "⭐️Звездный феникс⭐️",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~pocket"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "Pocket Rockets Club",
+          "tournament": "Freezeout Tournament",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~pocket"
+        }
+      ]
+    },
+    {
+      "name": "POKER FACE Сlub",
+      "venue": "Издаётся с 12 сентября 2025 · Irishman Pub · Звенигородское ш., 18/20, к. 1",
+      "address": "Звенигородское ш., 18/20, к. 1",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 8 · 17 августа 2026 POKER FACE Сlub Издаётся с 12 сентября 2025 · Irishman Pub · Звенигородское ш., 18/20, к. 1 ☆ В избранное Следующая игра среда 19:00 Расписание турниров в POKER FACE Сlub 2 турнира в ближайшие две недели · ближайший — среда, 19 августа , 19:00 среда, 19 августа Poker Face Night 1 000 ₽ 19:00 суббота, 22 августа Wheel of Fortune & Double Bounty Баунти / Нокаут 1 000 ₽ 16:00 Регулярные турниры Poker Face Night ♠️ → Wheel of Fortune & Double Bounty ♠️ → О клубе Добро пожаловать в покерный клуб \"POKER FACE\"! Мы открываемся и ждем всех, кто хочет наслаждаться интеллектуальной игрой и живой атмосферой в кругу единомышленников. Важно: мы играем в покер НЕ на деньги. Никаких денежных призов, призовых фондов и комиссий. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ За каждый повторный вход можно крутить колесо бонусов к стеку. Тройка финалистов турнира получает бесплатный вход на любой турнир клуба в течение 30 дней. Отзывы о POKER FACE Сlub Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до POKER FACE Сlub Город Москва Адрес Звенигородское ш., 18/20, к. 1 Площадка Irishman Pub Первая игра 12 сентября 2025 Орг. взнос от 1 000 ₽ ♦ Знаете ли вы? Клуб проводит турниры по классическим правилам разных видов покера Клуб создаёт условия и для новичков, и для опытных игроков Клуб работает на площадке паба За каждый повторный вход можно крутить коле…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~face",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 4,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "POKER FACE Сlub",
+          "tournament": "POKER FACE Сlub",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~face"
+        },
+        {
+          "date": "2026-09-12",
+          "time": "19:00",
+          "club": "POKER FACE Сlub",
+          "tournament": "Irishman Pub",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~face"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "POKER FACE Сlub",
+          "tournament": "Poker Face Night",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~face"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "16:00",
+          "club": "POKER FACE Сlub",
+          "tournament": "Wheel of Fortune & Double Bounty",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~face"
+        }
+      ]
+    },
+    {
+      "name": "PRIDE",
+      "venue": "Издаётся с 15 апреля 2025 · Continental Lounge · ул. Ладожская, д. 11",
+      "address": "ул. Ладожская, д. 11",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 12 · 17 августа 2026 PRIDE Издаётся с 15 апреля 2025 · Continental Lounge · ул. Ладожская, д. 11 ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в PRIDE 6 турниров в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа PRIDE MISSION 1 200 ₽ 19:00 среда, 19 августа PRIDE | BLACK LION 1 200 ₽ 19:00 четверг, 20 августа PRIDE DISCIPLINE 1 200 ₽ 19:00 пятница, 21 августа PRIDE | THE LION KING 1 200 ₽ 19:00 суббота, 22 августа PRIDE | KNOCKOUT BATTLE 1 200 ₽ 18:00 воскресенье, 23 августа PRIDE PRESTIGE 1 500 ₽ 18:00 Регулярные турниры MYSTERY BOUNTY TOURNAMENT → PRESTIGE TOURNAMENT → PRIDE MISSION TOURNAMENT → The Lion King Tournament → О клубе Добро пожаловать в PRIDE POKER CLUB! ⭐️Наш покерный клуб — это уникальное пространство для любителей покера, где игра идет не на деньги, а на дружеском энтузиазме и интеллектуальном соперничестве. Мы открываем двери каждому, кто хочет погрузиться в мир покера, независимо от уровня подготовки. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Мы создали наше сообщество, чтобы фанаты покера могли наслаждаться игрой в приятной и честной атмосфере без денежных ставок. Для комфорта всех участников, пожалуйста, ознакомьтесь и соблюдайте следующие правила: ❗️Первое и самое важное правило клуба - мы играем НЕ НА ДЕНЬГИ❗️ 🔞 Вход 18+ 📌Основные правила игры: 🔸Игра без денежных ставок: Мы играем исключительно ради удовольствия, общения и любви к покеру. Денежные ставки запрещены. 🔸Формат игры: Турниры проводятс…",
+      "details": [
+        "18+",
+        "Обучение",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~pride",
+      "min_fee_rub": 1200,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 8,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-04-15",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "Continental Lounge",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE MISSION",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE | BLACK LION",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE DISCIPLINE",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE | THE LION KING",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "18:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE | KNOCKOUT BATTLE",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "PRIDE",
+          "tournament": "PRIDE PRESTIGE",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~pride"
         }
       ]
     },
     {
       "name": "Quantum",
+      "venue": "Издаётся с 11 июля 2026 · Quantum · Новая Басманная улица, 19 ст7",
       "address": "Новая Басманная улица, 19 ст7",
-      "min_fee_rub": 1500,
-      "upcoming": 4,
-      "description": "QUANTUM — клуб спортивного покера в центре Москвы: 8 профессиональных столов, 72 игровых места, рейтинги и разные форматы.",
-      "venue": "Quantum",
-      "first_game": "",
-      "facts": [
-        "8 профессиональных столов",
-        "72 игровых места",
-        "VIP-комнаты",
-        "бар и кухня"
-      ],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 1,
       "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 219 · 17 августа 2026 Quantum Издаётся с 11 июля 2026 · Quantum · Новая Басманная улица, 19 ст7 ☆ В избранное Следующая игра четверг 19:00 ★ Клуб-партнёр Расписание турниров в Quantum 4 турнира в ближайшие две недели · ближайший — четверг, 20 августа , 19:00 четверг, 20 августа MYSTERY KNOCKOUT Mystery Bounty 1 500 ₽ 19:00 пятница, 21 августа MAFIA 1 500 ₽ 19:00 суббота, 22 августа BOSS BOUNTY Баунти / Нокаут 1 500 ₽ 18:00 воскресенье, 23 августа SPECIAL CARDS 1 500 ₽ 18:00 Регулярные турниры BOSS BOUNTY → Deep Stack → FREEZEOUT → Mystery Knockout Tournament → Обучение → Турнир Quantum 31 июля → О клубе QUANTUM — КЛУБ СПОРТИВНОГО ПОКЕРА В ЦЕНТРЕ МОСКВЫ ♠️ 8 профессиональных столов • 72 игровых места • турниры без денежных ставок • рейтинги • разные форматы Для отдыха: VIP-комнаты • бильярд • PS5 • блэкджек • бар • кухня • кальяны • живая музыка Отдельное здание • собственная территория • лаунж-зоны • бесплатная охраняемая парковка ЧТ-ПТ: 18:30 - 02:00 СБ-ВС: 16:30 - 02:00 Адрес: Москва, Новая Басманная улица, 19с7 Фоторепортаж Отзывы о Quantum Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до Quantum Город Москва Адрес Новая Басманная улица, 19 ст7 Площадка Quantum Первая игра 11 июля 2026 Орг. взнос от 1 500 ₽ ♦ Знаете ли вы? Клуб специализируется на спортивном покере без игры на деньги В клубе есть спортивный БлэкДжек Для отдыха доступны бильярдные столы В заведении есть лаун…",
       "details": [
-        "8 профессиональных столов",
-        "72 игровых места",
-        "VIP-комнаты",
-        "бар и кухня"
+        "18+",
+        "Обучение",
+        "Есть бесплатный формат",
+        "Bounty"
       ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~quantum",
+      "min_fee_rub": 1500,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 7,
       "schedule": [
         {
-          "time": "17:00",
+          "date": "2026-08-17",
+          "time": "19:00",
           "club": "Quantum",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "tournament": "Quantum",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
         },
         {
+          "date": "2026-07-11",
+          "time": "19:00",
+          "club": "Quantum",
+          "tournament": "Quantum",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Quantum",
+          "tournament": "MYSTERY KNOCKOUT",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Quantum",
+          "tournament": "MAFIA",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
+        },
+        {
+          "date": "2026-08-22",
           "time": "18:00",
           "club": "Quantum",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "tournament": "BOSS BOUNTY",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "Quantum",
+          "tournament": "SPECIAL CARDS",
+          "fee_rub": 1500,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
+        },
+        {
+          "date": "2026-07-31",
+          "time": "18:30",
+          "club": "Quantum",
+          "tournament": "О клубе",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~quantum"
         }
       ]
     },
     {
-      "name": "ХАРТС",
-      "address": "Боровая, 19А",
-      "min_fee_rub": 1000,
+      "name": "Raise Club",
+      "venue": "Издаётся с 21 февраля 2026 · Raise Club Lounge · ул. Азовская 18 (4 этаж)",
+      "address": "ул. Азовская 18 (4 этаж)",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 40 · 17 августа 2026 Raise Club Издаётся с 21 февраля 2026 · Raise Club Lounge · ул. Азовская 18 (4 этаж) ☆ В избранное Следующая игра понедельник 18:00 Расписание турниров в Raise Club 1 турнир в ближайшие две недели · ближайший — понедельник, 17 августа , 18:00 понедельник, 17 августа Dealer's choice FREEROLL Бесплатно 18:00 Регулярные турниры Add-on Tournament → Bloody Phoenix Tournament → Dealer's choice FREEROLL → Old School Tournament → Progressive Bounty Tournament «ОХОТА ЗА СКАЛЬПАМИ» → О клубе Raise Club — клуб спортивного покера в Москве, где играют не на деньги, а на рейтинг и призы клуба. Находится на ул. Азовская, 18 (4 этаж), в двух шагах от метро Севастопольская и Каховская. Клуб делает ставку на мастерство и удовольствие от игры: еженедельно проходят турниры по техасскому холдему в разных форматах — от классического Old School и фрироллов до прогрессивного нокаута «Охота за скальпами» и турнира с инкогнито-участником Excommunicado. Большинство турниров с бесплатным входом, для прогрессивного баунти бай-ин 500 ₽. Для гостей — кальян, напитки победителям, система рейтинга, вечеринки и конкурсы. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Запись — через собственного Telegram-бота клуба. Периодически проводится «freeroll week» — бесплатный вход на все турниры недели. В прогрессивном баунти-формате «Охота за скальпами» цена головы игрока растёт с каждым нокаутом — чем больше выбиваешь, тем дороже становишься сам. Отзывы о Raise Club Ваша оценка ★ ★ ★ ★ ★ Отправ…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~raise",
+      "min_fee_rub": 0,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 3,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "18:00",
+          "club": "Raise Club",
+          "tournament": "Raise Club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~raise"
+        },
+        {
+          "date": "2026-02-21",
+          "time": "18:00",
+          "club": "Raise Club",
+          "tournament": "Raise Club Lounge",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~raise"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "18:00",
+          "club": "Raise Club",
+          "tournament": "Dealer's choice FREEROLL",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~raise"
+        }
+      ]
+    },
+    {
+      "name": "SHOWDOWN",
+      "venue": "SHOWDOWN · ул. Платонова, 19, Воронеж",
+      "address": "ул. Платонова, 19, Воронеж",
+      "age": "",
+      "description": "← Все клубы города Воронеж Газета о спортивном покере · Воронеж Выпуск № 104 · 17 августа 2026 SHOWDOWN SHOWDOWN · ул. Платонова, 19, Воронеж ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в SHOWDOWN 4 турнира в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа BOOM POT Бесплатно 19:00 среда, 19 августа DEEPSTACK + 1 REBUY Дип-стек Бесплатно 19:00 четверг, 20 августа MYSTERY BOUNTY Mystery Bounty Бесплатно 19:00 воскресенье, 23 августа TABLE BATTLE Бесплатно 17:00 Регулярные турниры BOOM POT → DEEPSTACK + 1 REBUY → MYSTERY BOUNTY TOURNAMENT → TABLE BATTLE → О клубе Showdown — покерное комьюнити в Воронеже, где играют на рейтинг, не на деньги: ради эмоций, стратегии и славы. Турниры по техасскому холдему проходят на фишки и клубный рейтинг, без денежных ставок, в атмосфере одного из лучших покерных сообществ города. Приходите играть в спортивный покер в Воронеже ради азарта, общения и места в клубном рейтинге. Отзывы о SHOWDOWN Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до SHOWDOWN Город Воронеж Адрес ул. Платонова, 19, Воронеж Площадка SHOWDOWN Орг. взнос вход свободный Объявления Написать администратору → Telegram-канал клуба → Сообщить о нарушении Заметили, что этот клуб играет на деньги или награждает победителей материальными призами? Дайте нам знать. Другие клубы · Воронеж CHECK-CHECK Воронеж 1,0 км ACE CLUB 1,2 км ГОТО Покер 1,8 км FullHouse 2,1 км ФЕНИКС 2,1 км Когда играют Расписание тур…",
+      "details": [
+        "18+",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~showdown",
+      "min_fee_rub": 0,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
       "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
       "schedule": [
         {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "SHOWDOWN",
+          "tournament": "SHOWDOWN",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~showdown"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "SHOWDOWN",
+          "tournament": "BOOM POT",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~showdown"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "SHOWDOWN",
+          "tournament": "DEEPSTACK + 1 REBUY",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~showdown"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "SHOWDOWN",
+          "tournament": "MYSTERY BOUNTY",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~showdown"
+        },
+        {
+          "date": "2026-08-23",
           "time": "17:00",
-          "club": "ХАРТС",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "18:00",
-          "club": "ХАРТС",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "club": "SHOWDOWN",
+          "tournament": "TABLE BATTLE",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~showdown"
         }
       ]
     },
     {
-      "name": "Покерный Клуб №1",
-      "address": "Москва, ул. Киевская, 2",
-      "min_fee_rub": 2000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
+      "name": "Straddle poker club",
+      "venue": "Издаётся с 6 августа 2025 · Straddle poker club · Валовая улица, 32/75с2 (2 этаж)",
+      "address": "Валовая улица, 32/75с2 (2 этаж)",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 16 · 17 августа 2026 Straddle poker club Издаётся с 6 августа 2025 · Straddle poker club · Валовая улица, 32/75с2 (2 этаж) ☆ В избранное Следующая игра вторник 18:00 Расписание турниров в Straddle poker club 4 турнира в ближайшие две недели · ближайший — вторник, 18 августа , 18:00 вторник, 18 августа Обучение Бесплатно 18:00 Just One Time 1 200 ₽ 19:00 четверг, 20 августа Классический турнир 1 000 ₽ 19:00 суббота, 22 августа Bounty-турнир 1 000 ₽ 19:00 Регулярные турниры Bounty-турнир → Just One Time турнир → Классический турнир → Обучение → О клубе Добро пожаловать в Straddle! 👋 Привет! 🔥 Вы много слышали о покере, но ни разу не играли? Вы - любитель - и хотите классно провести вечер или улучшить свои навыки? Вы - профи, и устали от игр в онлайне? Тогда вам - в наш Клуб. Мы - Клуб спортивного покера STRADDLE и мы проводим живые игры. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Запись — реакцией «+» в комментариях к посту с анонсом турнира. Перед игрой (обычно к 16:00) можно прийти на бесплатное обучение основам покера для новичков. Бонусные фишки начисляют за пунктуальность и заказ кальяна за столом; за приглашённого друга — бесплатный ребай. Фоторепортаж Отзывы о Straddle poker club Ваша оценка ★ ★ ★ ★ ★ Отправить на модерацию Отзыв появится после проверки администратором. Один отзыв на клуб. Пока нет одобренных отзывов — оставьте первый! Как добраться до Straddle poker club Город Москва Адрес Валовая улица, 32/75с2 (2 этаж) Площадка Straddle poker club Первая игра 6 а…",
+      "details": [
+        "18+",
+        "Ребаи",
+        "Обучение",
+        "Есть бесплатный формат"
+      ],
       "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Showdown",
-      "address": "Новый Арбат, 19",
+      "source_url": "https://pokernomoney.ru/club/c~straddle",
       "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 5,
       "schedule": [
         {
-          "time": "19:00",
-          "club": "Showdown",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-08-17",
+          "time": "18:00",
+          "club": "Straddle poker club",
+          "tournament": "Straddle poker club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~straddle"
         },
         {
-          "time": "20:00",
-          "club": "Showdown",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-08-06",
+          "time": "18:00",
+          "club": "Straddle poker club",
+          "tournament": "Straddle poker club",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~straddle"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "18:00",
+          "club": "Straddle poker club",
+          "tournament": "Обучение",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~straddle"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Straddle poker club",
+          "tournament": "Классический турнир",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~straddle"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "19:00",
+          "club": "Straddle poker club",
+          "tournament": "Bounty-турнир",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~straddle"
         }
       ]
     },
     {
-      "name": "EMPIRE POKER CLUB",
-      "address": "Шелепихинская набережная, 34к3зд6",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
+      "name": "Дойл (Doyle poker club)",
+      "venue": "Издаётся с 29 августа 2024 · Gamma More (ex-Сфера) · Б. Сухаревская пл. д. 14/7",
+      "address": "Б. Сухаревская пл. д. 14/7",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 10 · 17 августа 2026 Дойл (Doyle poker club) Издаётся с 29 августа 2024 · Gamma More (ex-Сфера) · Б. Сухаревская пл. д. 14/7 ☆ В избранное Следующая игра вторник 19:00 Расписание турниров в Дойл (Doyle poker club) 5 турниров в ближайшие две недели · ближайший — вторник, 18 августа , 19:00 вторник, 18 августа Классический нокаут 1 000 ₽ 19:00 четверг, 20 августа Сателлит MPT 1 000 ₽ 19:00 пятница, 21 августа Нокаут + Бонус 1 000 ₽ 19:00 воскресенье, 23 августа Воскресный Deep Stack Дип-стек 1 000 ₽ 17:00 понедельник, 31 августа MPT Summer Championship 2026 Freezeout Бесплатно 19:00 Регулярные турниры Knockout + bonus → Воскресный Deep Stack → Классический нокаут → Нокаут + Бонус ⭐️ → Сателлит MPT → О клубе Дойл (Doyle Poker Club) — клуб спортивно-развлекательного покера в Москве, названный в честь легендарного покериста Дойла Брансона, где играют не на деньги. Здесь проходят офлайн-турниры по самому популярному виду покера — техасскому холдему: игра не азартная, без денежных ставок, на фишки и клубный рейтинг. Приходите играть в спортивный покер в Москве ради стратегии, общения и спортивного результата. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Самое главное правило — мы НЕ играем на деньги, у нас нет денежных ставок, призовых фондов, рейка и иных атрибутов азартных игр. Турниры носят исключительно развлекательный характер. Всё в строгом соответствии с законодательством. Перед первым участием все игроки обязаны ознакомиться с данными правилами. Цель наших игр – приятно п…",
+      "details": [
+        "18+",
+        "Re-entry",
+        "Поздняя регистрация",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~doyle",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 7,
       "schedule": [
         {
-          "time": "18:00",
-          "club": "EMPIRE POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Дойл (Doyle poker club)",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
         },
         {
+          "date": "2026-08-29",
           "time": "19:00",
-          "club": "EMPIRE POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Gamma More (ex-Сфера)",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Классический нокаут",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Сателлит MPT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Нокаут + Бонус",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "17:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Воскресный Deep Stack",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
+        },
+        {
+          "date": "2026-08-31",
+          "time": "19:00",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "MPT Summer Championship 2026",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~doyle"
         }
       ]
     },
     {
-      "name": "ХРОНИКИ",
-      "address": "Садовая-Кудринская улица, 3А, Москва",
+      "name": "Клуб спортивного покера RIVER",
+      "venue": "☆ В избранное",
+      "address": "М.О., г. Балашиха, мкрн. Железнодорожный, ул. Андрея Белого, д. 5",
+      "age": "",
+      "description": "← Все клубы города Московская область Газета о спортивном покере · Московская область Выпуск № 4 · 17 августа 2026 Клуб спортивного покера RIVER Издаётся с 12 октября 2025 · Цокольный этаж · М.О., г. Балашиха, мкрн. Железнодорожный, ул. Андрея Белого, д. 5 ☆ В избранное Следующая игра вторник 18:00 Расписание турниров в Клуб спортивного покера RIVER 15 турниров в ближайшие две недели · ближайший — вторник, 18 августа , 18:00 вторник, 18 августа River Express Tournament 1 000 ₽ 18:00 TOP GUN 1 000 ₽ 19:30 среда, 19 августа ЛАСТОЧКА CLASSIC Классика 1 000 ₽ 18:00 RIVER classic tournament Классика 1 000 ₽ 18:00 FREEROLL Бесплатно 19:30 четверг, 20 августа FREEROLL RIVER TOURNAMENT Фрирол 1 000 ₽ 18:00 DOUBLE STACK 1 000 ₽ 19:30 пятница, 21 августа ЛАСТОЧКА Bounty Friday River Баунти / Нокаут 1 000 ₽ 18:00 Bounty Friday River Баунти / Нокаут 1 000 ₽ 18:00 MYSTERY BOUNTY Mystery Bounty 1 000 ₽ 19:30 суббота, 22 августа MAIN EVENT 1 000 ₽ 18:00 ЛАСТОЧКА BIG STACK 1 000 ₽ 18:00 воскресенье, 23 августа RIVER Sunday tournament 1 000 ₽ 18:00 ЛАСТОЧКА CLASSIC Классика 1 000 ₽ 18:00 понедельник, 31 августа отборочный турнир 1 000 ₽ 19:00 Регулярные турниры Bounty Friday River → DOUBLE STACK → FREEROLL → MAIN EVENT → MYSTERY BOUNTY → RIVER Sunday tournament → RIVER classic tournament → River Express Tournament → TOP GUN → отборочный турнир → О клубе Клуб спортивного покера Мы играем не на деньги 💯 Наш клуб — это уютное и современное пространство, созданное для настоящих ценителей покера. Мы собрали всё лучшее: тактику, психологию, непредсказуемость и адреналин. Регламент и форматы Оф…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Есть бесплатный формат",
+        "Bounty"
+      ],
+      "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~river",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 9,
+      "schedule": [
+        {
+          "date": "2026-08-17",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "Клуб спортивного покера RIVER",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-10-12",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "Цокольный этаж",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "River Express Tournament",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "ЛАСТОЧКА CLASSIC",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "FREEROLL RIVER TOURNAMENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "ЛАСТОЧКА Bounty Friday River",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-22",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "MAIN EVENT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "RIVER Sunday tournament",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        },
+        {
+          "date": "2026-08-31",
+          "time": "19:00",
+          "club": "Клуб спортивного покера RIVER",
+          "tournament": "отборочный турнир",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~river"
+        }
+      ]
+    },
+    {
+      "name": "МАКСИМУМ",
+      "venue": "Издаётся с 19 июня 2026 · Покерный клуб Максимум · Большая Никитская 43",
+      "address": "Большая Никитская 43",
+      "age": "",
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 71 · 17 августа 2026 МАКСИМУМ Издаётся с 19 июня 2026 · Покерный клуб Максимум · Большая Никитская 43 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в МАКСИМУМ 7 турниров в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа Maximum Classic Tournament Бесплатно 19:00 вторник, 18 августа Boss Tournament 1 200 ₽ 19:00 среда, 19 августа Freezeout Tournament Freezeout 1 200 ₽ 19:00 четверг, 20 августа Double Chance Tournament 1 200 ₽ 19:00 пятница, 21 августа Bonus Tournament 1 200 ₽ 19:00 суббота, 22 августа Bounty Tournament 1 200 ₽ 18:00 воскресенье, 23 августа Evening at the Maximum 1 200 ₽ 18:00 Регулярные турниры Bonus Tournament → Boss Tournament → Bounty Tournament → Double Chance → Evening at the Maximum → Freezeout → Maximum Classic Tournament → О клубе Максимум — клуб спортивного покера в Москве, где играют не на деньги, на условных фишках и рейтинг. Находится в центре, по адресу Большая Никитская, 43. Турниры по техасскому холдему проходят каждый день: по будням (пн–чт, 19:00) с бесплатным входом, по выходным (пт–вс) — форматы Maximum Classic, Bounty, Double Chance, Boss и другие. Стартовые турниры бесплатные, ре-энтри и аддоны 1200–1500 ₽, число ре-энтри не ограничено. Клуб дарит бонусные фишки за фирменную кепку или футболку, а победителю — бизнес-такси. Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Запись — через приложение, администратора в Telegram/MAX или по телефону. Иногда клуб запускает сразу два па…",
+      "details": [
+        "18+",
+        "Re-entry",
+        "Есть бесплатный формат"
+      ],
+      "contacts": {
+        "phone": "+79235542619"
+      },
+      "source_url": "https://pokernomoney.ru/club/c~maximum",
       "min_fee_rub": 1200,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 9,
       "schedule": [
         {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "МАКСИМУМ",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-06-19",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Покерный клуб Максимум",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Maximum Classic Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-18",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Boss Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-19",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Freezeout Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Double Chance Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Bonus Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-22",
           "time": "18:00",
-          "club": "ХРОНИКИ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "club": "МАКСИМУМ",
+          "tournament": "Bounty Tournament",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Evening at the Maximum",
+          "fee_rub": 1200,
+          "source_url": "https://pokernomoney.ru/club/c~maximum"
         }
       ]
     },
     {
-      "name": "БЛЕФ?",
-      "address": "Проспект Мира, 102с12, подъезд 6",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
+      "name": "Покерный клуб ALL-IN",
+      "venue": "Издаётся с 2 апреля 2025 · MOS lounge & bar · ул. Таганская, 29, стр. 1",
+      "address": "ул. Таганская, 29, стр. 1",
       "age": "",
-      "details": [],
+      "description": "← Все клубы города Москва Газета о спортивном покере · Москва Выпуск № 5 · 17 августа 2026 Покерный клуб ALL-IN Издаётся с 2 апреля 2025 · MOS lounge & bar · ул. Таганская, 29, стр. 1 ☆ В избранное Следующая игра понедельник 19:00 Расписание турниров в Покерный клуб ALL-IN 1 турнир в ближайшие две недели · ближайший — понедельник, 17 августа , 19:00 понедельник, 17 августа KNOCKOUT 1 000 ₽ 19:00 Регулярные турниры GIFTS → KNOCKOUT → О клубе ДОБРО ПОЖАЛОВАТЬ В КЛУБ ALL-IN Мы предлагаем вам взглянуть на вашу любимую игру по-новому! Мы играем в покер в рамках закона — у нас нет призового фонда и выплат. Нас объединяет любовь к игре, спортивный азарт, яркие эмоции и дружеское общение с единомышленниками! Регламент и форматы Официальные правила клуба — развернуть полный текст ▾ Мы хотим обеспечить вам комфортное времяпрепровождение! 💫Мы играем не на деньги и просим игроков не агитировать друг друга на игры, связанные с денежными выигрышами. 💫Мы не агитируем друг друга на игры в аналогичных заведениях и клубах. 💫Мы просим игроков уважать друг друга, не создавать конфликтные ситуации и не нарушать нормы покерного этикета за столами. 💫Мы не допускаем до игры людей в состоянии сильного алкогольного/наркотического опьянения. 💫В нашем заведении есть хороший бар и своя замечательная кухня, поэтому просим игроков не приносить свою еду и напитки. ЛИДЕРБОРД Если мы играем не на деньги, что получают победители? 💫 Все игроки, участвующие в наших турнирах, попадают в лидерборд — это рейтинг игроков, который показывает, кто лучше всех выступает на протяжении серии турниров. 💫 Принципы наше…",
+      "details": [
+        "18+",
+        "Поздняя регистрация",
+        "Есть бесплатный формат"
+      ],
       "contacts": {},
+      "source_url": "https://pokernomoney.ru/club/c~allin",
+      "min_fee_rub": 1000,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null,
+      "upcoming": 3,
       "schedule": [
         {
-          "time": "18:00",
-          "club": "БЛЕФ?",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Покерный клуб ALL-IN",
+          "tournament": "Покерный клуб ALL-IN",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~allin"
+        },
+        {
+          "date": "2026-04-02",
+          "time": "19:00",
+          "club": "Покерный клуб ALL-IN",
+          "tournament": "MOS lounge & bar",
+          "fee_rub": 0,
+          "source_url": "https://pokernomoney.ru/club/c~allin"
+        },
+        {
+          "date": "2026-08-17",
+          "time": "19:00",
+          "club": "Покерный клуб ALL-IN",
+          "tournament": "KNOCKOUT",
+          "fee_rub": 1000,
+          "source_url": "https://pokernomoney.ru/club/c~allin"
         }
       ]
     }
   ],
   "events": [
     {
-      "time": "16:00",
-      "club": "Joker Poker Club Moscow",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "POKER FACE Сlub",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Aura Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Straddle poker club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Nuts poker club Moscow",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Ace Poker Club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:45",
-      "club": "MASK OFF POKER",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Level",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Straddle poker club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Check-Check Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "GARAGE Game Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "СТРИТ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Восьмёрка Кикер",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "КАРЕТА",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "CHECK-RAISE CLUB MOSCOW",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Всё могут Короли!",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ФИШ.КА POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Quantum",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ХАРТС",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:10",
-      "club": "Friendly Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "QQ POKER CLUB",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "ХАРТС",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Magnum Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "SRP EQUITY",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "MASK OFF POKER",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "CARTEL POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "МАКСИМУМ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Ocean's Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Комьюнити Компас",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Quantum",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-02-21",
       "time": "18:00",
       "club": "Raise Club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Raise Club Lounge",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~raise"
     },
     {
-      "time": "18:00",
-      "club": "River Room",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "SNAP CALL CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "BLEF BET",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
+      "date": "2026-04-02",
+      "time": "19:00",
       "club": "Покерный клуб ALL-IN",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "MOS lounge & bar",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~allin"
     },
     {
-      "time": "18:00",
-      "club": "EMPIRE POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "ХРОНИКИ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "БЛЕФ?",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "PLAYWAY",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Pocket Rockets Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "HEADS UP",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "БАРРЕЛЬ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "DUCKS POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "НУАР",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Free Poker Moscow",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "AURUM",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "EMPIRE POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-04-15",
       "time": "19:00",
       "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Continental Lounge",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
     },
     {
+      "date": "2026-04-18",
       "time": "19:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Aura Poker Club",
+      "tournament": "Гастро-лаундж-бар «Барвиха Lounge»",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~aura"
     },
     {
+      "date": "2026-04-18",
       "time": "19:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "Aura Poker Club",
+      "tournament": "Орг. взнос",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~aura"
     },
     {
-      "time": "19:00",
-      "club": "Showdown",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "date": "2026-05-30",
+      "time": "18:00",
+      "club": "Friendly Poker Club",
+      "tournament": "Орг. взнос",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
     },
     {
-      "time": "19:30",
-      "club": "Hi, Jack Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "date": "2026-05-30",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Friendly Poker Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
     },
     {
-      "time": "19:30",
-      "club": "BLEF BET",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "PRESTIG POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "Poker Room GTO",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
+      "date": "2026-06-12",
       "time": "20:00",
       "club": "BlackWood",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "BlackWood Poker",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
     },
     {
+      "date": "2026-06-12",
       "time": "20:00",
-      "club": "MIDNIGHT POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "BlackWood",
+      "tournament": "Орг. взнос",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
     },
     {
+      "date": "2026-06-19",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Покерный клуб Максимум",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-07-11",
+      "time": "19:00",
+      "club": "Quantum",
+      "tournament": "Quantum",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-07-31",
+      "time": "18:30",
+      "club": "Quantum",
+      "tournament": "О клубе",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-03",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Mos lounge & bar",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-06",
+      "time": "18:00",
+      "club": "Straddle poker club",
+      "tournament": "Straddle poker club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "18:00",
+      "club": "Raise Club",
+      "tournament": "Raise Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~raise"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "18:00",
+      "club": "Raise Club",
+      "tournament": "Dealer's choice FREEROLL",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~raise"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "18:00",
+      "club": "Straddle poker club",
+      "tournament": "Straddle poker club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "Клуб спортивного покера RIVER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Aura Poker Club",
+      "tournament": "Aura Poker Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~aura"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Check-Check Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Бесплатный понедельник",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "GARAGE Game Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "TRIPLE CHANCE TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "JOKER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "FREEROLL BOMB POT",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "MASK OFF POKER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds Monday day 2",
+      "fee_rub": 500,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts poker club Moscow",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "ПОКЕР НЕ НА ДЕНЬГИ В МОСКВЕ",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Pocket Rockets Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Smoke Bounty Tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "POKER FACE Сlub",
+      "tournament": "POKER FACE Сlub",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~face"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Quantum",
+      "tournament": "Quantum",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "SHOWDOWN",
+      "tournament": "SHOWDOWN",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Дойл (Doyle poker club)",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "МАКСИМУМ",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Maximum Classic Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Покерный клуб ALL-IN",
+      "tournament": "Покерный клуб ALL-IN",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~allin"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:00",
+      "club": "Покерный клуб ALL-IN",
+      "tournament": "KNOCKOUT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~allin"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Friendly Poker Club",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Classic Knockout",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-17",
+      "time": "19:30",
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Checkpoint | Lobnya",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
+    },
+    {
+      "date": "2026-08-17",
       "time": "20:00",
-      "club": "Showdown",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "BlackWood",
+      "tournament": "BlackWood",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
     },
     {
+      "date": "2026-08-17",
+      "time": "20:00",
+      "club": "BlackWood",
+      "tournament": "Freeroll Classic",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "18:00",
+      "club": "Straddle poker club",
+      "tournament": "Обучение",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "River Express Tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Aura Poker Club",
+      "tournament": "Aura Guard Game",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~aura"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "FREEROLL Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "DOBERMAN",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "FREEROLL PROGRESSIVE BOUNTY",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Classic Level Knockout",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "FREEROLL TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts Classic",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "⭐️Звездный феникс⭐️",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE MISSION",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "SHOWDOWN",
+      "tournament": "BOOM POT",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Классический нокаут",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Boss Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Bounty Hunter: Gold Edition",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:30",
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Запись на месте в один клик",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "19:30",
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Double stack",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "ЛАСТОЧКА CLASSIC",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "WANTED Event",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "MYSTERY DOGS",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "DOUBLE RATING POINTS TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Freezeout Tournament",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "POKER FACE Сlub",
+      "tournament": "Poker Face Night",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~face"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE | BLACK LION",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "SHOWDOWN",
+      "tournament": "DEEPSTACK + 1 REBUY",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Freezeout Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "High Hand Knockout",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "FREEROLL RIVER TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Phoenix XL",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "OMAHA DOG",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "JOKER",
+      "tournament": "FREEROLL BOUNTY HUNTER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level Bounty Progressive",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "PHOENIX DOUBLE STACK TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds deep stack turbo",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts Discipline 1R+1R(A)",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE DISCIPLINE",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Quantum",
+      "tournament": "MYSTERY KNOCKOUT",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "SHOWDOWN",
+      "tournament": "MYSTERY BOUNTY",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Straddle poker club",
+      "tournament": "Классический турнир",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Сателлит MPT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Double Chance Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Friendly Cards",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:30",
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Chill Day",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "ЛАСТОЧКА Bounty Friday River",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Bounty Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "CRAZY FRIDAY",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Classic Level Knockout+",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "EVENING POKER TOURNAMENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Minds bounty tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE | THE LION KING",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Quantum",
+      "tournament": "MAFIA",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Нокаут + Бонус",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Bonus Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Knockout Lucky Nine",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-21",
       "time": "23:00",
-      "club": "AK77",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "club": "JOKER",
+      "tournament": "FRIDAY POKER CUP",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "16:00",
+      "club": "POKER FACE Сlub",
+      "tournament": "Wheel of Fortune & Double Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~face"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "16:45",
+      "club": "MASK OFF POKER",
+      "tournament": "ОБУЧЕНИЕ ПОКЕРУ",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "17:00",
+      "club": "Check-Check Club",
+      "tournament": "Main Event",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "17:00",
+      "club": "Level",
+      "tournament": "Zlotnikov Mistery Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "17:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Mystery Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "18:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE | KNOCKOUT BATTLE",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "18:00",
+      "club": "Quantum",
+      "tournament": "BOSS BOUNTY",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "MAIN EVENT",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "18:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Bounty Tournament",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "DOGMAN",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "19:00",
+      "club": "Straddle poker club",
+      "tournament": "Bounty-турнир",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~straddle"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "23:00",
+      "club": "JOKER",
+      "tournament": "JOKER FREEROLL",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "16:00",
+      "club": "Friendly Poker Club",
+      "tournament": "Обучение по Омахе",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~friendly"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "17:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "Nuts Mystery Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~nuts"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "17:00",
+      "club": "SHOWDOWN",
+      "tournament": "TABLE BATTLE",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~showdown"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "17:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Воскресный Deep Stack",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "18:00",
+      "club": "Check-Check Club",
+      "tournament": "Воскресный классик",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "18:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE PRESTIGE",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~pride"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "18:00",
+      "club": "Quantum",
+      "tournament": "SPECIAL CARDS",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~quantum"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "RIVER Sunday tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "18:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Evening at the Maximum",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~maximum"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "ONE DOG FREEZEOUT",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "FREEZOUT DEEP STACK TOURNAMENT",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "23:00",
+      "club": "JOKER",
+      "tournament": "FREEROLL BOUNTY HUNTER",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~joker"
+    },
+    {
+      "date": "2026-08-24",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Бесплатный понедельник",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-25",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Classic Level Knockout",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-27",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level Split Life Tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-28",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level Bounty Progressive",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Level Mystery Bounty",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Gamma More (ex-Сфера)",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-30",
+      "time": "18:00",
+      "club": "Check-Check Club",
+      "tournament": "Воскресный классик",
+      "fee_rub": 1200,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-30",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "Final Summer Level Series",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2026-08-31",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Бесплатный понедельник",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-08-31",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "MPT Summer Championship 2026",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
+    },
+    {
+      "date": "2026-08-31",
+      "time": "19:00",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "MPT Summer Championship 2026",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~doyle"
+    },
+    {
+      "date": "2026-08-31",
+      "time": "19:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "отборочный турнир",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "19:00",
+      "club": "POKER FACE Сlub",
+      "tournament": "Irishman Pub",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~face"
+    },
+    {
+      "date": "2026-10-01",
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "ТРИУМФ ЛАУНЖ-БАР",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~garage"
+    },
+    {
+      "date": "2026-10-12",
+      "time": "18:00",
+      "club": "Клуб спортивного покера RIVER",
+      "tournament": "Цокольный этаж",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~river"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "19:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Цокольный этаж",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~pocket"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "Дом Check-Check",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~check"
+    },
+    {
+      "date": "2026-11-22",
+      "time": "19:00",
+      "club": "Minds",
+      "tournament": "Империя дыма",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~minds"
+    },
+    {
+      "date": "2026-12-20",
+      "time": "19:30",
+      "club": "Checkpoint | Lobnya",
+      "tournament": "Два Дракона",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~spc"
+    },
+    {
+      "date": "2026-12-21",
+      "time": "19:00",
+      "club": "Level",
+      "tournament": "МСК lounge",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~level"
+    },
+    {
+      "date": "2027-02-11",
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "Остров Lounge",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~mask"
     }
   ]
 }
