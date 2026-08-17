@@ -1,28 +1,15 @@
 {
   "source": "https://pokernomoney.ru/club",
-  "updated_at": "2026-08-17T23:48:55+03:00",
-  "date": "2026-08-17",
+  "updated_at": "2026-08-18T00:54:37+03:00",
+  "date": "2026-08-18",
   "city": "Москва",
   "events": [
     {
-      "date": "2026-08-17",
-      "time": "18:00",
-      "club": "Raise Club",
-      "tournament": "Dealer's choice FREEROLL",
-      "fee_rub": 1000,
-      "source_url": "https://pokernomoney.ru/club/c~raise",
-      "address": "ул. Азовская 18 (4 этаж)",
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "late_reg_minutes": null,
-      "duration_minutes": null
-    },
-    {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "18:00",
       "club": "Straddle poker club",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "Обучение",
+      "fee_rub": 1200,
       "source_url": "https://pokernomoney.ru/club/c~straddle",
       "address": "Валовая улица, 32/75с2 (2 этаж)",
       "reentry_limit": null,
@@ -31,11 +18,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "18:00",
       "club": "Клуб спортивного покера RIVER",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "River Express Tournament",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~river",
       "address": "М.О., г. Балашиха, мкрн. Железнодорожный, ул. Андрея Белого, д. 5",
       "reentry_limit": null,
@@ -44,11 +31,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Aura Poker Club",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "Aura Guard Game",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~aura",
       "address": "Новоясеневский проспект, 1",
       "reentry_limit": null,
@@ -57,10 +44,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Check-Check Club",
-      "tournament": "Бесплатный понедельник",
+      "tournament": "FREEROLL Tournament",
       "fee_rub": 1200,
       "source_url": "https://pokernomoney.ru/club/c~check",
       "address": "Нижний Сусальный пер., д. 5с1",
@@ -70,10 +57,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "GARAGE Game Club",
-      "tournament": "TRIPLE CHANCE TOURNAMENT",
+      "tournament": "DOBERMAN",
       "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~garage",
       "address": "пр. Аэропорта, 8, стр. 7",
@@ -83,10 +70,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "JOKER",
-      "tournament": "понедельник",
+      "tournament": "вторник",
       "fee_rub": 0,
       "source_url": "https://pokernomoney.ru/club/c~joker",
       "address": "ул. Красных Партизан, 1/3 корп. 3, Краснодар",
@@ -96,11 +83,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Level",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "Classic Level Knockout",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~level",
       "address": "просп. Вернадского, д. 14А, 3 этаж",
       "reentry_limit": null,
@@ -109,11 +96,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "MASK OFF POKER",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "FREEROLL TOURNAMENT",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~mask",
       "address": "Сущевский вал, д.16с1",
       "reentry_limit": null,
@@ -122,11 +109,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Minds",
-      "tournament": "Minds Monday day 2",
-      "fee_rub": 500,
+      "tournament": "Империя дыма",
+      "fee_rub": 0,
       "source_url": "https://pokernomoney.ru/club/c~minds",
       "address": "Новочеремушкинская ул., д. 21а",
       "reentry_limit": 4,
@@ -135,7 +122,7 @@
       "duration_minutes": 330
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Nuts poker club Moscow",
       "tournament": "Nuts Classic",
@@ -148,10 +135,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Pocket Rockets Club",
-      "tournament": "Smoke Bounty Tournament",
+      "tournament": "⭐️Звездный феникс⭐️",
       "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~pocket",
       "address": "Шелепихинская наб., 34к2зд1",
@@ -161,7 +148,7 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "POKER FACE Сlub",
       "tournament": "среда",
@@ -174,11 +161,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "PRIDE",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "PRIDE MISSION",
+      "fee_rub": 1200,
       "source_url": "https://pokernomoney.ru/club/c~pride",
       "address": "ул. Ладожская, д. 11",
       "reentry_limit": null,
@@ -187,7 +174,7 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Quantum",
       "tournament": "четверг",
@@ -200,7 +187,7 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "SHOWDOWN",
       "tournament": "вторник",
@@ -213,11 +200,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "Дойл (Doyle poker club)",
-      "tournament": "вторник",
-      "fee_rub": 0,
+      "tournament": "Классический нокаут",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~doyle",
       "address": "Б. Сухаревская пл. д. 14/7",
       "reentry_limit": null,
@@ -226,10 +213,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:00",
       "club": "МАКСИМУМ",
-      "tournament": "Maximum Classic Tournament",
+      "tournament": "Boss Tournament",
       "fee_rub": 1200,
       "source_url": "https://pokernomoney.ru/club/c~maximum",
       "address": "Большая Никитская 43",
@@ -239,23 +226,10 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
-      "time": "19:00",
-      "club": "Покерный клуб ALL-IN",
-      "tournament": "KNOCKOUT",
-      "fee_rub": 1000,
-      "source_url": "https://pokernomoney.ru/club/c~allin",
-      "address": "ул. Таганская, 29, стр. 1",
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "late_reg_minutes": null,
-      "duration_minutes": null
-    },
-    {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:10",
       "club": "Friendly Poker Club",
-      "tournament": "Classic Knockout",
+      "tournament": "Bounty Hunter: Gold Edition",
       "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~friendly",
       "address": "Русаковская набережная, д. 1А, стр. 1",
@@ -265,11 +239,11 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
+      "date": "2026-08-18",
       "time": "19:30",
       "club": "Checkpoint | Lobnya",
-      "tournament": "Два Дракона",
-      "fee_rub": 0,
+      "tournament": "Запись на месте в один клик",
+      "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~spc",
       "address": "МО, г. Лобня, ул. Батарейная, дом 7а",
       "reentry_limit": null,
@@ -278,13 +252,13 @@
       "duration_minutes": null
     },
     {
-      "date": "2026-08-17",
-      "time": "20:00",
-      "club": "BlackWood",
-      "tournament": "BlackWood Poker",
-      "fee_rub": 0,
-      "source_url": "https://pokernomoney.ru/club/c~blackwood",
-      "address": "Олимпийский проспект, 12",
+      "date": "2026-08-18",
+      "time": "19:30",
+      "club": "Raise Club",
+      "tournament": "Bloody Phoenix Tournament",
+      "fee_rub": 1000,
+      "source_url": "https://pokernomoney.ru/club/c~raise",
+      "address": "ул. Азовская 18 (4 этаж)",
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
