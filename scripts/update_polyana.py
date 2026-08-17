@@ -18,7 +18,7 @@ DATA.mkdir(exist_ok=True)
 
 S = requests.Session()
 S.headers.update({
-    "User-Agent": "Mozilla/5.0 (compatible; PokerSwipeSync/1.1; +https://github.com/vlxax/poker-swipe)",
+    "User-Agent": "Mozilla/5.0 (compatible; PokerSwipeSync/1.2; +https://github.com/vlxax/poker-swipe)",
     "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.7",
     "Accept": "text/html,application/xhtml+xml",
 })
@@ -106,21 +106,62 @@ def extract_club_links() -> tuple[str, dict[str, str]]:
         best = fallback_club_links()
     return best_url, best
 
-def meaningful_tournament(title: str | None, club: str) -> str | None:
+def looks_like_venue_or_address(title: str | None, address: str = "") -> bool:
+    t = clean(title)
+    if not t:
+        return True
+
+    n = norm(t)
+    if address and (n == norm(address) or (len(n) > 12 and n in norm(address))):
+        return True
+
+    low = t.lower()
+
+    venue_words = [
+        "lounge", "лаунж", "pub", "паб", "bar", "бар", "restaurant", "ресторан",
+        "кафе", "club lounge", "гостро", "гастро", "остров lounge", "мск lounge",
+        "continental lounge", "irishman pub", "gamma more", "сфера"
+    ]
+    address_words = [
+        "улица", "ул.", "ул ", "проспект", "просп.", "пер.", "переулок", "наб.",
+        "набережная", "шоссе", "ш.", "площадь", "пл.", "дом ", "д.", "стр.",
+        "строение", "корп.", "корпус", "этаж", "цоколь", "мкрн", "г.", "город "
+    ]
+
+    if any(w in low for w in venue_words):
+        return True
+    if any(w in low for w in address_words):
+        return True
+
+    # Obvious street/address patterns.
+    if re.search(r"\b\d+[а-яa-z]?\s*(?:к\d+|стр\.?\s*\d+|с\d+)?\b", low) and (
+        "," in t or any(w in low for w in ["ул", "просп", "пер", "наб", "шоссе", "дом", "д."])
+    ):
+        return True
+
+    return False
+
+def meaningful_tournament(title: str | None, club: str, address: str = "") -> str | None:
     t = clean(title)
     if not t:
         return None
     if norm(t) == norm(club):
         return None
+
     bad = {
         "турнир", "расписаниетурниров", "сегодня", "завтра", "москва",
-        "подробнее", "контактыиадрес", "связатьсясадминистратором"
+        "подробнее", "контактыиадрес", "связатьсясадминистратором",
+        "покерненаденьгивмоскве"
     }
     if norm(t) in bad:
         return None
+
+    if looks_like_venue_or_address(t, address):
+        return None
+
     return t
 
-def parse_schedule(soup, name, url, now):
+def parse_schedule(soup, name, url, now, address=''):
     result = []
     for table in soup.find_all("table"):
         for tr in table.find_all("tr"):
@@ -139,7 +180,7 @@ def parse_schedule(soup, name, url, now):
                 and "₽" not in c
                 and c.lower() not in {"дата","время","турнир","орг. взнос","оргвзнос"}
             ]
-            tournament = next((meaningful_tournament(c, name) for c in reversed(candidates) if meaningful_tournament(c, name)), None)
+            tournament = next((meaningful_tournament(c, name, address) for c in reversed(candidates) if meaningful_tournament(c, name, address)), None)
             result.append({
                 "date": date,
                 "time": tm.group(0).zfill(5),
@@ -167,7 +208,7 @@ def parse_schedule(soup, name, url, now):
                 and len(x) > 3
                 and "PokerNoMoney" not in x
             ]
-            tournament = next((meaningful_tournament(c, name) for c in candidates if meaningful_tournament(c, name)), None)
+            tournament = next((meaningful_tournament(c, name, address) for c in candidates if meaningful_tournament(c, name, address)), None)
             result.append({
                 "date": date,
                 "time": tm.group(0).zfill(5),
@@ -259,7 +300,7 @@ def parse_club(url, hint, now):
         if needle in dlow and label not in facts:
             facts.append(label)
 
-    schedule = parse_schedule(soup, name, url, now)
+    schedule = parse_schedule(soup, name, url, now, address)
     for e in schedule:
         e["address"] = address or None
         e["reentry_limit"] = reentry_limit
