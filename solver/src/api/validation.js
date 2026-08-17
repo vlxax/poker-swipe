@@ -13,7 +13,8 @@ export function validateEquityInput(input = {}) {
 
 export function validateAnalyzeInput(input = {}) {
   if (!input.villainRange) throw new SolverError('MISSING_INPUT', 'villainRange is required');
-  if (!Array.isArray(input.availableActions) || input.availableActions.length === 0) {
+  const solverMode = input.mode === 'solver' || input.analysisMode === 'solver';
+  if (!solverMode && (!Array.isArray(input.availableActions) || input.availableActions.length === 0)) {
     throw new SolverError('NO_AVAILABLE_ACTIONS', 'availableActions must be a non-empty array');
   }
   return input;
@@ -27,5 +28,22 @@ export function validateHandInput(input = {}) {
 
 export function validateRangeInput(input = {}) {
   assertValidRange(input.range || input.villainRange, 'range');
+  return input;
+}
+
+// Minimal shape check for the tree/CFR solver entry points. The heavy structural
+// validation happens in validateTreeConfig (called by buildGameTree).
+export function validateSolverInput(input = {}) {
+  if (!input.heroRange) throw new SolverError('MISSING_INPUT', 'heroRange is required');
+  if (!input.villainRange) throw new SolverError('MISSING_INPUT', 'villainRange is required');
+  if (input.potBB == null && input.pot == null) throw new SolverError('MISSING_INPUT', 'potBB is required');
+  if (input.effectiveStackBB == null) throw new SolverError('MISSING_INPUT', 'effectiveStackBB is required');
+  return input;
+}
+
+// Validate the optional solver-based decision-analysis mode.
+export function validateSolverModeInput(input = {}) {
+  if (!input.heroRange) throw new SolverError('MISSING_INPUT', 'heroRange is required in solver mode');
+  if (!input.villainRange) throw new SolverError('MISSING_INPUT', 'villainRange is required in solver mode');
   return input;
 }

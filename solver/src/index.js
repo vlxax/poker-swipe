@@ -13,5 +13,13 @@ export { analyzeDecision } from './analysis/decisionAnalyzer.js';
 export { buildExplanation } from './explanations/explanationBuilder.js';
 export { classifyMistake } from './analysis/mistakeClassifier.js';
 export { SolverError } from './api/errors.js';
+// Strategic CFR solver surface.
+export { buildGameTree } from './tree/treeBuilder.js';
+export { solveCFR } from './cfr/cfrSolver.js';
+export { CFRTrainer } from './cfr/cfrTrainer.js';
+export { computeExploitability, rootActionEV } from './cfr/exploitability.js';
+export { regretMatching } from './cfr/regretMatching.js';
+export { averageStrategy } from './cfr/strategyAccumulator.js';
+export { aggregateStrategy, normalizeReach } from './ranges/rangePropagation.js';
 
 export default PokerSwipeSolver;
