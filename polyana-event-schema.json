@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "event": {
+    "id": "string",
+    "date": "YYYY-MM-DD Europe/Moscow",
+    "start_time": "HH:MM",
+    "club": "string",
+    "tournament_name": "string|null",
+    "game": "NLH|PLO|HU|PINEAPPLE|null",
+    "format": "6-max|9-max|HU|null",
+    "buy_in_rub": "number|null",
+    "free": "boolean",
+    "reentry_limit": "number|null",
+    "reentry_cost_rub": "number|null",
+    "late_reg_minutes": "number|null",
+    "late_reg_end": "ISO timestamp|null",
+    "late_reg_remaining_minutes": "number|null",
+    "late_reg_open": "boolean|null",
+    "duration_minutes": "number|null",
+    "bounty_type": "bounty|pko|mystery|null",
+    "address": "string|null",
+    "source_url": "technical provenance only; never display in UI"
+  }
+}

@@ -1,75 +1,75 @@
-# PokerSwipe V33 Smart Line
 
-Контекстный релиз основного приложения PokerSwipe после рецензии профессионального игрока. Визуальные ассеты карт, стола, аватаров и фотографий сохранены без замены. Каталог Kataly в этот пакет не входит.
+# PokerSwipe Polyana Live Sync
 
-## Запуск
+Standalone Cloudflare Worker for keeping PokerSwipe "Поляна" data fresh.
 
-Приложение статическое, но для фонового расчёта equity его нужно открывать через HTTP/HTTPS, а не двойным кликом по `index.html`.
+## Architecture
 
-```bash
-python3 -m http.server 8080
-```
+Public source -> Cloudflare Worker scraper/normalizer -> KV -> PokerSwipe API.
 
-После запуска откройте `http://localhost:8080/`. Для Telegram Mini App нужен HTTPS-хостинг.
+The frontend never needs to display the source brand. `source_url` is stored only as technical provenance/debug metadata.
 
-Главная точка входа: `index.html`.
+## Endpoints
 
-## Проверка
+- `GET /api/polyana/health`
+- `GET /api/polyana/today`
+- `GET /api/polyana/clubs`
+- `GET /api/polyana/live`
+- `POST /api/polyana/sync` with header `x-sync-key`
 
-```bash
-npm install
-npm test
-```
+## Important behavior
 
-Регрессионный набор проверяет контекстный PokerBrain V33, 169 классов стартовых рук, card removal, чистый и повторный запуск, миграцию данных, Skill/Form, защиту от двойных событий, Swipe, Sizing, Push/Fold, X-Ray, All-in, реконструктор раздач, Quick и Heal.
+- Cron runs every 10 minutes.
+- Moscow time is used for event dates and late-registration countdowns.
+- Missing values are returned as `null`; the Worker does not invent tournament names or poker parameters.
+- `late_reg_remaining_minutes` is recalculated at request time.
+- If the upstream markup changes, parse errors are visible in `/health` and in the full `/live` payload.
 
-## Что нового в V33
+## Setup
 
-- Любая учебная оценка разделяет известные факты, допущения и недостающие данные. Вместо фальшивого `EXACT NODE` интерфейс показывает тип reference-модели и полноту контекста.
-- В Swipe и Sizing видна линия до решения: кто открылся, размер открытия, стандартный он или увеличенный, банк и эффективный стек.
-- POT, EFF STACK и служебные показатели получили контраст, пригодный для телефона.
-- Все основные слайдеры размера дополнены прямым вводом с клавиатуры; десятичная запятая поддерживается.
-- Push/Fold стал short-stack map с матрицей 13×13, позицией, стеком, стадией и отдельным предупреждением о неполном ICM.
-- Разбор раздачи хранит дополнительную историю каждой улицы, переносит рассчитанный банк, строит единую линию префлоп → ривер и объясняет изменение борда.
-- Storytelling отмечает появление и закрытие/промах флеш- и стрит-дро.
-- X-Ray получил режим своей руки и своего борда: диапазон можно провести по всем улицам, а удалённые классы не воскресают.
-- Спорный KQ на JT85 пересмотрен: при двух оверкартах и сильном стрит-дро ставка стала основным учебным ориентиром, чек — контекстной альтернативой.
+1. Create a KV namespace in Cloudflare.
+2. Replace `REPLACE_WITH_YOUR_KV_NAMESPACE_ID` in `wrangler.jsonc`.
+3. Install:
+   `npm install`
+4. Add secret:
+   `npx wrangler secret put SYNC_KEY`
+5. Deploy:
+   `npm run deploy`
+6. Manually seed once:
+   `curl -X POST https://YOUR-WORKER.workers.dev/api/polyana/sync -H "x-sync-key: YOUR_KEY"`
+7. Check:
+   `https://YOUR-WORKER.workers.dev/api/polyana/health`
 
-## Что исправлено в V32
+Cron changes in Cloudflare can take several minutes to propagate.
 
-- Устранена гонка загрузки V30/V31 и добавлен единый живой API `window.PokerSwipeCore`.
-- Состояние переведено на пользовательский ключ V32; старые данные мигрируются с резервной копией.
-- Ошибка `localStorage` теперь видна пользователю; в Profile есть полный экспорт и импорт JSON.
-- Skill и Form используют единую выборку реальных уникальных решений и не скачут после одного ответа.
-- Повторный тап в Sizing, Daily, Review и Heal больше не фармит события и ранг.
-- Исправлены локальные календарные дни, серия, Quick-таймеры и завершённые Heal-курсы.
-- В Swipe снова видны фактические pot/stack/line; декоративный контекст не подменяет данные.
-- All-in считает префлоп и неполный board в Worker, проверяет повтор карт и показывает объём Monte Carlo.
-- История My Hands объединена; добавлены валидация улиц, сохранение черновика, экспорт, подтверждение удаления и Undo.
-- Турниры принимают десятичную запятую, отдельно хранят количество и сумму bounty, корректно считают return/profit/ROI и валидируют поля.
-- X-Ray использует отдельное количество наблюдений для каждой метрики.
-- Добавлены manifest, CSP, адаптивность, keyboard focus, тестовый сценарий и CI-конфигурация.
+## PokerSwipe frontend
 
-Полный список изменений и оставшихся ограничений: [V33_RELEASE_NOTES.md](V33_RELEASE_NOTES.md). Базовые системные исправления сохранены из [V32_RELEASE_NOTES.md](V32_RELEASE_NOTES.md).
+Use:
+`GET https://YOUR-WORKER.workers.dev/api/polyana/today`
 
-## Данные и безопасность
+Do not render `source_url`.
 
-Основное состояние продолжает храниться локально в `pokerSwipeV32_user_<user-id>`. V33 намеренно не меняет ключ и схему, поэтому профиль V32 и вся история открываются без сброса.
+Suggested card fields:
+- `start_time`
+- `tournament_name`
+- `club`
+- `game`
+- `format`
+- `buy_in_rub`
+- `reentry_limit`
+- `late_reg_end`
+- `late_reg_remaining_minutes`
+- `duration_minutes`
+- `bounty_type`
+- `address`
 
-Публичная синхронизация профилей намеренно отключена. Её нельзя включать до серверной проверки Telegram `initData`, настроенного RLS и отрицательных security-тестов. Локальное приложение и экспорт профиля работают независимо.
+When `tournament_name` is null, show only the club + time; never show a fake placeholder such as "Турнир клуба".
 
-PokerBrain V33 — учебная локальная reference-модель, а не встроенная база коммерческого solver. В точках с неполным контекстом вывод ограничивается, а баббл/финалка не называются точным ICM без выплат и стеков стола.
+## Production hardening
 
-## Активные файлы
-
-- `index.html` — приложение и существующие продуктовые экраны.
-- `poker_brain_v20.js` — базовый учебный poker engine.
-- `poker_brain_v33.js` — контекст, storytelling, card removal и честная маркировка модели.
-- `poker_swipe_v32.js` / `poker_swipe_v32.css` — слой стабильности V32.
-- `poker_swipe_v33.js` / `poker_swipe_v33.css` — интерфейс и инструменты V33.
-- `equity_worker_v32.js` — фоновый Monte Carlo.
-- `app.webmanifest` — PWA metadata.
-- `tests/v33_brain.js` — автономные тесты контекстного мозга.
-- `tests/v32_regression.js` — полный DOM/runtime regression V32→V33.
-
-Старые точки входа и неиспользуемые runtime-файлы сохранены в `_archive/`, чтобы они не путались с текущим релизом.
+Before relying on this as production data:
+- verify the upstream site's permission/robots/terms for automated collection;
+- test selectors/heuristics against several club pages;
+- add alerting when event count unexpectedly drops;
+- add a second source later (club Telegram channels or direct club feeds);
+- cache photos/logos separately rather than hotlinking external assets.

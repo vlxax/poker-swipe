@@ -1,14 +1,13 @@
 {
-  "name": "pokerswipe",
-  "version": "35.0.0",
+  "name": "pokerswipe-polyana-sync",
   "private": true,
-  "description": "PokerSwipe static Telegram WebApp",
+  "type": "module",
   "scripts": {
-    "test": "npm run test:brain && npm run test:dom",
-    "test:brain": "node tests/v33_brain.js && node tests/v34_brain.js",
-    "test:dom": "node tests/v32_regression.js"
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
   },
   "devDependencies": {
-    "jsdom": "^26.1.0"
+    "wrangler": "^4.31.0"
   }
 }
