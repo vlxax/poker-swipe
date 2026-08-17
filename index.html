@@ -566,7 +566,7 @@ body{
  padding-top:8px!important;
  padding-left:0!important;
  padding-right:0!important;
- padding-bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 42px)!important;
+ padding-bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 44px)!important;
  overflow-x:hidden!important;
 }
 .screen>*{max-width:100%;min-width:0}
@@ -835,7 +835,7 @@ main{padding-bottom:96px}
 .you20Distance .you20SectionTitle span,.avatarTapHint21{letter-spacing:.02em}
 .pfWhy24{margin-top:10px;padding:12px 13px;border:1px solid #30303a;border-radius:16px;background:#101015;color:#d7d3d8;font-size:11px;line-height:1.45}
 .pfWhy24 b{display:block;color:#fff;margin-bottom:5px}
-.t23{padding-bottom:calc(158px + var(--tg-bottom-safe))!important}
+.t23{padding-bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 76px)!important}
 .t23CardEdit24{margin-top:8px;display:inline-flex;align-items:center;gap:5px;font-size:8px;font-weight:1000;color:#dfff8a}
 .t23DetailActions24{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:12px}
 .t23EditGhost24{border:1px solid #3a3340;background:#17141b;color:#fff;border-radius:14px;padding:12px 14px;font-size:10px;font-weight:1000}
@@ -1407,7 +1407,7 @@ function startQuick(){quick={active:true,index:0,start:now(),flow:['swipe','sizi
 function quickAdvance(){quick.index++;if(quick.index>=quick.flow.length){const sec=Math.round((now()-quick.start)/1000);quick.active=false;openModal(`<span class="ey">5 МИНУТ · ГОТОВО</span><h1>${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</h1><p>Swipe → Sizing → Memory Check → Review → X-Ray.</p><button class="primary" id="qDone">НА ГЛАВНУЮ</button>`);setTimeout(()=>$('#qDone').onclick=()=>{closeModal();show('home')},0);return}const next=quick.flow[quick.index];if(next==='memory'){const leak=topLeak(),cand=SWIPE.filter(x=>x.concept===leak?.concept);const pick=(cand.length?cand:SWIPE).find(x=>x.id!==memorySpotId)||SWIPE[0];memorySpotId=pick.id;swSession=[pick];swIndex=0;swSessionGrades=[];show('swipe');return}if(next==='review')rv=(rv+1)%REVIEWS.length;if(next==='xray'){show('xray');setTimeout(()=>xrBegin(2),0)}else show(next)}
 
 /* HOME */
-function renderHome(){const D=dailyToday();$('#home').innerHTML=`<div class="metrics"><button class="metric"><span class="ey">SKILL</span><b class="pink">${S.skill}</b><span class="mut small">долгий</span></button><button class="metric"><span class="ey">FORM</span><b>${formScore()}</b><span class="mut small">последние 20</span></button><button class="metric"><span class="ey">СЕРИЯ</span><b>${S.streak}</b><span class="mut small">дней</span></button></div><div class="grid2"><button class="tile dailyTile" id="homeDaily"><span class="modeNumber">01</span><span class="ey">DAILY #${D.number} · ${D.theme}</span><h2 class="impact">ОДНА РУКА.<br><span class="pink">НО НОРМАЛЬНО.</span></h2><span class="mut small">Один сложный спот в день.</span><div class="dailyBoard"><span>${D.board[0]}</span><span>${D.board[1]}</span><span>?</span></div><span class="go">→</span></button><button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">SIZING</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">CHECK тоже может быть стратегией.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button><button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">РАЗБОР</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Иногда — ничего.</span><div class="csiPreview">PRE ●<br>FLOP ●<br>TURN ⚠<br>RIVER ?</div><span class="go">→</span></button><button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button><button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Range narrowing + real card removal.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button></div><button class="quick5" id="quick5"><div><span class="ey">⚡ У МЕНЯ 5 МИНУТ</span><b>БЫСТРАЯ СЕССИЯ</b><div class="mut small">Задания на основе твоих ошибок.</div></div><strong>05:00</strong></button>`;$('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick}
+function renderHome(){}
 
 /* ===== V17 BRAIN INTEGRATION ===== */
 function brainSourceLabel(s=''){return ({EXACT_REFERENCE_NODE:'EXACT NODE',PREFLOP_ATLAS:'PREFLOP ATLAS',POSTFLOP_ATLAS:'POSTFLOP MODEL',LINE_MODEL:'LINE MODEL',REPAIR_MODEL:'REPAIR MODEL',NO_MODEL:'NO MODEL'})[s]||s}
@@ -1439,8 +1439,6 @@ const _xrRevealV16=xrReveal;
 xrReveal=function(score){_xrRevealV16(score);const v=$('#xrayArea .verdict');if(v)v.insertAdjacentHTML('afterend',`<div class="brainPanel"><div class="brainHead"><b>◉ RANGE ENGINE</b><span class="brainSource">COMBO REMOVAL · EXACT</span></div><p class="brainExplain">В этом режиме score взвешивается количеством реально доступных combinations после board removal. Следующий слой Brain использует ту же range-модель для blocker и bluff-density проверки.</p></div>`)}
 
 /* Home + YOU: expose that Brain is actually online */
-const _renderHomeV16=renderHome;
-renderHome=function(){_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>АНАЛИЗ</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')}  · ${s.exactNodes} </span></div></div><span>v${PokerBrain.version}</span></div>`)}
 const _renderProfileV16=renderProfile;
 renderProfile=function(){_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b></b> ${s.totalPolicies.toLocaleString('ru-RU')}  YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
 
@@ -1461,7 +1459,6 @@ function bindMetrics18(){
  else if(t.includes('FORM')){c.dataset.m18=1;c.onclick=()=>metricInfo18('FORM','Как ты принимаешь решения прямо сейчас. Смотрим последние 20 решений, поэтому показатель быстро видит апстрик качества или просадку.','FORM = взвешенный score последних 20 решений')}
  else if(t.includes('СЕРИЯ')||t.includes('STREAK')){c.dataset.m18=1;c.onclick=()=>metricInfo18('СЕРИЯ','Регулярность тренировок. Это не уровень игры, а количество дней подряд с завершённой практикой.','SERIES = последовательные тренировочные дни')}})
 }
-const _home18=typeof renderHome==='function'?renderHome:null;if(_home18)renderHome=function(){let r=_home18.apply(this,arguments);setTimeout(bindMetrics18,0);return r};
 
 const R18='23456789TJQKA',S18='shdc';
 function pc18(v){v=String(v||'').trim().toUpperCase().replace('10','T').replace('♠','S').replace('♥','H').replace('♦','D').replace('♣','C');if(v.length!==2)return null;return R18.includes(v[0])&&S18.includes(v[1].toLowerCase())?v[0]+v[1].toLowerCase():null}
@@ -1528,8 +1525,6 @@ function brain19Card(){
  if(!window.GTOBrainV19)return "";
  return `<div class="brain19"><div class="brain19Top"><div><span class="brain19Live">● GTO BRAIN V19 ONLINE</span><h3 style="margin:5px 0 0">NODE ENGINE</h3></div><b>${GTOBrainV19.nodes.length}</b></div><div class="brain19Grid"><div><b>EXACT</b><small>same anchor node</small></div><div><b>NEAR</b><small>distance + confidence</small></div><div><b>EST.</b><small>clearly labelled</small></div></div><div class="brain19Note">Ядро больше не притворяется солвером там, где данных нет: exact / nearest / estimate разделены. Postflop без dataset не выдумывает GTO-частоты.</div></div>`;
 }
-const __renderHome19=typeof renderHome==="function"?renderHome:null;
-if(__renderHome19)renderHome=function(){let r=__renderHome19.apply(this,arguments);setTimeout(()=>{const s=document.querySelector(".screen.active");if(s&&!s.querySelector(".brain19")){const nav=s.querySelector(".bottomNav,.nav");if(nav)nav.insertAdjacentHTML("beforebegin",brain19Card())}},0);return r}
 
 
 /* ============ V20 HOME + YOU OVERRIDES ============ */
@@ -1613,21 +1608,6 @@ function renderProfile20(){
 renderProfile=renderProfile20;
 
 function dailyDone20(){return Array.isArray(S.dailyArchive)&&S.dailyArchive.some(x=>x.date===today())}
-function renderHome20(){
- const D=dailyToday(),done=dailyDone20();
- $('#home').innerHTML=`<div class="metrics"><button class="metric"><span class="ey">SKILL</span><b class="pink">${S.skill}</b><span class="mut small">общий уровень</span></button><button class="metric"><span class="ey">FORM</span><b>${formScore()}</b><span class="mut small">последние 20</span></button><button class="metric"><span class="ey">СЕРИЯ</span><b>${S.streak}</b><span class="mut small">дней</span></button></div>
- <div class="grid2">
-  <button class="tile dailyTile" id="homeDaily">${done?'<span class="doneStamp20">DONE</span>':''}<span class="modeNumber">01</span><span class="ey">РАЗДАЧА ДНЯ</span><h2 class="impact">ОДНА<br><span class="pink">РУКА.</span></h2><span class="mut small">Один сложный спот в день: решение, размер и логика.</span><div class="dailyBoard"><span>${D.board[0]}</span><span>${D.board[1]}</span><span>?</span></div><span class="go">→</span></button>
-  <button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Выбери размер ставки и пойми, зачем он здесь.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button>
-  <button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">РАЗБОР ЛИНИИ</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Найди первую реальную ошибку в раздаче.</span><div class="csiPreview">ПРЕ ●<br>ФЛОП ●<br>ТЁРН ⚠<br>РИВЕР ?</div><span class="go">→</span></button>
-  <button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки. Быстро, без лишней воды.</span><div style="font-size:28px;margin-top:10px">← 🃏 →</div><span class="go">→</span></button>
-  <button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Сужай диапазон по улицам и убирай невозможные руки.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button>
- </div>
- <button class="quick5" id="quick5"><div class="quick5Copy21"><span class="ey">⚡ 5 МИНУТ</span><b class="quick5Title21">БЫСТРАЯ СЕССИЯ</b><div class="mut small quick5Desc21">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong class="quick5Timer21">05:00</strong></button>`;
- $('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick;
- if(typeof bindMetrics18==='function')setTimeout(bindMetrics18,0);
-}
-renderHome=renderHome20;
 window.openAvatar20=openAvatar20;
 
 
@@ -1640,17 +1620,6 @@ show=function(id){
 function creatorMark21(){
  return `<div class="creatorHomeMark21"><span class="dash"></span><span class="by">by</span><span class="name">Фриковая Дама</span><span class="kiss">💋</span></div>`;
 }
-const __renderHomeV21=renderHome;
-renderHome=function(){
-  __renderHomeV21();
-  document.body.classList.add('home-context');
-  const h=document.getElementById('home');
-  if(h && !h.querySelector('.creatorHomeMark21')){
-    h.insertAdjacentHTML('afterbegin',creatorMark21());
-  }
-  // stagger X-ray cells for a subtle scanner effect
-  h?.querySelectorAll('.miniGrid i').forEach((x,i)=>x.style.setProperty('--i',i));
-};
 function storyScene21(step){
  const cards=step===0?'A♠<|>Q♥':step===1?'Q♠<|>J♥':'7♠<|>2♥';
  const [c1,c2]=cards.split('<|>');
@@ -2360,22 +2329,6 @@ window.openTournamentForm23=openTournamentForm23;
 /* ================= V24 · POLISH OVERRIDES ================= */
 function metricCard24(title,big,small,cls=''){return `<button class="metric ${cls}" type="button"><span class="ey">${title}</span><b>${big}</b><span class="mut small">${small}</span></button>`}
 
-const __renderHomeV24Base = renderHome;
-renderHome=function(){
- const D=dailyToday(),done=dailyDone20();
- $('#home').innerHTML=`<div class="metrics">${metricCard24('SKILL',`<span class="pink">${S.skill}</span>`,'общий уровень')}${metricCard24('FORM',formScore(),'последние 20')}${metricCard24('СЕРИЯ',S.streak,'дней')}</div>
- <div class="grid2">
-  <button class="tile dailyTile" id="homeDaily">${done?'<span class="doneStamp20">DONE</span>':''}<div class="dailyText24"><span class="modeNumber">01</span><span class="ey">РАЗДАЧА ДНЯ</span><h2 class="impact">ОДНА<br><span class="pink">РУКА.</span></h2><span class="mut small">Один сложный спот в день: решение, размер и логика.</span></div><div class="dailyFan24"><div class="pc">Q♠</div><div class="pc">J♣</div><div class="pc">?</div></div><span class="go">→</span></button>
-  <button class="tile sizingTile" id="homeSizing"><span class="modeNumber">02</span><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Выбери размер ставки и пойми, зачем он здесь.</span><div class="chipsPreview"><i></i><i></i><i></i></div><span class="go">→</span></button>
-  <button class="tile" id="homeReview"><span class="modeNumber">03</span><span class="ey">РАЗБОР ЛИНИИ</span><b>НУ ЧТО ОПЯТЬ НЕ ТАК?</b><span class="mut small">Найди первую реальную ошибку в раздаче.</span><div class="csiPreview">ПРЕ ●<br>ФЛОП ●<br>ТЁРН ⚠<br>РИВЕР ?</div><span class="go">→</span></button>
-  <button class="tile" id="homeSwipe"><span class="modeNumber">04</span><span class="ey">10 РУК</span><b>POKER SWIPE</b><span class="mut small">Решение и размер ставки. Быстро, без лишней воды.</span><div style="font-size:28px;margin-top:10px">← <span style="display:inline-block;transform:translateY(1px)">▣</span> →</div><span class="go">→</span></button>
-  <button class="tile xrayTile" id="homeXray"><span class="modeNumber">05</span><span class="ey">ДИАПАЗОН</span><b>◎ РЕНТГЕН</b><span class="mut small">Сужай диапазон по улицам и убирай невозможные руки.</span><div class="miniGrid">${Array.from({length:32},()=>'<i></i>').join('')}</div><span class="go">→</span></button>
- </div>
- <button class="quick5" id="quick5"><div class="quick5Copy21"><span class="ey">⚡ 5 МИНУТ</span><b class="quick5Title21">БЫСТРАЯ СЕССИЯ</b><div class="mut small quick5Desc21">Разные задания, которые приложение подбирает по твоим ошибкам.</div></div><strong class="quick5Timer21">05:00</strong></button>`;
- $('#homeDaily').onclick=()=>show('daily');$('#homeSizing').onclick=()=>show('sizing');$('#homeReview').onclick=()=>show('review');$('#homeSwipe').onclick=()=>{swSession=[];show('swipe')};$('#homeXray').onclick=()=>show('xray');$('#quick5').onclick=startQuick;
- document.body.classList.add('home-context');
- setTimeout(()=>{if(typeof bindMetrics18==='function')bindMetrics18();},0);
-}
 
 const PERSONA24=[
  {short:'N',name:'НОВИЧОК'},
@@ -2680,7 +2633,6 @@ renderProfile=function(){
 
 
 /* NAV / START */
-$$('[data-nav]').forEach(b=>b.onclick=()=>show(b.dataset.nav));
 const _editNickBtn=$('#editNickBtn');
 if(_editNickBtn){
   _editNickBtn.onclick=()=>{
@@ -2733,7 +2685,7 @@ function exposeV32(name,get,set){
   ['hr22StreetEval',()=>hr22StreetEval,v=>{hr22StreetEval=v}],['hr22OpponentEval',()=>hr22OpponentEval,v=>{hr22OpponentEval=v}],
   ['hr22Save',()=>hr22Save,v=>{hr22Save=v}],['hr22Report',()=>hr22Report,v=>{hr22Report=v}],
   ['reconView18',()=>reconView18,v=>{reconView18=v}],['openSaved22',()=>openSaved22,v=>{openSaved22=v}],
-  ['myHub18',()=>myHub18,v=>{myHub18=v}],['myGo18',()=>myGo18,null],
+  ['myHub18',()=>myHub18,v=>{myHub18=v}],['myGo18',()=>myGo18,v=>{myGo18=v}],
   ['push18',()=>push18,v=>{push18=v}],['pushView18',()=>pushView18,v=>{pushView18=v}],['wirePush18',()=>wirePush18,v=>{wirePush18=v}],
   ['wireEq18',()=>wireEq18,v=>{wireEq18=v}],['bindCardPicker18',()=>bindCardPicker18,null],
   ['refreshCardButton18',()=>refreshCardButton18,null],['cardButton18',()=>cardButton18,null],
@@ -2887,11 +2839,6 @@ function renderQuickGame30(){ensureQG30();const area=document.getElementById('qu
 window.startQuickGame30=startQuickGame30;
 
 function reqSummary30(i,m){const c=checks30(rule30(i),m).filter(x=>!pass30(x)).slice(0,3);return c.map(x=>x[3]?`${x[0]} ${x[1]}% / ≤${x[2]}%`:`${x[0]} ${x[1]}/${x[2]}`).join(' · ')||'условия выполнены'}
-window.renderHome=function(){
- const h=document.getElementById('home');if(!h)return;const m=m30(),ri=rankIndex28(),r=RANKS28[ri],next=RANKS28[ri+1],np=next?rankPct30(ri+1,m):100,leak=typeof topLeak==='function'?topLeak():null,leakName=leak?conceptLabel(leak.concept):'ПОКА НЕТ ДОКАЗАННОГО ЛИКА',form=typeof formScore==='function'?formScore():50;
- h.innerHTML=`<div class="v30Home"><div class="v30Topline"><span class="ey">POKER SWIPE · V30</span><span class="sig">by <b>Фриковая Дама</b> 💋</span></div><div class="v30Hero"><div class="v30HeroHead"><img class="v30HeroAvatar" src="${r.img}"><div><span class="ey">${esc(S.nick||'ИГРОК')} · ТВОЙ РАНГ</span><h1>${r.name}</h1><div class="v30HeroStats"><span class="v30StatChip"><strong class="pink">${S.skill}</strong> SKILL</span><span class="v30StatChip"><strong>${form}</strong> ФОРМА</span><span class="v30StatChip"><strong>${m.sample}</strong> РЕШЕНИЙ</span></div></div></div><div class="v30Career"><div class="v30CareerTop"><div><span class="city">NEXT STOP · 🇧🇾 МИНСК</span><h2>HIGH ROLLER</h2><span class="mut small">Карьерная цель · допуск через подтверждённые навыки</span></div><b>${np}%</b></div><div class="v30Progress"><i style="width:${np}%"></i></div><div class="v30ReqLine">${next?`До <b>${next.name}</b>: ${reqSummary30(ri+1,m)}`:'Максимальный ранг открыт.'}</div><button class="primary v30Play" id="homePlay30">ПРОДОЛЖИТЬ КАРЬЕРУ →</button></div></div><div class="v30ActionGrid"><button class="v30Action main" id="homeSwipe30"><span class="ey">10 РУК · КОНТЕКСТНЫЕ СПОТЫ</span><b>POKER<br>SWIPE</b><small>Поле, стадия, стол, effective stack и профиль оппонента входят в задачу.</small><span class="go">→</span></button><button class="v30Action quick" id="homeQuick30"><span class="ey">⚡ НОВОЕ</span><b>3-MAX<br>HYPER</b><small>1500 фишек · уровни по 2 руки · два AI. Решения идут в твой Poker DNA.</small><span class="go">→</span></button></div><div class="v30Today"><button class="v30Mini" id="homeDaily30"><span class="ey">СЕГОДНЯ</span><b>РАЗДАЧА ДНЯ</b><span class="mut small">Один сложный контекстный спот.</span></button><button class="v30Mini" id="homeSizing30"><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Размер + причина, а не угадайка.</span></button><button class="v30Mini" id="homeReview30"><span class="ey">РАЗБОР</span><b>ГДЕ СЛОМАЛОСЬ?</b><span class="mut small">Первая существенная ошибка линии.</span></button><button class="v30Mini" id="homeXray30"><span class="ey">ДИАПАЗОН</span><b>РЕНТГЕН</b><span class="mut small">Линия + профиль + борд.</span></button></div><div class="v30Leak"><span class="ey">ФРИКОВАЯ ДАМА НАШЛА КОСЯК</span><h2>${esc(leakName)}</h2><p>${leak?`${leak.r} ошибок на ${leak.n} решениях · score ${leak.score}. Не диагноз по одной руке — уже есть повторяемость.`:'Пока данных недостаточно. Не буду придумывать тебе лик ради красивой карточки.'}</p><button class="secondary" id="homeLeak30">${leak?'ПОКАЗАТЬ, ЧТО ЛЕЧИТЬ':'НАБРАТЬ ВЫБОРКУ'} →</button></div></div>`;
- document.getElementById('homePlay30').onclick=()=>{swSession=[];show('swipe')};document.getElementById('homeSwipe30').onclick=()=>{swSession=[];show('swipe')};document.getElementById('homeQuick30').onclick=startQuickGame30;document.getElementById('homeDaily30').onclick=()=>show('daily');document.getElementById('homeSizing30').onclick=()=>show('sizing');document.getElementById('homeReview30').onclick=()=>show('review');document.getElementById('homeXray30').onclick=()=>show('xray');document.getElementById('homeLeak30').onclick=()=>leak?show('profile'):show('swipe');document.body.classList.add('home-context');
-};
 
 const prevProfile30=window.renderProfile;window.renderProfile=function(){prevProfile30.apply(this,arguments);const root=document.getElementById('profileArea');if(!root)return;root.querySelectorAll('.rank30Progress').forEach(x=>x.remove());const m=m30(),ri=rankIndex28(),next=RANKS28[ri+1];root.querySelectorAll('.rank28Card').forEach((b,i)=>{const sm=b.querySelector('small');if(sm&&i>ri)sm.textContent='🔒 нажми: условия';});if(next){const box=document.createElement('div');box.className='rank30Progress';box.innerHTML=`<span class="ey">КАК ПОЛУЧИТЬ СЛЕДУЮЩИЙ РАНГ</span><h3>${next.name} · ${rankPct30(ri+1,m)}%</h3><div class="rank30Items">${checks30(rule30(ri+1),m).map(x=>`<div class="rank30Item"><span>${x[0]} · ${x[1]}${x[3]?'%':''}</span><strong class="${pass30(x)?'ok':'bad'}">${pass30(x)?'ГОТОВО ✓':x[3]?'НУЖНО ≤ '+x[2]+'%':'НУЖНО '+x[2]}</strong></div>`).join('')}</div><div class="rank30Next"><b>Следующий шаг:</b> ${nextTask30(ri+1,m)}</div>`;const hero=root.querySelector('.rank28Hero');if(hero)hero.insertAdjacentElement('afterend',box);else root.prepend(box)}enhanceVerdict30(root)};
 
@@ -3313,7 +3260,6 @@ document.documentElement.dataset.pokerSwipeVersion='48-master';
  --v54-lime:#c8ff3d;--v54-pink:#ff4f98;
 }
 html,body{background:var(--v54-bg)!important;color:var(--v54-white)!important}
-.screen{padding-bottom:126px!important}
 
 /* FIVE REAL SECTIONS */
 .nav{
@@ -3381,7 +3327,7 @@ html,body{background:var(--v54-bg)!important;color:var(--v54-white)!important}
 .t23 .green{color:var(--v54-lime)!important}.t23 .red{color:var(--v54-pink)!important}
 
 /* POLYANA - full width destination photography */
-.v48{padding-bottom:128px!important}
+.v48{padding-bottom:calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 46px)!important}
 .v48Hero{
  border:0!important;border-radius:28px!important;padding:19px 16px!important;
  background:radial-gradient(circle at 92% 0,rgba(200,255,61,.15),transparent 34%),linear-gradient(145deg,#15151b,#0c0c10)!important
@@ -3548,17 +3494,6 @@ function buildFiveNav(){
   if(hands)hands.childNodes[hands.childNodes.length-1].textContent=' РАЗДАЧИ';
   if(field)field.childNodes[field.childNodes.length-1].textContent=' ПОЛЯНА';
   if(profile)profile.childNodes[profile.childNodes.length-1].textContent=' ТЫ';
-
-  my.onclick=function(e){e.preventDefault();e.stopPropagation();openJournal()};
-  if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
-
-  [home,hands,profile].filter(Boolean).forEach(b=>{
-    const id=b.dataset.nav;
-    b.onclick=function(e){
-      V54_MODE='polyana';
-      if(typeof show==='function')show(id);
-    }
-  });
 }
 
 /* Polyana does NOT need a duplicate "My tournaments" tab anymore. */
@@ -3641,7 +3576,6 @@ function fullDirectory(){
  if(anchor){anchor.insertAdjacentElement('afterend',source);source.insertAdjacentElement('afterend',grid)}else{area.append(source,grid)}
 }
 function wire(){
- const b=document.querySelector('.nav [data-nav="mytournaments"]');if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();openJournal()};
  fullDirectory();
 }
 document.addEventListener('DOMContentLoaded',async()=>{await loadData();wire();new MutationObserver(wire).observe(document.body,{childList:true,subtree:true})});
@@ -3652,7 +3586,7 @@ window.POKER_SWIPE_BUILD='V55 REAL SECTIONS';document.documentElement.dataset.po
 
 
 <style id="v56-live-polyana-fixed">
-.v56{padding:0 max(12px,var(--tg-left-safe)) calc(142px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v56{padding:0 max(12px,var(--tg-left-safe)) calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 60px) max(12px,var(--tg-right-safe))}
 .v56Hero{border-radius:28px;padding:19px 16px;background:
  radial-gradient(circle at 93% 0,rgba(200,255,61,.15),transparent 34%),
  radial-gradient(circle at 0 100%,rgba(255,79,152,.10),transparent 38%),
@@ -3801,8 +3735,6 @@ async function load(){
  render();
 }
 function hookNav(){
- const field=document.querySelector('.nav [data-nav="tournaments"]');
- if(field)field.onclick=e=>{e.preventDefault();e.stopPropagation();if(typeof show==='function')show('tournaments');load()};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hookNav);else hookNav();
 window.addEventListener('load',hookNav);
@@ -3965,7 +3897,8 @@ function decorate57(){hideSourceLanguage();decorateCards()}
 
 document.addEventListener('DOMContentLoaded',async()=>{
  await load57();decorate57();
- new MutationObserver(decorate57).observe(document.body,{childList:true,subtree:true});
+ var mo57=new MutationObserver(function(){mo57.disconnect();try{decorate57()}catch(e){}mo57.observe(document.body,{childList:true,subtree:true})});
+ mo57.observe(document.body,{childList:true,subtree:true});
 });
 window.addEventListener('focus',async()=>{await load57();decorate57()});
 window.openRichClubV57=openRichClub;
@@ -4067,8 +4000,6 @@ window.renderTournaments23=renderTournaments23=function(){
 
 /* Force the third bottom nav button to the real journal. */
 function wireMyTournaments(){
- const b=document.querySelector('.nav [data-nav="mytournaments"]');
- if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();renderMyTournaments58()};
 }
 
 /* ---------- TRIP BUILDER ---------- */
@@ -4160,7 +4091,7 @@ document.documentElement.dataset.pokerSwipeVersion='58-trips-my-tournaments';
 /* =========================
    V59 · MY TOURNAMENTS
    ========================= */
-.v59Journal{padding:0 max(12px,var(--tg-left-safe)) calc(145px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v59Journal{padding:0 max(12px,var(--tg-left-safe)) calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 63px) max(12px,var(--tg-right-safe))}
 .v59Hero{
   border-radius:28px;padding:18px 16px;
   background:radial-gradient(circle at 96% 0,rgba(200,255,61,.15),transparent 35%),linear-gradient(145deg,#15151b,#0c0c10)
@@ -4418,8 +4349,6 @@ window.myGo18=myGo18=function(v){
 
 /* Hard-wire the bottom nav to the clean V59 tournament journal. */
 function wire59(){
- const b=document.querySelector('.nav [data-nav="mytournaments"]');
- if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();v59RenderJournal()};
 }
 document.addEventListener('DOMContentLoaded',()=>{wire59();new MutationObserver(wire59).observe(document.body,{childList:true,subtree:true})});
 window.addEventListener('load',wire59);
@@ -4436,7 +4365,7 @@ document.documentElement.dataset.pokerSwipeVersion='59-poker-core';
  --v60-line:rgba(255,255,255,.09);--v60-white:#f5f2f4;--v60-muted:#9f98a3;
  --v60-lime:#c8ff3d;--v60-pink:#ff4f98;--v60-purple:#9d58ff;--v60-blue:#4c87ff;--v60-orange:#ff9d2e;
 }
-.v60Wrap{padding:0 max(12px,var(--tg-left-safe)) calc(150px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe))}
+.v60Wrap{padding:0 max(12px,var(--tg-left-safe)) calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 68px) max(12px,var(--tg-right-safe))}
 .v60Top{
  position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
  padding:8px 0 12px;background:linear-gradient(180deg,var(--v60-bg) 70%,transparent)
@@ -4814,32 +4743,14 @@ function rebuildNavIfNeeded(){
 }
 function hardWire(){
   rebuildNavIfNeeded();
-  var nav=document.querySelector('.nav'); if(!nav)return;
-  nav.querySelectorAll('button[data-nav]').forEach(function(b){
-    b.onclick=function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      route(b.dataset.nav);
-      return false;
-    };
-  });
 }
-// Capture the five navigation buttons before legacy bubbling handlers can steal the click.
+// Single delegated click handler: the one shared router for all five bottom-nav buttons.
 document.addEventListener('click',function(e){
   var b=e.target && e.target.closest ? e.target.closest('.nav button[data-nav]') : null;
   if(!b)return;
   e.preventDefault();
-  e.stopImmediatePropagation();
   route(b.dataset.nav);
-},true);
-
-document.addEventListener('touchend',function(e){
-  var b=e.target && e.target.closest ? e.target.closest('.nav button[data-nav]') : null;
-  if(!b)return;
-  e.preventDefault();
-  e.stopImmediatePropagation();
-  route(b.dataset.nav);
-},true);
+});
 
 document.addEventListener('DOMContentLoaded',function(){hardWire();setTimeout(hardWire,50);setTimeout(hardWire,500)});
 window.addEventListener('load',function(){hardWire();setTimeout(hardWire,200)});
