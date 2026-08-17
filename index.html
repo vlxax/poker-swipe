@@ -4759,7 +4759,14 @@ function filtered70(){
      q('#v70DeleteTournament')?.addEventListener('click',()=>{ st().tournaments=list70().filter(x=>String(x.id)!==String(old.id)); saveState(); if(typeof window.closeModal==='function') window.closeModal(); render70(); });
    },0);
  }
- function wire70(){ const b=document.querySelector('.nav [data-nav="mytournaments"]'); if(b) b.onclick=e=>{e.preventDefault(); e.stopPropagation(); render70();}; }
+ function wire70(){ const b=document.querySelector('.nav [data-nav="mytournaments"]'); if(b) b.onclick=e=>{e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation(); render70();}; }
+ function forceMyTournaments70(e){
+   const t=e.target && e.target.closest ? e.target.closest('.nav [data-nav="mytournaments"]') : null;
+   if(!t) return;
+   e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
+   render70();
+ }
+ window.addEventListener('click',forceMyTournaments70,true);
  document.addEventListener('DOMContentLoaded',()=>{wire70(); new MutationObserver(wire70).observe(document.body,{childList:true,subtree:true});});
  window.addEventListener('load',wire70);
  window.openMyTournamentsV59=render70;
