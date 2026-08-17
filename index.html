@@ -13,7 +13,7 @@
 <link rel="manifest" href="app.webmanifest">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
-<title>POKER SWIPE — V60 TRIP BUILDER</title>
+<title>POKER SWIPE — V71 REWRITTEN</title>
 <style>
 :root{
   --bg:#08080c;--panel:#121219;--panel2:#17171f;--line:#30303a;--text:#faf8fa;
@@ -3710,7 +3710,7 @@ function bind(){document.querySelectorAll('[data-v56tab]').forEach(b=>b.onclick=
 function render(){const a=area();if(!a)return;let body=V56_TAB==='today'?today():V56_TAB==='clubs'?clubs():regions();a.innerHTML='<div class="v56">'+hero()+body+'</div>';bind();markNav()}
 async function load(){try{const r=await fetch('data/live_polyana.json?v='+Date.now(),{cache:'no-store'});if(r.ok)V56_DATA=await r.json()}catch(e){}if(!V56_DATA){try{const [cr,sr]=await Promise.all([fetch('data/moscow_clubs.json?v='+Date.now(),{cache:'no-store'}),fetch('data/moscow_schedule_today.json?v='+Date.now(),{cache:'no-store'})]);const c=cr.ok?await cr.json():{clubs:[]},st=sr.ok?await sr.json():{events:[]};V56_DATA={clubs:c.clubs||[],events:st.events||[],updated_at:st.updated_at||c.retrieved_at||''}}catch(e){V56_DATA={clubs:[],events:[]}}}render()}
 function hookNav(){const field=document.querySelector('.nav [data-nav="tournaments"]');if(field)field.onclick=e=>{e.preventDefault();e.stopPropagation();if(typeof show==='function')show('tournaments');load()}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hookNav);else hookNav();window.addEventListener('load',hookNav);window.openPolyanaV56=()=>{if(typeof show==='function')show('tournaments');load()};document.documentElement.dataset.pokerSwipeVersion='69-polyana-visual';window.POKER_SWIPE_BUILD='V69 POLYANA VISUAL';
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hookNav);else hookNav();window.addEventListener('load',hookNav);window.openPolyanaV56=()=>{if(typeof show==='function')show('tournaments');load()};document.documentElement.dataset.pokerSwipeVersion='69-polyana-visual';window.POKER_SWIPE_BUILD='V71 REWRITTEN';
 })();
 </script>
 
@@ -3882,7 +3882,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
 });
 window.addEventListener('focus',async()=>{await load57();decorate57()});
 window.openRichClubV57=openRichClub;
-window.POKER_SWIPE_BUILD='V69 POLYANA VISUAL';
+window.POKER_SWIPE_BUILD='V71 REWRITTEN';
 document.documentElement.dataset.pokerSwipeVersion='69-polyana-visual';
 })();
 </script>
@@ -4632,145 +4632,48 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 </script>
 
 
-<style id="v70-my-tournaments-refined">
-.v70Wrap{padding:0 max(12px,var(--tg-left-safe)) calc(150px + var(--tg-bottom-safe)) max(12px,var(--tg-right-safe));color:#fff}
-.v70Head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin:2px 0 8px}
-.v70Brand{font-size:16px;font-weight:1000;letter-spacing:-.04em}.v70Brand span{color:#c8ff3d}
-.v70Tools{display:flex;gap:10px}
-.v70Tool{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(15,15,20,.92);display:grid;place-items:center;color:#fff;font-size:24px;box-shadow:0 0 0 1px rgba(255,255,255,.02) inset}
-.v70Tool.acid{color:#c8ff3d}
-.v70Hero{margin-top:8px}
-.v70Hero h1{font-size:58px;line-height:.88;letter-spacing:-.07em;margin:0 0 6px;font-weight:1000}
-.v70Hero h1 span{color:#c8ff3d}
-.v70Hero p{margin:0;color:#c3bcc6;font-size:13px;line-height:1.4;max-width:620px}
-.v70Tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:18px 0 14px}
-.v70Tabs button{min-height:58px;border-radius:999px;border:1px solid #2f3137;background:#0d1016;color:#efefef;font-size:12px;font-weight:900;letter-spacing:-.01em;padding:0 8px}
-.v70Tabs button.on{background:#c8ff3d;color:#0c1009;border-color:#c8ff3d;box-shadow:0 0 24px rgba(200,255,61,.12)}
-.v70Add{width:100%;min-height:48px;border-radius:16px;border:0;background:linear-gradient(180deg,#c8ff3d,#b8ec39);color:#12150e;font-size:11px;font-weight:1000;margin:0 0 14px}
-.v70Summary{border:1px solid rgba(200,255,61,.55);border-radius:28px;padding:16px 14px;background:radial-gradient(circle at 50% 0,rgba(200,255,61,.07),transparent 42%),linear-gradient(180deg,rgba(7,11,8,.98),rgba(9,9,14,.98));box-shadow:0 0 40px rgba(200,255,61,.06) inset}
-.v70SummaryGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-bottom:14px}
-.v70SummaryCell{padding:12px 10px;position:relative;text-align:center}.v70SummaryCell:not(:last-child):after{content:"";position:absolute;top:8px;right:0;bottom:8px;width:1px;background:rgba(255,255,255,.08)}
-.v70SummaryCell small{display:block;font-size:11px;color:#d3d0d5;opacity:.95;line-height:1.15;min-height:24px}.v70SummaryCell b{display:block;margin-top:7px;color:#c8ff3d;font-size:28px;line-height:1.05;letter-spacing:-.04em}
-.v70SummaryBottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(255,255,255,.08)}
-.v70SummaryBottom .v70Mini{padding:12px 10px;text-align:center;position:relative}.v70SummaryBottom .v70Mini:not(:last-child):after{content:"";position:absolute;top:10px;right:0;bottom:10px;width:1px;background:rgba(255,255,255,.08)}
-.v70Mini small{display:block;font-size:11px;color:#d0ccd4}.v70Mini b{display:block;margin-top:7px;color:#c8ff3d;font-size:23px;line-height:1.05;letter-spacing:-.04em}
-.v70MetaNote{margin-top:10px;font-size:11px;color:#9f98a3;line-height:1.35}
-.v70Section{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 10px}.v70Section h3{margin:0;font-size:15px;letter-spacing:.16em}.v70Section span{font-size:11px;color:#99939e}
-.v70Card{width:100%;text-align:left;color:#fff;background:radial-gradient(circle at 100% 0,rgba(88,124,255,.08),transparent 40%),linear-gradient(180deg,#0f131c,#0d0f16);border:1px solid rgba(255,255,255,.10);border-radius:28px;padding:14px 14px 14px 14px;margin:10px 0;display:grid;grid-template-columns:86px minmax(0,1fr) 144px 20px;gap:14px;align-items:center;box-shadow:0 12px 28px rgba(0,0,0,.22)}
-.v70Date{border:1px solid rgba(255,255,255,.10);background:#11151d;border-radius:18px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}.v70Date b{font-size:52px;color:#c8ff3d;letter-spacing:-.06em}.v70Date span{display:block;margin-top:8px;font-size:18px;text-transform:uppercase;color:#d4d0d7}
-.v70Main{min-width:0}.v70Main h4{margin:0;font-size:22px;line-height:1.02;letter-spacing:-.04em;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v70Sub{margin-top:4px;font-size:11px;color:#c2bcc6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.v70Badges{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 11px}.v70Badge{border:1px solid rgba(200,255,61,.8);color:#c8ff3d;background:rgba(200,255,61,.06);border-radius:999px;padding:6px 11px;font-size:11px;font-weight:900;line-height:1}.v70Badge.blue{border-color:#57a4ff;color:#57a4ff;background:rgba(87,164,255,.07)}.v70Badge.purple{border-color:#c26cff;color:#dd96ff;background:rgba(194,108,255,.08)}.v70Badge.orange{border-color:#ff9719;color:#ffb24e;background:rgba(255,151,25,.09)}
-.v70Facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.v70Fact small{display:block;font-size:10px;color:#9e97a2;line-height:1.1}.v70Fact b{display:block;margin-top:5px;font-size:18px;line-height:1.05}
-.v70RoiBox{border-radius:24px;min-height:118px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;background:linear-gradient(180deg,rgba(200,255,61,.10),rgba(200,255,61,.02));border:1px solid rgba(200,255,61,.35)}
-.v70RoiBox.neg{background:linear-gradient(180deg,rgba(255,78,92,.10),rgba(255,78,92,.02));border-color:rgba(255,78,92,.34)}
-.v70RoiValue{font-size:36px;line-height:1;font-weight:1000;letter-spacing:-.05em;color:#c8ff3d}.v70RoiBox.neg .v70RoiValue{color:#ff4e5c}
-.v70Spark{font-size:34px;line-height:1;color:rgba(200,255,61,.92)}.v70RoiBox.neg .v70Spark{color:rgba(255,78,92,.92)}
-.v70Arrow{font-size:30px;color:#d7d4d9;opacity:.85;justify-self:end}
-.v70Insights{margin-top:16px;border:1px solid rgba(200,255,61,.5);border-radius:24px;background:radial-gradient(circle at 20% 0,rgba(200,255,61,.08),transparent 30%),linear-gradient(180deg,#0c120b,#0e1016);display:grid;grid-template-columns:1.1fr 1fr 1fr 1.2fr;overflow:hidden}
-.v70Insight{padding:14px 13px;position:relative}.v70Insight:not(:last-child):after{content:"";position:absolute;right:0;top:12px;bottom:12px;width:1px;background:rgba(255,255,255,.08)}
-.v70Insight .k{font-size:11px;color:#d0ccd3}.v70Insight .v{display:block;margin-top:6px;font-size:16px;line-height:1.18;font-weight:900}.v70Insight .v strong{color:#c8ff3d}
-.v70InsightLead{display:flex;gap:10px;align-items:center;font-weight:1000;color:#c8ff3d;font-size:17px}.v70InsightLead .orb{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(200,255,61,.6);box-shadow:0 0 24px rgba(200,255,61,.18) inset, 0 0 12px rgba(200,255,61,.16);font-size:18px}
-.v70Empty{padding:20px;border-radius:22px;border:1px dashed rgba(255,255,255,.18);color:#a7a0ab;background:#10131a;font-size:13px;line-height:1.5}
-@media (max-width:880px){
- .v70Card{grid-template-columns:80px minmax(0,1fr) 130px 18px;gap:12px}.v70Main h4{font-size:20px}.v70Fact b{font-size:16px}
-}
-@media (max-width:680px){
- .v70Hero h1{font-size:44px}.v70SummaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.v70SummaryCell:nth-child(2):after{display:none}.v70SummaryBottom{grid-template-columns:1fr}.v70SummaryBottom .v70Mini:after{display:none}.v70Card{grid-template-columns:78px minmax(0,1fr) 106px 16px;gap:10px;padding:12px}.v70Date{min-height:98px}.v70Date b{font-size:43px}.v70Date span{font-size:16px}.v70Main h4{font-size:18px;white-space:normal}.v70Facts{grid-template-columns:1fr}.v70Fact b{font-size:15px}.v70RoiBox{min-height:100px;padding:10px 10px}.v70RoiValue{font-size:29px}.v70Spark{font-size:26px}.v70Insights{grid-template-columns:1fr}.v70Insight:after{display:none}.v70Tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-</style>
 
-<script id="v70-my-tournaments-refined-script">
+
+<style id="v71-my-tournaments">
+#ps71TournamentScreen{position:fixed;inset:0 0 76px 0;z-index:2147482000;background:#07090d;color:#fff;overflow:auto;display:none;-webkit-overflow-scrolling:touch}
+#ps71TournamentScreen.on{display:block}
+#ps71TournamentScreen *{box-sizing:border-box}
+.ps71{max-width:900px;margin:0 auto;padding:24px 18px 40px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif}
+.ps71top{display:flex;align-items:center;justify-content:space-between;gap:14px}.ps71brand{font-size:18px;font-weight:1000}.ps71brand b{color:#c8ff3d}.ps71actions{display:flex;gap:8px}.ps71icon{width:44px;height:44px;border:1px solid #2c3038;border-radius:50%;background:#11151c;color:#fff;font-size:21px}.ps71hero{margin-top:18px}.ps71hero h1{margin:0;font-size:52px;line-height:.9;letter-spacing:-.065em}.ps71hero h1 i{font-style:normal;color:#c8ff3d}.ps71hero p{margin:10px 0 0;color:#aaa4ae;font-size:14px;line-height:1.4}.ps71tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.ps71tabs button{height:50px;border:1px solid #30343b;border-radius:999px;background:#10131a;color:#ddd;font-weight:900}.ps71tabs button.on{background:#c8ff3d;border-color:#c8ff3d;color:#111}
+.ps71add{width:100%;height:48px;border:0;border-radius:15px;background:#c8ff3d;color:#111;font-weight:1000;margin-bottom:12px}.ps71summary{border:1px solid rgba(200,255,61,.5);border-radius:24px;background:radial-gradient(circle at 30% 0,rgba(200,255,61,.08),transparent 40%),#0d1015;padding:12px}.ps71summaryTop{display:grid;grid-template-columns:repeat(4,1fr)}.ps71sum{padding:12px;text-align:center;position:relative}.ps71sum:not(:last-child):after{content:"";position:absolute;right:0;top:10px;bottom:10px;width:1px;background:#242830}.ps71sum small,.ps71mini small{display:block;color:#a9a4ad;font-size:10px}.ps71sum b{display:block;color:#c8ff3d;font-size:25px;margin-top:7px}.ps71summaryBottom{border-top:1px solid #242830;display:grid;grid-template-columns:repeat(3,1fr)}.ps71mini{text-align:center;padding:11px}.ps71mini b{display:block;color:#c8ff3d;font-size:18px;margin-top:5px}.ps71section{margin:18px 2px 8px;font-size:13px;letter-spacing:.14em;font-weight:1000}.ps71card{display:grid;grid-template-columns:68px minmax(0,1fr) 112px 16px;gap:10px;align-items:center;width:100%;border:1px solid #292e36;border-radius:22px;background:linear-gradient(180deg,#11151d,#0e1117);color:#fff;padding:12px;margin:9px 0;text-align:left}.ps71date{border:1px solid #2a3038;border-radius:15px;min-height:86px;display:flex;flex-direction:column;align-items:center;justify-content:center}.ps71date b{font-size:34px;color:#c8ff3d}.ps71date span{font-size:11px;margin-top:5px}.ps71main h3{margin:0;font-size:18px;line-height:1.05}.ps71sub{margin-top:4px;color:#a8a2ac;font-size:10px}.ps71tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.ps71tag{font-size:9px;border:1px solid #5875ff;border-radius:999px;padding:4px 7px;color:#77a1ff}.ps71tag.off{border-color:#c8ff3d;color:#c8ff3d}.ps71facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ps71fact small{display:block;color:#88838d;font-size:8px}.ps71fact b{display:block;margin-top:3px;font-size:12px}.ps71roi{min-height:88px;border-radius:17px;border:1px solid rgba(200,255,61,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#c8ff3d;font-weight:1000;font-size:25px;background:rgba(200,255,61,.05)}.ps71roi.neg{border-color:rgba(255,80,95,.35);color:#ff5866;background:rgba(255,80,95,.05)}.ps71arrow{font-size:26px;color:#aaa}.ps71empty{padding:18px;border:1px dashed #343943;border-radius:20px;color:#99939d}.ps71analysis{margin-top:14px;border:1px solid rgba(200,255,61,.45);border-radius:20px;background:#0d120d;display:grid;grid-template-columns:1.2fr repeat(3,1fr)}.ps71an{padding:12px;border-right:1px solid #252b25}.ps71an:last-child{border-right:0}.ps71an strong{color:#c8ff3d}.ps71an small{display:block;color:#a7a2aa;font-size:9px;margin-bottom:4px}
+.ps71modal{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.72);display:none;align-items:flex-end}.ps71modal.on{display:flex}.ps71sheet{width:min(680px,100%);max-height:90vh;overflow:auto;margin:auto;background:#0d1015;border:1px solid #343943;border-radius:26px 26px 0 0;padding:18px}.ps71sheet h2{margin:0 0 10px}.ps71formGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ps71field{margin:8px 0}.ps71field label{display:block;font-size:9px;color:#9c96a0;margin-bottom:5px}.ps71field input,.ps71field select{width:100%;border:0;border-radius:12px;padding:12px;background:#fff;color:#111}.ps71types{display:flex;gap:7px}.ps71types button{flex:1;border:1px solid #343943;background:#171b22;color:#aaa;border-radius:12px;padding:10px}.ps71types button.on{border-color:#c8ff3d;color:#fff;background:#17200f}.ps71save{width:100%;height:46px;border:0;border-radius:13px;background:#c8ff3d;color:#111;font-weight:1000;margin-top:8px}.ps71delete{width:100%;height:42px;border:1px solid #552a35;border-radius:13px;background:#1b1014;color:#ff7893;font-weight:900;margin-top:7px}.ps71close{float:right;border:0;background:transparent;color:#fff;font-size:25px}
+@media(max-width:620px){#ps71TournamentScreen{bottom:72px}.ps71{padding:20px 12px 32px}.ps71hero h1{font-size:40px}.ps71tabs{grid-template-columns:repeat(2,1fr)}.ps71summaryTop{grid-template-columns:repeat(2,1fr)}.ps71sum:nth-child(2):after{display:none}.ps71summaryBottom{grid-template-columns:1fr}.ps71card{grid-template-columns:58px minmax(0,1fr) 92px 12px;padding:10px}.ps71date{min-height:78px}.ps71date b{font-size:29px}.ps71main h3{font-size:15px}.ps71facts{grid-template-columns:1fr}.ps71roi{font-size:22px}.ps71analysis{grid-template-columns:1fr}.ps71an{border-right:0;border-bottom:1px solid #252b25}.ps71an:last-child{border-bottom:0}.ps71formGrid{grid-template-columns:1fr}}
+</style>
+<div id="ps71TournamentScreen" aria-hidden="true"><div class="ps71" id="ps71TournamentRoot"></div></div>
+<div class="ps71modal" id="ps71Modal"><div class="ps71sheet" id="ps71Sheet"></div></div>
+<script id="v71-my-tournaments-script">
 (function(){
 'use strict';
-let V70_MODE='all';
-const monthShort=['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
-function st(){ window.S = window.S || {}; if(!Array.isArray(window.S.tournaments)) window.S.tournaments=[]; return window.S; }
-function saveState(){ if(typeof window.save==='function') window.save(); }
-function esc70(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function num70(x){ const n=Number(String(x??0).replace(/\s+/g,'').replace(',','.')); return Number.isFinite(n)?n:0; }
-function fmt70(n,c){ const sym={RUB:'₽',USD:'$',EUR:'€'}[c||'RUB']||'₽'; return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(num70(n))+' '+sym; }
-function list70(){ return Array.isArray(st().tournaments)?st().tournaments:[]; }
-function cost70(t){ return num70(t.buyin)*Math.max(1,Math.round(num70(t.entries)||1)); }
-function win70(t){ return num70(t.prize)+num70(t.bountyWon); }
-function profit70(t){ return win70(t)-cost70(t); }
-function roi70(t){ const c=cost70(t); return c?profit70(t)/c*100:0; }
-function itm70(t){ const place=Math.round(num70(t.place)); const field=Math.round(num70(t.field)); if(!place||!field) return false; return place<=Math.max(1,Math.ceil(field*0.12)); }
-function title70(t){ return t.tournamentName||t.name||'Без названия'; }
-function place70(t){ return t.clubOrRoom||t.club||t.room||''; }
-function type70(t){ return t.type==='online'?'online':'offline'; }
-function game70(t){ const s=(title70(t)+' '+place70(t)).toUpperCase(); if(s.includes('PLO')) return 'PLO'; if(s.includes('PKO')) return 'PKO'; if(s.includes('TURBO')) return 'Turbo'; if(s.includes('MYSTERY')) return 'Mystery'; if(s.includes('BOUNTY')) return 'Bounty'; return 'NLH'; }
-function badgeClass70(g){ return g==='PLO'?'purple':(g==='PKO' || g==='Mystery' ? 'purple' : (g==='Turbo' ? 'orange' : '')); }
-function filtered70(){
-  const all=list70().slice();
-  let arr=all;
-  if(V70_MODE==='online') arr=all.filter(t=>type70(t)==='online');
-  if(V70_MODE==='offline') arr=all.filter(t=>type70(t)==='offline');
-  if(V70_MODE==='roi') return all.sort((a,b)=>roi70(b)-roi70(a)||String(b.date||'').localeCompare(String(a.date||'')));
-  return arr.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')) || (b.updatedAt||0)-(a.updatedAt||0));
- }
- function summary70(){
-   const arr = V70_MODE==='roi' ? list70().slice() : filtered70();
-   const currs=[...new Set(arr.map(t=>t.currency||'RUB'))];
-   const mainCur=currs[0]||'RUB';
-   const same=arr.filter(t=>(t.currency||'RUB')===mainCur);
-   const invested=same.reduce((s,t)=>s+cost70(t),0);
-   const returned=same.reduce((s,t)=>s+win70(t),0);
-   const prof=same.reduce((s,t)=>s+profit70(t),0);
-   const roi=invested?prof/invested*100:0;
-   const itmCount=same.filter(itm70).length;
-   const itm=same.length?itmCount/same.length*100:0;
-   const abi=same.length?invested/same.length:0;
-   return {arr,same,mainCur,mixed:currs.length>1,count:arr.length,invested,returned,profit:prof,roi,itm,abi};
- }
- function dateParts70(iso){ try{ const d=new Date((iso||new Date().toISOString().slice(0,10))+'T12:00:00'); return {day:d.getDate(), mon:monthShort[d.getMonth()]||''}; }catch(e){ return {day:'—',mon:''}; } }
- function last10Profit70(){ const arr=list70().slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))).slice(0,10); const curr=arr[0]?.currency||'RUB'; const same=arr.filter(t=>(t.currency||'RUB')===curr); const p=same.reduce((s,t)=>s+profit70(t),0); return {curr,p}; }
- function bestType70(){ const types=['offline','online']; let best='—',bestVal=-Infinity; types.forEach(tp=>{ const arr=list70().filter(t=>type70(t)===tp && cost70(t)>0); if(!arr.length) return; const cost=arr.reduce((s,t)=>s+cost70(t),0); const pr=arr.reduce((s,t)=>s+profit70(t),0); const r=cost?pr/cost*100:-Infinity; if(r>bestVal){ bestVal=r; best=tp==='offline'?'Оффлайн':'Онлайн'; } }); return {best,val:isFinite(bestVal)?bestVal:0}; }
- function bestGame70(){ const map={}; list70().forEach(t=>{ const g=game70(t); (map[g]||(map[g]=[])).push(t); }); let best='—',bestVal=-Infinity; Object.keys(map).forEach(g=>{ const arr=map[g]; const cost=arr.reduce((s,t)=>s+cost70(t),0); const pr=arr.reduce((s,t)=>s+profit70(t),0); const r=cost?pr/cost*100:-Infinity; if(r>bestVal){bestVal=r; best=g==='NLH'?'NLH live':g;}}); return best; }
- function roiBox70(val){ const neg=val<0; const spark=neg?'╲╱╲╱':'╱╲╱╲'; return `<div class="v70RoiBox ${neg?'neg':''}"><div class="v70RoiValue">${val>0?'+':''}${val.toFixed(0)}%</div><div class="v70Spark">${spark}</div></div>`; }
- function card70(t){ const p=profit70(t), roi=roi70(t), d=dateParts70(t.date), g=game70(t), place=place70(t)|| (type70(t)==='online'?'Poker room':'Poker club'); const modeBadge = type70(t)==='online' ? '<span class="v70Badge blue">◉ Онлайн</span>' : '<span class="v70Badge">♠ Оффлайн</span>'; const gBadge = `<span class="v70Badge ${badgeClass70(g)}">${g}</span>`; return `<button class="v70Card" data-v70open="${esc70(t.id)}"><div class="v70Date"><b>${d.day}</b><span>${d.mon}</span></div><div class="v70Main"><h4>${esc70(title70(t))}</h4><div class="v70Sub">${esc70(place)}${t.field?` • поле ${Math.round(num70(t.field))}`:''}</div><div class="v70Badges">${modeBadge}${gBadge}</div><div class="v70Facts"><div class="v70Fact"><small>Бай-ин</small><b>${fmt70(cost70(t),t.currency||'RUB')}</b></div><div class="v70Fact"><small>Место</small><b>${t.place&&t.field?`${Math.round(num70(t.place))} / ${Math.round(num70(t.field))}`:(t.place?Math.round(num70(t.place)):'—')}</b></div><div class="v70Fact"><small>Приз</small><b>${fmt70(win70(t),t.currency||'RUB')}</b></div></div></div>${roiBox70(roi)}<div class="v70Arrow">›</div></button>`; }
- function render70(){
-   if(typeof window.show==='function') window.show('tournaments');
-   const area=document.getElementById('tournamentsArea'); if(!area) return;
-   const stats=summary70(); const list=filtered70(); const l10=last10Profit70(); const bt=bestType70(); const bestGame=bestGame70();
-   area.innerHTML = `<div class="v70Wrap"><div class="v70Head"><div class="v70Brand">POKER<span>SWIPE</span></div><div class="v70Tools"><button class="v70Tool" id="v70AddTop" aria-label="Добавить">＋</button><button class="v70Tool acid" id="v70HelpTop" aria-label="Фильтры">☷</button></div></div><div class="v70Hero"><h1>МОИ ТУРНИРЫ<span>.</span></h1><p>Оффлайн и онлайн турниры, бай-ины, призы и твой ROI в одном месте.</p></div><div class="v70Tabs"><button data-v70mode="all" class="${V70_MODE==='all'?'on':''}">Все</button><button data-v70mode="offline" class="${V70_MODE==='offline'?'on':''}">Оффлайн</button><button data-v70mode="online" class="${V70_MODE==='online'?'on':''}">Онлайн</button><button data-v70mode="roi" class="${V70_MODE==='roi'?'on':''}">По ROI</button></div><button class="v70Add" id="v70AddBtn">+ ДОБАВИТЬ ТУРНИР</button><div class="v70Summary"><div class="v70SummaryGrid"><div class="v70SummaryCell"><small>Турниров</small><b>${stats.count}</b></div><div class="v70SummaryCell"><small>Бай-ины</small><b>${fmt70(stats.invested,stats.mainCur)}</b></div><div class="v70SummaryCell"><small>Выигрыши</small><b>${fmt70(stats.returned,stats.mainCur)}</b></div><div class="v70SummaryCell"><small>ROI</small><b>${stats.count?(stats.roi>0?'+':'')+stats.roi.toFixed(1)+'%':'—'}</b></div></div><div class="v70SummaryBottom"><div class="v70Mini"><small>ITM</small><b>${stats.count?stats.itm.toFixed(0)+'%':'—'}</b></div><div class="v70Mini"><small>Profit</small><b>${stats.count?(stats.profit>0?'+':'')+fmt70(stats.profit,stats.mainCur):'—'}</b></div><div class="v70Mini"><small>ABI</small><b>${stats.count?fmt70(stats.abi,stats.mainCur):'—'}</b></div></div>${stats.mixed?'<div class="v70MetaNote">Часть записей в других валютах. Витрина считает сводку по основной валюте этой выборки.</div>':''}</div><div class="v70Section"><h3>ПОСЛЕДНИЕ ТУРНИРЫ</h3><span>${list.length} записей</span></div><div>${list.length?list.map(card70).join(''):`<div class="v70Empty">Пока пусто. Добавь первый online или offline турнир — PokerSwipe сам посчитает вложено, призы, profit и ROI.</div>`}</div><div class="v70Insights"><div class="v70Insight"><div class="v70InsightLead"><div class="orb">◎</div><div>АНАЛИТИКА</div></div></div><div class="v70Insight"><div class="k">Лучший формат:</div><span class="v">${esc70(bestGame)}</span></div><div class="v70Insight"><div class="k">Лучший ROI:</div><span class="v"><strong>${esc70(bt.best)}</strong>${bt.best!=='—'?` ${bt.val>0?'+':''}${bt.val.toFixed(0)}%`:''}</span></div><div class="v70Insight"><div class="k">Последние 10 турниров:</div><span class="v">${list70().length?(l10.p>0?'+':'')+fmt70(l10.p,l10.curr):'—'}</span></div></div></div>`;
-   area.querySelectorAll('[data-v70mode]').forEach(b=>b.onclick=()=>{V70_MODE=b.dataset.v70mode; render70();});
-   area.querySelectorAll('[data-v70open]').forEach(b=>b.onclick=()=>openForm70(b.dataset.v70open));
-   document.getElementById('v70AddBtn')?.addEventListener('click',()=>openForm70());
-   document.getElementById('v70AddTop')?.addEventListener('click',()=>openForm70());
-   document.getElementById('v70HelpTop')?.addEventListener('click',showHelp70);
-   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
-   document.querySelector('.nav [data-nav="mytournaments"]')?.classList.add('on');
- }
- function today70(){ try{return new Date().toISOString().slice(0,10)}catch(e){return ''} }
- function showHelp70(){ if(typeof window.openModal!=='function') return; window.openModal('<span class="ey">ЖУРНАЛ ТУРНИРОВ</span><h2>ЧТО ЗДЕСЬ СЧИТАЕТСЯ.</h2><p>Вложено = бай-ин × количество пуль. Profit = prize + bounty − вложено. ROI = profit / вложено. Вкладка «По ROI» сортирует список по доходности.</p>'); }
- function openForm70(id){
-   const old=id?list70().find(x=>String(x.id)===String(id)):null;
-   let type=old?.type||'offline'; const cur=old?.currency||'RUB';
-   const html = `<div class="v59Form"><span class="ey">${old?'РЕДАКТИРОВАТЬ':'НОВЫЙ ТУРНИР'}</span><h2>${old?'ОБНОВИ РЕЗУЛЬТАТ':'ДОБАВЬ ТУРНИР'}</h2><div class="v59Field"><label>ФОРМАТ</label><div class="v59Type"><button data-v70type="offline" class="${type==='offline'?'on':''}">OFFLINE</button><button data-v70type="online" class="${type==='online'?'on':''}">ONLINE</button></div></div><div class="v59Field"><label>${type==='offline'?'КЛУБ':'РУМ'}</label><input id="v70Place" value="${esc70(place70(old||{}))}" placeholder="${type==='offline'?'Joker / Aura / City':'PokerOK / GG / Stars'}"></div><div class="v59Field"><label>НАЗВАНИЕ ТУРНИРА</label><input id="v70Name" value="${esc70(title70(old||{}))}" placeholder="Sunday Major / Friday Night Deepstack"></div><div class="row"><div class="v59Field"><label>ДАТА</label><input id="v70Date" type="date" value="${esc70(old?.date||today70())}"></div><div class="v59Field"><label>ВАЛЮТА</label><select id="v70Cur"><option value="RUB" ${cur==='RUB'?'selected':''}>₽ RUB</option><option value="USD" ${cur==='USD'?'selected':''}>$ USD</option><option value="EUR" ${cur==='EUR'?'selected':''}>€ EUR</option></select></div></div><div class="row"><div class="v59Field"><label>БАЙ-ИН</label><input id="v70Buy" inputmode="decimal" value="${old?.buyin??''}"></div><div class="v59Field"><label>ПУЛЬ</label><input id="v70Entries" inputmode="numeric" value="${old?.entries??1}"></div></div><div class="row"><div class="v59Field"><label>ПРИЗОВЫЕ</label><input id="v70Prize" inputmode="decimal" value="${old?.prize??0}"></div><div class="v59Field"><label>BOUNTY · ДЕНЬГИ</label><input id="v70BWon" inputmode="decimal" value="${old?.bountyWon??0}"></div></div><div class="row"><div class="v59Field"><label>BOUNTY · КОЛ-ВО</label><input id="v70BCount" inputmode="numeric" value="${old?.bountyCount??0}"></div><div class="v59Field"><label>МЕСТО</label><input id="v70PlaceNum" inputmode="numeric" placeholder="17" value="${old?.place??''}"></div></div><div class="v59Field"><label>ИГРОКОВ В ПОЛЕ</label><input id="v70FieldN" inputmode="numeric" value="${old?.field??''}"></div><div class="hint">Profit = призовые + bounty winnings − (buy-in × bullets). ROI = profit / invested.</div><button class="primary" id="v70SaveTournament">${old?'СОХРАНИТЬ':'ДОБАВИТЬ'} →</button>${old?'<button class="secondary" id="v70DeleteTournament" style="margin-top:7px">УДАЛИТЬ</button>':''}</div>`;
-   if(typeof window.openModal==='function') window.openModal(html);
-   setTimeout(()=>{
-     (document.querySelectorAll('[data-v70type]')||[]).forEach(b=>b.onclick=()=>{type=b.dataset.v70type; if(typeof window.closeModal==='function') window.closeModal(); setTimeout(()=>openForm70(id),40);});
-     const q=s=>document.querySelector(s);
-     q('#v70SaveTournament')?.addEventListener('click',()=>{
-       const title=(q('#v70Name')?.value||'').trim(); if(!title){ q('#v70Name')?.focus(); return; }
-       const rec={...(old||{}),id:old?.id||('v70t_'+Date.now()),type,clubOrRoom:(q('#v70Place')?.value||'').trim(),tournamentName:title,name:title,date:q('#v70Date')?.value||today70(),currency:q('#v70Cur')?.value||'RUB',buyin:Math.max(0,num70(q('#v70Buy')?.value)),entries:Math.max(1,Math.round(num70(q('#v70Entries')?.value)||1)),prize:Math.max(0,num70(q('#v70Prize')?.value)),bountyWon:Math.max(0,num70(q('#v70BWon')?.value)),bountyCount:Math.max(0,Math.round(num70(q('#v70BCount')?.value))),place:Math.max(0,Math.round(num70(q('#v70PlaceNum')?.value))),field:Math.max(0,Math.round(num70(q('#v70FieldN')?.value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};
-       st().tournaments=list70().filter(x=>String(x.id)!==String(rec.id)); st().tournaments.push(rec); saveState(); if(typeof window.closeModal==='function') window.closeModal(); render70();
-     });
-     q('#v70DeleteTournament')?.addEventListener('click',()=>{ st().tournaments=list70().filter(x=>String(x.id)!==String(old.id)); saveState(); if(typeof window.closeModal==='function') window.closeModal(); render70(); });
-   },0);
- }
- function wire70(){ const b=document.querySelector('.nav [data-nav="mytournaments"]'); if(b) b.onclick=e=>{e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation(); render70();}; }
- function forceMyTournaments70(e){
-   const t=e.target && e.target.closest ? e.target.closest('.nav [data-nav="mytournaments"]') : null;
-   if(!t) return;
-   e.preventDefault(); e.stopImmediatePropagation(); e.stopPropagation();
-   render70();
- }
- window.addEventListener('click',forceMyTournaments70,true);
- document.addEventListener('DOMContentLoaded',()=>{wire70(); new MutationObserver(wire70).observe(document.body,{childList:true,subtree:true});});
- window.addEventListener('load',wire70);
- window.openMyTournamentsV59=render70;
- window.openMyTournamentsV70=render70;
+const SCREEN=document.getElementById('ps71TournamentScreen'),ROOT=document.getElementById('ps71TournamentRoot'),MODAL=document.getElementById('ps71Modal'),SHEET=document.getElementById('ps71Sheet');
+let FILTER='all';
+const months=['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
+const state=()=>{window.S=window.S||{}; if(!Array.isArray(window.S.tournaments))window.S.tournaments=[]; return window.S;};
+const list=()=>state().tournaments;
+const num=v=>{const n=Number(String(v??0).replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)?n:0};
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const cost=t=>num(t.buyin)*Math.max(1,Math.round(num(t.entries)||1));
+const ret=t=>num(t.prize)+num(t.bountyWon); const profit=t=>ret(t)-cost(t); const roi=t=>cost(t)?profit(t)/cost(t)*100:0;
+const money=(v,c='RUB')=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(num(v))+' '+({RUB:'₽',USD:'$',EUR:'€'}[c]||c);
+const type=t=>t.type==='online'?'online':'offline'; const title=t=>t.tournamentName||t.name||'Без названия'; const room=t=>t.clubOrRoom||t.club||t.room||(type(t)==='online'?'Online room':'Poker club');
+function filtered(){let a=list().slice();if(FILTER==='online')a=a.filter(t=>type(t)==='online');if(FILTER==='offline')a=a.filter(t=>type(t)==='offline');if(FILTER==='roi')return a.sort((x,y)=>roi(y)-roi(x));return a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));}
+function dateParts(s){try{const d=new Date((s||new Date().toISOString().slice(0,10))+'T12:00:00');return[d.getDate(),months[d.getMonth()]]}catch(e){return['—','']}}
+function stats(){const a=FILTER==='roi'?list().slice():filtered();const cur=a[0]?.currency||'RUB',same=a.filter(t=>(t.currency||'RUB')===cur);const inv=same.reduce((s,t)=>s+cost(t),0),wins=same.reduce((s,t)=>s+ret(t),0),p=wins-inv;const r=inv?p/inv*100:0;const abi=same.length?inv/same.length:0;const itmN=same.filter(t=>num(t.place)>0&&num(t.field)>0&&num(t.place)<=Math.ceil(num(t.field)*.12)).length;return{count:a.length,cur,inv,wins,p,r,abi,itm:same.length?itmN/same.length*100:0};}
+function card(t){const[d,m]=dateParts(t.date),r=roi(t),neg=r<0;return `<button class="ps71card" data-open="${esc(t.id)}"><div class="ps71date"><b>${d}</b><span>${m}</span></div><div class="ps71main"><h3>${esc(title(t))}</h3><div class="ps71sub">${esc(room(t))}</div><div class="ps71tags"><span class="ps71tag ${type(t)==='offline'?'off':''}">${type(t)==='offline'?'♠ Оффлайн':'◉ Онлайн'}</span></div><div class="ps71facts"><div class="ps71fact"><small>Бай-ин × пули</small><b>${money(cost(t),t.currency||'RUB')}</b></div><div class="ps71fact"><small>Место</small><b>${t.place?(Math.round(num(t.place))+(t.field?' / '+Math.round(num(t.field)):'')):'—'}</b></div><div class="ps71fact"><small>Приз + bounty</small><b>${money(ret(t),t.currency||'RUB')}</b></div></div></div><div class="ps71roi ${neg?'neg':''}">${r>0?'+':''}${r.toFixed(0)}%</div><div class="ps71arrow">›</div></button>`;}
+function bestType(){let best='—',v=-Infinity;['offline','online'].forEach(tp=>{const a=list().filter(t=>type(t)===tp);const inv=a.reduce((s,t)=>s+cost(t),0),p=a.reduce((s,t)=>s+profit(t),0),r=inv?p/inv*100:-Infinity;if(r>v){v=r;best=tp==='offline'?'Оффлайн':'Онлайн'}});return{best,v:isFinite(v)?v:0}}
+function render(){const s=stats(),a=filtered(),bt=bestType(),last=list().slice().sort((x,y)=>String(y.date||'').localeCompare(String(x.date||''))).slice(0,10),lc=last[0]?.currency||'RUB',lp=last.filter(t=>(t.currency||'RUB')===lc).reduce((q,t)=>q+profit(t),0);ROOT.innerHTML=`<div class="ps71top"><div class="ps71brand">POKER <b>SWIPE</b></div><div class="ps71actions"><button class="ps71icon" id="ps71AddTop">＋</button><button class="ps71icon" id="ps71Close">×</button></div></div><div class="ps71hero"><h1>МОИ ТУРНИРЫ<i>.</i></h1><p>Оффлайн и онлайн турниры, бай-ины, пули, призы, bounty и твой ROI в одном месте.</p></div><div class="ps71tabs"><button data-filter="all" class="${FILTER==='all'?'on':''}">Все</button><button data-filter="offline" class="${FILTER==='offline'?'on':''}">Оффлайн</button><button data-filter="online" class="${FILTER==='online'?'on':''}">Онлайн</button><button data-filter="roi" class="${FILTER==='roi'?'on':''}">По ROI</button></div><button class="ps71add" id="ps71Add">+ ДОБАВИТЬ ТУРНИР</button><div class="ps71summary"><div class="ps71summaryTop"><div class="ps71sum"><small>Турниров</small><b>${s.count}</b></div><div class="ps71sum"><small>Бай-ины</small><b>${money(s.inv,s.cur)}</b></div><div class="ps71sum"><small>Выигрыши</small><b>${money(s.wins,s.cur)}</b></div><div class="ps71sum"><small>ROI</small><b>${s.count?(s.r>0?'+':'')+s.r.toFixed(1)+'%':'—'}</b></div></div><div class="ps71summaryBottom"><div class="ps71mini"><small>ITM</small><b>${s.count?s.itm.toFixed(0)+'%':'—'}</b></div><div class="ps71mini"><small>Profit</small><b>${s.count?(s.p>0?'+':'')+money(s.p,s.cur):'—'}</b></div><div class="ps71mini"><small>ABI</small><b>${s.count?money(s.abi,s.cur):'—'}</b></div></div></div><div class="ps71section">ПОСЛЕДНИЕ ТУРНИРЫ</div>${a.length?a.map(card).join(''):'<div class="ps71empty">Пока пусто. Добавь первый турнир — приложение само посчитает вложено, profit и ROI.</div>'}<div class="ps71analysis"><div class="ps71an"><strong>◎ АНАЛИТИКА</strong></div><div class="ps71an"><small>Лучший ROI</small><b>${bt.best}${bt.best!=='—'?' '+(bt.v>0?'+':'')+bt.v.toFixed(0)+'%':''}</b></div><div class="ps71an"><small>Последние 10</small><b>${last.length?(lp>0?'+':'')+money(lp,lc):'—'}</b></div><div class="ps71an"><small>Формула</small><b>Prize + bounty − входы</b></div></div>`;
+ROOT.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{FILTER=b.dataset.filter;render()});ROOT.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>form(b.dataset.open));document.getElementById('ps71Add').onclick=()=>form();document.getElementById('ps71AddTop').onclick=()=>form();document.getElementById('ps71Close').onclick=closeScreen;}
+function openScreen(){SCREEN.classList.add('on');SCREEN.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';render();}
+function closeScreen(){SCREEN.classList.remove('on');SCREEN.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+function form(id){const old=id?list().find(t=>String(t.id)===String(id)):null;let tp=old?.type||'offline',cur=old?.currency||'RUB';SHEET.innerHTML=`<button class="ps71close" id="ps71MClose">×</button><h2>${old?'Редактировать турнир':'Новый турнир'}</h2><div class="ps71field"><label>ФОРМАТ</label><div class="ps71types"><button data-type="offline" class="${tp==='offline'?'on':''}">OFFLINE</button><button data-type="online" class="${tp==='online'?'on':''}">ONLINE</button></div></div><div class="ps71field"><label>${tp==='offline'?'КЛУБ':'РУМ'}</label><input id="ps71Room" value="${esc(old?room(old):'')}"></div><div class="ps71field"><label>НАЗВАНИЕ ТУРНИРА</label><input id="ps71Name" value="${esc(old?title(old):'')}"></div><div class="ps71formGrid"><div class="ps71field"><label>ДАТА</label><input id="ps71Date" type="date" value="${esc(old?.date||new Date().toISOString().slice(0,10))}"></div><div class="ps71field"><label>ВАЛЮТА</label><select id="ps71Cur"><option value="RUB" ${cur==='RUB'?'selected':''}>₽ RUB</option><option value="USD" ${cur==='USD'?'selected':''}>$ USD</option><option value="EUR" ${cur==='EUR'?'selected':''}>€ EUR</option></select></div><div class="ps71field"><label>БАЙ-ИН</label><input id="ps71Buy" inputmode="decimal" value="${old?.buyin??''}"></div><div class="ps71field"><label>ПУЛЬ</label><input id="ps71Entries" inputmode="numeric" value="${old?.entries??1}"></div><div class="ps71field"><label>ПРИЗОВЫЕ</label><input id="ps71Prize" inputmode="decimal" value="${old?.prize??0}"></div><div class="ps71field"><label>BOUNTY ₽</label><input id="ps71Bounty" inputmode="decimal" value="${old?.bountyWon??0}"></div><div class="ps71field"><label>МЕСТО</label><input id="ps71Place" inputmode="numeric" value="${old?.place??''}"></div><div class="ps71field"><label>ИГРОКОВ</label><input id="ps71Field" inputmode="numeric" value="${old?.field??''}"></div></div><button class="ps71save" id="ps71Save">${old?'СОХРАНИТЬ':'ДОБАВИТЬ'}</button>${old?'<button class="ps71delete" id="ps71Delete">УДАЛИТЬ</button>':''}`;MODAL.classList.add('on');document.getElementById('ps71MClose').onclick=()=>MODAL.classList.remove('on');SHEET.querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{tp=b.dataset.type;MODAL.classList.remove('on');setTimeout(()=>form(id),20)});document.getElementById('ps71Save').onclick=()=>{const q=id=>document.getElementById(id);const name=q('ps71Name').value.trim();if(!name){q('ps71Name').focus();return}const rec={...(old||{}),id:old?.id||'ps71_'+Date.now(),type:tp,clubOrRoom:q('ps71Room').value.trim(),tournamentName:name,name,date:q('ps71Date').value,currency:q('ps71Cur').value,buyin:Math.max(0,num(q('ps71Buy').value)),entries:Math.max(1,Math.round(num(q('ps71Entries').value)||1)),prize:Math.max(0,num(q('ps71Prize').value)),bountyWon:Math.max(0,num(q('ps71Bounty').value)),place:Math.max(0,Math.round(num(q('ps71Place').value))),field:Math.max(0,Math.round(num(q('ps71Field').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};state().tournaments=list().filter(t=>String(t.id)!==String(rec.id));state().tournaments.push(rec);if(typeof window.save==='function')window.save();MODAL.classList.remove('on');render()};if(old)document.getElementById('ps71Delete').onclick=()=>{state().tournaments=list().filter(t=>String(t.id)!==String(old.id));if(typeof window.save==='function')window.save();MODAL.classList.remove('on');render()};}
+MODAL.addEventListener('click',e=>{if(e.target===MODAL)MODAL.classList.remove('on')});
+function routeCapture(e){const btn=e.target?.closest?.('.nav [data-nav="mytournaments"]');if(btn){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();openScreen();return}const other=e.target?.closest?.('.nav [data-nav]');if(other&&SCREEN.classList.contains('on'))closeScreen();}
+window.addEventListener('pointerdown',routeCapture,true);window.addEventListener('touchstart',routeCapture,true);window.addEventListener('click',routeCapture,true);
+window.openMyTournamentsV71=openScreen;
 })();
 </script>
 
