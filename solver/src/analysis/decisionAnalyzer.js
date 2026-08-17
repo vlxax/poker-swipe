@@ -2,8 +2,10 @@ import { createGameState } from '../game/gameState.js';
 import { calculateEquity } from '../equity/index.js';
 import { evaluateAction } from './actionEvaluator.js';
 import { classifyMistake } from './mistakeClassifier.js';
-import { confidenceFor } from './confidence.js';
+import { confidenceFor, solverConfidence } from './confidence.js';
 import { solveCFR } from '../cfr/cfrSolver.js';
+import { buildSolverExplanation } from '../explanations/explanationBuilder.js';
+import { rangeEquilibrationResult } from './rangeEquilibration.js';
 import { SolverError, assert } from '../api/errors.js';
 
 export function analyzeDecision(input = {}) {
@@ -63,7 +65,7 @@ function analyzeDecisionHeuristic(input) {
 
   const bestEV = round(best.evBB, 4);
   const evLossBB = heroEV != null ? round(bestEV - heroEV, 4) : null;
-  const classification = evLossBB != null ? classifyMistake({ evLossBB, preset: input.thresholdPreset || 'cash' }) : null;
+  const classification = evLossBB != null ? classifyMistake({ evLossBB, potBB: state.potBB, preset: input.thresholdPreset || 'cash' }) : null;
 
   // overall analysisMethod: heuristic when any strategic assumption is used
   const analysisMethod = 'heuristic';
@@ -96,6 +98,7 @@ function analyzeDecisionHeuristic(input) {
       bestEV,
       evLossBB,
       severity: classification ? classification.severity : null,
+      mistakeSeverity: classification ? classification.mistakeSeverity : null,
       analysisMethod
     },
     explanation: {
@@ -115,8 +118,9 @@ function analyzeDecisionHeuristic(input) {
   };
 }
 
-// Solve-based decision analysis. Requires both hero and villain ranges and runs
-// CFR over the postflop tree to produce action EVs, best action and exploitability.
+// Solve-based decision analysis. Runs CFR over the postflop tree (fixed or
+// adaptive) and returns a production-ready strategy + EV + exploitability +
+// convergence + confidence + explanation result.
 function analyzeDecisionSolver(input) {
   assert(input.heroRange, 'MISSING_INPUT', 'heroRange is required in solver mode');
   assert(input.villainRange, 'MISSING_INPUT', 'villainRange is required in solver mode');
@@ -125,47 +129,111 @@ function analyzeDecisionSolver(input) {
   const r = solveCFR(input, {
     iterations: input.iterations,
     seed: input.seed,
-    algorithm: input.algorithm
+    algorithm: input.algorithm,
+    adaptive: input.adaptive,
+    minIterations: input.minIterations,
+    maxIterations: input.maxIterations,
+    checkEvery: input.checkEvery,
+    exploitabilityTargetBB: input.exploitabilityTargetBB,
+    strategyDeltaTarget: input.strategyDeltaTarget,
+    evDeltaTargetBB: input.evDeltaTargetBB,
+    rangeDeltaTarget: input.rangeDeltaTarget,
+    stableChecksRequired: input.stableChecksRequired,
+    maxSolveMs: input.maxSolveMs,
+    signal: input.signal
   });
 
-  const rootActions = (r._tree && r._tree.root.actions) || [];
+  const tree = r._tree;
+  const cfg = tree.cfg;
+  const rootActions = tree.root.actions || [];
   const amountById = {};
   for (const a of rootActions) amountById[a.id] = a.amountBB;
 
-  const actions = Object.keys(r.actionEV).map((id) => {
+  // Build strategy + actionEV keyed by the root's real, legal action ids only.
+  const strategy = {};
+  const actionEV = {};
+  const ordered = [];
+  for (const [id, ev] of Object.entries(r.actionEV)) {
+    const evBB = round(ev, 4);
+    const freq = round(r.aggregateStrategy[id] || 0, 4);
+    strategy[id] = freq;
+    actionEV[id] = evBB;
     const shape = actionFromId(id);
-    return {
+    ordered.push({
+      id,
       action: { ...shape, amountBB: amountById[id] != null ? round(amountById[id], 4) : null },
-      evBB: round(r.actionEV[id], 4),
-      analysisMethod: r.algorithm
-    };
-  }).sort((a, b) => b.evBB - a.evBB);
+      evBB,
+      frequency: freq
+    });
+  }
+  ordered.sort((a, b) => b.evBB - a.evBB);
 
-  let best = actions[0] || null;
-  for (const a of actions) if (a.evBB > best.evBB) best = a;
+  const best = ordered[0] || null;
+  const recommendedAction = best ? best.action : null;
+  const recommendedFrequency = best ? best.frequency : null;
 
   const heroActionId = r.heroAction;
-  const heroActionEntry = heroActionId != null && r.actionEV[heroActionId] != null
-    ? actions.find((a) => actionId(a.action) === heroActionId)
+  const heroEntry = heroActionId != null && r.actionEV[heroActionId] != null
+    ? ordered.find((o) => o.id === heroActionId)
     : null;
-  const heroEV = heroActionId != null && r.actionEV[heroActionId] != null
-    ? round(r.actionEV[heroActionId], 4)
-    : null;
-  const bestEV = best ? best.evBB : null;
-  const evLossBB = heroEV != null && bestEV != null ? round(bestEV - heroEV, 4) : null;
-  const classification = evLossBB != null ? classifyMistake({ evLossBB, preset: input.thresholdPreset || 'cash' }) : null;
+  const heroAction = heroEntry ? heroEntry.action : null;
+  const heroActionFrequency = heroEntry ? heroEntry.frequency : null;
+  const heroActionEVBB = heroEntry ? heroEntry.evBB : null;
+  const bestActionEVBB = best ? best.evBB : null;
+  const evLossBB = heroActionEVBB != null && bestActionEVBB != null ? round(bestActionEVBB - heroActionEVBB, 4) : null;
 
-  const analysisMethod = r.algorithm;
-  const conf = confidenceFor({
-    analysisMethod,
-    simulations: r.iterations,
-    comboCount: r.tree.heroComboCount,
-    heuristic: false,
-    iterations: r.iterations
+  const exploit = r.exploitability;
+  const analysisMethod = r.algorithm === 'cfr_plus' ? 'cfr_plus' : 'cfr';
+
+  const evSeparationBB = best && ordered[1] ? round(best.evBB - ordered[1].evBB, 4) : 0;
+  const chanceCapped = cfg.maxChanceBranches != null && Number.isFinite(cfg.maxChanceBranches) && cfg.maxChanceBranches < Infinity;
+  const streetBets = (cfg.betSizes && cfg.betSizes[r.game.street]) || [];
+  const minBetSize = streetBets.length ? Math.min(...streetBets) : 1;
+
+  const conf = solverConfidence({
+    converged: r.convergence.converged,
+    stopReason: r.convergence.stopReason,
+    exploitabilityBB: exploit.exploitabilityPerPlayerBB,
+    iterations: r.convergence.iterationsRun,
+    minIterations: r.meta.minIterations != null ? r.meta.minIterations : 200,
+    chanceAbstraction: chanceCapped ? cfg.maxChanceBranches : Infinity,
+    betAbstraction: minBetSize,
+    rangeAbstraction: 0,
+    evSeparationBB
+  });
+
+  const classification = evLossBB != null
+    ? classifyMistake({
+        evLossBB,
+        potBB: r.game.potBB,
+        preset: input.thresholdPreset || 'cash',
+        confidence: conf.score
+      })
+    : null;
+
+  const abstractions = {
+    treeAbstraction: true,
+    betAbstraction: cfg.betSizes,
+    chanceMode: r.meta.chanceMode,
+    chanceBranches: chanceCapped ? cfg.maxChanceBranches : null,
+    rangeAbstraction: true
+  };
+
+  const explanation = buildSolverExplanation({
+    best,
+    bestFrequency: recommendedFrequency,
+    heroAction,
+    evLossBB,
+    convergence: r.convergence,
+    exploitabilityBB: exploit.exploitabilityPerPlayerBB,
+    chanceBranches: abstractions.chanceBranches,
+    confidence: conf
   });
 
   return {
     version: 'solver-core',
+    solverMode: true,
+    analysisMethod,
     game: {
       street: r.game.street,
       heroPosition: r.game.heroPosition,
@@ -176,33 +244,47 @@ function analyzeDecisionSolver(input) {
       board: r.game.board
     },
     equity: null,
+    recommendedAction,
+    recommendedFrequency,
+    strategy,
+    actionEV,
+    heroAction,
+    heroActionFrequency,
+    heroActionEVBB,
+    bestActionEVBB,
+    evLossBB,
+    exploitabilityBB: round(exploit.exploitabilityBB, 4),
+    exploitabilityPerPlayerBB: round(exploit.exploitabilityPerPlayerBB, 4),
+    convergence: r.convergence,
+    rangeEquilibration: rangeEquilibrationResult(r.convergence.lastRangeDelta, r.meta.rangeDeltaTarget || 0.01),
+    confidence: conf,
+    abstractions,
+    explanation,
     calculation: {
-      bestAction: best ? best.action : null,
-      heroAction: heroActionEntry ? heroActionEntry.action : null,
-      actions,
-      heroEV,
-      bestEV,
+      bestAction: recommendedAction,
+      heroAction,
+      actions: ordered.map((o) => ({ action: o.action, evBB: o.evBB, frequency: o.frequency, analysisMethod })),
+      heroEV: heroActionEVBB,
+      bestEV: bestActionEVBB,
       evLossBB,
       severity: classification ? classification.severity : null,
+      mistakeSeverity: classification ? classification.mistakeSeverity : null,
+      evLossPctPot: classification ? classification.evLossPctPot : null,
       analysisMethod
-    },
-    explanation: {
-      summary: null,
-      why: [],
-      keyConcept: null,
-      recommendedPractice: null
     },
     meta: {
       version: 'solver-core',
       analysisMethod,
       algorithm: r.algorithm,
       iterations: r.iterations,
-      exploitabilityBB: r.exploitability.exploitabilityBB,
-      exploitabilityPerPlayerBB: r.exploitability.exploitabilityPerPlayerBB,
+      adaptive: r.adaptive,
+      exploitabilityBB: exploit.exploitabilityBB,
+      exploitabilityPerPlayerBB: exploit.exploitabilityPerPlayerBB,
       convergence: r.convergence.status,
+      stopReason: r.convergence.stopReason,
       tree: r.tree,
-      confidence: conf.label,
-      confidenceScore: conf.confidence,
+      confidence: conf.level,
+      confidenceScore: conf.score,
       durationMs: r.meta.durationMs
     }
   };

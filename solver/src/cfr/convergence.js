@@ -44,7 +44,7 @@ export class ConvergenceTracker {
     if (this.history.length > this.maxSamples) this.history.shift();
   }
 
-  finalStatus() {
+  finalStatus({ iterationsRun = null, stopReason = null } = {}) {
     const last = this.history[this.history.length - 1];
     const delta = last && last.delta != null ? last.delta : null;
     let status = 'early';
@@ -52,6 +52,22 @@ export class ConvergenceTracker {
       if (delta < 0.001) status = 'converged';
       else if (delta < 0.02) status = 'approximate';
     }
-    return { status, delta, samples: this.history.length };
+    const converged = status === 'converged';
+    const reason = stopReason || (converged ? 'converged' : 'max_iterations');
+    return {
+      status,
+      delta,
+      samples: this.history.length,
+      // Extended shape shared with the adaptive path (fixed path reports the
+      // strategy-delta based status and never over-claims convergence).
+      converged,
+      iterationsRun: iterationsRun != null ? iterationsRun : (last ? last.iteration : null),
+      stopReason: reason,
+      exploitabilityBB: null,
+      exploitabilityHistory: [],
+      strategyDelta: delta,
+      evDeltaBB: null,
+      stableChecks: converged ? 1 : 0
+    };
   }
 }

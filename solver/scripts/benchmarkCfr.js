@@ -1,5 +1,7 @@
 // CFR benchmark: measures solve time, tree size and exploitability convergence
-// across representative heads-up postflop scenarios. Run with:
+// across representative heads-up postflop scenarios. Reports fixed-iteration
+// solves alongside adaptive solves (automated convergence detection).
+// Run with:
 //   node scripts/benchmarkCfr.js   (from solver/)
 //
 // Multi-street scenarios use maxChanceBranches to keep the tree tractable; the
@@ -100,5 +102,38 @@ for (const row of rows) {
 }
 
 const total = rows.reduce((s, r) => s + r.ms, 0);
-console.log(`\nTotal: ${total}ms across ${rows.length} runs (seed=1).`);
+console.log(`\nTotal: ${total}ms across ${rows.length} fixed runs (seed=1).`);
 console.log('Smaller expl/BB = closer to a Nash equilibrium for the abstracted game.');
+
+console.log('\n=== Adaptive (automated convergence detection) ===');
+const adaptiveHeader = [
+  { key: 'scenario', label: 'scenario' },
+  { key: 'iterationsRun', label: 'iterations' },
+  { key: 'ms', label: 'ms' },
+  { key: 'explPerPlayerBB', label: 'expl/BB' },
+  { key: 'strategyDelta', label: 'stratΔ' },
+  { key: 'converged', label: 'converged' },
+  { key: 'stopReason', label: 'stop' }
+];
+const aRows = [];
+for (const { name, input } of scenarios) {
+  const r = solveCFR(input, { iterations: 'adaptive', seed: 1 });
+  aRows.push({
+    scenario: name,
+    iterationsRun: r.iterations,
+    ms: r.meta.durationMs,
+    explPerPlayerBB: r.exploitability.exploitabilityPerPlayerBB.toFixed(4),
+    strategyDelta: (r.convergence.strategyDelta == null ? '-' : r.convergence.strategyDelta.toFixed(4)),
+    converged: r.convergence.converged ? 'yes' : 'no',
+    stopReason: r.convergence.stopReason
+  });
+}
+
+const aWidths = adaptiveHeader.map((col, i) => Math.max(col.label.length, ...aRows.map((row) => String(row[col.key]).length)));
+console.log(adaptiveHeader.map((col, i) => pad(col.label, aWidths[i])).join(' | '));
+console.log(aWidths.map((w) => '-'.repeat(w)).join('-+-'));
+for (const row of aRows) {
+  console.log(adaptiveHeader.map((col, i) => pad(row[col.key], aWidths[i])).join(' | '));
+}
+const aTotal = aRows.reduce((s, r) => s + r.ms, 0);
+console.log(`\nTotal: ${aTotal}ms across ${aRows.length} adaptive runs (seed=1).`);

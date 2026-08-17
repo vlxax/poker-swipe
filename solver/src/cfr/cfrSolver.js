@@ -2,12 +2,18 @@ import { buildGameTree } from '../tree/treeBuilder.js';
 import { SolverError } from '../api/errors.js';
 import { CFRTrainer, comboKey } from './cfrTrainer.js';
 import { ConvergenceTracker } from './convergence.js';
+import { AdaptiveConvergence, buildAdaptiveConfig, DEFAULT_ADAPTIVE_CONFIG } from './adaptiveConvergence.js';
 import { computeExploitability, rootActionEV } from './exploitability.js';
 import { aggregateStrategy, normalizeReach } from '../ranges/rangePropagation.js';
 import { averageStrategy } from './strategyAccumulator.js';
 
 const ALGORITHMS = ['cfr', 'cfr_plus'];
 
+// Solve the game tree by CFR (vanilla or CFR+). When `iterations` is the string
+// "adaptive" (or `options.adaptive` is true) the solver uses automated convergence
+// detection and stops as soon as several consecutive checkpoints are stable,
+// bounded by min/maxIterations and time/node limits. Otherwise it runs a fixed
+// number of iterations (legacy behavior, preserved for compatibility).
 export function solveCFR(input = {}, options = {}) {
   const start = Date.now();
   const tree = buildGameTree(input);
@@ -18,26 +24,56 @@ export function solveCFR(input = {}, options = {}) {
     throw new SolverError('INVALID_CONFIG', `algorithm must be one of: ${ALGORITHMS.join(', ')}`);
   }
 
-  let iterations = Number(options.iterations || 1000);
-  if (!Number.isFinite(iterations) || iterations <= 0) iterations = 1000;
-  iterations = Math.min(iterations, cfg.maxIterations);
-
+  const adaptive = options.adaptive || String(options.iterations).toLowerCase() === 'adaptive';
   const seed = options.seed != null ? Number(options.seed) : 12345;
-  // Determinism is guaranteed by the enumerative traversal (no sampling);
-  // seed is accepted for API compatibility and future MCCFR sampling.
+  const maxSolveMs = options.maxSolveMs != null ? Number(options.maxSolveMs) : 0;
+  const signal = options.signal || options.abortSignal || null;
+  if (signal && typeof signal.aborted !== 'boolean') {
+    throw new SolverError('INVALID_CONFIG', 'signal must be an AbortSignal-like object');
+  }
 
   const trainer = new CFRTrainer(tree, {
     algorithm,
     linearAveraging: !!options.linearAveraging
   });
 
-  const convergence = new ConvergenceTracker({
-    sampleEvery: options.sampleEvery || Math.max(1, Math.floor(iterations / 20))
-  });
+  const adaptiveCfg = adaptive ? buildAdaptiveConfig(options, cfg) : null;
 
+  let iterations = Number(options.iterations || 1000);
+  if (!Number.isFinite(iterations) || iterations <= 0) iterations = 1000;
+  if (adaptive) iterations = adaptiveCfg.maxIterations;
+
+  const convergence = adaptive
+    ? new AdaptiveConvergence(adaptiveCfg)
+    : new ConvergenceTracker({
+        sampleEvery: options.sampleEvery || Math.max(1, Math.floor(iterations / 20))
+      });
+
+  let iterationsRun = 0;
+  let stopReason = 'max_iterations';
   for (let t = 1; t <= iterations; t++) {
     trainer.iterate();
-    convergence.maybeRecord(t, trainer.infos);
+    iterationsRun = t;
+
+    if (signal && signal.aborted) {
+      throw new SolverError('CANCELLED', 'solve was aborted via signal');
+    }
+    if (maxSolveMs > 0 && Date.now() - start > maxSolveMs) {
+      stopReason = 'time_limit';
+      break;
+    }
+
+    if (adaptive) {
+      if (t % adaptiveCfg.checkEvery === 0 && t >= adaptiveCfg.minIterations) {
+        const st = convergence.checkpoint(t, { trainer, tree });
+        if (st.converged) {
+          stopReason = 'converged';
+          break;
+        }
+      }
+    } else {
+      convergence.maybeRecord(t, trainer.infos);
+    }
   }
 
   const exploit = computeExploitability(tree, trainer);
@@ -59,7 +95,9 @@ export function solveCFR(input = {}, options = {}) {
   }
 
   const aggregate = aggregateStrategy(weightMap, comboStrategies);
-  const convStatus = convergence.finalStatus();
+  const convStatus = adaptive
+    ? convergence.finalize({ iterationsRun, stopReason })
+    : convergence.finalStatus({ iterationsRun, stopReason });
 
   // bestAction + heroAction based on action EV.
   const ids = Object.keys(actionEV);
@@ -70,9 +108,12 @@ export function solveCFR(input = {}, options = {}) {
   const bestEV = bestId != null ? actionEV[bestId] : null;
   const evLossBB = heroEV != null && bestEV != null ? bestEV - heroEV : null;
 
+  const chanceCapped = Number.isFinite(cfg.maxChanceBranches) && cfg.maxChanceBranches < Infinity;
+
   return {
     algorithm,
-    iterations,
+    iterations: iterationsRun,
+    adaptive: adaptive || null,
     game: {
       street: tree.game.street,
       board: tree.game.board,
@@ -99,9 +140,15 @@ export function solveCFR(input = {}, options = {}) {
       exactGame: true,
       treeAbstraction: true,
       betAbstraction: true,
-      chanceMode: 'enumerated',
+      chanceMode: chanceCapped ? 'capped' : 'enumerated',
       rangeAbstraction: true,
+      maxChanceBranches: chanceCapped ? cfg.maxChanceBranches : null,
       linearAveraging: !!options.linearAveraging,
+      adaptive,
+      iterationsRun,
+      minIterations: adaptive ? adaptiveCfg.minIterations : null,
+      rangeDeltaTarget: adaptive ? adaptiveCfg.rangeDeltaTarget : null,
+      stopReason,
       seed
     },
     _trainer: trainer,

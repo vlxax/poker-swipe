@@ -21,5 +21,12 @@ export { computeExploitability, rootActionEV } from './cfr/exploitability.js';
 export { regretMatching } from './cfr/regretMatching.js';
 export { averageStrategy } from './cfr/strategyAccumulator.js';
 export { aggregateStrategy, normalizeReach } from './ranges/rangePropagation.js';
+export { AdaptiveConvergence, buildAdaptiveConfig, DEFAULT_ADAPTIVE_CONFIG } from './cfr/adaptiveConvergence.js';
+export { solverConfidence, confidenceFor } from './analysis/confidence.js';
+export { classifySeverity, classifyLoss, SEVERITY_ORDER } from './config/thresholds.js';
+export {
+  computeReachSnapshot, rangeEquilibrationDelta, rangeEquilibrationStable, rangeEquilibrationResult
+} from './analysis/rangeEquilibration.js';
+export { buildSolverExplanation } from './explanations/explanationBuilder.js';
 
 export default PokerSwipeSolver;
