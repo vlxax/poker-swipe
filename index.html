@@ -4731,5 +4731,124 @@ document.documentElement.dataset.pokerSwipeVersion='61-trip-routing-hotfix';
 })();
 </script>
 
+
+
+<!-- V62 EMERGENCY NAVIGATION HARD ROUTER -->
+<style id="v62-nav-hardfix">
+.nav{z-index:10000!important;pointer-events:auto!important;grid-template-columns:repeat(5,1fr)!important}
+.nav button{pointer-events:auto!important;touch-action:manipulation!important;position:relative!important;z-index:10001!important}
+#mainApp,main,.screen{pointer-events:auto}
+.modal.hidden,#onboarding.hidden{display:none!important;pointer-events:none!important}
+</style>
+<script id="v62-nav-hardfix-script">
+(function(){
+'use strict';
+function activateScreen(id){
+  var target=document.getElementById(id)||document.getElementById('home');
+  document.querySelectorAll('.screen').forEach(function(x){x.classList.toggle('active',x===target)});
+  try{window.scrollTo(0,0)}catch(e){}
+}
+function markNav(key){
+  document.querySelectorAll('.nav button').forEach(function(x){x.classList.remove('on','active')});
+  var b=document.querySelector('.nav [data-nav="'+key+'"]');
+  if(b)b.classList.add('on');
+}
+function route(key){
+  try{
+    if(key==='home'){
+      activateScreen('home');
+      markNav('home');
+      if(typeof window.renderHome==='function')window.renderHome();
+      return;
+    }
+    if(key==='myhands'){
+      activateScreen('myhands');
+      markNav('myhands');
+      if(typeof window.renderMy==='function')window.renderMy();
+      else if(typeof renderMy==='function')renderMy();
+      return;
+    }
+    if(key==='mytournaments'){
+      activateScreen('tournaments');
+      markNav('mytournaments');
+      if(typeof window.openMyTournamentsV59==='function')window.openMyTournamentsV59();
+      else if(typeof window.openMyTournamentsV58==='function')window.openMyTournamentsV58();
+      else if(typeof v59RenderJournal==='function')v59RenderJournal();
+      return;
+    }
+    if(key==='tournaments'){
+      activateScreen('tournaments');
+      markNav('tournaments');
+      if(typeof window.openPolyanaV56==='function')window.openPolyanaV56();
+      else if(typeof window.renderTournaments23==='function')window.renderTournaments23();
+      return;
+    }
+    if(key==='profile'){
+      activateScreen('profile');
+      markNav('profile');
+      if(typeof window.renderProfile==='function')window.renderProfile();
+      else if(typeof renderProfile==='function')renderProfile();
+      return;
+    }
+  }catch(err){
+    console.error('V62 route failed',key,err);
+  }
+}
+function rebuildNavIfNeeded(){
+  var nav=document.querySelector('.nav'); if(!nav)return;
+  if(!nav.querySelector('[data-nav="mytournaments"]')){
+    var field=nav.querySelector('[data-nav="tournaments"]');
+    var b=document.createElement('button');
+    b.type='button'; b.dataset.nav='mytournaments';
+    b.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
+    if(field)nav.insertBefore(b,field); else nav.appendChild(b);
+  }
+  var labels={home:' ГЛАВНАЯ',myhands:' РАЗДАЧИ',mytournaments:' МОИ ТУРНИРЫ',tournaments:' ПОЛЯНА',profile:' ТЫ'};
+  Object.keys(labels).forEach(function(k){
+    var b=nav.querySelector('[data-nav="'+k+'"]');
+    if(!b)return;
+    var textNodes=[].filter.call(b.childNodes,function(n){return n.nodeType===3});
+    if(textNodes.length)textNodes[textNodes.length-1].textContent=labels[k];
+    else if(k==='mytournaments' && !b.querySelector('span'))b.insertAdjacentHTML('beforeend','<span>'+labels[k].trim()+'</span>');
+  });
+}
+function hardWire(){
+  rebuildNavIfNeeded();
+  var nav=document.querySelector('.nav'); if(!nav)return;
+  nav.querySelectorAll('button[data-nav]').forEach(function(b){
+    b.onclick=function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      route(b.dataset.nav);
+      return false;
+    };
+  });
+}
+// Capture the five navigation buttons before legacy bubbling handlers can steal the click.
+document.addEventListener('click',function(e){
+  var b=e.target && e.target.closest ? e.target.closest('.nav button[data-nav]') : null;
+  if(!b)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  route(b.dataset.nav);
+},true);
+
+document.addEventListener('touchend',function(e){
+  var b=e.target && e.target.closest ? e.target.closest('.nav button[data-nav]') : null;
+  if(!b)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  route(b.dataset.nav);
+},true);
+
+document.addEventListener('DOMContentLoaded',function(){hardWire();setTimeout(hardWire,50);setTimeout(hardWire,500)});
+window.addEventListener('load',function(){hardWire();setTimeout(hardWire,200)});
+new MutationObserver(function(){hardWire()}).observe(document.documentElement,{childList:true,subtree:true});
+window.PokerSwipeRouteV62=route;
+window.POKER_SWIPE_BUILD='V62 NAVIGATION HARD ROUTER';
+document.documentElement.dataset.pokerSwipeVersion='62-nav-hard-router';
+})();
+</script>
+
 </body>
 </html>
