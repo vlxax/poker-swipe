@@ -1,3 +1,9 @@
+PokerSwipe V61 · TRIP ROUTING HOTFIX
+2026-08-17
+
+Fixed: «МОИ ПОЕЗДКИ» and trip CTAs now route directly to V60 trip builder, bypassing legacy V48/V56/V58 click handlers.
+
+Previous build info:
 POKER SWIPE — V60 TRIP BUILDER
 
 Built on V59 Poker Core.

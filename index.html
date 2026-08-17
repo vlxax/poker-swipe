@@ -4713,8 +4713,21 @@ function wireTripCtas(){
 document.addEventListener('DOMContentLoaded',()=>{wireTripCtas();new MutationObserver(wireTripCtas).observe(document.body,{childList:true,subtree:true})});
 window.addEventListener('load',wireTripCtas);
 
-window.POKER_SWIPE_BUILD='V60 TRIP BUILDER';
-document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
+/* V61 routing hotfix: trip CTAs must always win over legacy V48/V56/V58 handlers. */
+document.addEventListener('click',function(e){
+ const trip=e.target.closest('[data-top="trips"],#v48NewTrip,[data-v56trip],[data-v58trip]');
+ if(!trip)return;
+ e.preventDefault();
+ e.stopImmediatePropagation();
+ if(trip.dataset && trip.dataset.v56trip && ['Калининград','Сочи','Минск','Приморье','Алтайский край'].includes(trip.dataset.v56trip)){
+   V60_STATE.city=trip.dataset.v56trip;
+ }
+ V60_VIEW='builder';
+ renderTripBuilder();
+},true);
+
+window.POKER_SWIPE_BUILD='V61 TRIP ROUTING HOTFIX';
+document.documentElement.dataset.pokerSwipeVersion='61-trip-routing-hotfix';
 })();
 </script>
 
