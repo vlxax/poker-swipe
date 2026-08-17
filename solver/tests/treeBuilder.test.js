@@ -106,7 +106,7 @@ test('flop tree contains chance nodes to deal the turn', () => {
 });
 
 test('invalid street throws structured error', () => {
-  assert.throws(() => buildGameTree({ ...base, street: 'preflop' }), (e) => e instanceof SolverError && e.code === 'INVALID_STREET');
+  assert.throws(() => buildGameTree({ ...base, street: 'not_a_street' }), (e) => e instanceof SolverError && e.code === 'INVALID_STREET');
 });
 
 test('wrong board card count throws', () => {

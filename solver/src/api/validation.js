@@ -36,7 +36,11 @@ export function validateRangeInput(input = {}) {
 export function validateSolverInput(input = {}) {
   if (!input.heroRange) throw new SolverError('MISSING_INPUT', 'heroRange is required');
   if (!input.villainRange) throw new SolverError('MISSING_INPUT', 'villainRange is required');
-  if (input.potBB == null && input.pot == null) throw new SolverError('MISSING_INPUT', 'potBB is required');
+  const preflop = String(input.street || 'preflop').toLowerCase() === 'preflop';
+  // Preflop derives its pot from the blinds; postflop needs an explicit pot.
+  if (!preflop && input.potBB == null && input.pot == null) {
+    throw new SolverError('MISSING_INPUT', 'potBB is required');
+  }
   if (input.effectiveStackBB == null) throw new SolverError('MISSING_INPUT', 'effectiveStackBB is required');
   return input;
 }

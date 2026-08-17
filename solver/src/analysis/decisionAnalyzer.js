@@ -4,7 +4,7 @@ import { evaluateAction } from './actionEvaluator.js';
 import { classifyMistake } from './mistakeClassifier.js';
 import { confidenceFor, solverConfidence } from './confidence.js';
 import { solveCFR } from '../cfr/cfrSolver.js';
-import { buildSolverExplanation } from '../explanations/explanationBuilder.js';
+import { buildSolverExplanation, buildPreflopSolverExplanation } from '../explanations/explanationBuilder.js';
 import { rangeEquilibrationResult } from './rangeEquilibration.js';
 import { SolverError, assert } from '../api/errors.js';
 
@@ -124,9 +124,12 @@ function analyzeDecisionHeuristic(input) {
 function analyzeDecisionSolver(input) {
   assert(input.heroRange, 'MISSING_INPUT', 'heroRange is required in solver mode');
   assert(input.villainRange, 'MISSING_INPUT', 'villainRange is required in solver mode');
-  assert(input.board && input.board.length >= 3, 'INVALID_BOARD', 'solver mode requires a postflop board');
+  const isPreflop = String(input.street || 'preflop').toLowerCase() === 'preflop';
+  if (!isPreflop) {
+    assert(input.board && input.board.length >= 3, 'INVALID_BOARD', 'solver mode requires a postflop board');
+  }
 
-  const r = solveCFR(input, {
+  const r = solveCFR({ ...input, street: isPreflop ? 'preflop' : input.street }, {
     iterations: input.iterations,
     seed: input.seed,
     algorithm: input.algorithm,
@@ -171,6 +174,9 @@ function analyzeDecisionSolver(input) {
   const best = ordered[0] || null;
   const recommendedAction = best ? best.action : null;
   const recommendedFrequency = best ? best.frequency : null;
+  const recommendedSizeBB = recommendedAction && recommendedAction.amountBB != null
+    ? round(recommendedAction.amountBB, 4)
+    : null;
 
   const heroActionId = r.heroAction;
   const heroEntry = heroActionId != null && r.actionEV[heroActionId] != null
@@ -219,16 +225,29 @@ function analyzeDecisionSolver(input) {
     rangeAbstraction: true
   };
 
-  const explanation = buildSolverExplanation({
-    best,
-    bestFrequency: recommendedFrequency,
-    heroAction,
-    evLossBB,
-    convergence: r.convergence,
-    exploitabilityBB: exploit.exploitabilityPerPlayerBB,
-    chanceBranches: abstractions.chanceBranches,
-    confidence: conf
-  });
+  const explanation = isPreflop
+    ? buildPreflopSolverExplanation({
+        ordered,
+        bestId: best ? best.id : null,
+        bestFrequency: recommendedFrequency,
+        heroActionId: heroActionId != null ? heroActionId : null,
+        evLossBB,
+        potBB: r.game.potBB,
+        convergence: r.convergence,
+        exploitabilityBB: exploit.exploitabilityPerPlayerBB,
+        chanceBranches: abstractions.chanceBranches,
+        confidence: conf
+      })
+    : buildSolverExplanation({
+        best,
+        bestFrequency: recommendedFrequency,
+        heroAction,
+        evLossBB,
+        convergence: r.convergence,
+        exploitabilityBB: exploit.exploitabilityPerPlayerBB,
+        chanceBranches: abstractions.chanceBranches,
+        confidence: conf
+      });
 
   return {
     version: 'solver-core',
@@ -241,11 +260,13 @@ function analyzeDecisionSolver(input) {
       potBB: r.game.potBB,
       effectiveStackBB: r.game.effectiveStackBB,
       spr: r.game.potBB > 0 ? round(r.game.effectiveStackBB / r.game.potBB, 3) : null,
-      board: r.game.board
+      board: r.game.board,
+      ...(isPreflop ? { blinds: r.game.blinds } : {})
     },
     equity: null,
     recommendedAction,
     recommendedFrequency,
+    recommendedSizeBB,
     strategy,
     actionEV,
     heroAction,
@@ -301,6 +322,7 @@ function actionFromId(id) {
   if (id === 'fold') return { type: 'fold' };
   if (id === 'call') return { type: 'call' };
   if (id === 'all_in') return { type: 'all_in' };
+  if (id.startsWith('open_')) return { type: 'raise', semantic: 'open', sizeBB: Number(id.slice(5)) };
   if (id.startsWith('bet_')) return { type: 'bet', sizePot: Number(id.slice(4)) / 100 };
   if (id.startsWith('raise_')) return { type: 'raise', sizePot: Number(id.slice(6)) / 100 };
   return { type: id };

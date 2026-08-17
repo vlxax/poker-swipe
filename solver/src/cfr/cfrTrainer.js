@@ -17,6 +17,14 @@ function overlaps(a, b) {
   return false;
 }
 
+// A chance-card entry may be a single dealt card (postflop turn/river) or an
+// array of dealt cards (a capped flop in a preflop transition). It collides if
+// any dealt card appears in either private hand.
+function chanceCollides(entry, cards) {
+  if (Array.isArray(entry)) return entry.some((c) => cards.includes(c));
+  return cards.includes(entry);
+}
+
 // Per-hand counterfactual regret minimization over the fixed tree abstraction.
 // Supports vanilla CFR and CFR+ (non-negative regrets). Chance cards that collide
 // with either private hand are excluded during traversal (enumerated chanceMode).
@@ -72,7 +80,7 @@ export class CFRTrainer {
       let count = 0;
       for (let i = 0; i < node.chanceCards.length; i++) {
         const card = node.chanceCards[i];
-        if (hc.cards.includes(card) || oc.cards.includes(card)) continue;
+        if (chanceCollides(card, hc.cards) || chanceCollides(card, oc.cards)) continue;
         sum += this._cfr(node.children[i], p, hc, oc, reachP, reachO);
         count++;
       }

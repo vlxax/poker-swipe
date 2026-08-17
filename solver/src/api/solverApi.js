@@ -14,6 +14,7 @@ import {
 } from './validation.js';
 import { buildGameTree } from '../tree/treeBuilder.js';
 import { solveCFR as solveCFRCore } from '../cfr/cfrSolver.js';
+import { solvePreflop as solvePreflopCore } from '../cfr/cfrSolver.js';
 
 function gameSummary(tree) {
   return {
@@ -103,6 +104,7 @@ export const PokerSwipeSolver = {
         exploitability: r.exploitability,
         convergence: r.convergence,
         tree: r.tree,
+        betSizingAbstraction: r.betSizingAbstraction,
         meta: r.meta,
         _trainer: r._trainer,
         _tree: r._tree
@@ -120,6 +122,36 @@ export const PokerSwipeSolver = {
         throw new SolverError('INVALID_CONFIG', `unsupported algorithm: ${algorithm}`);
       }
       return this.solveCFR(input, { ...options, algorithm });
+    })(input, options);
+  },
+
+  // Preflop heads-up solve (BTN/SB/CO vs BB opens, 3bet/4bet/jam lines, call-to-
+  // flop transitions). Returns the same shape as solveCFR with preflop meta and
+  // the bet-sizing abstraction.
+  async solvePreflop(input, options = {}) {
+    return catchErrors(() => {
+      validateSolverInput(input);
+      const r = solvePreflopCore(input, options);
+      return {
+        algorithm: r.algorithm,
+        iterations: r.iterations,
+        game: r.game,
+        rootStrategy: r.rootStrategy,
+        aggregateStrategy: r.aggregateStrategy,
+        actionEV: r.actionEV,
+        bestAction: r.bestAction,
+        heroAction: r.heroAction,
+        heroEV: r.heroEV,
+        bestEV: r.bestEV,
+        evLossBB: r.evLossBB,
+        exploitability: r.exploitability,
+        convergence: r.convergence,
+        tree: r.tree,
+        betSizingAbstraction: r.betSizingAbstraction,
+        meta: r.meta,
+        _trainer: r._trainer,
+        _tree: r._tree
+      };
     })(input, options);
   },
 

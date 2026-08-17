@@ -10,6 +10,40 @@ import { solveCFR } from '../src/cfr/cfrSolver.js';
 
 const scenarios = [
   {
+    name: 'preflop · 2-combo open',
+    input: {
+      street: 'preflop',
+      heroRange: { AA: 1, KK: 1 },
+      villainRange: { QQ: 1, JJ: 1 },
+      effectiveStackBB: 100,
+      heroPosition: 'BTN',
+      villainPosition: 'BB',
+      betSizes: { preflop: [2.5, 3.0] },
+      raiseSizes: { preflop: [3.0] },
+      maxRaisesPerStreet: 1,
+      maxChanceBranches: 2
+    },
+    iterationCounts: [20, 50],
+    adaptiveOptions: { maxIterations: 200, minIterations: 50, checkEvery: 50 }
+  },
+  {
+    name: 'preflop · full combo range',
+    input: {
+      street: 'preflop',
+      heroRange: { JJ: 1, QQ: 1, KK: 1, AA: 1 },
+      villainRange: { '88': 1, '99': 1, TT: 1, JJ: 1, QQ: 1 },
+      effectiveStackBB: 100,
+      heroPosition: 'BTN',
+      villainPosition: 'BB',
+      betSizes: { preflop: [2.5, 3.0] },
+      raiseSizes: { preflop: [3.0] },
+      maxRaisesPerStreet: 1,
+      maxChanceBranches: 2
+    },
+    iterationCounts: [10, 20],
+    adaptiveOptions: { maxIterations: 100, minIterations: 30, checkEvery: 25 }
+  },
+  {
     name: 'river · 4 combos',
     input: {
       street: 'river',
@@ -116,8 +150,8 @@ const adaptiveHeader = [
   { key: 'stopReason', label: 'stop' }
 ];
 const aRows = [];
-for (const { name, input } of scenarios) {
-  const r = solveCFR(input, { iterations: 'adaptive', seed: 1 });
+for (const { name, input, adaptiveOptions } of scenarios) {
+  const r = solveCFR(input, { iterations: 'adaptive', seed: 1, ...(adaptiveOptions || {}) });
   aRows.push({
     scenario: name,
     iterationsRun: r.iterations,

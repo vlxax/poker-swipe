@@ -6,8 +6,51 @@ import { AdaptiveConvergence, buildAdaptiveConfig, DEFAULT_ADAPTIVE_CONFIG } fro
 import { computeExploitability, rootActionEV } from './exploitability.js';
 import { aggregateStrategy, normalizeReach } from '../ranges/rangePropagation.js';
 import { averageStrategy } from './strategyAccumulator.js';
+import { buildBetSizingModel } from '../abstraction/betSizingModel.js';
 
 const ALGORITHMS = ['cfr', 'cfr_plus'];
+
+// Map the caller's heroAction into the tree's action-id space. Postflop, a bet
+// maps to bet_<sizePot*100>; everything else uses its type. Preflop, an open
+// raise maps to open_<raiseToBB> (root actions are absolute raise-to amounts).
+function heroActionIdFor(action, preflop) {
+  if (!action) return null;
+  if (preflop) {
+    if (action.type === 'raise' || action.type === 'bet') {
+      const bb = action.amountBB ?? action.sizeBB;
+      if (Number.isFinite(Number(bb))) return `open_${Math.round(Number(bb) * 10) / 10}`;
+    }
+    return String(action.type);
+  }
+  return String(action.type === 'bet' ? `bet_${Math.round((action.sizePot || 0) * 100)}` : action.type);
+}
+
+// Bet-sizing abstraction reported for a solved tree. Postflop uses fraction-of-pot
+// sizes (with geometric sizing when applicable); preflop uses absolute raise-to BB.
+function computeBetSizingAbstraction(tree, cfg, options) {
+  const street = tree.game.street;
+  if (street === 'preflop') {
+    const requestedSizes = (cfg.betSizes && cfg.betSizes.preflop) || [];
+    return {
+      model: 'absolute_raise_to_bb',
+      requestedSizes,
+      usedSizes: requestedSizes,
+      prunedSizes: [],
+      geometricSizeUsed: null
+    };
+  }
+  const maxPerNode = options.maxBetSizesPerNode != null ? options.maxBetSizesPerNode : 4;
+  const tolerance = options.sizeMergeTolerance != null ? options.sizeMergeTolerance : 0.05;
+  const sizes = (cfg.betSizes && cfg.betSizes[street]) || [];
+  return buildBetSizingModel({
+    street,
+    pot: tree.game.potBB,
+    stack: tree.game.effectiveStackBB,
+    requestedBetSizes: sizes,
+    maxBetSizesPerNode: maxPerNode,
+    sizeMergeTolerance: tolerance
+  });
+}
 
 // Solve the game tree by CFR (vanilla or CFR+). When `iterations` is the string
 // "adaptive" (or `options.adaptive` is true) the solver uses automated convergence
@@ -100,15 +143,17 @@ export function solveCFR(input = {}, options = {}) {
     : convergence.finalStatus({ iterationsRun, stopReason });
 
   // bestAction + heroAction based on action EV.
+  const preflop = tree.game.street === 'preflop';
   const ids = Object.keys(actionEV);
   let bestId = ids.length ? ids[0] : null;
   for (const id of ids) if (actionEV[id] > actionEV[bestId]) bestId = id;
-  const heroActionId = input.heroAction ? String(input.heroAction.type === 'bet' ? `bet_${Math.round((input.heroAction.sizePot || 0) * 100)}` : input.heroAction.type) : null;
+  const heroActionId = heroActionIdFor(input.heroAction, preflop);
   const heroEV = heroActionId != null ? actionEV[heroActionId] : null;
   const bestEV = bestId != null ? actionEV[bestId] : null;
   const evLossBB = heroEV != null && bestEV != null ? bestEV - heroEV : null;
 
   const chanceCapped = Number.isFinite(cfg.maxChanceBranches) && cfg.maxChanceBranches < Infinity;
+  const betSizingAbstraction = computeBetSizingAbstraction(tree, cfg, options);
 
   return {
     algorithm,
@@ -121,7 +166,8 @@ export function solveCFR(input = {}, options = {}) {
       effectiveStackBB: tree.game.effectiveStackBB,
       heroPosition: tree.game.heroPosition,
       villainPosition: tree.game.villainPosition,
-      firstToAct: cfg.firstToAct
+      firstToAct: cfg.firstToAct,
+      ...(preflop ? { blinds: tree.game.blinds } : {})
     },
     rootStrategy: comboStrategies,
     aggregateStrategy: aggregate,
@@ -134,6 +180,7 @@ export function solveCFR(input = {}, options = {}) {
     exploitability: exploit,
     convergence: convStatus,
     tree: tree.summary(),
+    betSizingAbstraction,
     meta: {
       durationMs: Date.now() - start,
       analysisMethod: algorithm === 'cfr_plus' ? 'cfr_plus' : 'cfr',
@@ -141,7 +188,7 @@ export function solveCFR(input = {}, options = {}) {
       treeAbstraction: true,
       betAbstraction: true,
       chanceMode: chanceCapped ? 'capped' : 'enumerated',
-      rangeAbstraction: true,
+      rangeAbstraction: 'combo',
       maxChanceBranches: chanceCapped ? cfg.maxChanceBranches : null,
       linearAveraging: !!options.linearAveraging,
       adaptive,
@@ -149,9 +196,22 @@ export function solveCFR(input = {}, options = {}) {
       minIterations: adaptive ? adaptiveCfg.minIterations : null,
       rangeDeltaTarget: adaptive ? adaptiveCfg.rangeDeltaTarget : null,
       stopReason,
-      seed
+      seed,
+      preflopAbstraction: preflop,
+      flopTransitionMode: preflop ? (chanceCapped ? 'capped_chance' : 'chance') : null
     },
     _trainer: trainer,
     _tree: tree
   };
+}
+
+// Convenience wrapper for preflop solves. Validates the spot and delegates to the
+// shared CFR engine (which builds and solves the preflop tree). Returns the same
+// shape as solveCFR plus preflop-specific meta.
+export function solvePreflop(input = {}, options = {}) {
+  const street = String(input.street || 'preflop').toLowerCase();
+  if (street !== 'preflop') {
+    throw new SolverError('INVALID_CONFIG', `solvePreflop requires street: 'preflop', got: ${input.street}`);
+  }
+  return solveCFR({ ...input, street: 'preflop' }, options);
 }
