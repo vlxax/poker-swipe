@@ -16,20 +16,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: 20
+          python-version: "3.12"
+
+      - name: Install parser dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
 
       - name: Update Polyana data
-        run: node scripts/sync_polyana.mjs
+        run: python scripts/update_polyana.py
 
       - name: Commit updated data
         run: |
           git config user.name "PokerSwipe Bot"
           git config user.email "actions@github.com"
 
-          git add data/polyana_live.json
+          git add data/live_polyana.json
+          git add data/moscow_clubs_pokernomoney.json
+          git add data/moscow_schedule_today.json
 
           if git diff --cached --quiet; then
             echo "No Polyana changes"
