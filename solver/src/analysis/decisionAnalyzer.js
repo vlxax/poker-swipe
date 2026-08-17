@@ -3,9 +3,17 @@ import { calculateEquity } from '../equity/index.js';
 import { evaluateAction } from './actionEvaluator.js';
 import { classifyMistake } from './mistakeClassifier.js';
 import { confidenceFor } from './confidence.js';
+import { solveCFR } from '../cfr/cfrSolver.js';
 import { SolverError, assert } from '../api/errors.js';
 
 export function analyzeDecision(input = {}) {
+  if (input.mode === 'solver' || input.analysisMode === 'solver') {
+    return analyzeDecisionSolver(input);
+  }
+  return analyzeDecisionHeuristic(input);
+}
+
+function analyzeDecisionHeuristic(input) {
   const state = createGameState(input);
 
   assert(state.villainRange, 'INVALID_RANGE', 'villainRange is required for decision analysis');
@@ -105,6 +113,115 @@ export function analyzeDecision(input = {}) {
       confidenceScore: conf.confidence
     }
   };
+}
+
+// Solve-based decision analysis. Requires both hero and villain ranges and runs
+// CFR over the postflop tree to produce action EVs, best action and exploitability.
+function analyzeDecisionSolver(input) {
+  assert(input.heroRange, 'MISSING_INPUT', 'heroRange is required in solver mode');
+  assert(input.villainRange, 'MISSING_INPUT', 'villainRange is required in solver mode');
+  assert(input.board && input.board.length >= 3, 'INVALID_BOARD', 'solver mode requires a postflop board');
+
+  const r = solveCFR(input, {
+    iterations: input.iterations,
+    seed: input.seed,
+    algorithm: input.algorithm
+  });
+
+  const rootActions = (r._tree && r._tree.root.actions) || [];
+  const amountById = {};
+  for (const a of rootActions) amountById[a.id] = a.amountBB;
+
+  const actions = Object.keys(r.actionEV).map((id) => {
+    const shape = actionFromId(id);
+    return {
+      action: { ...shape, amountBB: amountById[id] != null ? round(amountById[id], 4) : null },
+      evBB: round(r.actionEV[id], 4),
+      analysisMethod: r.algorithm
+    };
+  }).sort((a, b) => b.evBB - a.evBB);
+
+  let best = actions[0] || null;
+  for (const a of actions) if (a.evBB > best.evBB) best = a;
+
+  const heroActionId = r.heroAction;
+  const heroActionEntry = heroActionId != null && r.actionEV[heroActionId] != null
+    ? actions.find((a) => actionId(a.action) === heroActionId)
+    : null;
+  const heroEV = heroActionId != null && r.actionEV[heroActionId] != null
+    ? round(r.actionEV[heroActionId], 4)
+    : null;
+  const bestEV = best ? best.evBB : null;
+  const evLossBB = heroEV != null && bestEV != null ? round(bestEV - heroEV, 4) : null;
+  const classification = evLossBB != null ? classifyMistake({ evLossBB, preset: input.thresholdPreset || 'cash' }) : null;
+
+  const analysisMethod = r.algorithm;
+  const conf = confidenceFor({
+    analysisMethod,
+    simulations: r.iterations,
+    comboCount: r.tree.heroComboCount,
+    heuristic: false,
+    iterations: r.iterations
+  });
+
+  return {
+    version: 'solver-core',
+    game: {
+      street: r.game.street,
+      heroPosition: r.game.heroPosition,
+      villainPosition: r.game.villainPosition,
+      potBB: r.game.potBB,
+      effectiveStackBB: r.game.effectiveStackBB,
+      spr: r.game.potBB > 0 ? round(r.game.effectiveStackBB / r.game.potBB, 3) : null,
+      board: r.game.board
+    },
+    equity: null,
+    calculation: {
+      bestAction: best ? best.action : null,
+      heroAction: heroActionEntry ? heroActionEntry.action : null,
+      actions,
+      heroEV,
+      bestEV,
+      evLossBB,
+      severity: classification ? classification.severity : null,
+      analysisMethod
+    },
+    explanation: {
+      summary: null,
+      why: [],
+      keyConcept: null,
+      recommendedPractice: null
+    },
+    meta: {
+      version: 'solver-core',
+      analysisMethod,
+      algorithm: r.algorithm,
+      iterations: r.iterations,
+      exploitabilityBB: r.exploitability.exploitabilityBB,
+      exploitabilityPerPlayerBB: r.exploitability.exploitabilityPerPlayerBB,
+      convergence: r.convergence.status,
+      tree: r.tree,
+      confidence: conf.label,
+      confidenceScore: conf.confidence,
+      durationMs: r.meta.durationMs
+    }
+  };
+}
+
+function actionId(action) {
+  if (!action) return null;
+  if (action.type === 'bet') return `bet_${Math.round((action.sizePot || 0) * 100)}`;
+  return action.type;
+}
+
+function actionFromId(id) {
+  if (id === 'check') return { type: 'check' };
+  if (id === 'fold') return { type: 'fold' };
+  if (id === 'call') return { type: 'call' };
+  if (id === 'all_in') return { type: 'all_in' };
+  if (id.startsWith('bet_')) return { type: 'bet', sizePot: Number(id.slice(4)) / 100 };
+  if (id.startsWith('raise_')) return { type: 'raise', sizePot: Number(id.slice(6)) / 100 };
+  return { type: id };
 }
 
 function round(n, d) {
