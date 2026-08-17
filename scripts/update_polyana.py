@@ -18,7 +18,7 @@ DATA.mkdir(exist_ok=True)
 
 S = requests.Session()
 S.headers.update({
-    "User-Agent": "Mozilla/5.0 (compatible; PokerSwipeSync/1.2; +https://github.com/vlxax/poker-swipe)",
+    "User-Agent": "Mozilla/5.0 (compatible; PokerSwipeSync/1.3; +https://github.com/vlxax/poker-swipe)",
     "Accept-Language": "ru-RU,ru;q=0.9,en;q=0.7",
     "Accept": "text/html,application/xhtml+xml",
 })
@@ -151,7 +151,7 @@ def meaningful_tournament(title: str | None, club: str, address: str = "") -> st
     bad = {
         "турнир", "расписаниетурниров", "сегодня", "завтра", "москва",
         "подробнее", "контактыиадрес", "связатьсясадминистратором",
-        "покерненаденьгивмоскве"
+        "покерненаденьгивмоскве", "визбранное", "добавитьвизбранное", "избранное"
     }
     if norm(t) in bad:
         return None
