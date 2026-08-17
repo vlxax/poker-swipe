@@ -1,2001 +1,754 @@
 {
-  "source": "https://pokernomoney.ru/clubs",
-  "club_count": 66,
-  "event_count": 65,
-  "clubs": [
-    {
-      "name": "PRIDE",
-      "address": "ул. Ладожская, д. 11",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "partner": true,
-      "description": "Клуб живого спортивного покера с регулярными турнирами, разными форматами, обучением и клубным комьюнити.",
-      "venue": "Continental Lounge",
-      "first_game": "",
-      "facts": [],
-      "today_events": 3,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "1 год 1 месяц",
-      "details": [
-        "MTT",
-        "нокаут",
-        "мистери-баунти",
-        "обучающие сессии",
-        "клубное комьюнити"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "20:00",
-          "club": "PRIDE",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "МАКСИМУМ",
-      "address": "Большая Никитская 43",
-      "min_fee_rub": 1200,
-      "upcoming": 2,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "МАКСИМУМ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club Moscow",
-      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Joker Poker Club Moscow",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Ocean's Poker Club",
-      "address": "Нижняя Красносельская улица, 35 с. 59",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Ocean's Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "PARLIAMENT",
-      "address": "Вешняковская ул., д. 22А",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "DUCKS POKER CLUB",
-      "address": "проспект Мира, 102с25",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "partner": true,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "DUCKS POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Minds",
-      "address": "Новочеремушкинская ул., д. 21а",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "partner": true,
-      "description": "Клуб спортивного покера с правилами на базе TDA. Игра не на деньги, есть рейтинг, ребаи и поздняя регистрация.",
-      "venue": "Империя дыма",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "6 месяцев",
-      "details": [
-        "18+",
-        "правила на базе TDA",
-        "ребай до 4 раз",
-        "турнир около 5–6 часов",
-        "поздняя регистрация до 2,5 часов"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Minds",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Minds",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Moscow Poker Club",
-      "address": "Малый Гнездниковский переулок, 9, стр. 2",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Резиденция ПОКЕР",
-      "address": "Денисовский пер., 30, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Резиденция ПОКЕР",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "Резиденция ПОКЕР",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "MASK OFF POKER",
-      "address": "Сущевский вал, д.16с1",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "16:45",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:45",
-          "club": "MASK OFF POKER",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "18:00",
-          "club": "MASK OFF POKER",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Nuts poker club Moscow",
-      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Nuts poker club Moscow",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Дойл (Doyle poker club)",
-      "address": "Б. Сухаревская пл. д. 14/7",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Восьмерка Кикер",
-      "address": "ул. Каретный ряд, д. 10",
-      "min_fee_rub": 1000,
-      "upcoming": 6,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Check-Check Club",
-      "address": "Нижний Сусальный пер., д. 5с1",
-      "min_fee_rub": 1200,
-      "upcoming": 6,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Check-Check Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Покерный клуб ALL-IN",
-      "address": "ул. Таганская, 29, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Покерный клуб ALL-IN",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Straddle poker club",
-      "address": "Валовая улица, 32/75с2 (2 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "Клуб спортивного покера в центре Москвы. Живые игры для игроков любого уровня, обучение для новичков, профессиональное оснащение и клубное комьюнити.",
-      "venue": "PLn Lounge",
-      "first_game": "6 августа 2025",
-      "facts": [
-        "игра не на деньги",
-        "карты Fournier",
-        "керамические фишки",
-        "10 минут от м. Добрынинская"
-      ],
-      "today_events": 2,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "10 месяцев",
-      "details": [
-        "игры несколько раз в неделю",
-        "профессиональные столы",
-        "карты Fournier",
-        "керамические фишки",
-        "обучение для новичков"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Straddle poker club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Straddle poker club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "POKER FACE Сlub",
-      "address": "Звенигородское ш., 18/20, к. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "POKER FACE Сlub",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Ace Poker Club",
-      "address": "улица Сергия Радонежского, 9с5",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 3,
-      "today_first_time": "16:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Ace Poker Club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "17:00",
-          "club": "Ace Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "Ace Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "GARAGE Game Club",
-      "address": "пр. Аэропорта, 8, стр. 7",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "Живой спортивный покер без денежных выплат: клуб делает акцент на игре, эмоциях и общении.",
-      "venue": "ТРИУМФ ЛАУНЖ-БАР",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "8 месяцев",
-      "details": [
-        "живой покер",
-        "спортивный формат",
-        "клубное комьюнити"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "GARAGE Game Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "BLEF BET",
-      "address": "Измайловское ш., д. 73Ж",
-      "min_fee_rub": 1000,
-      "upcoming": 9,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "BLEF BET",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:30",
-          "club": "BLEF BET",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Pocket Rockets Club",
-      "address": "Шелепихинская наб., 34к2зд1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "Pocket Rockets Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Level",
-      "address": "просп. Вернадского, д. 14А, 3 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 10,
-      "description": "Level Poker Club — клуб спортивного покера в Москве, где играют не на деньги. Акцент на стратегии, атмосфере и клубном рейтинге.",
-      "venue": "МСК lounge",
-      "first_game": "21 декабря 2025",
-      "facts": [
-        "одно из самых больших количеств проведённых турниров",
-        "турниры по NLH",
-        "игра не на деньги"
-      ],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [
-        "одно из самых больших количеств проведённых турниров",
-        "турниры по NLH",
-        "игра не на деньги"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Level",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Aria Royale",
-      "address": "ул. Братиславская, д. 28 (2 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Magnum Club",
-      "address": "Большая Новодмитровская ул., д. 36с13",
-      "min_fee_rub": 1000,
-      "upcoming": 4,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Magnum Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Poker Spot",
-      "address": "Краснопролетарская ул., д. 7",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Hi, Jack Club",
-      "address": "Люсиновская улица, 53к2",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:30",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:30",
-          "club": "Hi, Jack Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Bubble Club",
-      "address": "Комсомольский просп., 28",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "River Room",
-      "address": "Сретенский бульвар, д. 6 с. 1/1",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "River Room",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Raise Club",
-      "address": "ул. Азовская 18 (4 этаж)",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "Raise Club",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "SRP EQUITY",
-      "address": "Новолесная улица, д. 8/12",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "SRP EQUITY",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Poker Room GTO",
-      "address": "Даев пер., д. 2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "Poker Room GTO",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club (Кутузовская)",
-      "address": "ул. Киевская, д. 20 (метро Студенческая)",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Два туза",
-      "address": "ул. Александры Монаховой, 98, корп. 3",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "HEADS UP",
-      "address": "проспект Мира, 26с2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "HEADS UP",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Московский Покерный Зал",
-      "address": "Нижегородская ул., 9Г",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "БАРРЕЛЬ",
-      "address": "Доброслободская ул., д. 3",
-      "min_fee_rub": 1500,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "БАРРЕЛЬ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "MIDNIGHT POKER CLUB",
-      "address": "Новослободская дом 39",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "MIDNIGHT POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Aura Poker Club",
-      "address": "Новоясеневский проспект, 1",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "16:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "16:00",
-          "club": "Aura Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "CARTEL POKER CLUB",
-      "address": "Волоколамское шоссе, 124",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "CARTEL POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "НУАР",
-      "address": "ул. Краснопрудная 24с1",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "НУАР",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "TROYA покер",
-      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Комьюнити «Компас»",
-      "address": "Дмитровское ш., 81",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Всё могут Короли!",
-      "address": "Мытная 46/2с3",
-      "min_fee_rub": 3000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Всё могут Короли!",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "СТРИТ",
-      "address": "Средняя первомайская ул, дом 4",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "СТРИТ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Free Poker Moscow",
-      "address": "м. 1905 года, Звенигородское шоссе 18/20к1",
-      "min_fee_rub": 0,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "Free Poker Moscow",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "AURUM",
-      "address": "Алтуфьевское ш., д. 22Б",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "AURUM",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "YAKUDZA POKER COMMUNITY",
-      "address": "Оружейный переулок 15А, 11 этаж",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Friendly Poker Club",
-      "address": "Русаковская набережная, д. 1А, стр. 1",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:10",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:10",
-          "club": "Friendly Poker Club",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "QQ POKER CLUB",
-      "address": "Нагатинская улица, 16",
-      "min_fee_rub": 1000,
-      "upcoming": 18,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "QQ POKER CLUB",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "CHECK-RAISE CLUB MOSCOW",
-      "address": "Старопетровский проезд, 1с1",
-      "min_fee_rub": 1000,
-      "upcoming": 4,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "CHECK-RAISE CLUB MOSCOW",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "КАРЕТА",
-      "address": "Гороховский переулок, 19",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "КАРЕТА",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Joker Poker Club (Беломорская)",
-      "address": "Ул Петрозаводская 11 корп.3 стр.1",
-      "min_fee_rub": 1000,
-      "upcoming": 0,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "ФИШ.КА POKER CLUB",
-      "address": "Нижегородская, 32сБ",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "17:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "ФИШ.КА POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "SNAP CALL CLUB",
-      "address": "Проспект Андропова 48с2",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "SNAP CALL CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "BlackWood",
-      "address": "Олимпийский проспект, 12",
-      "min_fee_rub": 1000,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "BlackWood",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "PRESTIG POKER CLUB",
-      "address": "Козицкий переулок, 3",
-      "min_fee_rub": 1000,
-      "upcoming": 7,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "20:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "20:00",
-          "club": "PRESTIG POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "AK77",
-      "address": "ул. Софьи Ковалевской, 2",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "23:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "23:00",
-          "club": "AK77",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Oasis Poker Club",
-      "address": "Садовая-Самотечная ул. д. 13, стр. 1",
-      "min_fee_rub": 0,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "PLAYWAY",
-      "address": "Москва, Винницкая, 8, корпус 2.",
-      "min_fee_rub": 1300,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "19:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "PLAYWAY",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Quantum",
-      "address": "Новая Басманная улица, 19 ст7",
-      "min_fee_rub": 1500,
-      "upcoming": 4,
-      "description": "QUANTUM — клуб спортивного покера в центре Москвы: 8 профессиональных столов, 72 игровых места, рейтинги и разные форматы.",
-      "venue": "Quantum",
-      "first_game": "",
-      "facts": [
-        "8 профессиональных столов",
-        "72 игровых места",
-        "VIP-комнаты",
-        "бар и кухня"
-      ],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [
-        "8 профессиональных столов",
-        "72 игровых места",
-        "VIP-комнаты",
-        "бар и кухня"
-      ],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "Quantum",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "18:00",
-          "club": "Quantum",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "ХАРТС",
-      "address": "Боровая, 19А",
-      "min_fee_rub": 1000,
-      "upcoming": 5,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "17:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "17:00",
-          "club": "ХАРТС",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "18:00",
-          "club": "ХАРТС",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "Покерный Клуб №1",
-      "address": "Москва, ул. Киевская, 2",
-      "min_fee_rub": 2000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 0,
-      "today_first_time": "",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": []
-    },
-    {
-      "name": "Showdown",
-      "address": "Новый Арбат, 19",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "19:00",
-      "today_free_events": 1,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "19:00",
-          "club": "Showdown",
-          "free": true,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "20:00",
-          "club": "Showdown",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "EMPIRE POKER CLUB",
-      "address": "Шелепихинская набережная, 34к3зд6",
-      "min_fee_rub": 1000,
-      "upcoming": 3,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 2,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "EMPIRE POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        },
-        {
-          "time": "19:00",
-          "club": "EMPIRE POKER CLUB",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "ХРОНИКИ",
-      "address": "Садовая-Кудринская улица, 3А, Москва",
-      "min_fee_rub": 1200,
-      "upcoming": 2,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "ХРОНИКИ",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    },
-    {
-      "name": "БЛЕФ?",
-      "address": "Проспект Мира, 102с12, подъезд 6",
-      "min_fee_rub": 1000,
-      "upcoming": 1,
-      "description": "",
-      "venue": "",
-      "first_game": "",
-      "facts": [],
-      "today_events": 1,
-      "today_first_time": "18:00",
-      "today_free_events": 0,
-      "age": "",
-      "details": [],
-      "contacts": {},
-      "schedule": [
-        {
-          "time": "18:00",
-          "club": "БЛЕФ?",
-          "free": false,
-          "tournament": "Турнир из афиши PokerNoMoney"
-        }
-      ]
-    }
-  ],
+  "city": "Москва",
+  "snapshot_date": "2026-08-05",
+  "snapshot_label": "5 августа 2026",
+  "summary": {
+    "events": 54,
+    "clubs_in_schedule": 42,
+    "clubs_total": 65,
+    "free_events": 12
+  },
   "events": [
     {
-      "time": "16:00",
-      "club": "Joker Poker Club Moscow",
+      "time": "14:27",
+      "club": "Moscow Poker Club",
+      "tournament": "OPEN TOURNAMENT POKER",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Малый Гнездниковский переулок, 9, стр. 2",
+      "format": "Классика"
     },
     {
-      "time": "16:00",
-      "club": "POKER FACE Сlub",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Aura Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Straddle poker club",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
-      "club": "Nuts poker club Moscow",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "16:00",
+      "time": "18:00",
       "club": "Ace Poker Club",
+      "tournament": "Обучение",
+      "fee_rub": 0,
       "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "улица Сергия Радонежского, 9с5",
+      "format": "Обучающий"
     },
     {
-      "time": "16:45",
-      "club": "MASK OFF POKER",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Level",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Straddle poker club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Check-Check Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "GARAGE Game Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "СТРИТ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Восьмёрка Кикер",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "КАРЕТА",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "CHECK-RAISE CLUB MOSCOW",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Всё могут Короли!",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ФИШ.КА POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Minds",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "Quantum",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:00",
-      "club": "ХАРТС",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "17:10",
+      "time": "18:00",
       "club": "Friendly Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "QQ POKER CLUB",
+      "tournament": "Обучение",
+      "fee_rub": 0,
       "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Русаковская набережная, д. 1А, стр. 1",
+      "format": "Обучающий"
     },
     {
       "time": "18:00",
       "club": "ХАРТС",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Magnum Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "SRP EQUITY",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "MASK OFF POKER",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "CARTEL POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "МАКСИМУМ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Ocean's Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Комьюнити Компас",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Quantum",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Raise Club",
+      "tournament": "Обучение",
+      "fee_rub": 0,
       "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "River Room",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "SNAP CALL CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "BLEF BET",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "Покерный клуб ALL-IN",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Боровая, 19А",
+      "format": "Обучающий"
     },
     {
       "time": "18:00",
       "club": "EMPIRE POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Обучение",
+      "fee_rub": 0,
+      "free": true,
+      "address": "Шелепихинская набережная, 34к3зд6",
+      "format": "Обучающий"
     },
     {
-      "time": "18:00",
-      "club": "ХРОНИКИ",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "18:00",
-      "club": "БЛЕФ?",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "time": "18:30",
+      "club": "CARTEL POKER CLUB",
+      "tournament": "Обучение",
+      "fee_rub": 0,
+      "free": true,
+      "address": "Волоколамское шоссе, 124",
+      "format": "Обучающий"
     },
     {
       "time": "19:00",
-      "club": "PLAYWAY",
+      "club": "Magnum Club",
+      "tournament": "Нокаут среда",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Большая Новодмитровская ул., д. 36с13",
+      "format": "Баунти / Нокаут"
+    },
+    {
+      "time": "19:00",
+      "club": "QQ POKER CLUB",
+      "tournament": "WIN THE BUTTON TOURNAMENT",
+      "fee_rub": 0,
+      "free": true,
+      "address": "Нагатинская улица, 16",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "Ace Poker Club",
+      "tournament": "Freeroll",
+      "fee_rub": 0,
+      "free": true,
+      "address": "улица Сергия Радонежского, 9с5",
+      "format": "Фрирол"
+    },
+    {
+      "time": "19:00",
+      "club": "SNAP CALL CLUB",
+      "tournament": "Moscow Main Event",
+      "fee_rub": 1500,
+      "free": false,
+      "address": "Проспект Андропова 48с2",
+      "format": "Сателлит"
     },
     {
       "time": "19:00",
       "club": "Pocket Rockets Club",
+      "tournament": "Freezeout Tournament",
+      "fee_rub": 1500,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Шелепихинская наб., 34к2зд1",
+      "format": "Freezeout"
     },
     {
       "time": "19:00",
-      "club": "HEADS UP",
+      "club": "Два туза",
+      "tournament": "MYSTERY BOUNTY",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "ул. Александры Монаховой, 98, корп. 3",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "ХАРТС",
+      "tournament": "WIN THE BUTTON TOURNEY",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Боровая, 19А",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "BLEF BET",
+      "tournament": "Феникс Варфоломеева",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Измайловское ш., д. 73Ж",
+      "format": "Феникс"
+    },
+    {
+      "time": "19:00",
+      "club": "PRESTIG POKER CLUB",
+      "tournament": "БАУНТИ",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Козицкий переулок, 3",
+      "format": "Баунти / Нокаут"
+    },
+    {
+      "time": "19:00",
+      "club": "PLAYWAY",
+      "tournament": "MYSTERY GOLD",
+      "fee_rub": 1300,
+      "free": false,
+      "address": "Москва, Винницкая, 8, корпус 2",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "Check-Check Club",
+      "tournament": "X2 Mystery",
+      "fee_rub": 1200,
+      "free": false,
+      "address": "Нижний Сусальный пер., д. 5с1",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "River Room",
+      "tournament": "Classic Holdem",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Сретенский бульвар, д. 6 с. 1/1",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "МАКСИМУМ",
+      "tournament": "Freezeout",
+      "fee_rub": 2000,
+      "free": false,
+      "address": "Большая Никитская 43",
+      "format": "Freezeout"
+    },
+    {
+      "time": "19:00",
+      "club": "SRP EQUITY",
+      "tournament": "MYSTERY BOUNTY TOURNAMENT POKER",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Новолесная улица, д. 8/12",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "MASK OFF POKER",
+      "tournament": "DOUBLE RATING POINTS TOURNAMENT",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Сущевский вал, д.16с1",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "Poker Room GTO",
+      "tournament": "MYSTERY WOMAN DAY",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Даев пер., д. 2",
+      "format": "Mystery Bounty"
     },
     {
       "time": "19:00",
       "club": "БАРРЕЛЬ",
+      "tournament": "CLASSIC POKER NIGHT",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Доброслободская ул., д. 3",
+      "format": "Классика"
     },
     {
       "time": "19:00",
-      "club": "DUCKS POKER CLUB",
+      "club": "CARTEL POKER CLUB",
+      "tournament": "DOUBLE RATING TOURNAMENT",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Волоколамское шоссе, 124",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "HEADS UP",
+      "tournament": "FREEZEOUT TOURNAMENT",
+      "fee_rub": 1500,
+      "free": false,
+      "address": "проспект Мира, 26с2",
+      "format": "Freezeout"
+    },
+    {
+      "time": "19:00",
+      "club": "POKER FACE Сlub",
+      "tournament": "Face Night",
+      "fee_rub": 0,
+      "free": true,
+      "address": "Звенигородское ш., 18/20, к. 1",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "GARAGE Game Club",
+      "tournament": "MYSTERY DOGS",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "Ocean's Poker Club",
+      "tournament": "DAVY JONES TOURNAMENT",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Нижняя Красносельская улица, 35 с. 59",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "Покерный клуб ALL-IN",
+      "tournament": "BLACK FLAG",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "ул. Таганская, 29, стр. 1",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "Joker Poker Club Moscow",
+      "tournament": "Mystery Bounty Tournament",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Варшавское ш., 160, ТЦ Галерея Атлантис, 3 эт.",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "19:00",
+      "club": "River Room",
+      "tournament": "Отборочный турнир",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Сретенский бульвар, д. 6 с. 1/1",
+      "format": "Сателлит"
+    },
+    {
+      "time": "19:00",
+      "club": "PRIDE",
+      "tournament": "PRIDE MISSION TOURNAMENT",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "ул. Ладожская, д. 11",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "Aria Royale",
+      "tournament": "DOUBLE BOARD TOURNAMENT",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "ул. Братиславская, д. 28, 2 этаж",
+      "format": "Классика"
+    },
+    {
+      "time": "19:00",
+      "club": "TROYA покер",
+      "tournament": "KING BOOMB POT",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "ул. Поречная, д.10, ТРК MARI, 3 этаж",
+      "format": "Bomb Pot"
+    },
+    {
+      "time": "19:00",
+      "club": "Nuts poker club Moscow",
+      "tournament": "DOUBLE NUTS",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
+      "format": "Классика"
     },
     {
       "time": "19:00",
       "club": "НУАР",
+      "tournament": "WINNER TAKES THE BUTTON",
+      "fee_rub": 0,
       "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Free Poker Moscow",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "AURUM",
-      "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "ул. Краснопрудная 24с1",
+      "format": "Классика"
     },
     {
       "time": "19:00",
       "club": "EMPIRE POKER CLUB",
+      "tournament": "EMPIRE NLH + BOMB POT TRIPLE STACK",
+      "fee_rub": 1500,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Шелепихинская набережная, 34к3зд6",
+      "format": "Bomb Pot"
     },
     {
       "time": "19:00",
-      "club": "PRIDE",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Резиденция ПОКЕР",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Ace Poker Club",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "19:00",
-      "club": "Showdown",
+      "club": "ХРОНИКИ",
+      "tournament": "WEDNESDAY FREEROLL ХРОНИКИ",
+      "fee_rub": 0,
       "free": true,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Садовая-Кудринская улица, 3А, Москва",
+      "format": "Фрирол"
+    },
+    {
+      "time": "19:00",
+      "club": "DUCKS POKER CLUB",
+      "tournament": "GIPER BOUNTY",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "проспект Мира, 102с25",
+      "format": "Баунти / Нокаут"
+    },
+    {
+      "time": "19:00",
+      "club": "AK77",
+      "tournament": "Bounty",
+      "fee_rub": 0,
+      "free": true,
+      "address": "ул. Софьи Ковалевской, 2",
+      "format": "Баунти / Нокаут"
+    },
+    {
+      "time": "19:10",
+      "club": "Friendly Poker Club",
+      "tournament": "Friendly Cards",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Русаковская набережная, д. 1А, стр. 1",
+      "format": "Классика"
+    },
+    {
+      "time": "19:10",
+      "club": "Hi, Jack Club",
+      "tournament": "HONOR & MORE",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Люсиновская улица, 53к2",
+      "format": "Классика"
+    },
+    {
+      "time": "19:13",
+      "club": "Moscow Poker Club",
+      "tournament": "OPEN TOURNAMENT POKER",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Малый Гнездниковский переулок, 9, стр. 2",
+      "format": "Классика"
     },
     {
       "time": "19:30",
-      "club": "Hi, Jack Club",
+      "club": "Резиденция ПОКЕР",
+      "tournament": "SPECIAL TOURNAMENT",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Денисовский пер., 30, стр. 1",
+      "format": "Классика"
     },
     {
       "time": "19:30",
       "club": "BLEF BET",
+      "tournament": "Repost FreeRoll Клубная 19А",
+      "fee_rub": 500,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Измайловское ш., д. 73Ж",
+      "format": "Фрирол"
     },
     {
-      "time": "20:00",
-      "club": "PRESTIG POKER CLUB",
+      "time": "19:30",
+      "club": "Комьюнити Компас",
+      "tournament": "DOUBLE RATING TOURNAMENT",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Дмитровское ш., 81",
+      "format": "Классика"
     },
     {
-      "time": "20:00",
-      "club": "PRIDE",
+      "time": "19:30",
+      "club": "Raise Club",
+      "tournament": "OLD SCHOOL",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
-    },
-    {
-      "time": "20:00",
-      "club": "Poker Room GTO",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "ул. Азовская 18, 4 этаж",
+      "format": "Классика"
     },
     {
       "time": "20:00",
       "club": "BlackWood",
+      "tournament": "Win the Button",
+      "fee_rub": 500,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Олимпийский проспект, 12",
+      "format": "Классика"
+    },
+    {
+      "time": "20:00",
+      "club": "PRESTIG POKER CLUB",
+      "tournament": "Bounty турнир",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Козицкий переулок, 3",
+      "format": "Баунти / Нокаут"
     },
     {
       "time": "20:00",
       "club": "MIDNIGHT POKER CLUB",
-      "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "tournament": "Free-roll NLH 3-1",
+      "fee_rub": 0,
+      "free": true,
+      "address": "Новослободская дом 39",
+      "format": "Фрирол"
     },
     {
       "time": "20:00",
       "club": "Showdown",
+      "tournament": "Середина недели — Перезагрузка",
+      "fee_rub": 1000,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Новый Арбат, 19",
+      "format": "Классика"
     },
     {
-      "time": "23:00",
-      "club": "AK77",
+      "time": "20:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Poker Tournament: Boom Pot",
+      "fee_rub": 1500,
       "free": false,
-      "tournament": "Турнир из афиши PokerNoMoney"
+      "address": "Шелепихинская наб., 34к2зд1",
+      "format": "Bomb Pot"
+    },
+    {
+      "time": "20:00",
+      "club": "Poker Room GTO",
+      "tournament": "Freezeout MYSTERY",
+      "fee_rub": 1500,
+      "free": false,
+      "address": "Даев пер., д. 2",
+      "format": "Mystery Bounty"
+    },
+    {
+      "time": "21:36",
+      "club": "Moscow Poker Club",
+      "tournament": "OPEN TOURNAMENT POKER",
+      "fee_rub": 1000,
+      "free": false,
+      "address": "Малый Гнездниковский переулок, 9, стр. 2",
+      "format": "Классика"
     }
-  ]
+  ],
+  "clubs": [
+    {
+      "name": "Moscow Poker Club",
+      "address": "Малый Гнездниковский переулок, 9, стр. 2",
+      "events": 3,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Ace Poker Club",
+      "address": "улица Сергия Радонежского, 9с5",
+      "events": 2,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "Friendly Poker Club",
+      "address": "Русаковская набережная, д. 1А, стр. 1",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "ХАРТС",
+      "address": "Боровая, 19А",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "EMPIRE POKER CLUB",
+      "address": "Шелепихинская набережная, 34к3зд6",
+      "events": 2,
+      "min_fee_rub": 1500
+    },
+    {
+      "name": "CARTEL POKER CLUB",
+      "address": "Волоколамское шоссе, 124",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Magnum Club",
+      "address": "Большая Новодмитровская ул., д. 36с13",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "QQ POKER CLUB",
+      "address": "Нагатинская улица, 16",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "SNAP CALL CLUB",
+      "address": "Проспект Андропова 48с2",
+      "events": 1,
+      "min_fee_rub": 1500
+    },
+    {
+      "name": "Pocket Rockets Club",
+      "address": "Шелепихинская наб., 34к2зд1",
+      "events": 2,
+      "min_fee_rub": 1500
+    },
+    {
+      "name": "Два туза",
+      "address": "ул. Александры Монаховой, 98, корп. 3",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "BLEF BET",
+      "address": "Измайловское ш., д. 73Ж",
+      "events": 2,
+      "min_fee_rub": 500
+    },
+    {
+      "name": "PRESTIG POKER CLUB",
+      "address": "Козицкий переулок, 3",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "PLAYWAY",
+      "address": "Москва, Винницкая, 8, корпус 2",
+      "events": 1,
+      "min_fee_rub": 1300
+    },
+    {
+      "name": "Check-Check Club",
+      "address": "Нижний Сусальный пер., д. 5с1",
+      "events": 1,
+      "min_fee_rub": 1200
+    },
+    {
+      "name": "River Room",
+      "address": "Сретенский бульвар, д. 6 с. 1/1",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "МАКСИМУМ",
+      "address": "Большая Никитская 43",
+      "events": 1,
+      "min_fee_rub": 2000
+    },
+    {
+      "name": "SRP EQUITY",
+      "address": "Новолесная улица, д. 8/12",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "MASK OFF POKER",
+      "address": "Сущевский вал, д.16с1",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Poker Room GTO",
+      "address": "Даев пер., д. 2",
+      "events": 2,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "БАРРЕЛЬ",
+      "address": "Доброслободская ул., д. 3",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "HEADS UP",
+      "address": "проспект Мира, 26с2",
+      "events": 1,
+      "min_fee_rub": 1500
+    },
+    {
+      "name": "POKER FACE Сlub",
+      "address": "Звенигородское ш., 18/20, к. 1",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "GARAGE Game Club",
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Ocean's Poker Club",
+      "address": "Нижняя Красносельская улица, 35 с. 59",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Покерный клуб ALL-IN",
+      "address": "ул. Таганская, 29, стр. 1",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Joker Poker Club Moscow",
+      "address": "Варшавское ш., 160, ТЦ Галерея Атлантис, 3 эт.",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "PRIDE",
+      "address": "ул. Ладожская, д. 11",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Aria Royale",
+      "address": "ул. Братиславская, д. 28, 2 этаж",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "TROYA покер",
+      "address": "ул. Поречная, д.10, ТРК MARI, 3 этаж",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Nuts poker club Moscow",
+      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "НУАР",
+      "address": "ул. Краснопрудная 24с1",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "ХРОНИКИ",
+      "address": "Садовая-Кудринская улица, 3А, Москва",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "DUCKS POKER CLUB",
+      "address": "проспект Мира, 102с25",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "AK77",
+      "address": "ул. Софьи Ковалевской, 2",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "Hi, Jack Club",
+      "address": "Люсиновская улица, 53к2",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Резиденция ПОКЕР",
+      "address": "Денисовский пер., 30, стр. 1",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Комьюнити Компас",
+      "address": "Дмитровское ш., 81",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "Raise Club",
+      "address": "ул. Азовская 18, 4 этаж",
+      "events": 1,
+      "min_fee_rub": 1000
+    },
+    {
+      "name": "BlackWood",
+      "address": "Олимпийский проспект, 12",
+      "events": 1,
+      "min_fee_rub": 500
+    },
+    {
+      "name": "MIDNIGHT POKER CLUB",
+      "address": "Новослободская дом 39",
+      "events": 1,
+      "min_fee_rub": 0
+    },
+    {
+      "name": "Showdown",
+      "address": "Новый Арбат, 19",
+      "events": 1,
+      "min_fee_rub": 1000
+    }
+  ],
+  "snapshot_source": "public_schedule_snapshot"
 }
