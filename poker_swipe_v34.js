@@ -121,3 +121,26 @@
     loadPolyanaPromo();
   }
 })();
+
+
+/* PokerSwipe — Polyana Filters V3 loader.
+   Separate file + cache-busted URL so Telegram/iOS do not keep the old filter patch. */
+(() => {
+  'use strict';
+  const CSS_ID='polyana-filters-v3-css';
+  const JS_ID='polyana-filters-v3-js';
+  const V='20260818-1';
+  if(!document.getElementById(CSS_ID)){
+    const l=document.createElement('link');
+    l.id=CSS_ID;l.rel='stylesheet';l.href='polyana-filters-v3.css?v='+V;
+    document.head.appendChild(l);
+  }
+  function load(){
+    if(window.PokerSwipePolyanaFiltersV3){window.PokerSwipePolyanaFiltersV3.refresh?.();return}
+    if(document.getElementById(JS_ID))return;
+    const s=document.createElement('script');
+    s.id=JS_ID;s.src='polyana-filters-v3.js?v='+V;s.defer=true;
+    document.body.appendChild(s);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
+})();

@@ -1,0 +1,33 @@
+html.psv3Locked,html.psv3Locked body{overflow:hidden!important}
+#polyana .psf2Toolbar,#polyana .psf2Empty{display:none!important}
+#polyana .psv3Toolbar{display:flex;gap:8px;align-items:center;margin:18px 0 3px}
+#polyana .psv3Open{flex:1;min-height:46px;border:1px solid #3a3a43;border-radius:14px;background:linear-gradient(145deg,#121218,#0d0d12);color:#f5f3f6;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:10px;font-weight:1000;letter-spacing:.08em}
+#polyana .psv3Open b{min-width:23px;height:23px;border-radius:999px;display:grid;place-items:center;background:#c8ff3d;color:#11150b;font-size:9px}
+#polyana .psv3Open b:empty{background:#22222a}
+#polyana .psv3QuickReset{min-height:46px;padding:0 12px;border:1px solid #34343d;border-radius:14px;background:#0d0d12;color:#89838c;font-size:8px;font-weight:1000}
+#polyanaFiltersV3{display:none;position:fixed;inset:0;z-index:100000}
+#polyanaFiltersV3.on{display:block}
+#polyanaFiltersV3 .psv3Backdrop{position:absolute;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#polyanaFiltersV3 .psv3Sheet{position:absolute;left:0;right:0;bottom:0;max-height:91vh;overflow:auto;background:#101014;border:1px solid #34343d;border-bottom:0;border-radius:26px 26px 0 0;padding:18px 15px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -24px 80px rgba(0,0,0,.55);color:#fff}
+#polyanaFiltersV3 .psv3Top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding-bottom:13px}
+#polyanaFiltersV3 .psv3Top span{display:block;color:#c8ff3d;font-size:8px;font-weight:1000;letter-spacing:.14em;margin-bottom:5px}
+#polyanaFiltersV3 .psv3Top h2{margin:0;font-size:29px;line-height:1;font-weight:1000;letter-spacing:-.05em}
+#polyanaFiltersV3 .psv3Close{width:40px;height:40px;border-radius:50%;border:1px solid #383842;background:#17171d;color:#fff;font-size:23px}
+#polyanaFiltersV3 .psv3Section{padding:14px 0;border-top:1px solid #26262d}
+#polyanaFiltersV3 .psv3SectionHead{display:flex;align-items:end;justify-content:space-between;gap:8px;margin-bottom:9px}
+#polyanaFiltersV3 .psv3SectionHead h3{margin:0;color:#f4f1f5;font-size:10px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase}
+#polyanaFiltersV3 .psv3SectionHead span{color:#716b74;font-size:7px}
+#polyanaFiltersV3 .psv3Choices{display:flex;flex-wrap:wrap;gap:7px}
+#polyanaFiltersV3 .psv3Chip{min-height:40px;padding:0 13px;border:1px solid #34343d;border-radius:12px;background:#121217;color:#cbc5cd;font-size:9px;font-weight:900}
+#polyanaFiltersV3 .psv3Chip.on{border-color:#718b25;background:#1a220f;color:#dfff82;box-shadow:0 0 20px rgba(200,255,61,.11)}
+#polyanaFiltersV3 .psv3NoData{border:1px dashed #373740;border-radius:13px;background:#0d0d11;padding:11px 12px}
+#polyanaFiltersV3 .psv3NoData b{display:block;color:#c8ff3d;font-size:8px;margin-bottom:4px}
+#polyanaFiltersV3 .psv3NoData span{display:block;color:#77717a;font-size:8px;line-height:1.45}
+#polyanaFiltersV3 .psv3Select{width:100%;min-height:47px;border:1px solid #363640;border-radius:13px;background:#121217;color:#fff;padding:0 12px;font-size:10px;font-weight:800}
+#polyanaFiltersV3 .psv3Actions{position:sticky;bottom:calc(-24px - env(safe-area-inset-bottom));display:grid;grid-template-columns:.43fr 1fr;gap:8px;margin-top:5px;padding:13px 0 calc(24px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#101014 18%,#101014)}
+#polyanaFiltersV3 .psv3Reset,#polyanaFiltersV3 .psv3Apply{min-height:50px;border-radius:14px;font-size:9px;font-weight:1000}
+#polyanaFiltersV3 .psv3Reset{border:1px solid #383842;background:#15151a;color:#a39da6}
+#polyanaFiltersV3 .psv3Reset:disabled{opacity:.35}
+#polyanaFiltersV3 .psv3Apply{border:0;background:#c8ff3d;color:#11150b}
+#polyana .psv3Empty{margin-top:10px}
+@media(max-width:390px){#polyanaFiltersV3 .psv3Sheet{padding-left:12px;padding-right:12px}#polyanaFiltersV3 .psv3Chip{padding:0 11px}}
