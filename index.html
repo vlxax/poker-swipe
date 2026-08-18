@@ -4761,5 +4761,114 @@ document.documentElement.dataset.pokerSwipeVersion='62-nav-hard-router';
 })();
 </script>
 
+<script>
+/* My Hands · PokerSwipe solver integration (CFR range analysis).
+   Replaces the legacy GTO BRAIN panel in showHand with a real async solver
+   review: loading → solve (cancelable, stale-protected) → cached review model.
+   Kept as a classic script + dynamic import() so it shares the app's globals
+   (esc, $, renderMy, _showHandV16) and can still load the pure-ESM solver. */
+(function(){
+  var VERDICT_RU={GOOD:'ХОРОШО',INACCURACY:'НЕТОЧНОСТЬ',MISTAKE:'ОШИБКА',BLUNDER:'ГРУБАЯ ОШИБКА'};
+  var STREET_RU={flop:'ФЛОП',turn:'ТЁРН',river:'РИВЕР',preflop:'ПРЕФЛОП'};
+  var solver=null,cacheInst=null,activeCtrl=null,activeKey=null;
+
+  // Base renderer is the ORIGINAL (pre-GTO-BRAIN) showHand.
+  var baseShow=(typeof _showHandV16==='function')?_showHandV16:(typeof showHand==='function')?showHand:null;
+
+  function fmtBB(n){ if(n==null||!isFinite(n))return '—'; return Number(n).toFixed(2); }
+  function actionLabel(a){ if(!a)return '—'; var s=String(a.type||'').toUpperCase(); if(a.sizePot!=null)s+=' '+Math.round(a.sizePot*100)+'%'; if(a.amountBB!=null)s+=' · '+fmtBB(a.amountBB)+' BB'; return s; }
+  function vru(t){ return VERDICT_RU[t]||String(t||'—'); }
+  function sru(s){ return STREET_RU[s]||String(s||'?').toUpperCase(); }
+  function confLevelRu(c){ return c==='high'?'высокая':c==='medium'?'средняя':'низкая'; }
+  var CONCEPT_RU={blunder:'Грубая ошибка',mistake:'Ошибка',mixed_strategy:'Смешанная стратегия',close_decision:'Почти равное EV',sizing_efficiency:'Эффективность сайзинга',pot_geometry:'Пот-геометрия (SPR)',value:'Value-рука',fold_equity:'Fold equity',bluff_catch:'Bluff-catch на ривере',range_advantage_and_sizing:'Преимущество по диапазону и сайзинг'};
+  function conceptRu(d){ var c=d&&d.explanation&&d.explanation.concept; return CONCEPT_RU[c]||null; }
+  function explainRu(d){
+    var out=[],took=d.actionTaken,rec=d.recommendedAction;
+    if(took&&rec)out.push('«'+actionLabel(took)+'» вместо «'+actionLabel(rec)+'».');
+    if(d.evLossBB!=null)out.push('Потеря EV ≈ '+fmtBB(d.evLossBB)+' BB.');
+    if(d.recommendedFrequency!=null)out.push('Оптимально — в '+Math.round(d.recommendedFrequency*100)+'% случаев.');
+    if(!out.length)out.push('Нет данных.');
+    return out.join(' ');
+  }
+
+  function loadSolver(){
+    return Promise.all([
+      import('./solver/src/integration/reviewModel.js'),
+      import('./solver/src/integration/cache.js'),
+      import('./solver/src/integration/pokerSwipeHandAdapter.js')
+    ]).then(function(m){
+      solver={ reviewPokerSwipeHandAsync:m[0].reviewPokerSwipeHandAsync, createHandCache:m[1].createHandCache, handContentKey:m[2].handContentKey };
+      var storage=null;
+      try{ var s=window.localStorage,p='__ps_solver_probe__'; s.setItem(p,'1'); s.removeItem(p); storage=s; }catch(e){ storage=null; }
+      cacheInst=solver.createHandCache({ storage:storage, maxEntries:60 });
+    }).catch(function(){ solver=null; });
+  }
+
+  function abortActive(){ if(activeCtrl){ try{ activeCtrl.abort(); }catch(e){} } activeCtrl=null; activeKey=null; }
+
+  function renderIdle(host,h,opts){
+    opts=opts||{};
+    host.innerHTML='<div class="regReport"><span class="ey">◉ SOLVER · RANGE ANALYSIS</span><p>'+(opts.error?esc(opts.error):'Солвер пересчитает твои решения по диапазону: EV, EV loss, рекомендации по улицам и главную ошибку. Займёт несколько секунд.')+'</p><button class="primary" id="solverAnalyze">РАЗОБРАТЬ ЧЕРЕЗ SOLVER →</button></div>';
+    var btn=host.querySelector('#solverAnalyze');
+    if(btn)btn.onclick=function(){ runSolver(host,h); };
+  }
+
+  function renderAnalyzing(host){
+    host.innerHTML='<div class="regReport"><span class="ey">◉ SOLVER · CFR-АНАЛИЗ</span><p class="mut">Считаю диапазонный разбор… (несколько секунд на решение).</p><button class="secondary" id="solverCancel">ОТМЕНИТЬ</button></div>';
+    var cancel=host.querySelector('#solverCancel');
+    if(cancel)cancel.onclick=function(){ abortActive(); renderIdle(host,null,{error:'Анализ отменён.'}); };
+  }
+
+  function runSolver(host,h){
+    if(!solver){ renderIdle(host,h,{error:'Солвер ещё не загружен. Повтори попытку через секунду.'}); return; }
+    renderAnalyzing(host);
+    var ctrl=new AbortController();
+    abortActive();
+    activeCtrl=ctrl;
+    var key;
+    try{ key=solver.handContentKey(h); }catch(e){ key=String(Date.now()); }
+    activeKey=key;
+    solver.reviewPokerSwipeHandAsync(h,{ signal:ctrl.signal, cache:cacheInst }).then(function(model){
+      if(activeKey!==key)return;
+      if(!document.body.contains(host))return;
+      if(model.status==='CANCELLED'){ renderIdle(host,h,{error:'Анализ отменён.'}); return; }
+      renderModel(host,h,model);
+    }).catch(function(){
+      if(activeKey!==key)return;
+      if(!document.body.contains(host))return;
+      renderIdle(host,h,{error:'Не удалось провести анализ этой руки.'});
+    }).finally(function(){ if(activeCtrl===ctrl)activeCtrl=null; });
+  }
+
+  function renderModel(host,h,model){
+    var overall=model.overall||{}, decisions=model.decisions||[], parts=[];
+    if(model.status==='READY'){
+      parts.push('<div class="verdict"><span class="ey">SOLVER · RANGE ANALYSIS · EV LOSS</span><h2>'+esc(vru(overall.verdict))+' · '+fmtBB(overall.totalEvLossBB)+' BB</h2><p>'+decisions.length+' точек решений · решено '+ (overall.solvedDecisions||0) +' · уверенность '+confLevelRu(overall.confidence&&overall.confidence.level)+'</p></div>');
+      if(overall.biggestMistake)parts.push('<div class="regReport"><span class="ey">ГЛАВНАЯ ОШИБКА</span><h3>'+sru(overall.biggestMistake.street)+' · '+fmtBB(overall.biggestMistake.evLossBB)+' BB</h3></div>');
+      decisions.filter(function(d){return d.solved;}).forEach(function(d){
+        parts.push('<div class="regReport"><span class="ey">'+sru(d.street)+(d.biggest?' · ГЛАВНАЯ ОШИБКА':'')+' · '+esc(vru(d.severity))+'</span><div class="grid2"><div><b>ТЫ СДЕЛАЛ</b><p>'+esc(actionLabel(d.actionTaken))+'</p></div><div><b>РЕКОМЕНДАЦИЯ</b><p>'+esc(actionLabel(d.recommendedAction))+(d.recommendedFrequency!=null?' · '+Math.round(d.recommendedFrequency*100)+'%':'')+'</p></div></div><p class="mut small">EV loss '+fmtBB(d.evLossBB)+' BB · уверенность '+confLevelRu(d.confidence&&d.confidence.level)+'</p><p>'+esc(explainRu(d))+(conceptRu(d)?' <span class="mut small">· концепт: '+esc(conceptRu(d))+'</span>':'')+'</p></div>');
+      });
+      if(model.trainingCandidate)parts.push('<div class="verdict"><span class="ey">КУДА ТРЕНИРОВАТЬ</span><h3>'+sru(model.trainingCandidate.street)+' · '+esc(String(model.trainingCandidate.actionTaken||'').toUpperCase())+' → '+esc(String(model.trainingCandidate.recommendedAction||'').toUpperCase())+'</h3><p>difficulty '+esc(model.trainingCandidate.difficultyScore)+'</p></div>');
+    }else{
+      parts.push('<div class="verdict"><span class="ey">SOLVER · RANGE ANALYSIS</span><h2>'+esc(model.status)+'</h2><p>'+esc((model.warnings||[]).join(' '))+'</p></div>');
+    }
+    var warns=(model.warnings||[]).filter(Boolean);
+    if(warns.length)parts.push('<p class="mut small">'+warns.map(esc).join(' · ')+'</p>');
+    parts.push('<button class="secondary" id="solverAgain">ПОВТОРИТЬ АНАЛИЗ</button>');
+    host.innerHTML=parts.join('');
+    var again=host.querySelector('#solverAgain');
+    if(again)again.onclick=function(){ runSolver(host,h); };
+  }
+
+  window.showHand=function(h){ abortActive(); if(baseShow)baseShow(h); var root=document.querySelector('#myArea .panel'); if(!root)return; var back=document.querySelector('#myBack'); var host=document.createElement('div'); host.className='solverHost'; if(back)back.insertAdjacentElement('beforebegin',host); else root.appendChild(host); renderIdle(host,h); };
+
+  // Returning to the list must cancel any in-flight analysis.
+  var baseRenderMy=(typeof renderMy==='function')?renderMy:null;
+  if(baseRenderMy)window.renderMy=function(){ abortActive(); baseRenderMy(); };
+
+  loadSolver();
+})();
+</script>
+
 </body>
 </html>
