@@ -1,0 +1,120 @@
+/* PokerSwipe 3D Bottom Navigation — Figma Make visual port */
+
+.nav[data-ps3d-build]{
+  border-top:1px solid rgba(255,255,255,.055)!important;
+  background:rgba(8,8,10,.96)!important;
+  box-shadow:0 -14px 36px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+.nav[data-ps3d-build] [data-nav]{
+  position:relative!important;
+  display:flex!important;
+  flex:1 1 0!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:4px!important;
+  min-width:0!important;
+  min-height:76px!important;
+  padding:8px 2px calc(10px + env(safe-area-inset-bottom))!important;
+  border:0!important;
+  background:transparent!important;
+  outline:0!important;
+  -webkit-tap-highlight-color:transparent!important;
+  overflow:visible!important;
+}
+
+.nav[data-ps3d-build] [data-nav]::before{
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:18%;
+  right:18%;
+  height:2px;
+  border-radius:0 0 5px 5px;
+  background:transparent;
+  box-shadow:none;
+  transition:background .22s ease,box-shadow .22s ease;
+}
+
+.nav[data-ps3d-build] [data-nav].on::before,
+.nav[data-ps3d-build] [data-nav].active::before,
+.nav[data-ps3d-build] [data-nav][aria-current="page"]::before{
+  background:linear-gradient(90deg,transparent,#c8f135 38%,#c8f135 62%,transparent);
+  box-shadow:0 0 16px 3px rgba(200,241,53,.72);
+}
+
+.nav[data-ps3d-build] .ps3d-icon{
+  position:relative;
+  z-index:1;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform:translateY(0) scale(1);
+  transform-origin:50% 55%;
+  transition:transform .26s cubic-bezier(.34,1.56,.64,1),filter .22s ease;
+  pointer-events:none;
+}
+
+.nav[data-ps3d-build] .ps3d-icon svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon{
+  width:37px;
+  height:37px;
+}
+
+.nav[data-ps3d-build] [data-nav].on .ps3d-icon,
+.nav[data-ps3d-build] [data-nav].active .ps3d-icon,
+.nav[data-ps3d-build] [data-nav][aria-current="page"] .ps3d-icon{
+  transform:translateY(-2px) scale(1.12);
+  filter:drop-shadow(0 3px 8px rgba(200,241,53,.28));
+}
+
+.nav[data-ps3d-build] [data-ps3d-type="meadow"].on .ps3d-icon,
+.nav[data-ps3d-build] [data-ps3d-type="meadow"].active .ps3d-icon,
+.nav[data-ps3d-build] [data-ps3d-type="meadow"][aria-current="page"] .ps3d-icon{
+  transform:translateY(-3px) scale(1.18);
+  filter:drop-shadow(0 3px 10px rgba(200,241,53,.34));
+}
+
+.nav[data-ps3d-build] .ps3d-label{
+  max-width:100%;
+  color:#4a4a50;
+  font-family:"Barlow Condensed",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:9px;
+  line-height:1.05;
+  font-weight:800;
+  letter-spacing:.075em;
+  text-align:center;
+  text-transform:uppercase;
+  white-space:normal;
+  transition:color .22s ease,text-shadow .22s ease;
+  pointer-events:none;
+}
+
+.nav[data-ps3d-build] [data-nav].on .ps3d-label,
+.nav[data-ps3d-build] [data-nav].active .ps3d-label,
+.nav[data-ps3d-build] [data-nav][aria-current="page"] .ps3d-label{
+  color:#c8f135;
+  text-shadow:0 0 10px rgba(200,241,53,.18);
+}
+
+@media(max-width:380px){
+  .nav[data-ps3d-build] [data-nav]{
+    min-height:70px!important;
+    padding-left:1px!important;
+    padding-right:1px!important;
+  }
+  .nav[data-ps3d-build] .ps3d-icon{width:31px;height:31px}
+  .nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon{width:34px;height:34px}
+  .nav[data-ps3d-build] .ps3d-label{font-size:8px;letter-spacing:.055em}
+}
