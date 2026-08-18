@@ -1,0 +1,7 @@
+{
+  "name": "training-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PokerSwipe personalised training UI: pure view models + session controller wiring the solver-driven training layer to the existing #daily screen."
+}
