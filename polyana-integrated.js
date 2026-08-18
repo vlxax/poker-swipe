@@ -1,5 +1,6 @@
 (() => {
 'use strict';
+window.__POLYANA_BUILD='filters-v2-no-quick-2026-08-18';
 
 const ROOT_ID='psPolyanaArea';
 const DATA_URLS=['data/moscow_schedule_today.json','data/live_polyana.json'];
