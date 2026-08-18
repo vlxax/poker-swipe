@@ -15,6 +15,7 @@ import {
 import { buildGameTree } from '../tree/treeBuilder.js';
 import { solveCFR as solveCFRCore } from '../cfr/cfrSolver.js';
 import { solvePreflop as solvePreflopCore } from '../cfr/cfrSolver.js';
+import { analyzeHand as analyzeHandCore } from '../hand/handAnalyzer.js';
 
 function gameSummary(tree) {
   return {
@@ -153,6 +154,15 @@ export const PokerSwipeSolver = {
         _tree: r._tree
       };
     })(input, options);
+  },
+
+  // Analyze a played heads-up hand street by street: reconstruct the Hero
+  // decision spots and re-solve each with CFR, returning per-decision EV /
+  // strategy / explanation, total EV lost, the biggest mistake and interesting
+  // training spots. Performance-guarded (adaptive iterations, max nodes / solve
+  // time, cancellation, chance pruning).
+  async analyzeHand(input = {}, options = {}) {
+    return catchErrors(() => analyzeHandCore(input, options))(input, options);
   },
 
   // Root / aggregate strategy for a solved (or freshly solved) game.

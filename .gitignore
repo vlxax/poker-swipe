@@ -1,0 +1,8 @@
+# Node dependencies
+node_modules/
+
+# Logs
+*.log
+
+# SourceCraft assistant workspace
+.codeassistant/

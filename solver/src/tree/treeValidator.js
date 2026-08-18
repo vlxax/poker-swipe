@@ -58,6 +58,27 @@ export function validateTreeConfig(input = {}) {
     assert(Number.isFinite(potBB) && potBB > 0, 'INVALID_POT', 'potBB must be a positive number');
   }
 
+  // Optional starting betting state for postflop roots. This lets a spot begin
+  // with one player facing an outstanding bet (e.g. Hero facing a villain bet
+  // mid-hand) rather than always starting from an equal pot split. The invariant
+  // pot === committed.hero + committed.villain is preserved so the CFR payoff
+  // math is unchanged. When absent the root starts with an equal split.
+  let startingCommitted = null;
+  if (!isPreflop && input.startingCommitted != null) {
+    const sc = input.startingCommitted;
+    const hero = Number(sc.hero);
+    const villain = Number(sc.villain);
+    assert(Number.isFinite(hero) && hero >= 0, 'INVALID_CONFIG',
+      'startingCommitted.hero must be a non-negative number');
+    assert(Number.isFinite(villain) && villain >= 0, 'INVALID_CONFIG',
+      'startingCommitted.villain must be a non-negative number');
+    assert(Math.abs(hero + villain - potBB) < 1e-6, 'INVALID_CONFIG',
+      'startingCommitted must sum to potBB');
+    assert(effectiveStackBB >= hero && effectiveStackBB >= villain, 'INVALID_CONFIG',
+      'effectiveStackBB must cover startingCommitted');
+    startingCommitted = { hero, villain };
+  }
+
   assert(input.heroRange != null, 'MISSING_INPUT', 'heroRange is required');
   assert(input.villainRange != null, 'MISSING_INPUT', 'villainRange is required');
   assertValidRange(input.heroRange, 'heroRange');
@@ -72,6 +93,7 @@ export function validateTreeConfig(input = {}) {
     villainRange: input.villainRange,
     heroPosition,
     villainPosition,
-    blinds
+    blinds,
+    startingCommitted
   };
 }

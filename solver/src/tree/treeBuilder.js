@@ -45,7 +45,12 @@ export function buildGameTree(input = {}) {
     rootFirstToAct = firstToAct;
   } else {
     const halfPot = game.potBB / 2;
-    committed = { hero: halfPot, villain: halfPot };
+    committed = game.startingCommitted || { hero: halfPot, villain: halfPot };
+    if (game.startingCommitted) {
+      // Hero (or the root actor) may already face an outstanding bet carried in
+      // from an earlier street; preserve it so the root is a real decision.
+      rootFirstToAct = cfg.firstToAct;
+    }
   }
 
   const stats = {
@@ -315,8 +320,13 @@ export function buildGameTree(input = {}) {
       Math.max(0, committed.villain - committed.hero), rootFirstToAct, 0, false, 0, [], 0, []
     );
   } else {
+    const toCall = game.startingCommitted
+      ? (rootFirstToAct === 'hero'
+          ? Math.max(0, committed.villain - committed.hero)
+          : Math.max(0, committed.hero - committed.villain))
+      : 0;
     root = buildStreet(
-      game.street, game.board, game.potBB, committed, 0, cfg.firstToAct, 0, false, [], 0, []
+      game.street, game.board, game.potBB, committed, toCall, rootFirstToAct, 0, false, [], 0, []
     );
   }
 
