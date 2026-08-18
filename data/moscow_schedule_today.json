@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/club",
-  "updated_at": "2026-08-18T11:04:57+03:00",
+  "updated_at": "2026-08-18T12:55:23+03:00",
   "date": "2026-08-18",
   "city": "Москва",
   "events": [
@@ -259,6 +259,19 @@
       "fee_rub": 1000,
       "source_url": "https://pokernomoney.ru/club/c~raise",
       "address": "ул. Азовская 18 (4 этаж)",
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null
+    },
+    {
+      "date": "2026-08-18",
+      "time": "20:00",
+      "club": "BlackWood",
+      "tournament": "Double Rating",
+      "fee_rub": 1500,
+      "source_url": "https://pokernomoney.ru/club/c~blackwood",
+      "address": "Олимпийский проспект, 12",
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
