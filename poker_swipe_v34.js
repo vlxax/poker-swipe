@@ -50,3 +50,38 @@
   document.documentElement.dataset.pokerSwipeVersion='34.0';
   const build=q('.build'); if(build)build.textContent='V34 УМНЫЙ РАЗБОР';
 })();
+
+/* PokerSwipe — safe loader for the Figma 3D bottom navigation.
+   Kept outside the V34 brain guard so it always runs. */
+(() => {
+  'use strict';
+  const CSS_ID='poker3d-nav-css';
+  const SCRIPT_ID='poker3d-nav-script';
+
+  if(!document.getElementById(CSS_ID)){
+    const link=document.createElement('link');
+    link.id=CSS_ID;
+    link.rel='stylesheet';
+    link.href='poker3d-nav.css';
+    document.head.appendChild(link);
+  }
+
+  function loadPoker3DNav(){
+    if(window.PokerSwipe3DNav){
+      window.PokerSwipe3DNav.refresh?.();
+      return;
+    }
+    if(document.getElementById(SCRIPT_ID))return;
+    const script=document.createElement('script');
+    script.id=SCRIPT_ID;
+    script.src='poker3d-nav.js';
+    script.defer=true;
+    document.body.appendChild(script);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',loadPoker3DNav,{once:true});
+  }else{
+    loadPoker3DNav();
+  }
+})();
