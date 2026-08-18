@@ -16,6 +16,11 @@ export { SolverError } from './api/errors.js';
 // Strategic CFR solver surface.
 export { buildGameTree } from './tree/treeBuilder.js';
 export { solveCFR, solvePreflop } from './cfr/cfrSolver.js';
+export { analyzeHand } from './hand/handAnalyzer.js';
+export { replayHand } from './hand/replayHand.js';
+export { buildHandExplanation } from './hand/handExplanation.js';
+export { inspectDecision, detectInterestingSpots } from './hand/interestingSpots.js';
+export { conceptFor, conceptList } from './hand/concepts.js';
 export { buildBetSizingModel, calculateGeometricSizing, pruneSizes, pickSpread, mergeNearDuplicates } from './abstraction/betSizingModel.js';
 export { preflopLegalActions, preflopApplyAction } from './preflop/preflopActions.js';
 export { CFRTrainer } from './cfr/cfrTrainer.js';
