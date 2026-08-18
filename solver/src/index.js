@@ -38,5 +38,31 @@ export { buildSolverExplanation } from './explanations/explanationBuilder.js';
 export { adaptPokerSwipeHand, defaultRangesFor, handContentKey, stableHash } from './integration/pokerSwipeHandAdapter.js';
 export { buildReviewModel, reviewPokerSwipeHandAsync } from './integration/reviewModel.js';
 export { createHandCache, stableHash as cacheHash } from './integration/cache.js';
+// Personalised training layer.
+export {
+  LEAKS, classifyConcept, leakLabelRu, leakDefinitionRu, isKnownLeak, conceptFamilyLabelRu
+} from './training/concepts.js';
+export { normalizeCandidate, candidateIdentity, ANALYZER_VERSION } from './training/candidateNormalizer.js';
+export {
+  createLeakProfile, recordLeakEvent, buildLeakProfile, leakEventFromCandidate, TREND_MIN_SAMPLE
+} from './training/leakProfile.js';
+export { computePriority, rankLeaks } from './training/priority.js';
+export { isTrivialDecision, validateDrillDecision, distinctActions } from './training/drillValidator.js';
+export {
+  dealCards, nextVariant, buildScenarioInput, classifyDifficulty, actionLabelRu,
+  buildDrillModel, generateDrill
+} from './training/drillGenerator.js';
+export {
+  gradeForLoss, feedbackForGrade, gradeAnswer, GRADE_ORDER
+} from './training/answerEvaluator.js';
+export {
+  createConceptProgress, recordAttempt, buildProgress, MIN_SAMPLE as PROGRESS_MIN_SAMPLE
+} from './training/progress.js';
+export { buildTrainingSession, getDailyPersonalizedTraining as planDailyTraining, recentDrilledKeys } from './training/sessionBuilder.js';
+export { createTrainingStore, STORE_VERSION } from './training/trainingStore.js';
+export {
+  getTopLeaks, recordCandidate, recordTrainingResult,
+  getDailyPersonalizedTraining, getDailyPersonalizedTrainingAsync, buildPersonalizedSessionAsync
+} from './training/personalizedTraining.js';
 
 export default PokerSwipeSolver;
