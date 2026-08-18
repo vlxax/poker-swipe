@@ -6,15 +6,15 @@
 <title>Карта клубов Москвы</title>
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-#map{position:relative;width:100%;height:100%;overflow:hidden;background:radial-gradient(circle at 50% 45%,#182111 0,#0e100e 45%,#090a09 100%);touch-action:none;cursor:grab;isolation:isolate}
+#map{position:relative;width:100%;height:100%;overflow:hidden;background:#0d0f0d;touch-action:none;cursor:grab;isolation:isolate}
 #map.dragging{cursor:grabbing}
 .tiles,.markers{position:absolute;inset:0;overflow:hidden}
-.tile{position:absolute;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;filter:brightness(.46) saturate(.76) contrast(1.18) hue-rotate(18deg)}
+.tile{position:absolute;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;filter:brightness(.47) saturate(.74) contrast(1.18) hue-rotate(18deg)}
 .markers{pointer-events:none}
 .marker{position:absolute;left:0;top:0;width:30px;height:30px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}
 .marker span{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 12px #c8ff3d99}
 .marker:active span{transform:scale(.82)}
-.controls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:11px;overflow:hidden;background:#0d0f0dee;box-shadow:0 4px 18px #0008}
+.controls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:11px;overflow:hidden;background:#0d0f0eee;box-shadow:0 4px 18px #0008}
 .controls button{width:38px;height:38px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}
 .controls button:last-child{border-bottom:0}
 .status{position:absolute;left:58px;right:10px;top:10px;z-index:6;background:#090b09e8;border:1px solid #33392d;border-radius:11px;padding:9px 11px;color:#c8c3ca;font-size:11px;line-height:1.3;pointer-events:none}
@@ -37,24 +37,21 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;col
     <button type="button" data-plus aria-label="Приблизить">+</button>
     <button type="button" data-minus aria-label="Отдалить">−</button>
   </div>
-  <div class="status" id="status">Загружаем клубы…</div>
+  <div class="status" id="status">Открываем карту…</div>
   <div class="attr">© OpenStreetMap contributors</div>
 </div>
 
 <script>
 (()=>{'use strict';
 
-/* FIX 1: iframe itself is forced to occupy the whole Polyana map section.
-   This is same-origin, so it safely fixes the old 300px iframe default width
-   without touching index.html or the rest of Polyana. */
 try{
   if(window.frameElement){
     const f=window.frameElement;
     f.style.display='block';
     f.style.width='100%';
     f.style.maxWidth='100%';
-    f.style.height=matchMedia('(max-width: 600px)').matches?'520px':'620px';
-    f.style.minHeight='420px';
+    f.style.minHeight='480px';
+    f.style.height=(matchMedia('(max-width:600px)').matches?'560px':'640px');
     f.style.border='0';
   }
 }catch(_){}
@@ -62,299 +59,149 @@ try{
 const MOSCOW=[55.7558,37.6173];
 const BOUNDS={minLat:54.90,maxLat:56.30,minLng:36.65,maxLng:39.05};
 const MIN_Z=8,MAX_Z=17;
-const CACHE_PREFIX='psp-map-v5:';
-const FAIL_TTL=24*60*60*1000;
-
-/* Verified seed points only. No invented coordinates. */
-const SEED={
-  'minds':[55.682229,37.580647],
-  'joker-poker-club-moscow':[55.582987,37.595142],
-  'pride':[55.771803,37.684111],
-  'check-check-club':[55.761279,37.663018],
-  'heads-up':[55.777318,37.636410]
-};
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const valid=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=BOUNDS.minLat&&lat<=BOUNDS.maxLat&&lng>=BOUNDS.minLng&&lng<=BOUNDS.maxLng;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const keyOf=c=>String(c.id||c.name||'club')+'|'+String(c.address||'');
+const valid=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=BOUNDS.minLat&&lat<=BOUNDS.maxLat&&lng>=BOUNDS.minLng&&lng<=BOUNDS.maxLng;
+function project(lat,lng,z){const n=256*Math.pow(2,z),s=Math.sin(clamp(lat,-85.0511,85.0511)*Math.PI/180);return{x:(lng+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n}}
+function unproject(x,y,z){const n=256*Math.pow(2,z);return[180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n))),x/n*360-180]}
+function safeCenter(lat,lng){return[clamp(lat,BOUNDS.minLat,BOUNDS.maxLat),clamp(lng,BOUNDS.minLng,BOUNDS.maxLng)]}
 
-function project(lat,lng,z){
-  const n=256*Math.pow(2,z);
-  const s=Math.sin(clamp(lat,-85.0511,85.0511)*Math.PI/180);
-  return {x:(lng+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n};
-}
-function unproject(x,y,z){
-  const n=256*Math.pow(2,z);
-  return [180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n))),x/n*360-180];
-}
-function safeCenter(lat,lng){return [clamp(lat,BOUNDS.minLat,BOUNDS.maxLat),clamp(lng,BOUNDS.minLng,BOUNDS.maxLng)]}
-
-function getCached(c){
-  const direct=[Number(c.lat),Number(c.lng)];
-  if(valid(...direct))return direct;                         // FIX 2: honor static lat/lng first.
-  if(SEED[c.id])return SEED[c.id];
-  try{
-    const v=JSON.parse(localStorage.getItem(CACHE_PREFIX+keyOf(c))||'null');
-    if(v?.failed && Date.now()-Number(v.at||0)<FAIL_TTL)return 'failed';
-    if(v&&valid(+v.lat,+v.lng))return [+v.lat,+v.lng];
-  }catch(_){}
-  return null;
-}
-function saveCoord(c,lat,lng,source){
-  try{localStorage.setItem(CACHE_PREFIX+keyOf(c),JSON.stringify({lat,lng,source,at:Date.now()}))}catch(_){}
-}
-function saveFail(c){
-  try{localStorage.setItem(CACHE_PREFIX+keyOf(c),JSON.stringify({failed:true,at:Date.now()}))}catch(_){}
-}
-
-async function geocode(c,signal){
-  const address=String(c.address||'').replace(/\([^)]*(?:этаж|подъезд|метро)[^)]*\)/ig,'').trim();
-  const q=`${address}, Москва, Россия`;
-  const urls=[
-    'https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=4&lat=55.7558&lon=37.6173&lang=ru',
-    'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=4&countrycodes=ru&addressdetails=1&q='+encodeURIComponent(q)
-  ];
-  for(const url of urls){
-    try{
-      const r=await fetch(url,{signal,headers:{Accept:'application/json'}});
-      if(!r.ok)continue;
-      const d=await r.json();
-      const rows=Array.isArray(d)?d:(d.features||[]);
-      for(const row of rows){
-        let lat,lng,label='';
-        if(row.geometry?.coordinates){
-          lng=+row.geometry.coordinates[0];lat=+row.geometry.coordinates[1];
-          label=String(row.properties?.name||row.properties?.city||row.properties?.state||'');
-        }else{
-          lat=+row.lat;lng=+row.lon;label=String(row.display_name||'');
-        }
-        if(!valid(lat,lng))continue;
-        /* Moscow bounding box is the hard validator; don't accept random Russia matches. */
-        saveCoord(c,lat,lng,url.includes('photon')?'Photon':'Nominatim');
-        return [lat,lng];
-      }
-    }catch(e){if(signal?.aborted)throw e}
-  }
-  saveFail(c);
-  return null;
-}
-
-const el=document.getElementById('map');
-const tiles=el.querySelector('.tiles');
-const markers=el.querySelector('.markers');
-const popup=el.querySelector('.popup');
-const status=document.getElementById('status');
-
+const el=document.getElementById('map'),tiles=el.querySelector('.tiles'),markers=el.querySelector('.markers'),popup=el.querySelector('.popup'),status=document.getElementById('status');
 let center=[...MOSCOW],zoom=10,drag=null,raf=0,pinch=null;
-const coords=new Map();
-const tileEls=new Map();
+const coords=new Map(), markerEls=new Map(), tileEls=new Map();
 
-function topLeft(){
-  const cp=project(center[0],center[1],zoom);
-  return {x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2};
-}
-function position(lat,lng){
-  const p=project(lat,lng,zoom),tl=topLeft();
-  return {x:p.x-tl.x,y:p.y-tl.y};
-}
+function topLeft(){const cp=project(center[0],center[1],zoom);return{x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
+function position(lat,lng){const p=project(lat,lng,zoom),tl=topLeft();return{x:p.x-tl.x,y:p.y-tl.y}}
 
-/* FIX 3: keep tile DOM nodes instead of destroying/recreating every pointer move. */
 function renderTiles(w,h,tl){
-  const ts=256,max=Math.pow(2,zoom);
-  const minX=Math.floor(tl.x/ts)-1,maxX=Math.floor((tl.x+w)/ts)+1;
-  const minY=Math.floor(tl.y/ts)-1,maxY=Math.floor((tl.y+h)/ts)+1;
-  const wanted=new Set();
+  const ts=256,max=Math.pow(2,zoom),wanted=new Set();
+  const minX=Math.floor(tl.x/ts)-1,maxX=Math.floor((tl.x+w)/ts)+1,minY=Math.floor(tl.y/ts)-1,maxY=Math.floor((tl.y+h)/ts)+1;
   for(let ty=minY;ty<=maxY;ty++)for(let tx=minX;tx<=maxX;tx++){
     if(ty<0||ty>=max)continue;
     const wrap=((tx%max)+max)%max,key=`${zoom}/${wrap}/${ty}/${tx}`;
     wanted.add(key);
     let img=tileEls.get(key);
     if(!img){
-      img=document.createElement('img');
-      img.className='tile';img.alt='';img.draggable=false;
+      img=document.createElement('img');img.className='tile';img.alt='';img.draggable=false;
       img.src=`https://tile.openstreetmap.org/${zoom}/${wrap}/${ty}.png`;
       tileEls.set(key,img);tiles.appendChild(img);
     }
-    img.style.left=(tx*ts-tl.x)+'px';
-    img.style.top=(ty*ts-tl.y)+'px';
+    img.style.left=(tx*ts-tl.x)+'px';img.style.top=(ty*ts-tl.y)+'px';
   }
-  for(const [key,img] of tileEls){
-    if(!wanted.has(key)){img.remove();tileEls.delete(key)}
-  }
+  for(const [key,img] of tileEls)if(!wanted.has(key)){img.remove();tileEls.delete(key)}
 }
 
 function render(){
   cancelAnimationFrame(raf);
   raf=requestAnimationFrame(()=>{
-    const w=el.clientWidth||390,h=el.clientHeight||520,tl=topLeft();
+    const w=el.clientWidth||390,h=el.clientHeight||560,tl=topLeft();
     renderTiles(w,h,tl);
-    markers.querySelectorAll('[data-club]').forEach(m=>{
-      const rec=coords.get(m.dataset.club);if(!rec)return;
+    for(const [id,m] of markerEls){
+      const rec=coords.get(id);if(!rec)continue;
       const p=position(rec.lat,rec.lng);
       m.style.transform=`translate(${Math.round(p.x)}px,${Math.round(p.y)}px) translate(-50%,-50%)`;
       m.hidden=p.x<-35||p.y<-35||p.x>w+35||p.y>h+35;
-    });
+    }
     if(!popup.hidden&&popup.dataset.lat){
       const p=position(+popup.dataset.lat,+popup.dataset.lng);
       popup.style.left=Math.max(8,Math.min(w-232,p.x+12))+'px';
       popup.style.top=Math.max(8,Math.min(h-110,p.y-30))+'px';
     }
-  });
+  })
 }
 
-function addClub(c,co){
-  if(!co||co==='failed')return false;
-  const [lat,lng]=co;if(!valid(lat,lng))return false;
-  const id=String(c.id||c.name||'club');
+function addClub(c){
+  const lat=+c.lat,lng=+c.lng;if(!valid(lat,lng))return;
+  const id=String(c.id||c.name||Math.random());
   coords.set(id,{lat,lng,c});
-  if(!markers.querySelector(`[data-club="${CSS.escape(id)}"]`)){
-    const m=document.createElement('button');
-    m.type='button';m.className='marker';m.dataset.club=id;m.title=c.name||'Клуб';m.innerHTML='<span></span>';
-    m.addEventListener('click',e=>{
-      e.stopPropagation();
-      const rec=coords.get(id);if(!rec)return;
-      popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
-      popup.innerHTML=`<button type="button" class="close" aria-label="Закрыть">×</button>
-        <b>${esc(rec.c.name||'Клуб')}</b>
-        <span>${esc(rec.c.address||'')}</span>
-        ${rec.c.needs_manual_review?'<em>Адрес требует проверки</em>':''}`;
-      popup.querySelector('.close').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')};
-      render();
-    });
-    markers.appendChild(m);
-  }
-  return true;
+  const m=document.createElement('button');
+  m.type='button';m.className='marker';m.title=c.name||'Клуб';m.innerHTML='<span></span>';
+  m.addEventListener('click',e=>{
+    e.stopPropagation();const rec=coords.get(id);if(!rec)return;
+    popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
+    popup.innerHTML=`<button type="button" class="close" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>${rec.c.needs_manual_review?'<em>Адрес требует проверки</em>':''}`;
+    popup.querySelector('.close').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')};
+    render();
+  });
+  markerEls.set(id,m);markers.appendChild(m);
 }
 
-/* FIX 4: true fit-bounds. Once coordinates are known, all points fit on first view. */
 function fitAll(){
   const a=[...coords.values()];
   if(!a.length){center=[...MOSCOW];zoom=10;render();return}
   let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;
-  a.forEach(p=>{minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);minLng=Math.min(minLng,p.lng);maxLng=Math.max(maxLng,p.lng)});
+  for(const p of a){minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);minLng=Math.min(minLng,p.lng);maxLng=Math.max(maxLng,p.lng)}
   center=safeCenter((minLat+maxLat)/2,(minLng+maxLng)/2);
-  const w=Math.max(250,el.clientWidth-48),h=Math.max(300,el.clientHeight-80);
+  const w=Math.max(250,el.clientWidth-54),h=Math.max(300,el.clientHeight-96);
+  let chosen=MIN_Z;
   for(let z=MAX_Z;z>=MIN_Z;z--){
     const p1=project(maxLat,minLng,z),p2=project(minLat,maxLng,z);
-    if(Math.abs(p2.x-p1.x)<=w&&Math.abs(p2.y-p1.y)<=h){zoom=z;break}
+    if(Math.abs(p2.x-p1.x)<=w&&Math.abs(p2.y-p1.y)<=h){chosen=z;break}
   }
-  render();
+  zoom=chosen;render();
 }
-
-function setView(c,z=zoom){
-  center=safeCenter(+c[0],+c[1]);
-  zoom=clamp(Math.round(+z||10),MIN_Z,MAX_Z);
-  popup.hidden=true;render();
-}
-function reset(){fitAll()}
-function changeZoom(d){
-  const next=clamp(zoom+d,MIN_Z,MAX_Z);
-  if(next!==zoom){zoom=next;popup.hidden=true;render()}
-}
+function changeZoom(d){const next=clamp(zoom+d,MIN_Z,MAX_Z);if(next!==zoom){zoom=next;popup.hidden=true;render()}}
 el.querySelector('[data-plus]').onclick=e=>{e.stopPropagation();changeZoom(1)};
 el.querySelector('[data-minus]').onclick=e=>{e.stopPropagation();changeZoom(-1)};
 
-/* FIX 5: drag cannot leave Moscow region bounds. */
+const pointers=new Map();
 el.addEventListener('pointerdown',e=>{
   if(e.target.closest('button'))return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   el.setPointerCapture?.(e.pointerId);
-  if(!drag)drag={id:e.pointerId,x:e.clientX,y:e.clientY,p:project(center[0],center[1],zoom)};
-  el.classList.add('dragging');popup.hidden=true;
-});
-el.addEventListener('pointermove',e=>{
-  if(!drag||drag.id!==e.pointerId)return;
-  const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)};
-  const c=unproject(p.x,p.y,zoom);center=safeCenter(c[0],c[1]);render();
-});
-const end=e=>{
-  if(!drag||drag.id!==e.pointerId)return;
-  drag=null;el.classList.remove('dragging');
-  try{el.releasePointerCapture?.(e.pointerId)}catch(_){}
-};
-el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
-el.addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},{passive:false});
-
-/* FIX 6: mobile pinch-to-zoom. */
-const activePointers=new Map();
-el.addEventListener('pointerdown',e=>{
-  activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(activePointers.size===2){
-    const pts=[...activePointers.values()];
-    pinch={dist:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y),zoom};
-    drag=null;
+  popup.hidden=true;
+  if(pointers.size===1){
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,p:project(center[0],center[1],zoom)};
+    el.classList.add('dragging');
+  }else if(pointers.size===2){
+    drag=null;el.classList.remove('dragging');
+    const p=[...pointers.values()];
+    pinch={dist:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),zoom};
   }
 });
 el.addEventListener('pointermove',e=>{
-  if(!activePointers.has(e.pointerId))return;
-  activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pinch&&activePointers.size>=2){
-    const pts=[...activePointers.values()];
-    const dist=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
-    const delta=Math.log2(Math.max(0.2,dist/pinch.dist));
-    const next=clamp(Math.round(pinch.zoom+delta),MIN_Z,MAX_Z);
+  if(!pointers.has(e.pointerId))return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&pointers.size>=2){
+    const p=[...pointers.values()],dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+    const next=clamp(Math.round(pinch.zoom+Math.log2(Math.max(.2,dist/pinch.dist))),MIN_Z,MAX_Z);
     if(next!==zoom){zoom=next;render()}
+    return;
+  }
+  if(drag&&drag.id===e.pointerId){
+    const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)},c=unproject(p.x,p.y,zoom);
+    center=safeCenter(c[0],c[1]);render();
   }
 });
-function clearPointer(e){activePointers.delete(e.pointerId);if(activePointers.size<2)pinch=null}
-el.addEventListener('pointerup',clearPointer);el.addEventListener('pointercancel',clearPointer);
-
-window.addEventListener('resize',()=>{try{
-  if(window.frameElement){
-    window.frameElement.style.height=matchMedia('(max-width: 600px)').matches?'520px':'620px';
-  }
-}catch(_){}render()});
-window.addEventListener('message',e=>{
-  if(e.origin!==location.origin)return;
-  if(e.data?.type==='psp-map-reset')reset();
-});
+function endPointer(e){
+  pointers.delete(e.pointerId);
+  if(drag?.id===e.pointerId){drag=null;el.classList.remove('dragging')}
+  if(pointers.size<2)pinch=null;
+  try{el.releasePointerCapture?.(e.pointerId)}catch(_){}
+}
+el.addEventListener('pointerup',endPointer);el.addEventListener('pointercancel',endPointer);
+el.addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},{passive:false});
+window.addEventListener('resize',render);
+window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.type==='psp-map-reset')fitAll()});
 
 async function load(){
   try{
-    const r=await fetch('../data/moscow_club_locations_source.json?v=5',{cache:'no-store'});
-    if(!r.ok)throw new Error('clubs '+r.status);
+    /* ZERO runtime geocoding. One small ready JSON -> all available markers immediately. */
+    const r=await fetch('club_coords.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('coords '+r.status);
     const d=await r.json();
-    const clubs=(d.clubs||[]).filter(c=>c.id&&c.address);
-    let ready=0,failed=0;
-    const pending=[];
-
-    for(const c of clubs){
-      const co=getCached(c);
-      if(co==='failed'){failed++;continue}
-      if(co&&addClub(c,co))ready++;
-      else pending.push(c);
-    }
-
+    const rows=(d.clubs||[]).filter(c=>valid(+c.lat,+c.lng));
+    for(const c of rows)addClub(c);
     fitAll();
-    status.innerHTML=`На карте <b>${ready}</b> из ${clubs.length}${pending.length?' · уточняем остальные':''}${failed?' · '+failed+' адресов на паузе':''}`;
-
-    /* FIX 7: background geocoding is bounded, cached by id+address and failed lookups
-       aren't hammered again on every tab reopen. Static lat/lng will always win. */
-    const ctl=new AbortController();
-    const workers=Array.from({length:3},async()=>{
-      while(pending.length){
-        const c=pending.shift();
-        try{
-          const co=await geocode(c,ctl.signal);
-          if(co&&addClub(c,co)){ready++; if(ready%5===0)fitAll()}
-          else failed++;
-        }catch(_){failed++}
-        status.innerHTML=`На карте <b>${ready}</b> из ${clubs.length}${pending.length?' · ещё '+pending.length:''}${failed?' · не найдено '+failed:''}`;
-        await new Promise(r=>setTimeout(r,500));
-      }
-    });
-
-    Promise.all(workers).then(()=>{
-      fitAll();
-      status.innerHTML=ready===clubs.length
-        ?`На карте <b>${ready}</b> клубов`
-        :`На карте <b>${ready}</b> из ${clubs.length}${failed?' · '+failed+' адресов требуют проверки':''}`;
-    });
+    const total=Number(d.club_count)||rows.length;
+    status.innerHTML=rows.length===total
+      ?`На карте <b>${rows.length}</b> клубов`
+      :`На карте <b>${rows.length}</b> из ${total}${d.unresolved_count?` · ${d.unresolved_count} адресов уточняются`:''}`;
   }catch(e){
-    const box=document.createElement('div');
-    box.className='error';
-    box.textContent='Не удалось загрузить каталог клубов.';
-    el.appendChild(box);
+    const box=document.createElement('div');box.className='error';
+    box.textContent='Координаты клубов ещё не подготовлены. Запусти GitHub Action “Build Polyana map coordinates” один раз.';
+    el.appendChild(box);status.textContent='Карта не готова';
   }
 }
 
