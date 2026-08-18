@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "city": "Москва",
+  "note": "Only manually verified coordinates belong here. Geocoded medium-confidence points are never published.",
+  "clubs": [
+    {
+      "source_id": "minds",
+      "lat": 55.682229,
+      "lng": 37.580647,
+      "status": "verified_manual"
+    },
+    {
+      "source_id": "joker-poker-club-moscow",
+      "lat": 55.582987,
+      "lng": 37.595142,
+      "status": "verified_manual"
+    },
+    {
+      "source_id": "pride",
+      "lat": 55.771803,
+      "lng": 37.684111,
+      "status": "verified_manual"
+    },
+    {
+      "source_id": "check-check-club",
+      "lat": 55.761279,
+      "lng": 37.663018,
+      "status": "verified_manual"
+    },
+    {
+      "source_id": "heads-up",
+      "lat": 55.777318,
+      "lng": 37.63641,
+      "status": "verified_manual"
+    }
+  ]
+}

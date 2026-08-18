@@ -11,19 +11,18 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;col
 .tiles,.markers{position:absolute;inset:0;overflow:hidden}
 .tile{position:absolute;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;filter:brightness(.47) saturate(.74) contrast(1.18) hue-rotate(18deg)}
 .markers{pointer-events:none}
-.marker{position:absolute;left:0;top:0;width:30px;height:30px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}
-.marker span{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 12px #c8ff3d99}
+.marker{position:absolute;left:0;top:0;width:34px;height:34px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}
+.marker span{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 10px #c8ff3d7a}
 .marker:active span{transform:scale(.82)}
 .controls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:11px;overflow:hidden;background:#0d0f0eee;box-shadow:0 4px 18px #0008}
-.controls button{width:38px;height:38px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}
+.controls button{width:40px;height:40px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}
 .controls button:last-child{border-bottom:0}
-.status{position:absolute;left:58px;right:10px;top:10px;z-index:6;background:#090b09e8;border:1px solid #33392d;border-radius:11px;padding:9px 11px;color:#c8c3ca;font-size:11px;line-height:1.3;pointer-events:none}
+.status{position:absolute;left:60px;right:10px;top:10px;z-index:6;background:#090b09e8;border:1px solid #33392d;border-radius:11px;padding:9px 11px;color:#c8c3ca;font-size:11px;line-height:1.3;pointer-events:none}
 .status b{color:#c8ff3d}
 .attr{position:absolute;right:4px;bottom:3px;z-index:5;background:#090a09d8;color:#777;font-size:7px;padding:2px 4px;border-radius:4px;pointer-events:none}
 .popup{position:absolute;z-index:9;width:220px;max-width:calc(100% - 16px);padding:12px 32px 11px 12px;border:1px solid #667d25;border-radius:13px;background:#11140ff5;color:#fff;box-shadow:0 10px 30px #000b;pointer-events:auto}
 .popup b{display:block;color:#c8ff3d;font-size:12px;line-height:1.25;margin-bottom:5px}
 .popup span{display:block;color:#c8c3ca;font-size:10px;line-height:1.35}
-.popup em{display:block;color:#e7c85a;font-size:9px;margin-top:5px;font-style:normal}
 .close{position:absolute;right:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#fff;font-size:16px}
 .error{position:absolute;inset:18px;display:grid;place-items:center;text-align:center;color:#aaa4ad;border:1px dashed #3a3c3a;border-radius:16px;padding:20px;z-index:10;background:#0d0f0de8}
 </style>
@@ -40,7 +39,6 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;col
   <div class="status" id="status">Открываем карту…</div>
   <div class="attr">© OpenStreetMap contributors</div>
 </div>
-
 <script>
 (()=>{'use strict';
 
@@ -51,7 +49,7 @@ try{
     f.style.width='100%';
     f.style.maxWidth='100%';
     f.style.minHeight='480px';
-    f.style.height=(matchMedia('(max-width:600px)').matches?'560px':'640px');
+    f.style.height=matchMedia('(max-width:600px)').matches?'560px':'640px';
     f.style.border='0';
   }
 }catch(_){}
@@ -59,6 +57,8 @@ try{
 const MOSCOW=[55.7558,37.6173];
 const BOUNDS={minLat:54.90,maxLat:56.30,minLng:36.65,maxLng:39.05};
 const MIN_Z=8,MAX_Z=17;
+const LKG_KEY='psp-polyana-map-lkg-v1';
+const FETCH_TIMEOUT_MS=4500;
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -69,7 +69,7 @@ function safeCenter(lat,lng){return[clamp(lat,BOUNDS.minLat,BOUNDS.maxLat),clamp
 
 const el=document.getElementById('map'),tiles=el.querySelector('.tiles'),markers=el.querySelector('.markers'),popup=el.querySelector('.popup'),status=document.getElementById('status');
 let center=[...MOSCOW],zoom=10,drag=null,raf=0,pinch=null;
-const coords=new Map(), markerEls=new Map(), tileEls=new Map();
+const coords=new Map(),markerEls=new Map(),tileEls=new Map();
 
 function topLeft(){const cp=project(center[0],center[1],zoom);return{x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
 function position(lat,lng){const p=project(lat,lng,zoom),tl=topLeft();return{x:p.x-tl.x,y:p.y-tl.y}}
@@ -108,23 +108,26 @@ function render(){
       popup.style.left=Math.max(8,Math.min(w-232,p.x+12))+'px';
       popup.style.top=Math.max(8,Math.min(h-110,p.y-30))+'px';
     }
-  })
+  });
 }
 
 function addClub(c){
-  const lat=+c.lat,lng=+c.lng;if(!valid(lat,lng))return;
-  const id=String(c.id||c.name||Math.random());
+  const lat=+c.lat,lng=+c.lng;
+  if(!valid(lat,lng))return false;
+  const id=String(c.id||c.source_id||c.name||'');
+  if(!id||coords.has(id))return false;
   coords.set(id,{lat,lng,c});
   const m=document.createElement('button');
   m.type='button';m.className='marker';m.title=c.name||'Клуб';m.innerHTML='<span></span>';
   m.addEventListener('click',e=>{
     e.stopPropagation();const rec=coords.get(id);if(!rec)return;
     popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
-    popup.innerHTML=`<button type="button" class="close" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>${rec.c.needs_manual_review?'<em>Адрес требует проверки</em>':''}`;
+    popup.innerHTML=`<button type="button" class="close" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>`;
     popup.querySelector('.close').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')};
     render();
   });
   markerEls.set(id,m);markers.appendChild(m);
+  return true;
 }
 
 function fitAll(){
@@ -141,6 +144,7 @@ function fitAll(){
   }
   zoom=chosen;render();
 }
+
 function changeZoom(d){const next=clamp(zoom+d,MIN_Z,MAX_Z);if(next!==zoom){zoom=next;popup.hidden=true;render()}}
 el.querySelector('[data-plus]').onclick=e=>{e.stopPropagation();changeZoom(1)};
 el.querySelector('[data-minus]').onclick=e=>{e.stopPropagation();changeZoom(-1)};
@@ -185,23 +189,70 @@ el.addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},
 window.addEventListener('resize',render);
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.type==='psp-map-reset')fitAll()});
 
-async function load(){
+function parsePayload(raw){
+  if(!raw||!Array.isArray(raw.clubs))return null;
+  const clubs=raw.clubs.filter(c=>valid(+c.lat,+c.lng)&&["verified","high"].includes(String(c.confidence||"")));
+  const ids=new Set();
+  const clean=[];
+  for(const c of clubs){
+    const id=String(c.id||c.source_id||"");
+    if(!id||ids.has(id))continue;
+    ids.add(id);clean.push(c);
+  }
+  return {...raw,clubs:clean,resolved_count:clean.length};
+}
+function readLkg(){
+  try{return parsePayload(JSON.parse(localStorage.getItem(LKG_KEY)||'null'))}catch(_){return null}
+}
+function saveLkg(d){
+  try{localStorage.setItem(LKG_KEY,JSON.stringify(d))}catch(_){}
+}
+async function fetchJsonTimeout(url,ms){
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(),ms);
   try{
-    /* ZERO runtime geocoding. One small ready JSON -> all available markers immediately. */
-    const r=await fetch('club_coords.json?ts='+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error('coords '+r.status);
-    const d=await r.json();
-    const rows=(d.clubs||[]).filter(c=>valid(+c.lat,+c.lng));
-    for(const c of rows)addClub(c);
-    fitAll();
-    const total=Number(d.club_count)||rows.length;
-    status.innerHTML=rows.length===total
-      ?`На карте <b>${rows.length}</b> клубов`
-      :`На карте <b>${rows.length}</b> из ${total}${d.unresolved_count?` · ${d.unresolved_count} адресов уточняются`:''}`;
-  }catch(e){
+    const r=await fetch(url,{cache:'no-cache',signal:ctl.signal});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return await r.json();
+  }finally{clearTimeout(timer)}
+}
+
+function chooseBest(remote,lkg){
+  if(remote&&lkg&&lkg.clubs.length>remote.clubs.length)return {data:lkg,fromCache:true,remoteRegressed:true};
+  if(remote)return {data:remote,fromCache:false,remoteRegressed:false};
+  if(lkg)return {data:lkg,fromCache:true,remoteRegressed:false};
+  return null;
+}
+
+async function load(){
+  const lkg=readLkg();
+  let remote=null;
+  try{
+    remote=parsePayload(await fetchJsonTimeout('club_coords.json',FETCH_TIMEOUT_MS));
+  }catch(_){}
+  const best=chooseBest(remote,lkg);
+  if(!best){
     const box=document.createElement('div');box.className='error';
-    box.textContent='Координаты клубов ещё не подготовлены. Запусти GitHub Action “Build Polyana map coordinates” один раз.';
-    el.appendChild(box);status.textContent='Карта не готова';
+    box.textContent='Не удалось загрузить готовые координаты клубов.';
+    el.appendChild(box);status.textContent='Карта временно недоступна';return;
+  }
+
+  const d=best.data;
+  for(const c of d.clubs)addClub(c);
+  fitAll();
+
+  if(remote&&!best.fromCache&&remote.build_status==='ready')saveLkg(remote);
+
+  const shown=coords.size,total=Number(d.club_count)||shown;
+  if(best.remoteRegressed){
+    status.innerHTML=`На карте <b>${shown}</b> клубов · использована последняя полная версия`;
+  }else if(best.fromCache){
+    status.innerHTML=`На карте <b>${shown}</b> клубов · сохранённая версия`;
+  }else if(shown===total){
+    status.innerHTML=`На карте <b>${shown}</b> клубов`;
+  }else{
+    const review=Number(d.review_count)||0,unresolved=Number(d.unresolved_count)||0;
+    status.innerHTML=`На карте <b>${shown}</b> из ${total}${review||unresolved?` · ${review+unresolved} адресов требуют проверки`:''}`;
   }
 }
 
