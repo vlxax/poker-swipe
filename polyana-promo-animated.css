@@ -1,0 +1,136 @@
+/*
+  PokerSwipe · Polyana animated Heads Up promo
+  Visual-only Figma animation patch.
+*/
+
+.pspAd.pspAdAnimated{overflow:visible}
+
+.psPromoFxStage{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  border-radius:18px;
+  background:#090909;
+  box-shadow:0 0 30px 8px rgba(180,255,0,.25),0 0 80px 20px rgba(255,140,0,.12);
+  animation:psPromoGlowPulse 3s ease-in-out infinite;
+  transform:translateZ(0);
+}
+
+.psPromoFxStage>.psPromoFxImage{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+  transform-origin:60% 50%;
+  will-change:transform;
+  animation:psPromoCardFloat 6s ease-in-out infinite;
+}
+
+.psPromoFxShimmer,.psPromoFxBorder,.psPromoFxScan,
+.psPromoFxEmbers,.psPromoFxSparks,.psPromoFxGlow{
+  position:absolute;
+  pointer-events:none;
+}
+
+.psPromoFxShimmer{
+  z-index:4;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);
+  animation:psPromoShimmerSweep 5s ease-in-out 1.5s infinite;
+}
+
+.psPromoFxBorder{
+  z-index:7;inset:0;border-radius:18px;
+  border:2px solid rgba(180,255,0,.5);
+  animation:psPromoBorderGlow 2.5s ease-in-out infinite;
+}
+
+.psPromoFxScan{
+  z-index:5;left:0;right:0;top:-2px;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(180,255,0,.5) 40%,rgba(255,180,0,.4) 60%,transparent);
+  animation:psPromoScanLine 7s linear .5s infinite;
+}
+
+.psPromoFxEmbers,.psPromoFxSparks{z-index:6;inset:0;overflow:hidden}
+
+.psPromoFxEmber{
+  position:absolute;display:block;border-radius:50%;opacity:.9;
+  will-change:transform,opacity;
+  animation-name:psPromoFloatEmber;
+  animation-timing-function:ease-out;
+  animation-iteration-count:infinite;
+}
+
+.psPromoFxSpark{
+  position:absolute;display:block;opacity:0;
+  will-change:transform,opacity;
+  animation-name:psPromoSparkAppear;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+
+.psPromoFxSpark svg{
+  width:100%;height:100%;display:block;
+  filter:drop-shadow(0 0 5px rgba(255,229,102,.75));
+}
+
+.psPromoFxGlow{
+  z-index:2;width:180px;height:180px;border-radius:50%;
+  filter:blur(40px);opacity:.7;
+  animation-name:psPromoFireFlicker;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+}
+
+.psPromoFxGlow.tl{top:-75px;left:-75px}
+.psPromoFxGlow.tr{top:-75px;right:-75px}
+.psPromoFxGlow.bl{bottom:-75px;left:-75px}
+.psPromoFxGlow.br{bottom:-75px;right:-75px}
+
+@keyframes psPromoGlowPulse{
+  0%,100%{box-shadow:0 0 30px 8px rgba(180,255,0,.25),0 0 80px 20px rgba(255,140,0,.12)}
+  50%{box-shadow:0 0 60px 16px rgba(180,255,0,.5),0 0 140px 40px rgba(255,140,0,.25)}
+}
+@keyframes psPromoBorderGlow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes psPromoShimmerSweep{
+  0%{transform:translateX(-120%) skewX(-18deg);opacity:0}
+  20%{opacity:1}80%{opacity:1}
+  100%{transform:translateX(220%) skewX(-18deg);opacity:0}
+}
+@keyframes psPromoFloatEmber{
+  0%{transform:translateY(0) translateX(0) scale(1);opacity:.9}
+  40%{transform:translateY(-60px) translateX(var(--ps-ex)) scale(.8);opacity:.7}
+  100%{transform:translateY(-160px) translateX(calc(var(--ps-ex) * 1.6)) scale(.2);opacity:0}
+}
+@keyframes psPromoSparkAppear{
+  0%{transform:scale(0) rotate(0);opacity:0}
+  30%{transform:scale(1) rotate(120deg);opacity:1}
+  70%{transform:scale(1) rotate(240deg);opacity:1}
+  100%{transform:scale(0) rotate(360deg);opacity:0}
+}
+@keyframes psPromoCardFloat{
+  0%,100%{transform:scale(1.025) translateY(0) rotate(0)}
+  33%{transform:scale(1.025) translateY(-5px) rotate(.7deg)}
+  66%{transform:scale(1.025) translateY(-2px) rotate(-.5deg)}
+}
+@keyframes psPromoFireFlicker{
+  0%,100%{opacity:.7;transform:scaleX(1) scaleY(1)}
+  25%{opacity:1;transform:scaleX(1.04) scaleY(1.02)}
+  50%{opacity:.85;transform:scaleX(.97) scaleY(1.04)}
+  75%{opacity:1;transform:scaleX(1.02) scaleY(.98)}
+}
+@keyframes psPromoScanLine{
+  0%{top:-2px;opacity:0}5%{opacity:.4}95%{opacity:.4}100%{top:100%;opacity:0}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .psPromoFxStage,.psPromoFxStage>.psPromoFxImage,.psPromoFxShimmer,.psPromoFxBorder,
+  .psPromoFxScan,.psPromoFxEmber,.psPromoFxSpark,.psPromoFxGlow{animation:none!important}
+  .psPromoFxShimmer,.psPromoFxScan,.psPromoFxEmbers,.psPromoFxSparks{display:none!important}
+}
+
+@media (max-width:420px){
+  .psPromoFxStage,.psPromoFxBorder{border-radius:15px}
+  .psPromoFxGlow{width:120px;height:120px;filter:blur(32px)}
+}

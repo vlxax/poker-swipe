@@ -85,3 +85,39 @@
     loadPoker3DNav();
   }
 })();
+
+
+/* PokerSwipe — safe loader for the animated Polyana Heads Up promo.
+   Visual only: Polyana data/filters/solver are untouched. */
+(() => {
+  'use strict';
+  const CSS_ID='polyana-promo-animated-css';
+  const SCRIPT_ID='polyana-promo-animated-script';
+
+  if(!document.getElementById(CSS_ID)){
+    const link=document.createElement('link');
+    link.id=CSS_ID;
+    link.rel='stylesheet';
+    link.href='polyana-promo-animated.css';
+    document.head.appendChild(link);
+  }
+
+  function loadPolyanaPromo(){
+    if(window.PokerSwipePolyanaPromo){
+      window.PokerSwipePolyanaPromo.refresh?.();
+      return;
+    }
+    if(document.getElementById(SCRIPT_ID))return;
+    const script=document.createElement('script');
+    script.id=SCRIPT_ID;
+    script.src='polyana-promo-animated.js';
+    script.defer=true;
+    document.body.appendChild(script);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',loadPolyanaPromo,{once:true});
+  }else{
+    loadPolyanaPromo();
+  }
+})();
