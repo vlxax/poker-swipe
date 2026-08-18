@@ -91,9 +91,9 @@ function clubs(){
 }
 function mapView(){
  return `<div class="pspMapPanel">
-   <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span id="pspMapProgress">Подготавливаем точки…</span></div><button class="pspMapReset" data-map-reset>Москва</button></div>
-   <div id="pspMoscowMap" class="pspMapBox"></div>
-   <div class="pspMapNote">Адреса клубов: PokerNoMoney. Карта: OpenStreetMap. Координаты кэшируются на устройстве после первого определения.</div>
+   <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span id="pspMapProgress">Карта Москвы · точки клубов</span></div><button class="pspMapReset" data-map-reset>Москва</button></div>
+   <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=4" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
+   <div class="pspMapNote">Адреса клубов: PokerNoMoney. Карта: OpenStreetMap.</div>
  </div>`;
 }
 
@@ -248,14 +248,14 @@ function renderBody(){
  if(state.tab!=='map')destroyMap();
  b.innerHTML=state.tab==='today'?today():state.tab==='clubs'?clubs():mapView();
  bindBody();
- if(state.tab==='map')setTimeout(initMap,0);
+
 }
 function bindBody(){
  document.querySelectorAll('#polyana [data-q]').forEach(b=>b.onclick=()=>{const q=b.dataset.q;state.quick.has(q)?state.quick.delete(q):state.quick.add(q);renderBody()});
  document.querySelectorAll('#polyana [data-event]').forEach(b=>b.onclick=()=>detail(+b.dataset.event));
  const s=document.getElementById('pspSearch');if(s)s.oninput=()=>{window.__pspClubQuery=s.value;renderBody();setTimeout(()=>document.getElementById('pspSearch')?.focus(),0)};
  document.querySelectorAll('#polyana [data-psp-filters]').forEach(b=>b.onclick=()=>document.getElementById('pspFilters')?.classList.add('on'));
- document.querySelector('#polyana [data-map-reset]')?.addEventListener('click',()=>{try{state.map?.reset()}catch(_){}});
+ document.querySelector('#polyana [data-map-reset]')?.addEventListener('click',()=>{try{document.getElementById('pspMoscowMapFrame')?.contentWindow?.postMessage({type:'psp-map-reset'},location.origin)}catch(_){}});
 }
 
 function bindShell(){
