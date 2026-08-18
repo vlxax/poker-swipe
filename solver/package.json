@@ -1,0 +1,19 @@
+{
+  "name": "solver-core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PokerSwipe backend solver-core. DOM-free computational core (cards, hand evaluation, ranges, equity, pot math, EV, decision analysis). Not a commercial GTO solver.",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test tests/",
+    "test:solver": "node --test tests/*.test.js",
+    "benchmark:cfr": "node scripts/benchmarkCfr.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

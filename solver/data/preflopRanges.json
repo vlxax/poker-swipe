@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "PokerSwipe solver-core preflop range dataset. Demonstrative/curated only, NOT a commercial GTO export. Extensible structure.",
+  "format": "6max",
+  "stackDepthBB": [10, 20, 25, 40, 100],
+  "positions": ["UTG", "HJ", "CO", "BTN", "SB", "BB"],
+  "scenarios": [
+    {
+      "id": "6max_btn_open",
+      "spot": "RFI",
+      "position": "BTN",
+      "stackDepthBB": 100,
+      "openSizeBB": 2.5,
+      "range": {
+        "AA": 1, "KK": 1, "QQ": 1, "JJ": 1, "TT": 1, "99": 1, "88": 1, "77": 1, "66": 1, "55": 1, "44": 0.7, "33": 0.5, "22": 0.3,
+        "AKs": 1, "AQs": 1, "AJs": 1, "ATs": 1, "A9s": 0.9, "A8s": 0.7, "A7s": 0.5, "A5s": 1, "A4s": 0.9, "A3s": 0.7, "A2s": 0.6,
+        "AKo": 1, "AQo": 1, "AJo": 1, "ATo": 0.6, "KQs": 1, "KJs": 1, "KTs": 1, "KQo": 1, "KJo": 0.8,
+        "QJs": 1, "QTs": 1, "JTs": 1, "T9s": 1, "98s": 1, "87s": 1, "76s": 0.9, "65s": 0.7, "54s": 0.6, "43s": 0.4
+      }
+    },
+    {
+      "id": "6max_bb_defend",
+      "spot": "BB_DEFEND_VS_OPEN",
+      "position": "BB",
+      "stackDepthBB": 100,
+      "vsOpenSizeBB": 2.5,
+      "range": {
+        "AA": 0.8, "KK": 0.9, "QQ": 1, "JJ": 1, "TT": 1, "99": 1, "88": 1, "77": 1, "66": 1, "55": 0.9, "44": 0.8, "33": 0.6, "22": 0.5,
+        "AKs": 1, "AQs": 1, "AJs": 1, "ATs": 0.9, "A9s": 0.8, "A8s": 0.7, "A7s": 0.6, "A6s": 0.6, "A5s": 0.8, "A4s": 0.6, "A3s": 0.5, "A2s": 0.4,
+        "KQs": 1, "KJs": 1, "KTs": 0.9, "K9s": 0.6, "QJs": 1, "QTs": 0.9, "JTs": 1, "T9s": 1, "98s": 1, "87s": 1, "76s": 1, "65s": 0.9, "54s": 0.7
+      }
+    },
+    {
+      "id": "6max_btn_20bb_rfi",
+      "spot": "RFI",
+      "position": "BTN",
+      "stackDepthBB": 20,
+      "openSizeBB": 2.3,
+      "range": {
+        "AA": 1, "KK": 1, "QQ": 1, "JJ": 1, "TT": 1, "99": 1, "88": 1, "77": 1, "66": 1, "55": 0.8,
+        "AKs": 1, "AQs": 1, "AJs": 1, "ATs": 0.9, "A5s": 1, "AKo": 1, "AQo": 1, "KQs": 1, "QJs": 1, "JTs": 1, "T9s": 1, "98s": 0.8, "87s": 0.7
+      }
+    }
+  ]
+}
