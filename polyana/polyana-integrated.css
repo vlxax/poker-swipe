@@ -1,0 +1,91 @@
+
+/* PokerSwipe Polyana — isolated production screen.
+   All selectors are scoped to #polyana so legacy versions cannot collide. */
+#polyana{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+#polyana #psPolyanaArea{max-width:760px;margin:0 auto;padding:8px 12px 28px}
+#polyana .pspTop{display:flex;justify-content:space-between;align-items:center;margin:2px 0 18px}
+#polyana .pspLogo{font-weight:1000;font-size:15px;letter-spacing:-.03em}
+#polyana .pspLogo i{font-style:normal;color:#c8ff3d}
+#polyana .pspBy{font-size:9px;letter-spacing:.16em;color:#d8d2da;font-weight:900}
+#polyana .pspHero{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+#polyana .pspHero h1{margin:0;font-size:48px;line-height:.88;letter-spacing:-.07em;font-weight:1000}
+#polyana .pspHero h1 span{color:#c8ff3d}
+#polyana .pspHero p{margin:10px 0 0;color:#a7a0aa;font-size:12px;line-height:1.4;max-width:320px}
+#polyana .pspTools{display:flex;gap:8px}
+#polyana .pspTool{width:46px;height:46px;border:1px solid #34343d;background:#0d0d12;color:#fff;border-radius:50%;font-size:20px}
+#polyana .pspTool.acid{color:#c8ff3d;box-shadow:0 0 20px #c8ff3d22}
+#polyana .pspTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:20px 0 12px}
+#polyana .pspTab{min-height:44px;border:1px solid #34343e;border-radius:999px;background:#0d0d12;color:#c5bec8;font-size:10px;font-weight:1000;letter-spacing:.04em}
+#polyana .pspTab.on{background:#c8ff3d;border-color:#c8ff3d;color:#11150b}
+#polyana .pspAd{border:1px solid #373d2d;border-radius:18px;overflow:hidden;background:#0b0c0b;margin-top:5px}
+#polyana .pspAdLabel{padding:8px 10px 0;color:#777e78;font-size:8px;letter-spacing:.12em;font-weight:1000;text-transform:uppercase}
+#polyana .pspAd img{display:block;width:100%;height:auto}
+#polyana .pspFresh{margin-top:10px;border:1px solid #3c4b20;border-radius:16px;padding:11px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#0c0f0b}
+#polyana .pspFresh strong{font-size:11px;line-height:1.25}
+#polyana .pspFreshDot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#c8ff3d;box-shadow:0 0 12px #c8ff3d99;margin-right:7px}
+#polyana .pspFreshMeta{font-size:10px;color:#bcb5bf;text-align:right}
+#polyana .pspFreshMeta b{color:#c8ff3d}
+#polyana .pspSecHead{display:flex;align-items:center;justify-content:space-between;margin:17px 0 9px}
+#polyana .pspSecHead h3{margin:0;font-size:11px;letter-spacing:.12em;color:#8e8791}
+#polyana .pspFilterLink{border:0;background:transparent;color:#c8ff3d;font-size:9px;font-weight:1000}
+#polyana .pspQuick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+#polyana .pspChip{min-height:43px;border:1px solid #303039;border-radius:11px;background:#111116;color:#dad4dc;font-size:10px;font-weight:900}
+#polyana .pspChip.on{border-color:#657d1f;background:#19210f;color:#d9ff77}
+#polyana .pspChip.disabled,#polyana .pspChip:disabled{opacity:.38;cursor:not-allowed;filter:saturate(.25)}
+#polyana .pspListHead{display:flex;justify-content:space-between;align-items:end;margin:22px 0 9px;border-bottom:1px solid #22222a;padding-bottom:9px}
+#polyana .pspListHead b{font-size:12px;letter-spacing:.16em}
+#polyana .pspListHead b span{color:#7e7781}
+#polyana .pspListHead small{font-size:9px;color:#77717a}
+#polyana .pspList{display:grid;gap:9px}
+#polyana .pspEvent{position:relative;display:grid;grid-template-columns:70px minmax(0,1fr) auto;gap:10px;align-items:start;width:100%;text-align:left;color:#fff;border:1px solid #292931;border-left:3px solid #c8ff3d;border-radius:17px;background:linear-gradient(145deg,#111117,#0d0d12);padding:12px}
+#polyana .pspTime{color:#c8ff3d;font-size:22px;font-weight:1000;line-height:1}
+#polyana .pspTime small{display:block;color:#858089;font-size:9px;margin-top:5px}
+#polyana .pspName{font-size:16px;line-height:1.05;font-weight:1000}
+#polyana .pspClub{font-size:10px;color:#aaa3ac;margin-top:5px}
+#polyana .pspTags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+#polyana .pspTag{border:1px solid #34343c;border-radius:999px;padding:4px 6px;font-size:7px;color:#bcb6be}
+#polyana .pspTag.acid{border-color:#61781e;color:#d8ff72}
+#polyana .pspMeta{font-size:8px;color:#89838b;line-height:1.5;margin-top:7px}
+#polyana .pspFee{color:#c8ff3d;font-weight:1000;font-size:12px;white-space:nowrap;text-align:right}
+#polyana .pspFee small{display:block;color:#706b72;font-size:6px;text-transform:uppercase;margin-top:3px}
+#polyana .pspSearch{width:100%;box-sizing:border-box;background:#0d0d12;color:#fff;border:1px solid #34343d;border-radius:14px;padding:12px;font-size:11px;outline:none}
+#polyana .pspGroup{margin:13px 0 18px}
+#polyana .pspLetter{color:#c8ff3d;font-size:10px;font-weight:1000;margin-bottom:5px}
+#polyana .pspClubRow{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #202027;padding:11px 1px;color:#fff}
+#polyana .pspClubRow b{font-size:12px}
+#polyana .pspClubRow span{font-size:8px;color:#8c858f;line-height:1.4}
+#polyana .pspMapPanel{margin-top:4px}
+#polyana .pspMapTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px}
+#polyana .pspMapTop b{display:block;color:#fff;font-size:12px;letter-spacing:.08em}
+#polyana .pspMapTop span{display:block;color:#8d8790;font-size:8px;margin-top:3px}
+#polyana .pspMapReset{border:1px solid #596d22;background:#12170d;color:#c8ff3d;border-radius:999px;padding:8px 11px;font-size:8px;font-weight:1000}
+#polyana .pspMapBox{height:470px;min-height:390px;border:1px solid #2d2d35;border-radius:18px;overflow:hidden;background:#10110f;color:#aaa3ad;position:relative}
+#polyana .pspMapBox .leaflet-control-zoom a{background:#111116;color:#c8ff3d;border-color:#2f3034}
+#polyana .pspMapBox .leaflet-control-attribution{background:#0a0a0dcc;color:#807b82;font-size:7px}
+#polyana .pspMapNote{font-size:7px;color:#6f6972;line-height:1.45;margin:7px 2px 0}
+#polyana .pspMapPinWrap{background:transparent!important;border:0!important}
+#polyana .pspMapPin{display:block;width:16px;height:16px;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 16px #c8ff3d99}
+#polyana .pspMapPopup{font:700 11px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111;min-width:150px}
+#polyana .pspMapPopup span{font-weight:500;color:#444}
+#polyana .pspMapPopup em{font-weight:700;color:#8a6200;font-size:9px}
+#polyana .pspMapBox .pspEmpty{margin:20px}
+
+#polyana .pspEmpty{border:1px dashed #34343c;border-radius:16px;padding:25px;text-align:center;color:#8d8690;font-size:10px}
+#polyana .pspError button{margin-top:10px;border:0;border-radius:10px;background:#c8ff3d;color:#11150b;padding:10px 14px;font-weight:1000}
+#polyana .pspSheetBg{position:fixed;inset:0;background:#000b;z-index:99998;display:none}
+#polyana .pspSheetBg.on{display:block}
+#polyana .pspSheet{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:#101014;border:1px solid #34343d;border-bottom:0;border-radius:24px 24px 0 0;padding:17px 15px calc(24px + env(safe-area-inset-bottom))}
+#polyana .pspSheet h2{margin:0 0 15px;font-size:22px}
+#polyana .pspClose{float:right;border:1px solid #34343d;background:#15151a;color:#fff;border-radius:10px;padding:8px 10px}
+#polyana .pspBlock{border-top:1px solid #232329;padding:13px 0}
+#polyana .pspBlock h4{margin:0 0 8px;color:#99929b;font-size:9px}
+#polyana .pspApply{width:100%;border:0;border-radius:12px;background:#c8ff3d;color:#11150b;padding:14px;font-size:10px;font-weight:1000;margin-top:8px}
+#polyana .pspDetailRow{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #24242b;padding:11px 0}
+#polyana .pspDetailRow span{color:#88818a;font-size:9px}
+#polyana .pspDetailRow b{font-size:10px;text-align:right}
+@media(max-width:390px){
+ #polyana #psPolyanaArea{padding-left:10px;padding-right:10px}
+ #polyana .pspHero h1{font-size:42px}
+ #polyana .pspEvent{grid-template-columns:62px minmax(0,1fr)}
+ #polyana .pspFee{grid-column:2;text-align:left;margin-top:-2px}
+}

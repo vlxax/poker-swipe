@@ -946,6 +946,8 @@ button{letter-spacing:-.01em}
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
+<link rel="stylesheet" href="polyana/polyana-integrated.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 <div class="app">
@@ -969,12 +971,13 @@ button{letter-spacing:-.01em}
 <section id="myhands" class="screen"><div id="myArea"></div></section>
 <section id="xray" class="screen"><div id="xrayArea"></div></section>
 <section id="tournaments" class="screen"><div id="tournamentsArea"></div></section>
+<section id="polyana" class="screen"><div id="psPolyanaArea"></div></section>
 <section id="profile" class="screen"><div id="profileArea"></div></section>
 </main>
 <nav class="nav">
 <button class="on" data-nav="home"><i>⌂</i>ИГРАТЬ</button>
 <button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i>МОИ</button>
-<button data-nav="tournaments"><i class="tourNav23">♛</i>ТУРНИРЫ</button>
+<button data-nav="polyana"><i class="tourNav23">♛</i>ПОЛЯНА</button>
 <button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>ПРОФИЛЬ</button>
 </nav>
 </div>
@@ -4710,5 +4713,7 @@ window.openMyTournamentsV71=openScreen;window.openMyTournamentsV72=openScreen;wi
 })();
 </script>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="polyana/polyana-integrated.js"></script>
 </body>
 </html>

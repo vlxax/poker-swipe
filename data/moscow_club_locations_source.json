@@ -1,0 +1,676 @@
+{
+  "source": "https://pokernomoney.ru/clubs",
+  "source_checked_at": "2026-08-18",
+  "source_city": "Москва",
+  "source_reported_count": 66,
+  "included_count": 65,
+  "excluded_count": 1,
+  "coordinate_status": "not_geocoded_yet",
+  "clubs": [
+    {
+      "id": "quantum",
+      "name": "Quantum",
+      "address": "Новая Басманная улица, 19 ст7",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "ace-poker-club",
+      "name": "Ace Poker Club",
+      "address": "улица Сергия Радонежского, 9с5",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-3",
+      "name": "Два туза",
+      "address": "ул. Александры Монаховой, 98, корп. 3",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "minds",
+      "name": "Minds",
+      "address": "Новочеремушкинская ул., д. 21а",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "joker-poker-club-moscow",
+      "name": "Joker Poker Club Moscow",
+      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "friendly-poker-club",
+      "name": "Friendly Poker Club",
+      "address": "Русаковская набережная, д. 1А, стр. 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "moscow-poker-club",
+      "name": "Moscow Poker Club",
+      "address": "Малый Гнездниковский переулок, 9, стр. 2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-8",
+      "name": "Резиденция ПОКЕР",
+      "address": "Денисовский пер., 30, стр. 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "mask-off-poker",
+      "name": "MASK OFF POKER",
+      "address": "Сущевский вал, д.16с1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "nuts-poker-club-moscow",
+      "name": "Nuts poker club Moscow",
+      "address": "Б. Спасоглинищевский пер., д. 3, стр. 5",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "i-doyle-poker-club",
+      "name": "Дойл (Doyle poker club)",
+      "address": "Б. Сухаревская пл. д. 14/7",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-12",
+      "name": "Восьмёрка Кикер",
+      "address": "ул. Каретный ряд, д. 10",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "check-check-club",
+      "name": "Check-Check Club",
+      "address": "Нижний Сусальный пер., д. 5с1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "i-all-in",
+      "name": "Покерный клуб ALL-IN",
+      "address": "ул. Таганская, 29, стр. 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "pride",
+      "name": "PRIDE",
+      "address": "ул. Ладожская, д. 11",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "straddle-poker-club",
+      "name": "Straddle poker club",
+      "address": "Валовая улица, 32/75с2 (2 этаж)",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "poker-face-lub",
+      "name": "POKER FACE Сlub",
+      "address": "Звенигородское ш., 18/20, к. 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "garage-game-club",
+      "name": "GARAGE Game Club",
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "blef-bet",
+      "name": "BLEF BET",
+      "address": "Измайловское ш., д. 73Ж",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "pocket-rockets-club",
+      "name": "Pocket Rockets Club",
+      "address": "Шелепихинская наб., 34к2зд1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "level",
+      "name": "Level",
+      "address": "просп. Вернадского, д. 14А, 3 этаж",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "aria-royale",
+      "name": "Aria Royale",
+      "address": "ул. Братиславская, д. 28 (2 этаж)",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "magnum-club",
+      "name": "Magnum Club",
+      "address": "Большая Новодмитровская ул., д. 36с13",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "poker-spot",
+      "name": "Poker Spot",
+      "address": "Краснопролетарская ул., д. 7",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "hi-jack-club",
+      "name": "Hi, Jack Club",
+      "address": "Люсиновская улица, 53к2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "bubble-club",
+      "name": "Bubble Club",
+      "address": "Комсомольский просп., 28",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "river-room",
+      "name": "River Room",
+      "address": "Сретенский бульвар, д. 6 с. 1/1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "parliament",
+      "name": "PARLIAMENT",
+      "address": "Вешняковская ул., д. 22А",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "raise-club",
+      "name": "Raise Club",
+      "address": "ул. Азовская 18 (4 этаж)",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "srp-equity",
+      "name": "SRP EQUITY",
+      "address": "Новолесная улица, д. 8/12",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "poker-room-gto",
+      "name": "Poker Room GTO",
+      "address": "Даев пер., д. 2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "joker-poker-club",
+      "name": "Joker Poker Club (Кутузовская)",
+      "address": "ул. Киевская, д. 20 (метро Студенческая)",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "heads-up",
+      "name": "HEADS UP",
+      "address": "проспект Мира, 26с2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "i-i",
+      "name": "Московский Покерный Зал",
+      "address": "Нижегородская ул., 9Г",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-35",
+      "name": "БАРРЕЛЬ",
+      "address": "Доброслободская ул., д. 3",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "midnight-poker-club",
+      "name": "MIDNIGHT POKER CLUB",
+      "address": "Новослободская дом 39",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "aura-poker-club",
+      "name": "Aura Poker Club",
+      "address": "Новоясеневский проспект, 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "cartel-poker-club",
+      "name": "CARTEL POKER CLUB",
+      "address": "Волоколамское шоссе, 124",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-39",
+      "name": "НУАР",
+      "address": "ул. Краснопрудная 24с1",
+      "address_alternative": "ул. Краснопрудная, 24/2 с1",
+      "needs_manual_review": true,
+      "note": "В каталоге и тексте страницы PokerNoMoney указаны разные варианты адреса.",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "troya",
+      "name": "TROYA покер",
+      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-41",
+      "name": "Комьюнити Компас",
+      "address": "Дмитровское ш., 81",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-42",
+      "name": "Всё могут Короли!",
+      "address": "Мытная 46/2с3",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-43",
+      "name": "СТРИТ",
+      "address": "Средняя первомайская ул, дом 4",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "free-poker-moscow",
+      "name": "Free Poker Moscow",
+      "address": "Звенигородское шоссе 18/20к1",
+      "note": "PokerNoMoney указывает, что у клуба также есть площадка в Куркино; здесь сохранён адрес московской площадки из каталога.",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "aurum",
+      "name": "AURUM",
+      "address": "Алтуфьевское ш., д. 22Б",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "yakudza-poker-community",
+      "name": "YAKUDZA POKER COMMUNITY",
+      "address": "Оружейный переулок 15А, 11 этаж",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "qq-poker-club",
+      "name": "QQ POKER CLUB",
+      "address": "Нагатинская улица, 16",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "check-raise-club-moscow",
+      "name": "CHECK-RAISE CLUB MOSCOW",
+      "address": "Старопетровский проезд, 1с1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-49",
+      "name": "КАРЕТА",
+      "address": "Гороховский переулок, 19",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "joker-poker-club",
+      "name": "Joker Poker Club (Беломорская)",
+      "address": "Ул Петрозаводская 11 корп.3 стр.1",
+      "address_alternative": "ул. Петрозаводская, 11к3с2",
+      "needs_manual_review": true,
+      "note": "В каталоге и тексте страницы PokerNoMoney указаны разные строения.",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "poker-club",
+      "name": "ФИШ.КА POKER CLUB",
+      "address": "Нижегородская, 32сБ",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "ducks-poker-club",
+      "name": "DUCKS POKER CLUB",
+      "address": "проспект Мира, 102с25",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "snap-call-club",
+      "name": "SNAP CALL CLUB",
+      "address": "Проспект Андропова 48с2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "blackwood",
+      "name": "BlackWood",
+      "address": "Олимпийский проспект, 12",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "prestig-poker-club",
+      "name": "PRESTIG POKER CLUB",
+      "address": "Козицкий переулок, 3",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-56",
+      "name": "МАКСИМУМ",
+      "address": "Большая Никитская 43",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "ak77",
+      "name": "AK77",
+      "address": "ул. Софьи Ковалевской, 2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "oasis-poker-club",
+      "name": "Oasis Poker Club",
+      "address": "Садовая-Самотечная ул. д. 13, стр. 1",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "i-1",
+      "name": "Покерный Клуб №1",
+      "address": "Москва, ул. Киевская, 2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "playway",
+      "name": "PLAYWAY",
+      "address": "Москва, Винницкая, 8, корпус 2",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "ocean-s-poker-club",
+      "name": "Ocean's Poker Club",
+      "address": "Нижняя Красносельская улица, 35 с. 59",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "showdown",
+      "name": "Showdown",
+      "address": "Новый Арбат, 19",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "empire-poker-club",
+      "name": "EMPIRE POKER CLUB",
+      "address": "Шелепихинская набережная, 34к3зд6",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-64",
+      "name": "ХРОНИКИ",
+      "address": "Садовая-Кудринская улица, 3А, Москва",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    },
+    {
+      "id": "club-65",
+      "name": "БЛЕФ?",
+      "address": "Проспект Мира, 102с12, подъезд 6",
+      "city": "Москва",
+      "country": "Россия",
+      "lat": null,
+      "lng": null,
+      "geocode_status": "pending"
+    }
+  ],
+  "excluded": [
+    {
+      "name": "ХАРТС",
+      "address": "Боровая, 19А",
+      "excluded": true,
+      "reason": "На московской странице PokerNoMoney клуб попал в список, но описание прямо указывает Санкт-Петербург."
+    }
+  ]
+}
