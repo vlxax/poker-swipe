@@ -4849,6 +4849,7 @@ document.documentElement.dataset.pokerSwipeVersion='62-nav-hard-router';
         parts.push('<div class="regReport"><span class="ey">'+sru(d.street)+(d.biggest?' · ГЛАВНАЯ ОШИБКА':'')+' · '+esc(vru(d.severity))+'</span><div class="grid2"><div><b>ТЫ СДЕЛАЛ</b><p>'+esc(actionLabel(d.actionTaken))+'</p></div><div><b>РЕКОМЕНДАЦИЯ</b><p>'+esc(actionLabel(d.recommendedAction))+(d.recommendedFrequency!=null?' · '+Math.round(d.recommendedFrequency*100)+'%':'')+'</p></div></div><p class="mut small">EV loss '+fmtBB(d.evLossBB)+' BB · уверенность '+confLevelRu(d.confidence&&d.confidence.level)+'</p><p>'+esc(explainRu(d))+(conceptRu(d)?' <span class="mut small">· концепт: '+esc(conceptRu(d))+'</span>':'')+'</p></div>');
       });
       if(model.trainingCandidate)parts.push('<div class="verdict"><span class="ey">КУДА ТРЕНИРОВАТЬ</span><h3>'+sru(model.trainingCandidate.street)+' · '+esc(String(model.trainingCandidate.actionTaken||'').toUpperCase())+' → '+esc(String(model.trainingCandidate.recommendedAction||'').toUpperCase())+'</h3><p>difficulty '+esc(model.trainingCandidate.difficultyScore)+'</p></div>');
+      if(window.__recordTrainingCandidate)window.__recordTrainingCandidate(model,h);
     }else{
       parts.push('<div class="verdict"><span class="ey">SOLVER · RANGE ANALYSIS</span><h2>'+esc(model.status)+'</h2><p>'+esc((model.warnings||[]).join(' '))+'</p></div>');
     }
@@ -4870,5 +4871,6 @@ document.documentElement.dataset.pokerSwipeVersion='62-nav-hard-router';
 })();
 </script>
 
+<script type="module" src="training-ui/main.js"></script>
 </body>
 </html>
