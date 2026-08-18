@@ -97,14 +97,15 @@ function mapView(){
  </div>`;
 }
 
-const MAP_CACHE_PREFIX='psp-map-v2:';
+const MAP_CACHE_PREFIX='psp-map-v3:';
 const MAP_CENTER=[55.7558,37.6173];
 const MAP_BOUNDS={minLat:54.95,maxLat:56.20,minLng:36.75,maxLng:38.95};
 const MAP_SEED={
  'Minds':[55.682229,37.580647],
  'Joker Poker Club Moscow':[55.582987,37.595142],
- 'PRIDE':[55.771753,37.684111],
- 'Check-Check Club':[55.761279,37.663018]
+ 'PRIDE':[55.771803,37.684111],
+ 'Check-Check Club':[55.761279,37.663018],
+ 'HEADS UP':[55.777318,37.636410]
 };
 function validCoord(lat,lng){return Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=MAP_BOUNDS.minLat&&lat<=MAP_BOUNDS.maxLat&&lng>=MAP_BOUNDS.minLng&&lng<=MAP_BOUNDS.maxLng}
 function readCoord(c){
@@ -116,20 +117,89 @@ function readCoord(c){
 function saveCoord(c,lat,lng,source){try{localStorage.setItem(MAP_CACHE_PREFIX+c.name,JSON.stringify({lat,lng,source,at:Date.now()}))}catch(_){}}
 async function geocodeClub(c,signal){
  const q=`Москва, ${c.address}, Россия`;
- const url='https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=3&lat=55.7558&lon=37.6173&lang=ru';
- const r=await fetch(url,{signal,headers:{'Accept':'application/json'}});if(!r.ok)throw new Error('geocoder '+r.status);
- const d=await r.json();
- for(const f of (d.features||[])){
-   const co=f?.geometry?.coordinates;if(!Array.isArray(co)||co.length<2)continue;
-   const lng=Number(co[0]),lat=Number(co[1]);if(!validCoord(lat,lng))continue;
-   const props=f.properties||{};const country=String(props.country||'').toLowerCase();
-   if(country && !/(россия|russia|russian)/i.test(country))continue;
-   saveCoord(c,lat,lng,'Photon/OpenStreetMap');return [lat,lng];
+ const urls=[
+  'https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=3&lat=55.7558&lon=37.6173&lang=ru',
+  'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&countrycodes=ru&q='+encodeURIComponent(q)
+ ];
+ for(const url of urls){
+  try{
+   const r=await fetch(url,{signal,headers:{'Accept':'application/json'}});if(!r.ok)continue;
+   const d=await r.json();
+   const rows=Array.isArray(d)?d:(d.features||[]);
+   for(const row of rows){
+    let lat,lng,country='';
+    if(row.geometry?.coordinates){lng=Number(row.geometry.coordinates[0]);lat=Number(row.geometry.coordinates[1]);country=String(row.properties?.country||'')}
+    else {lat=Number(row.lat);lng=Number(row.lon);country=String(row.display_name||'')}
+    if(!validCoord(lat,lng))continue;
+    if(country && !/(россия|russia|russian|moscow|москва)/i.test(country))continue;
+    saveCoord(c,lat,lng,url.includes('photon')?'Photon/OpenStreetMap':'Nominatim/OpenStreetMap');return [lat,lng];
+   }
+  }catch(err){if(signal?.aborted)throw err}
  }
  return null;
 }
-function mapPin(){return L.divIcon({className:'pspMapPinWrap',html:'<span class="pspMapPin"></span>',iconSize:[20,20],iconAnchor:[10,10],popupAnchor:[0,-11]})}
-function mapPopup(c){return `<div class="pspMapPopup"><b>${esc(c.name||'Клуб')}</b><br><span>${esc(c.address||'')}</span>${c.needs_manual_review?'<br><em>Адрес требует проверки</em>':''}</div>`}
+
+/* Minimal slippy-map renderer. No Leaflet dependency: the existing Polyana map
+   container is filled directly with OpenStreetMap tiles + our own markers. */
+function mercatorProject(lat,lng,z){
+ const n=256*Math.pow(2,z),s=Math.sin(Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180);
+ return {x:(lng+180)/360*n,y:(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n};
+}
+function mercatorUnproject(x,y,z){
+ const n=256*Math.pow(2,z),lng=x/n*360-180,lat=180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n)));
+ return [lat,lng];
+}
+function createOsmMap(el){
+ let center=[...MAP_CENTER],zoom=10,destroyed=false,raf=0,drag=null;
+ const coords=new Map();
+ el.innerHTML=`<div class="pspOsmTiles" aria-hidden="true"></div><div class="pspOsmMarkers"></div><div class="pspOsmPopup" hidden></div><div class="pspOsmControls"><button type="button" data-osm-plus aria-label="Приблизить">+</button><button type="button" data-osm-minus aria-label="Отдалить">−</button></div><div class="pspOsmAttribution">© OpenStreetMap contributors</div>`;
+ const tiles=el.querySelector('.pspOsmTiles'),markers=el.querySelector('.pspOsmMarkers'),popup=el.querySelector('.pspOsmPopup');
+ const cleanup=[];
+ function on(target,type,fn,opts){target.addEventListener(type,fn,opts);cleanup.push(()=>target.removeEventListener(type,fn,opts))}
+ function topLeft(){const cp=mercatorProject(center[0],center[1],zoom);return {x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
+ function position(lat,lng){const p=mercatorProject(lat,lng,zoom),tl=topLeft();return {x:p.x-tl.x,y:p.y-tl.y}}
+ function render(){
+  if(destroyed)return;cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{
+   if(destroyed)return;
+   const w=el.clientWidth||420,h=el.clientHeight||470,tl=topLeft(),ts=256,max=Math.pow(2,zoom);
+   const minX=Math.floor(tl.x/ts)-1,maxX=Math.floor((tl.x+w)/ts)+1,minY=Math.floor(tl.y/ts)-1,maxY=Math.floor((tl.y+h)/ts)+1;
+   const frag=document.createDocumentFragment();tiles.textContent='';
+   for(let ty=minY;ty<=maxY;ty++)for(let tx=minX;tx<=maxX;tx++){
+    if(ty<0||ty>=max)continue;const wrap=((tx%max)+max)%max;
+    const img=document.createElement('img');img.className='pspOsmTile';img.alt='';img.draggable=false;
+    img.src=`https://tile.openstreetmap.org/${zoom}/${wrap}/${ty}.png`;
+    img.style.left=(tx*ts-tl.x)+'px';img.style.top=(ty*ts-tl.y)+'px';
+    frag.appendChild(img);
+   }
+   tiles.appendChild(frag);
+   markers.querySelectorAll('[data-map-club]').forEach(m=>{
+    const c=coords.get(m.dataset.mapClub);if(!c)return;const p=position(c.lat,c.lng);m.style.transform=`translate(${Math.round(p.x)}px,${Math.round(p.y)}px) translate(-50%,-50%)`;m.hidden=p.x<-30||p.y<-30||p.x>w+30||p.y>h+30;
+   });
+   if(!popup.hidden&&popup.dataset.lat){const p=position(Number(popup.dataset.lat),Number(popup.dataset.lng));popup.style.left=Math.max(8,Math.min(w-218,p.x+12))+'px';popup.style.top=Math.max(8,Math.min(h-100,p.y-30))+'px'}
+  })
+ }
+ function addClub(c,co){
+  if(destroyed||!co)return;const [lat,lng]=co;if(!validCoord(lat,lng))return;
+  const id=String(c.name||'club');coords.set(id,{lat,lng,c});
+  let m=[...markers.querySelectorAll('[data-map-club]')].find(x=>x.dataset.mapClub===id);
+  if(!m){m=document.createElement('button');m.type='button';m.className='pspOsmMarker';m.dataset.mapClub=id;m.title=c.name||'Клуб';m.innerHTML='<span></span>';markers.appendChild(m);
+   on(m,'click',ev=>{ev.stopPropagation();const rec=coords.get(id);if(!rec)return;popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;popup.innerHTML=`<button type="button" class="pspOsmPopupClose" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>${rec.c.needs_manual_review?'<em>Адрес требует проверки</em>':''}`;popup.querySelector('.pspOsmPopupClose').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')}})}
+  render();
+ }
+ function setView(c,z=zoom){center=[Math.max(MAP_BOUNDS.minLat,Math.min(MAP_BOUNDS.maxLat,Number(c[0]))),Math.max(MAP_BOUNDS.minLng,Math.min(MAP_BOUNDS.maxLng,Number(c[1])))];zoom=Math.max(9,Math.min(16,Math.round(Number(z)||10)));popup.hidden=true;render()}
+ function reset(){setView(MAP_CENTER,10)}
+ function changeZoom(d){const next=Math.max(9,Math.min(16,zoom+d));if(next!==zoom){zoom=next;popup.hidden=true;render()}}
+ on(el.querySelector('[data-osm-plus]'),'click',e=>{e.stopPropagation();changeZoom(1)});
+ on(el.querySelector('[data-osm-minus]'),'click',e=>{e.stopPropagation();changeZoom(-1)});
+ on(el,'pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,p:mercatorProject(center[0],center[1],zoom)};el.setPointerCapture?.(e.pointerId);el.classList.add('dragging');popup.hidden=true});
+ on(el,'pointermove',e=>{if(!drag)return;const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)};center=mercatorUnproject(p.x,p.y,zoom);render()});
+ const end=e=>{if(!drag)return;drag=null;el.classList.remove('dragging');try{el.releasePointerCapture?.(e.pointerId)}catch(_){}};
+ on(el,'pointerup',end);on(el,'pointercancel',end);
+ on(el,'wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},{passive:false});
+ on(window,'resize',render);
+ render();
+ return {addClub,setView,reset,invalidateSize:render,remove(){destroyed=true;cancelAnimationFrame(raf);cleanup.forEach(fn=>fn());el.innerHTML=''}};
+}
 function destroyMap(){
  state.mapToken++;
  if(state.map){try{state.map.remove()}catch(_){ }state.map=null}
@@ -138,31 +208,26 @@ function destroyMap(){
 async function initMap(){
  const el=document.getElementById('pspMoscowMap');if(!el||state.tab!=='map')return;
  destroyMap();const token=state.mapToken;
- if(!window.L){el.innerHTML='<div class="pspEmpty">Не удалось загрузить карту. Проверь интернет и открой вкладку ещё раз.</div>';return}
- const map=L.map(el,{zoomControl:true,preferCanvas:true}).setView(MAP_CENTER,10);state.map=map;
- L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+ const map=createOsmMap(el);state.map=map;
  const clubs=state.clubs.filter(c=>allowed(c)&&c.address);
  const progress=document.getElementById('pspMapProgress');
- const bounds=[];let ready=0,failed=0;
- const add=(c,co)=>{if(token!==state.mapToken||!state.map)return;const [lat,lng]=co;const marker=L.marker([lat,lng],{icon:mapPin(),keyboard:true,title:c.name||'Клуб'}).addTo(map).bindPopup(mapPopup(c));state.mapMarkers.push(marker);bounds.push([lat,lng]);ready++;if(progress)progress.textContent=`На карте ${ready} из ${clubs.length}`};
+ let ready=0,failed=0;
+ const add=(c,co)=>{if(token!==state.mapToken||!state.map||!co)return;state.map.addClub(c,co);ready++;if(progress)progress.textContent=`На карте ${ready} из ${clubs.length}`};
  const pending=[];
  for(const c of clubs){const co=readCoord(c);if(co)add(c,co);else pending.push(c)}
- if(bounds.length>1)map.fitBounds(bounds,{padding:[28,28],maxZoom:12});
- setTimeout(()=>{try{map.invalidateSize()}catch(_){ }},80);
+ if(progress&&ready)progress.textContent=`На карте ${ready} из ${clubs.length} · остальные точки загружаются`;
  const controller=new AbortController();
  const workers=Array.from({length:2},async()=>{
    while(pending.length&&token===state.mapToken){
      const c=pending.shift();
      try{const co=await geocodeClub(c,controller.signal);if(co)add(c,co);else failed++}catch(_){failed++}
-     if(progress&&token===state.mapToken)progress.textContent=`На карте ${ready} из ${clubs.length}${failed?' · не найдено '+failed:''}`;
-     await new Promise(r=>setTimeout(r,450));
+     if(progress&&token===state.mapToken)progress.textContent=`На карте ${ready} из ${clubs.length}${pending.length?' · подготавливаем ещё '+pending.length:''}${failed?' · не найдено '+failed:''}`;
+     await new Promise(r=>setTimeout(r,700));
    }
  });
- await Promise.all(workers);
- if(token!==state.mapToken)return;
- if(bounds.length>1)map.fitBounds(bounds,{padding:[28,28],maxZoom:12});
- if(progress)progress.textContent=`На карте ${ready} из ${clubs.length}${failed?' · не найдено '+failed:''}`;
+ Promise.all(workers).then(()=>{if(token===state.mapToken&&progress)progress.textContent=`На карте ${ready} из ${clubs.length}${failed?' · не найдено '+failed:''}`});
 }
+
 function detail(id){
  const e=state.events.find(x=>x._id===id);if(!e)return;
  const rows=[
@@ -190,7 +255,7 @@ function bindBody(){
  document.querySelectorAll('#polyana [data-event]').forEach(b=>b.onclick=()=>detail(+b.dataset.event));
  const s=document.getElementById('pspSearch');if(s)s.oninput=()=>{window.__pspClubQuery=s.value;renderBody();setTimeout(()=>document.getElementById('pspSearch')?.focus(),0)};
  document.querySelectorAll('#polyana [data-psp-filters]').forEach(b=>b.onclick=()=>document.getElementById('pspFilters')?.classList.add('on'));
- document.querySelector('#polyana [data-map-reset]')?.addEventListener('click',()=>{try{state.map?.setView(MAP_CENTER,10)}catch(_){}});
+ document.querySelector('#polyana [data-map-reset]')?.addEventListener('click',()=>{try{state.map?.reset()}catch(_){}});
 }
 
 function bindShell(){

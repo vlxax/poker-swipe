@@ -60,8 +60,6 @@
 #polyana .pspMapTop span{display:block;color:#8d8790;font-size:8px;margin-top:3px}
 #polyana .pspMapReset{border:1px solid #596d22;background:#12170d;color:#c8ff3d;border-radius:999px;padding:8px 11px;font-size:8px;font-weight:1000}
 #polyana .pspMapBox{height:470px;min-height:390px;border:1px solid #2d2d35;border-radius:18px;overflow:hidden;background:#10110f;color:#aaa3ad;position:relative}
-#polyana .pspMapBox .leaflet-control-zoom a{background:#111116;color:#c8ff3d;border-color:#2f3034}
-#polyana .pspMapBox .leaflet-control-attribution{background:#0a0a0dcc;color:#807b82;font-size:7px}
 #polyana .pspMapNote{font-size:7px;color:#6f6972;line-height:1.45;margin:7px 2px 0}
 #polyana .pspMapPinWrap{background:transparent!important;border:0!important}
 #polyana .pspMapPin{display:block;width:16px;height:16px;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 16px #c8ff3d99}
@@ -89,3 +87,23 @@
  #polyana .pspEvent{grid-template-columns:62px minmax(0,1fr)}
  #polyana .pspFee{grid-column:2;text-align:left;margin-top:-2px}
 }
+
+
+#polyana .pspMapBox{touch-action:none;cursor:grab;isolation:isolate}
+#polyana .pspMapBox.dragging{cursor:grabbing}
+#polyana .pspOsmTiles,#polyana .pspOsmMarkers{position:absolute;inset:0;overflow:hidden}
+#polyana .pspOsmTiles{background:radial-gradient(circle at 50% 45%,#182111 0,#0e100e 45%,#090a09 100%)}
+#polyana .pspOsmTile{position:absolute;width:256px;height:256px;max-width:none!important;user-select:none;-webkit-user-drag:none;filter:brightness(.42) saturate(.7) contrast(1.25) hue-rotate(25deg)}
+#polyana .pspOsmMarkers{pointer-events:none}
+#polyana .pspOsmMarker{position:absolute;left:0;top:0;width:24px;height:24px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}
+#polyana .pspOsmMarker span{display:block;width:15px;height:15px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 15px #c8ff3daa}
+#polyana .pspOsmMarker:active span{transform:scale(.82)}
+#polyana .pspOsmControls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:10px;overflow:hidden;background:#0d0f0ddd;box-shadow:0 4px 18px #0008}
+#polyana .pspOsmControls button{width:34px;height:34px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}
+#polyana .pspOsmControls button:last-child{border-bottom:0}
+#polyana .pspOsmAttribution{position:absolute;right:4px;bottom:3px;z-index:5;background:#090a09cc;color:#777;font-size:6px;padding:2px 4px;border-radius:4px;pointer-events:none}
+#polyana .pspOsmPopup{position:absolute;z-index:9;width:205px;max-width:calc(100% - 16px);padding:11px 28px 10px 11px;border:1px solid #667d25;border-radius:12px;background:#11140ff2;color:#fff;box-shadow:0 10px 30px #000b;pointer-events:auto}
+#polyana .pspOsmPopup b{display:block;color:#c8ff3d;font-size:11px;line-height:1.25;margin-bottom:5px}
+#polyana .pspOsmPopup span{display:block;color:#c8c3ca;font-size:9px;line-height:1.35}
+#polyana .pspOsmPopup em{display:block;color:#e7c85a;font-size:8px;margin-top:5px;font-style:normal}
+#polyana .pspOsmPopupClose{position:absolute;right:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#fff;font-size:16px}
