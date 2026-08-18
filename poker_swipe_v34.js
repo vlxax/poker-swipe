@@ -144,3 +144,39 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',load,{once:true});else load();
 })();
+
+/* PokerSwipe — Daily Figma Make card loader.
+   Safe adapter: no React/Vite project files are added to the repository. */
+(() => {
+  'use strict';
+  const CSS_ID='daily-figma-card-css';
+  const JS_ID='daily-figma-card-js';
+  const V='20260818-1';
+
+  if(!document.getElementById(CSS_ID)){
+    const l=document.createElement('link');
+    l.id=CSS_ID;
+    l.rel='stylesheet';
+    l.href='daily-figma-card.css?v='+V;
+    document.head.appendChild(l);
+  }
+
+  function load(){
+    if(window.PokerSwipeDailyFigma){
+      window.PokerSwipeDailyFigma.refresh?.();
+      return;
+    }
+    if(document.getElementById(JS_ID))return;
+    const s=document.createElement('script');
+    s.id=JS_ID;
+    s.src='daily-figma-card.js?v='+V;
+    s.defer=true;
+    document.body.appendChild(s);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',load,{once:true});
+  }else{
+    load();
+  }
+})();
