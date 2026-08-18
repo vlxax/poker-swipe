@@ -1,43 +1,95 @@
 <!doctype html>
-<html lang="ru"><head>
+<html lang="ru">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Поляна 2.0 — PokerSwipe</title>
+<title>Поляна — PokerSwipe</title>
 <link rel="stylesheet" href="./polyana/polyana.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-</head><body>
-<main class="ps-polyana">
- <div class="ps-head"><div><h1 class="ps-title">ПОЛЯНА<i>.</i></h1><div class="ps-sub">Навигатор по спортивному покеру Москвы · <span id="ps-updated"></span></div></div></div>
- <div class="ps-tabs"><button class="ps-tab active" data-tab="today">Сегодня</button><button class="ps-tab" data-tab="clubs">А–Я</button><button class="ps-tab" data-tab="map">Карта</button></div>
- <section id="ps-tools">
-  <div class="ps-posters">
-   <div class="ps-poster"><small>СЕГОДНЯ В МОСКВЕ</small><h3>Выбери турнир по структуре, а не по красивому постеру</h3><p>Формат · re-entry · late reg · орг. взнос</p></div>
-   <div class="ps-poster secondary"><small>БЫСТРЫЙ ПОИСК</small><h3>Куда ещё можно успеть</h3><p>Фильтруй по late reg</p></div>
+</head>
+<body>
+<main class="ps-app">
+  <div class="ps-top"><div class="ps-brand">POKER <b>SWIPE</b></div><div class="ps-by">by ФРИКОВАЯ ДАМА 💋</div></div>
+
+  <section class="ps-hero">
+    <div><h1 class="ps-title">ПОЛЯНА<i>.</i></h1><p class="ps-sub">Навигатор по спортивному покеру Москвы.</p></div>
+    <div class="ps-actions"><button class="ps-icon">⌕</button><button id="open-filters" class="ps-icon accent">☷</button></div>
+  </section>
+
+  <div class="ps-tabs">
+    <button class="ps-tab active" data-tab="today">СЕГОДНЯ</button>
+    <button class="ps-tab" data-tab="clubs">КЛУБЫ</button>
+    <button class="ps-tab" data-tab="map">КАРТА</button>
   </div>
-  <div class="ps-section-head"><h2>Быстрые фильтры</h2><button id="ps-filter-open" class="ps-filter-open">Все фильтры ⚙︎</button></div>
-  <div class="ps-chips">
-   <button class="ps-chip" data-q="NLH">NLH</button><button class="ps-chip" data-q="PLO">PLO</button>
-   <button class="ps-chip" data-q="Bounty">Bounty</button><button class="ps-chip" data-q="Freezeout">Freezeout</button>
-   <button class="ps-chip" data-q="Freeroll">Freeroll</button><button class="ps-chip" data-q="Re-entry">Re-entry</button>
-   <button class="ps-chip" data-q="Late reg">Late reg</button>
-  </div>
- </section>
- <div id="ps-status" class="ps-status"></div>
- <section id="ps-content"></section>
+
+  <section class="ps-ad-wrap">
+    <div class="ps-ad-label">Партнёрское предложение</div>
+    <img class="ps-ad" src="./assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry">
+  </section>
+
+  <section class="ps-status">
+    <strong><span class="ps-dot"></span>АФИША ОБНОВЛЕНА</strong>
+    <span><b id="club-count">—</b> клубов · <b id="event-count">—</b> событий · <span id="updated">—</span></span>
+  </section>
+
+  <section id="filters-area">
+    <div class="ps-section-head"><h2>Быстрые фильтры</h2><button id="open-filters-2" class="ps-filter-btn" onclick="document.getElementById('filters-bg').classList.add('open')">Все фильтры</button></div>
+    <div class="ps-chips">
+      <button class="ps-chip" data-q="NLH">NLH</button><button class="ps-chip" data-q="PLO">PLO</button><button class="ps-chip" data-q="Bounty">Bounty</button>
+      <button class="ps-chip" data-q="Freezeout">Freezeout</button><button class="ps-chip" data-q="Freeroll">Freeroll</button><button class="ps-chip" data-q="Re-entry">Re-entry</button>
+      <button class="ps-chip" data-q="Add-on">Add-on</button><button class="ps-chip" data-q="Late reg">Late reg</button><button class="ps-chip" data-q="Levels">Уровни</button>
+    </div>
+  </section>
+
+  <div id="list-head" class="ps-list-head"><b>МОСКВА · СЕГОДНЯ</b><span id="count-today">—</span></div>
+  <section id="content"></section>
 </main>
 
-<div id="ps-filter-wrap" class="ps-sheet-backdrop"><div class="ps-sheet">
- <button id="ps-filter-close" class="ps-reset" style="float:right">Закрыть</button><h2>Фильтры</h2>
- <div class="ps-filter-block"><h4>Игра</h4><div class="ps-chips"><button class="ps-chip ps-filter-choice" data-key="game" data-value="NLH">NLH</button><button class="ps-chip ps-filter-choice" data-key="game" data-value="PLO">PLO</button></div></div>
- <div class="ps-filter-block"><h4>Формат</h4><div class="ps-chips"><button class="ps-chip ps-filter-choice" data-key="type" data-value="Freezeout">Freezeout</button><button class="ps-chip ps-filter-choice" data-key="type" data-value="Bounty">Bounty</button><button class="ps-chip ps-filter-choice" data-key="type" data-value="Mystery">Mystery</button><button class="ps-chip ps-filter-choice" data-key="type" data-value="Freeroll">Freeroll</button></div></div>
- <div class="ps-filter-block"><h4>Re-entry</h4><div class="ps-chips"><button class="ps-chip ps-filter-choice" data-key="reentry" data-value="none">Без re-entry</button><button class="ps-chip ps-filter-choice" data-key="reentry" data-value="yes">Есть re-entry</button></div></div>
- <div class="ps-filter-block"><h4>Late reg</h4><div class="ps-chips"><button class="ps-chip ps-filter-choice" data-key="late" data-value="yes">Есть late reg</button></div></div>
- <div class="ps-filter-block"><h4>Орг. взнос</h4><div class="ps-chips"><button class="ps-chip ps-filter-choice" data-key="fee" data-value="1000">до 1 000 ₽</button></div></div>
- <button id="ps-apply" class="ps-apply">ПОКАЗАТЬ ТУРНИРЫ</button>
+<div id="filters-bg" class="ps-sheet-bg"><div class="ps-sheet">
+<button id="filters-close" class="ps-close">Закрыть</button><h2>Фильтры</h2>
+
+<div class="ps-filter-block"><h4>Игра</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="game" data-value="NLH">NLH</button>
+<button class="ps-chip choice" data-key="game" data-value="PLO">PLO</button>
+<button class="ps-chip choice" data-key="game" data-value="PLO5">PLO5</button>
 </div></div>
 
-<div id="ps-detail-wrap" class="ps-sheet-backdrop"><div class="ps-sheet">
- <button id="ps-detail-close" class="ps-reset" style="float:right">Закрыть</button><div id="ps-detail"></div>
+<div class="ps-filter-block"><h4>Формат</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="type" data-value="Freezeout">Freezeout</button>
+<button class="ps-chip choice" data-key="type" data-value="Bounty">Bounty</button>
+<button class="ps-chip choice" data-key="type" data-value="Mystery Bounty">Mystery Bounty</button>
+<button class="ps-chip choice" data-key="type" data-value="Freeroll">Freeroll</button>
 </div></div>
+
+<div class="ps-filter-block"><h4>Re-entry</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="reentry" data-value="none">Без re-entry</button>
+<button class="ps-chip choice" data-key="reentry" data-value="yes">Есть re-entry</button>
+</div></div>
+
+<div class="ps-filter-block"><h4>Add-on</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="addon" data-value="yes">Есть add-on</button>
+</div></div>
+
+<div class="ps-filter-block"><h4>Late reg</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="late" data-value="yes">Есть late reg</button>
+<button class="ps-chip choice" data-key="late" data-value="open">Куда ещё можно успеть</button>
+</div></div>
+
+<div class="ps-filter-block"><h4>Орг. взнос</h4><div class="ps-chips">
+<button class="ps-chip choice" data-key="fee" data-value="free">Бесплатно</button>
+<button class="ps-chip choice" data-key="fee" data-value="1000">До 1 000 ₽</button>
+</div></div>
+
+<button id="apply" class="ps-apply">ПОКАЗАТЬ ТУРНИРЫ</button>
+</div></div>
+
+<div id="detail-bg" class="ps-sheet-bg"><div class="ps-sheet">
+<button id="detail-close" class="ps-close">Закрыть</button><div id="detail"></div>
+</div></div>
+
+<nav class="ps-bottom">
+<div><b>⌂</b>ГЛАВНАЯ</div><div><b>▱</b>РАЗДАЧИ</div><div><b>▤</b>МОИ ТУРНИРЫ</div><div class="active"><b>♛</b>ПОЛЯНА</div><div><b>◯</b>ТЫ</div>
+</nav>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="./polyana/polyana.js"></script>
 </body></html>
