@@ -35,5 +35,8 @@ export {
   computeReachSnapshot, rangeEquilibrationDelta, rangeEquilibrationStable, rangeEquilibrationResult
 } from './analysis/rangeEquilibration.js';
 export { buildSolverExplanation } from './explanations/explanationBuilder.js';
+export { adaptPokerSwipeHand, defaultRangesFor, handContentKey, stableHash } from './integration/pokerSwipeHandAdapter.js';
+export { buildReviewModel, reviewPokerSwipeHandAsync } from './integration/reviewModel.js';
+export { createHandCache, stableHash as cacheHash } from './integration/cache.js';
 
 export default PokerSwipeSolver;
