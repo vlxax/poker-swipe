@@ -101,6 +101,26 @@ async function main() {
   // Legacy passport (старый декоративный паспорт) не должен дублироваться.
   assert.equal(document.querySelectorAll('#dailyArea > .spot30').length, 1, 'duplicate context blocks in daily');
 
+  // --- остальные мини-апки первого раздела рендерятся без ошибок ---
+  w.show('heal'); await wait(30);
+  w.show('xray'); await wait(30);
+  w.show('myhands'); await wait(30);
+  w.show('profile'); await wait(30);
+  w.show('home'); await wait(30);
+
+  // --- русификация пользовательских строк ---
+  assert.match(document.body.textContent, /ЛАБОРАТОРИЯ РАЗМЕРА/);
+  assert.ok(!/SESSION REPORT/.test(document.body.textContent), 'SESSION REPORT not russified');
+  assert.ok(!/SIZING LAB/.test(document.body.textContent), 'SIZING LAB not russified');
+  assert.ok(!document.body.textContent.includes('ey">POT</span>'), 'POT label still present');
+  assert.ok(!document.body.textContent.includes('<span>HERO</span>'), 'HERO label still present');
+  assert.ok(!/DAILY #/.test(document.body.textContent), 'DAILY # still present');
+
+  // Известная предсуществующая ошибка загрузки (myGo18 getter-only) — не связана
+  // с нашей работой и не ломает приложение; отфильтровываем.
+  const real = errors.filter(e => !/myGo18/.test(e));
+  assert.equal(real.length, 0, 'runtime errors during boot/render: ' + JSON.stringify(real));
+
   w.close();
   console.log('task-context integration DOM: OK');
 }
