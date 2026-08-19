@@ -1,9 +1,22 @@
 {
   "source": "https://pokernomoney.ru/club",
-  "updated_at": "2026-08-19T10:26:12+03:00",
+  "updated_at": "2026-08-19T12:08:39+03:00",
   "date": "2026-08-19",
   "city": "Москва",
   "events": [
+    {
+      "date": "2026-08-19",
+      "time": "18:00",
+      "club": "Straddle poker club",
+      "tournament": "четверг",
+      "fee_rub": 0,
+      "source_url": "https://pokernomoney.ru/club/c~straddle",
+      "address": "Валовая улица, 32/75с2 (2 этаж)",
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "late_reg_minutes": null,
+      "duration_minutes": null
+    },
     {
       "date": "2026-08-19",
       "time": "18:00",
@@ -176,19 +189,6 @@
     {
       "date": "2026-08-19",
       "time": "19:00",
-      "club": "Straddle poker club",
-      "tournament": "четверг",
-      "fee_rub": 0,
-      "source_url": "https://pokernomoney.ru/club/c~straddle",
-      "address": "Валовая улица, 32/75с2 (2 этаж)",
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "late_reg_minutes": null,
-      "duration_minutes": null
-    },
-    {
-      "date": "2026-08-19",
-      "time": "19:00",
       "club": "Дойл (Doyle poker club)",
       "tournament": "четверг",
       "fee_rub": 0,
@@ -255,8 +255,8 @@
       "date": "2026-08-19",
       "time": "20:00",
       "club": "BlackWood",
-      "tournament": "BlackWood Poker",
-      "fee_rub": 0,
+      "tournament": "Win the Button",
+      "fee_rub": 1500,
       "source_url": "https://pokernomoney.ru/club/c~blackwood",
       "address": "Олимпийский проспект, 12",
       "reentry_limit": null,
