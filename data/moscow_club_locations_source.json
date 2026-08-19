@@ -35,7 +35,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Коммунарка"
     },
     {
       "id": "minds",
@@ -45,7 +46,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Академическая"
     },
     {
       "id": "joker-poker-club-moscow",
@@ -55,7 +57,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Аннино"
     },
     {
       "id": "friendly-poker-club",
@@ -65,7 +68,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Электрозаводская"
     },
     {
       "id": "moscow-poker-club",
@@ -75,7 +79,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Пушкинская / Чеховская"
     },
     {
       "id": "club-8",
@@ -95,7 +100,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Савёловская"
     },
     {
       "id": "nuts-poker-club-moscow",
@@ -105,7 +111,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Китай-город"
     },
     {
       "id": "i-doyle-poker-club",
@@ -185,7 +192,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Сокол"
     },
     {
       "id": "blef-bet",
@@ -205,7 +213,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Шелепиха и ЗИЛ"
     },
     {
       "id": "level",
@@ -305,7 +314,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Менделеевская"
     },
     {
       "id": "poker-room-gto",
@@ -315,7 +325,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Сухаревская"
     },
     {
       "id": "joker-poker-club",
@@ -325,7 +336,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Кутузовская"
     },
     {
       "id": "heads-up",
@@ -345,7 +357,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Римская"
     },
     {
       "id": "club-35",
@@ -355,7 +368,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Бауманская и ЗИЛ"
     },
     {
       "id": "midnight-poker-club",
@@ -385,7 +399,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Тушинская"
     },
     {
       "id": "club-39",
@@ -428,7 +443,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Тульская"
     },
     {
       "id": "club-43",
@@ -512,7 +528,8 @@
       "country": "Россия",
       "lat": null,
       "lng": null,
-      "geocode_status": "pending"
+      "geocode_status": "pending",
+      "metro": "Беломорская"
     },
     {
       "id": "poker-club",
@@ -672,5 +689,7 @@
       "excluded": true,
       "reason": "На московской странице PokerNoMoney клуб попал в список, но описание прямо указывает Санкт-Петербург."
     }
-  ]
+  ],
+  "secondary_catalog_reported_count": 67,
+  "secondary_catalog_checked_at": "2026-08-19"
 }

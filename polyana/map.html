@@ -6,323 +6,41 @@
 <title>Карта клубов Москвы</title>
 <style>
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-#map{position:relative;width:100%;height:100%;overflow:hidden;background:#0d0f0d;touch-action:none;cursor:grab;isolation:isolate}
-#map.dragging{cursor:grabbing}
-.tiles,.markers{position:absolute;inset:0;overflow:hidden}
-.tile{position:absolute;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;filter:brightness(.47) saturate(.74) contrast(1.18) hue-rotate(18deg)}
-.markers{pointer-events:none}
-.marker{position:absolute;left:0;top:0;width:34px;height:34px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}
-.marker span{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 10px #c8ff3d7a}
-.marker:active span{transform:scale(.82)}
-.controls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:11px;overflow:hidden;background:#0d0f0eee;box-shadow:0 4px 18px #0008}
-.controls button{width:40px;height:40px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}
-.controls button:last-child{border-bottom:0}
-.status{position:absolute;left:60px;right:10px;top:10px;z-index:6;background:#090b09e8;border:1px solid #33392d;border-radius:11px;padding:9px 11px;color:#c8c3ca;font-size:11px;line-height:1.3;pointer-events:none}
-.status b{color:#c8ff3d}
-.attr{position:absolute;right:4px;bottom:3px;z-index:5;background:#090a09d8;color:#777;font-size:7px;padding:2px 4px;border-radius:4px;pointer-events:none}
-.popup{position:absolute;z-index:9;width:220px;max-width:calc(100% - 16px);padding:12px 32px 11px 12px;border:1px solid #667d25;border-radius:13px;background:#11140ff5;color:#fff;box-shadow:0 10px 30px #000b;pointer-events:auto}
-.popup b{display:block;color:#c8ff3d;font-size:12px;line-height:1.25;margin-bottom:5px}
-.popup span{display:block;color:#c8c3ca;font-size:10px;line-height:1.35}
-.close{position:absolute;right:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#fff;font-size:16px}
-.popup .fav{position:absolute;left:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#77717a;font-size:15px}
-.popup .fav.on{color:#ffd66b}
-.popup .line{display:block;margin-top:6px;padding-top:6px;border-top:1px solid #2a2e2a;font-size:9px}
-.popup .near b{display:block;color:#c8ff3d;font-size:9px;font-weight:900;margin-bottom:2px}
-.popup .go{width:100%;margin-top:8px;min-height:34px;border:1px solid #64791f;border-radius:10px;background:#151b0f;color:#d9ff77;font:900 9px/1 system-ui}
-.marker.favorite span{background:#ffd66b;border-color:#090b08;box-shadow:0 0 0 1px #ffd66b,0 0 10px #ffd66b8a}
-.error{position:absolute;inset:18px;display:grid;place-items:center;text-align:center;color:#aaa4ad;border:1px dashed #3a3c3a;border-radius:16px;padding:20px;z-index:10;background:#0d0f0de8}
+#map{position:relative;width:100%;height:100%;overflow:hidden;background:#0d0f0d;touch-action:none;cursor:grab;isolation:isolate}#map.dragging{cursor:grabbing}
+.tiles,.markers{position:absolute;inset:0;overflow:hidden}.tile{position:absolute;width:256px;height:256px;max-width:none;user-select:none;-webkit-user-drag:none;filter:brightness(.47) saturate(.74) contrast(1.18) hue-rotate(18deg)}
+.markers{pointer-events:none}.marker{position:absolute;left:0;top:0;width:34px;height:34px;border:0;background:transparent;padding:0;pointer-events:auto;z-index:4}.marker span{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#c8ff3d;border:3px solid #090b08;box-shadow:0 0 0 1px #c8ff3d,0 0 12px #c8ff3d88}.marker.favorite span{background:#ffd66b;box-shadow:0 0 0 1px #ffd66b,0 0 12px #ffd66b88}
+.controls{position:absolute;left:10px;top:10px;z-index:7;display:grid;border:1px solid #34383a;border-radius:11px;overflow:hidden;background:#0d0f0eee;box-shadow:0 4px 18px #0008}.controls button{width:40px;height:40px;border:0;border-bottom:1px solid #34383a;background:#0f110f;color:#c8ff3d;font:900 20px/1 system-ui}.controls button:last-child{border-bottom:0}
+.status{position:absolute;left:60px;right:10px;top:10px;z-index:6;background:#090b09e8;border:1px solid #33392d;border-radius:11px;padding:9px 11px;color:#c8c3ca;font-size:11px;line-height:1.3;pointer-events:none}.status b{color:#c8ff3d}
+.popup{position:absolute;z-index:9;width:230px;max-width:calc(100% - 16px);padding:12px 32px 11px 12px;border:1px solid #667d25;border-radius:13px;background:#11140ff5;color:#fff;box-shadow:0 10px 30px #000b;pointer-events:auto}.popup b{display:block;color:#c8ff3d;font-size:12px;line-height:1.25;margin-bottom:5px}.popup span{display:block;color:#c8c3ca;font-size:10px;line-height:1.35}.popup .line{margin-top:7px;padding-top:7px;border-top:1px solid #2a2e2a}.popup .go{width:100%;margin-top:8px;min-height:34px;border:1px solid #64791f;border-radius:10px;background:#151b0f;color:#d9ff77;font:900 9px/1 system-ui}.close,.fav{position:absolute;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;font-size:16px}.close{right:6px;color:#fff}.fav{left:6px;color:#77717a}.fav.on{color:#ffd66b}.popup{padding-left:36px}
+.attr{position:absolute;right:4px;bottom:3px;z-index:5;background:#090a09d8;color:#777;font-size:7px;padding:2px 4px;border-radius:4px;pointer-events:none}.error{position:absolute;inset:18px;display:grid;place-items:center;text-align:center;color:#aaa4ad;border:1px dashed #3a3c3a;border-radius:16px;padding:20px;z-index:10;background:#0d0f0de8}
 </style>
 </head>
 <body>
-<div id="map">
-  <div class="tiles" aria-hidden="true"></div>
-  <div class="markers"></div>
-  <div class="popup" hidden></div>
-  <div class="controls">
-    <button type="button" data-plus aria-label="Приблизить">+</button>
-    <button type="button" data-minus aria-label="Отдалить">−</button>
-  </div>
-  <div class="status" id="status">Открываем карту…</div>
-  <div class="attr">© OpenStreetMap contributors</div>
-</div>
+<div id="map"><div class="tiles" aria-hidden="true"></div><div class="markers"></div><div class="popup" hidden></div><div class="controls"><button type="button" data-plus aria-label="Приблизить">+</button><button type="button" data-minus aria-label="Отдалить">−</button></div><div class="status" id="status">Открываем карту…</div><div class="attr">© OpenStreetMap contributors</div></div>
 <script>
 (()=>{'use strict';
-
-try{
-  if(window.frameElement){
-    const f=window.frameElement;
-    f.style.display='block';
-    f.style.width='100%';
-    f.style.maxWidth='100%';
-    f.style.minHeight='480px';
-    f.style.height=matchMedia('(max-width:600px)').matches?'560px':'640px';
-    f.style.border='0';
-  }
-}catch(_){}
-
-const MOSCOW=[55.7558,37.6173];
-const BOUNDS={minLat:54.90,maxLat:56.30,minLng:36.65,maxLng:39.05};
-const MIN_Z=8,MAX_Z=17;
-const LKG_KEY='psp-polyana-map-lkg-v1';
-const FAV_KEY='psp-polyana-favorite-clubs-v1';
-const DATA_URLS=['../data/moscow_schedule_today.json','../data/live_polyana.json'];
-const FETCH_TIMEOUT_MS=4500;
-
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const valid=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=BOUNDS.minLat&&lat<=BOUNDS.maxLat&&lng>=BOUNDS.minLng&&lng<=BOUNDS.maxLng;
-const normName=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
-const readFavs=()=>{try{const r=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');return new Set(Array.isArray(r)?r.map(normName).filter(Boolean):[])}catch(_){return new Set()}};
-function matchesClub(clubName,eventClub){const a=normName(clubName),b=normName(eventClub);return b?b.includes(a)||a.includes(b):false}
-function clubMatches(c,ev){return matchesClub(c.name||'',ev.club)}
-function nextUpcoming(c){
-  if(!events.length)return null;
-  let best=null;
-  for(const ev of events){
-    if(!clubMatches(c,ev))continue;
-    if(!ev.time)continue;
-    const t=ev.time;
-    const k=(ev.date||'')+'T'+t;
-    if(!best||k<best.key)best={key:k,title:ev.tournament||'Турнир клуба',time:t};
-  }
-  return best;
-}
-function project(lat,lng,z){const n=256*Math.pow(2,z),s=Math.sin(clamp(lat,-85.0511,85.0511)*Math.PI/180);return{x:(lng+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n}}
-function unproject(x,y,z){const n=256*Math.pow(2,z);return[180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n))),x/n*360-180]}
-function safeCenter(lat,lng){return[clamp(lat,BOUNDS.minLat,BOUNDS.maxLat),clamp(lng,BOUNDS.minLng,BOUNDS.maxLng)]}
-
+const MOSCOW=[55.7558,37.6173],BOUNDS={minLat:54.9,maxLat:56.3,minLng:36.65,maxLng:39.05},MIN_Z=8,MAX_Z=17,FAV_KEY='psp-polyana-favorite-clubs-v1';
 const el=document.getElementById('map'),tiles=el.querySelector('.tiles'),markers=el.querySelector('.markers'),popup=el.querySelector('.popup'),status=document.getElementById('status');
-let center=[...MOSCOW],zoom=10,drag=null,raf=0,pinch=null;
-let events=[],favs=readFavs();
-const coords=new Map(),markerEls=new Map(),tileEls=new Map();
-
-function topLeft(){const cp=project(center[0],center[1],zoom);return{x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
-function position(lat,lng){const p=project(lat,lng,zoom),tl=topLeft();return{x:p.x-tl.x,y:p.y-tl.y}}
-
-function renderTiles(w,h,tl){
-  const ts=256,max=Math.pow(2,zoom),wanted=new Set();
-  const minX=Math.floor(tl.x/ts)-1,maxX=Math.floor((tl.x+w)/ts)+1,minY=Math.floor(tl.y/ts)-1,maxY=Math.floor((tl.y+h)/ts)+1;
-  for(let ty=minY;ty<=maxY;ty++)for(let tx=minX;tx<=maxX;tx++){
-    if(ty<0||ty>=max)continue;
-    const wrap=((tx%max)+max)%max,key=`${zoom}/${wrap}/${ty}/${tx}`;
-    wanted.add(key);
-    let img=tileEls.get(key);
-    if(!img){
-      img=document.createElement('img');img.className='tile';img.alt='';img.draggable=false;
-      img.src=`https://tile.openstreetmap.org/${zoom}/${wrap}/${ty}.png`;
-      tileEls.set(key,img);tiles.appendChild(img);
-    }
-    img.style.left=(tx*ts-tl.x)+'px';img.style.top=(ty*ts-tl.y)+'px';
-  }
-  for(const [key,img] of tileEls)if(!wanted.has(key)){img.remove();tileEls.delete(key)}
-}
-
-function render(){
-  cancelAnimationFrame(raf);
-  raf=requestAnimationFrame(()=>{
-    const w=el.clientWidth||390,h=el.clientHeight||560,tl=topLeft();
-    renderTiles(w,h,tl);
-    for(const [id,m] of markerEls){
-      const rec=coords.get(id);if(!rec)continue;
-      const p=position(rec.lat,rec.lng);
-      m.style.transform=`translate(${Math.round(p.x)}px,${Math.round(p.y)}px) translate(-50%,-50%)`;
-      m.hidden=p.x<-35||p.y<-35||p.x>w+35||p.y>h+35;
-    }
-    if(!popup.hidden&&popup.dataset.lat){
-      const p=position(+popup.dataset.lat,+popup.dataset.lng);
-      popup.style.left=Math.max(8,Math.min(w-232,p.x+12))+'px';
-      popup.style.top=Math.max(8,Math.min(h-110,p.y-30))+'px';
-    }
-  });
-}
-
-function popupCard(rec){
-  const c=rec.c,name=c.name||'Клуб';
-  const fav=isFav(name);
-  const near=nextUpcoming(c);
-  const nearHtml=near?`<span class="near"><b>${esc(near.title)}</b>${esc(near.time)}</span>`:'';
-  const favHtml=`<button type="button" class="fav ${fav?'on':''}" data-fav>${fav?'★':'☆'}</button>`;
-  const goHtml=`<button type="button" class="go" data-go>Турниры клуба →</button>`;
-  return `<button type="button" class="close" aria-label="Закрыть">×</button>${favHtml}
-    <b>${esc(name)}</b>
-    ${esc(c.address||'Адрес уточняется')}
-    <span class="line">${nearHtml?nearHtml:'<span>Ближайший турнир не найден</span>'}</span>
-    ${goHtml}`;
-}
-function openPopup(rec){
-  popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
-  popup.innerHTML=popupCard(rec);
-  const c=popup.querySelector('.close');
-  c.onclick=e=>{e.stopPropagation();closePopup()};
-  const f=popup.querySelector('[data-fav]');
-  if(f)f.onclick=e=>{e.stopPropagation();const name=rec.c.name||'';const k=normName(name);if(!k)return;favs.has(k)?favs.delete(k):favs.add(k);saveFavs();refreshFavMarkers();popup.innerHTML=popupCard(rec);rehook();};
-  const g=popup.querySelector('[data-go]');
-  if(g)g.onclick=e=>{e.stopPropagation();try{parent.postMessage({type:'psp-map-open-club',club:rec.c.name||''},location.origin)}catch(_){}};
-  function rehook(){const ff=popup.querySelector('[data-fav]');if(ff)ff.onclick=e=>{e.stopPropagation();const name=rec.c.name||'';const k=normName(name);if(!k)return;favs.has(k)?favs.delete(k):favs.add(k);saveFavs();refreshFavMarkers();popup.innerHTML=popupCard(rec);rehook();};const gg=popup.querySelector('[data-go]');if(gg)gg.onclick=e=>{e.stopPropagation();try{parent.postMessage({type:'psp-map-open-club',club:rec.c.name||''},location.origin)}catch(_){}};}
-  render();
-}
-function closePopup(){popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')}
-function isFav(name){return favs.has(normName(name))}
-function saveFavs(){try{localStorage.setItem(FAV_KEY,JSON.stringify([...favs]))}catch(_){};try{parent.postMessage({type:'psp-map-favorites-changed'},location.origin)}catch(_){}}
-function refreshFavMarkers(){
-  for(const [id,m] of markerEls){
-    const rec=coords.get(id);if(!rec)continue;
-    m.classList.toggle('favorite',isFav(rec.c.name||''));
-  }
-}
-function addClub(c){
-  const lat=+c.lat,lng=+c.lng;
-  if(!valid(lat,lng))return false;
-  const id=String(c.id||c.source_id||c.name||'');
-  if(!id||coords.has(id))return false;
-  coords.set(id,{lat,lng,c});
-  const m=document.createElement('button');
-  m.type='button';m.className='marker'+(isFav(c.name||'')?' favorite':'');m.title=c.name||'Клуб';m.innerHTML='<span></span>';
-  m.addEventListener('click',e=>{
-    e.stopPropagation();const rec=coords.get(id);if(!rec)return;
-    openPopup(rec);
-  });
-  markerEls.set(id,m);markers.appendChild(m);
-  return true;
-}
-
-function fitAll(){
-  const a=[...coords.values()];
-  if(!a.length){center=[...MOSCOW];zoom=10;render();return}
-  let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;
-  for(const p of a){minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);minLng=Math.min(minLng,p.lng);maxLng=Math.max(maxLng,p.lng)}
-  center=safeCenter((minLat+maxLat)/2,(minLng+maxLng)/2);
-  const w=Math.max(250,el.clientWidth-54),h=Math.max(300,el.clientHeight-96);
-  let chosen=MIN_Z;
-  for(let z=MAX_Z;z>=MIN_Z;z--){
-    const p1=project(maxLat,minLng,z),p2=project(minLat,maxLng,z);
-    if(Math.abs(p2.x-p1.x)<=w&&Math.abs(p2.y-p1.y)<=h){chosen=z;break}
-  }
-  zoom=chosen;render();
-}
-
-function changeZoom(d){const next=clamp(zoom+d,MIN_Z,MAX_Z);if(next!==zoom){zoom=next;popup.hidden=true;render()}}
-el.querySelector('[data-plus]').onclick=e=>{e.stopPropagation();changeZoom(1)};
-el.querySelector('[data-minus]').onclick=e=>{e.stopPropagation();changeZoom(-1)};
-
-const pointers=new Map();
-el.addEventListener('pointerdown',e=>{
-  if(e.target.closest('button'))return;
-  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  el.setPointerCapture?.(e.pointerId);
-  popup.hidden=true;
-  if(pointers.size===1){
-    drag={id:e.pointerId,x:e.clientX,y:e.clientY,p:project(center[0],center[1],zoom)};
-    el.classList.add('dragging');
-  }else if(pointers.size===2){
-    drag=null;el.classList.remove('dragging');
-    const p=[...pointers.values()];
-    pinch={dist:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),zoom};
-  }
-});
-el.addEventListener('pointermove',e=>{
-  if(!pointers.has(e.pointerId))return;
-  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pinch&&pointers.size>=2){
-    const p=[...pointers.values()],dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
-    const next=clamp(Math.round(pinch.zoom+Math.log2(Math.max(.2,dist/pinch.dist))),MIN_Z,MAX_Z);
-    if(next!==zoom){zoom=next;render()}
-    return;
-  }
-  if(drag&&drag.id===e.pointerId){
-    const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)},c=unproject(p.x,p.y,zoom);
-    center=safeCenter(c[0],c[1]);render();
-  }
-});
-function endPointer(e){
-  pointers.delete(e.pointerId);
-  if(drag?.id===e.pointerId){drag=null;el.classList.remove('dragging')}
-  if(pointers.size<2)pinch=null;
-  try{el.releasePointerCapture?.(e.pointerId)}catch(_){}
-}
-el.addEventListener('pointerup',endPointer);el.addEventListener('pointercancel',endPointer);
-el.addEventListener('wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},{passive:false});
-window.addEventListener('resize',render);
-window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.type==='psp-map-reset')fitAll()});
-
-function parsePayload(raw){
-  if(!raw||!Array.isArray(raw.clubs))return null;
-  const clubs=raw.clubs.filter(c=>valid(+c.lat,+c.lng)&&["verified","high"].includes(String(c.confidence||"")));
-  const ids=new Set();
-  const clean=[];
-  for(const c of clubs){
-    const id=String(c.id||c.source_id||"");
-    if(!id||ids.has(id))continue;
-    ids.add(id);clean.push(c);
-  }
-  return {...raw,clubs:clean,resolved_count:clean.length};
-}
-function readLkg(){
-  try{return parsePayload(JSON.parse(localStorage.getItem(LKG_KEY)||'null'))}catch(_){return null}
-}
-function saveLkg(d){
-  try{localStorage.setItem(LKG_KEY,JSON.stringify(d))}catch(_){}
-}
-async function fetchJsonTimeout(url,ms){
-  const ctl=new AbortController();
-  const timer=setTimeout(()=>ctl.abort(),ms);
-  try{
-    const r=await fetch(url,{cache:'no-cache',signal:ctl.signal});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return await r.json();
-  }finally{clearTimeout(timer)}
-}
-
-function chooseBest(remote,lkg){
-  if(remote&&lkg&&lkg.clubs.length>remote.clubs.length)return {data:lkg,fromCache:true,remoteRegressed:true};
-  if(remote)return {data:remote,fromCache:false,remoteRegressed:false};
-  if(lkg)return {data:lkg,fromCache:true,remoteRegressed:false};
-  return null;
-}
-
-async function loadEvents(){
-  for(const u of DATA_URLS){
-    try{
-      const d=await fetchJsonTimeout(u,5000);
-      if(d&&Array.isArray(d.events)){events=d.events;return}
-    }catch(_){}
-  }
-}
-async function load(){
-  loadEvents();
-  const lkg=readLkg();
-  let remote=null;
-  try{
-    remote=parsePayload(await fetchJsonTimeout('club_coords.json',FETCH_TIMEOUT_MS));
-  }catch(_){}
-  const best=chooseBest(remote,lkg);
-  if(!best){
-    const box=document.createElement('div');box.className='error';
-    box.textContent='Не удалось загрузить готовые координаты клубов.';
-    el.appendChild(box);status.textContent='Карта временно недоступна';return;
-  }
-
-  const d=best.data;
-  for(const c of d.clubs)addClub(c);
-  fitAll();
-
-  if(remote&&!best.fromCache&&remote.build_status==='ready')saveLkg(remote);
-
-  const shown=coords.size,total=Number(d.club_count)||shown;
-  if(best.remoteRegressed){
-    status.innerHTML=`На карте <b>${shown}</b> клубов · использована последняя полная версия`;
-  }else if(best.fromCache){
-    status.innerHTML=`На карте <b>${shown}</b> клубов · сохранённая версия`;
-  }else if(shown===total){
-    status.innerHTML=`На карте <b>${shown}</b> клубов`;
-  }else{
-    const review=Number(d.review_count)||0,unresolved=Number(d.unresolved_count)||0;
-    status.innerHTML=`На карте <b>${shown}</b> из ${total}${review||unresolved?` · ${review+unresolved} адресов требуют проверки`:''}`;
-  }
-}
-
-render();load();
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),valid=(a,b)=>Number.isFinite(a)&&Number.isFinite(b)&&a>=BOUNDS.minLat&&a<=BOUNDS.maxLat&&b>=BOUNDS.minLng&&b<=BOUNDS.maxLng,esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])),norm=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+let center=[...MOSCOW],zoom=10,raf=0,drag=null,pinch=null,activePopupId='',events=[],favs=readFavs();const coords=new Map(),markerEls=new Map(),tileEls=new Map(),pointers=new Map();
+function readFavs(){try{const a=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');return new Set(Array.isArray(a)?a.map(norm):[])}catch(_){return new Set()}}function saveFavs(){try{localStorage.setItem(FAV_KEY,JSON.stringify([...favs]))}catch(_){}}
+function project(lat,lng,z){const n=256*2**z,s=Math.sin(clamp(lat,-85.0511,85.0511)*Math.PI/180);return{x:(lng+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n}}function unproject(x,y,z){const n=256*2**z;return[180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n))),x/n*360-180]}function topLeft(){const p=project(center[0],center[1],zoom);return{x:p.x-el.clientWidth/2,y:p.y-el.clientHeight/2}}
+function popupPosition(){if(popup.hidden||!activePopupId)return;const r=coords.get(activePopupId);if(!r)return;const w=el.clientWidth||390,h=el.clientHeight||560,tl=topLeft(),p=project(r.lat,r.lng,zoom),x=p.x-tl.x,y=p.y-tl.y;popup.style.left=Math.max(8,Math.min(w-242,x+12))+'px';popup.style.top=Math.max(8,Math.min(h-150,y-30))+'px'}
+function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const w=el.clientWidth||390,h=el.clientHeight||560,tl=topLeft(),ts=256,max=2**zoom,wanted=new Set();for(let ty=Math.floor(tl.y/ts)-1;ty<=Math.floor((tl.y+h)/ts)+1;ty++)for(let tx=Math.floor(tl.x/ts)-1;tx<=Math.floor((tl.x+w)/ts)+1;tx++){if(ty<0||ty>=max)continue;const wrap=((tx%max)+max)%max,key=`${zoom}/${wrap}/${ty}/${tx}`;wanted.add(key);let img=tileEls.get(key);if(!img){img=document.createElement('img');img.className='tile';img.alt='';img.draggable=false;img.src=`https://tile.openstreetmap.org/${zoom}/${wrap}/${ty}.png`;tileEls.set(key,img);tiles.appendChild(img)}img.style.left=(tx*ts-tl.x)+'px';img.style.top=(ty*ts-tl.y)+'px'}for(const[k,img]of tileEls)if(!wanted.has(k)){img.remove();tileEls.delete(k)}for(const[id,m]of markerEls){const r=coords.get(id),p=project(r.lat,r.lng,zoom),x=p.x-tl.x,y=p.y-tl.y;m.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px) translate(-50%,-50%)`;m.hidden=x<-35||y<-35||x>w+35||y>h+35}popupPosition()})}
+function clubEvent(c){const n=norm(c.name);return events.filter(e=>{const x=norm(e.club);return x&&n&&(x.includes(n)||n.includes(x))}).sort((a,b)=>`${a.date||''}T${a.time||''}`.localeCompare(`${b.date||''}T${b.time||''}`))[0]||null}
+function popupHtml(r){const c=r.c,k=norm(c.name),fav=favs.has(k),ev=clubEvent(c);return `<button type="button" class="fav ${fav?'on':''}" data-fav aria-label="Избранное">${fav?'★':'☆'}</button><button type="button" class="close" data-close aria-label="Закрыть">×</button><b>${esc(c.name||'Клуб')}</b><span>${esc(c.address||'Адрес уточняется')}</span>${c.metro?`<span>м. ${esc(c.metro)}</span>`:''}${c.working_hours?`<span>${esc(c.working_hours)}</span>`:''}<span class="line">${ev?`Ближайшее: ${esc(ev.time||'')} · ${esc(ev.tournament||'Турнир клуба')}`:'Ближайший турнир не найден'}</span><button type="button" class="go" data-go>Турниры клуба →</button>`}
+function openPopup(id){const r=coords.get(id);if(!r)return;activePopupId=id;popup.hidden=false;popup.innerHTML=popupHtml(r);popup.querySelector('[data-close]').onclick=e=>{e.stopPropagation();closePopup()};popup.querySelector('[data-fav]').onclick=e=>{e.stopPropagation();const k=norm(r.c.name);favs.has(k)?favs.delete(k):favs.add(k);saveFavs();markerEls.get(id)?.classList.toggle('favorite',favs.has(k));openPopup(id)};popup.querySelector('[data-go]').onclick=e=>{e.stopPropagation();try{parent.postMessage({type:'psp-map-open-club',club:r.c.name||''},location.origin)}catch(_){}};popupPosition()}
+function closePopup(){activePopupId='';popup.hidden=true}
+function add(c,lat,lng){if(!valid(+lat,+lng))return false;const id=String(c.id||c.source_id||c.name||'');if(!id||coords.has(id))return false;coords.set(id,{c,lat:+lat,lng:+lng});const m=document.createElement('button');m.type='button';m.className='marker'+(favs.has(norm(c.name))?' favorite':'');m.title=c.name||'Клуб';m.innerHTML='<span></span>';m.onclick=e=>{e.stopPropagation();openPopup(id)};markerEls.set(id,m);markers.appendChild(m);return true}
+function fitAll(){const a=[...coords.values()];if(!a.length){center=[...MOSCOW];zoom=10;render();return}let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;for(const p of a){minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);minLng=Math.min(minLng,p.lng);maxLng=Math.max(maxLng,p.lng)}center=[(minLat+maxLat)/2,(minLng+maxLng)/2];const w=Math.max(250,el.clientWidth-54),h=Math.max(300,el.clientHeight-96);let chosen=MIN_Z;for(let z=MAX_Z;z>=MIN_Z;z--){const p1=project(maxLat,minLng,z),p2=project(minLat,maxLng,z);if(Math.abs(p2.x-p1.x)<=w&&Math.abs(p2.y-p1.y)<=h){chosen=z;break}}zoom=chosen;render()}
+async function json(url){const r=await fetch(url+(url.includes('?')?'&':'?')+'v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error(r.status);return r.json()}
+async function load(){try{const [d,ev]=await Promise.all([json('club_coords.json'),json('../data/moscow_schedule_today.json').catch(()=>({events:[]}))]);events=Array.isArray(ev.events)?ev.events:[];const rows=Array.isArray(d.clubs)?d.clubs:[];for(const c of rows)add(c,c.lat,c.lng);fitAll();const total=Number(d.club_count)||rows.length,missing=Math.max(0,total-coords.size);status.innerHTML=missing?`На карте <b>${coords.size}</b> из ${total} · база точек обновляется`:`На карте <b>${coords.size}</b> клубов`;if(!coords.size){const box=document.createElement('div');box.className='error';box.textContent='Координаты клубов ещё не собраны. Запустите синхронизацию Поляны в GitHub Actions.';el.appendChild(box)}}catch(_){status.textContent='Карта временно недоступна'}}
+function zoomBy(delta){const z=clamp(zoom+delta,MIN_Z,MAX_Z);if(z!==zoom){zoom=z;render()}}
+el.querySelector('[data-plus]').onclick=e=>{e.stopPropagation();zoomBy(1)};el.querySelector('[data-minus]').onclick=e=>{e.stopPropagation();zoomBy(-1)};
+el.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});el.setPointerCapture?.(e.pointerId);closePopup();if(pointers.size===1){drag={id:e.pointerId,x:e.clientX,y:e.clientY,p:project(center[0],center[1],zoom)};el.classList.add('dragging')}else if(pointers.size===2){drag=null;el.classList.remove('dragging');const p=[...pointers.values()];pinch={dist:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),zoom}}});
+el.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&pointers.size>=2){const p=[...pointers.values()],dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),z=clamp(Math.round(pinch.zoom+Math.log2(Math.max(.2,dist/pinch.dist))),MIN_Z,MAX_Z);if(z!==zoom){zoom=z;render()}return}if(drag&&drag.id===e.pointerId){const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)},c=unproject(p.x,p.y,zoom);center=[clamp(c[0],BOUNDS.minLat,BOUNDS.maxLat),clamp(c[1],BOUNDS.minLng,BOUNDS.maxLng)];render()}});
+function endPointer(e){pointers.delete(e.pointerId);if(drag?.id===e.pointerId){drag=null;el.classList.remove('dragging')}if(pointers.size<2)pinch=null;try{el.releasePointerCapture?.(e.pointerId)}catch(_){}}
+el.addEventListener('pointerup',endPointer);el.addEventListener('pointercancel',endPointer);el.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))endPointer(e)});el.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY<0?1:-1)},{passive:false});window.addEventListener('resize',render);window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.type==='psp-map-reset')fitAll()});render();load();
 })();
 </script>
-</body>
-</html>
+</body></html>

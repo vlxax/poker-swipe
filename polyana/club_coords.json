@@ -1,63 +1,51 @@
 {
-  "schema_version": 4,
+  "schema_version": 2,
   "city": "Москва",
-  "build_status": "bootstrap",
+  "generated_at": null,
   "club_count": 65,
   "resolved_count": 5,
-  "review_count": 0,
   "unresolved_count": 60,
+  "note": "Initial verified seeds. GitHub Action fills all resolvable coordinates server-side.",
   "clubs": [
     {
       "id": "minds",
-      "source_id": "minds",
       "name": "Minds",
-      "address": "",
+      "address": "Новочеремушкинская ул., д. 21а",
       "lat": 55.682229,
       "lng": 37.580647,
-      "status": "verified_manual",
-      "confidence": "verified"
+      "status": "verified_seed"
     },
     {
       "id": "joker-poker-club-moscow",
-      "source_id": "joker-poker-club-moscow",
       "name": "Joker Poker Club Moscow",
-      "address": "",
+      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
       "lat": 55.582987,
       "lng": 37.595142,
-      "status": "verified_manual",
-      "confidence": "verified"
+      "status": "verified_seed"
     },
     {
       "id": "pride",
-      "source_id": "pride",
       "name": "PRIDE",
-      "address": "",
+      "address": "ул. Ладожская, д. 11",
       "lat": 55.771803,
       "lng": 37.684111,
-      "status": "verified_manual",
-      "confidence": "verified"
+      "status": "verified_seed"
     },
     {
       "id": "check-check-club",
-      "source_id": "check-check-club",
       "name": "Check-Check Club",
-      "address": "",
+      "address": "Нижний Сусальный пер., д. 5с1",
       "lat": 55.761279,
       "lng": 37.663018,
-      "status": "verified_manual",
-      "confidence": "verified"
+      "status": "verified_seed"
     },
     {
       "id": "heads-up",
-      "source_id": "heads-up",
       "name": "HEADS UP",
-      "address": "Проспект Мира, 26с2",
+      "address": "проспект Мира, 26с2",
       "lat": 55.777318,
       "lng": 37.63641,
-      "status": "verified_manual",
-      "confidence": "verified"
+      "status": "verified_seed"
     }
-  ],
-  "needs_review": [],
-  "unresolved": []
+  ]
 }
