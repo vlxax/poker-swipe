@@ -137,37 +137,97 @@
     return { stage: 'СРЕДНЯЯ', table: '6-MAX', left: '', eff: '24 ББ', opp: 'РЕГ', note: '' };
   }
 
+  /* ---------- вспомогательные разборы legacy-данных ---------- */
+  var SEATS = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+  function parseVS(str) {
+    var m = String(str || '').match(/(UTG|HJ|CO|BTN|SB|BB)\s*(?:vs|VS)\s*(UTG|HJ|CO|BTN|SB|BB)/);
+    if (m) return { position: m[1], villain: m[2] };
+    return null;
+  }
+  function seatFrom(str) {
+    var m = String(str || '').match(/\b(UTG|HJ|CO|BTN|SB|BB)\b/);
+    return m ? m[1] : '';
+  }
+  function guessBlinds(pot) {
+    if (pot <= 3) return [50, 100];
+    if (pot <= 6) return [100, 200];
+    if (pot <= 16) return [200, 400];
+    if (pot <= 30) return [500, 1000];
+    return [1000, 2000];
+  }
+  function guessStage(pot, street) {
+    if (street === 'ПРЕФЛОП' || street === 'PREFLOP' || street === 'PRE') return 'РАННЯЯ';
+    if (pot <= 15) return 'РАННЯЯ';
+    if (pot <= 30) return 'СРЕДНЯЯ';
+    return 'ПОЗДНЯЯ';
+  }
+  function buildHistory(spot) {
+    if (spot.history && spot.history.length) return spot.history;
+    if (spot.line && spot.line.length) {
+      return spot.line.filter(Boolean).map(function (l) {
+        return { street: seatFrom(l) ? (l.indexOf('BTN') > -1 || l.indexOf('CO') > -1 || l.indexOf('HJ') > -1 || l.indexOf('UTG') > -1 ? 'ПРЕФЛОП' : 'ФЛОП') : 'ПРЕФЛОП', text: l };
+      });
+    }
+    if (spot.nodes && spot.nodes.length) {
+      return spot.nodes.map(function (n) {
+        var st = (n[0] || '').replace(/^PRE$/, 'ПРЕФЛОП').replace(/^FLOP$/, 'ФЛОП').replace(/^TURN$/, 'ТЁРН').replace(/^RIVER$/, 'РИВЕР');
+        return { street: st, text: String(n[1] || '') };
+      });
+    }
+    if (spot.actions && spot.actions.length) {
+      return spot.actions.map(function (a) { return { street: spot.street || 'ПРЕФЛОП', text: String(a) }; });
+    }
+    if (spot.ctx) return [{ street: spot.street || 'ПРЕФЛОП', text: spot.ctx }];
+    return [];
+  }
+  function buildQuestion(key, spot) {
+    if (spot.question) return spot.question;
+    if (spot.key) return spot.key;
+    if (key === 'sizing') return 'Какой размер ставки выбрать и почему?';
+    if (key === 'review') return 'Где линия сломалась?';
+    if (key === 'daily') return 'Какое решение и почему?';
+    if (key === 'swipe') return 'Твоё действие?';
+    if (spot.ctx) return spot.ctx;
+    return '';
+  }
+
   /* ---------- дополнение legacy-спота до полного контекста ---------- */
   function enrich(base, spot) {
-    var heroStack = spot.stack || spot.heroStack || 24;
-    var villainStack = spot.villainStack || Math.round(heroStack * 0.9);
     var ctx = (base && base.ctx) ? base.ctx : (base || {});
+    var key = (base && base.key) ? base.key : '';
+    var street = spot.street || 'ПРЕФЛОП';
+    var heroStack = spot.stack || spot.heroStack || 24;
+    var pot = spot.pot || 0;
+    var vs = parseVS(spot.pos) || parseVS(spot.ctx) || (spot.line && parseVS(spot.line[0])) || (spot.nodes && parseVS(spot.nodes[0] && spot.nodes[0][1])) || null;
+    if (!vs && (spot.line && spot.line[0])) vs = { position: seatFrom(spot.line[0]) || 'BTN', villain: 'BB' };
+    if (!vs && (spot.nodes && spot.nodes[0])) vs = { position: seatFrom(spot.nodes[0][1]) || 'BTN', villain: 'BB' };
+    var position = spot.pos ? seatFrom(String(spot.pos)) || (vs ? vs.position : '') : (vs ? vs.position : '');
+    var villain = vs ? vs.villain : (spot.villainSeat || 'BB');
+    var villainStack = spot.villainStack || Math.round(heroStack * 0.9);
     var oppName = spot.opp || ctx.opp || 'РЕГ';
     var opp = (typeof oppName === 'object' && oppName && oppName.name) ? oppName : oppOf(oppName);
-    var history = spot.history || [];
-    if (spot.actions && !history.length) {
-      history = spot.actions.map(function (a) { return { street: spot.street || 'ПРЕФЛОП', text: String(a) }; });
-    }
+    var history = buildHistory(spot);
+    var blinds = spot.blinds || guessBlinds(pot);
     return {
       id: spot.id || (ctx.field || 'SPOT'),
       format: spot.format || 'MTT',
-      street: spot.street || 'ПРЕФЛОП',
-      blinds: spot.blinds || [500, 1000],
-      ante: spot.ante != null ? spot.ante : 125,
-      stage: spot.stage || ctx.stage || 'СРЕДНЯЯ',
+      street: street,
+      blinds: blinds,
+      ante: spot.ante != null ? spot.ante : 0,
+      stage: spot.stage || ctx.stage || guessStage(pot, street),
       table: spot.table || ctx.table || '6-MAX',
-      left: spot.left || ctx.left || '',
-      position: spot.pos || spot.position || 'BTN',
+      left: spot.left || ctx.left || '8 из 8',
+      position: position || 'BTN',
       hero: spot.hero || [],
       heroStack: heroStack,
-      villain: spot.villain || spot.villainSeat || 'BB',
+      villain: villain,
       villainStack: villainStack,
       effStack: spot.effStack || Math.min(heroStack, villainStack),
       opp: opp,
       board: spot.board || [],
-      pot: spot.pot || 0,
+      pot: pot,
       history: history,
-      question: spot.question || spot.ctx || spot.key || '',
+      question: buildQuestion(key, spot),
       options: spot.options || spot.actions || spot.decision || [],
       correct: spot.correct || spot.preferred || '',
       concept: spot.concept || spot.theme || '',
@@ -206,7 +266,7 @@
     el.querySelectorAll(':scope > .spot30').forEach(function (x) { x.remove(); });
     var spot = current(key);
     if (!spot) return;
-    var enriched = enrich({ ctx: ctxBase(ctxKey || key) }, spot);
+    var enriched = enrich({ ctx: ctxBase(ctxKey || key), key: key }, spot);
     if (!enriched.id) enriched.id = key + '_' + (spot.id != null ? spot.id : Math.random());
     enrichedCache[enriched.id] = enriched;
     el.insertAdjacentHTML('afterbegin', compactConditions(enriched));

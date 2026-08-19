@@ -87,11 +87,31 @@ async function main() {
   const sizingCtx = document.querySelector('#sizingArea .spot30.ctxCard');
   assert.ok(sizingCtx, 'sizing has no context block');
   assert.ok(sizingCtx.querySelector('[data-ctx-full]'), 'sizing has no ВСЕ УСЛОВИЯ');
+  // из ctx 'BTN vs BB' должны парситься позиция/соперник
+  assert.match(sizingCtx.textContent, /BTN/, 'sizing position not parsed');
+  assert.match(sizingCtx.textContent, /СОПЕРНИК/, 'sizing opponent label missing');
+  sizingCtx.querySelector('[data-ctx-full]').click();
+  await wait(20);
+  const sizingModal = document.querySelector('#modalBody').textContent;
+  assert.match(sizingModal, /ТВОИ КАРТЫ/, 'sizing modal missing cards');
+  assert.match(sizingModal, /ТВОЙ ХОД|Какой размер/, 'sizing modal missing question');
+  assert.ok(sizingModal.includes('ИСТОРИЯ') || sizingModal.includes('Вопрос'), 'sizing modal missing history/question');
+  document.querySelector('.ctxCloseBtn').click();
+  await wait(20);
 
   // --- REVIEW ---
   w.show('review');
   await wait(30);
-  assert.ok(document.querySelector('#reviewArea .spot30.ctxCard'), 'review has no context block');
+  const reviewCtx = document.querySelector('#reviewArea .spot30.ctxCard');
+  assert.ok(reviewCtx, 'review has no context block');
+  reviewCtx.querySelector('[data-ctx-full]').click();
+  await wait(20);
+  const reviewModal = document.querySelector('#modalBody').textContent;
+  // история раздачи строится из nodes (PRE/FLOP/TURN/RIVER -> русские улицы)
+  assert.match(reviewModal, /История раздачи/, 'review modal missing history');
+  assert.match(reviewModal, /ФЛОП|ПРЕФЛОП|ТЁРН|РИВЕР/, 'review history has no russian streets');
+  document.querySelector('.ctxCloseBtn').click();
+  await wait(20);
 
   // --- DAILY ---
   w.show('daily');
