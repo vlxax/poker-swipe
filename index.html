@@ -2731,6 +2731,8 @@ function exposeV32(name,get,set){
   ['swSession',()=>swSession,v=>{swSession=v}],['swIndex',()=>swIndex,v=>{swIndex=v}],
   ['swStart',()=>swStart,v=>{swStart=v}],['swTimer',()=>swTimer,v=>{swTimer=v}],
   ['swLocked',()=>swLocked,v=>{swLocked=v}],['swSessionGrades',()=>swSessionGrades,v=>{swSessionGrades=v}],
+  ['SIZING',()=>SIZING,null],['sz',()=>sz,null],['REVIEWS',()=>REVIEWS,null],['rv',()=>rv,null],
+  ['DAILY_TEMPLATES',()=>DAILY_TEMPLATES,null],['dailyToday',()=>dailyToday,null],['CTX30',()=>CTX30,null],
   ['HR22',()=>HR22,v=>{HR22=v}],['hr22Fresh',()=>hr22Fresh,null],
   ['hr22BindBoard',()=>hr22BindBoard,v=>{hr22BindBoard=v}],['hr22BoardAt',()=>hr22BoardAt,v=>{hr22BoardAt=v}],
   ['hr22StreetEval',()=>hr22StreetEval,v=>{hr22StreetEval=v}],['hr22OpponentEval',()=>hr22OpponentEval,v=>{hr22OpponentEval=v}],
@@ -4826,6 +4828,7 @@ window.openMyTournamentsV71=openScreen;window.openMyTournamentsV72=openScreen;wi
 })();
 </script>
 
+<script src="task-context/integrate.js"></script>
 <script type="module" src="training-ui/main.js"></script>
 </body>
 </html>

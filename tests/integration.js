@@ -1,0 +1,111 @@
+// tests/integration.js
+// DOM-регрессия интеграции единого блока условий (task-context/integrate.js)
+// в мини-апки первого раздела. Boot'ает index.html в jsdom, подставляя
+// integrate.js инлайном (jsdom без ResourceLoader не грузит внешние скрипты).
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import pkg from 'jsdom';
+const {JSDOM, VirtualConsole} = pkg;
+
+const root = path.resolve(import.meta.dirname, '..');
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const integrateSrc = fs.readFileSync(path.join(root, 'task-context', 'integrate.js'), 'utf8');
+
+function htmlWithInlineIntegration() {
+  return fs.readFileSync(path.join(root, 'index.html'), 'utf8')
+    .replace('<script src="task-context/integrate.js"></script>', `<script>${integrateSrc}</script>`);
+}
+
+function boot({returning = true} = {}) {
+  const errors = [];
+  const virtualConsole = new VirtualConsole();
+  virtualConsole.on('error', (...args) => errors.push(args.map(String).join(' ')));
+  virtualConsole.on('jsdomError', e => errors.push(e.message));
+  const dom = new JSDOM(htmlWithInlineIntegration(), {
+    url: 'http://app.local/index.html',
+    runScripts: 'dangerously',
+    pretendToBeVisual: true,
+    virtualConsole,
+    beforeParse(window) {
+      window.fetch = async () => ({ok: false, status: 503, text: async () => '', json: async () => []});
+      window.scrollTo = () => {};
+      window.HTMLElement.prototype.scrollIntoView = () => {};
+      window.alert = () => {};
+      window.Math.random = () => 0.42;
+      if (returning) {
+        window.localStorage.setItem('pokerSwipeDeviceId', 'test-device');
+        window.localStorage.setItem('pokerSwipeV28_user_test-device', JSON.stringify({
+          version: '16.2', nick: 'TEST', onboarded: true, diagDone: true, skill: 50,
+          streak: 4, lastDay: '2025-01-01', events: [], hands: [], myHands18: [], tournaments: [],
+          dailyArchive: [], snapshots: [], seenSwipe: [], diagnostic: [],
+          diagnosticProfile25: {overall: 50},
+          xray: {runs: 0, pre: 0, narrow: 0, river: 0, blockers: 0, best: 0, history: []},
+          healCourses: {river_bluffcatch: [0,0,0,0], sizing: [0,0,0,0], bb_defence: [0,0,0,0], thin_value: [0,0,0,0]}
+        }));
+      }
+    }
+  });
+  return new Promise(resolve => {
+    dom.window.addEventListener('load', () => setTimeout(() => resolve({dom, window: dom.window, document: dom.window.document, errors}), 150), {once: true});
+  });
+}
+
+async function main() {
+  const {window, document, errors} = await boot();
+  const w = window;
+  assert.equal(w.__pokerBooted, true, 'poker did not boot');
+  assert.equal(w.__taskContextIntegrated, true, 'integration script did not run');
+
+  // --- SWIPE ---
+  w.show('swipe');
+  await wait(30);
+  const swipeCard = document.querySelector('#swipeCard');
+  assert.ok(swipeCard, 'no #swipeCard');
+  const swipeCtx = swipeCard.querySelector('.spot30.ctxCard');
+  assert.ok(swipeCtx, 'swipe card has no context block');
+  assert.match(swipeCtx.textContent, /УСЛОВИЯ/);
+  assert.match(swipeCtx.textContent, /БАНК/);
+  assert.ok(swipeCtx.querySelector('[data-ctx-full]'), 'swipe has no ВСЕ УСЛОВИЯ button');
+  const swipeId = swipeCtx.querySelector('[data-ctx-full]').dataset.ctxFull;
+  assert.ok(swipeId, 'swipe context id empty');
+
+  // --- ВСЕ УСЛОВИЯ modal ---
+  swipeCtx.querySelector('[data-ctx-full]').click();
+  await wait(20);
+  assert.equal(document.querySelector('#modal').classList.contains('hidden'), false, 'modal did not open');
+  assert.match(document.querySelector('#modalBody').textContent, /ПАСПОРТ СПОТА/);
+  assert.match(document.querySelector('#modalBody').textContent, /История раздачи/);
+  assert.ok(document.querySelector('.ctxCloseBtn'), 'no ПОНЯТНО button');
+  document.querySelector('.ctxCloseBtn').click();
+  await wait(20);
+
+  // --- SIZING ---
+  w.show('sizing');
+  await wait(30);
+  const sizingCtx = document.querySelector('#sizingArea .spot30.ctxCard');
+  assert.ok(sizingCtx, 'sizing has no context block');
+  assert.ok(sizingCtx.querySelector('[data-ctx-full]'), 'sizing has no ВСЕ УСЛОВИЯ');
+
+  // --- REVIEW ---
+  w.show('review');
+  await wait(30);
+  assert.ok(document.querySelector('#reviewArea .spot30.ctxCard'), 'review has no context block');
+
+  // --- DAILY ---
+  w.show('daily');
+  await wait(30);
+  assert.ok(document.querySelector('#dailyArea .spot30.ctxCard'), 'daily has no context block');
+
+  // Legacy passport (старый декоративный паспорт) не должен дублироваться.
+  assert.equal(document.querySelectorAll('#dailyArea > .spot30').length, 1, 'duplicate context blocks in daily');
+
+  w.close();
+  console.log('task-context integration DOM: OK');
+}
+
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
