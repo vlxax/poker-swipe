@@ -19,7 +19,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;col
 <div id="map"><div class="tiles" aria-hidden="true"></div><div class="markers"></div><div class="popup" hidden></div><div class="controls"><button type="button" data-plus aria-label="Приблизить">+</button><button type="button" data-minus aria-label="Отдалить">−</button></div><div class="status" id="status">Открываем карту…</div><div class="attr">© OpenStreetMap contributors</div></div>
 <script>
 (()=>{'use strict';
-const MOSCOW=[55.7558,37.6173],BOUNDS={minLat:54.9,maxLat:56.3,minLng:36.65,maxLng:39.05},MIN_Z=8,MAX_Z=17,FAV_KEY='psp-polyana-favorite-clubs-v1';
+const MOSCOW=[55.7558,37.6173],BOUNDS={minLat:54.9,maxLat:56.3,minLng:36.65,maxLng:39.05},MIN_Z=8,MAX_Z=17,FAV_KEY='psp-polyana-favorite-clubs-v1',GEO_CACHE='psp-polyana-geocode-v8',CHANNEL='psp-polyana-map-v8';
 const el=document.getElementById('map'),tiles=el.querySelector('.tiles'),markers=el.querySelector('.markers'),popup=el.querySelector('.popup'),status=document.getElementById('status');
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),valid=(a,b)=>Number.isFinite(a)&&Number.isFinite(b)&&a>=BOUNDS.minLat&&a<=BOUNDS.maxLat&&b>=BOUNDS.minLng&&b<=BOUNDS.maxLng,esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])),norm=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
 let center=[...MOSCOW],zoom=10,raf=0,drag=null,pinch=null,activePopupId='',events=[],favs=readFavs();const coords=new Map(),markerEls=new Map(),tileEls=new Map(),pointers=new Map();
@@ -33,8 +33,109 @@ function openPopup(id){const r=coords.get(id);if(!r)return;activePopupId=id;popu
 function closePopup(){activePopupId='';popup.hidden=true}
 function add(c,lat,lng){if(!valid(+lat,+lng))return false;const id=String(c.id||c.source_id||c.name||'');if(!id||coords.has(id))return false;coords.set(id,{c,lat:+lat,lng:+lng});const m=document.createElement('button');m.type='button';m.className='marker'+(favs.has(norm(c.name))?' favorite':'');m.title=c.name||'Клуб';m.innerHTML='<span></span>';m.onclick=e=>{e.stopPropagation();openPopup(id)};markerEls.set(id,m);markers.appendChild(m);return true}
 function fitAll(){const a=[...coords.values()];if(!a.length){center=[...MOSCOW];zoom=10;render();return}let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;for(const p of a){minLat=Math.min(minLat,p.lat);maxLat=Math.max(maxLat,p.lat);minLng=Math.min(minLng,p.lng);maxLng=Math.max(maxLng,p.lng)}center=[(minLat+maxLat)/2,(minLng+maxLng)/2];const w=Math.max(250,el.clientWidth-54),h=Math.max(300,el.clientHeight-96);let chosen=MIN_Z;for(let z=MAX_Z;z>=MIN_Z;z--){const p1=project(maxLat,minLng,z),p2=project(minLat,maxLng,z);if(Math.abs(p2.x-p1.x)<=w&&Math.abs(p2.y-p1.y)<=h){chosen=z;break}}zoom=chosen;render()}
+function readGeoCache(){try{const x=JSON.parse(localStorage.getItem(GEO_CACHE)||'{}');return x&&typeof x==='object'?x:{}}catch(_){return{}}}
+function writeGeoCache(cache){try{localStorage.setItem(GEO_CACHE,JSON.stringify(cache))}catch(_){}}
+function clubKey(c){return String(c.id||c.source_id||c.name||'').trim()}
+function validResult(lat,lng){return valid(Number(lat),Number(lng))}
+async function fetchTimeout(url,ms=7000){
+  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),ms);
+  try{
+    const r=await fetch(url,{cache:'no-store',signal:ctl.signal,headers:{'Accept':'application/json'}});
+    if(!r.ok)throw Error(r.status);
+    return await r.json();
+  }finally{clearTimeout(timer)}
+}
+async function geocodeAddress(address){
+  const q=encodeURIComponent(`${address}, Москва, Россия`);
+  try{
+    const d=await fetchTimeout(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&countryCode=RUS&maxLocations=1&outFields=Match_addr,Addr_type&SingleLine=${q}`,6500);
+    const c=d?.candidates?.[0],lat=Number(c?.location?.y),lng=Number(c?.location?.x);
+    if(validResult(lat,lng))return [lat,lng];
+  }catch(_){}
+  try{
+    const d=await fetchTimeout(`https://photon.komoot.io/api/?limit=1&lang=ru&q=${q}`,6500);
+    const f=d?.features?.[0],lng=Number(f?.geometry?.coordinates?.[0]),lat=Number(f?.geometry?.coordinates?.[1]);
+    if(validResult(lat,lng))return [lat,lng];
+  }catch(_){}
+  return null;
+}
+async function pool(items,limit,worker){
+  let next=0;
+  const runners=Array.from({length:Math.min(limit,items.length)},async()=>{for(;;){const i=next++;if(i>=items.length)return;await worker(items[i],i)}});
+  await Promise.all(runners);
+}
 async function json(url){const r=await fetch(url+(url.includes('?')?'&':'?')+'v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error(r.status);return r.json()}
-async function load(){try{const [d,ev]=await Promise.all([json('club_coords.json'),json('../data/moscow_schedule_today.json').catch(()=>({events:[]}))]);events=Array.isArray(ev.events)?ev.events:[];const rows=Array.isArray(d.clubs)?d.clubs:[];for(const c of rows)add(c,c.lat,c.lng);fitAll();const total=Number(d.club_count)||rows.length,missing=Math.max(0,total-coords.size);status.innerHTML=missing?`На карте <b>${coords.size}</b> из ${total} · база точек обновляется`:`На карте <b>${coords.size}</b> клубов`;if(!coords.size){const box=document.createElement('div');box.className='error';box.textContent='Координаты клубов ещё не собраны. Запустите синхронизацию Поляны в GitHub Actions.';el.appendChild(box)}}catch(_){status.textContent='Карта временно недоступна'}}
+
+const bc=typeof BroadcastChannel==='function'?new BroadcastChannel(CHANNEL):null;
+bc?.addEventListener('message',e=>{
+  const x=e.data;
+  if(!x||x.type!=='coord'||!x.club||!validResult(x.lat,x.lng))return;
+  if(add(x.club,x.lat,x.lng)){render();updateStatus(window.__pspMapTotal||coords.size)}
+});
+window.addEventListener('storage',e=>{
+  if(e.key!==GEO_CACHE||!e.newValue)return;
+  try{
+    const c=JSON.parse(e.newValue)||{};
+    for(const [id,p] of Object.entries(c)){
+      const club=(window.__pspSourceClubs||[]).find(x=>clubKey(x)===id);
+      if(club&&Array.isArray(p)&&validResult(p[0],p[1]))add(club,p[0],p[1]);
+    }
+    render();updateStatus(window.__pspMapTotal||coords.size);
+  }catch(_){}
+});
+function updateStatus(total){
+  const shown=coords.size,missing=Math.max(0,total-shown);
+  status.innerHTML=missing?`На карте <b>${shown}</b> из ${total} · добавляем точки…`:`На карте <b>${shown}</b> клубов`;
+}
+async function load(){
+  try{
+    const [d,source,ev]=await Promise.all([
+      json('club_coords.json').catch(()=>({clubs:[]})),
+      json('../data/moscow_club_locations_source.json'),
+      json('../data/moscow_schedule_today.json').catch(()=>({events:[]}))
+    ]);
+    events=Array.isArray(ev.events)?ev.events:[];
+    const sourceClubs=Array.isArray(source.clubs)?source.clubs:[];
+    window.__pspSourceClubs=sourceClubs;
+    window.__pspMapTotal=sourceClubs.length||Number(d.club_count)||0;
+
+    const byId=new Map(sourceClubs.map(c=>[clubKey(c),c]));
+    for(const c of (Array.isArray(d.clubs)?d.clubs:[])){
+      const full=byId.get(String(c.source_id||c.id||c.name||''))||c;
+      add({...full,...c},c.lat,c.lng);
+    }
+
+    const cache=readGeoCache();
+    for(const c of sourceClubs){
+      const p=cache[clubKey(c)];
+      if(Array.isArray(p)&&validResult(p[0],p[1]))add(c,p[0],p[1]);
+    }
+
+    if(coords.size)fitAll(); else render();
+    updateStatus(window.__pspMapTotal);
+
+    const todo=sourceClubs.filter(c=>!coords.has(clubKey(c))&&c.address);
+    if(!todo.length)return;
+
+    await pool(todo,6,async c=>{
+      const id=clubKey(c);
+      if(coords.has(id))return;
+      const p=await geocodeAddress(c.address);
+      if(!p)return;
+      cache[id]=p;writeGeoCache(cache);
+      const added=add(c,p[0],p[1]);
+      if(added){
+        bc?.postMessage({type:'coord',club:c,lat:p[0],lng:p[1]});
+        render();updateStatus(window.__pspMapTotal);
+      }
+    });
+
+    if(coords.size)fitAll();
+    updateStatus(window.__pspMapTotal);
+  }catch(_){
+    status.textContent='Карта временно недоступна';
+  }
+}
 function zoomBy(delta){const z=clamp(zoom+delta,MIN_Z,MAX_Z);if(z!==zoom){zoom=z;render()}}
 el.querySelector('[data-plus]').onclick=e=>{e.stopPropagation();zoomBy(1)};el.querySelector('[data-minus]').onclick=e=>{e.stopPropagation();zoomBy(-1)};
 el.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});el.setPointerCapture?.(e.pointerId);closePopup();if(pointers.size===1){drag={id:e.pointerId,x:e.clientX,y:e.clientY,p:project(center[0],center[1],zoom)};el.classList.add('dragging')}else if(pointers.size===2){drag=null;el.classList.remove('dragging');const p=[...pointers.values()];pinch={dist:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y),zoom}}});

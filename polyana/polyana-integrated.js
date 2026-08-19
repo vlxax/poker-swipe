@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-window.__POLYANA_BUILD='polyana-map-all-points-2026-08-19';
+window.__POLYANA_BUILD='polyana-map-progressive-all-points-v8-2026-08-19';
 
 /* Canonical Polyana owns filtering/navigation. Legacy injected filter
    patches (polyana-filters-v3.js and the V2 sheet inside
@@ -386,7 +386,7 @@ function clubsView(){
 function mapView(){
   return `<div class="pspMapPanel">
     <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span>Карта Москвы · точки клубов</span></div><button type="button" class="pspMapReset" data-map-reset>Москва</button></div>
-    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=7" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=8" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <div class="pspMapNote">Карта: OpenStreetMap.</div>
   </div>`;
 }
@@ -645,7 +645,7 @@ function warmMapCache(){
   if(window.__pspMapWarmStarted)return;
   window.__pspMapWarmStarted=true;
   const f=document.createElement('iframe');
-  f.src='polyana/map.html?v=7&warm=1';
+  f.src='polyana/map.html?v=8&warm=1';
   f.setAttribute('aria-hidden','true');
   f.tabIndex=-1;
   f.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10000px;top:-10000px;border:0';
@@ -704,6 +704,15 @@ if(document.readyState==='loading'){
 }else{
   const b=document.querySelector('.nav [data-nav="polyana"]');
   if(b)b.innerHTML='<i class="tourNav23">♛</i>ПОЛЯНА';
+}
+
+
+/* Start resolving map coordinates as soon as PokerSwipe loads.
+   The hidden same-origin map shares its cache with the visible map. */
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(warmMapCache,250),{once:true});
+}else{
+  setTimeout(warmMapCache,250);
 }
 
 window.openPokerSwipePolyana=openPolyana;
