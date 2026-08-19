@@ -128,6 +128,24 @@ async function main() {
   w.show('profile'); await wait(30);
   w.show('home'); await wait(30);
 
+  // --- мобильный экран 390×844: контекстный блок и модалка на всех мини-апках ---
+  w.innerWidth = 390; w.innerHeight = 844;
+  for (const [tab, sel] of [['swipe','#swipeCard'], ['sizing','#sizingArea'], ['review','#reviewArea'], ['daily','#dailyArea']]) {
+    w.show(tab);
+    await wait(30);
+    const el = document.querySelector(sel);
+    const ctx = el && el.querySelector('.spot30.ctxCard');
+    assert.ok(ctx, `[mobile] ${tab} has no context block`);
+    const btn = ctx.querySelector('[data-ctx-full]');
+    assert.ok(btn, `[mobile] ${tab} has no ВСЕ УСЛОВИЯ`);
+    btn.click();
+    await wait(20);
+    assert.equal(document.querySelector('#modal').classList.contains('hidden'), false, `[mobile] ${tab} modal did not open`);
+    assert.ok(document.querySelector('#modalBody .ctxModal'), `[mobile] ${tab} modal missing ctxModal`);
+    document.querySelector('.ctxCloseBtn').click();
+    await wait(20);
+  }
+
   // --- русификация пользовательских строк ---
   assert.match(document.body.textContent, /ЛАБОРАТОРИЯ РАЗМЕРА/);
   assert.ok(!/SESSION REPORT/.test(document.body.textContent), 'SESSION REPORT not russified');
