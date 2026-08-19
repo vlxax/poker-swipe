@@ -24,6 +24,12 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d0f0d;col
 .popup b{display:block;color:#c8ff3d;font-size:12px;line-height:1.25;margin-bottom:5px}
 .popup span{display:block;color:#c8c3ca;font-size:10px;line-height:1.35}
 .close{position:absolute;right:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#fff;font-size:16px}
+.popup .fav{position:absolute;left:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#77717a;font-size:15px}
+.popup .fav.on{color:#ffd66b}
+.popup .line{display:block;margin-top:6px;padding-top:6px;border-top:1px solid #2a2e2a;font-size:9px}
+.popup .near b{display:block;color:#c8ff3d;font-size:9px;font-weight:900;margin-bottom:2px}
+.popup .go{width:100%;margin-top:8px;min-height:34px;border:1px solid #64791f;border-radius:10px;background:#151b0f;color:#d9ff77;font:900 9px/1 system-ui}
+.marker.favorite span{background:#ffd66b;border-color:#090b08;box-shadow:0 0 0 1px #ffd66b,0 0 10px #ffd66b8a}
 .error{position:absolute;inset:18px;display:grid;place-items:center;text-align:center;color:#aaa4ad;border:1px dashed #3a3c3a;border-radius:16px;padding:20px;z-index:10;background:#0d0f0de8}
 </style>
 </head>
@@ -58,17 +64,36 @@ const MOSCOW=[55.7558,37.6173];
 const BOUNDS={minLat:54.90,maxLat:56.30,minLng:36.65,maxLng:39.05};
 const MIN_Z=8,MAX_Z=17;
 const LKG_KEY='psp-polyana-map-lkg-v1';
+const FAV_KEY='psp-polyana-favorite-clubs-v1';
+const DATA_URLS=['../data/moscow_schedule_today.json','../data/live_polyana.json'];
 const FETCH_TIMEOUT_MS=4500;
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const valid=(lat,lng)=>Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=BOUNDS.minLat&&lat<=BOUNDS.maxLat&&lng>=BOUNDS.minLng&&lng<=BOUNDS.maxLng;
+const normName=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+const readFavs=()=>{try{const r=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');return new Set(Array.isArray(r)?r.map(normName).filter(Boolean):[])}catch(_){return new Set()}};
+function matchesClub(clubName,eventClub){const a=normName(clubName),b=normName(eventClub);return b?b.includes(a)||a.includes(b):false}
+function clubMatches(c,ev){return matchesClub(c.name||'',ev.club)}
+function nextUpcoming(c){
+  if(!events.length)return null;
+  let best=null;
+  for(const ev of events){
+    if(!clubMatches(c,ev))continue;
+    if(!ev.time)continue;
+    const t=ev.time;
+    const k=(ev.date||'')+'T'+t;
+    if(!best||k<best.key)best={key:k,title:ev.tournament||'Турнир клуба',time:t};
+  }
+  return best;
+}
 function project(lat,lng,z){const n=256*Math.pow(2,z),s=Math.sin(clamp(lat,-85.0511,85.0511)*Math.PI/180);return{x:(lng+180)/360*n,y:(.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n}}
 function unproject(x,y,z){const n=256*Math.pow(2,z);return[180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n))),x/n*360-180]}
 function safeCenter(lat,lng){return[clamp(lat,BOUNDS.minLat,BOUNDS.maxLat),clamp(lng,BOUNDS.minLng,BOUNDS.maxLng)]}
 
 const el=document.getElementById('map'),tiles=el.querySelector('.tiles'),markers=el.querySelector('.markers'),popup=el.querySelector('.popup'),status=document.getElementById('status');
 let center=[...MOSCOW],zoom=10,drag=null,raf=0,pinch=null;
+let events=[],favs=readFavs();
 const coords=new Map(),markerEls=new Map(),tileEls=new Map();
 
 function topLeft(){const cp=project(center[0],center[1],zoom);return{x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
@@ -111,6 +136,40 @@ function render(){
   });
 }
 
+function popupCard(rec){
+  const c=rec.c,name=c.name||'Клуб';
+  const fav=isFav(name);
+  const near=nextUpcoming(c);
+  const nearHtml=near?`<span class="near"><b>${esc(near.title)}</b>${esc(near.time)}</span>`:'';
+  const favHtml=`<button type="button" class="fav ${fav?'on':''}" data-fav>${fav?'★':'☆'}</button>`;
+  const goHtml=`<button type="button" class="go" data-go>Турниры клуба →</button>`;
+  return `<button type="button" class="close" aria-label="Закрыть">×</button>${favHtml}
+    <b>${esc(name)}</b>
+    ${esc(c.address||'Адрес уточняется')}
+    <span class="line">${nearHtml?nearHtml:'<span>Ближайший турнир не найден</span>'}</span>
+    ${goHtml}`;
+}
+function openPopup(rec){
+  popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
+  popup.innerHTML=popupCard(rec);
+  const c=popup.querySelector('.close');
+  c.onclick=e=>{e.stopPropagation();closePopup()};
+  const f=popup.querySelector('[data-fav]');
+  if(f)f.onclick=e=>{e.stopPropagation();const name=rec.c.name||'';const k=normName(name);if(!k)return;favs.has(k)?favs.delete(k):favs.add(k);saveFavs();refreshFavMarkers();popup.innerHTML=popupCard(rec);rehook();};
+  const g=popup.querySelector('[data-go]');
+  if(g)g.onclick=e=>{e.stopPropagation();try{parent.postMessage({type:'psp-map-open-club',club:rec.c.name||''},location.origin)}catch(_){}};
+  function rehook(){const ff=popup.querySelector('[data-fav]');if(ff)ff.onclick=e=>{e.stopPropagation();const name=rec.c.name||'';const k=normName(name);if(!k)return;favs.has(k)?favs.delete(k):favs.add(k);saveFavs();refreshFavMarkers();popup.innerHTML=popupCard(rec);rehook();};const gg=popup.querySelector('[data-go]');if(gg)gg.onclick=e=>{e.stopPropagation();try{parent.postMessage({type:'psp-map-open-club',club:rec.c.name||''},location.origin)}catch(_){}};}
+  render();
+}
+function closePopup(){popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')}
+function isFav(name){return favs.has(normName(name))}
+function saveFavs(){try{localStorage.setItem(FAV_KEY,JSON.stringify([...favs]))}catch(_){};try{parent.postMessage({type:'psp-map-favorites-changed'},location.origin)}catch(_){}}
+function refreshFavMarkers(){
+  for(const [id,m] of markerEls){
+    const rec=coords.get(id);if(!rec)continue;
+    m.classList.toggle('favorite',isFav(rec.c.name||''));
+  }
+}
 function addClub(c){
   const lat=+c.lat,lng=+c.lng;
   if(!valid(lat,lng))return false;
@@ -118,13 +177,10 @@ function addClub(c){
   if(!id||coords.has(id))return false;
   coords.set(id,{lat,lng,c});
   const m=document.createElement('button');
-  m.type='button';m.className='marker';m.title=c.name||'Клуб';m.innerHTML='<span></span>';
+  m.type='button';m.className='marker'+(isFav(c.name||'')?' favorite':'');m.title=c.name||'Клуб';m.innerHTML='<span></span>';
   m.addEventListener('click',e=>{
     e.stopPropagation();const rec=coords.get(id);if(!rec)return;
-    popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;
-    popup.innerHTML=`<button type="button" class="close" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>`;
-    popup.querySelector('.close').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')};
-    render();
+    openPopup(rec);
   });
   markerEls.set(id,m);markers.appendChild(m);
   return true;
@@ -224,7 +280,16 @@ function chooseBest(remote,lkg){
   return null;
 }
 
+async function loadEvents(){
+  for(const u of DATA_URLS){
+    try{
+      const d=await fetchJsonTimeout(u,5000);
+      if(d&&Array.isArray(d.events)){events=d.events;return}
+    }catch(_){}
+  }
+}
 async function load(){
+  loadEvents();
   const lkg=readLkg();
   let remote=null;
   try{

@@ -1,0 +1,69 @@
+================================================================
+POLYANA-FINISH EXPORT INFO
+================================================================
+Repo mirror (SourceCraft): vlxax16/poker-swipe-live
+Target original GitHub:     vlxax/poker-swipe
+Source branch:              sourcecraft/polyana-finish
+
+ACTUAL main SHA (origin/main):
+  6cd0f00f2c9c6779b84a4d9841943f330656c23a
+
+HEAD SHA of sourcecraft/polyana-finish:
+  61db0983176b0d3a59abfc1eaf13c2754348cbb0
+
+Ahead/Behind vs main: 3 ahead / 0 behind
+
+----------------------------------------------------------------
+THE 3 POLYANA COMMITS (main..branch)
+----------------------------------------------------------------
+  353c7e8  Finish canonical Polyana: map club cards, filters, favorites, late-reg
+  b27da30  Add Polyana regression/map tests; convert v32 test to ESM
+  61db098  Remove orphaned top-level polyana-integrated.* duplicates
+
+----------------------------------------------------------------
+CHANGED FILES vs actual main (git diff origin/main...HEAD)
+----------------------------------------------------------------
+MODIFIED (present in this archive):
+  M polyana-filters-v3.js
+  M polyana-promo-animated.js
+  M polyana/map.html
+  M polyana/polyana-integrated.css
+  M polyana/polyana-integrated.js
+  M tests/v32_regression.js
+
+ADDED (new files, present in this archive):
+  A tests/polyana_map.js
+  A tests/polyana_regression.js
+
+DELETED (do NOT transfer - must be DELETED on the target repo):
+  D polyana-integrated.css   <- top-level duplicate, remove on target
+  D polyana-integrated.js    <- top-level duplicate, remove on target
+
+NOTE: data/live_polyana.json, data/moscow_clubs_pokernomoney.json,
+data/moscow_schedule_today.json are IDENTICAL to main (came via rebase)
+and are intentionally NOT included in this archive.
+
+----------------------------------------------------------------
+FILES TO DELETE WHEN APPLYING ON THE ORIGINAL GITHUB
+----------------------------------------------------------------
+  polyana-integrated.css
+  polyana-integrated.js
+Apply the patch with deletions:  git apply --index polyana-finish.patch
+(or copy present files + `git rm` the two top-level files above).
+
+----------------------------------------------------------------
+TEST RESULTS (run on sourcecraft/polyana-finish @ 61db098)
+----------------------------------------------------------------
+  tests/polyana_regression.js : OK  (Polyana DOM regression: OK)
+  tests/polyana_map.js        : OK  (Polyana Map regression: OK)
+  tests/v32_regression.js     : pre-existing failure (unrelated to Polyana;
+                                home-screen text changed; fails identically
+                                on clean main - baseline evidence)
+
+----------------------------------------------------------------
+SECURITY
+----------------------------------------------------------------
+No secrets, tokens, passwords, API keys, .env, node_modules, caches,
+or temporary files are included. Scanned for common secret patterns.
+Exports are code + diff only.
+================================================================
