@@ -374,3 +374,16 @@ body.pspFilterLock{overflow:hidden!important}
   #polyana .pspClubFilterList{grid-template-columns:1fr}
   #polyana .pspTodayHead{align-items:center!important}
 }
+
+
+/* 2026-08-19 mobile filter hotfix: full-screen sheet opens at top. */
+#polyana .pspFiltersOverlay{align-items:flex-start!important;}
+#polyana .pspFilterSheet{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  border-radius:0!important;
+  padding-top:max(16px,env(safe-area-inset-top))!important;
+  padding-bottom:calc(82px + env(safe-area-inset-bottom))!important;
+  margin:0!important;
+}
+#polyana .pspTools{display:none!important;}

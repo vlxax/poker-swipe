@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-window.__POLYANA_BUILD='filters-v2-no-quick-2026-08-18';
+window.__POLYANA_BUILD='polyana-map-all-points-2026-08-19';
 
 /* Canonical Polyana owns filtering/navigation. Legacy injected filter
    patches (polyana-filters-v3.js and the V2 sheet inside
@@ -80,16 +80,17 @@ function typeOf(n){
 }
 function normalize(e,i){
   const title=cleanTitle(e);
-  const type=String(e.type||e.format||typeOf(title)||'');
+  const type=String(e.type||e.format||typeOf(title)||'').trim();
+  const typeKey=type.toLowerCase();
   const game=String(e.game||gameOf(title)||'').toUpperCase();
   const t=title.toLowerCase();
 
-  const isFreezeout=e.freezeout===true||type==='Freezeout'||/freeze|фризаут/.test(t);
-  const isBounty=e.bounty===true||type==='Bounty'||type==='Mystery Bounty'||/bounty|knockout|баунти|нокаут/.test(t);
-  const isFreeroll=type==='Freeroll'||/freeroll|бесплат/.test(t);
+  const isFreezeout=e.freezeout===true||typeKey==='freezeout'||/freeze|фризаут/.test(t);
+  const isBounty=e.bounty===true||typeKey==='bounty'||typeKey==='mystery bounty'||/bounty|knockout|баунти|нокаут/.test(t);
+  const isFreeroll=typeKey==='freeroll'||/freeroll|бесплат/.test(t);
 
   const rawRe=e.reentry_limit;
-  const reentryUnlimited=e.reentry_unlimited===true||/unlimited|безлимит/i.test(String(rawRe??''));
+  const reentryUnlimited=e.reentry_unlimited===true||/unlimited|безлимит|∞|infinity/i.test(String(rawRe??''));
   let reentryCount=null;
   if(!reentryUnlimited&&rawRe!==null&&rawRe!==undefined&&rawRe!==''&&Number.isFinite(Number(rawRe))){
     reentryCount=Number(rawRe);
@@ -119,7 +120,9 @@ function fee(e){
 }
 function startDate(e){
   if(!e.date||!e.time)return null;
-  const d=new Date(`${e.date}T${e.time}:00+03:00`);
+  const time=String(e.time).trim();
+  const normalizedTime=/^\d{2}:\d{2}$/.test(time)?`${time}:00`:time;
+  const d=new Date(`${e.date}T${normalizedTime}+03:00`);
   return Number.isNaN(+d)?null:d;
 }
 function lateClose(e){
@@ -305,8 +308,7 @@ function filterSheet(){
 
 function shell(){
   return `<div class="pspTop"><div class="pspLogo">POKER <i>SWIPE</i></div><div class="pspBy">by ФРИКОВАЯ ДАМА 💋</div></div>
-  <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div>
-  <div class="pspTools"><button type="button" class="pspTool" data-psp-search>⌕</button><button type="button" class="pspTool acid" data-psp-filters>☷</button></div></div>
+  <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
   <div class="pspTabs"><button type="button" class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button type="button" class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button type="button" class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
   <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
   <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>
@@ -384,7 +386,7 @@ function clubsView(){
 function mapView(){
   return `<div class="pspMapPanel">
     <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span>Карта Москвы · точки клубов</span></div><button type="button" class="pspMapReset" data-map-reset>Москва</button></div>
-    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=4" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=7" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <div class="pspMapNote">Карта: OpenStreetMap.</div>
   </div>`;
 }
@@ -479,7 +481,19 @@ function closeOverlay(el){
 }
 function openFilters(){
   const f=document.getElementById('pspFilters');
+  if(!f)return;
+  const sheet=f.querySelector('.pspFilterSheet');
+  f.style.alignItems='flex-start';
+  f.style.justifyContent='center';
+  if(sheet){
+    sheet.scrollTop=0;
+    sheet.style.height='100dvh';
+    sheet.style.maxHeight='100dvh';
+    sheet.style.borderRadius='0';
+    sheet.style.margin='0';
+  }
   openOverlay(f);
+  requestAnimationFrame(()=>{ if(sheet)sheet.scrollTop=0; });
   updateApplyCount();
 }
 function resetFilters(){
@@ -587,13 +601,6 @@ function handleRootClick(e){
     return;
   }
 
-  if(t.closest?.('[data-psp-search]')){
-    state.tab='clubs';
-    render();
-    setTimeout(()=>document.getElementById('pspSearch')?.focus(),0);
-    return;
-  }
-
   if(t.closest?.('[data-map-reset]')){
     try{
       document.getElementById('pspMoscowMapFrame')?.contentWindow?.postMessage({type:'psp-map-reset'},location.origin);
@@ -634,11 +641,23 @@ async function load(){
   state.loaded=true;
   render();
 }
+function warmMapCache(){
+  if(window.__pspMapWarmStarted)return;
+  window.__pspMapWarmStarted=true;
+  const f=document.createElement('iframe');
+  f.src='polyana/map.html?v=7&warm=1';
+  f.setAttribute('aria-hidden','true');
+  f.tabIndex=-1;
+  f.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10000px;top:-10000px;border:0';
+  document.body.appendChild(f);
+}
+
 function openPolyana(){
   if(typeof window.show==='function')window.show('polyana');
   const nav=document.querySelector('.nav [data-nav="polyana"]');
   document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
   if(!state.loaded)load();else render();
+  warmMapCache();
 }
 
 document.addEventListener('keydown',e=>{

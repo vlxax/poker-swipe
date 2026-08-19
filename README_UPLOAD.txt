@@ -1,16 +1,16 @@
-PokerSwipe V67 CLEAN
+POKER SWIPE — POLYANA FIX, CORRECT PATHS
 
-Upload the CONTENTS of this folder into the repository root.
-Production entry files:
-- index.html
-- style.css
-- app.js
-- app.webmanifest
-- .nojekyll
-- assets/
-- data/
+Причина прошлого отсутствия изменений:
+index.html подключает:
+  polyana/polyana-integrated.css
+  polyana/polyana-integrated.js
 
-V67 intentionally does NOT include legacy index copies, home.jpg, home.png, match.png,
-or poker_swipe_v32-v40 production JS/CSS.
+Предыдущий минимальный ZIP обновлял root-копии:
+  polyana-integrated.css
+  polyana-integrated.js
+которые страница НЕ использует.
 
-Important: solver files/branches are not included and are not touched by this ZIP.
+Этот архив содержит только реально подключаемые файлы.
+
+Загрузить содержимое архива в корень репозитория с заменой файлов.
+После commit обновить GitHub Pages / дождаться deployment.
