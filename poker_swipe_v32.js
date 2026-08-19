@@ -186,7 +186,7 @@ window.recordEvent=function recordEventV32(input={}){
 
 const baseSizing=window.renderSizing;
 function stripDecorativeContextV32(){
-  qa('#swipeCard > .spot30,#sizingArea > .spot30,#dailyArea > .spot30,#reviewArea > .spot30,#healArea > .spot30,#xrayArea > .spot30').forEach(el=>el.remove());
+  qa('#swipeCard > .spot30:not(.ctxCard),#sizingArea > .spot30:not(.ctxCard),#dailyArea > .spot30:not(.ctxCard),#reviewArea > .spot30:not(.ctxCard),#healArea > .spot30:not(.ctxCard),#xrayArea > .spot30:not(.ctxCard)').forEach(el=>el.remove());
 }
 const baseSwipe=window.renderSwipe;
 window.renderSwipe=function renderSwipeV32(){const result=baseSwipe.apply(this,arguments);setTimeout(stripDecorativeContextV32,0);return result};
