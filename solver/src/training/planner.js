@@ -201,6 +201,7 @@ export function buildDailyPlan({
     adaptiveDifficulty: result.targetDifficulty,
     reason: result.reason,
     buckets: result.buckets,
+    slotKinds: result.slotKinds,
     sessionPlan,
     skillTargets,
     drills: selectedSpots.map((s) => ({

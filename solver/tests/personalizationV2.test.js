@@ -3,9 +3,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { getTaskPool, loadTaskLibrary } from '../src/training/taskLibraryBridge.js';
+import { getTaskPool, loadTaskLibrary, getTaskById } from '../src/training/taskLibraryBridge.js';
 import { buildDailyPlan, computeSkillTargets } from '../src/training/planner.js';
-import { selectSpots } from '../src/training/spotSelector.js';
+import { selectSpots, sessionSlotOrder } from '../src/training/spotSelector.js';
 import { buildSkillProfile } from '../src/training/skillProfile.js';
 import { drillFromLibraryTask } from '../src/training/libraryDrill.js';
 import { gradeAnswer } from '../src/training/answerEvaluator.js';
@@ -145,6 +145,38 @@ test('profile persists and drives library plan on reopen', () => {
   assert.equal(plan1.filled, 7);
   const plan2 = buildProfileDailyPlan({ store, count: 7, rng: () => 0.88, history: store.loadHistory() });
   assert.ok(plan2);
+});
+
+test('Profile B slots 5-10 avoid stacking ICM maintenance when ICM is strong', () => {
+  const profileB = buildSkillProfile({
+    leakProfiles: [
+      { concept: 'bluff_catch', attempts: Array(8).fill({ evLossBb: 1.2, at: 1 }) },
+      { concept: 'icm_pressure', attempts: Array(6).fill({ evLossBb: 0.05, at: 2 }) }
+    ],
+    assessment: {
+      results: [
+        { skillTag: 'icm', correct: true, evLossBb: 0, at: 1 },
+        { skillTag: 'river', correct: false, evLossBb: 0.75, at: 2 },
+        { skillTag: 'bluffCatch', correct: false, evLossBb: 0.8, at: 3 }
+      ]
+    }
+  });
+  const plan = buildDailyPlan({ pool: POOL, skillProfile: profileB, count: 10, rng: () => 0.17, history: [], progressByConcept: {} });
+  const tail = (plan.spotIds || []).slice(4);
+  const icmTail = tail.filter((id) => {
+    const t = getTaskById(id);
+    return /icm|баббл|bubble|itm|финальн|pko/i.test([t?.concept, t?.stage].join(' '));
+  });
+  assert.ok(icmTail.length <= 2, `expected at most 2 ICM tasks in slots 5-10, got ${icmTail.length}: ${icmTail.join(',')}`);
+});
+
+test('session slot order follows 4+2+2+1+1 mix for count 10', () => {
+  const order = sessionSlotOrder(10);
+  assert.equal(order.filter((s) => s === 'primary_weakness').length, 4);
+  assert.equal(order.filter((s) => s === 'secondary_weakness').length, 2);
+  assert.equal(order.filter((s) => s === 'maintenance_medium').length, 2);
+  assert.equal(order.filter((s) => s === 'maintenance_strong').length, 1);
+  assert.equal(order.filter((s) => s === 'exploration').length, 1);
 });
 
 test('selectSpots never returns duplicate ids in one batch', () => {

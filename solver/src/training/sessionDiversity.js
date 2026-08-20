@@ -38,5 +38,22 @@ export function diversityPenalty(spot, picked = [], recentHistory = []) {
   for (const h of last) {
     if (h.spotId === spot.id) penalty += 15;
   }
+  penalty += sessionRepetitionPenalty(spot, picked);
+  return penalty;
+}
+
+export function sessionRepetitionPenalty(spot, picked = []) {
+  let penalty = 0;
+  for (const p of picked) {
+    const s = p.spot || p;
+    if (!s || !spot) continue;
+    if (s.concept === spot.concept) penalty += 4;
+    if (s.street === spot.street) penalty += 2;
+    const posA = s.positions && s.positions.hero ? s.positions.hero : s.position;
+    const posB = spot.positions && spot.positions.hero ? spot.positions.hero : spot.position;
+    if (posA && posB && posA === posB) penalty += 1.5;
+    if (s.stackDepth && spot.stackDepth && s.stackDepth === spot.stackDepth) penalty += 1;
+    if (s.decisionType && spot.decisionType && s.decisionType === spot.decisionType) penalty += 0.5;
+  }
   return penalty;
 }

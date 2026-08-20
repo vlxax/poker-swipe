@@ -5,10 +5,11 @@
 
 import { clamp, round } from './util.js';
 import {
-  leakBoostForSpot, weakSkillBoost, maintenanceSkillMatch, conceptLabelForPlan
+  leakBoostForSpot, weakSkillBoost, maintenanceSkillMatch, conceptLabelForPlan,
+  spotMatchesLeakConcept
 } from './leakSpotMapping.js';
 import { computePriority } from './priority.js';
-import { diversityPenalty } from './sessionDiversity.js';
+import { diversityPenalty, sessionRepetitionPenalty } from './sessionDiversity.js';
 
 const DEFAULT_SHOWN_COOLDOWN = 60;
 const DEFAULT_MASTERY_GATE = 78;
@@ -141,13 +142,256 @@ function bucketForSpot(spot, ctx) {
   return 'maintenance';
 }
 
-function weaknessScore(spot, ctx) {
+export const SESSION_SLOT_KINDS = [
+  'primary_weakness', 'secondary_weakness', 'maintenance_medium',
+  'maintenance_strong', 'exploration'
+];
+
+const SLOT_MIX_10 = {
+  primary_weakness: 4,
+  secondary_weakness: 2,
+  maintenance_medium: 2,
+  maintenance_strong: 1,
+  exploration: 1
+};
+
+export function buildSkillTiers(skillProfile) {
+  if (!skillProfile || !skillProfile.skills) {
+    return { primary: [], secondary: [], medium: [], strong: [], ranked: [] };
+  }
+  const STRONG_THRESHOLD = 82;
+  const ranked = Object.values(skillProfile.skills)
+    .filter((s) => s && s.score != null)
+    .sort((a, b) => a.score - b.score);
+  const strong = ranked.filter((s) => s.score >= STRONG_THRESHOLD).map((s) => s.skill);
+  const nonStrong = ranked.filter((s) => s.score < STRONG_THRESHOLD);
+  const primary = nonStrong.slice(0, 2).map((s) => s.skill);
+  const secondary = nonStrong.slice(2, 4).map((s) => s.skill);
+  let medium = ranked
+    .filter((s) => s.score >= 45 && s.score <= 75 && !primary.includes(s.skill) && !secondary.includes(s.skill))
+    .map((s) => s.skill);
+  if (!medium.length) {
+    medium = ranked
+      .filter((s) => s.score >= 30 && s.score < STRONG_THRESHOLD && !primary.includes(s.skill) && !secondary.includes(s.skill))
+      .map((s) => s.skill);
+  }
+  if (!medium.length && strong.length) {
+    medium = ranked
+      .filter((s) => s.score >= 70 && s.score < STRONG_THRESHOLD)
+      .map((s) => s.skill);
+  }
+  return { primary, secondary, medium, strong, ranked };
+}
+
+export function sessionSlotOrder(count = 10) {
+  if (count <= 0) return [];
+  const scale = count / 10;
+  const quotas = {};
+  let assigned = 0;
+  for (const [kind, base] of Object.entries(SLOT_MIX_10)) {
+    const n = kind === 'exploration'
+      ? Math.max(1, Math.round(base * scale))
+      : Math.round(base * scale);
+    quotas[kind] = Math.max(0, n);
+    assigned += quotas[kind];
+  }
+  while (assigned < count) {
+    quotas.primary_weakness = (quotas.primary_weakness || 0) + 1;
+    assigned++;
+  }
+  while (assigned > count && quotas.maintenance_medium > 0) {
+    quotas.maintenance_medium--;
+    assigned--;
+  }
+  const order = [];
+  for (const kind of SESSION_SLOT_KINDS) {
+    for (let i = 0; i < (quotas[kind] || 0); i++) order.push(kind);
+  }
+  return order.slice(0, count);
+}
+
+function slotToLegacyBucket(slotKind) {
+  if (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness') return 'weakness';
+  if (slotKind === 'exploration') return 'exploration';
+  return 'maintenance';
+}
+
+function spotHasSkill(spot, skill) {
+  return skill && (spot.skillTags || []).includes(skill);
+}
+
+function spotHasStrongSkill(spot, tiers) {
+  return (spot.skillTags || []).some((t) => tiers.strong.includes(t));
+}
+
+function scoreForSessionSlot(spot, slotKind, ctx) {
+  const { tiers, skillProfile, leakPriorities, targetDiff, picked, strongMaintUsed, strongSkillSpotCount } = ctx;
+  let score = 0.5;
+  const tags = spot.skillTags || [];
+
+  if (slotKind === 'primary_weakness') {
+    if (tiers.primary.some((s) => tags.includes(s))) score += 6;
+    for (const { concept, priority } of (leakPriorities || []).slice(0, 3)) {
+      if (concept && spotMatchesLeakConcept(spot, concept)) score += 5 + (priority || 0) * 6;
+    }
+    score += weaknessScore(spot, ctx, { useSkillTargets: true }) * 0.6;
+    score += leakBoostForSpot(spot, leakPriorities) * 3;
+  } else if (slotKind === 'secondary_weakness') {
+    if (tiers.secondary.some((s) => tags.includes(s))) score += 5;
+    else if (tiers.primary.some((s) => tags.includes(s))) score += 4;
+    else if (spotHasStrongSkill(spot, tiers)) score -= 10;
+    for (const { concept, priority } of (leakPriorities || []).slice(0, 3)) {
+      if (concept && spotMatchesLeakConcept(spot, concept)) score += 3 + (priority || 0) * 4;
+    }
+    score += leakBoostForSpot(spot, leakPriorities) * 2.5;
+    score += weakSkillBoost(spot, skillProfile) * 1.5;
+    if (strongSkillSpotCount > 0 && spotHasStrongSkill(spot, tiers)) score -= 8;
+  } else if (slotKind === 'maintenance_medium') {
+    if (tiers.medium.some((s) => tags.includes(s))) score += 5;
+    if (spotHasStrongSkill(spot, tiers)) score -= 10;
+    if (tiers.primary.some((s) => tags.includes(s))) score -= 5;
+    if (tiers.secondary.some((s) => tags.includes(s))) score -= 3;
+    if (!tags.some((t) => tiers.strong.includes(t) || tiers.primary.includes(t))) score += 2;
+    if (strongSkillSpotCount > 0 && spotHasStrongSkill(spot, tiers)) score -= 12;
+  } else if (slotKind === 'maintenance_strong') {
+    if (strongMaintUsed) return -10;
+    const top = tiers.ranked.length ? tiers.ranked[tiers.ranked.length - 1].skill : null;
+    if (top && tags.includes(top)) score += 4;
+    else if (tiers.strong.some((s) => tags.includes(s))) score += 2;
+    if (tiers.primary.some((s) => tags.includes(s))) score -= 5;
+  } else if (slotKind === 'exploration') {
+    const focus = [...tiers.primary, ...tiers.secondary, ...tiers.medium];
+    if (focus.some((s) => tags.includes(s))) score += 3;
+    score += difficultyFit(spot, targetDiff + 0.5) + 0.5;
+    if (spot.theoryOrExploit === 'exploit') score += 0.4;
+    if (!ctx.history.some((h) => h.concept === spot.concept)) score += 1;
+    if (spotHasStrongSkill(spot, tiers) && !focus.some((s) => tags.includes(s))) score -= 3;
+  }
+
+  let diversity = diversityPenalty(spot, picked, ctx.history);
+  const topLeak = (leakPriorities || [])[0]?.concept;
+  if (topLeak && (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness')
+      && spotMatchesLeakConcept(spot, topLeak)) {
+    diversity *= 0.25;
+  }
+  score -= diversity;
+  return score;
+}
+
+function pickOneSlot(candidates, slotKind, ctx, rng, usedIds) {
+  let pool = candidates
+    .filter((s) => !usedIds.has(s.id))
+    .map((s) => ({
+      spot: s,
+      score: scoreForSessionSlot(s, slotKind, ctx),
+      bucket: slotToLegacyBucket(slotKind),
+      slotKind
+    }))
+    .filter((x) => x.score > -5)
+    .sort((a, b) => b.score - a.score);
+
+  const topLeak = (ctx.leakPriorities || [])[0]?.concept;
+  if (topLeak && (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness')) {
+    const leakPool = pool.filter((x) => spotMatchesLeakConcept(x.spot, topLeak));
+    const minLeak = slotKind === 'primary_weakness' ? 1 : 2;
+    if (leakPool.length >= minLeak) pool = leakPool;
+  }
+
+  if (!pool.length) return null;
+
+  const top = pool.slice(0, Math.min(10, pool.length));
+  const total = top.reduce((s, x) => s + Math.max(0.01, x.score), 0);
+  let r = rng() * total;
+  let pick = top[0];
+  for (const item of top) {
+    r -= Math.max(0.01, item.score);
+    if (r <= 0) { pick = item; break; }
+  }
+  return pick;
+}
+
+function selectSpotsProfileAware({
+  spots, candidates, count, ctx, rng, shownAt, shownCooldown, history
+}) {
+  const slotOrder = sessionSlotOrder(count);
+  const tiers = buildSkillTiers(ctx.skillProfile);
+  const usedIds = new Set();
+  const picked = [];
+  let strongMaintUsed = false;
+  let strongSkillSpotCount = 0;
+
+  const slotCtx = { ...ctx, tiers, picked, strongMaintUsed: false, strongSkillSpotCount: 0 };
+
+  for (const slotKind of slotOrder) {
+    slotCtx.strongMaintUsed = strongMaintUsed;
+    slotCtx.strongSkillSpotCount = strongSkillSpotCount;
+    let choice = pickOneSlot(candidates, slotKind, slotCtx, rng, usedIds);
+
+    if (!choice && slotKind === 'maintenance_strong') continue;
+
+    if (!choice) {
+      const fallbackKinds = slotKind === 'exploration'
+        ? ['secondary_weakness', 'maintenance_medium']
+        : slotKind === 'secondary_weakness' && !tiers.secondary.length
+          ? ['primary_weakness', 'maintenance_medium']
+          : ['maintenance_medium', 'secondary_weakness', 'exploration'];
+      for (const fb of fallbackKinds) {
+        choice = pickOneSlot(candidates, fb, slotCtx, rng, usedIds);
+        if (choice) break;
+      }
+    }
+
+    if (!choice) {
+      const rest = candidates
+        .filter((s) => !usedIds.has(s.id))
+        .map((s) => ({
+          spot: s,
+          score: 0.5 - diversityPenalty(s, picked, history),
+          bucket: 'maintenance',
+          slotKind: 'maintenance_medium'
+        }));
+      if (rest.length) choice = rest.sort((a, b) => b.score - a.score)[0];
+    }
+
+    if (!choice) continue;
+
+    usedIds.add(choice.spot.id);
+    if (choice.slotKind === 'maintenance_strong') strongMaintUsed = true;
+    if (spotHasStrongSkill(choice.spot, tiers) && choice.slotKind !== 'maintenance_strong') {
+      strongSkillSpotCount++;
+    }
+    picked.push(choice);
+    slotCtx.picked = picked;
+  }
+
+  if (picked.length < count) {
+    const rest = candidates
+      .filter((s) => !usedIds.has(s.id))
+      .map((s) => ({
+        spot: s,
+        score: 0.4 - diversityPenalty(s, picked, history),
+        bucket: bucketForSpot(s, ctx),
+        slotKind: 'maintenance_medium'
+      }));
+    while (picked.length < count && rest.length) {
+      rest.sort((a, b) => b.score - a.score);
+      const choice = rest.shift();
+      if (usedIds.has(choice.spot.id)) continue;
+      usedIds.add(choice.spot.id);
+      picked.push(choice);
+    }
+  }
+
+  return picked;
+}
+
+function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   let score = weakSkillBoost(spot, ctx.skillProfile) * 2;
   score += leakBoostForSpot(spot, ctx.leakPriorities) * 4;
   if (ctx.weakConcepts.has(spot.concept)) score += 2;
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
   score += difficultyFit(spot, ctx.targetDiff);
-  if (ctx.skillTargets) {
+  if (useSkillTargets && ctx.skillTargets) {
     for (const tag of spot.skillTags || []) {
       const want = ctx.skillTargets[tag];
       const have = ctx.skillCounts[tag] || 0;
@@ -219,8 +463,13 @@ export function selectSpots({
   const targetDiff = adaptiveDifficulty({ current: adaptiveCurrent, recentResults, skillProfile });
 
   const leakPriorities = (leakProfiles || [])
-    .map((p) => ({ concept: p.concept, priority: computePriority(p, { now }) }))
-    .filter((p) => p.priority > 0)
+    .map((p) => {
+      const priority = computePriority(p, { now });
+      const hasEvidence = (p.sampleSize || 0) >= 1 || (Array.isArray(p.attempts) && p.attempts.length >= 1);
+      const floor = p.concept && hasEvidence ? 0.15 : 0;
+      return { concept: p.concept, priority: Math.max(priority, floor) };
+    })
+    .filter((p) => p.priority > 0 && p.concept)
     .sort((a, b) => b.priority - a.priority);
 
   const weakConcepts = new Set();
@@ -255,40 +504,51 @@ export function selectSpots({
   const softEligible = spots.filter((s) => !recentIds.has(s.id));
   const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
 
-  const weaknessWant = Math.max(1, Math.round(count * WEAKNESS_SHARE));
-  const maintenanceWant = Math.max(1, Math.round(count * MAINTENANCE_SHARE));
-  const explorationWant = Math.max(1, Math.round(count * EXPLORATION_SHARE));
-  const challengeWant = Math.max(0, Math.round(count * CHALLENGE_WEIGHT));
-  const controlWant = count >= CONTROL_EVERY ? 1 : 0;
-  const skillCap = Math.max(2, Math.ceil(weaknessWant * MAX_WEAK_PER_SKILL_SHARE));
+  let picked = [];
+  let slotKinds = [];
 
-  const buckets = { weakness: [], maintenance: [], exploration: [], challenge: [], control: [] };
-  for (const s of candidates) {
-    const b = bucketForSpot(s, ctx);
-    buckets[b].push(...scoredPool([s], ctx, b));
-  }
+  const useProfileSlots = skillProfile && skillProfile.skills && Object.keys(skillProfile.skills).length > 0;
 
-  const usedIds = new Set();
-  const skillCounts = {};
-  const picked = [];
+  if (useProfileSlots) {
+    picked = selectSpotsProfileAware({
+      spots, candidates, count, ctx, rng, shownAt, shownCooldown, history
+    });
+    slotKinds = picked.map((p) => p.slotKind);
+  } else {
+    const weaknessWant = Math.max(1, Math.round(count * WEAKNESS_SHARE));
+    const maintenanceWant = Math.max(1, Math.round(count * MAINTENANCE_SHARE));
+    const explorationWant = Math.max(1, Math.round(count * EXPLORATION_SHARE));
+    const challengeWant = Math.max(0, Math.round(count * CHALLENGE_WEIGHT));
+    const controlWant = count >= CONTROL_EVERY ? 1 : 0;
+    const skillCap = Math.max(2, Math.ceil(weaknessWant * MAX_WEAK_PER_SKILL_SHARE));
 
-  const take = (arr, want, cap) => {
-    const got = weightedPick(arr, want, rng, usedIds, cap, skillCounts, ctx);
-    for (const g of got) picked.push({ ...g, bucket: g.bucket || bucketForSpot(g.spot, ctx) });
-  };
+    const buckets = { weakness: [], maintenance: [], exploration: [], challenge: [], control: [] };
+    for (const s of candidates) {
+      const b = bucketForSpot(s, ctx);
+      buckets[b].push(...scoredPool([s], ctx, b));
+    }
 
-  take(buckets.weakness, weaknessWant, skillCap);
-  take(buckets.challenge, challengeWant, null);
-  take(buckets.exploration, explorationWant, null);
-  if (controlWant) take(buckets.control.length ? buckets.control : buckets.maintenance, controlWant, null);
+    const usedIds = new Set();
+    const skillCounts = {};
 
-  const remain = count - picked.length;
-  if (remain > 0) take(buckets.maintenance, remain, null);
-  if (picked.length < count) {
-    const rest = candidates
-      .filter((s) => !usedIds.has(s.id))
-      .map((s) => ({ spot: s, score: 0.5 - diversityPenalty(s, picked, history), bucket: bucketForSpot(s, ctx) }));
-    take(rest, count - picked.length, null);
+    const take = (arr, want, cap) => {
+      const got = weightedPick(arr, want, rng, usedIds, cap, skillCounts, ctx);
+      for (const g of got) picked.push({ ...g, bucket: g.bucket || bucketForSpot(g.spot, ctx), slotKind: null });
+    };
+
+    take(buckets.weakness, weaknessWant, skillCap);
+    take(buckets.challenge, challengeWant, null);
+    take(buckets.exploration, explorationWant, null);
+    if (controlWant) take(buckets.control.length ? buckets.control : buckets.maintenance, controlWant, null);
+
+    const remain = count - picked.length;
+    if (remain > 0) take(buckets.maintenance, remain, null);
+    if (picked.length < count) {
+      const rest = candidates
+        .filter((s) => !usedIds.has(s.id))
+        .map((s) => ({ spot: s, score: 0.5 - diversityPenalty(s, picked, history), bucket: bucketForSpot(s, ctx), slotKind: null }));
+      take(rest, count - picked.length, null);
+    }
   }
 
   const selectedSpots = picked.map((p) => p.spot);
@@ -326,11 +586,17 @@ export function selectSpots({
     overall: skillProfile && skillProfile.overall
   });
 
+  const slotMix = useProfileSlots ? sessionSlotOrder(count).reduce((acc, k) => {
+    acc[k] = (acc[k] || 0) + 1;
+    return acc;
+  }, {}) : null;
+
   return {
     ok: true,
     targetDifficulty: targetDiff,
     selected: selectedSpots.map((s) => s.id),
     buckets: bucketLabels,
+    slotKinds,
     goal,
     earliestMeaningful: earliest,
     sessionPlan: { primaryTargets, maintenance, exploration },
@@ -338,11 +604,8 @@ export function selectSpots({
       weakConcepts: [...weakConcepts],
       mastered: [...masteredConcepts],
       leakPriorities: leakPriorities.slice(0, 5),
-      exploration: explorationWant,
-      challenge: challengeWant,
-      control: controlWant,
-      weakness: weaknessWant,
-      maintenance: maintenanceWant
+      profileSlots: useProfileSlots,
+      slotMix
     }
   };
 }
