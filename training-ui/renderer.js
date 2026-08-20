@@ -23,7 +23,7 @@ export const renderHome = (root, vm, handlers = {}) => {
   const h = handlers;
   if (vm.type === 'training') {
     const levelLine = vm.levelLabel
-      ? `<div class="row"><span>Твой уровень</span><b>${esc(vm.levelLabel)}${vm.levelScore != null ? ' · ' + esc(vm.levelScore) : ''}</b></div>`
+      ? `<div class="row"><span>Твой уровень:</span><b>${esc(vm.levelLabel)}${vm.levelScore != null ? ' · ' + esc(vm.levelScore) : ''}</b></div>`
       : '';
     const focusHtml = (vm.focusItems || []).map((item) => `<div class="row"><span>•</span><b>${esc(item)}</b></div>`).join('');
     root.innerHTML = `<div class="panel dailyStage">
@@ -54,9 +54,9 @@ export const renderHome = (root, vm, handlers = {}) => {
 export const renderLoading = (root, vm = {}) => {
   if (!root) return;
   root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">ТРЕНИРОВКА · ГЕНЕРАЦИЯ</span>
-    <h1 class="impact">СЧИТАЮ<br><span class="pink">СПОТЫ.</span></h1>
-    <p class="mut">Солвер пересчитывает твои решения по диапазону и собирает персональные споты. Несколько секунд…</p>
+    <span class="ey">ТРЕНИРОВКА · ПОДГОТОВКА</span>
+    <h1 class="impact">ПОДБИРАЕМ<br><span class="pink">РАЗДАЧИ.</span></h1>
+    <p class="mut">Подбираем раздачи под твой уровень. Пару секунд…</p>
     <button class="secondary" id="trCancel">ОТМЕНИТЬ</button>
   </div>`;
   const b = root.querySelector('#trCancel');
@@ -70,7 +70,7 @@ export const renderDrill = (root, vm, handlers = {}) => {
   const board = (sc.board || []).map(cardHtml).join('');
   const hero = (sc.heroCards || []).map((c) => cardHtml(c)).join('');
   root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">${esc(vm.streetRu)} · СПОТ ${vm.progress.index} / ${vm.progress.total}</span>
+    <span class="ey">${esc(vm.streetRu)} · РАЗДАЧА ${vm.progress.index} / ${vm.progress.total}</span>
     ${streetDots(vm.street)}
     <div class="dailyPot">
       <div><span class="ey">POT</span><b>${sc.potBb != null ? Number(sc.potBb).toFixed(1) : '—'} BB</b></div>
@@ -80,7 +80,7 @@ export const renderDrill = (root, vm, handlers = {}) => {
     <div class="dailyBoard">${board || ''}</div>
     ${hero ? `<div class="cards">${hero}</div>` : ''}
     ${vm.confidence && vm.confidence.available
-      ? `<p class="mut small">ТОЧНОСТЬ АНАЛИЗА ${vm.confidence.score}%${vm.confidence.note ? ' — ' + esc(vm.confidence.note) : ''}</p>` : ''}
+      ? `<p class="mut small">УВЕРЕННОСТЬ В РАЗБОРЕ ${vm.confidence.score}%${vm.confidence.note ? ' — ' + esc(vm.confidence.note) : ''}</p>` : ''}
     <h2>${esc(vm.prompt)}</h2>
     <div class="grid2">${vm.options.map((o) =>
       `<button class="choice" data-option="${esc(o.id)}">${esc(o.labelRu)}</button>`).join('')}</div>
@@ -105,10 +105,10 @@ export const renderFeedback = (root, vm, handlers = {}) => {
       <div class="gradeBox ${cls}"><span class="ey">ОЦЕНКА</span><b>${esc(vm.grade)}</b></div>
       <div class="gradeBox ${cls}"><span class="ey">ПОТЕРЯ EV</span><b>${vm.evLossBb != null ? Number(vm.evLossBb).toFixed(2) : '—'} BB</b></div>
     </div>
-    <div class="regReport"><span class="ey">СТРАТЕГИЯ</span><p>Рекомендация: ${esc(rec)} · частота ${freq}${vm.mixedStrategy ? ' · смешанная стратегия' : ''}</p></div>
+    <div class="regReport"><span class="ey">СТРАТЕГИЯ</span><p>Рекомендация: ${esc(rec)} · частота ${freq}${vm.mixedStrategy ? ' · можно миксовать линии' : ''}</p></div>
     <div class="verdict"><span class="ey">ПОЧЕМУ</span><p class="mut small">${esc(vm.summary || '')}</p><p>${esc(vm.tip || '')}</p></div>
     <p class="mut small">ТРЕНИРУЕМ: ${esc(vm.concept || '—')}</p>
-    <button class="primary" id="trNext">СЛЕДУЮЩИЙ СПОТ →</button>
+    <button class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
   </div>`;
   const b = root.querySelector('#trNext');
   if (b && typeof h.next === 'function') b.onclick = () => h.next();
@@ -118,7 +118,7 @@ export const renderSummary = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
   const trendHtml = vm.trend && vm.trend.available
-    ? `<div class="verdict"><span class="ey">ПРОГРЕСС (${esc(vm.primaryLabel || '')})</span><p>До: ${vm.trend.beforeAvg.toFixed(2)} BB · После: ${vm.trend.afterAvg.toFixed(2)} BB · Δ ${vm.trend.delta > 0 ? '+' : ''}${vm.trend.delta.toFixed(2)} BB</p></div>`
+    ? `<div class="verdict"><span class="ey">ПРОГРЕСС (${esc(vm.primaryLabel || '')})</span><p>До: ${vm.trend.beforeAvg.toFixed(2)} BB · После: ${vm.trend.afterAvg.toFixed(2)} BB · разница ${vm.trend.delta > 0 ? '+' : ''}${vm.trend.delta.toFixed(2)} BB</p></div>`
     : `<p class="mut small">Нужно больше решений для оценки прогресса.</p>`;
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">СЕССИЯ ЗАВЕРШЕНА</span>
@@ -127,10 +127,10 @@ export const renderSummary = (root, vm, handlers = {}) => {
       <div class="gradeBox"><span class="ey">СРЕДНЯЯ ПОТЕРЯ EV</span><b>${vm.avgLossBb != null ? Number(vm.avgLossBb).toFixed(2) : '—'} BB</b></div>
       <div class="gradeBox"><span class="ey">ОКОЛО ОПТИМАЛЬНЫХ</span><b>${vm.nearOptimalCount} / ${vm.solved}</b></div>
     </div>
-    <p class="mut small">Главный концепт: ${esc(vm.primaryLabel || '—')}</p>
+    <p class="mut small">Главная тема: ${esc(vm.primaryLabel || '—')}</p>
     ${trendHtml}
     <div class="grid2">
-      <button class="secondary" id="trMore">ЕЩЁ 5 СПОТОВ</button>
+      <button class="secondary" id="trMore">ЕЩЁ 5 РАЗДАЧ</button>
       <button class="primary" id="trBack">НАЗАД</button>
     </div>
   </div>`;
@@ -145,7 +145,7 @@ export const renderError = (root, vm = {}) => {
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">ТРЕНИРОВКА · ОШИБКА</span>
     <h1 class="impact">НЕ<br><span class="pink">ПОЛУЧИЛОСЬ.</span></h1>
-    <p class="mut">${esc(vm.message || 'Не удалось собрать споты. Попробуй ещё раз.')}</p>
+    <p class="mut">${esc(vm.message || 'Не удалось подготовить раздачи. Попробуй ещё раз.')}</p>
     <button class="primary" id="trRetry">ЕЩЁ РАЗ →</button>
   </div>`;
   const b = root.querySelector('#trRetry');
@@ -169,7 +169,7 @@ export const renderAssessment = (root, vm = {}, handlers = {}) => {
   if (!root || !vm || !vm.q) return;
   const p = vm.progress || {};
   root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">ПЕРВИЧНЫЙ АНАЛИЗ · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>
+    <span class="ey">УРОВЕНЬ · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>
     <h1 class="impact">ЧТО<br><span class="pink">СДЕЛАЕШЬ?</span></h1>
     <p class="mut">${esc(vm.q)}</p>
     <div class="grid2">${(vm.choices || []).map((c) =>
@@ -187,9 +187,9 @@ export const renderAssessmentIntro = (root, vm = {}, handlers = {}) => {
   if (!root) return;
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">ТРЕНИРОВКА · СТАРТ</span>
-    <h1 class="impact">НАЧНИ С<br><span class="pink">ПЕРВИЧНОГО АНАЛИЗА.</span></h1>
-    <p class="mut">${esc(vm.copy || '12 вопросов по реальным спотам. Мы соберём твой профиль и будем строить тренировку под слабые навыки.')}</p>
-    <button class="primary" id="trAssess">ПРОЙТИ АНАЛИЗ →</button>
+    <h1 class="impact">ОПРЕДЕЛИМ<br><span class="pink">ТВОЙ УРОВЕНЬ.</span></h1>
+    <p class="mut">${esc(vm.copy || '12 игровых ситуаций. По ответам определим твои сильные стороны и основные ошибки.')}</p>
+    <button class="primary" id="trAssess">ОПРЕДЕЛИТЬ УРОВЕНЬ →</button>
     <button class="secondary" id="trLegacy">ОБЩАЯ ТРЕНИРОВКА</button>
   </div>`;
   const a = root.querySelector('#trAssess');
@@ -201,15 +201,15 @@ export const renderAssessmentIntro = (root, vm = {}, handlers = {}) => {
 export const renderAssessmentSummary = (root, vm = {}, handlers = {}) => {
   if (!root) return;
   root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">ПЕРВИЧНЫЙ АНАЛИЗ · ГОТОВО</span>
-    <h1 class="impact">${vm.overallLabel ? esc(vm.overallLabel) : 'ПРОФИЛЬ'}<br><span class="pink">СОБРАН.</span></h1>
+    <span class="ey">УРОВЕНЬ · ГОТОВО</span>
+    <h1 class="impact">${vm.overallLabel ? esc(vm.overallLabel) : 'УРОВЕНЬ'}<br><span class="pink">ОПРЕДЕЛЁН.</span></h1>
     <div class="dualGrade">
       <div class="gradeBox"><span class="ey">УРОВЕНЬ</span><b>${vm.overall != null ? vm.overall : '—'}</b></div>
       <div class="gradeBox"><span class="ey">ВЕРНЫХ</span><b>${vm.correct} / ${vm.answered}</b></div>
     </div>
     <div class="row"><span>Слабый навык</span><b>${esc(vm.weakest || '—')}</b></div>
     <div class="row"><span>Сильный навык</span><b>${esc(vm.strongest || '—')}</b></div>
-    <p class="mut small">Теперь тренировка строится под твой профиль и слабые места.</p>
+    <p class="mut small">Тренировки теперь подстраиваются под твои слабые места.</p>
     <button class="primary" id="asBack">К ТРЕНИРОВКЕ →</button>
   </div>`;
   const b = root.querySelector('#asBack');

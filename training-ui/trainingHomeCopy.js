@@ -3,20 +3,35 @@
 
 import { skillLabelRu, leakLabelRu } from '../solver/src/index.js';
 
+export const FALLBACK_FOCUS = 'разные игровые ситуации';
+
 const FOCUS_PATTERNS = [
-  { re: /icm|баббл|bubble|itm|финальн|pko|баунти/i, label: 'ICM' },
-  { re: /bluffcatch|bluff catch|bluff-catch|блеф-кетч|price defence|price defense|overbet fold/i, label: 'защита ривера' },
+  { re: /icm|баббл|bubble|itm|финальн|pko|баунти/i, label: 'решения на баббле' },
+  { re: /bluffcatch|bluff catch|bluff-catch|блеф-кетч|блеф-кэтч|price defence|price defense|overbet fold/i, label: 'блеф-кетчи на ривере' },
   { re: /thin value|тонк/i, label: 'тонкое вэлью' },
-  { re: /river|ривер/i, label: 'ривер' },
-  { re: /barrel|баррел/i, label: 'баррелинг' },
+  { re: /river|ривер/i, label: 'игра на ривере' },
+  { re: /barrel|баррел/i, label: 'баррели' },
   { re: /bb defence|bb defend|защита bb|defend|defence/i, label: 'защита блайндов' },
   { re: /rfi|preflop|префлоп|push-fold|пуш/i, label: 'префлоп' },
-  { re: /c-bet|cbet|с-бет/i, label: 'конт-бет' },
-  { re: /exploit|эксплойт|nit|station|маниак|любитель/i, label: 'эксплойт' },
+  { re: /c-bet|cbet|с-бет|конт-бет|контбет/i, label: 'контбет' },
+  { re: /exploit|эксплойт|nit|station|маниак|любитель/i, label: 'адаптация под оппонента' },
   { re: /bluff|блеф/i, label: 'блеф' },
   { re: /sizing|сайзинг|overbet|овербет/i, label: 'сайзинг' },
   { re: /range|диапазон/i, label: 'чтение диапазонов' }
 ];
+
+function skillPhraseForWhy(label) {
+  const t = String(label || '').trim();
+  if (/icm|баббл/i.test(t)) return 'решения на баббле';
+  if (/блеф|кэтч|кетч/i.test(t)) return 'блеф-кетчи на ривере';
+  if (/ривер/i.test(t)) return 'игра на ривере';
+  if (/префлоп/i.test(t)) return 'префлоп';
+  if (/постфлоп/i.test(t)) return 'постфлоп';
+  if (/сайзинг/i.test(t)) return 'сайзинг';
+  if (/эксплойт/i.test(t)) return 'адаптация под оппонента';
+  if (/контбет|конт-бет/i.test(t)) return 'контбет';
+  return t.toLowerCase();
+}
 
 export function humanFocusLabel(raw) {
   const text = String(raw || '').trim();
@@ -25,7 +40,7 @@ export function humanFocusLabel(raw) {
     if (re.test(text)) return label;
   }
   if (text.length > 28) return text.slice(0, 28).trim() + '…';
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  return text.charAt(0).toLowerCase() + text.slice(1);
 }
 
 export function focusItemsFromPlan(plan, limit = 2) {
@@ -55,7 +70,8 @@ export function focusItemsFromProfile({ skillProfile, leaks = [], plan = null, l
   const fromPlan = focusItemsFromPlan(plan, limit);
   if (fromPlan.length >= limit) return fromPlan;
 
-  const fromSkills = weakestSkillLabels(skillProfile, limit);
+  const fromSkills = weakestSkillLabels(skillProfile, limit)
+    .map((s) => humanFocusLabel(s) || s);
   for (const s of fromSkills) {
     if (!fromPlan.includes(s)) fromPlan.push(s);
     if (fromPlan.length >= limit) return fromPlan.slice(0, limit);
@@ -68,46 +84,32 @@ export function focusItemsFromProfile({ skillProfile, leaks = [], plan = null, l
     if (fromPlan.length >= limit) break;
   }
 
-  if (!fromPlan.length) return ['развитие и новые линии'];
+  if (!fromPlan.length) return [FALLBACK_FOCUS];
   return fromPlan.slice(0, limit);
 }
 
 export function whyTextForTraining({ skillProfile, leaks = [], focusItems = [] } = {}) {
-  const leakLabels = (leaks || [])
-    .slice(0, 3)
-    .map((l) => (l.label || leakLabelRu(l.concept) || '').toLowerCase())
-    .filter(Boolean);
-
-  if (leakLabels.length >= 2) {
-    return `Ты чаще ошибаешься в решениях на ${leakLabels[0]} и в ${leakLabels[1]}.`;
-  }
-  if (leakLabels.length === 1) {
-    const one = leakLabels[0];
-    if (/icm|баббл/.test(one)) return 'Ты чаще ошибаешься в решениях на баббле и в ICM-спотах.';
-    if (/блеф|bluff|кетч|catch/.test(one)) return 'Ты чаще ошибаешься в блеф-кетчах и защите на ривере.';
-    return `Ты чаще ошибаешься в ${one}.`;
+  const hasLeaks = (leaks || []).length > 0;
+  if (hasLeaks) {
+    return 'Именно здесь ты сейчас чаще всего теряешь фишки.';
   }
 
   const weak = weakestSkillLabels(skillProfile, 2);
   if (weak.length >= 2) {
-    const a = weak[0];
-    const b = weak[1];
-    if (/ICM|баббл/i.test(a) && /ривер|блеф|кэтч/i.test(b)) {
-      return 'Ты чаще ошибаешься в решениях на баббле и в блеф-кетчах.';
-    }
-    return `Сейчас больше всего теряешь EV в ${a} и в ${b}.`;
+    const a = skillPhraseForWhy(weak[0]);
+    const b = skillPhraseForWhy(weak[1]);
+    return `Главные потери сейчас — ${a} и ${b}.`;
   }
   if (weak.length === 1) {
-    return `Сейчас больше всего теряешь EV в ${weak[0]}.`;
+    return `Главные потери сейчас — ${skillPhraseForWhy(weak[0])}.`;
   }
 
-  if (focusItems.length >= 2) {
-    return `Сегодня собрали споты под ${focusItems[0].toLowerCase()} и ${focusItems[1].toLowerCase()}.`;
+  const meaningfulFocus = (focusItems || []).filter((f) => f && f !== FALLBACK_FOCUS);
+  if (meaningfulFocus.length >= 1) {
+    return 'Именно здесь ты сейчас чаще всего теряешь фишки.';
   }
-  if (focusItems.length === 1 && focusItems[0] !== 'развитие и новые линии') {
-    return `Сегодня собрали споты под ${focusItems[0].toLowerCase()}.`;
-  }
-  return 'Сегодня — развитие новых линий и поддержание сильных навыков.';
+
+  return 'Здесь следующий запас роста для твоего уровня.';
 }
 
 export function estimateMinutes(spotCount) {
@@ -117,5 +119,5 @@ export function estimateMinutes(spotCount) {
 
 export function trainingSubtitle(total) {
   const n = total || 7;
-  return `${n} спотов · ~${estimateMinutes(n)} минут`;
+  return `${n} раздач · около ${estimateMinutes(n)} минут`;
 }

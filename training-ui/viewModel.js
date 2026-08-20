@@ -48,7 +48,7 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     subtitle: trainingSubtitle(total),
     levelLabel,
     levelScore,
-    focusHeading: 'Сегодня в фокусе:',
+    focusHeading: 'Сегодня тренируем:',
     focusItems,
     whyHeading: 'Почему:',
     whyText,
@@ -65,9 +65,9 @@ export function confidenceModel(c) {
   const score = Math.round(c.score * 100);
   let note = '';
   if (c.score < 0.6) {
-    note = 'Ограничено: диапазон соперника не задан';
+    note = 'диапазон соперника не задан — расчёт приблизительный';
   } else if (c.score < 0.8) {
-    note = 'Ограничено: приближение по диапазону соперника';
+    note = 'расчёт по приблизительному диапазону соперника';
   }
   return { available: true, score, level: c.level || null, note };
 }

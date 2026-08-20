@@ -34,7 +34,7 @@ test('renderAssessmentIntro offers diagnostic + legacy and wires handlers', () =
   const root = freshRoot();
   let begin = 0, legacy = 0;
   R.renderAssessmentIntro(root, { copy: 'Тест' }, { begin: () => begin++, legacy: () => legacy++ });
-  assert.ok(root.innerHTML.includes('ПЕРВИЧНОГО АНАЛИЗА'));
+  assert.ok(root.innerHTML.includes('ТВОЙ УРОВЕНЬ'));
   const b = root.querySelector('#trAssess');
   const l = root.querySelector('#trLegacy');
   assert.ok(b && l, 'both CTA buttons rendered');
@@ -87,22 +87,22 @@ test('renderHome renders personal training CTA with start handler', () => {
   const vm = {
     type: 'training',
     title: 'ТВОЯ ТРЕНИРОВКА',
-    subtitle: '7 спотов · ~5 минут',
+    subtitle: '7 раздач · около 5 минут',
     levelLabel: 'КЛУБНЫЙ РЕГ',
     levelScore: 61,
-    focusHeading: 'Сегодня в фокусе:',
-    focusItems: ['ICM', 'защита ривера'],
+    focusHeading: 'Сегодня тренируем:',
+    focusItems: ['решения на баббле', 'блеф-кетчи на ривере'],
     whyHeading: 'Почему:',
-    whyText: 'Ты чаще ошибаешься в решениях на баббле и в блеф-кетчах.',
+    whyText: 'Именно здесь ты сейчас чаще всего теряешь фишки.',
     cta: 'НАЧАТЬ ТРЕНИРОВКУ',
     total: 7
   };
   let started = 0;
   R.renderHome(root, vm, { start: () => started++ });
   assert.ok(root.innerHTML.includes('ТВОЯ ТРЕНИРОВКА'));
-  assert.ok(root.innerHTML.includes('7 спотов'));
-  assert.ok(root.innerHTML.includes('Сегодня в фокусе'));
-  assert.ok(root.innerHTML.includes('ICM'));
+  assert.ok(root.innerHTML.includes('7 раздач'));
+  assert.ok(root.innerHTML.includes('Сегодня тренируем'));
+  assert.ok(root.innerHTML.includes('баббле'));
   root.querySelector('#trStart').onclick();
   assert.equal(started, 1);
 });

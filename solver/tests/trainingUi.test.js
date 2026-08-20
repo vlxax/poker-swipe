@@ -132,7 +132,7 @@ test('drillViewModel confidence shows a limited-analysis note on low confidence'
   const vm = drillViewModel({ drill, index: 1, total: 7 });
   assert.equal(vm.confidence.available, true);
   assert.equal(vm.confidence.score, 50);
-  assert.match(vm.confidence.note, /Ограничено/);
+  assert.match(vm.confidence.note, /приблизительн/i);
 });
 
 test('confidenceModel returns unavailable when no confidence is present', () => {
@@ -405,9 +405,9 @@ test('homeViewModel returns the personal training CTA when a skill profile exist
   });
   assert.equal(vm.type, 'training');
   assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
-  assert.match(vm.subtitle, /7 спотов/);
+  assert.match(vm.subtitle, /7 раздач/);
   assert.equal(vm.cta, 'НАЧАТЬ ТРЕНИРОВКУ');
-  assert.ok(vm.focusItems.some((f) => /ICM/i.test(f)));
+  assert.ok(vm.focusItems.some((f) => /баббл|решения/i.test(f)));
 });
 
 test('AssessmentController runs the diagnostic and persists a profile', () => {
@@ -512,8 +512,8 @@ test('weak ICM profile shows ICM focus on the home card', () => {
     plan: { total: 7, sessionPlan: { primaryTargets: ['bubble ICM fold', 'final table ICM'], maintenance: [], exploration: [] } },
     skillProfile: { overall: 48, overallLabel: 'НЕСТАБИЛЬНАЯ БАЗА', weakest: { skill: 'icm', labelRu: 'ICM / баббл' }, skills: { icm: { score: 35, labelRu: 'ICM / баббл' } } }
   });
-  assert.ok(vm.focusItems.some((f) => /ICM/i.test(f)));
-  assert.match(vm.whyText, /баббл|ICM|ошиба/i);
+  assert.ok(vm.focusItems.some((f) => /баббл|решения/i.test(f)));
+  assert.match(vm.whyText, /фишки|потери/i);
 });
 
 test('weak river profile shows river defence focus on the home card', () => {
@@ -522,7 +522,7 @@ test('weak river profile shows river defence focus on the home card', () => {
     plan: { total: 7, sessionPlan: { primaryTargets: ['river bluffcatch', 'price defence'], maintenance: [], exploration: [] } },
     skillProfile: { overall: 52, overallLabel: 'КЛУБНЫЙ РЕГ', weakest: { skill: 'bluffCatch', labelRu: 'Блафф-кэтч' }, skills: { river: { score: 38, labelRu: 'Ривер' }, bluffCatch: { score: 36, labelRu: 'Блафф-кэтч' } } }
   });
-  assert.ok(vm.focusItems.some((f) => /ривер|блеф|защит/i.test(f)));
+  assert.ok(vm.focusItems.some((f) => /ривер|блеф|кетч/i.test(f)));
 });
 
 test('different profiles show different focus text on the home card', () => {
