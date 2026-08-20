@@ -1,0 +1,326 @@
+{
+  "format": "6max",
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceFile": "src/data/ranges/greenline.ts",
+  "sourceDescription": "Extracted from GreenCharts2024_01.pdf (Greenline Poker)",
+  "importedAt": "2026-08-20T16:59:47.167Z",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false,
+  "stackSpecific": false,
+  "sizingSpecific": false,
+  "frequencySupport": true,
+  "positions": [
+    "UTG",
+    "MP",
+    "CO",
+    "BTN",
+    "SB",
+    "BB"
+  ],
+  "excludedScenarios": [
+    "ISO"
+  ],
+  "userLabel": "Базовая стратегия",
+  "disclaimer": "Справочный префлоп-диапазон. Не является solver-верифицированным решением для конкретной структуры турнира.",
+  "rangeCount": 37,
+  "ranges": [
+    {
+      "id": "bb-vs-4bet-btn",
+      "heroPosition": "BB",
+      "villainPosition": "BTN",
+      "situation": "vs_4bet",
+      "sourceChartKey": "BB-vs-4bet-BTN",
+      "file": "ranges/bb-vs-4bet-btn.json"
+    },
+    {
+      "id": "bb-vs-4bet-co",
+      "heroPosition": "BB",
+      "villainPosition": "CO",
+      "situation": "vs_4bet",
+      "sourceChartKey": "BB-vs-4bet-CO",
+      "file": "ranges/bb-vs-4bet-co.json"
+    },
+    {
+      "id": "bb-vs-4bet-mp",
+      "heroPosition": "BB",
+      "villainPosition": "MP",
+      "situation": "vs_4bet",
+      "sourceChartKey": "BB-vs-4bet-MP",
+      "file": "ranges/bb-vs-4bet-mp.json"
+    },
+    {
+      "id": "bb-vs-4bet-sb",
+      "heroPosition": "BB",
+      "villainPosition": "SB",
+      "situation": "vs_4bet",
+      "sourceChartKey": "BB-vs-4bet-SB",
+      "file": "ranges/bb-vs-4bet-sb.json"
+    },
+    {
+      "id": "bb-vs-4bet-utg",
+      "heroPosition": "BB",
+      "villainPosition": "UTG",
+      "situation": "vs_4bet",
+      "sourceChartKey": "BB-vs-4bet-UTG",
+      "file": "ranges/bb-vs-4bet-utg.json"
+    },
+    {
+      "id": "bb-vs-open-btn",
+      "heroPosition": "BB",
+      "villainPosition": "BTN",
+      "situation": "vs_open",
+      "sourceChartKey": "BB-vs-open-BTN",
+      "file": "ranges/bb-vs-open-btn.json"
+    },
+    {
+      "id": "bb-vs-open-co",
+      "heroPosition": "BB",
+      "villainPosition": "CO",
+      "situation": "vs_open",
+      "sourceChartKey": "BB-vs-open-CO",
+      "file": "ranges/bb-vs-open-co.json"
+    },
+    {
+      "id": "bb-vs-open-mp",
+      "heroPosition": "BB",
+      "villainPosition": "MP",
+      "situation": "vs_open",
+      "sourceChartKey": "BB-vs-open-MP",
+      "file": "ranges/bb-vs-open-mp.json"
+    },
+    {
+      "id": "bb-vs-open-sb",
+      "heroPosition": "BB",
+      "villainPosition": "SB",
+      "situation": "vs_open",
+      "sourceChartKey": "BB-vs-open-SB",
+      "file": "ranges/bb-vs-open-sb.json"
+    },
+    {
+      "id": "bb-vs-open-utg",
+      "heroPosition": "BB",
+      "villainPosition": "UTG",
+      "situation": "vs_open",
+      "sourceChartKey": "BB-vs-open-UTG",
+      "file": "ranges/bb-vs-open-utg.json"
+    },
+    {
+      "id": "btn-rfi",
+      "heroPosition": "BTN",
+      "villainPosition": null,
+      "situation": "rfi",
+      "sourceChartKey": "BTN-RFI",
+      "file": "ranges/btn-rfi.json"
+    },
+    {
+      "id": "btn-vs-3bet-bb",
+      "heroPosition": "BTN",
+      "villainPosition": "BB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "BTN-vs-3bet-BB",
+      "file": "ranges/btn-vs-3bet-bb.json"
+    },
+    {
+      "id": "btn-vs-3bet-sb",
+      "heroPosition": "BTN",
+      "villainPosition": "SB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "BTN-vs-3bet-SB",
+      "file": "ranges/btn-vs-3bet-sb.json"
+    },
+    {
+      "id": "btn-vs-open-co",
+      "heroPosition": "BTN",
+      "villainPosition": "CO",
+      "situation": "vs_open",
+      "sourceChartKey": "BTN-vs-open-CO",
+      "file": "ranges/btn-vs-open-co.json"
+    },
+    {
+      "id": "btn-vs-open-mp",
+      "heroPosition": "BTN",
+      "villainPosition": "MP",
+      "situation": "vs_open",
+      "sourceChartKey": "BTN-vs-open-MP",
+      "file": "ranges/btn-vs-open-mp.json"
+    },
+    {
+      "id": "btn-vs-open-utg",
+      "heroPosition": "BTN",
+      "villainPosition": "UTG",
+      "situation": "vs_open",
+      "sourceChartKey": "BTN-vs-open-UTG",
+      "file": "ranges/btn-vs-open-utg.json"
+    },
+    {
+      "id": "co-rfi",
+      "heroPosition": "CO",
+      "villainPosition": null,
+      "situation": "rfi",
+      "sourceChartKey": "CO-RFI",
+      "file": "ranges/co-rfi.json"
+    },
+    {
+      "id": "co-vs-3bet-bb",
+      "heroPosition": "CO",
+      "villainPosition": "BB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "CO-vs-3bet-BB",
+      "file": "ranges/co-vs-3bet-bb.json"
+    },
+    {
+      "id": "co-vs-3bet-btn",
+      "heroPosition": "CO",
+      "villainPosition": "BTN",
+      "situation": "vs_3bet",
+      "sourceChartKey": "CO-vs-3bet-BTN",
+      "file": "ranges/co-vs-3bet-btn.json"
+    },
+    {
+      "id": "co-vs-3bet-sb",
+      "heroPosition": "CO",
+      "villainPosition": "SB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "CO-vs-3bet-SB",
+      "file": "ranges/co-vs-3bet-sb.json"
+    },
+    {
+      "id": "mp-rfi",
+      "heroPosition": "MP",
+      "villainPosition": null,
+      "situation": "rfi",
+      "sourceChartKey": "MP-RFI",
+      "file": "ranges/mp-rfi.json"
+    },
+    {
+      "id": "mp-vs-3bet-bb",
+      "heroPosition": "MP",
+      "villainPosition": "BB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "MP-vs-3bet-BB",
+      "file": "ranges/mp-vs-3bet-bb.json"
+    },
+    {
+      "id": "mp-vs-3bet-btn",
+      "heroPosition": "MP",
+      "villainPosition": "BTN",
+      "situation": "vs_3bet",
+      "sourceChartKey": "MP-vs-3bet-BTN",
+      "file": "ranges/mp-vs-3bet-btn.json"
+    },
+    {
+      "id": "mp-vs-3bet-co",
+      "heroPosition": "MP",
+      "villainPosition": "CO",
+      "situation": "vs_3bet",
+      "sourceChartKey": "MP-vs-3bet-CO",
+      "file": "ranges/mp-vs-3bet-co.json"
+    },
+    {
+      "id": "mp-vs-3bet-sb",
+      "heroPosition": "MP",
+      "villainPosition": "SB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "MP-vs-3bet-SB",
+      "file": "ranges/mp-vs-3bet-sb.json"
+    },
+    {
+      "id": "sb-rfi",
+      "heroPosition": "SB",
+      "villainPosition": null,
+      "situation": "rfi",
+      "sourceChartKey": "SB-RFI",
+      "file": "ranges/sb-rfi.json"
+    },
+    {
+      "id": "sb-vs-3bet-bb",
+      "heroPosition": "SB",
+      "villainPosition": "BB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "SB-vs-3bet-BB",
+      "file": "ranges/sb-vs-3bet-bb.json"
+    },
+    {
+      "id": "sb-vs-open-btn",
+      "heroPosition": "SB",
+      "villainPosition": "BTN",
+      "situation": "vs_open",
+      "sourceChartKey": "SB-vs-open-BTN",
+      "file": "ranges/sb-vs-open-btn.json"
+    },
+    {
+      "id": "sb-vs-open-co",
+      "heroPosition": "SB",
+      "villainPosition": "CO",
+      "situation": "vs_open",
+      "sourceChartKey": "SB-vs-open-CO",
+      "file": "ranges/sb-vs-open-co.json"
+    },
+    {
+      "id": "sb-vs-open-mp",
+      "heroPosition": "SB",
+      "villainPosition": "MP",
+      "situation": "vs_open",
+      "sourceChartKey": "SB-vs-open-MP",
+      "file": "ranges/sb-vs-open-mp.json"
+    },
+    {
+      "id": "sb-vs-open-utg",
+      "heroPosition": "SB",
+      "villainPosition": "UTG",
+      "situation": "vs_open",
+      "sourceChartKey": "SB-vs-open-UTG",
+      "file": "ranges/sb-vs-open-utg.json"
+    },
+    {
+      "id": "utg-rfi",
+      "heroPosition": "UTG",
+      "villainPosition": null,
+      "situation": "rfi",
+      "sourceChartKey": "UTG-RFI",
+      "file": "ranges/utg-rfi.json"
+    },
+    {
+      "id": "utg-vs-3bet-bb",
+      "heroPosition": "UTG",
+      "villainPosition": "BB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "UTG-vs-3bet-BB",
+      "file": "ranges/utg-vs-3bet-bb.json"
+    },
+    {
+      "id": "utg-vs-3bet-btn",
+      "heroPosition": "UTG",
+      "villainPosition": "BTN",
+      "situation": "vs_3bet",
+      "sourceChartKey": "UTG-vs-3bet-BTN",
+      "file": "ranges/utg-vs-3bet-btn.json"
+    },
+    {
+      "id": "utg-vs-3bet-co",
+      "heroPosition": "UTG",
+      "villainPosition": "CO",
+      "situation": "vs_3bet",
+      "sourceChartKey": "UTG-vs-3bet-CO",
+      "file": "ranges/utg-vs-3bet-co.json"
+    },
+    {
+      "id": "utg-vs-3bet-mp",
+      "heroPosition": "UTG",
+      "villainPosition": "MP",
+      "situation": "vs_3bet",
+      "sourceChartKey": "UTG-vs-3bet-MP",
+      "file": "ranges/utg-vs-3bet-mp.json"
+    },
+    {
+      "id": "utg-vs-3bet-sb",
+      "heroPosition": "UTG",
+      "villainPosition": "SB",
+      "situation": "vs_3bet",
+      "sourceChartKey": "UTG-vs-3bet-SB",
+      "file": "ranges/utg-vs-3bet-sb.json"
+    }
+  ]
+}

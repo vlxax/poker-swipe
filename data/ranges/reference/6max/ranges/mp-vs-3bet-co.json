@@ -1,0 +1,126 @@
+{
+  "id": "mp-vs-3bet-co",
+  "format": "6max",
+  "heroPosition": "MP",
+  "villainPosition": "CO",
+  "situation": "vs_3bet",
+  "stackBB": null,
+  "range": {
+    "77": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "88": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "99": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQo": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "AJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "ATs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A5s": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "A4s": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "KQs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KTs": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "QJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "QTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "JTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "MP-vs-3bet-CO",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}

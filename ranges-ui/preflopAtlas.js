@@ -23,7 +23,7 @@ export function nearestStack(bb, buckets = ATLAS_STACKS) {
   return best;
 }
 
-function primaryAction(policy = {}, situation) {
+export function primaryAction(policy = {}, situation) {
   const fold = policy.FOLD || 0;
   const call = policy.CALL || 0;
   const raise = policy.RAISE || 0;

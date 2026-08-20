@@ -1,0 +1,27 @@
+{
+  "format": "6max",
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceFile": "src/data/ranges/greenline.ts",
+  "sourceDescription": "Extracted from GreenCharts2024_01.pdf (Greenline Poker)",
+  "importedAt": "2026-08-20T16:59:47.167Z",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false,
+  "stackSpecific": false,
+  "sizingSpecific": false,
+  "frequencySupport": true,
+  "positions": [
+    "UTG",
+    "MP",
+    "CO",
+    "BTN",
+    "SB",
+    "BB"
+  ],
+  "excludedScenarios": [
+    "ISO"
+  ],
+  "userLabel": "Базовая стратегия",
+  "disclaimer": "Справочный префлоп-диапазон. Не является solver-верифицированным решением для конкретной структуры турнира."
+}

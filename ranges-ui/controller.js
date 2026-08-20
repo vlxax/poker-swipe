@@ -9,6 +9,7 @@ export class RangeController {
     this.pack = pack;
     this.storage = storage;
     this.selection = {
+      dataSource: 'reference',
       format: '6max',
       situation: null,
       position: null,
@@ -23,7 +24,7 @@ export class RangeController {
   }
 
   _catalog() {
-    return getCatalog(this.pack, this.selection.format || '6max');
+    return getCatalog(this.pack, this.selection.format || '6max', this.selection.dataSource || 'verified');
   }
 
   _syncSelection() {
@@ -33,7 +34,7 @@ export class RangeController {
   viewModel() {
     this._syncSelection();
     if (this.showHelp) {
-      return { ...helpViewModel(), phase: 'help', overlay: true };
+      return { ...helpViewModel(this.selection), phase: 'help', overlay: true };
     }
     if (this.phase === 'result' && isSelectionComplete(this.selection)) {
       return resultViewModel({
@@ -55,6 +56,16 @@ export class RangeController {
   setField(field, value) {
     const v = field === 'stack' ? Number(value) : value;
     this.selection = { ...this.selection, [field]: v };
+
+    if (field === 'dataSource') {
+      this.selection.format = value === 'reference' ? '6max' : this.selection.format;
+      this.selection.position = null;
+      this.selection.situation = null;
+      this.selection.opener = null;
+      this.selection.stack = null;
+      this.phase = 'selector';
+      this.selectedHand = null;
+    }
 
     if (field === 'format') {
       this.selection.position = null;
@@ -92,6 +103,9 @@ export class RangeController {
       this.selection.stack = null;
       this.phase = 'selector';
       this.selectedHand = null;
+      if (!this.onboarding.hintsSeen.includes('opener')) {
+        this.onboarding = markHintSeen(this.storage, 'opener');
+      }
     }
 
     if (field === 'stack') {
@@ -109,6 +123,9 @@ export class RangeController {
     if (!isSelectionComplete(this.selection)) return this.viewModel();
     this.phase = 'result';
     this.selectedHand = null;
+    if (!this.onboarding.completed) {
+      this.onboarding = completeOnboarding(this.storage);
+    }
     return this.viewModel();
   }
 
@@ -122,9 +139,6 @@ export class RangeController {
     this.selectedHand = hand;
     if (!this.onboarding.hintsSeen.includes('hand')) {
       this.onboarding = markHintSeen(this.storage, 'hand');
-    }
-    if (this.onboarding.hintsSeen.length >= 3 && !this.onboarding.completed) {
-      this.onboarding = completeOnboarding(this.storage);
     }
     return this.viewModel();
   }

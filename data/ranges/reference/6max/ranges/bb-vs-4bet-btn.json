@@ -1,0 +1,136 @@
+{
+  "id": "bb-vs-4bet-btn",
+  "format": "6max",
+  "heroPosition": "BB",
+  "villainPosition": "BTN",
+  "situation": "vs_4bet",
+  "stackBB": null,
+  "range": {
+    "55": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "66": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "77": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "88": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "99": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AQs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "ATs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KQs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "T9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "98s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "87s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "76s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "BB-vs-4bet-BTN",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}

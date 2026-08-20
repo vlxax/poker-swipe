@@ -1,0 +1,71 @@
+{
+  "id": "bb-vs-4bet-co",
+  "format": "6max",
+  "heroPosition": "BB",
+  "villainPosition": "CO",
+  "situation": "vs_4bet",
+  "stackBB": null,
+  "range": {
+    "99": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "BB-vs-4bet-CO",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}

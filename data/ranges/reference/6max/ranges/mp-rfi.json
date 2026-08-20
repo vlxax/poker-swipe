@@ -1,0 +1,251 @@
+{
+  "id": "mp-rfi",
+  "format": "6max",
+  "heroPosition": "MP",
+  "villainPosition": null,
+  "situation": "rfi",
+  "stackBB": null,
+  "range": {
+    "22": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "33": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "44": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "55": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "66": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "77": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "88": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "99": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AQs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AJs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "ATs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A9s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A8s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A7s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A6s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A5s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A4s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A3s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A2s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KQs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KJs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KTs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "K9s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "K8s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AQo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KQo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QJs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QTs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "Q9s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AJo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KJo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JTs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "J9s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "ATo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "T9s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "T8s": {
+      "FOLD": 0.5,
+      "CALL": 0,
+      "RAISE": 0.5
+    },
+    "98s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "87s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "76s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "65s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "MP-RFI",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}
