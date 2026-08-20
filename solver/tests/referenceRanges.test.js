@@ -263,17 +263,19 @@ for (const spot of spotChecks) {
   });
 }
 
-test('controller can show reference BTN RFI matrix', () => {
+test('controller opens narrowing trainer instead of reference chart browser', () => {
   const ctl = new RangeController({ pack, storage: null });
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'rfi');
-  assert.equal(isSelectionComplete(ctl.selection), true);
-  ctl.showRange();
   const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'result');
-  assert.equal(vm.headline, 'Базовая стратегия');
-  assert.match(vm.contextLine, /BTN/);
-  assert.equal(vm.cells.AA.bucket, 'always');
+  assert.equal(vm.phase, 'intro');
+  assert.equal(vm.title, 'СУЖЕНИЕ ДИАПАЗОНА');
+  assert.ok(vm.headline);
+  assert.ok(!vm.cells);
+
+  ctl.startScenario('read-open-btn');
+  ctl.beginPlay();
+  const play = ctl.viewModel();
+  assert.equal(play.phase, 'play');
+  assert.ok(play.matrix.length >= 169);
 });
 
 test('UI reachable reference scenarios map to 37 unique ranges', () => {

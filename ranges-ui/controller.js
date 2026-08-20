@@ -1,145 +1,182 @@
-// Range viewer controller — selection state, onboarding, matrix gating.
+// Range narrowing trainer controller.
 
-import { loadOnboarding, saveOnboarding, markHintSeen, completeOnboarding } from './storage.js';
-import { getCatalog, isSelectionComplete, sanitizeSelection, situationMeta } from './catalog.js';
-import { selectorViewModel, resultViewModel, helpViewModel } from './viewModel.js';
+import { loadProgress, saveProgress, markHintSeen, completeOnboarding } from './storage.js';
+import { pickScenario, getScenarioById } from './narrowingScenarios.js';
+import {
+  introViewModel,
+  playViewModel,
+  summaryViewModel,
+  helpViewModel
+} from './viewModel.js';
+import {
+  startingSelection,
+  toggleHand,
+  scoreStep,
+  stepFeedback,
+  summaryFeedback
+} from './narrowingEngine.js';
 
 export class RangeController {
   constructor({ pack, storage = null } = {}) {
     this.pack = pack;
     this.storage = storage;
-    this.selection = {
-      dataSource: 'reference',
-      format: '6max',
-      situation: null,
-      position: null,
-      opener: null,
-      stack: null,
-      pushMode: 'PUSH'
-    };
-    this.phase = 'selector';
-    this.selectedHand = null;
+    this.phase = 'intro';
+    this.scenario = null;
+    this.stepIndex = 0;
+    this.userSelection = new Set();
+    this.answers = [];
+    this.scores = [];
     this.showHelp = false;
-    this.onboarding = loadOnboarding(storage);
+    this.progress = loadProgress(storage);
   }
 
-  _catalog() {
-    return getCatalog(this.pack, this.selection.format || '6max', this.selection.dataSource || 'verified');
+  _freshScenario(excludeId = null) {
+    this.scenario = pickScenario({ storage: this.storage, excludeId });
+    this.stepIndex = 0;
+    this.answers = [];
+    this.scores = [];
+    this._initStepSelection();
   }
 
-  _syncSelection() {
-    this.selection = sanitizeSelection(this.selection, this._catalog());
+  _currentStep() {
+    return this.scenario?.steps?.[this.stepIndex] || null;
+  }
+
+  _candidateHands(step) {
+    if (!step) return new Set();
+    if (step.dependsOnStep != null && this.answers[step.dependsOnStep]) {
+      return new Set(this.answers[step.dependsOnStep]);
+    }
+    return new Set(step.candidateHands || []);
+  }
+
+  _initStepSelection() {
+    const step = this._currentStep();
+    if (!step) {
+      this.userSelection = new Set();
+      return;
+    }
+    const candidates = this._candidateHands(step);
+    this.userSelection = startingSelection(candidates);
   }
 
   viewModel() {
-    this._syncSelection();
     if (this.showHelp) {
-      return { ...helpViewModel(this.selection), phase: 'help', overlay: true };
+      return { ...helpViewModel(), phase: 'help', overlay: true };
     }
-    if (this.phase === 'result' && isSelectionComplete(this.selection)) {
-      return resultViewModel({
-        pack: this.pack,
-        selection: this.selection,
-        onboarding: this.onboarding,
-        selectedHand: this.selectedHand,
+
+    if (!this.scenario) {
+      this._freshScenario();
+    }
+
+    if (this.phase === 'intro') {
+      return introViewModel({
+        scenario: this.scenario,
+        progress: this.progress,
         showHelp: false
       });
     }
-    return selectorViewModel({
-      pack: this.pack,
-      selection: this.selection,
-      onboarding: this.onboarding,
-      showHelp: false
+
+    if (this.phase === 'play') {
+      return playViewModel({
+        scenario: this.scenario,
+        stepIndex: this.stepIndex,
+        userSelection: this.userSelection,
+        answers: this.answers,
+        progress: this.progress,
+        showHelp: false
+      });
+    }
+
+    if (this.phase === 'summary') {
+      return summaryViewModel({
+        scenario: this.scenario,
+        answers: this.answers,
+        scores: this.scores,
+        progress: this.progress,
+        showHelp: false
+      });
+    }
+
+    return introViewModel({ scenario: this.scenario, progress: this.progress });
+  }
+
+  startScenario(id = null) {
+    if (id) this.scenario = getScenarioById(id);
+    else this._freshScenario(this.scenario?.id);
+    this.phase = 'intro';
+    this.stepIndex = 0;
+    this.answers = [];
+    this.scores = [];
+    this.showHelp = false;
+    return this.viewModel();
+  }
+
+  beginPlay() {
+    if (!this.scenario) this._freshScenario();
+    this.phase = 'play';
+    this.stepIndex = 0;
+    this.answers = [];
+    this.scores = [];
+    this._initStepSelection();
+    if (!this.progress.completed && !this.progress.hintsSeen.includes('start')) {
+      this.progress = markHintSeen(this.storage, 'start');
+    }
+    return this.viewModel();
+  }
+
+  toggleHand(hand) {
+    const step = this._currentStep();
+    if (!step || this.phase !== 'play') return this.viewModel();
+    const candidates = this._candidateHands(step);
+    this.userSelection = toggleHand(this.userSelection, hand, candidates);
+    if (!this.progress.hintsSeen.includes('toggle')) {
+      this.progress = markHintSeen(this.storage, 'toggle');
+    }
+    return this.viewModel();
+  }
+
+  confirmStep() {
+    const step = this._currentStep();
+    if (!step || this.phase !== 'play') return this.viewModel();
+
+    const candidates = this._candidateHands(step);
+    const answer = new Set([...this.userSelection].filter((h) => candidates.has(h)));
+    const score = scoreStep(answer, step.truth, candidates);
+    const feedback = stepFeedback(step, score);
+
+    this.answers[this.stepIndex] = answer;
+    this.scores[this.stepIndex] = { ...score, feedback };
+
+    if (this.stepIndex < this.scenario.steps.length - 1) {
+      this.stepIndex += 1;
+      this._initStepSelection();
+      if (!this.progress.hintsSeen.includes('step')) {
+        this.progress = markHintSeen(this.storage, 'step');
+      }
+      return this.viewModel();
+    }
+
+    this.phase = 'summary';
+    const summary = summaryFeedback(this.scenario, this.scores);
+    this.scores.summary = summary;
+    this.progress = saveProgress(this.storage, {
+      completed: this.progress.completed,
+      hintsSeen: this.progress.hintsSeen,
+      runs: (this.progress.runs || 0) + 1,
+      lastScenarioId: this.scenario.id,
+      lastAccuracy: summary.avgAccuracy
     });
-  }
-
-  setField(field, value) {
-    const v = field === 'stack' ? Number(value) : value;
-    this.selection = { ...this.selection, [field]: v };
-
-    if (field === 'dataSource') {
-      this.selection.format = value === 'reference' ? '6max' : this.selection.format;
-      this.selection.position = null;
-      this.selection.situation = null;
-      this.selection.opener = null;
-      this.selection.stack = null;
-      this.phase = 'selector';
-      this.selectedHand = null;
-    }
-
-    if (field === 'format') {
-      this.selection.position = null;
-      this.selection.situation = null;
-      this.selection.opener = null;
-      this.selection.stack = null;
-      this.phase = 'selector';
-      this.selectedHand = null;
-    }
-
-    if (field === 'position') {
-      this.selection.situation = null;
-      this.selection.opener = null;
-      this.selection.stack = null;
-      this.phase = 'selector';
-      this.selectedHand = null;
-      if (!this.onboarding.hintsSeen.includes('position')) {
-        this.onboarding = markHintSeen(this.storage, 'position');
-      }
-    }
-
-    if (field === 'situation') {
-      this.selection.opener = null;
-      this.selection.stack = null;
-      this.phase = 'selector';
-      this.selectedHand = null;
-      const sit = situationMeta(value);
-      if (sit && sit.heroFixed) this.selection.position = sit.heroFixed;
-      if (!this.onboarding.hintsSeen.includes('situation')) {
-        this.onboarding = markHintSeen(this.storage, 'situation');
-      }
-    }
-
-    if (field === 'opener') {
-      this.selection.stack = null;
-      this.phase = 'selector';
-      this.selectedHand = null;
-      if (!this.onboarding.hintsSeen.includes('opener')) {
-        this.onboarding = markHintSeen(this.storage, 'opener');
-      }
-    }
-
-    if (field === 'stack') {
-      if (!this.onboarding.hintsSeen.includes('stack')) {
-        this.onboarding = markHintSeen(this.storage, 'stack');
-      }
-    }
-
-    this._syncSelection();
-    return this.viewModel();
-  }
-
-  showRange() {
-    this._syncSelection();
-    if (!isSelectionComplete(this.selection)) return this.viewModel();
-    this.phase = 'result';
-    this.selectedHand = null;
-    if (!this.onboarding.completed) {
-      this.onboarding = completeOnboarding(this.storage);
+    if (!this.progress.completed) {
+      this.progress = completeOnboarding(this.storage);
     }
     return this.viewModel();
   }
 
-  backToSelector() {
-    this.phase = 'selector';
-    this.selectedHand = null;
-    return this.viewModel();
-  }
-
-  selectHand(hand) {
-    this.selectedHand = hand;
-    if (!this.onboarding.hintsSeen.includes('hand')) {
-      this.onboarding = markHintSeen(this.storage, 'hand');
-    }
+  nextScenario() {
+    this._freshScenario(this.scenario?.id);
+    this.phase = 'intro';
+    this.showHelp = false;
     return this.viewModel();
   }
 
@@ -153,13 +190,33 @@ export class RangeController {
     return this.viewModel();
   }
 
-  dismissOnboarding() {
-    this.onboarding = completeOnboarding(this.storage);
+  resetOnboardingForTest() {
+    this.progress = { completed: false, hintsSeen: [], runs: 0 };
+    saveProgress(this.storage, this.progress);
+  }
+
+  get selection() {
+    return { dataSource: 'reference', format: '6max' };
+  }
+
+  setField() {
     return this.viewModel();
   }
 
-  resetOnboardingForTest() {
-    this.onboarding = { completed: false, hintsSeen: [] };
-    saveOnboarding(this.storage, this.onboarding);
+  showRange() {
+    return this.beginPlay();
+  }
+
+  backToSelector() {
+    return this.startScenario();
+  }
+
+  selectHand(hand) {
+    return this.toggleHand(hand);
+  }
+
+  dismissOnboarding() {
+    this.progress = completeOnboarding(this.storage);
+    return this.viewModel();
   }
 }
