@@ -1,15 +1,16 @@
 // Range viewer controller — selection state, onboarding, matrix gating.
 
 import { loadOnboarding, saveOnboarding, markHintSeen, completeOnboarding } from './storage.js';
-import { getCatalog, isSelectionComplete, sanitizeSelection, situationMeta } from './catalog.js';
+import { getCatalog, isSelectionComplete, sanitizeSelection, isSelectionAvailable } from './catalog.js';
 import { selectorViewModel, resultViewModel, helpViewModel } from './viewModel.js';
+import { formatOptionsFor } from './coverage.js';
 
 export class RangeController {
   constructor({ pack, storage = null } = {}) {
     this.pack = pack;
     this.storage = storage;
     this.selection = {
-      format: '6max',
+      format: this._defaultFormat(),
       situation: null,
       position: null,
       opener: null,
@@ -22,8 +23,13 @@ export class RangeController {
     this.onboarding = loadOnboarding(storage);
   }
 
+  _defaultFormat() {
+    const available = formatOptionsFor(this.pack);
+    return available.includes('6max') ? '6max' : (available[0] || '6max');
+  }
+
   _catalog() {
-    return getCatalog(this.pack, this.selection.format || '6max');
+    return getCatalog(this.pack, this.selection.format || this._defaultFormat());
   }
 
   _syncSelection() {
@@ -35,7 +41,9 @@ export class RangeController {
     if (this.showHelp) {
       return { ...helpViewModel(), phase: 'help', overlay: true };
     }
-    if (this.phase === 'result' && isSelectionComplete(this.selection)) {
+    const ready = isSelectionComplete(this.selection)
+      && isSelectionAvailable(this.pack, this.selection);
+    if (this.phase === 'result' && ready) {
       return resultViewModel({
         pack: this.pack,
         selection: this.selection,
@@ -81,8 +89,6 @@ export class RangeController {
       this.selection.stack = null;
       this.phase = 'selector';
       this.selectedHand = null;
-      const sit = situationMeta(value);
-      if (sit && sit.heroFixed) this.selection.position = sit.heroFixed;
       if (!this.onboarding.hintsSeen.includes('situation')) {
         this.onboarding = markHintSeen(this.storage, 'situation');
       }
@@ -107,6 +113,7 @@ export class RangeController {
   showRange() {
     this._syncSelection();
     if (!isSelectionComplete(this.selection)) return this.viewModel();
+    if (!isSelectionAvailable(this.pack, this.selection)) return this.viewModel();
     this.phase = 'result';
     this.selectedHand = null;
     return this.viewModel();

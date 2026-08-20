@@ -63,8 +63,9 @@ export function renderSelector(root, vm, handlers = {}) {
     <div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>
     ${vm.showSituation ? `<div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>` : ''}
     ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">ОТКРЫТИЕ С</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
-    ${vm.showStack ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks.map((x) => ({ id: x, label: `${x} ББ` })), s.stack, 'stack')}</div>` : ''}
+    ${vm.showStack ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks, s.stack, 'stack')}</div>` : ''}
     <button type="button" class="primary rangesCta" id="rangesShow" ${vm.ctaEnabled ? '' : 'disabled'}>${esc(vm.cta)} →</button>
+    ${vm.unavailableNote ? `<p class="mut small rangesNote">Пока недоступно: ${esc(vm.unavailableNote)}.</p>` : ''}
     ${vm.xrayLink ? `<div class="rangesLinkRow"><button type="button" class="secondary" id="rangesXray">СУЗИТЬ ДИАПЗОН ПО УЛИЦАМ →</button></div>` : ''}
   </div>`;
   const show = root.querySelector('#rangesShow');
@@ -98,7 +99,9 @@ export function renderResult(root, vm, handlers = {}) {
       <b>${esc(vm.contextLine)}</b>
       <span class="mut">${esc(vm.situationLine)}</span>
     </div>
+    ${vm.statsLine ? `<p class="rangesStats">${esc(vm.statsLine)}</p>` : ''}
     <p class="rangesLegend">${esc(vm.legend)}<br>Жёлтые — играем иногда.</p>
+    ${vm.sourceNote ? `<p class="mut small rangesNote">${esc(vm.sourceNote)}</p>` : ''}
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как читать таблицу?</button>
     ${hintsHtml(vm.hints)}
     ${matrixGrid(vm.cells, vm.handDetail && vm.handDetail.hand)}

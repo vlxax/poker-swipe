@@ -1,8 +1,15 @@
-// Queries POKER_BRAIN_PACK.preflop for weighted range matrices. No solver changes.
+// Builds range matrices from POKER_BRAIN_PACK.preflop.
+//
+// Every lookup goes through rangeSources.js, which only ever resolves exact
+// keys. A tuple counts as usable when all 169 hand classes are present; a
+// partially populated tuple is treated as no data rather than being padded.
 
 import { matrixClasses } from './matrix.js';
+import {
+  SOURCE_RFI, SOURCE_VS_OPEN, SOURCE_BB_DEFEND, SOURCE_VS_3BET,
+  sourceIdFor, lookupPolicyExact, describeSource
+} from './rangeSources.js';
 
-const ATLAS_STACKS = [20, 25, 30, 40, 50];
 const ACTION_RU = {
   FOLD: 'Фолд',
   CALL: 'Колл',
@@ -11,40 +18,32 @@ const ACTION_RU = {
   MIX: 'Микс'
 };
 
-export function nearestStack(bb, buckets = ATLAS_STACKS) {
-  const n = Number(bb);
-  if (!Number.isFinite(n)) return buckets[2];
-  let best = buckets[0];
-  let diff = Math.abs(n - best);
-  for (const b of buckets) {
-    const d = Math.abs(n - b);
-    if (d < diff) { best = b; diff = d; }
-  }
-  return best;
-}
-
-function primaryAction(policy = {}, situation) {
+// How the raw {FOLD, CALL, RAISE} policy maps onto "do we play this hand" and
+// onto the label shown in the hand detail card.
+export function actionFor(policy = {}, sourceId) {
   const fold = policy.FOLD || 0;
   const call = policy.CALL || 0;
   const raise = policy.RAISE || 0;
-  if (situation === 'rfi' || situation === 'vs_3bet') {
+
+  if (sourceId === SOURCE_RFI) {
     return { action: 'RAISE', freq: raise, play: raise, label: 'Открываем' };
   }
-  if (situation === 'bb_defend') {
-    const play = call + raise;
-    if (raise >= 0.35) return { action: 'RAISE', freq: raise, play, label: '3-бетим' };
-    if (play >= 0.5) return { action: 'CALL', freq: call, play, label: 'Коллим' };
-    return { action: 'FOLD', freq: fold, play: 1 - fold, label: 'Фолдим' };
+
+  const play = call + raise;
+  if (sourceId === SOURCE_VS_3BET) {
+    if (raise >= 0.4) return { action: 'RAISE', freq: raise, play, label: '4-бетим' };
+    if (play >= 0.45) return { action: 'CALL', freq: call, play, label: 'Коллим' };
+    return { action: 'FOLD', freq: fold, play, label: 'Фолдим' };
   }
-  if (situation === 'vs_open') {
-    const play = call + raise;
+  if (sourceId === SOURCE_VS_OPEN || sourceId === SOURCE_BB_DEFEND) {
     if (raise >= 0.4) return { action: 'RAISE', freq: raise, play, label: '3-бетим' };
     if (play >= 0.45) return { action: 'CALL', freq: call, play, label: 'Коллим' };
-    return { action: 'FOLD', freq: fold, play: 1 - fold, label: 'Фолдим' };
+    return { action: 'FOLD', freq: fold, play, label: 'Фолдим' };
   }
-  const play = Math.max(raise, call, 1 - fold);
-  const action = raise >= call && raise >= 1 - fold ? 'RAISE' : call >= 1 - fold ? 'CALL' : 'FOLD';
-  return { action, freq: policy[action] || play, play, label: ACTION_RU[action] || action };
+
+  const best = Math.max(raise, call, fold);
+  const action = best === raise ? 'RAISE' : best === call ? 'CALL' : 'FOLD';
+  return { action, freq: best, play, label: ACTION_RU[action] };
 }
 
 export function playBucket(play) {
@@ -54,59 +53,20 @@ export function playBucket(play) {
   return { key: 'never', label: 'Не играем' };
 }
 
-function atlasPositionForLookup(sel) {
-  const pos = String(sel.position || '').toUpperCase();
-  if (sel.format !== '9max') return pos;
-  const map = {
-    'UTG+1': 'UTG',
-    MP: 'HJ',
-    LJ: 'HJ'
-  };
-  return map[pos] || pos;
-}
-
-function atlasKey({ situation, position, opener, stack, hand, format }) {
-  const pos = atlasPositionForLookup({ position, format });
-  const st = nearestStack(stack);
-  const h = String(hand || '').trim();
-  if (situation === 'rfi') return `RFI|${pos}|${st}|${h}`;
-  if (situation === 'bb_defend') return `BB_DEFEND|${opener}|${st}|${h}`;
-  if (situation === 'vs_3bet') return `VS_3BET|${pos}|${st}|${h}`;
-  if (situation === 'vs_open') return `VS_OPEN|${pos}|${opener}|${st}|${h}`;
-  return null;
-}
-
-export function lookupPolicy(pack, sel, hand) {
-  if (!pack || !pack.preflop) return null;
-  if (sel.format === '9max') {
-    const pos = String(sel.position || '').toUpperCase();
-    const atlasOnly = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
-    if (!atlasOnly.includes(pos) && pos !== 'BB') return null;
-    if (sel.situation === 'vs_open' && sel.opener) {
-      const opener = String(sel.opener).toUpperCase();
-      if (!atlasOnly.includes(opener)) return null;
-    }
-    if (sel.situation === 'bb_defend' && sel.opener) {
-      const opener = String(sel.opener).toUpperCase();
-      if (!atlasOnly.includes(opener)) return null;
-    }
-  }
-  const key = atlasKey({ ...sel, hand });
-  if (!key) return null;
-  return pack.preflop[key] || null;
-}
-
 export function buildAtlasMatrix(pack, sel) {
+  const sourceId = sourceIdFor(sel.situation, sel.position);
   const cells = {};
   let found = 0;
-  for (const hand of matrixClasses()) {
-    const policy = lookupPolicy(pack, sel, hand);
+  const classes = matrixClasses();
+
+  for (const hand of classes) {
+    const policy = lookupPolicyExact(pack, sel, hand);
     if (!policy) {
       cells[hand] = { hand, supported: false, play: 0, bucket: 'never' };
       continue;
     }
     found++;
-    const meta = primaryAction(policy, sel.situation);
+    const meta = actionFor(policy, sourceId);
     const bucket = playBucket(meta.play);
     cells[hand] = {
       hand,
@@ -120,65 +80,30 @@ export function buildAtlasMatrix(pack, sel) {
       policy
     };
   }
-  return { cells, found, supported: found > 100 };
+
+  // Anything short of the full 169 classes is an incomplete tuple, not a range.
+  const supported = found === classes.length;
+  return { cells, found, supported, sourceId, source: describeSource(pack, sel) };
 }
 
 export function handDetailFromAtlas(pack, sel, hand) {
-  const policy = lookupPolicy(pack, sel, hand);
+  const policy = lookupPolicyExact(pack, sel, hand);
   if (!policy) return null;
-  const meta = primaryAction(policy, sel.situation);
+  const sourceId = sourceIdFor(sel.situation, sel.position);
+  const meta = actionFor(policy, sourceId);
   const bucket = playBucket(meta.play);
-  const openSize = sel.situation === 'rfi'
+  const openSize = sourceId === SOURCE_RFI
     ? (sel.stack <= 25 ? 2.2 : sel.stack <= 40 ? 2.3 : 2.5)
     : null;
   return {
     hand,
     actionLabel: meta.label,
     actionCode: meta.action,
-    freqPct: Math.round((meta.freq || meta.play) * 100),
+    freqPct: Math.round((meta.freq || 0) * 100),
     bucketLabel: bucket.label,
     sizeLabel: openSize ? `${String(openSize).replace('.', ',')} ББ` : null,
     policy
   };
 }
 
-export function inventoryAtlas(pack, format = '6max') {
-  const pre = (pack && pack.preflop) || {};
-  const vsOpen = {};
-  for (const k of Object.keys(pre)) {
-    if (!k.startsWith('VS_OPEN|')) continue;
-    const [, hero, opener] = k.split('|');
-    if (!vsOpen[hero]) vsOpen[hero] = new Set();
-    vsOpen[hero].add(opener);
-  }
-  const atlasOnlyPositions = ['UTG', 'HJ', 'CO', 'BTN', 'SB'];
-  const rfiPositions = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const vs3betPositions = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const bbDefendOpeners = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const vsOpenPairs = format === '9max'
-    ? Object.fromEntries(
-      ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB'].map((h) => [
-        h,
-        vsOpen[h] ? [...vsOpen[h]].sort() : (vsOpen.UTG ? [...vsOpen.UTG].sort() : [])
-      ])
-    )
-    : Object.fromEntries(
-      Object.entries(vsOpen).map(([h, set]) => [h, [...set].sort()])
-    );
-  return {
-    stacks: ATLAS_STACKS,
-    rfiPositions,
-    vs3betPositions,
-    bbDefendOpeners,
-    vsOpenPairs,
-    atlasOnlyPositions
-  };
-}
-
-export { ATLAS_STACKS, ACTION_RU };
+export { ACTION_RU };

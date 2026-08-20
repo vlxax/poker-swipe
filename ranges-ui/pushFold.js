@@ -1,22 +1,29 @@
-// Short-stack push/fold heuristic (same formula as index.html push18). Used only for push_fold situation.
+// Short-stack push/fold heuristic (same formula as index.html push18).
+//
+// This is an explicit model, not atlas data, and it is only meaningful inside
+// the stack band it was calibrated for: the (12 - bb) term collapses the whole
+// range to folds once stacks get deep. Positions and depths are therefore
+// filtered down to the band where the model still produces a structurally valid
+// range, and the model is never mixed with deep-stack opening ranges.
 
 import { matrixClasses } from './matrix.js';
 import { playBucket } from './preflopAtlas.js';
+import { validateRangeMatrix, validationProfileFor } from './rangeValidation.js';
 
 const R18 = '23456789TJQKA';
 
-function cls18(a, b) {
-  const r1 = String(a || '').replace('10', 'T')[0];
-  const r2 = String(b || a || '').replace('10', 'T')[0];
-  const s1 = String(a).includes('♠') || String(a).endsWith('s') ? 's' : 'o';
-  if (!b || r1 === r2) return r1 + r2;
-  const hi = R18.indexOf(r1) >= R18.indexOf(r2) ? r1 : r2;
-  const lo = r1 === hi ? r2 : r1;
-  return hi + lo + (s1 === 's' || String(a).includes(String(b)) ? 's' : 'o');
-}
+// Seats the model actually calibrates for. The offsets encode how many players
+// are still to act, so they are 6-max values and are not reused for 9-max.
+const POSITION_OFFSETS = Object.freeze({
+  UTG: -11, HJ: -6, CO: 0, BTN: 8, SB: 12, BB: 3
+});
+
+export const PUSHFOLD_FORMAT = '6max';
+export const PUSHFOLD_POSITIONS = Object.freeze(Object.keys(POSITION_OFFSETS));
+export const PUSH_STACK_CANDIDATES = Object.freeze([10, 15, 20, 25, 30]);
 
 export function pushFoldEval(handClass, pos, bb, mode = 'PUSH') {
-  const c = handClass.length === 2 ? handClass : handClass;
+  const c = String(handClass);
   const pair = c.length === 2;
   const a = R18.indexOf(c[0]);
   const b = R18.indexOf(c[1] || c[0]);
@@ -24,7 +31,7 @@ export function pushFoldEval(handClass, pos, bb, mode = 'PUSH') {
     ? 54 + a * 3.3
     : 18 + a * 2.4 + b * 0.75 + (c.endsWith('s') ? 6 : 0)
       + (Math.abs(a - b) <= 2 ? 4 : 0) + (c[0] === 'A' ? 5 : 0);
-  x += ({ UTG: -11, HJ: -6, CO: 0, BTN: 8, SB: 12, BB: 3 }[pos] || 0);
+  x += POSITION_OFFSETS[String(pos || '').toUpperCase()] || 0;
   x += (12 - bb) * 3.4;
   x += mode === 'CALL' ? -9 : 0;
   x = Math.max(3, Math.min(97, Math.round(x)));
@@ -33,7 +40,7 @@ export function pushFoldEval(handClass, pos, bb, mode = 'PUSH') {
   return { p: x, label };
 }
 
-export function buildPushFoldMatrix(sel) {
+function cellsFor(sel) {
   const mode = sel.pushMode || 'PUSH';
   const cells = {};
   for (const hand of matrixClasses()) {
@@ -57,7 +64,34 @@ export function buildPushFoldMatrix(sel) {
       pushPct: ev.p
     };
   }
-  return { cells, found: 169, supported: true };
+  return cells;
+}
+
+// The model is in-domain when the top of the range is a pure shove and the
+// bottom is a pure fold. Outside the band it either shoves 72o or folds aces.
+export function isPushFoldModelValid(position, stack, mode = 'PUSH') {
+  const pos = String(position || '').toUpperCase();
+  if (!PUSHFOLD_POSITIONS.includes(pos)) return false;
+  if (!Number.isFinite(Number(stack))) return false;
+  const cells = cellsFor({ position: pos, stack: Number(stack), pushMode: mode });
+  if (cells.AA.play !== 1 || cells.KK.play !== 1) return false;
+  if (cells['72o'].play !== 0) return false;
+  return validateRangeMatrix(cells, { profile: validationProfileFor('push_fold', pos) }).ok;
+}
+
+export function pushFoldStacksFor(position, mode = 'PUSH') {
+  return PUSH_STACK_CANDIDATES.filter((stack) => isPushFoldModelValid(position, stack, mode));
+}
+
+export function pushFoldPositions(format, mode = 'PUSH') {
+  if (format && format !== PUSHFOLD_FORMAT) return [];
+  return PUSHFOLD_POSITIONS.filter((pos) => pushFoldStacksFor(pos, mode).length > 0);
+}
+
+export function buildPushFoldMatrix(sel) {
+  const cells = cellsFor(sel);
+  const supported = isPushFoldModelValid(sel.position, sel.stack, sel.pushMode || 'PUSH');
+  return { cells, found: Object.keys(cells).length, supported, sourceId: 'PUSHFOLD_MODEL' };
 }
 
 export function handDetailFromPush(sel, hand) {
@@ -78,4 +112,6 @@ export function handDetailFromPush(sel, hand) {
   };
 }
 
-export const PUSH_STACKS = [10, 15, 20, 25, 30];
+// Kept for callers that only need the advertised depths; per-position filtering
+// goes through pushFoldStacksFor.
+export const PUSH_STACKS = PUSH_STACK_CANDIDATES;

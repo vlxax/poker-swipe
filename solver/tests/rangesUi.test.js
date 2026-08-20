@@ -9,6 +9,7 @@ import { isSelectionComplete, getCatalog, nextCtaLabel } from '../../ranges-ui/c
 import { buildAtlasMatrix } from '../../ranges-ui/preflopAtlas.js';
 import { buildPushFoldMatrix } from '../../ranges-ui/pushFold.js';
 import { loadOnboarding, completeOnboarding, saveOnboarding, HINTS } from '../../ranges-ui/storage.js';
+import { resultViewModel } from '../../ranges-ui/viewModel.js';
 import * as Renderer from '../../ranges-ui/renderer.js';
 
 function loadPack() {
@@ -88,13 +89,13 @@ test('progressive CTA reflects the next missing field', () => {
   assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ ПОЗИЦИЮ');
   assert.equal(nextCtaLabel(ctl.selection), 'ВЫБЕРИ ПОЗИЦИЮ');
 
-  ctl.setField('position', 'BTN');
+  ctl.setField('position', 'BB');
   assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ СИТУАЦИЮ');
 
   ctl.setField('situation', 'vs_open');
   assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ ОТКРЫТИЕ');
 
-  ctl.setField('opener', 'CO');
+  ctl.setField('opener', 'BTN');
   assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ СТЕК');
 
   ctl.setField('stack', 20);
@@ -136,18 +137,20 @@ test('valid selection renders a range matrix', () => {
   assert.ok(root.innerHTML.includes('BTN'));
 });
 
-test('unsupported selection shows explicit fallback', () => {
-  const emptyPack = { preflop: {} };
-  const ctl = new RangeController({ pack: emptyPack, storage: memStorage() });
-  selectComplete(ctl);
-  ctl.showRange();
-  const vm = ctl.viewModel();
+test('unsupported selection is only reachable as an emergency fallback', () => {
+  // Nothing in the selector can produce this selection; it is built by hand to
+  // prove the fallback screen still renders if data disappears at runtime.
+  const vm = resultViewModel({
+    pack: { preflop: {} },
+    selection: { format: '6max', situation: 'rfi', position: 'UTG', stack: 20 },
+    onboarding: { completed: true, hintsSeen: [] }
+  });
   assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /нет готового ренджа/i);
+  assert.match(vm.unsupportedMessage, /недоступен/i);
 
   const root = setupDom();
   Renderer.renderResult(root, vm, {});
-  assert.ok(root.innerHTML.includes('нет готового ренджа') || root.innerHTML.includes('НЕТ'));
+  assert.ok(root.innerHTML.includes('НЕТ'));
 });
 
 test('tapping a hand shows action detail', () => {
@@ -179,13 +182,13 @@ test('onboarding does not repeat after completion', () => {
 
 test('existing range atlas logic is not broken', () => {
   const catalog = getCatalog(pack);
-  assert.ok(catalog.rfiPositions.includes('BTN'));
+  assert.ok(catalog.availablePositions.includes('BTN'));
   const matrix = buildAtlasMatrix(pack, {
     format: '6max', situation: 'rfi', position: 'UTG', stack: 20
   });
   assert.equal(matrix.supported, true);
-  assert.ok(matrix.found > 100);
-  const push = buildPushFoldMatrix({ position: 'BTN', stack: 10, pushMode: 'PUSH' });
+  assert.equal(matrix.found, 169);
+  const push = buildPushFoldMatrix({ format: '6max', position: 'BTN', stack: 15, pushMode: 'PUSH' });
   assert.equal(push.supported, true);
   assert.equal(Object.keys(push.cells).length, 169);
 });
@@ -200,7 +203,7 @@ test('selector renders fields in spec order and hides irrelevant selectors', () 
   assert.ok(!root.innerHTML.includes('СИТУАЦИЯ'));
   assert.ok(!root.innerHTML.includes('СТЕК'));
 
-  ctl.setField('position', 'BTN');
+  ctl.setField('position', 'BB');
   Renderer.renderSelector(root, ctl.viewModel(), {});
   order = fieldOrder(root.innerHTML);
   assert.deepEqual(order, ['ФОРМАТ', 'ПОЗИЦИЯ', 'СИТУАЦИЯ']);
@@ -239,19 +242,20 @@ test('mobile matrix uses full-width grid with expanded touch targets', () => {
   assert.ok(root.clientWidth <= 390 || root.clientWidth === 0);
 });
 
-test('9-max format exposes MP/LJ positions and honest unsupported for missing atlas', () => {
+test('9-max keeps its full poker model but is not offered without 9-max data', () => {
   const catalog = getCatalog(pack, '9max');
-  assert.ok(catalog.positions.includes('MP'));
-  assert.ok(catalog.positions.includes('LJ'));
+  // The seat model stays complete so other callers still see real 9-max seats.
+  assert.deepEqual(catalog.positions, ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB']);
+  // The selector offers nothing, because the atlas holds no 9-max tuples.
+  assert.deepEqual(catalog.availablePositions, []);
+  assert.deepEqual(catalog.availableFormats.map((f) => f.id), ['6max']);
+
+  const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('format', '9max');
-  ctl.setField('position', 'MP');
-  ctl.setField('situation', 'rfi');
-  ctl.setField('stack', 20);
-  ctl.showRange();
-  const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /пока нет/i);
+  Renderer.renderSelector(root, ctl.viewModel(), {});
+  assert.ok(root.querySelector('[data-rfield="format"][data-rval="6max"]'));
+  assert.equal(root.querySelector('[data-rfield="format"][data-rval="9max"]'), null);
+  assert.match(root.innerHTML, /Пока недоступно/);
 });
 
 test('mobile 390x844 has no horizontal overflow on selector and result', () => {
