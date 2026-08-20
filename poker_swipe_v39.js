@@ -60,7 +60,7 @@ window.renderHome=function(){
       <button class="v36Tile v36Sizing" id="v36Sizing"><span>САЙЗИНГ</span><h3>СКОЛЬКО<br>СТАВИМ?</h3><p>Выбери размер и пойми, зачем он здесь.</p><div class="v36Chips"><i></i><i></i><i></i></div><strong>→</strong></button>
       <button class="v36Tile" id="v36Review"><span>РАЗБОР ЛИНИИ</span><h3>ГДЕ<br>СЛОМАЛОСЬ?</h3><p>Найди первую реальную ошибку.</p><div class="v36Streets">PRE ●<br>FLOP ●<br>TURN △<br>RIVER ?</div><strong>→</strong></button>
       <button class="v36Tile" id="v36Swipe"><span>10 РУК</span><h3>POKER<br>SWIPE</h3><p>Решение + размер. Быстро, но не тупо.</p><div class="v36SwipeMark">← <i>J♠</i> →</div><strong>→</strong></button>
-      <button class="v36Tile" id="v36Xray"><span>ДИАПАЗОН</span><h3>◎ РЕНТГЕН</h3><p>Сужай range по улицам и учитывай блокеры.</p><div class="v36Matrix">${'<i></i>'.repeat(28)}</div><strong>→</strong></button>
+      <button class="v36Tile" id="v36Xray"><span>РЕНДЖИ</span><h3>◎ РЕНДЖИ</h3><p>Выбери позицию, стек и ситуацию — покажем с чем играть.</p><div class="v36Matrix">${'<i></i>'.repeat(28)}</div><strong>→</strong></button>
     </div>
 
     <button class="v36Quick" id="v36Quick"><div><span>⚡ 5 МИНУТ</span><h3>БЫСТРАЯ ТРЕНИРОВКА</h3><p>Смешанная сессия без выбора режима.</p></div><b>05:00</b></button>
