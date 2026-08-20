@@ -20,12 +20,39 @@ export const SOURCE_VS_3BET = 'ATLAS_VS_3BET';
 export const SOURCE_PUSHFOLD = 'PUSHFOLD_MODEL';
 
 export const SOURCE_LABELS = Object.freeze({
-  [SOURCE_RFI]: 'Preflop atlas · RFI',
-  [SOURCE_VS_OPEN]: 'Preflop atlas · vs open',
-  [SOURCE_BB_DEFEND]: 'Preflop atlas · BB defend',
-  [SOURCE_VS_3BET]: 'Preflop atlas · vs 3-bet',
-  [SOURCE_PUSHFOLD]: 'Push/fold модель'
+  [SOURCE_RFI]: 'Модель префлоп-атласа · открытие',
+  [SOURCE_VS_OPEN]: 'Модель префлоп-атласа · против открытия',
+  [SOURCE_BB_DEFEND]: 'Модель префлоп-атласа · защита BB',
+  [SOURCE_VS_3BET]: 'Модель префлоп-атласа · против 3-бета',
+  [SOURCE_PUSHFOLD]: 'Пуш/фолд модель'
 });
+
+// How the numbers behind a source were produced. No tier in this repository is
+// solver output: the pack declares `truth.solverOutput === false`, its
+// frequencies form smooth curves over hand strength, and the push/fold matrix
+// comes from a hand-tuned scoring formula. SOLVER exists so verified data can
+// declare itself once it is actually imported.
+export const PRECISION_SOLVER = 'SOLVER';
+export const PRECISION_MODEL = 'MODEL';
+export const PRECISION_HEURISTIC = 'HEURISTIC';
+
+export const SOURCE_PRECISION = Object.freeze({
+  [SOURCE_RFI]: PRECISION_MODEL,
+  [SOURCE_VS_OPEN]: PRECISION_MODEL,
+  [SOURCE_BB_DEFEND]: PRECISION_MODEL,
+  [SOURCE_VS_3BET]: PRECISION_MODEL,
+  [SOURCE_PUSHFOLD]: PRECISION_HEURISTIC
+});
+
+export const PRECISION_NOTES = Object.freeze({
+  [PRECISION_SOLVER]: 'Верифицированные равновесные данные.',
+  [PRECISION_MODEL]: 'Расчётная модель префлоп-атласа — не вывод солвера и не Nash-таблица.',
+  [PRECISION_HEURISTIC]: 'Эвристическая пуш/фолд модель — не Nash-таблица и не вывод солвера.'
+});
+
+export function precisionFor(sourceId) {
+  return SOURCE_PRECISION[sourceId] || null;
+}
 
 // Atlas key layout per source. `hero`/`opener`/`stack` list the key segments in
 // order, which is also the set of axes the data is allowed to vary over.
@@ -228,7 +255,13 @@ export function describeSource(pack, sel) {
   const sourceId = sourceIdFor(sel.situation, sel.position);
   if (!sourceId) return null;
   if (sourceId === SOURCE_PUSHFOLD) {
-    return { id: sourceId, label: SOURCE_LABELS[sourceId], kind: 'MODEL', key: null, exact: true };
+    return {
+      id: sourceId,
+      label: SOURCE_LABELS[sourceId],
+      kind: 'FORMULA',
+      key: null,
+      precision: precisionFor(sourceId)
+    };
   }
   const tupleKey = atlasTupleKey(sel);
   if (!tupleKey || !hasExactTuple(pack, sel)) return null;
@@ -237,7 +270,7 @@ export function describeSource(pack, sel) {
     label: SOURCE_LABELS[sourceId],
     kind: 'ATLAS',
     key: tupleKey,
-    exact: true
+    precision: precisionFor(sourceId)
   };
 }
 

@@ -16,7 +16,8 @@ import {
 } from './positions.js';
 import {
   SOURCE_PUSHFOLD, sourceIdFor, isAtlasSource, hasExactTuple, atlasSupportsFormat,
-  getSourceIndex, stackBandFor, buildExactIndex, SOURCE_LABELS
+  getSourceIndex, stackBandFor, buildExactIndex, SOURCE_LABELS, precisionFor,
+  PRECISION_SOLVER, PRECISION_MODEL, PRECISION_HEURISTIC
 } from './rangeSources.js';
 import { buildAtlasMatrix } from './preflopAtlas.js';
 import {
@@ -44,10 +45,10 @@ export const REASON = Object.freeze({
 
 export const REASON_TEXT = Object.freeze({
   [REASON.ILLEGAL]: 'невозможная последовательность действий',
-  [REASON.NO_DATA]: 'нет точных данных в атласе',
+  [REASON.NO_DATA]: 'в атласе нет данных для этой комбинации',
   [REASON.NOT_DISCRIMINATED]: 'атлас отдаёт один и тот же рендж для всех вариантов',
   [REASON.INVALID_RANGE]: 'рендж не проходит структурную проверку',
-  [REASON.OUT_OF_MODEL]: 'вне рабочего диапазона push/fold модели'
+  [REASON.OUT_OF_MODEL]: 'вне рабочего диапазона пуш/фолд модели'
 });
 
 export function situationNeedsOpener(situation) {
@@ -323,7 +324,11 @@ function computeCoverageReport(pack) {
               situation,
               opener,
               stack,
-              exact: result.available,
+              // "available" means: legal, present under its own key, sensitive to
+              // the chosen parameters and structurally valid. It does not claim
+              // the numbers are solver output - see `precision`.
+              available: result.available,
+              precision: result.available ? precisionFor(result.sourceId) : null,
               reason: result.reason,
               source: result.available ? result.sourceId : null,
               sourceKey: result.sourceKey,
@@ -338,7 +343,10 @@ function computeCoverageReport(pack) {
 
   const summary = {
     total: rows.length,
-    exact: rows.filter((r) => r.exact).length,
+    available: rows.filter((r) => r.available).length,
+    solver: rows.filter((r) => r.precision === PRECISION_SOLVER).length,
+    model: rows.filter((r) => r.precision === PRECISION_MODEL).length,
+    heuristic: rows.filter((r) => r.precision === PRECISION_HEURISTIC).length,
     illegal: rows.filter((r) => r.reason === REASON.ILLEGAL).length,
     noData: rows.filter((r) => r.reason === REASON.NO_DATA).length,
     notDiscriminated: rows.filter((r) => r.reason === REASON.NOT_DISCRIMINATED).length,
@@ -419,7 +427,7 @@ function computeHiddenScenarios(pack) {
   const { rows } = buildCoverageReport(pack);
   const groups = new Map();
   for (const row of rows) {
-    if (row.exact || row.reason === REASON.ILLEGAL) continue;
+    if (row.available || row.reason === REASON.ILLEGAL) continue;
     const key = `${row.format}|${row.situation}|${row.reason}`;
     if (!groups.has(key)) {
       groups.set(key, {

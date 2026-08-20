@@ -7,7 +7,9 @@ import {
 import { situationNeedsOpener, evaluateCombination, REASON_TEXT } from './coverage.js';
 import { buildAtlasMatrix, handDetailFromAtlas } from './preflopAtlas.js';
 import { buildPushFoldMatrix, handDetailFromPush } from './pushFold.js';
-import { SOURCE_LABELS, sourceIdFor, SOURCE_PUSHFOLD } from './rangeSources.js';
+import {
+  SOURCE_LABELS, sourceIdFor, SOURCE_PUSHFOLD, precisionFor, PRECISION_NOTES
+} from './rangeSources.js';
 import { rangeStats, TOTAL_COMBOS } from './rangeValidation.js';
 import { handHelpText } from './matrix.js';
 import { HINTS } from './storage.js';
@@ -85,6 +87,7 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
   const stats = unsupported ? null : rangeStats(matrix.cells);
   const sourceId = sourceIdFor(sel.situation, sel.position);
   const sourceLabel = SOURCE_LABELS[sourceId] || null;
+  const precision = precisionFor(sourceId);
 
   const hints = [];
   if (!onboarding.completed && !onboarding.hintsSeen.includes('hand')) {
@@ -112,6 +115,8 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
       ? `Играем ${stats.playPct}% комбинаций (${Math.round(stats.playCombos)} из ${TOTAL_COMBOS})`
       : null,
     sourceLabel,
+    precision,
+    precisionNote: unsupported ? null : (PRECISION_NOTES[precision] || null),
     sourceNote: sourceId === SOURCE_PUSHFOLD
       ? 'Отдельная короткостековая модель, не смешивается с deep-stack ренджами.'
       : null,

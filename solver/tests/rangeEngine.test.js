@@ -19,7 +19,8 @@ import {
   positionOptionsFor, formatOptionsFor, REASON
 } from '../../ranges-ui/coverage.js';
 import {
-  atlasTupleKey, lookupPolicyExact, buildExactIndex, sourceIdFor,
+  atlasTupleKey, lookupPolicyExact, buildExactIndex, sourceIdFor, precisionFor,
+  PRECISION_MODEL, PRECISION_HEURISTIC,
   SOURCE_RFI, SOURCE_BB_DEFEND, SOURCE_VS_OPEN, SOURCE_VS_3BET, SOURCE_PUSHFOLD
 } from '../../ranges-ui/rangeSources.js';
 import { buildAtlasMatrix } from '../../ranges-ui/preflopAtlas.js';
@@ -361,11 +362,117 @@ test('coverage report contains no fallback rows', () => {
   const report = buildCoverageReport(pack);
   assert.equal(report.summary.fallback, 0);
   assert.equal(report.summary.invalid, 0);
-  assert.ok(report.summary.exact > 0);
-  for (const row of report.rows.filter((r) => r.exact)) {
+  assert.ok(report.summary.available > 0);
+  for (const row of report.rows.filter((r) => r.available)) {
     assert.equal(row.fallback, false);
     assert.ok(row.source);
+    assert.ok(row.precision);
   }
+});
+
+// --- Provenance: nothing may read as solver or Nash output ------------------
+
+test('no range in the section claims solver or Nash provenance', () => {
+  assert.equal(pack.truth.solverOutput, false, 'the pack itself declares it is not solver output');
+
+  const report = buildCoverageReport(pack);
+  assert.equal(report.summary.solver, 0, 'no source may claim verified equilibrium data');
+  assert.equal(report.summary.model + report.summary.heuristic, report.summary.available);
+
+  assert.equal(precisionFor(SOURCE_RFI), PRECISION_MODEL);
+  assert.equal(precisionFor(SOURCE_BB_DEFEND), PRECISION_MODEL);
+  assert.equal(precisionFor(SOURCE_PUSHFOLD), PRECISION_HEURISTIC);
+});
+
+// "Nash" and "GTO" may only ever appear as an explicit denial ("не Nash-..."),
+// never as a claim about what the section is showing.
+function provenanceClaims(text) {
+  const claims = [];
+  const re = /(.{0,14})\b(nash|gto)\b/gi;
+  let match = re.exec(text);
+  while (match) {
+    if (!/не\s*$/i.test(match[1])) claims.push(match[0].trim());
+    match = re.exec(text);
+  }
+  return claims;
+}
+
+test('user-facing strings never claim Nash or GTO provenance', () => {
+  const files = [
+    'catalog.js', 'controller.js', 'coverage.js', 'matrix.js', 'positions.js',
+    'preflopAtlas.js', 'pushFold.js', 'rangeSources.js', 'rangeValidation.js',
+    'renderer.js', 'viewModel.js', 'main.js', 'storage.js'
+  ];
+  for (const file of files) {
+    const source = readFileSync(new URL(`../../ranges-ui/${file}`, import.meta.url), 'utf8');
+    const code = source.replace(/^\s*\/\/.*$/gm, '');
+    assert.deepEqual(provenanceClaims(code), [], `${file} must not claim Nash/GTO provenance`);
+  }
+
+  const root = setupDom();
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  for (const sel of selectable) {
+    ctl.setField('format', sel.format);
+    ctl.setField('position', sel.position);
+    ctl.setField('situation', sel.situation);
+    if (sel.opener) ctl.setField('opener', sel.opener);
+    ctl.setField('stack', sel.stack);
+    ctl.showRange();
+    Renderer.renderResult(root, ctl.viewModel(), {});
+    assert.deepEqual(provenanceClaims(root.innerHTML), [], JSON.stringify(sel));
+    ctl.backToSelector();
+  }
+  Renderer.renderSelector(root, ctl.viewModel(), {});
+  assert.deepEqual(provenanceClaims(root.innerHTML), []);
+});
+
+test('every rendered range states that it is a model, not solver output', () => {
+  const root = setupDom();
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  for (const sel of selectable) {
+    ctl.setField('format', sel.format);
+    ctl.setField('position', sel.position);
+    ctl.setField('situation', sel.situation);
+    if (sel.opener) ctl.setField('opener', sel.opener);
+    ctl.setField('stack', sel.stack);
+    ctl.showRange();
+    const vm = ctl.viewModel();
+    assert.ok(vm.precisionNote, JSON.stringify(sel));
+    assert.match(vm.precisionNote, /не вывод солвера/, JSON.stringify(sel));
+    Renderer.renderResult(root, vm, {});
+    assert.match(root.innerHTML, /не вывод солвера/, JSON.stringify(sel));
+    ctl.backToSelector();
+  }
+});
+
+test('push/fold is labelled as a heuristic model and denies Nash provenance', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'push_fold');
+  ctl.setField('stack', 15);
+  ctl.showRange();
+  const vm = ctl.viewModel();
+  assert.equal(vm.sourceLabel, 'Пуш/фолд модель');
+  assert.equal(vm.precision, PRECISION_HEURISTIC);
+  assert.match(vm.precisionNote, /Эвристическая пуш\/фолд модель/);
+  assert.match(vm.precisionNote, /не Nash-таблица/);
+
+  const root = setupDom();
+  Renderer.renderResult(root, vm, {});
+  assert.match(root.innerHTML, /Пуш\/фолд модель/);
+  assert.match(root.innerHTML, /не Nash-таблица/);
+});
+
+test('atlas ranges are labelled as an atlas model, never as an atlas fact', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('position', 'CO');
+  ctl.setField('situation', 'rfi');
+  ctl.setField('stack', 30);
+  ctl.showRange();
+  const vm = ctl.viewModel();
+  assert.equal(vm.sourceLabel, 'Модель префлоп-атласа · открытие');
+  assert.equal(vm.precision, PRECISION_MODEL);
+  assert.match(vm.precisionNote, /Расчётная модель префлоп-атласа/);
 });
 
 // --- Task 6: dependency-aware UI --------------------------------------------
@@ -612,7 +719,7 @@ test('the result screen states which source the range came from', () => {
   ctl.setField('stack', 30);
   ctl.showRange();
   Renderer.renderResult(root, ctl.viewModel(), {});
-  assert.match(root.innerHTML, /Источник: Preflop atlas · RFI/);
+  assert.match(root.innerHTML, /Источник: Модель префлоп-атласа · открытие/);
   assert.match(root.innerHTML, /Играем 65% комбинаций \(862 из 1326\)/);
 
   ctl.backToSelector();
@@ -621,7 +728,7 @@ test('the result screen states which source the range came from', () => {
   ctl.setField('stack', 15);
   ctl.showRange();
   Renderer.renderResult(root, ctl.viewModel(), {});
-  assert.match(root.innerHTML, /Источник: Push\/fold модель/);
+  assert.match(root.innerHTML, /Источник: Пуш\/фолд модель/);
   assert.match(root.innerHTML, /не смешивается с deep-stack/);
 });
 
