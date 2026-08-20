@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-20T19:02:20+03:00",
+  "retrieved_at": "2026-08-20T20:51:32+03:00",
   "city": "Москва",
   "count": 57,
   "clubs": [
@@ -317,7 +317,7 @@
           "club": "EMPIRE POKER CLUB",
           "tournament": "WIN THE BUTTON + LADIES NIGHT",
           "fee_rub": 1500,
-          "type": "",
+          "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/10851",
           "address": "Шелепихинская набережная, 34к3зд6",
           "late_reg_until": "22:30",
@@ -325,7 +325,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "WIN THE BUTTON + LADIES NIGHT 19:00 1 500 ₽ вход до 22:30 EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6"
+          "source_card_text": "Баунти / Нокаут WIN THE BUTTON + LADIES NIGHT 19:00 1 500 ₽ вход до 22:30 EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6"
         }
       ],
       "upcoming": 1
@@ -524,12 +524,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10681",
           "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-          "late_reg_until": "21:37",
-          "late_reg_minutes": 157,
+          "late_reg_until": "21:38",
+          "late_reg_minutes": 158,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
+          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:38 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
         }
       ],
       "upcoming": 1
