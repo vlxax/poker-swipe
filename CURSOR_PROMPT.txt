@@ -1,0 +1,62 @@
+POKERSWIPE — ПРИМЕНИТЬ STITCH-ВИЗУАЛ К «МОИ ТУРНИРЫ»
+
+В приложенном ZIP лежат:
+- my-tournaments-stitch.css
+- my-tournaments-stitch.js
+- STITCH_REFERENCE/DESIGN.md
+- STITCH_REFERENCE/code.html
+
+ЗАДАЧА:
+Применить этот visual patch к АКТУАЛЬНОМУ разделу «Мои турниры» PokerSwipe.
+
+КРИТИЧЕСКИ ВАЖНО:
+1. НЕ переписывать бизнес-логику турниров.
+2. НЕ удалять существующие tournament records.
+3. НЕ менять localStorage schema.
+4. НЕ менять функции добавления / редактирования / удаления турнира.
+5. НЕ менять t23Profit / t23Cost / t23Return / ROI / bounty calculations.
+6. НЕ менять routing.
+7. НЕ менять нижнюю навигацию PokerSwipe НИ ВИЗУАЛЬНО, НИ ФУНКЦИОНАЛЬНО.
+8. Нижние кнопки и названия разделов должны остаться ровно текущими.
+9. НЕ копировать Stitch bottom navigation, если она где-либо есть.
+10. Не делать wholesale replacement index.html.
+
+ЧТО НУЖНО СДЕЛАТЬ:
+- Найти реальный render «Мои турниры» в текущем main.
+- Сопоставить существующие DOM-классы с t23 selectors в my-tournaments-stitch.css.
+- Если класс отличается, лучше расширить selectors в CSS, а не переписывать логику.
+- Подключить my-tournaments-stitch.css ПОСЛЕ текущего visual stack.
+- Подключить my-tournaments-stitch.js после основного PokerSwipe JS.
+- Сохранить текущие обработчики openTournament23 / openTournamentForm23 и т.д.
+- Проверить mobile width 320/360/390/430 px.
+- Проверить add/edit/delete/undo.
+- Проверить empty state.
+- Проверить несколько турниров в списке.
+- Проверить, что bottom nav untouched.
+- Проверить, что другие экраны визуально не поменялись.
+
+ВИЗУАЛ:
+Должен выглядеть дорого, а не как казино:
+- obsidian / deep charcoal;
+- electric lime #DFFF00 только как controlled accent;
+- subtle tonal layering;
+- аккуратные тонкие borders;
+- data-first presentation;
+- дорогие карточки;
+- компактные chips;
+- монолитная типографическая иерархия;
+- никакого золота;
+- никакого дешёвого неона;
+- никакого cyberpunk overload.
+
+STITCH_REFERENCE/code.html использовать только как визуальный reference для 3D-фишки.
+НЕ подключать Three.js в production на этом шаге без необходимости.
+
+СДЕЛАЙ ОТДЕЛЬНУЮ ВЕТКУ И PR.
+В финале дай:
+- changed files;
+- что именно было изменено;
+- что НЕ было изменено;
+- результаты тестов;
+- скрин/preview «Мои турниры»;
+- отдельно подтверждение: BOTTOM NAV UNTOUCHED.
