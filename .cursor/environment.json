@@ -1,0 +1,16 @@
+{
+  "name": "PokerSwipe",
+  "terminals": [
+    {
+      "name": "pokerswipe-web",
+      "command": "python3 -m http.server 8000",
+      "description": "Serve the static PokerSwipe app from the repository root for manual preview."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 8000
+    }
+  ]
+}
