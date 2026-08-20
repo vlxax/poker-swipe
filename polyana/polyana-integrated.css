@@ -107,3 +107,283 @@
 #polyana .pspOsmPopup span{display:block;color:#c8c3ca;font-size:9px;line-height:1.35}
 #polyana .pspOsmPopup em{display:block;color:#e7c85a;font-size:8px;margin-top:5px;font-style:normal}
 #polyana .pspOsmPopupClose{position:absolute;right:6px;top:5px;width:24px;height:24px;border:0;border-radius:50%;background:#242722;color:#fff;font-size:16px}
+
+
+/* ---- Polyana filters/favorites/live late-reg fix ---- */
+body.pspFilterLock{overflow:hidden!important}
+
+#polyana .pspTodayHead{
+  align-items:center!important;
+  margin-top:17px!important;
+}
+#polyana .pspTodayHead>div{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+#polyana .pspTodayHead small{display:block}
+#polyana .pspFilterPrimary{
+  min-height:38px;
+  border:1px solid #64791f;
+  border-radius:12px;
+  padding:0 12px;
+  background:#151b0f;
+  color:#d9ff77;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+#polyana .pspFilterPrimary i{
+  display:inline-grid;
+  place-items:center;
+  min-width:18px;
+  height:18px;
+  margin-left:4px;
+  border-radius:999px;
+  background:#c8ff3d;
+  color:#10130c;
+  font-style:normal;
+  font-size:8px;
+}
+
+#polyana .pspActiveFilters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:-2px 0 12px;
+}
+#polyana .pspActiveFilters span{
+  border:1px solid #3d4727;
+  border-radius:999px;
+  padding:6px 8px;
+  background:#11150e;
+  color:#cbd5b0;
+  font-size:8px;
+  font-weight:850;
+}
+#polyana .pspActiveFilters button{
+  border:0;
+  background:transparent;
+  color:#7e7781;
+  font-size:8px;
+  font-weight:900;
+  padding:5px 4px;
+}
+
+#polyana .pspEvent.favorite{
+  border-color:#4a4634;
+  border-left-color:#ffd66b;
+  background:
+    radial-gradient(circle at 10% 0,rgba(255,214,107,.09),transparent 30%),
+    linear-gradient(145deg,#131313,#0d0d12);
+}
+#polyana .pspEvent.favorite .pspClub{color:#ffd66b}
+#polyana .pspLateReg{font-weight:950}
+#polyana .pspLateReg.open{color:#c8ff3d}
+#polyana .pspLateReg.closed{color:#77717a}
+
+#polyana .pspClubRow.favorite{
+  border-bottom-color:#3f3b2e;
+  background:linear-gradient(90deg,rgba(255,214,107,.035),transparent);
+}
+#polyana .pspClubRow.favorite b{color:#ffd66b}
+#polyana .pspClubStar{
+  flex:0 0 36px;
+  width:36px;
+  height:36px;
+  border:1px solid #34343d;
+  border-radius:11px;
+  background:#121217;
+  color:#77717a;
+  font-size:18px;
+}
+#polyana .pspClubStar.on{
+  color:#ffd66b;
+  border-color:#7b6c3d;
+  background:#1a170e;
+}
+
+/* Force the sheet above every legacy PokerSwipe layer. */
+#polyana .pspFiltersOverlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483600!important;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:0!important;
+  background:rgba(0,0,0,.72)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  pointer-events:auto!important;
+}
+#polyana .pspFiltersOverlay.on{display:flex!important}
+#polyana .pspFilterSheet{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:min(760px,100%)!important;
+  max-width:760px!important;
+  max-height:min(91dvh,820px)!important;
+  box-sizing:border-box!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  border-radius:25px 25px 0 0!important;
+  padding:16px 14px calc(16px + env(safe-area-inset-bottom))!important;
+  background:
+    radial-gradient(circle at 90% 0,rgba(200,255,61,.055),transparent 28%),
+    #101014!important;
+  box-shadow:0 -30px 80px #000b;
+}
+#polyana .pspSheetHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:5px;
+}
+#polyana .pspSheetHead span{
+  display:block;
+  color:#c8ff3d;
+  font-size:7px;
+  font-weight:1000;
+  letter-spacing:.17em;
+}
+#polyana .pspSheetHead h2{
+  margin:3px 0 0!important;
+  font-size:27px!important;
+  letter-spacing:-.04em;
+}
+#polyana .pspFilterGrid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+#polyana .pspFilterGrid .pspChip{
+  min-height:42px;
+  padding:5px 6px;
+}
+#polyana .pspFavoriteOnly{
+  width:100%;
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  border:1px solid #34343d;
+  border-radius:12px;
+  background:#111116;
+  color:#c8c3ca;
+  padding:0 12px;
+  text-align:left;
+  font-size:10px;
+  font-weight:950;
+}
+#polyana .pspFavoriteOnly span{color:#77717a;font-size:18px}
+#polyana .pspFavoriteOnly.on{
+  border-color:#7b6c3d;
+  background:#1a170e;
+  color:#ffe391;
+}
+#polyana .pspFavoriteOnly.on span{color:#ffd66b}
+
+#polyana .pspFilterSearch{
+  width:100%;
+  box-sizing:border-box;
+  height:44px;
+  border:1px solid #34343d;
+  border-radius:12px;
+  outline:none;
+  background:#0d0d12;
+  color:#fff;
+  padding:0 12px;
+  font-size:10px;
+  margin-bottom:8px;
+}
+#polyana .pspFilterSearch:focus{border-color:#667d24}
+#polyana .pspClubFilterList{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  max-height:210px;
+  overflow:auto;
+  padding-right:2px;
+}
+#polyana .pspClubChoice{
+  min-width:0;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  border:1px solid #303039;
+  border-radius:11px;
+  background:#111116;
+  color:#c9c3cb;
+  padding:8px 9px;
+  text-align:left;
+  font-size:8px;
+  font-weight:900;
+}
+#polyana .pspClubChoice span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+#polyana .pspClubChoice i{color:#c8ff3d;font-style:normal}
+#polyana .pspClubChoice.on{
+  border-color:#657d1f;
+  background:#19210f;
+  color:#d9ff77;
+}
+
+#polyana .pspSheetFooter{
+  position:sticky;
+  bottom:calc(-16px - env(safe-area-inset-bottom));
+  z-index:4;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:8px;
+  margin:14px -14px calc(-16px - env(safe-area-inset-bottom));
+  padding:11px 14px calc(12px + env(safe-area-inset-bottom));
+  border-top:1px solid #26262c;
+  background:rgba(16,16,20,.96);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+#polyana .pspSheetFooter .pspApply{
+  margin:0!important;
+  min-height:48px;
+}
+#polyana .pspFilterReset{
+  min-height:48px;
+  border:1px solid #34343d;
+  border-radius:12px;
+  background:#15151a;
+  color:#9e979f;
+  padding:0 12px;
+  font-size:9px;
+  font-weight:950;
+}
+
+@media(max-width:430px){
+  #polyana .pspFilterGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #polyana .pspClubFilterList{grid-template-columns:1fr}
+  #polyana .pspTodayHead{align-items:center!important}
+}
+
+
+/* 2026-08-19 mobile filter hotfix: full-screen sheet opens at top. */
+#polyana .pspFiltersOverlay{align-items:flex-start!important;}
+#polyana .pspFilterSheet{
+  height:100dvh!important;
+  max-height:100dvh!important;
+  border-radius:0!important;
+  padding-top:max(16px,env(safe-area-inset-top))!important;
+  padding-bottom:calc(82px + env(safe-area-inset-bottom))!important;
+  margin:0!important;
+}
+#polyana .pspTools{display:none!important;}

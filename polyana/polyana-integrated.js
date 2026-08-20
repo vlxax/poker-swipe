@@ -1,302 +1,719 @@
-
 (() => {
 'use strict';
+window.__POLYANA_BUILD='polyana-map-progressive-all-points-v8-2026-08-19';
+
+/* Canonical Polyana owns filtering/navigation. Legacy injected filter
+   patches (polyana-filters-v3.js and the V2 sheet inside
+   polyana-promo-animated.js) deactivate themselves when this flag is set,
+   avoiding duplicate filter UI and document-wide MutationObserver loops. */
+window.__PSP_NATIVE_POLYANA=true;
+
 const ROOT_ID='psPolyanaArea';
 const DATA_URLS=['data/moscow_schedule_today.json','data/live_polyana.json'];
 const CLUB_URLS=['data/moscow_club_locations_source.json','data/moscow_clubs_pokernomoney.json','data/live_polyana.json'];
 const BAD=/^(понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|следующая игра|ближайшая игра|в избранное|запись на месте в один клик)$/i;
 const FAR=/(краснодар|воронеж|санкт[- ]?петербург)/i;
-const state={tab:'today',events:[],clubs:[],quick:new Set(),filters:{},loaded:false,map:null,mapToken:0,mapMarkers:[]};
+const FAV_KEY='psp-polyana-favorite-clubs-v1';
+
+const state={
+  tab:'today',
+  events:[],
+  clubs:[],
+  filters:{
+    game:'',
+    freezeout:'',
+    bounty:'',
+    reentry:'',
+    addon:'',
+    late:'',
+    levels:'',
+    fee:'',
+    district:'',
+    favoriteOnly:false,
+    clubs:new Set()
+  },
+  favorites:loadFavorites(),
+  loaded:false,
+  lateTimer:null
+};
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const root=()=>document.getElementById(ROOT_ID);
-function cleanTitle(e){const n=String(e.tournament||'').trim();return !n||BAD.test(n)?'Турнир клуба':n}
-function gameOf(n){const t=n.toLowerCase();if(/plo5|5-card|5 card|5-карточ/.test(t))return'PLO5';if(/plo|omaha|омаха/.test(t))return'PLO';if(/nlh|hold.?em|холдем/.test(t))return'NLH';return''}
-function typeOf(n){const t=n.toLowerCase();if(/mystery/.test(t))return'Mystery Bounty';if(/bounty|knockout|баунти|нокаут/.test(t))return'Bounty';if(/freeze/.test(t))return'Freezeout';if(/freeroll|бесплат/.test(t))return'Freeroll';if(/turbo/.test(t))return'Turbo';if(/deep/.test(t))return'Deepstack';return''}
-function normalize(e,i){const title=cleanTitle(e);return {...e,_id:i,_title:title,_game:gameOf(title),_type:typeOf(title)}}
-function fee(e){const n=Number(e.fee_rub)||0;if(n>0)return n.toLocaleString('ru-RU')+' ₽';if(/freeroll|бесплат/i.test(e._title))return'Freeroll';return'Уточняется'}
-function startDate(e){if(!e.date||!e.time)return null;const d=new Date(`${e.date}T${e.time}:00+03:00`);return Number.isNaN(+d)?null:d}
-function lateClose(e){const s=startDate(e);return s&&e.late_reg_minutes!=null?new Date(+s+Number(e.late_reg_minutes)*60000):null}
-function lateText(e){if(e.late_reg_minutes==null)return'';const s=startDate(e),c=lateClose(e),now=new Date();if(s&&c&&now>=s&&now<c){let m=Math.max(0,Math.floor((c-now)/60000));return`Late reg ещё ${Math.floor(m/60)}ч ${m%60}м`}if(c&&now>=c)return'Late reg закрыта';return`Late reg ${e.late_reg_minutes} мин`}
-function allowed(e){return !FAR.test(e.address||'')}
-function match(e){
- if(!allowed(e))return false;
- for(const q of state.quick){
-  if(q==='NLH'&&e._game!=='NLH')return false;
-  if(q==='PLO'&&e._game!=='PLO')return false;
-  if(q==='Bounty'&&!['Bounty','Mystery Bounty'].includes(e._type))return false;
-  if(q==='Freezeout'&&e._type!=='Freezeout')return false;
-  if(q==='Freeroll'&&e._type!=='Freeroll')return false;
-  if(q==='Re-entry'&&e.reentry_limit==null)return false;
-  if(q==='Add-on'&&e.addon_allowed!==true)return false;
-  if(q==='Late reg'&&e.late_reg_minutes==null)return false;
-  if(q==='Уровни'&&e.level_minutes==null)return false;
- }
- const f=state.filters;
- if(f.game&&e._game!==f.game)return false;
- if(f.type&&e._type!==f.type)return false;
- if(f.reentry==='yes'&&e.reentry_limit==null)return false;
- if(f.reentry==='none'&&e.reentry_limit!=null)return false;
- if(f.late==='yes'&&e.late_reg_minutes==null)return false;
- if(f.late==='open'){const c=lateClose(e);if(!c||new Date()>=c)return false}
- if(f.fee==='1000'&&(Number(e.fee_rub)||0)>1000)return false;
- return true;
-}
-async function fetchFirst(urls,key){
- for(const u of urls){
+const normName=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+
+function loadFavorites(){
   try{
-   const r=await fetch(u+(u.includes('?')?'&':'?')+'ts='+Date.now(),{cache:'no-store'});
-   if(!r.ok)continue;
-   const d=await r.json();
-   if(Array.isArray(d[key]))return d;
-  }catch(_){}
- }
- return {[key]:[]};
+    const raw=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');
+    return new Set(Array.isArray(raw)?raw.map(normName).filter(Boolean):[]);
+  }catch(_){return new Set()}
 }
+function saveFavorites(){
+  try{localStorage.setItem(FAV_KEY,JSON.stringify([...state.favorites]))}catch(_){}
+}
+function isFavorite(name){return state.favorites.has(normName(name))}
+function toggleFavorite(name){
+  const k=normName(name);if(!k)return;
+  state.favorites.has(k)?state.favorites.delete(k):state.favorites.add(k);
+  saveFavorites();
+}
+
+function cleanTitle(e){
+  const n=String(e.tournament||'').trim();
+  return !n||BAD.test(n)?'Турнир клуба':n;
+}
+function gameOf(n){
+  const t=String(n||'').toLowerCase();
+  if(/plo5|5-card|5 card|5-карточ/.test(t))return'PLO5';
+  if(/plo|omaha|омаха/.test(t))return'PLO';
+  if(/nlh|hold.?em|холдем/.test(t))return'NLH';
+  return'';
+}
+function typeOf(n){
+  const t=String(n||'').toLowerCase();
+  if(/mystery/.test(t))return'Mystery Bounty';
+  if(/bounty|knockout|баунти|нокаут/.test(t))return'Bounty';
+  if(/freeze|фризаут/.test(t))return'Freezeout';
+  if(/freeroll|бесплат/.test(t))return'Freeroll';
+  if(/turbo/.test(t))return'Turbo';
+  if(/deep/.test(t))return'Deepstack';
+  return'';
+}
+function normalize(e,i){
+  const title=cleanTitle(e);
+  const type=String(e.type||e.format||typeOf(title)||'').trim();
+  const typeKey=type.toLowerCase();
+  const game=String(e.game||gameOf(title)||'').toUpperCase();
+  const t=title.toLowerCase();
+
+  const isFreezeout=e.freezeout===true||typeKey==='freezeout'||/freeze|фризаут/.test(t);
+  const isBounty=e.bounty===true||typeKey==='bounty'||typeKey==='mystery bounty'||/bounty|knockout|баунти|нокаут/.test(t);
+  const isFreeroll=typeKey==='freeroll'||/freeroll|бесплат/.test(t);
+
+  const rawRe=e.reentry_limit;
+  const reentryUnlimited=e.reentry_unlimited===true||/unlimited|безлимит|∞|infinity/i.test(String(rawRe??''));
+  let reentryCount=null;
+  if(!reentryUnlimited&&rawRe!==null&&rawRe!==undefined&&rawRe!==''&&Number.isFinite(Number(rawRe))){
+    reentryCount=Number(rawRe);
+  }else if(isFreezeout){
+    reentryCount=0;
+  }
+
+  return {
+    ...e,
+    _id:i,
+    _title:title,
+    _game:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
+    _type:type||typeOf(title),
+    _isFreezeout:isFreezeout,
+    _isBounty:isBounty,
+    _isFreeroll:isFreeroll,
+    _reentryCount:reentryCount,
+    _reentryUnlimited:reentryUnlimited
+  };
+}
+
+function fee(e){
+  const n=Number(e.fee_rub);
+  if(Number.isFinite(n)&&n>0)return n.toLocaleString('ru-RU')+' ₽';
+  if(e._isFreeroll)return'Freeroll';
+  return'Уточняется';
+}
+function startDate(e){
+  if(!e.date||!e.time)return null;
+  const time=String(e.time).trim();
+  const normalizedTime=/^\d{2}:\d{2}$/.test(time)?`${time}:00`:time;
+  const d=new Date(`${e.date}T${normalizedTime}+03:00`);
+  return Number.isNaN(+d)?null:d;
+}
+function lateClose(e){
+  const s=startDate(e),raw=e.late_reg_minutes;
+  if(!s||raw===null||raw===undefined||raw==='')return null;
+  const m=Number(raw);
+  return Number.isFinite(m)&&m>=0?new Date(+s+m*60000):null;
+}
+function moscowClock(d){
+  return d.toLocaleTimeString('ru-RU',{timeZone:'Europe/Moscow',hour:'2-digit',minute:'2-digit'});
+}
+function remainingText(ms){
+  const sec=Math.max(0,Math.ceil(ms/1000));
+  if(sec<=600){
+    const m=Math.floor(sec/60),s=sec%60;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  const min=Math.ceil(sec/60);
+  if(min>=60)return `${Math.floor(min/60)} ч ${min%60} мин`;
+  return `${min} мин`;
+}
+function lateRegInfo(e,nowMs=Date.now()){
+  const c=lateClose(e);if(!c)return null;
+  const diff=+c-nowMs,until=moscowClock(c);
+  if(diff<=0)return {open:false,urgent:false,remainingMs:0,text:`Late reg закрыт · ${until}`};
+  return {
+    open:true,
+    urgent:diff<=10*60000,
+    remainingMs:diff,
+    text:`Late reg до ${until} · осталось ${remainingText(diff)}`
+  };
+}
+function allowed(e){return !FAR.test(e.address||'')}
+
+function numKnown(v){
+  return v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v));
+}
+function districtOf(e){
+  return String(e.district||e.admin_district||'').trim();
+}
+function match(e){
+  if(!allowed(e))return false;
+  const f=state.filters;
+
+  if(f.game&&e._game!==f.game)return false;
+
+  if(f.freezeout==='yes'&&!e._isFreezeout)return false;
+  if(f.freezeout==='no'&&e._isFreezeout)return false;
+
+  if(f.bounty==='yes'&&!e._isBounty)return false;
+  if(f.bounty==='no'&&e._isBounty)return false;
+
+  if(f.reentry){
+    if(f.reentry==='unlimited'){
+      if(!e._reentryUnlimited)return false;
+    }else if(f.reentry==='4plus'){
+      if(e._reentryUnlimited||!Number.isFinite(e._reentryCount)||e._reentryCount<4)return false;
+    }else{
+      const n=Number(f.reentry);
+      if(!Number.isFinite(e._reentryCount)||e._reentryCount!==n)return false;
+    }
+  }
+
+  if(f.addon==='yes'&&e.addon_allowed!==true)return false;
+  if(f.addon==='no'&&e.addon_allowed!==false)return false;
+
+  if(f.late){
+    const m=numKnown(e.late_reg_minutes)?Number(e.late_reg_minutes):null;
+    if(f.late==='open'){
+      if(!lateRegInfo(e)?.open)return false;
+    }else if(f.late==='none'){
+      if(!(m===0||e.late_reg_allowed===false))return false;
+    }else if(f.late==='upto60'){
+      if(!(m>0&&m<=60))return false;
+    }else if(f.late==='60to120'){
+      if(!(m>60&&m<=120))return false;
+    }else if(f.late==='120plus'){
+      if(!(m>120))return false;
+    }
+  }
+
+  if(f.levels){
+    const m=numKnown(e.level_minutes)?Number(e.level_minutes):null;
+    if(m===null)return false;
+    if(f.levels==='10to15'&&!(m>=10&&m<=15))return false;
+    if(f.levels==='20'&&m!==20)return false;
+    if(f.levels==='25to30'&&!(m>=25&&m<=30))return false;
+    if(f.levels==='40plus'&&m<40)return false;
+  }
+
+  if(f.fee){
+    const n=Number(e.fee_rub);
+    if(!Number.isFinite(n)||n<=0)return false;
+    if(f.fee==='lte500'&&n>500)return false;
+    if(f.fee==='lte1000'&&n>1000)return false;
+    if(f.fee==='gt1000'&&n<=1000)return false;
+  }
+
+  if(f.clubs.size&& !f.clubs.has(normName(e.club)))return false;
+  if(f.favoriteOnly&&!isFavorite(e.club))return false;
+
+  if(f.district&&districtOf(e)!==f.district)return false;
+
+  return true;
+}
+
+async function fetchFirst(urls,key){
+  for(const u of urls){
+    try{
+      const r=await fetch(u+(u.includes('?')?'&':'?')+'ts='+Date.now(),{cache:'no-store'});
+      if(!r.ok)continue;
+      const d=await r.json();
+      if(Array.isArray(d[key]))return d;
+    }catch(_){}
+  }
+  return {[key]:[]};
+}
+
+function filterBlock(title,key,vals){
+  return `<div class="pspBlock"><h4>${esc(title)}</h4><div class="pspFilterGrid">${
+    vals.map(([l,v])=>`<button type="button" class="pspChip pspChoice ${state.filters[key]===v?'on':''}" data-key="${esc(key)}" data-value="${esc(v)}">${esc(l)}</button>`).join('')
+  }</div></div>`;
+}
+function eventClubNames(){
+  return [...new Set(state.events.filter(allowed).map(e=>String(e.club||'').trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'ru'));
+}
+function districtOptions(){
+  return [...new Set(state.events.map(districtOf).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ru'));
+}
+function filterSheet(){
+  const clubs=eventClubNames();
+  const districts=districtOptions();
+  const filteredCount=state.events.filter(match).length;
+
+  return `<div id="pspFilters" class="pspSheetBg pspFiltersOverlay" aria-hidden="true">
+    <div class="pspSheet pspFilterSheet" role="dialog" aria-modal="true" aria-label="Фильтры Поляны" tabindex="-1">
+      <div class="pspSheetHead">
+        <div><span>ПОЛЯНА</span><h2>Фильтры</h2></div>
+        <button type="button" class="pspClose" data-psp-close aria-label="Закрыть">✕</button>
+      </div>
+
+      ${filterBlock('Игра','game',[['NLH','NLH'],['PLO','PLO'],['PLO5','PLO5']])}
+      ${filterBlock('Freezeout','freezeout',[['Есть','yes'],['Нет','no']])}
+      ${filterBlock('Bounty','bounty',[['Есть','yes'],['Нет','no']])}
+      ${filterBlock('Количество re-entry','reentry',[['0','0'],['1','1'],['2','2'],['3','3'],['4+','4plus'],['Безлимит','unlimited']])}
+      ${filterBlock('Add-on','addon',[['Есть','yes'],['Нет','no']])}
+      ${filterBlock('Late reg','late',[['Открыт сейчас','open'],['Нет','none'],['До 1 ч','upto60'],['1–2 ч','60to120'],['2 ч+','120plus']])}
+      ${filterBlock('Уровни','levels',[['10–15 мин','10to15'],['20 мин','20'],['25–30 мин','25to30'],['40+ мин','40plus']])}
+      ${filterBlock('Орг. взнос','fee',[['До 500 ₽','lte500'],['До 1 000 ₽','lte1000'],['Больше 1 000 ₽','gt1000']])}
+
+      <div class="pspBlock">
+        <h4>Любимые клубы</h4>
+        <button type="button" class="pspFavoriteOnly ${state.filters.favoriteOnly?'on':''}" data-favorite-only>
+          <span>★</span> Только любимые клубы
+        </button>
+      </div>
+
+      <div class="pspBlock">
+        <h4>Клуб</h4>
+        <input class="pspFilterSearch" data-club-filter-search placeholder="Найти клуб" autocomplete="off">
+        <div class="pspClubFilterList" data-club-filter-list>
+          ${clubs.map(name=>{
+            const k=normName(name),on=state.filters.clubs.has(k);
+            return `<button type="button" class="pspClubChoice ${on?'on':''}" data-filter-club="${esc(name)}">
+              <span>${isFavorite(name)?'★ ':''}${esc(name)}</span><i>${on?'✓':''}</i>
+            </button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      ${districts.length?`<div class="pspBlock"><h4>Район</h4><div class="pspFilterGrid">${
+        districts.map(v=>`<button type="button" class="pspChip pspChoice ${state.filters.district===v?'on':''}" data-key="district" data-value="${esc(v)}">${esc(v)}</button>`).join('')
+      }</div></div>`:''}
+
+      <div class="pspSheetFooter">
+        <button type="button" class="pspFilterReset" data-filter-reset>Сбросить</button>
+        <button type="button" class="pspApply" data-psp-apply>ПОКАЗАТЬ ${filteredCount} ТУРНИРОВ</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 function shell(){
- return `<div class="pspTop"><div class="pspLogo">POKER <i>SWIPE</i></div><div class="pspBy">by ФРИКОВАЯ ДАМА 💋</div></div>
- <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div>
- <div class="pspTools"><button class="pspTool" data-psp-search>⌕</button><button class="pspTool acid" data-psp-filters>☷</button></div></div>
- <div class="pspTabs"><button class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
- <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
- <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>
- <div id="pspBody"></div>
- <div id="pspFilters" class="pspSheetBg"><div class="pspSheet"><button class="pspClose" data-psp-close>Закрыть</button><h2>Фильтры</h2>
- ${filterBlock('Игра','game',[['NLH','NLH'],['PLO','PLO'],['PLO5','PLO5']])}
- ${filterBlock('Формат','type',[['Freezeout','Freezeout'],['Bounty','Bounty'],['Mystery Bounty','Mystery Bounty'],['Freeroll','Freeroll']])}
- ${filterBlock('Re-entry','reentry',[['Есть re-entry','yes'],['Без re-entry','none']])}
- ${filterBlock('Late reg','late',[['Есть late reg','yes'],['Куда ещё можно успеть','open']])}
- ${filterBlock('Орг. взнос','fee',[['До 1 000 ₽','1000']])}
- <button class="pspApply" data-psp-apply>ПОКАЗАТЬ ТУРНИРЫ</button></div></div>
- <div id="pspDetail" class="pspSheetBg"><div class="pspSheet"><button class="pspClose" data-psp-detail-close>Закрыть</button><div id="pspDetailBody"></div></div></div>`;
+  return `<div class="pspTop"><div class="pspLogo">POKER <i>SWIPE</i></div><div class="pspBy">by ФРИКОВАЯ ДАМА 💋</div></div>
+  <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
+  <div class="pspTabs"><button type="button" class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button type="button" class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button type="button" class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
+  <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
+  <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>
+  <div id="pspBody"></div>
+  ${filterSheet()}
+  <div id="pspDetail" class="pspSheetBg pspFiltersOverlay" aria-hidden="true"><div class="pspSheet"><button type="button" class="pspClose" data-psp-detail-close>Закрыть</button><div id="pspDetailBody"></div></div></div>`;
 }
-function filterBlock(title,key,vals){return `<div class="pspBlock"><h4>${title}</h4><div class="pspQuick">${vals.map(([l,v])=>`<button class="pspChip pspChoice ${state.filters[key]===v?'on':''}" data-key="${key}" data-value="${v}">${l}</button>`).join('')}</div></div>`}
+
+function activeFilters(){
+  const f=state.filters,a=[];
+  if(f.game)a.push(f.game);
+  if(f.freezeout)a.push(`Freezeout: ${f.freezeout==='yes'?'есть':'нет'}`);
+  if(f.bounty)a.push(`Bounty: ${f.bounty==='yes'?'есть':'нет'}`);
+  if(f.reentry)a.push(`Re-entry: ${f.reentry==='4plus'?'4+':f.reentry==='unlimited'?'безлимит':f.reentry}`);
+  if(f.addon)a.push(`Add-on: ${f.addon==='yes'?'есть':'нет'}`);
+  if(f.late)a.push(`Late reg: ${({'open':'открыт','none':'нет','upto60':'до 1ч','60to120':'1–2ч','120plus':'2ч+'})[f.late]}`);
+  if(f.levels)a.push(`Уровни: ${({'10to15':'10–15','20':'20','25to30':'25–30','40plus':'40+'})[f.levels]} мин`);
+  if(f.fee)a.push(({'lte500':'до 500 ₽','lte1000':'до 1 000 ₽','gt1000':'> 1 000 ₽'})[f.fee]);
+  if(f.favoriteOnly)a.push('★ Любимые');
+  if(f.clubs.size)a.push(`Клубы: ${f.clubs.size}`);
+  if(f.district)a.push(f.district);
+  return a;
+}
 function today(){
- const arr=state.events.filter(match).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
- return `<div class="pspSecHead"><h3>БЫСТРЫЕ ФИЛЬТРЫ</h3><button class="pspFilterLink" data-psp-filters>Все фильтры</button></div>
- <div class="pspQuick">${['NLH','PLO','Bounty','Freezeout','Freeroll','Re-entry','Add-on','Late reg','Уровни'].map(q=>{const unavailable=(q==='Add-on'&&!state.events.some(e=>e.addon_allowed===true))||(q==='Уровни'&&!state.events.some(e=>e.level_minutes!=null));return `<button class="pspChip ${state.quick.has(q)?'on':''} ${unavailable?'disabled':''}" data-q="${q}" ${unavailable?'disabled title="Нет данных в источнике"':''}>${q}</button>`}).join('')}</div>
- <div class="pspListHead"><b>МОСКВА <span>· СЕГОДНЯ</span></b><small>${arr.length} событий</small></div>
- ${arr.length?`<div class="pspList">${arr.map(card).join('')}</div>`:`<div class="pspEmpty">Сегодня таких турниров нет. Попробуй изменить фильтры.</div>`}`;
+  const arr=state.events.filter(match).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+  const active=activeFilters();
+  return `<div class="pspListHead pspTodayHead">
+    <div><b>МОСКВА <span>· СЕГОДНЯ</span></b><small>${arr.length} событий</small></div>
+    <button type="button" class="pspFilterPrimary" data-psp-filters>ФИЛЬТРЫ${active.length?` <i>${active.length}</i>`:''}</button>
+  </div>
+  ${active.length?`<div class="pspActiveFilters">${active.map(x=>`<span>${esc(x)}</span>`).join('')}<button type="button" data-filter-reset>Сбросить</button></div>`:''}
+  ${arr.length?`<div class="pspList">${arr.map(card).join('')}</div>`:`<div class="pspEmpty">Сегодня таких турниров нет. Попробуй изменить фильтры.</div>`}`;
 }
 function card(e){
- const tags=[e._game,e._type,e.level_minutes!=null?`${e.level_minutes} мин`:'',e.reentry_limit!=null?`${e.reentry_limit} re-entry`: ''].filter(Boolean);
- const meta=[lateText(e),e.reentry_cost_rub!=null?`Re-entry ${Number(e.reentry_cost_rub).toLocaleString('ru-RU')} ₽`:'',e.duration_minutes!=null?`≈ ${Math.round(e.duration_minutes/60*10)/10} ч`: ''].filter(Boolean);
- return `<button class="pspEvent" data-event="${e._id}"><div class="pspTime">${esc(e.time||'—')}<small>Сегодня</small></div><div><div class="pspName">${esc(e._title)}</div><div class="pspClub">${esc(e.club||'')}</div><div class="pspTags">${tags.map((x,i)=>`<span class="pspTag ${i===0?'acid':''}">${esc(x)}</span>`).join('')}</div>${meta.length?`<div class="pspMeta">${meta.map(esc).join(' · ')}</div>`:''}</div><div class="pspFee">${esc(fee(e))}<small>орг. взнос</small></div></button>`;
+  const fav=isFavorite(e.club);
+  const tags=[e._game,e._type,e.level_minutes!=null?`${e.level_minutes} мин`:'',e._reentryUnlimited?'re-entry ∞':Number.isFinite(e._reentryCount)?`${e._reentryCount} re-entry`:''].filter(Boolean);
+  const late=lateRegInfo(e);
+  const meta=[
+    e.reentry_cost_rub!=null?`Re-entry ${Number(e.reentry_cost_rub).toLocaleString('ru-RU')} ₽`:'',
+    e.addon_allowed===true?'Add-on есть':'',
+    e.duration_minutes!=null?`≈ ${Math.round(e.duration_minutes/60*10)/10} ч`:''
+  ].filter(Boolean);
+  const lateHtml=late?`<span class="pspLateReg ${late.open?'open':'closed'}" data-late-event="${e._id}" data-late-open="${late.open?'1':'0'}">${esc(late.text)}</span>`:'';
+  const metaHtml=[lateHtml,...meta.map(esc)].filter(Boolean).join(' · ');
+
+  return `<button type="button" class="pspEvent ${fav?'favorite':''}" data-event="${e._id}">
+    <div class="pspTime">${esc(e.time||'—')}<small>Сегодня</small></div>
+    <div><div class="pspName">${esc(e._title)}</div><div class="pspClub">${fav?'★ ':''}${esc(e.club||'')}</div>
+    <div class="pspTags">${tags.map((x,i)=>`<span class="pspTag ${i===0?'acid':''}">${esc(x)}</span>`).join('')}</div>
+    ${metaHtml?`<div class="pspMeta">${metaHtml}</div>`:''}</div>
+    <div class="pspFee">${esc(fee(e))}<small>орг. взнос</small></div>
+  </button>`;
 }
-function clubs(){
- const q=(window.__pspClubQuery||'').toLowerCase();
- const list=state.clubs.filter(c=>allowed(c)).filter(c=>!q||(`${c.name||''} ${c.address||''}`).toLowerCase().includes(q)).sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru'));
- const groups={};for(const c of list){const l=(c.name||'#')[0].toUpperCase();(groups[l]??=[]).push(c)}
- return `<input id="pspSearch" class="pspSearch" placeholder="Поиск клуба" value="${esc(window.__pspClubQuery||'')}">${Object.entries(groups).map(([l,a])=>`<div class="pspGroup"><div class="pspLetter">${esc(l)}</div>${a.map(c=>`<div class="pspClubRow"><div><b>${esc(c.name||'Клуб')}</b><br><span>${esc(c.address||'Адрес уточняется')}</span></div><span>${typeof c.upcoming==='number'?c.upcoming+' анонсов':''}</span></div>`).join('')}</div>`).join('')||'<div class="pspEmpty">Каталог клубов пока неполный.</div>'}`;
+function clubsView(){
+  const q=(window.__pspClubQuery||'').toLowerCase();
+  const list=state.clubs.filter(c=>allowed(c))
+    .filter(c=>!q||(`${c.name||''} ${c.address||''}`).toLowerCase().includes(q))
+    .sort((a,b)=>(a.name||'').localeCompare(b.name||'','ru'));
+
+  const groups={};
+  for(const c of list){
+    const l=(c.name||'#')[0].toUpperCase();
+    (groups[l]??=[]).push(c);
+  }
+
+  return `<input id="pspSearch" class="pspSearch" placeholder="Поиск клуба" value="${esc(window.__pspClubQuery||'')}">${
+    Object.entries(groups).map(([l,a])=>`<div class="pspGroup"><div class="pspLetter">${esc(l)}</div>${
+      a.map(c=>`<div class="pspClubRow ${isFavorite(c.name)?'favorite':''}">
+        <div><b>${isFavorite(c.name)?'★ ':''}${esc(c.name||'Клуб')}</b><br><span>${esc(c.address||'Адрес уточняется')}</span></div>
+        <button type="button" class="pspClubStar ${isFavorite(c.name)?'on':''}" data-fav-club="${esc(c.name||'')}" aria-label="Любимый клуб">${isFavorite(c.name)?'★':'☆'}</button>
+      </div>`).join('')
+    }</div>`).join('')||'<div class="pspEmpty">Каталог клубов пока неполный.</div>'
+  }`;
 }
 function mapView(){
- return `<div class="pspMapPanel">
-   <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span id="pspMapProgress">Карта Москвы · точки клубов</span></div><button class="pspMapReset" data-map-reset>Москва</button></div>
-   <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=4" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
-   <div class="pspMapNote">Адреса клубов: PokerNoMoney. Карта: OpenStreetMap.</div>
- </div>`;
-}
-
-const MAP_CACHE_PREFIX='psp-map-v3:';
-const MAP_CENTER=[55.7558,37.6173];
-const MAP_BOUNDS={minLat:54.95,maxLat:56.20,minLng:36.75,maxLng:38.95};
-const MAP_SEED={
- 'Minds':[55.682229,37.580647],
- 'Joker Poker Club Moscow':[55.582987,37.595142],
- 'PRIDE':[55.771803,37.684111],
- 'Check-Check Club':[55.761279,37.663018],
- 'HEADS UP':[55.777318,37.636410]
-};
-function validCoord(lat,lng){return Number.isFinite(lat)&&Number.isFinite(lng)&&lat>=MAP_BOUNDS.minLat&&lat<=MAP_BOUNDS.maxLat&&lng>=MAP_BOUNDS.minLng&&lng<=MAP_BOUNDS.maxLng}
-function readCoord(c){
- const direct=[Number(c.lat),Number(c.lng)];if(validCoord(...direct))return direct;
- if(MAP_SEED[c.name])return MAP_SEED[c.name];
- try{const v=JSON.parse(localStorage.getItem(MAP_CACHE_PREFIX+c.name)||'null');if(v&&validCoord(Number(v.lat),Number(v.lng)))return [Number(v.lat),Number(v.lng)]}catch(_){ }
- return null;
-}
-function saveCoord(c,lat,lng,source){try{localStorage.setItem(MAP_CACHE_PREFIX+c.name,JSON.stringify({lat,lng,source,at:Date.now()}))}catch(_){}}
-async function geocodeClub(c,signal){
- const q=`Москва, ${c.address}, Россия`;
- const urls=[
-  'https://photon.komoot.io/api/?q='+encodeURIComponent(q)+'&limit=3&lat=55.7558&lon=37.6173&lang=ru',
-  'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=3&countrycodes=ru&q='+encodeURIComponent(q)
- ];
- for(const url of urls){
-  try{
-   const r=await fetch(url,{signal,headers:{'Accept':'application/json'}});if(!r.ok)continue;
-   const d=await r.json();
-   const rows=Array.isArray(d)?d:(d.features||[]);
-   for(const row of rows){
-    let lat,lng,country='';
-    if(row.geometry?.coordinates){lng=Number(row.geometry.coordinates[0]);lat=Number(row.geometry.coordinates[1]);country=String(row.properties?.country||'')}
-    else {lat=Number(row.lat);lng=Number(row.lon);country=String(row.display_name||'')}
-    if(!validCoord(lat,lng))continue;
-    if(country && !/(россия|russia|russian|moscow|москва)/i.test(country))continue;
-    saveCoord(c,lat,lng,url.includes('photon')?'Photon/OpenStreetMap':'Nominatim/OpenStreetMap');return [lat,lng];
-   }
-  }catch(err){if(signal?.aborted)throw err}
- }
- return null;
-}
-
-/* Minimal slippy-map renderer. No Leaflet dependency: the existing Polyana map
-   container is filled directly with OpenStreetMap tiles + our own markers. */
-function mercatorProject(lat,lng,z){
- const n=256*Math.pow(2,z),s=Math.sin(Math.max(-85.0511,Math.min(85.0511,lat))*Math.PI/180);
- return {x:(lng+180)/360*n,y:(0.5-Math.log((1+s)/(1-s))/(4*Math.PI))*n};
-}
-function mercatorUnproject(x,y,z){
- const n=256*Math.pow(2,z),lng=x/n*360-180,lat=180/Math.PI*Math.atan(Math.sinh(Math.PI*(1-2*y/n)));
- return [lat,lng];
-}
-function createOsmMap(el){
- let center=[...MAP_CENTER],zoom=10,destroyed=false,raf=0,drag=null;
- const coords=new Map();
- el.innerHTML=`<div class="pspOsmTiles" aria-hidden="true"></div><div class="pspOsmMarkers"></div><div class="pspOsmPopup" hidden></div><div class="pspOsmControls"><button type="button" data-osm-plus aria-label="Приблизить">+</button><button type="button" data-osm-minus aria-label="Отдалить">−</button></div><div class="pspOsmAttribution">© OpenStreetMap contributors</div>`;
- const tiles=el.querySelector('.pspOsmTiles'),markers=el.querySelector('.pspOsmMarkers'),popup=el.querySelector('.pspOsmPopup');
- const cleanup=[];
- function on(target,type,fn,opts){target.addEventListener(type,fn,opts);cleanup.push(()=>target.removeEventListener(type,fn,opts))}
- function topLeft(){const cp=mercatorProject(center[0],center[1],zoom);return {x:cp.x-el.clientWidth/2,y:cp.y-el.clientHeight/2}}
- function position(lat,lng){const p=mercatorProject(lat,lng,zoom),tl=topLeft();return {x:p.x-tl.x,y:p.y-tl.y}}
- function render(){
-  if(destroyed)return;cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{
-   if(destroyed)return;
-   const w=el.clientWidth||420,h=el.clientHeight||470,tl=topLeft(),ts=256,max=Math.pow(2,zoom);
-   const minX=Math.floor(tl.x/ts)-1,maxX=Math.floor((tl.x+w)/ts)+1,minY=Math.floor(tl.y/ts)-1,maxY=Math.floor((tl.y+h)/ts)+1;
-   const frag=document.createDocumentFragment();tiles.textContent='';
-   for(let ty=minY;ty<=maxY;ty++)for(let tx=minX;tx<=maxX;tx++){
-    if(ty<0||ty>=max)continue;const wrap=((tx%max)+max)%max;
-    const img=document.createElement('img');img.className='pspOsmTile';img.alt='';img.draggable=false;
-    img.src=`https://tile.openstreetmap.org/${zoom}/${wrap}/${ty}.png`;
-    img.style.left=(tx*ts-tl.x)+'px';img.style.top=(ty*ts-tl.y)+'px';
-    frag.appendChild(img);
-   }
-   tiles.appendChild(frag);
-   markers.querySelectorAll('[data-map-club]').forEach(m=>{
-    const c=coords.get(m.dataset.mapClub);if(!c)return;const p=position(c.lat,c.lng);m.style.transform=`translate(${Math.round(p.x)}px,${Math.round(p.y)}px) translate(-50%,-50%)`;m.hidden=p.x<-30||p.y<-30||p.x>w+30||p.y>h+30;
-   });
-   if(!popup.hidden&&popup.dataset.lat){const p=position(Number(popup.dataset.lat),Number(popup.dataset.lng));popup.style.left=Math.max(8,Math.min(w-218,p.x+12))+'px';popup.style.top=Math.max(8,Math.min(h-100,p.y-30))+'px'}
-  })
- }
- function addClub(c,co){
-  if(destroyed||!co)return;const [lat,lng]=co;if(!validCoord(lat,lng))return;
-  const id=String(c.name||'club');coords.set(id,{lat,lng,c});
-  let m=[...markers.querySelectorAll('[data-map-club]')].find(x=>x.dataset.mapClub===id);
-  if(!m){m=document.createElement('button');m.type='button';m.className='pspOsmMarker';m.dataset.mapClub=id;m.title=c.name||'Клуб';m.innerHTML='<span></span>';markers.appendChild(m);
-   on(m,'click',ev=>{ev.stopPropagation();const rec=coords.get(id);if(!rec)return;popup.dataset.lat=rec.lat;popup.dataset.lng=rec.lng;popup.hidden=false;popup.innerHTML=`<button type="button" class="pspOsmPopupClose" aria-label="Закрыть">×</button><b>${esc(rec.c.name||'Клуб')}</b><span>${esc(rec.c.address||'')}</span>${rec.c.needs_manual_review?'<em>Адрес требует проверки</em>':''}`;popup.querySelector('.pspOsmPopupClose').onclick=()=>{popup.hidden=true;popup.removeAttribute('data-lat');popup.removeAttribute('data-lng')}})}
-  render();
- }
- function setView(c,z=zoom){center=[Math.max(MAP_BOUNDS.minLat,Math.min(MAP_BOUNDS.maxLat,Number(c[0]))),Math.max(MAP_BOUNDS.minLng,Math.min(MAP_BOUNDS.maxLng,Number(c[1])))];zoom=Math.max(9,Math.min(16,Math.round(Number(z)||10)));popup.hidden=true;render()}
- function reset(){setView(MAP_CENTER,10)}
- function changeZoom(d){const next=Math.max(9,Math.min(16,zoom+d));if(next!==zoom){zoom=next;popup.hidden=true;render()}}
- on(el.querySelector('[data-osm-plus]'),'click',e=>{e.stopPropagation();changeZoom(1)});
- on(el.querySelector('[data-osm-minus]'),'click',e=>{e.stopPropagation();changeZoom(-1)});
- on(el,'pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY,p:mercatorProject(center[0],center[1],zoom)};el.setPointerCapture?.(e.pointerId);el.classList.add('dragging');popup.hidden=true});
- on(el,'pointermove',e=>{if(!drag)return;const p={x:drag.p.x-(e.clientX-drag.x),y:drag.p.y-(e.clientY-drag.y)};center=mercatorUnproject(p.x,p.y,zoom);render()});
- const end=e=>{if(!drag)return;drag=null;el.classList.remove('dragging');try{el.releasePointerCapture?.(e.pointerId)}catch(_){}};
- on(el,'pointerup',end);on(el,'pointercancel',end);
- on(el,'wheel',e=>{e.preventDefault();changeZoom(e.deltaY<0?1:-1)},{passive:false});
- on(window,'resize',render);
- render();
- return {addClub,setView,reset,invalidateSize:render,remove(){destroyed=true;cancelAnimationFrame(raf);cleanup.forEach(fn=>fn());el.innerHTML=''}};
-}
-function destroyMap(){
- state.mapToken++;
- if(state.map){try{state.map.remove()}catch(_){ }state.map=null}
- state.mapMarkers=[];
-}
-async function initMap(){
- const el=document.getElementById('pspMoscowMap');if(!el||state.tab!=='map')return;
- destroyMap();const token=state.mapToken;
- const map=createOsmMap(el);state.map=map;
- const clubs=state.clubs.filter(c=>allowed(c)&&c.address);
- const progress=document.getElementById('pspMapProgress');
- let ready=0,failed=0;
- const add=(c,co)=>{if(token!==state.mapToken||!state.map||!co)return;state.map.addClub(c,co);ready++;if(progress)progress.textContent=`На карте ${ready} из ${clubs.length}`};
- const pending=[];
- for(const c of clubs){const co=readCoord(c);if(co)add(c,co);else pending.push(c)}
- if(progress&&ready)progress.textContent=`На карте ${ready} из ${clubs.length} · остальные точки загружаются`;
- const controller=new AbortController();
- const workers=Array.from({length:2},async()=>{
-   while(pending.length&&token===state.mapToken){
-     const c=pending.shift();
-     try{const co=await geocodeClub(c,controller.signal);if(co)add(c,co);else failed++}catch(_){failed++}
-     if(progress&&token===state.mapToken)progress.textContent=`На карте ${ready} из ${clubs.length}${pending.length?' · подготавливаем ещё '+pending.length:''}${failed?' · не найдено '+failed:''}`;
-     await new Promise(r=>setTimeout(r,700));
-   }
- });
- Promise.all(workers).then(()=>{if(token===state.mapToken&&progress)progress.textContent=`На карте ${ready} из ${clubs.length}${failed?' · не найдено '+failed:''}`});
+  return `<div class="pspMapPanel">
+    <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span>Карта Москвы · точки клубов</span></div><button type="button" class="pspMapReset" data-map-reset>Москва</button></div>
+    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=8" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="pspMapNote">Карта: OpenStreetMap.</div>
+  </div>`;
 }
 
 function detail(id){
- const e=state.events.find(x=>x._id===id);if(!e)return;
- const rows=[
- ['Орг. взнос',fee(e)],
- ['Уровни',e.level_minutes!=null?e.level_minutes+' мин':'Не указано'],
- ['Стартовый стек',e.starting_stack!=null?Number(e.starting_stack).toLocaleString('ru-RU'):'Не указано'],
- ['Re-entry',e.reentry_limit!=null?`до ${e.reentry_limit}${e.reentry_cost_rub!=null?` × ${Number(e.reentry_cost_rub).toLocaleString('ru-RU')} ₽`:''}`:'Не указано'],
- ['Add-on',e.addon_allowed===true?'Есть':e.addon_allowed===false?'Нет':'Не указано'],
- ['Late reg',e.late_reg_minutes!=null?e.late_reg_minutes+' мин':'Не указано'],
- ['Длительность',e.duration_minutes!=null?`≈ ${Math.round(e.duration_minutes/60*10)/10} ч`:'Не указано'],
- ['Адрес',e.address||'Не указан']
- ];
- document.getElementById('pspDetailBody').innerHTML=`<h2>${esc(e._title)}</h2><div class="pspClub">${esc(e.club||'')} · ${esc(e.time||'')}</div>${rows.map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}`;
- document.getElementById('pspDetail').classList.add('on');
+  const e=state.events.find(x=>x._id===id);if(!e)return;
+  const late=lateRegInfo(e);
+  const rows=[
+    ['Орг. взнос',fee(e)],
+    ['Уровни',e.level_minutes!=null?e.level_minutes+' мин':'Не указано'],
+    ['Стартовый стек',e.starting_stack!=null?Number(e.starting_stack).toLocaleString('ru-RU'):'Не указано'],
+    ['Re-entry',e._reentryUnlimited?'Безлимит':Number.isFinite(e._reentryCount)?`${e._reentryCount}${e.reentry_cost_rub!=null?` × ${Number(e.reentry_cost_rub).toLocaleString('ru-RU')} ₽`:''}`:'Не указано'],
+    ['Add-on',e.addon_allowed===true?'Есть':e.addon_allowed===false?'Нет':'Не указано'],
+    ['Длительность',e.duration_minutes!=null?`≈ ${Math.round(e.duration_minutes/60*10)/10} ч`:'Не указано'],
+    ['Адрес',e.address||'Не указан']
+  ];
+  const lateRow=late
+    ?`<div class="pspDetailRow"><span>Late reg</span><b class="pspLateReg ${late.open?'open':'closed'}" data-late-event="${e._id}" data-late-open="${late.open?'1':'0'}">${esc(late.text)}</b></div>`
+    :`<div class="pspDetailRow"><span>Late reg</span><b>Late reg · уточняется</b></div>`;
+
+  const d=document.getElementById('pspDetailBody');
+  if(!d)return;
+  d.innerHTML=`<h2>${esc(e._title)}</h2><div class="pspClub">${isFavorite(e.club)?'★ ':''}${esc(e.club||'')} · ${esc(e.time||'')}</div>
+    ${rows.slice(0,5).map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}
+    ${lateRow}
+    ${rows.slice(5).map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}`;
+  openOverlay(document.getElementById('pspDetail'));
+  updateLateRegCountdowns();
 }
+
+function clearLateTimer(){
+  if(state.lateTimer){clearTimeout(state.lateTimer);state.lateTimer=null}
+}
+function scheduleLateTicker(minRemaining=Infinity){
+  clearLateTimer();
+  const nodes=document.querySelectorAll('#polyana [data-late-event]');
+  if(!nodes.length)return;
+  const delay=minRemaining<=10*60000?1000:30000;
+  state.lateTimer=setTimeout(updateLateRegCountdowns,delay);
+}
+function updateLateRegCountdowns(){
+  clearLateTimer();
+  const nodes=[...document.querySelectorAll('#polyana [data-late-event]')];
+  if(!nodes.length)return;
+
+  const now=Date.now();
+  let minRemaining=Infinity;
+  let expiredOpenFilter=false;
+
+  for(const node of nodes){
+    const id=Number(node.dataset.lateEvent);
+    const e=state.events.find(x=>x._id===id);
+    const info=e?lateRegInfo(e,now):null;
+    if(!info){node.textContent='';continue}
+
+    const wasOpen=node.dataset.lateOpen==='1';
+    node.dataset.lateOpen=info.open?'1':'0';
+    node.textContent=info.text;
+    node.classList.toggle('open',info.open);
+    node.classList.toggle('closed',!info.open);
+
+    if(info.open)minRemaining=Math.min(minRemaining,info.remainingMs);
+    if(wasOpen&&!info.open&&state.filters.late==='open')expiredOpenFilter=true;
+  }
+
+  if(expiredOpenFilter&&state.tab==='today'){renderBody();return}
+  scheduleLateTicker(minRemaining);
+}
+
 function renderBody(){
- const b=document.getElementById('pspBody');if(!b)return;
- if(state.tab!=='map')destroyMap();
- b.innerHTML=state.tab==='today'?today():state.tab==='clubs'?clubs():mapView();
- bindBody();
-
-}
-function bindBody(){
- document.querySelectorAll('#polyana [data-q]').forEach(b=>b.onclick=()=>{const q=b.dataset.q;state.quick.has(q)?state.quick.delete(q):state.quick.add(q);renderBody()});
- document.querySelectorAll('#polyana [data-event]').forEach(b=>b.onclick=()=>detail(+b.dataset.event));
- const s=document.getElementById('pspSearch');if(s)s.oninput=()=>{window.__pspClubQuery=s.value;renderBody();setTimeout(()=>document.getElementById('pspSearch')?.focus(),0)};
- document.querySelectorAll('#polyana [data-psp-filters]').forEach(b=>b.onclick=()=>document.getElementById('pspFilters')?.classList.add('on'));
- document.querySelector('#polyana [data-map-reset]')?.addEventListener('click',()=>{try{document.getElementById('pspMoscowMapFrame')?.contentWindow?.postMessage({type:'psp-map-reset'},location.origin)}catch(_){}});
+  const b=document.getElementById('pspBody');if(!b)return;
+  clearLateTimer();
+  b.innerHTML=state.tab==='today'?today():state.tab==='clubs'?clubsView():mapView();
+  updateLateRegCountdowns();
 }
 
-function bindShell(){
- document.querySelectorAll('#polyana [data-psp-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.pspTab;render()});
- document.querySelectorAll('#polyana [data-psp-filters]').forEach(b=>b.onclick=()=>document.getElementById('pspFilters')?.classList.add('on'));
- document.querySelectorAll('#polyana .pspChoice').forEach(b=>b.onclick=()=>{const k=b.dataset.key,v=b.dataset.value;state.filters[k]=state.filters[k]===v?'':v;document.querySelectorAll(`#polyana .pspChoice[data-key="${k}"]`).forEach(x=>x.classList.toggle('on',state.filters[k]===x.dataset.value));});
- document.querySelector('#polyana [data-psp-close]')?.addEventListener('click',()=>document.getElementById('pspFilters')?.classList.remove('on'));
- document.querySelector('#polyana [data-psp-apply]')?.addEventListener('click',()=>{document.getElementById('pspFilters')?.classList.remove('on');state.tab='today';render()});
- document.querySelector('#polyana [data-psp-detail-close]')?.addEventListener('click',()=>document.getElementById('pspDetail')?.classList.remove('on'));
- document.getElementById('pspFilters')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('on')});
- document.getElementById('pspDetail')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('on')});
- document.querySelector('#polyana [data-psp-search]')?.addEventListener('click',()=>{state.tab='clubs';render();setTimeout(()=>document.getElementById('pspSearch')?.focus(),0)});
+function openOverlay(el){
+  if(!el)return;
+  el.classList.add('on');
+  el.style.display='flex';
+  el.style.zIndex='2147483600';
+  el.setAttribute('aria-hidden','false');
+  document.body.classList.add('pspFilterLock');
+  setTimeout(()=>el.querySelector('.pspSheet')?.focus({preventScroll:true}),0);
 }
+function closeOverlay(el){
+  if(!el)return;
+  el.classList.remove('on');
+  el.style.display='none';
+  el.setAttribute('aria-hidden','true');
+  if(!document.querySelector('#polyana .pspFiltersOverlay.on'))document.body.classList.remove('pspFilterLock');
+}
+function openFilters(){
+  const f=document.getElementById('pspFilters');
+  if(!f)return;
+  const sheet=f.querySelector('.pspFilterSheet');
+  f.style.alignItems='flex-start';
+  f.style.justifyContent='center';
+  if(sheet){
+    sheet.scrollTop=0;
+    sheet.style.height='100dvh';
+    sheet.style.maxHeight='100dvh';
+    sheet.style.borderRadius='0';
+    sheet.style.margin='0';
+  }
+  openOverlay(f);
+  requestAnimationFrame(()=>{ if(sheet)sheet.scrollTop=0; });
+  updateApplyCount();
+}
+function resetFilters(){
+  state.filters.game='';
+  state.filters.freezeout='';
+  state.filters.bounty='';
+  state.filters.reentry='';
+  state.filters.addon='';
+  state.filters.late='';
+  state.filters.levels='';
+  state.filters.fee='';
+  state.filters.district='';
+  state.filters.favoriteOnly=false;
+  state.filters.clubs.clear();
+}
+function updateApplyCount(){
+  const btn=document.querySelector('#polyana [data-psp-apply]');
+  if(btn)btn.textContent=`ПОКАЗАТЬ ${state.events.filter(match).length} ТУРНИРОВ`;
+}
+function updateClubSearch(value){
+  const q=String(value||'').trim().toLowerCase();
+  document.querySelectorAll('#polyana [data-filter-club]').forEach(btn=>{
+    btn.hidden=q&&!String(btn.dataset.filterClub||'').toLowerCase().includes(q);
+  });
+}
+
+function handleRootClick(e){
+  const t=e.target;
+
+  const tab=t.closest?.('[data-psp-tab]');
+  if(tab){
+    state.tab=tab.dataset.pspTab;
+    render();
+    return;
+  }
+
+  if(t.closest?.('[data-psp-filters]')){
+    openFilters();
+    return;
+  }
+
+  if(t.closest?.('[data-psp-close]')){
+    closeOverlay(document.getElementById('pspFilters'));
+    return;
+  }
+
+  if(t.closest?.('[data-psp-detail-close]')){
+    closeOverlay(document.getElementById('pspDetail'));
+    return;
+  }
+
+  const choice=t.closest?.('.pspChoice');
+  if(choice){
+    const k=choice.dataset.key,v=choice.dataset.value;
+    state.filters[k]=state.filters[k]===v?'':v;
+    document.querySelectorAll('#polyana .pspChoice')
+      .forEach(x=>{if(x.dataset.key===k)x.classList.toggle('on',state.filters[k]===x.dataset.value)});
+    updateApplyCount();
+    return;
+  }
+
+  const clubChoice=t.closest?.('[data-filter-club]');
+  if(clubChoice){
+    const k=normName(clubChoice.dataset.filterClub);
+    state.filters.clubs.has(k)?state.filters.clubs.delete(k):state.filters.clubs.add(k);
+    clubChoice.classList.toggle('on',state.filters.clubs.has(k));
+    const mark=clubChoice.querySelector('i');if(mark)mark.textContent=state.filters.clubs.has(k)?'✓':'';
+    updateApplyCount();
+    return;
+  }
+
+  if(t.closest?.('[data-favorite-only]')){
+    state.filters.favoriteOnly=!state.filters.favoriteOnly;
+    t.closest('[data-favorite-only]').classList.toggle('on',state.filters.favoriteOnly);
+    updateApplyCount();
+    return;
+  }
+
+  if(t.closest?.('[data-filter-reset]')){
+    const reopen=document.getElementById('pspFilters')?.classList.contains('on');
+    resetFilters();
+    render();
+    if(reopen)openFilters();
+    return;
+  }
+
+  if(t.closest?.('[data-psp-apply]')){
+    closeOverlay(document.getElementById('pspFilters'));
+    state.tab='today';
+    render();
+    return;
+  }
+
+  const fav=t.closest?.('[data-fav-club]');
+  if(fav){
+    e.preventDefault();e.stopPropagation();
+    toggleFavorite(fav.dataset.favClub);
+    render();
+    return;
+  }
+
+  const event=t.closest?.('[data-event]');
+  if(event){
+    detail(Number(event.dataset.event));
+    return;
+  }
+
+  if(t.closest?.('[data-map-reset]')){
+    try{
+      document.getElementById('pspMoscowMapFrame')?.contentWindow?.postMessage({type:'psp-map-reset'},location.origin);
+    }catch(_){}
+    return;
+  }
+
+  const overlay=t.closest?.('.pspFiltersOverlay');
+  if(overlay&&t===overlay)closeOverlay(overlay);
+}
+function handleRootInput(e){
+  if(e.target?.id==='pspSearch'){
+    window.__pspClubQuery=e.target.value;
+    renderBody();
+    setTimeout(()=>{
+      const x=document.getElementById('pspSearch');
+      if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}
+    },0);
+    return;
+  }
+  if(e.target?.matches?.('[data-club-filter-search]')){
+    updateClubSearch(e.target.value);
+  }
+}
+
 function render(){
- const r=root();if(!r)return;
- r.innerHTML=shell();bindShell();renderBody();
+  const r=root();if(!r)return;
+  clearLateTimer();
+  r.innerHTML=shell();
+  r.onclick=handleRootClick;
+  r.oninput=handleRootInput;
+  renderBody();
 }
 async function load(){
- const [ed,cd]=await Promise.all([fetchFirst(DATA_URLS,'events'),fetchFirst(CLUB_URLS,'clubs')]);
- state.events=(ed.events||[]).map(normalize);
- state.clubs=(cd.clubs||[]);
- state.loaded=true;render();
+  const [ed,cd]=await Promise.all([fetchFirst(DATA_URLS,'events'),fetchFirst(CLUB_URLS,'clubs')]);
+  state.events=(ed.events||[]).map(normalize);
+  state.clubs=(cd.clubs||[]);
+  state.loaded=true;
+  render();
 }
-function openPolyana(){
- if(typeof window.show==='function')window.show('polyana');
- const nav=document.querySelector('.nav [data-nav="polyana"]');
- document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
- if(!state.loaded)load();else render();
+function warmMapCache(){
+  if(window.__pspMapWarmStarted)return;
+  window.__pspMapWarmStarted=true;
+  const f=document.createElement('iframe');
+  f.src='polyana/map.html?v=8&warm=1';
+  f.setAttribute('aria-hidden','true');
+  f.tabIndex=-1;
+  f.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10000px;top:-10000px;border:0';
+  document.body.appendChild(f);
 }
 
-/* Isolated navigation:
-   capture-phase interception means legacy listeners cannot hijack Polyana. */
+function openPolyana(){
+  if(typeof window.show==='function')window.show('polyana');
+  const nav=document.querySelector('.nav [data-nav="polyana"]');
+  document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
+  if(!state.loaded)load();else render();
+  warmMapCache();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  const detail=document.getElementById('pspDetail');
+  const filters=document.getElementById('pspFilters');
+  if(detail?.classList.contains('on'))closeOverlay(detail);
+  else if(filters?.classList.contains('on'))closeOverlay(filters);
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.loaded)updateLateRegCountdowns()});
+window.addEventListener('focus',()=>{if(state.loaded)updateLateRegCountdowns()});
+window.addEventListener('message',e=>{
+  if(e.origin!==location.origin||!e.data)return;
+  const d=e.data;
+  if(d.type==='psp-map-open-club'&&d.club){
+    const k=normName(d.club);
+    if(k){
+      state.filters.clubs=new Set([k]);
+      state.filters.game='';state.filters.freezeout='';state.filters.bounty='';state.filters.reentry='';
+      state.filters.addon='';state.filters.late='';state.filters.levels='';state.filters.fee='';
+      state.filters.district='';state.filters.favoriteOnly=false;
+      state.tab='today';
+      render();
+    }
+  }else if(d.type==='psp-map-favorites-changed'){
+    state.favorites=loadFavorites();
+  }
+});
+
+/* Isolated navigation: legacy listeners cannot hijack Polyana. */
 document.addEventListener('click',e=>{
- const b=e.target.closest?.('.nav [data-nav="polyana"]');
- if(!b)return;
- e.preventDefault();e.stopImmediatePropagation();
- openPolyana();
+  const b=e.target.closest?.('.nav [data-nav="polyana"]');
+  if(!b)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  openPolyana();
 },true);
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{const b=document.querySelector('.nav [data-nav="polyana"]');if(b)b.innerHTML='<i class="tourNav23">♛</i>ПОЛЯНА';});
-else {const b=document.querySelector('.nav [data-nav="polyana"]');if(b)b.innerHTML='<i class="tourNav23">♛</i>ПОЛЯНА';}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>{
+    const b=document.querySelector('.nav [data-nav="polyana"]');
+    if(b)b.innerHTML='<i class="tourNav23">♛</i>ПОЛЯНА';
+  });
+}else{
+  const b=document.querySelector('.nav [data-nav="polyana"]');
+  if(b)b.innerHTML='<i class="tourNav23">♛</i>ПОЛЯНА';
+}
+
+
+/* Start resolving map coordinates as soon as PokerSwipe loads.
+   The hidden same-origin map shares its cache with the visible map. */
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(warmMapCache,250),{once:true});
+}else{
+  setTimeout(warmMapCache,250);
+}
 
 window.openPokerSwipePolyana=openPolyana;
 })();

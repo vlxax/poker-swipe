@@ -1,6 +1,11 @@
 (() => {
 'use strict';
 
+/* Deactivated when the canonical Polyana build owns filtering (it sets
+   window.__PSP_NATIVE_POLYANA). Avoids duplicate filter UI, click
+   interception and a second document-wide MutationObserver. */
+if(window.__PSP_NATIVE_POLYANA){window.PokerSwipePolyanaFiltersV3={build:'polyana-filters-v3-20260818',open(){},refresh(){},reset(){}};return}
+
 const BUILD='polyana-filters-v3-20260818';
 const STORE='pokerswipe.polyana.filters.v3';
 const OLD_STORE='pokerswipe.polyana.filters.v2';

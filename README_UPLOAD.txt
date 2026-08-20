@@ -1,16 +1,16 @@
-PokerSwipe V67 CLEAN
+POKER SWIPE — POLYANA MAP V8
 
-Upload the CONTENTS of this folder into the repository root.
-Production entry files:
-- index.html
-- style.css
-- app.js
-- app.webmanifest
-- .nojekyll
-- assets/
-- data/
+Что исправлено:
+- Используются реальные подключаемые пути polyana/*.
+- 5 уже подтверждённых координат рисуются сразу.
+- Остальные адреса начинают определяться автоматически ещё при загрузке PokerSwipe,
+  до открытия вкладки «КАРТА».
+- Координаты сохраняются в localStorage и повторно не вычисляются.
+- Скрытая и видимая карты синхронизируются через BroadcastChannel/storage:
+  точки появляются по мере готовности без перезагрузки.
+- После первого полного прохода на этом устройстве все найденные точки открываются сразу.
+- GitHub Action по-прежнему собирает статический club_coords.json для всех пользователей.
+- UI не показывает название дополнительного источника.
 
-V67 intentionally does NOT include legacy index copies, home.jpg, home.png, match.png,
-or poker_swipe_v32-v40 production JS/CSS.
-
-Important: solver files/branches are not included and are not touched by this ZIP.
+Загрузка:
+распаковать в корень репозитория с заменой файлов.

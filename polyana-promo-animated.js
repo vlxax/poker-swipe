@@ -127,7 +127,8 @@ const observer=new MutationObserver(schedule);
 
 function start(){
   decorate();
-  observer.observe(document.documentElement,{subtree:true,childList:true});
+  const host=document.querySelector('#polyana')||document.body;
+  observer.observe(host,{subtree:true,childList:true});
   window.addEventListener('pageshow',schedule);
   document.addEventListener('click',e=>{
     if(e.target.closest?.('[data-nav],[data-psp-tab],[data-psp-filters]')) setTimeout(schedule,0);
@@ -150,6 +151,11 @@ window.PokerSwipePolyanaPromo={refresh:decorate,build:BUILD};
    ============================================================ */
 (() => {
 'use strict';
+
+/* Deactivated when the canonical Polyana build owns filtering (it sets
+   window.__PSP_NATIVE_POLYANA). The promo decor above still runs; only this
+   duplicate filter sheet is disabled. */
+if(window.__PSP_NATIVE_POLYANA){window.PokerSwipePolyanaFiltersV2={build:'polyana-filters-v2',refresh(){},reset(){}};return}
 
 const BUILD='polyana-filters-v2';
 const STORE='pokerswipe.polyana.filters.v2';
