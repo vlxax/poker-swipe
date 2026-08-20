@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-20T20:51:32+03:00",
+  "retrieved_at": "2026-08-20T22:46:01+03:00",
   "city": "Москва",
   "count": 57,
   "clubs": [
@@ -512,7 +512,7 @@
     },
     {
       "name": "Joker Poker Club Moscow",
-      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
+      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
       "contacts": {},
       "schedule": [
         {
@@ -523,13 +523,13 @@
           "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10681",
-          "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-          "late_reg_until": "21:38",
-          "late_reg_minutes": 158,
+          "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
+          "late_reg_until": "21:40",
+          "late_reg_minutes": 160,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:38 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
+          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:40 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт."
         }
       ],
       "upcoming": 1
@@ -1022,7 +1022,7 @@
           "club": "Raise Club",
           "tournament": "Progressive Bounty",
           "fee_rub": 0,
-          "type": "PKO",
+          "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/10804",
           "address": "ул. Азовская 18 (4 этаж)",
           "late_reg_until": null,
@@ -1030,7 +1030,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "PKO Progressive Bounty 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
+          "source_card_text": "Баунти / Нокаут Progressive Bounty 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
         }
       ]
     },
@@ -1212,7 +1212,7 @@
       "schedule": [
         {
           "date": "2026-08-20",
-          "time": "18:00",
+          "time": "19:00",
           "club": "БЛЕФ?",
           "tournament": "FREEROLL TOURNAMENT",
           "fee_rub": 0,
@@ -1224,7 +1224,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Фрирол FREEROLL TOURNAMENT 18:00 Бесплатно БЛЕФ? Проспект Мира, 102с12, подъезд 6"
+          "source_card_text": "Фрирол FREEROLL TOURNAMENT 19:00 Бесплатно БЛЕФ? Проспект Мира, 102с12, подъезд 6"
         }
       ],
       "upcoming": 1
@@ -1587,8 +1587,25 @@
       "name": "ХРОНИКИ",
       "address": "Садовая-Кудринская улица, 3А, Москва",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "ХРОНИКИ",
+          "tournament": "СУПЕР НОКАУТ ХРОНИКИ",
+          "fee_rub": 1200,
+          "type": "Баунти / Нокаут",
+          "source_url": "https://pokernomoney.ru/tournaments/11232",
+          "address": "Садовая-Кудринская улица, 3А, Москва",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Баунти / Нокаут СУПЕР НОКАУТ ХРОНИКИ 19:00 1 200 ₽ ХРОНИКИ Садовая-Кудринская улица, 3А, Москва"
+        }
+      ],
+      "upcoming": 1
     }
   ]
 }
