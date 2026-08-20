@@ -27,7 +27,7 @@ export class RangeController {
   }
 
   _syncSelection() {
-    this.selection = sanitizeSelection(this.selection, this._catalog());
+    this.selection = sanitizeSelection(this.selection, this._catalog(), this.pack);
   }
 
   viewModel() {

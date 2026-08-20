@@ -2,7 +2,9 @@
 
 import { matrixClasses } from './matrix.js';
 
-const ATLAS_STACKS = [20, 25, 30, 40, 50];
+const ATLAS_BUCKETS = [20, 25, 30, 40, 50];
+const UI_STACKS = [10, 15, 20, 25, 30, 40, 60, 100];
+
 const ACTION_RU = {
   FOLD: 'Фолд',
   CALL: 'Колл',
@@ -11,7 +13,13 @@ const ACTION_RU = {
   MIX: 'Микс'
 };
 
-export function nearestStack(bb, buckets = ATLAS_STACKS) {
+const NINE_MAX_REMAP = {
+  'UTG+1': 'UTG',
+  MP: 'HJ',
+  LJ: 'HJ'
+};
+
+export function nearestStack(bb, buckets = ATLAS_BUCKETS) {
   const n = Number(bb);
   if (!Number.isFinite(n)) return buckets[2];
   let best = buckets[0];
@@ -27,7 +35,10 @@ function primaryAction(policy = {}, situation) {
   const fold = policy.FOLD || 0;
   const call = policy.CALL || 0;
   const raise = policy.RAISE || 0;
-  if (situation === 'rfi' || situation === 'vs_3bet') {
+  if (situation === 'rfi') {
+    return { action: 'RAISE', freq: raise, play: raise, label: 'Открываем' };
+  }
+  if (situation === 'vs_3bet') {
     return { action: 'RAISE', freq: raise, play: raise, label: 'Открываем' };
   }
   if (situation === 'bb_defend') {
@@ -54,43 +65,32 @@ export function playBucket(play) {
   return { key: 'never', label: 'Не играем' };
 }
 
-function atlasPositionForLookup(sel) {
+export function atlasPositionForLookup(sel) {
   const pos = String(sel.position || '').toUpperCase();
   if (sel.format !== '9max') return pos;
-  const map = {
-    'UTG+1': 'UTG',
-    MP: 'HJ',
-    LJ: 'HJ'
-  };
-  return map[pos] || pos;
+  return NINE_MAX_REMAP[pos] || pos;
+}
+
+export function atlasOpenerForLookup(sel) {
+  const opener = String(sel.opener || '').toUpperCase();
+  if (sel.format !== '9max') return opener;
+  return NINE_MAX_REMAP[opener] || opener;
 }
 
 function atlasKey({ situation, position, opener, stack, hand, format }) {
   const pos = atlasPositionForLookup({ position, format });
+  const op = atlasOpenerForLookup({ opener, format });
   const st = nearestStack(stack);
   const h = String(hand || '').trim();
   if (situation === 'rfi') return `RFI|${pos}|${st}|${h}`;
-  if (situation === 'bb_defend') return `BB_DEFEND|${opener}|${st}|${h}`;
+  if (situation === 'bb_defend') return `BB_DEFEND|${op}|${st}|${h}`;
   if (situation === 'vs_3bet') return `VS_3BET|${pos}|${st}|${h}`;
-  if (situation === 'vs_open') return `VS_OPEN|${pos}|${opener}|${st}|${h}`;
+  if (situation === 'vs_open') return `VS_OPEN|${pos}|${op}|${st}|${h}`;
   return null;
 }
 
 export function lookupPolicy(pack, sel, hand) {
   if (!pack || !pack.preflop) return null;
-  if (sel.format === '9max') {
-    const pos = String(sel.position || '').toUpperCase();
-    const atlasOnly = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
-    if (!atlasOnly.includes(pos) && pos !== 'BB') return null;
-    if (sel.situation === 'vs_open' && sel.opener) {
-      const opener = String(sel.opener).toUpperCase();
-      if (!atlasOnly.includes(opener)) return null;
-    }
-    if (sel.situation === 'bb_defend' && sel.opener) {
-      const opener = String(sel.opener).toUpperCase();
-      if (!atlasOnly.includes(opener)) return null;
-    }
-  }
   const key = atlasKey({ ...sel, hand });
   if (!key) return null;
   return pack.preflop[key] || null;
@@ -142,43 +142,164 @@ export function handDetailFromAtlas(pack, sel, hand) {
   };
 }
 
+function probeAtlas(pack, sel) {
+  return buildAtlasMatrix(pack, sel).supported;
+}
+
+function sortByOrder(items, order) {
+  const idx = new Map(order.map((v, i) => [v, i]));
+  return [...items].sort((a, b) => (idx.get(a) ?? 99) - (idx.get(b) ?? 99));
+}
+
 export function inventoryAtlas(pack, format = '6max') {
-  const pre = (pack && pack.preflop) || {};
-  const vsOpen = {};
-  for (const k of Object.keys(pre)) {
-    if (!k.startsWith('VS_OPEN|')) continue;
-    const [, hero, opener] = k.split('|');
-    if (!vsOpen[hero]) vsOpen[hero] = new Set();
-    vsOpen[hero].add(opener);
+  const allPositions = format === '9max'
+    ? ['UTG', 'UTG+1', 'MP', 'HJ', 'CO', 'BTN', 'SB', 'BB']
+    : ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+  const probeStack = 20;
+
+  const rfiPositions = [];
+  const vs3betPositions = [];
+  const vsOpenPairs = {};
+  const bbDefendOpeners = [];
+
+  for (const pos of allPositions) {
+    if (pos !== 'BB' && probeAtlas(pack, { format, situation: 'rfi', position: pos, stack: probeStack })) {
+      rfiPositions.push(pos);
+    }
+    if (pos !== 'BB' && probeAtlas(pack, { format, situation: 'vs_3bet', position: pos, stack: probeStack })) {
+      vs3betPositions.push(pos);
+    }
+
+    const atlasHero = atlasPositionForLookup({ position: pos, format });
+    if (['HJ', 'CO', 'BTN'].includes(atlasHero)) {
+      const openers = [];
+      for (const opener of allPositions) {
+        if (opener === pos || opener === 'BB') continue;
+        if (probeAtlas(pack, {
+          format, situation: 'vs_open', position: pos, opener, stack: probeStack
+        })) {
+          openers.push(opener);
+        }
+      }
+      if (openers.length) vsOpenPairs[pos] = sortByOrder(openers, allPositions);
+    }
   }
-  const atlasOnlyPositions = ['UTG', 'HJ', 'CO', 'BTN', 'SB'];
-  const rfiPositions = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const vs3betPositions = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const bbDefendOpeners = format === '9max'
-    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
-    : atlasOnlyPositions;
-  const vsOpenPairs = format === '9max'
-    ? Object.fromEntries(
-      ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB'].map((h) => [
-        h,
-        vsOpen[h] ? [...vsOpen[h]].sort() : (vsOpen.UTG ? [...vsOpen.UTG].sort() : [])
-      ])
-    )
-    : Object.fromEntries(
-      Object.entries(vsOpen).map(([h, set]) => [h, [...set].sort()])
-    );
+
+  for (const opener of allPositions) {
+    if (opener === 'BB') continue;
+    if (probeAtlas(pack, { format, situation: 'bb_defend', position: 'BB', opener, stack: probeStack })) {
+      bbDefendOpeners.push(opener);
+    }
+  }
+
+  const availablePositions = sortByOrder(
+    [...new Set([
+      ...rfiPositions,
+      ...vs3betPositions,
+      ...Object.keys(vsOpenPairs),
+      ...(bbDefendOpeners.length ? ['BB'] : []),
+      ...allPositions
+    ])],
+    allPositions
+  );
+
   return {
-    stacks: ATLAS_STACKS,
-    rfiPositions,
-    vs3betPositions,
-    bbDefendOpeners,
+    stacks: UI_STACKS,
+    atlasBuckets: ATLAS_BUCKETS,
+    rfiPositions: sortByOrder(rfiPositions, allPositions),
+    vs3betPositions: sortByOrder(vs3betPositions, allPositions),
+    bbDefendOpeners: sortByOrder(bbDefendOpeners, allPositions),
     vsOpenPairs,
-    atlasOnlyPositions
+    pushFoldPositions: [...allPositions],
+    availablePositions,
+    format
   };
 }
 
-export { ATLAS_STACKS, ACTION_RU };
+export function atlasStacksForSelection(pack, sel) {
+  if (!sel.situation || sel.situation === 'push_fold') return [];
+  const stacks = [];
+  for (const stack of UI_STACKS) {
+    const probe = { ...sel, stack };
+    if (sel.situation === 'bb_defend') {
+      if (!sel.opener) continue;
+      probe.position = 'BB';
+    }
+    if (sel.situation === 'vs_open' && !sel.opener) continue;
+    if (probeAtlas(pack, probe)) stacks.push(stack);
+  }
+  return stacks;
+}
+
+export function coverageAudit(pack, format = '6max') {
+  const inv = inventoryAtlas(pack, format);
+  const allPositions = inv.availablePositions;
+  const situations = ['rfi', 'vs_open', 'vs_3bet', 'bb_defend', 'push_fold'];
+  const rows = [];
+
+  for (const position of allPositions) {
+    for (const situation of situations) {
+      if (situation === 'rfi' && !inv.rfiPositions.includes(position)) {
+        rows.push({ format, position, situation, stack: null, opener: null, status: 'INVALID' });
+        continue;
+      }
+      if (situation === 'vs_3bet' && !inv.vs3betPositions.includes(position)) {
+        rows.push({ format, position, situation, stack: null, opener: null, status: 'INVALID' });
+        continue;
+      }
+      if (situation === 'vs_open' && !inv.vsOpenPairs[position]) {
+        rows.push({ format, position, situation, stack: null, opener: null, status: 'INVALID' });
+        continue;
+      }
+      if (situation === 'bb_defend' && position !== 'BB') {
+        rows.push({ format, position, situation, stack: null, opener: null, status: 'INVALID' });
+        continue;
+      }
+      if (situation === 'push_fold') {
+        for (const stack of [10, 15, 20, 25, 30]) {
+          rows.push({
+            format, position, situation, stack, opener: null, status: 'SUPPORTED'
+          });
+        }
+        continue;
+      }
+
+      const openers = situation === 'bb_defend'
+        ? inv.bbDefendOpeners
+        : situation === 'vs_open'
+          ? (inv.vsOpenPairs[position] || [])
+          : [null];
+
+      for (const opener of openers) {
+        for (const stack of UI_STACKS) {
+          const sel = {
+            format,
+            situation,
+            position: situation === 'bb_defend' ? 'BB' : position,
+            opener,
+            stack
+          };
+          const supported = probeAtlas(pack, sel);
+          rows.push({
+            format,
+            position: sel.position,
+            situation,
+            stack,
+            opener,
+            status: supported ? 'SUPPORTED' : 'MISSING'
+          });
+        }
+      }
+    }
+  }
+
+  const summary = {
+    supported: rows.filter((r) => r.status === 'SUPPORTED').length,
+    missing: rows.filter((r) => r.status === 'MISSING').length,
+    invalid: rows.filter((r) => r.status === 'INVALID').length,
+    partial: rows.filter((r) => r.status === 'PARTIAL').length
+  };
+  return { rows, summary };
+}
+
+export { ATLAS_BUCKETS as ATLAS_STACKS, UI_STACKS, ACTION_RU };

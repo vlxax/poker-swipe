@@ -9,6 +9,7 @@ import { isSelectionComplete, getCatalog, nextCtaLabel } from '../../ranges-ui/c
 import { buildAtlasMatrix } from '../../ranges-ui/preflopAtlas.js';
 import { buildPushFoldMatrix } from '../../ranges-ui/pushFold.js';
 import { loadOnboarding, completeOnboarding, saveOnboarding, HINTS } from '../../ranges-ui/storage.js';
+import { resultViewModel } from '../../ranges-ui/viewModel.js';
 import * as Renderer from '../../ranges-ui/renderer.js';
 
 function loadPack() {
@@ -138,16 +139,17 @@ test('valid selection renders a range matrix', () => {
 
 test('unsupported selection shows explicit fallback', () => {
   const emptyPack = { preflop: {} };
-  const ctl = new RangeController({ pack: emptyPack, storage: memStorage() });
-  selectComplete(ctl);
-  ctl.showRange();
-  const vm = ctl.viewModel();
+  const vm = resultViewModel({
+    pack: emptyPack,
+    selection: { format: '6max', situation: 'rfi', position: 'BTN', stack: 20 },
+    onboarding: { completed: true, hintsSeen: [] }
+  });
   assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /нет готового ренджа/i);
+  assert.match(vm.unsupportedMessage, /не удалось загрузить/i);
 
   const root = setupDom();
   Renderer.renderResult(root, vm, {});
-  assert.ok(root.innerHTML.includes('нет готового ренджа') || root.innerHTML.includes('НЕТ'));
+  assert.ok(root.innerHTML.includes('НЕТ') || root.innerHTML.includes('ДАННЫХ'));
 });
 
 test('tapping a hand shows action detail', () => {
@@ -239,10 +241,12 @@ test('mobile matrix uses full-width grid with expanded touch targets', () => {
   assert.ok(root.clientWidth <= 390 || root.clientWidth === 0);
 });
 
-test('9-max format exposes MP/LJ positions and honest unsupported for missing atlas', () => {
+test('9-max format exposes UTG+1/MP with working atlas via position remap', () => {
   const catalog = getCatalog(pack, '9max');
   assert.ok(catalog.positions.includes('MP'));
-  assert.ok(catalog.positions.includes('LJ'));
+  assert.ok(catalog.positions.includes('UTG+1'));
+  assert.ok(catalog.rfiPositions.includes('MP'));
+  assert.ok(catalog.rfiPositions.includes('UTG+1'));
   const ctl = new RangeController({ pack, storage: memStorage() });
   ctl.setField('format', '9max');
   ctl.setField('position', 'MP');
@@ -250,8 +254,8 @@ test('9-max format exposes MP/LJ positions and honest unsupported for missing at
   ctl.setField('stack', 20);
   ctl.showRange();
   const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /пока нет/i);
+  assert.equal(vm.phase, 'result');
+  assert.ok(vm.cells.AA);
 });
 
 test('mobile 390x844 has no horizontal overflow on selector and result', () => {
