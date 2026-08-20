@@ -9,10 +9,11 @@ import assert from 'node:assert/strict';
 
 import {
   normalizeCandidate, recordCandidate, createTrainingStore, gradeAnswer,
-  generateDrill, leakLabelRu
+  generateDrill, leakLabelRu, skillLabelRu
 } from '../../solver/src/index.js';
-import { homeViewModel, drillViewModel, confidenceModel, feedbackViewModel, summaryViewModel, gradeClass } from '../../training-ui/viewModel.js';
+import { homeViewModel, drillViewModel, confidenceModel, feedbackViewModel, summaryViewModel, gradeClass, assessmentViewModel, assessmentSummaryViewModel } from '../../training-ui/viewModel.js';
 import { SessionController } from '../../training-ui/sessionController.js';
+import { AssessmentController } from '../../training-ui/assessmentController.js';
 
 function reviewModelFixture() {
   return {
@@ -343,4 +344,78 @@ test('summary after a session reports real results and trend', async () => {
   assert.equal(vm.solved, 1);
   assert.ok(vm.avgLossBb != null);
   assert.equal(vm.primaryConcept, 'turn_barrel_sizing');
+});
+
+// ---- Primary assessment (P0) -------------------------------------------------
+
+test('assessmentViewModel maps a question with plain-string choices', () => {
+  const vm = assessmentViewModel({ item: { id: 'A', q: 'BTN · A8s', street: 'ПРЕФЛОП', skillTag: 'preflop', choices: ['ФОЛД', 'РЕЙЗ'] }, index: 2, total: 12 });
+  assert.equal(vm.q, 'BTN · A8s');
+  assert.equal(vm.progress.index, 2);
+  assert.equal(vm.progress.total, 12);
+  assert.deepEqual(vm.choices.map((c) => c.id), ['ФОЛД', 'РЕЙЗ']);
+  assert.equal(vm.choices[0].labelRu, 'ФОЛД');
+});
+
+test('assessmentSummaryViewModel reports level, correct and weakest/strongest', () => {
+  const vm = assessmentSummaryViewModel({
+    result: {
+      answered: 12, total: 12, overall: 60, overallLabel: 'КЛУБНЫЙ РЕГ',
+      weakestSkill: 'icm', strongestSkill: 'preflop',
+      skillProfile: {},
+      results: [{ correct: true }, { correct: false }, { correct: true }, { nearOptimal: true }]
+    }
+  });
+  assert.equal(vm.overall, 60);
+  assert.equal(vm.correct, 2);
+  assert.equal(vm.nearOptimal, 1);
+  assert.equal(vm.weakest, 'ICM / баббл');
+  assert.equal(vm.hasResult, true);
+});
+
+test('homeViewModel returns the personal training CTA when a skill profile exists', () => {
+  const vm = homeViewModel({
+    leaks: [],
+    plan: { total: 7, estimatedDifficulty: 3 },
+    skillProfile: { overall: 61, overallLabel: 'КЛУБНЫЙ РЕГ', weakest: { skill: 'icm', labelRu: 'ICM / баббл' }, skills: { icm: {}, preflop: {} } }
+  });
+  assert.equal(vm.type, 'training');
+  assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
+  assert.ok(vm.cta.length > 0);
+});
+
+test('AssessmentController runs the diagnostic and persists a profile', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  const begin = ctl.begin();
+  assert.equal(begin.started, true);
+  assert.ok(begin.total >= 1);
+  assert.equal(ctl.state, 'answering');
+
+  // Answer every question with the correct choice.
+  let guard = 0;
+  while (ctl.state === 'answering' && guard < 30) {
+    const item = ctl.current();
+    assert.ok(item && item.choices.length >= 2);
+    ctl.answer(item.correct);
+    guard++;
+  }
+  assert.equal(ctl.state, 'done');
+  assert.equal(ctl.hasResult(), true);
+
+  // Persisted skill profile + assessment + analytics event.
+  assert.ok(store.loadSkillProfile());
+  assert.ok(store.loadAssessment());
+  assert.ok(store.loadAnalyticsEvents().some((e) => e.name === 'assessment_completed'));
+
+  const vm = ctl.viewModel();
+  assert.equal(vm.phase, 'summary');
+  assert.equal(vm.hasResult, true);
+});
+
+test('AssessmentController answer on an empty run is a no-op', () => {
+  const ctl = new AssessmentController({ now: () => 0, rng: () => 0.5 });
+  ctl.begin();
+  while (ctl.state === 'answering') ctl.answer(ctl.current().correct);
+  assert.equal(ctl.answer('ФОЛД'), null);
 });

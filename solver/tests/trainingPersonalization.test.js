@@ -14,7 +14,7 @@ import {
 import { gradeForLoss, gradeAnswer, feedbackForGrade } from '../src/training/answerEvaluator.js';
 import { createConceptProgress, recordAttempt, buildProgress } from '../src/training/progress.js';
 import { buildTrainingSession, recentDrilledKeys } from '../src/training/sessionBuilder.js';
-import { createTrainingStore } from '../src/training/trainingStore.js';
+import { createTrainingStore, STORE_VERSION } from '../src/training/trainingStore.js';
 import {
   getTopLeaks, recordCandidate, recordTrainingResult, buildPersonalizedSessionAsync
 } from '../src/training/personalizedTraining.js';
@@ -439,7 +439,7 @@ test('training store survives corrupt JSON (graceful reset)', () => {
   };
   storage.setItem('pokerSwipe_train_meta', '{corrupt!!!');
   const store = createTrainingStore({ storage });
-  assert.equal(store.version, 1);
+  assert.equal(store.version, STORE_VERSION);
   // A corrupted key returns fallback and does not crash.
   assert.equal(store.loadProfile('bluff'), null);
 });

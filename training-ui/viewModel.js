@@ -2,9 +2,10 @@
 // no solver work — these only turn training-layer data into the render models
 // the renderer consumes. Everything here is deterministic and unit-testable.
 
-import { leakLabelRu, actionLabelRu } from '../solver/src/index.js';
+import { leakLabelRu, actionLabelRu, skillLabelRu } from '../solver/src/index.js';
 
 export const STREET_RU = { preflop: 'ПРЕФЛОП', flop: 'ФЛОП', turn: 'ТЁРН', river: 'РИВЕР' };
+export const ASSESSMENT_STREET_RU = { 'ПРЕФЛОП': 'ПРЕФЛОП', 'ФЛОП': 'ФЛОП', 'ТЁРН': 'ТЁРН', 'РИВЕР': 'РИВЕР' };
 
 // Grade → visual class used across the daily visual system (g/y/r).
 export function gradeClass(grade) {
@@ -17,10 +18,31 @@ export function gradeClass(grade) {
 
 // The training home is either a personalised block (leak profile available) or
 // a general-daily fallback. Never shows fake personalised content.
-export function homeViewModel({ leaks = [], plan = null } = {}) {
+export function homeViewModel({ leaks = [], plan = null, skillProfile = null } = {}) {
   const total = plan && plan.total ? plan.total : 7;
   const difficulty = plan && plan.estimatedDifficulty != null ? plan.estimatedDifficulty : null;
   const leaksList = leaks || [];
+
+  // P0 personal CTA driven by the primary-assessment skill profile. Present once
+  // a profile exists (overall != null) — before that we fall through to leak- or
+  // general-daily. Never shows fake personalisation.
+  if (skillProfile && skillProfile.overall != null) {
+    const weakest = skillProfile.weakest;
+    return {
+      type: 'training',
+      title: 'ТВОЯ ТРЕНИРОВКА',
+      label: skillProfile.overallLabel || 'ПЕРСОНАЛЬНАЯ',
+      definition: weakest
+        ? `Слабый навык: ${weakest.labelRu || weakest.skill}. Начинаем с него.`
+        : 'Персональные споты под твой уровень.',
+      evidence: `Уровень ${skillProfile.overall} · навыков: ${Object.keys(skillProfile.skills || {}).length}`,
+      spots: Object.keys(skillProfile.skills || {}).length,
+      total,
+      difficulty,
+      why: 'Почему сейчас',
+      cta: 'НАЧАТЬ'
+    };
+  }
 
   if (!leaksList.length) {
     return {
@@ -159,5 +181,43 @@ export function summaryViewModel({ session = null, results = [], baselineLosses 
     primaryConcept: primary,
     primaryLabel: primary ? leakLabelRu(primary) : null,
     trend
+  };
+}
+
+// ---- Primary assessment (P0) --------------------------------------------------
+
+// A single question from the 12-item primary diagnostic. Choices are plain
+// strings (e.g. 'ФОЛД'/'РЕЙЗ'), exposed as { id, labelRu } pairs for the renderer.
+export function assessmentViewModel({ item = null, index = 1, total = 1 } = {}) {
+  if (!item) return { q: null, choices: [], progress: { index: 0, total: 0 } };
+  return {
+    id: item.id,
+    q: item.q,
+    street: item.street,
+    streetRu: ASSESSMENT_STREET_RU[item.street] || String(item.street || '').toUpperCase(),
+    skillTag: item.skillTag,
+    concept: item.concept,
+    progress: { index, total },
+    choices: (item.choices || []).map((c) => ({ id: c, labelRu: c }))
+  };
+}
+
+// The result screen of the diagnostic: overall level + weakest/strongest skills.
+export function assessmentSummaryViewModel({ result = null } = {}) {
+  const results = (result && result.results) || [];
+  const correct = results.filter((r) => r.correct).length;
+  const nearOptimal = results.filter((r) => r.nearOptimal).length;
+  const weakest = result && result.weakestSkill ? skillLabelRu(result.weakestSkill) : null;
+  const strongest = result && result.strongestSkill ? skillLabelRu(result.strongestSkill) : null;
+  return {
+    answered: result && result.answered != null ? result.answered : 0,
+    total: result && result.total != null ? result.total : 0,
+    overall: result && result.overall != null ? result.overall : null,
+    overallLabel: result && result.overallLabel ? result.overallLabel : null,
+    correct,
+    nearOptimal,
+    weakest,
+    strongest,
+    hasResult: !!(result && result.skillProfile)
   };
 }

@@ -5,7 +5,24 @@
 
 import { candidateIdentity } from './candidateNormalizer.js';
 
-const STORE_VERSION = 1;
+const STORE_VERSION = 2;
+
+// Migration from version 1 → 2: the old store already tolerated missing keys,
+// so no destructive rewrite is needed. We simply record that we're on v2. If a
+// future migration needs reshaping, branch here. Returns the effective version
+// so callers can reflect it in their in-memory state immediately.
+function migrateMeta(st, key) {
+  const raw = st.getItem(key);
+  let meta = null;
+  try { meta = raw ? JSON.parse(raw) : null; } catch (_) { meta = null; }
+  const version = meta && typeof meta.version === 'number' ? meta.version : 1;
+  if (version < 2) {
+    const next = { version: 2, migratedFrom: version, migratedAt: Date.now() };
+    try { st.setItem(key, JSON.stringify(next)); } catch (_) { /* ignore */ }
+    return next.version;
+  }
+  return version;
+}
 
 function memoryStorage() {
   const map = new Map();
@@ -49,8 +66,7 @@ export function createTrainingStore({
   }
 
   // ---- version / migration ---------------------------------------------------
-  const meta = loadJSON('meta', { version });
-  const currentVersion = meta && typeof meta.version === 'number' ? meta.version : version;
+  const currentVersion = migrateMeta(st, metaKey);
 
   // ---- candidates (dedup by identity) ---------------------------------------
   function saveCandidate(candidate) {
@@ -133,6 +149,32 @@ export function createTrainingStore({
     for (const k of toRemove) { try { st.removeItem(k); } catch (_) { /* ignore */ } }
   }
 
+  // ---- skill profile / assessment ------------------------------------------
+  function saveSkillProfile(profile) {
+    if (!profile) return;
+    saveJSON('skillProfile', profile);
+  }
+  function loadSkillProfile() {
+    return loadJSON('skillProfile', null);
+  }
+  function saveAssessment(result) {
+    if (!result) return;
+    saveJSON('assessment', { ...result, savedAt: now() });
+  }
+  function loadAssessment() {
+    return loadJSON('assessment', null);
+  }
+
+  // ---- analytics events (append-only, capped) ------------------------------
+  function addAnalyticsEvent(event) {
+    const events = loadJSON('analytics', []);
+    events.push({ ...event, at: event.at != null ? event.at : now() });
+    saveJSON('analytics', events.slice(-500));
+  }
+  function loadAnalyticsEvents() {
+    return loadJSON('analytics', []);
+  }
+
   return {
     version: currentVersion,
     key,
@@ -149,6 +191,12 @@ export function createTrainingStore({
     loadHistory,
     addHistoryEntry,
     saveHistory,
+    saveSkillProfile,
+    loadSkillProfile,
+    saveAssessment,
+    loadAssessment,
+    addAnalyticsEvent,
+    loadAnalyticsEvents,
     reset
   };
 }

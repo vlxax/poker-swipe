@@ -21,7 +21,7 @@ function streetDots(street) {
 export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
-  if (vm.type === 'personalized') {
+  if (vm.type === 'personalized' || vm.type === 'training') {
     root.innerHTML = `<div class="panel dailyStage">
       <span class="ey">ТРЕНИРОВКА · ПЕРСОНАЛЬНАЯ</span>
       <h1 class="impact">${esc(vm.title)}<br><span class="pink">${esc(vm.label)}</span></h1>
@@ -156,4 +156,57 @@ export const renderCancelled = (root, vm = {}) => {
   </div>`;
   const b = root.querySelector('#trBack');
   if (b && typeof vm.back === 'function') b.onclick = () => vm.back();
+};
+
+// ---- Primary assessment (P0) -------------------------------------------------
+
+export const renderAssessment = (root, vm = {}, handlers = {}) => {
+  if (!root || !vm || !vm.q) return;
+  const p = vm.progress || {};
+  root.innerHTML = `<div class="panel dailyStage">
+    <span class="ey">ПЕРВИЧНЫЙ АНАЛИЗ · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>
+    <h1 class="impact">ЧТО<br><span class="pink">СДЕЛАЕШЬ?</span></h1>
+    <p class="mut">${esc(vm.q)}</p>
+    <div class="grid2">${(vm.choices || []).map((c) =>
+      `<button class="choice" data-achoice="${esc(c.id)}">${esc(c.labelRu)}</button>`).join('')}</div>
+  </div>`;
+  root.querySelectorAll('[data-achoice]').forEach((b) => {
+    b.onclick = () => { if (typeof handlers.answer === 'function') handlers.answer(b.dataset.achoice); };
+  });
+};
+
+// First-run entry to personalised training: offers the 12-question diagnostic
+// (which creates the skill profile driving the personal CTA) alongside the
+// validated legacy daily. Rendered only when no leak/skill profile exists yet.
+export const renderAssessmentIntro = (root, vm = {}, handlers = {}) => {
+  if (!root) return;
+  root.innerHTML = `<div class="panel dailyStage">
+    <span class="ey">ТРЕНИРОВКА · СТАРТ</span>
+    <h1 class="impact">НАЧНИ С<br><span class="pink">ПЕРВИЧНОГО АНАЛИЗА.</span></h1>
+    <p class="mut">${esc(vm.copy || '12 вопросов по реальным спотам. Мы соберём твой профиль и будем строить тренировку под слабые навыки.')}</p>
+    <button class="primary" id="trAssess">ПРОЙТИ АНАЛИЗ →</button>
+    <button class="secondary" id="trLegacy">ОБЩАЯ ТРЕНИРОВКА</button>
+  </div>`;
+  const a = root.querySelector('#trAssess');
+  const l = root.querySelector('#trLegacy');
+  if (a && typeof handlers.begin === 'function') a.onclick = () => handlers.begin();
+  if (l && typeof handlers.legacy === 'function') l.onclick = () => handlers.legacy();
+};
+
+export const renderAssessmentSummary = (root, vm = {}, handlers = {}) => {
+  if (!root) return;
+  root.innerHTML = `<div class="panel dailyStage">
+    <span class="ey">ПЕРВИЧНЫЙ АНАЛИЗ · ГОТОВО</span>
+    <h1 class="impact">${vm.overallLabel ? esc(vm.overallLabel) : 'ПРОФИЛЬ'}<br><span class="pink">СОБРАН.</span></h1>
+    <div class="dualGrade">
+      <div class="gradeBox"><span class="ey">УРОВЕНЬ</span><b>${vm.overall != null ? vm.overall : '—'}</b></div>
+      <div class="gradeBox"><span class="ey">ВЕРНЫХ</span><b>${vm.correct} / ${vm.answered}</b></div>
+    </div>
+    <div class="row"><span>Слабый навык</span><b>${esc(vm.weakest || '—')}</b></div>
+    <div class="row"><span>Сильный навык</span><b>${esc(vm.strongest || '—')}</b></div>
+    <p class="mut small">Теперь тренировка строится под твой профиль и слабые места.</p>
+    <button class="primary" id="asBack">К ТРЕНИРОВКЕ →</button>
+  </div>`;
+  const b = root.querySelector('#asBack');
+  if (b && typeof handlers.back === 'function') b.onclick = () => handlers.back();
 };

@@ -64,5 +64,24 @@ export {
   getTopLeaks, recordCandidate, recordTrainingResult,
   getDailyPersonalizedTraining, getDailyPersonalizedTrainingAsync, buildPersonalizedSessionAsync
 } from './training/personalizedTraining.js';
+// P0 night-build additions.
+export {
+  SKILLS, SKILL_TO_CONCEPTS, skillLabelRu, skillDefinitionRu, conceptsForSkill,
+  skillsForConcept, normalizeSkill, createSkillEvidence, recordSkillEvidence,
+  scoreFromEvidence, confidenceFromEvidence, trendFromEvidence, buildSkillProfile,
+  overallLabel, confidenceLabel, skillProfileId
+} from './training/skillProfile.js';
+export {
+  ERROR_CAUSES, errorCauseLabelRu, errorCauseTipRu, classifyErrorCause, errorCauseFromMistake
+} from './training/errorCause.js';
+export {
+  ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, gradeAssessmentItem, runAssessment
+} from './training/assessment.js';
+export {
+  SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
+  spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots
+} from './training/spotSelector.js';
+export { poolFromLibrary, buildDailyPlan, planSummaryRu } from './training/planner.js';
+export { createAnalytics, isKnownEvent } from './training/analytics.js';
 
 export default PokerSwipeSolver;

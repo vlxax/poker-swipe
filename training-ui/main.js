@@ -12,6 +12,7 @@ import {
   createTrainingStore, recordCandidate, normalizeCandidate, handContentKey
 } from '../solver/src/index.js';
 import { SessionController } from './sessionController.js';
+import { AssessmentController } from './assessmentController.js';
 import { drillViewModel } from './viewModel.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import * as R from './renderer.js';
@@ -61,6 +62,14 @@ const ctl = new SessionController({
   onStateChange: () => paint()
 });
 
+// Primary 12-question diagnostic (P0). Run before the first personalised session
+// so the personal CTA (homeViewModel 'training' type) has a skill profile to
+// drive off. Optional: falling back to the leak-driven training flow is safe.
+const assessment = new AssessmentController({
+  store,
+  onStateChange: () => paint()
+});
+
 const goHome = () => {
   if (typeof window.show === 'function') window.show('home');
   else if (legacyRenderDaily) legacyRenderDaily();
@@ -83,6 +92,13 @@ const handlers = {
   back() { goHome(); }
 };
 
+const assessmentHandlers = {
+  begin() { assessment.begin(); paint(); },
+  answer(choice) { const res = assessment.answer(choice); if (res && res.done) paint(); },
+  finish() { assessment.finish(); paint(); },
+  back() { goHome(); }
+};
+
 function moreSpots() {
   ctl._resetRun();
   ctl.config = { ...ctl.config, count: 5 };
@@ -100,6 +116,22 @@ function drillVM() {
 function paint() {
   const el = root();
   if (!el) return;
+
+  // Primary diagnostic flow takes precedence while it is active.
+  if (assessment.state === 'answering' || assessment.state === 'done') {
+    const vm = assessment.viewModel();
+    if (vm.phase === 'question') {
+      R.renderAssessment(el, vm, assessmentHandlers);
+    } else {
+      // A skill profile now exists → "К ТРЕНИРОВКЕ" starts the personalised
+      // session instead of dropping back to the legacy home screen.
+      R.renderAssessmentSummary(el, vm, {
+        back: () => { const r = ctl.start(); if (r.started) paint(); else goHome(); }
+      });
+    }
+    return;
+  }
+
   const st = ctl.state;
 
   if (st === 'ready' || st === 'limited') {
@@ -115,14 +147,30 @@ function paint() {
   } else {
     // idle / fallback → show home; if not personalised, use legacy validated daily.
     const vm = ctl.home();
-    if (vm.type === 'personalized') R.renderHome(el, vm, { start: handlers.start });
-    else legacyFallback();
+    if (vm.type === 'personalized' || vm.type === 'training') {
+      R.renderHome(el, vm, { start: handlers.start });
+    } else {
+      // No leak or skill profile yet → offer the primary diagnostic as the entry
+      // to personalised training, keeping the validated legacy daily available.
+      R.renderAssessmentIntro(el, { copy: null }, {
+        begin: assessmentHandlers.begin,
+        legacy: legacyFallback
+      });
+    }
   }
 }
 
 // Replace renderDaily (via the exposeV32 live accessor) so show('daily') hits us.
 window.renderDaily = function () { paint(); };
 
-window.PersonalizedTrainingUi = { store, controller: ctl, paint };
+// Entry point for the UI shell: run the primary diagnostic (first-run), or jump
+// straight to training when a skill profile already exists.
+window.PersonalizedTrainingUi = {
+  store,
+  controller: ctl,
+  assessment,
+  paint,
+  beginAssessment: () => { assessment.begin(); paint(); }
+};
 
-export { store, ctl, paint };
+export { store, ctl, paint, assessment };
