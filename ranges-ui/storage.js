@@ -40,6 +40,7 @@ export function completeOnboarding(storage) {
 
 export const HINTS = [
   { id: 'position', text: 'Сначала выбери позицию' },
+  { id: 'situation', text: 'Теперь выбери ситуацию' },
   { id: 'stack', text: 'Теперь выбери стек' },
   { id: 'hand', text: 'Нажми на руку, чтобы увидеть действие' }
 ];

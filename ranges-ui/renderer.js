@@ -55,15 +55,15 @@ export function renderSelector(root, vm, handlers = {}) {
   if (!root) return;
   const s = vm.selection || {};
   root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">СПРАВОЧНИК</span>
+    <span class="ey">РЕНДЖИ</span>
     <h1 class="impact">${esc(vm.title)}</h1>
     <p class="mut">${esc(vm.intro)}</p>
     ${hintsHtml(vm.hints)}
     <div class="rangesField"><span class="ey">ФОРМАТ</span>${chips(vm.formats, s.format, 'format')}</div>
-    <div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>
-    ${vm.positions && vm.positions.length && s.situation ? `<div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>` : ''}
+    <div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>
+    ${vm.showSituation ? `<div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>` : ''}
     ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">ОТКРЫТИЕ С</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
-    ${s.situation ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks.map((x) => ({ id: x, label: `${x} ББ` })), s.stack, 'stack')}</div>` : ''}
+    ${vm.showStack ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks.map((x) => ({ id: x, label: `${x} ББ` })), s.stack, 'stack')}</div>` : ''}
     <button type="button" class="primary rangesCta" id="rangesShow" ${vm.ctaEnabled ? '' : 'disabled'}>${esc(vm.cta)} →</button>
     ${vm.xrayLink ? `<div class="rangesLinkRow"><button type="button" class="secondary" id="rangesXray">СУЗИТЬ ДИАПЗОН ПО УЛИЦАМ →</button></div>` : ''}
   </div>`;

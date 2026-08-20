@@ -1,49 +1,53 @@
 // View models for the ranges UI.
 
 import {
-  getCatalog, isSelectionComplete, situationLabel, positionsForSituation,
-  stacksForSituation, openersForSituation, suggestNearby
+  getCatalog, isSelectionComplete, situationLabel, situationsForPosition,
+  stacksForSituation, openersForSituation, suggestNearby, nextCtaLabel, sanitizeSelection
 } from './catalog.js';
 import { buildAtlasMatrix, handDetailFromAtlas } from './preflopAtlas.js';
 import { buildPushFoldMatrix, handDetailFromPush } from './pushFold.js';
 import { handHelpText } from './matrix.js';
 import { HINTS } from './storage.js';
 
+function selectorHints(selection, onboarding) {
+  if (onboarding.completed) return [];
+  if (!selection.position) return [HINTS[0]];
+  if (!selection.situation) return [HINTS[1]];
+  const sit = selection.situation;
+  const needsOpener = sit === 'vs_open' || sit === 'bb_defend';
+  if (needsOpener && !selection.opener) return [];
+  if (!selection.stack) return [HINTS[2]];
+  return [];
+}
+
 export function selectorViewModel({ pack, selection, onboarding, showHelp = false }) {
   const catalog = getCatalog(pack);
-  const sit = selection.situation;
-  const complete = isSelectionComplete(selection);
-  const positions = sit ? positionsForSituation(catalog, sit) : [];
-  const stacks = sit ? stacksForSituation(sit) : [];
-  const openers = sit && (sit === 'vs_open' || sit === 'bb_defend')
-    ? openersForSituation(catalog, sit, selection.position || 'BB')
+  const sel = sanitizeSelection(selection, catalog);
+  const complete = isSelectionComplete(sel);
+  const positions = catalog.positions;
+  const situations = sel.position ? situationsForPosition(catalog, sel.position) : [];
+  const stacks = sel.situation ? stacksForSituation(sel.situation) : [];
+  const needsOpener = sel.situation === 'vs_open' || sel.situation === 'bb_defend';
+  const openers = needsOpener && sel.situation && sel.position
+    ? openersForSituation(catalog, sel.situation, sel.position)
     : [];
-
-  const hints = [];
-  if (!onboarding.completed) {
-    if (!selection.position && !selection.situation) {
-      hints.push(HINTS[0]);
-    } else if (!selection.position && positions.length) {
-      hints.push(HINTS[0]);
-    } else if (!selection.stack) {
-      hints.push(HINTS[1]);
-    }
-  }
 
   return {
     phase: 'selector',
     title: 'РЕНДЖИ',
-    intro: 'Выбери ситуацию — покажем, с какими руками играть.',
+    intro: 'Выбери позицию, ситуацию и стек — покажем, с какими руками играть.',
     formats: catalog.formats,
-    situations: catalog.situations,
+    situations,
     positions,
     stacks,
     openers,
-    needsOpener: sit === 'vs_open' || sit === 'bb_defend',
-    selection,
-    cta: complete ? 'ПОКАЗАТЬ РЕНДЖ' : 'ВЫБЕРИ СИТУАЦИЮ',
+    showSituation: !!sel.position,
+    showStack: !!sel.situation && (!needsOpener || !!sel.opener),
+    needsOpener: needsOpener && !!sel.situation,
+    selection: sel,
+    cta: complete ? 'ПОКАЗАТЬ РЕНДЖ' : nextCtaLabel(sel),
     ctaEnabled: complete,
-    hints,
+    hints: selectorHints(sel, onboarding),
     showHelp,
     xrayLink: true
   };
@@ -51,34 +55,35 @@ export function selectorViewModel({ pack, selection, onboarding, showHelp = fals
 
 export function resultViewModel({ pack, selection, onboarding, selectedHand = null, showHelp = false }) {
   const catalog = getCatalog(pack);
+  const sel = sanitizeSelection(selection, catalog);
   let matrix;
-  if (selection.situation === 'push_fold') {
-    matrix = buildPushFoldMatrix(selection);
+  if (sel.situation === 'push_fold') {
+    matrix = buildPushFoldMatrix(sel);
   } else {
-    matrix = buildAtlasMatrix(pack, selection);
+    matrix = buildAtlasMatrix(pack, sel);
   }
 
   const unsupported = !matrix.supported;
-  const suggestions = unsupported ? suggestNearby(selection, catalog) : [];
+  const suggestions = unsupported ? suggestNearby(sel, catalog) : [];
 
-  const posLine = selection.position || '—';
-  const stackLine = `${selection.stack} ББ`;
-  const sitLine = situationLabel(selection.situation);
+  const posLine = sel.position || '—';
+  const stackLine = `${sel.stack} ББ`;
+  const sitLine = situationLabel(sel.situation);
   let contextLine = `${posLine} · ${stackLine}`;
-  if (selection.opener && selection.situation !== 'rfi') {
-    contextLine = `${posLine} · ${stackLine} · против ${selection.opener}`;
+  if (sel.opener && sel.situation !== 'rfi') {
+    contextLine = `${posLine} · ${stackLine} · против ${sel.opener}`;
   }
 
   const hints = [];
   if (!onboarding.completed && !onboarding.hintsSeen.includes('hand')) {
-    hints.push(HINTS[2]);
+    hints.push(HINTS[3]);
   }
 
   let handDetail = null;
   if (selectedHand && matrix.cells[selectedHand]) {
-    handDetail = selection.situation === 'push_fold'
-      ? handDetailFromPush(selection, selectedHand)
-      : handDetailFromAtlas(pack, selection, selectedHand);
+    handDetail = sel.situation === 'push_fold'
+      ? handDetailFromPush(sel, selectedHand)
+      : handDetailFromAtlas(pack, sel, selectedHand);
     if (handDetail) {
       handDetail.help = handHelpText(selectedHand);
     }
@@ -98,7 +103,7 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
     handDetail,
     hints,
     showHelp,
-    selection
+    selection: sel
   };
 }
 

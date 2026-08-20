@@ -1,7 +1,7 @@
 // Range viewer controller — selection state, onboarding, matrix gating.
 
 import { loadOnboarding, saveOnboarding, markHintSeen, completeOnboarding } from './storage.js';
-import { isSelectionComplete } from './catalog.js';
+import { getCatalog, isSelectionComplete, sanitizeSelection, situationMeta } from './catalog.js';
 import { selectorViewModel, resultViewModel, helpViewModel } from './viewModel.js';
 
 export class RangeController {
@@ -16,13 +16,22 @@ export class RangeController {
       stack: null,
       pushMode: 'PUSH'
     };
-    this.phase = 'selector'; // selector | result
+    this.phase = 'selector';
     this.selectedHand = null;
     this.showHelp = false;
     this.onboarding = loadOnboarding(storage);
   }
 
+  _catalog() {
+    return getCatalog(this.pack);
+  }
+
+  _syncSelection() {
+    this.selection = sanitizeSelection(this.selection, this._catalog());
+  }
+
   viewModel() {
+    this._syncSelection();
     if (this.showHelp) {
       return { ...helpViewModel(), phase: 'help', overlay: true };
     }
@@ -44,31 +53,50 @@ export class RangeController {
   }
 
   setField(field, value) {
-    this.selection = { ...this.selection, [field]: value };
-    if (field === 'situation') {
-      this.selection.position = null;
+    const v = field === 'stack' ? Number(value) : value;
+    this.selection = { ...this.selection, [field]: v };
+
+    if (field === 'position') {
+      this.selection.situation = null;
       this.selection.opener = null;
       this.selection.stack = null;
       this.phase = 'selector';
       this.selectedHand = null;
-      const sit = this._situationMeta(value);
-      if (sit && sit.heroFixed) this.selection.position = sit.heroFixed;
-    }
-    if (field === 'position') {
-      this.selection.opener = null;
-      if (this.onboarding.hintsSeen && !this.onboarding.hintsSeen.includes('position')) {
+      if (!this.onboarding.hintsSeen.includes('position')) {
         this.onboarding = markHintSeen(this.storage, 'position');
       }
     }
+
+    if (field === 'situation') {
+      this.selection.opener = null;
+      this.selection.stack = null;
+      this.phase = 'selector';
+      this.selectedHand = null;
+      const sit = situationMeta(value);
+      if (sit && sit.heroFixed) this.selection.position = sit.heroFixed;
+      if (!this.onboarding.hintsSeen.includes('situation')) {
+        this.onboarding = markHintSeen(this.storage, 'situation');
+      }
+    }
+
+    if (field === 'opener') {
+      this.selection.stack = null;
+      this.phase = 'selector';
+      this.selectedHand = null;
+    }
+
     if (field === 'stack') {
       if (!this.onboarding.hintsSeen.includes('stack')) {
         this.onboarding = markHintSeen(this.storage, 'stack');
       }
     }
+
+    this._syncSelection();
     return this.viewModel();
   }
 
   showRange() {
+    this._syncSelection();
     if (!isSelectionComplete(this.selection)) return this.viewModel();
     this.phase = 'result';
     this.selectedHand = null;
@@ -110,9 +138,5 @@ export class RangeController {
   resetOnboardingForTest() {
     this.onboarding = { completed: false, hintsSeen: [] };
     saveOnboarding(this.storage, this.onboarding);
-  }
-
-  _situationMeta(id) {
-    return { rfi: {}, vs_open: {}, vs_3bet: {}, bb_defend: { heroFixed: 'BB' }, push_fold: {} }[id] || null;
   }
 }
