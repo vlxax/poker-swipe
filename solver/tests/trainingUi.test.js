@@ -90,7 +90,7 @@ test('homeViewModel returns a personalised block when a leak profile exists', ()
   assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
   assert.equal(vm.total, 7);
   assert.ok(vm.focusItems.length >= 1);
-  assert.equal(vm.cta, 'НАЧАТЬ ТРЕНИРОВКУ');
+  assert.equal(vm.cta, 'НАЧАТЬ МОЮ ТРЕНИРОВКУ');
   assert.ok(vm.whyText);
 });
 
@@ -293,6 +293,8 @@ test('controller next returns done:false while drills remain and advances progre
   ctl.state = 'ready';
   ctl.drills = [drillFixture(), drillFixture()];
   ctl.index = 0;
+  ctl.showingFeedback = true;
+  ctl.lastAnswer = { grade: 'GOOD', feedbackRu: { verdict: 'Хорошее решение' } };
   const r = ctl.next();
   assert.equal(r.done, false);
   assert.equal(ctl.index, 1);
@@ -406,7 +408,7 @@ test('homeViewModel returns the personal training CTA when a skill profile exist
   assert.equal(vm.type, 'training');
   assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
   assert.match(vm.subtitle, /7 раздач/);
-  assert.equal(vm.cta, 'НАЧАТЬ ТРЕНИРОВКУ');
+  assert.equal(vm.cta, 'НАЧАТЬ МОЮ ТРЕНИРОВКУ');
   assert.ok(vm.focusItems.some((f) => /баббл|решения/i.test(f)));
 });
 
@@ -538,7 +540,7 @@ test('different profiles show different focus text on the home card', () => {
   assert.notEqual(icmVm.whyText, riverVm.whyText);
 });
 
-test('controller caches the home plan and launches it on start', async () => {
+test('controller builds a fresh library plan on start', async () => {
   const store = createTrainingStore();
   store.saveSkillProfile({
     overall: 55,
@@ -549,10 +551,10 @@ test('controller caches the home plan and launches it on start', async () => {
   const ctl = makeController(store, fakeDecision(), { count: 1 });
   const homeVm = ctl.home();
   assert.equal(homeVm.type, 'training');
-  const expectedId = ctl.preparedDaily && ctl.preparedDaily.plan && ctl.preparedDaily.plan.sessionId;
-  assert.ok(expectedId);
+  assert.ok(ctl.preparedDaily && ctl.preparedDaily.plan);
   ctl.start();
   await new Promise((r) => setTimeout(r, 80));
   assert.ok(ctl.session && ctl.session.plan);
-  assert.equal(ctl.session.plan.sessionId, expectedId);
+  assert.ok(ctl.session.plan.sessionId);
+  assert.ok(ctl.drills.length >= 1);
 });

@@ -7,7 +7,7 @@ import {
   buildPersonalizedSessionAsync, gradeAnswer, recordTrainingResult,
   getTopLeaks, getDailyPersonalizedTraining
 } from '../solver/src/index.js';
-import { homeViewModel, summaryViewModel } from './viewModel.js';
+import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
 
 export class SessionController {
   constructor({ store, solve, solveOpts = {}, config = {}, onStateChange = null, now = Date.now } = {}) {
@@ -28,6 +28,8 @@ export class SessionController {
     this.genToken = 0;
     this.answering = false;
     this.preparedDaily = null;
+    this.lastAnswer = null;
+    this.showingFeedback = false;
   }
 
   // ---- Home -----------------------------------------------------------------
@@ -91,7 +93,8 @@ export class SessionController {
       config: this.config,
       signal: ctrl.signal,
       now: this.now(),
-      preparedPlan: this.preparedDaily && this.preparedDaily.plan ? this.preparedDaily.plan : null
+      preparedPlan: null,
+      rng: this.config.rng
     }).then(
       (session) => this._onGenerated(token, session),
       (err) => this._onError(token, err)
@@ -136,6 +139,8 @@ export class SessionController {
     this.index = 0;
     this.results = [];
     this.baselineLossByConcept = {};
+    this.showingFeedback = false;
+    this.lastAnswer = null;
     this.state = 'idle';
   }
 
@@ -155,13 +160,17 @@ export class SessionController {
     return this.drills[this.index] || null;
   }
 
+  feedbackVM() {
+    return feedbackViewModel({ result: this.lastAnswer, drill: this.current() });
+  }
+
   progress() {
     return { index: this.drills.length ? this.index + 1 : 0, total: this.drills.length };
   }
 
   answer(optionId) {
     if (this.state !== 'ready' && this.state !== 'limited') return null;
-    if (this.answering) return null; // prevent double submission
+    if (this.answering || this.showingFeedback) return null; // prevent double submission
     const drill = this.current();
     if (!drill) return null;
 
@@ -173,6 +182,9 @@ export class SessionController {
         drill, grade: result.grade, evLossBb: result.evLossBb, now: this.now()
       });
       this.results.push({ ...result, concept: drill.concept });
+      this.lastAnswer = result;
+      this.showingFeedback = true;
+      this._notify();
     } finally {
       this.answering = false;
     }
@@ -180,7 +192,9 @@ export class SessionController {
   }
 
   next() {
-    if (this.state !== 'ready' && this.state !== 'limited') return { done: false };
+    if (!this.showingFeedback) return { done: false };
+    this.showingFeedback = false;
+    this.lastAnswer = null;
     if (this.index < this.drills.length - 1) {
       this.index++;
       this._notify();

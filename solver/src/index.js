@@ -81,9 +81,11 @@ export {
   SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
   spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots
 } from './training/spotSelector.js';
-export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask } from './training/planner.js';
+export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
 export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
 export { drillFromLibraryTask } from './training/libraryDrill.js';
+export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
+export { spotFingerprint, diversityPenalty, isTooSimilar } from './training/sessionDiversity.js';
 export { leakBoostForSpot, spotMatchesLeakConcept, LEAK_SPOT_MATCHERS } from './training/leakSpotMapping.js';
 export { createAnalytics, isKnownEvent } from './training/analytics.js';
 

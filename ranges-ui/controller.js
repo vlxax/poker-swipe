@@ -23,7 +23,7 @@ export class RangeController {
   }
 
   _catalog() {
-    return getCatalog(this.pack);
+    return getCatalog(this.pack, this.selection.format || '6max');
   }
 
   _syncSelection() {
@@ -55,6 +55,15 @@ export class RangeController {
   setField(field, value) {
     const v = field === 'stack' ? Number(value) : value;
     this.selection = { ...this.selection, [field]: v };
+
+    if (field === 'format') {
+      this.selection.position = null;
+      this.selection.situation = null;
+      this.selection.opener = null;
+      this.selection.stack = null;
+      this.phase = 'selector';
+      this.selectedHand = null;
+    }
 
     if (field === 'position') {
       this.selection.situation = null;

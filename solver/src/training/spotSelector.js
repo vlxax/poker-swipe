@@ -8,8 +8,9 @@ import {
   leakBoostForSpot, weakSkillBoost, maintenanceSkillMatch, conceptLabelForPlan
 } from './leakSpotMapping.js';
 import { computePriority } from './priority.js';
+import { diversityPenalty } from './sessionDiversity.js';
 
-const DEFAULT_SHOWN_COOLDOWN = 40;
+const DEFAULT_SHOWN_COOLDOWN = 60;
 const DEFAULT_MASTERY_GATE = 78;
 const WEAKNESS_SHARE = 0.65;
 const MAINTENANCE_SHARE = 0.25;
@@ -146,10 +147,29 @@ function weaknessScore(spot, ctx) {
   if (ctx.weakConcepts.has(spot.concept)) score += 2;
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
   score += difficultyFit(spot, ctx.targetDiff);
+  if (ctx.skillTargets) {
+    for (const tag of spot.skillTags || []) {
+      const want = ctx.skillTargets[tag];
+      const have = ctx.skillCounts[tag] || 0;
+      if (want != null && have < want) score += 3 + (want - have);
+    }
+  }
   return score;
 }
 
-function weightedPick(scored, want, rng, usedIds, skillCap, skillCounts) {
+function scoredPool(candidates, ctx, bucket) {
+  return candidates.map((s) => {
+    const base = { spot: s, score: 1, bucket };
+    if (bucket === 'weakness') base.score = weaknessScore(s, ctx);
+    else if (bucket === 'exploration') base.score = 1 + (s.theoryOrExploit === 'exploit' ? 0.3 : 0);
+    else if (bucket === 'challenge') base.score = difficultyFit(s, ctx.targetDiff + 1) + 1;
+    else base.score = maintenanceSkillMatch(s, ctx.skillProfile) ? 1.5 : 1;
+    base.score -= diversityPenalty(s, ctx.picked || [], ctx.history || []);
+    return base;
+  });
+}
+
+function weightedPick(scored, want, rng, usedIds, skillCap, skillCounts, ctx) {
   const selected = [];
   const pool = scored.slice().sort((a, b) => b.score - a.score);
   while (selected.length < want && pool.length) {
@@ -171,6 +191,7 @@ function weightedPick(scored, want, rng, usedIds, skillCap, skillCounts) {
     }
     usedIds.add(pick.spot.id);
     for (const t of pick.spot.skillTags || ['_']) skillCounts[t] = (skillCounts[t] || 0) + 1;
+    if (ctx) ctx.picked = (ctx.picked || []).concat([pick]);
     selected.push(pick);
   }
   return selected;
@@ -189,6 +210,7 @@ export function selectSpots({
   now = Date.now(),
   shownCooldown = DEFAULT_SHOWN_COOLDOWN,
   masteryGate = DEFAULT_MASTERY_GATE,
+  skillTargets = null,
   rng = Math.random
 } = {}) {
   const spots = (pool || []).map(normalizeSpot).filter((s) => s.id);
@@ -222,11 +244,16 @@ export function selectSpots({
     masteredConcepts,
     weakestSkillConcepts,
     history,
-    targetDiff
+    targetDiff,
+    skillTargets,
+    skillCounts: {},
+    picked: []
   };
 
-  const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown));
-  const candidates = eligible.length >= count ? eligible : spots;
+  const recentIds = new Set((history || []).slice(0, shownCooldown).map((h) => h.spotId).filter(Boolean));
+  const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown) && !recentIds.has(s.id));
+  const softEligible = spots.filter((s) => !recentIds.has(s.id));
+  const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
 
   const weaknessWant = Math.max(1, Math.round(count * WEAKNESS_SHARE));
   const maintenanceWant = Math.max(1, Math.round(count * MAINTENANCE_SHARE));
@@ -238,12 +265,7 @@ export function selectSpots({
   const buckets = { weakness: [], maintenance: [], exploration: [], challenge: [], control: [] };
   for (const s of candidates) {
     const b = bucketForSpot(s, ctx);
-    const base = { spot: s, score: 1, bucket: b };
-    if (b === 'weakness') base.score = weaknessScore(s, ctx);
-    else if (b === 'exploration') base.score = 1 + (s.theoryOrExploit === 'exploit' ? 0.3 : 0);
-    else if (b === 'challenge') base.score = difficultyFit(s, targetDiff + 1) + 1;
-    else base.score = maintenanceSkillMatch(s, skillProfile) ? 1.5 : 1;
-    buckets[b].push(base);
+    buckets[b].push(...scoredPool([s], ctx, b));
   }
 
   const usedIds = new Set();
@@ -251,7 +273,7 @@ export function selectSpots({
   const picked = [];
 
   const take = (arr, want, cap) => {
-    const got = weightedPick(arr, want, rng, usedIds, cap, skillCounts);
+    const got = weightedPick(arr, want, rng, usedIds, cap, skillCounts, ctx);
     for (const g of got) picked.push({ ...g, bucket: g.bucket || bucketForSpot(g.spot, ctx) });
   };
 
@@ -265,7 +287,7 @@ export function selectSpots({
   if (picked.length < count) {
     const rest = candidates
       .filter((s) => !usedIds.has(s.id))
-      .map((s) => ({ spot: s, score: 0.5, bucket: bucketForSpot(s, ctx) }));
+      .map((s) => ({ spot: s, score: 0.5 - diversityPenalty(s, picked, history), bucket: bucketForSpot(s, ctx) }));
     take(rest, count - picked.length, null);
   }
 

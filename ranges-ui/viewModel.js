@@ -21,7 +21,7 @@ function selectorHints(selection, onboarding) {
 }
 
 export function selectorViewModel({ pack, selection, onboarding, showHelp = false }) {
-  const catalog = getCatalog(pack);
+  const catalog = getCatalog(pack, selection.format || '6max');
   const sel = sanitizeSelection(selection, catalog);
   const complete = isSelectionComplete(sel);
   const positions = catalog.positions;
@@ -54,7 +54,7 @@ export function selectorViewModel({ pack, selection, onboarding, showHelp = fals
 }
 
 export function resultViewModel({ pack, selection, onboarding, selectedHand = null, showHelp = false }) {
-  const catalog = getCatalog(pack);
+  const catalog = getCatalog(pack, selection.format || '6max');
   const sel = sanitizeSelection(selection, catalog);
   let matrix;
   if (sel.situation === 'push_fold') {
@@ -65,11 +65,12 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
 
   const unsupported = !matrix.supported;
   const suggestions = unsupported ? suggestNearby(sel, catalog) : [];
+  const formatLabel = sel.format === '9max' ? '9-max' : '6-max';
 
   const posLine = sel.position || '—';
   const stackLine = `${sel.stack} ББ`;
   const sitLine = situationLabel(sel.situation);
-  let contextLine = `${posLine} · ${stackLine}`;
+  let contextLine = `${formatLabel} · ${posLine} · ${stackLine}`;
   if (sel.opener && sel.situation !== 'rfi') {
     contextLine = `${posLine} · ${stackLine} · против ${sel.opener}`;
   }
@@ -98,7 +99,9 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
     mixedLegend: true,
     cells: matrix.cells,
     unsupported,
-    unsupportedMessage: 'Для этой ситуации пока нет готового ренджа.',
+    unsupportedMessage: sel.format === '9max' && !['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'].includes(String(sel.position || '').toUpperCase())
+      ? 'Для этой позиции в 9-max пока нет готового ренджа. Попробуй UTG, HJ, CO, BTN или SB — или выбери push/fold.'
+      : 'Для этой ситуации пока нет готового ренджа.',
     suggestions,
     handDetail,
     hints,

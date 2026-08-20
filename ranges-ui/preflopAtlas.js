@@ -54,18 +54,43 @@ export function playBucket(play) {
   return { key: 'never', label: 'Не играем' };
 }
 
-function atlasKey({ situation, position, opener, stack, hand }) {
+function atlasPositionForLookup(sel) {
+  const pos = String(sel.position || '').toUpperCase();
+  if (sel.format !== '9max') return pos;
+  const map = {
+    'UTG+1': 'UTG',
+    MP: 'HJ',
+    LJ: 'HJ'
+  };
+  return map[pos] || pos;
+}
+
+function atlasKey({ situation, position, opener, stack, hand, format }) {
+  const pos = atlasPositionForLookup({ position, format });
   const st = nearestStack(stack);
   const h = String(hand || '').trim();
-  if (situation === 'rfi') return `RFI|${position}|${st}|${h}`;
+  if (situation === 'rfi') return `RFI|${pos}|${st}|${h}`;
   if (situation === 'bb_defend') return `BB_DEFEND|${opener}|${st}|${h}`;
-  if (situation === 'vs_3bet') return `VS_3BET|${position}|${st}|${h}`;
-  if (situation === 'vs_open') return `VS_OPEN|${position}|${opener}|${st}|${h}`;
+  if (situation === 'vs_3bet') return `VS_3BET|${pos}|${st}|${h}`;
+  if (situation === 'vs_open') return `VS_OPEN|${pos}|${opener}|${st}|${h}`;
   return null;
 }
 
 export function lookupPolicy(pack, sel, hand) {
   if (!pack || !pack.preflop) return null;
+  if (sel.format === '9max') {
+    const pos = String(sel.position || '').toUpperCase();
+    const atlasOnly = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+    if (!atlasOnly.includes(pos) && pos !== 'BB') return null;
+    if (sel.situation === 'vs_open' && sel.opener) {
+      const opener = String(sel.opener).toUpperCase();
+      if (!atlasOnly.includes(opener)) return null;
+    }
+    if (sel.situation === 'bb_defend' && sel.opener) {
+      const opener = String(sel.opener).toUpperCase();
+      if (!atlasOnly.includes(opener)) return null;
+    }
+  }
   const key = atlasKey({ ...sel, hand });
   if (!key) return null;
   return pack.preflop[key] || null;
@@ -117,7 +142,7 @@ export function handDetailFromAtlas(pack, sel, hand) {
   };
 }
 
-export function inventoryAtlas(pack) {
+export function inventoryAtlas(pack, format = '6max') {
   const pre = (pack && pack.preflop) || {};
   const vsOpen = {};
   for (const k of Object.keys(pre)) {
@@ -126,14 +151,33 @@ export function inventoryAtlas(pack) {
     if (!vsOpen[hero]) vsOpen[hero] = new Set();
     vsOpen[hero].add(opener);
   }
+  const atlasOnlyPositions = ['UTG', 'HJ', 'CO', 'BTN', 'SB'];
+  const rfiPositions = format === '9max'
+    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
+    : atlasOnlyPositions;
+  const vs3betPositions = format === '9max'
+    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
+    : atlasOnlyPositions;
+  const bbDefendOpeners = format === '9max'
+    ? ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB']
+    : atlasOnlyPositions;
+  const vsOpenPairs = format === '9max'
+    ? Object.fromEntries(
+      ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB'].map((h) => [
+        h,
+        vsOpen[h] ? [...vsOpen[h]].sort() : (vsOpen.UTG ? [...vsOpen.UTG].sort() : [])
+      ])
+    )
+    : Object.fromEntries(
+      Object.entries(vsOpen).map(([h, set]) => [h, [...set].sort()])
+    );
   return {
     stacks: ATLAS_STACKS,
-    rfiPositions: ['UTG', 'HJ', 'CO', 'BTN', 'SB'],
-    vs3betPositions: ['UTG', 'HJ', 'CO', 'BTN', 'SB'],
-    bbDefendOpeners: ['UTG', 'HJ', 'CO', 'BTN', 'SB'],
-    vsOpenPairs: Object.fromEntries(
-      Object.entries(vsOpen).map(([h, set]) => [h, [...set].sort()])
-    )
+    rfiPositions,
+    vs3betPositions,
+    bbDefendOpeners,
+    vsOpenPairs,
+    atlasOnlyPositions
   };
 }
 

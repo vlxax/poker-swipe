@@ -3,6 +3,7 @@
 // the renderer consumes. Everything here is deterministic and unit-testable.
 
 import { leakLabelRu, actionLabelRu, skillLabelRu } from '../solver/src/index.js';
+import { skillScoresForHome } from '../solver/src/training/taskFeedback.js';
 import {
   focusItemsFromProfile, whyTextForTraining, trainingSubtitle
 } from './trainingHomeCopy.js';
@@ -37,24 +38,23 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     };
   }
 
-  const focusItems = focusItemsFromProfile({ skillProfile, leaks: leaksList, plan, limit: 2 });
-  const whyText = whyTextForTraining({ skillProfile, leaks: leaksList, focusItems });
-  const levelLabel = hasSkill ? (skillProfile.overallLabel || 'ТВОЙ УРОВЕНЬ') : null;
-  const levelScore = hasSkill ? skillProfile.overall : null;
+  const focusItems = focusItemsFromProfile({ skillProfile, leaks: leaksList, plan, limit: 3 });
+  const whyText = whyTextForTraining({ skillProfile, leaks: leaksList, focusItems, plan });
+  const skillScores = hasSkill ? skillScoresForHome(skillProfile) : [];
 
   return {
     type: 'training',
     title: 'ТВОЯ ТРЕНИРОВКА',
     subtitle: trainingSubtitle(total),
-    levelLabel,
-    levelScore,
-    focusHeading: 'Сегодня тренируем:',
+    levelHeading: 'ТВОЙ УРОВЕНЬ',
+    skillScores,
+    focusHeading: 'СЕГОДНЯ В ФОКУСЕ',
     focusItems,
-    whyHeading: 'Почему:',
+    whyHeading: 'ПОЧЕМУ',
     whyText,
     planSessionId: plan && plan.sessionId ? plan.sessionId : null,
     total,
-    cta: 'НАЧАТЬ ТРЕНИРОВКУ'
+    cta: 'НАЧАТЬ МОЮ ТРЕНИРОВКУ'
   };
 }
 
@@ -96,6 +96,9 @@ export function drillViewModel({ drill = null, index = 1, total = 1 } = {}) {
       heroCards: sc.heroCards || []
     },
     prompt: (drill && drill.explanation && drill.explanation.promptRu) || 'Ваш ход.',
+    contextLine: (drill && drill.explanation && drill.explanation.contextRu) || null,
+    historyLine: (drill && drill.explanation && drill.explanation.historyRu) || null,
+    taskInstruction: (drill && drill.explanation && drill.explanation.promptRu) || null,
     options: options.map((o) => ({ id: o.id, labelRu: o.labelRu })),
     legalActions: options.map((o) => o.id),
     confidence: confidenceModel(sol.confidence)
@@ -107,6 +110,34 @@ export function drillViewModel({ drill = null, index = 1, total = 1 } = {}) {
 export function feedbackViewModel({ result = null, drill = null } = {}) {
   const sol = (drill && drill.solution) || {};
   const rec = sol.recommendedAction || null;
+  const fb = result && result.feedbackRu;
+
+  if (fb && fb.verdict) {
+    return {
+      grade: result.grade,
+      structured: true,
+      verdict: fb.verdict,
+      correctLine: fb.correctLine,
+      why: fb.why,
+      userMistake: fb.userMistake,
+      remember: fb.concept,
+      alternative: fb.alternative,
+      tip: fb.tip,
+      detail: fb.detail,
+      gradeTitle: fb.title || fb.verdict,
+      summary: fb.summary,
+      concept: fb.concept,
+      evLossBb: result.evLossBb,
+      nearOptimal: !!(result.nearOptimal),
+      mixedStrategy: !!(result.mixedStrategy || fb.mixedStrategy),
+      chosenRecommended: !!(result.chosenRecommended),
+      strategy: {
+        recommendedActionLabel: fb.recLabelRu || (rec ? actionLabelRu(rec) : null),
+        recommendedFrequency: sol.recommendedFrequency != null ? sol.recommendedFrequency : null
+      }
+    };
+  }
+
   return {
     grade: result && result.grade,
     gradeTitle: result && result.feedbackRu && result.feedbackRu.title,

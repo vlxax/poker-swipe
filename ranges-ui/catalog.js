@@ -4,8 +4,12 @@ import { inventoryAtlas, ATLAS_STACKS } from './preflopAtlas.js';
 import { PUSH_STACKS } from './pushFold.js';
 
 export const FORMATS = [
-  { id: '6max', label: '6-max' }
+  { id: '6max', label: '6-max' },
+  { id: '9max', label: '9-max' }
 ];
+
+const POSITIONS_6MAX = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+const POSITIONS_9MAX = ['UTG', 'UTG+1', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
 
 export const SITUATIONS = [
   { id: 'rfi', label: 'Первый вход в банк', needsOpener: false, heroFixed: null },
@@ -15,20 +19,24 @@ export const SITUATIONS = [
   { id: 'push_fold', label: 'Пуш / фолд', needsOpener: false, heroFixed: null, push: true }
 ];
 
-const POSITIONS = ['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+function positionsForFormat(format) {
+  return format === '9max' ? POSITIONS_9MAX : POSITIONS_6MAX;
+}
 
-export function getCatalog(pack) {
-  const inv = inventoryAtlas(pack);
+export function getCatalog(pack, format = '6max') {
+  const inv = inventoryAtlas(pack, format);
   return {
     formats: FORMATS,
     situations: SITUATIONS,
     atlasStacks: ATLAS_STACKS,
     pushStacks: PUSH_STACKS,
-    positions: POSITIONS,
+    format,
+    positions: positionsForFormat(format),
     vsOpenPairs: inv.vsOpenPairs,
     rfiPositions: inv.rfiPositions,
     vs3betPositions: inv.vs3betPositions,
-    bbDefendOpeners: inv.bbDefendOpeners
+    bbDefendOpeners: inv.bbDefendOpeners,
+    atlasOnlyPositions: inv.atlasOnlyPositions
   };
 }
 
@@ -51,8 +59,8 @@ export function positionsForSituation(catalog, situation) {
   if (situation === 'rfi') return catalog.rfiPositions;
   if (situation === 'vs_3bet') return catalog.vs3betPositions;
   if (situation === 'vs_open') return Object.keys(catalog.vsOpenPairs || {}).sort();
-  if (situation === 'push_fold') return POSITIONS;
-  return POSITIONS;
+  if (situation === 'push_fold') return catalog.positions || POSITIONS_6MAX;
+  return catalog.positions || POSITIONS_6MAX;
 }
 
 export function stacksForSituation(situation) {

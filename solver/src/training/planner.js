@@ -86,6 +86,40 @@ export function poolFromLibrary(tasks = []) {
   }));
 }
 
+export function computeSkillTargets(skillProfile, count = 7) {
+  if (!skillProfile || !skillProfile.skills) return null;
+  const ranked = Object.values(skillProfile.skills)
+    .filter((s) => s && s.score != null)
+    .sort((a, b) => a.score - b.score);
+  if (!ranked.length) return null;
+
+  const weak = ranked.slice(0, 3);
+  const strong = ranked[ranked.length - 1];
+  const targets = {};
+  let remaining = count;
+
+  const alloc = (skill, n) => {
+    if (n <= 0 || remaining <= 0) return;
+    const take = Math.min(n, remaining);
+    targets[skill] = (targets[skill] || 0) + take;
+    remaining -= take;
+  };
+
+  if (weak[0]) alloc(weak[0].skill, Math.max(2, Math.round(count * 0.4)));
+  if (weak[1]) alloc(weak[1].skill, Math.max(1, Math.round(count * 0.25)));
+  if (weak[2]) alloc(weak[2].skill, Math.max(1, Math.round(count * 0.15)));
+  if (strong && remaining > 0) alloc(strong.skill, 1);
+
+  let guard = 0;
+  while (remaining > 0 && weak.length && guard < count) {
+    const w = weak[guard % weak.length];
+    alloc(w.skill, 1);
+    guard++;
+  }
+
+  return targets;
+}
+
 export function buildDailyPlan({
   pool = [],
   progressByConcept = {},
@@ -109,6 +143,8 @@ export function buildDailyPlan({
   }
   const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0);
 
+  const skillTargets = computeSkillTargets(skillProfile, count);
+
   const result = selectSpots({
     pool: eligiblePool.length ? eligiblePool : spots,
     shownAt,
@@ -120,6 +156,7 @@ export function buildDailyPlan({
     count,
     now,
     masteryGate: DEFAULTS.masteryGate,
+    skillTargets,
     rng
   });
 
@@ -165,6 +202,7 @@ export function buildDailyPlan({
     reason: result.reason,
     buckets: result.buckets,
     sessionPlan,
+    skillTargets,
     drills: selectedSpots.map((s) => ({
       spotId: s.id,
       concept: mapLeakConceptForTask({ concept: s.concept, tags: [], street: s.street }) || s.concept,

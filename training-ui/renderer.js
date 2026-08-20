@@ -22,15 +22,16 @@ export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
   if (vm.type === 'training') {
-    const levelLine = vm.levelLabel
-      ? `<div class="row"><span>Твой уровень:</span><b>${esc(vm.levelLabel)}${vm.levelScore != null ? ' · ' + esc(vm.levelScore) : ''}</b></div>`
+    const scoresHtml = (vm.skillScores || []).length
+      ? `<div class="rangesField" style="margin-top:12px"><span class="ey">${esc(vm.levelHeading || 'ТВОЙ УРОВЕНЬ')}</span>${(vm.skillScores || []).map((s) =>
+        `<div class="row"><span>${esc(s.label)}</span><b>${esc(s.score)}</b></div>`).join('')}</div>`
       : '';
     const focusHtml = (vm.focusItems || []).map((item) => `<div class="row"><span>•</span><b>${esc(item)}</b></div>`).join('');
     root.innerHTML = `<div class="panel dailyStage">
       <span class="ey">ТРЕНИРОВКА</span>
       <h1 class="impact">${esc(vm.title)}</h1>
       <p class="mut">${esc(vm.subtitle)}</p>
-      ${levelLine}
+      ${scoresHtml}
       <p class="ey" style="margin-top:16px">${esc(vm.focusHeading)}</p>
       ${focusHtml}
       <p class="ey" style="margin-top:14px">${esc(vm.whyHeading)}</p>
@@ -77,6 +78,8 @@ export const renderDrill = (root, vm, handlers = {}) => {
       <div><span class="ey">EFF</span><b>${sc.effectiveStackBb != null ? Number(sc.effectiveStackBb).toFixed(1) : '—'} BB</b></div>
     </div>
     <div class="row"><span class="mut small">${posRu(sc.heroPosition)} (ТЫ) vs ${posRu(sc.villainPosition)}</span></div>
+    ${vm.contextLine ? `<p class="mut small">${esc(vm.contextLine)}</p>` : ''}
+    ${vm.historyLine ? `<p class="mut small">${esc(vm.historyLine)}</p>` : ''}
     <div class="dailyBoard">${board || ''}</div>
     ${hero ? `<div class="cards">${hero}</div>` : ''}
     ${vm.confidence && vm.confidence.available
@@ -94,6 +97,42 @@ export const renderFeedback = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
   const cls = gradeClass(vm.grade);
+
+  if (vm.structured) {
+    const detail = vm.detail || {};
+    const detailHtml = `<details class="regReport" style="margin-top:12px">
+      <summary class="ey" style="cursor:pointer">ПОДРОБНЫЙ РАЗБОР →</summary>
+      <p class="mut small">${esc(detail.heroRange || '')}</p>
+      <p class="mut small">${esc(detail.villainRange || '')}</p>
+      <p class="mut small">${esc(detail.valueHands || '')}</p>
+      <p class="mut small">${esc(detail.bluffHands || '')}</p>
+      <p class="mut small">${esc(detail.folds || '')}</p>
+      <p class="mut small">${esc(detail.calls || '')}</p>
+      <p class="mut small">${esc(detail.position || '')}</p>
+      ${detail.stackDepth ? `<p class="mut small">${esc(detail.stackDepth)}</p>` : ''}
+      <p class="mut small">${esc(detail.potSizing || '')}</p>
+      ${detail.icm ? `<p class="mut small">${esc(detail.icm)}</p>` : ''}
+      ${detail.alternativeLine ? `<p class="mut small">${esc(detail.alternativeLine)}</p>` : ''}
+    </details>`;
+    root.innerHTML = `<div class="panel dailyStage">
+      <span class="ey">ВСКРЫТИЕ · РАЗБОР</span>
+      <h1 class="impact">${esc(vm.verdict || vm.gradeTitle || 'Результат')}</h1>
+      <div class="dualGrade">
+        <div class="gradeBox ${cls}"><span class="ey">РЕШЕНИЕ</span><b>${esc(vm.correctLine || '—')}</b></div>
+        <div class="gradeBox ${cls}"><span class="ey">ПОТЕРЯ EV</span><b>${vm.evLossBb != null ? Number(vm.evLossBb).toFixed(2) : '—'} BB</b></div>
+      </div>
+      <div class="verdict"><span class="ey">ПОЧЕМУ</span><p class="mut small">${esc(vm.why || '')}</p></div>
+      <div class="verdict"><span class="ey">${vm.chosenRecommended ? 'ПОЧЕМУ ТЫ ПРАВ' : 'ТВОЯ ОШИБКА'}</span><p>${esc(vm.userMistake || '')}</p></div>
+      <div class="verdict"><span class="ey">ЧТО ЗАПОМНИТЬ</span><p><b>${esc(vm.remember || '—')}</b>${vm.alternative ? `<br><span class="mut small">${esc(vm.alternative)}</span>` : ''}</p></div>
+      ${vm.tip ? `<p class="mut small">${esc(vm.tip)}</p>` : ''}
+      ${detailHtml}
+      <button class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
+    </div>`;
+    const b = root.querySelector('#trNext');
+    if (b && typeof h.next === 'function') b.onclick = () => h.next();
+    return;
+  }
+
   const freq = vm.strategy && vm.strategy.recommendedFrequency != null
     ? Math.round(vm.strategy.recommendedFrequency * 100) + '%'
     : '—';

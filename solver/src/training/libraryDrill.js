@@ -89,9 +89,16 @@ export function drillFromLibraryTask(task, { leakConcept = null } = {}) {
       explanation: {
         keyConcept: concept,
         conceptLabelRu: leakLabelRu(concept) || task.concept,
-        promptRu: task.question || 'Ваш ход.'
+        promptRu: task.question || 'Ваш ход.',
+        historyRu: (task.history || []).map((h) => `${h.street}: ${h.text}`).join(' → '),
+        contextRu: [
+          task.position ? `${task.position} (ты)` : null,
+          task.villain ? `против ${task.villain}` : null,
+          task.heroStack != null ? `стек ${task.heroStack} ББ` : null,
+          task.pot != null ? `банк ${task.pot} ББ` : null
+        ].filter(Boolean).join(' · ')
       },
-      metadata: { source: 'task_library', taskId: task.id }
+      metadata: { source: 'task_library', taskId: task.id, task }
     }
   };
 }

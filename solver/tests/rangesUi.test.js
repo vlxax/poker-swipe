@@ -239,6 +239,21 @@ test('mobile matrix uses full-width grid with expanded touch targets', () => {
   assert.ok(root.clientWidth <= 390 || root.clientWidth === 0);
 });
 
+test('9-max format exposes MP/LJ positions and honest unsupported for missing atlas', () => {
+  const catalog = getCatalog(pack, '9max');
+  assert.ok(catalog.positions.includes('MP'));
+  assert.ok(catalog.positions.includes('LJ'));
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('format', '9max');
+  ctl.setField('position', 'MP');
+  ctl.setField('situation', 'rfi');
+  ctl.setField('stack', 20);
+  ctl.showRange();
+  const vm = ctl.viewModel();
+  assert.equal(vm.phase, 'unsupported');
+  assert.match(vm.unsupportedMessage, /пока нет/i);
+});
+
 test('mobile 390x844 has no horizontal overflow on selector and result', () => {
   const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });

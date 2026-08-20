@@ -137,7 +137,11 @@ function paint() {
   const st = ctl.state;
 
   if (st === 'ready' || st === 'limited') {
-    R.renderDrill(el, drillVM(), handlers);
+    if (ctl.showingFeedback && ctl.lastAnswer) {
+      R.renderFeedback(el, ctl.feedbackVM(), handlers);
+    } else {
+      R.renderDrill(el, drillVM(), handlers);
+    }
   } else if (st === 'done') {
     R.renderSummary(el, ctl.summary(), { ...handlers, back: goHome });
   } else if (st === 'loading') {

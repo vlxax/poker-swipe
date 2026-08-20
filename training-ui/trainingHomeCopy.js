@@ -88,20 +88,33 @@ export function focusItemsFromProfile({ skillProfile, leaks = [], plan = null, l
   return fromPlan.slice(0, limit);
 }
 
-export function whyTextForTraining({ skillProfile, leaks = [], focusItems = [] } = {}) {
+export function whyTextForTraining({ skillProfile, leaks = [], focusItems = [], plan = null } = {}) {
+  const weak = weakestSkillLabels(skillProfile, 3);
+  const riverWeak = weak.some((s) => /ривер|river/i.test(s));
+  const icmWeak = weak.some((s) => /icm|баббл/i.test(s));
+  if (riverWeak && icmWeak) {
+    return 'На диагностике ты чаще всего теряла фишки в крупных решениях на ривере и под давлением ICM.';
+  }
+  if (riverWeak) {
+    return 'На диагностике ты чаще всего теряла фишки в крупных решениях на ривере.';
+  }
+  if (icmWeak) {
+    return 'На диагностике ты чаще всего теряла фишки под давлением ICM и на баббле.';
+  }
+
   const hasLeaks = (leaks || []).length > 0;
   if (hasLeaks) {
     return 'Именно здесь ты сейчас чаще всего теряешь фишки.';
   }
 
-  const weak = weakestSkillLabels(skillProfile, 2);
-  if (weak.length >= 2) {
-    const a = skillPhraseForWhy(weak[0]);
-    const b = skillPhraseForWhy(weak[1]);
+  const weakTwo = weakestSkillLabels(skillProfile, 2);
+  if (weakTwo.length >= 2) {
+    const a = skillPhraseForWhy(weakTwo[0]);
+    const b = skillPhraseForWhy(weakTwo[1]);
     return `Главные потери сейчас — ${a} и ${b}.`;
   }
-  if (weak.length === 1) {
-    return `Главные потери сейчас — ${skillPhraseForWhy(weak[0])}.`;
+  if (weakTwo.length === 1) {
+    return `Главные потери сейчас — ${skillPhraseForWhy(weakTwo[0])}.`;
   }
 
   const meaningfulFocus = (focusItems || []).filter((f) => f && f !== FALLBACK_FOCUS);

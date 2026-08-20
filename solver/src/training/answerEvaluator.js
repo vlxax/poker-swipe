@@ -6,6 +6,7 @@
 
 import { classifyLoss, classifySeverity } from '../config/thresholds.js';
 import { leakLabelRu } from './concepts.js';
+import { buildTaskFeedback } from './taskFeedback.js';
 
 const GOOD_LOSS = 0.05;
 
@@ -100,15 +101,31 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
     solution.recommendedFrequency > 0.2 && solution.recommendedFrequency < 0.8;
   const chosenRecommended = !!opt && !!solution.recommendedAction && sameAction(opt.action, solution.recommendedAction);
 
-  const feedbackRu = feedbackForGrade(grade, {
-    concept: drill && drill.concept,
-    evLossBb,
-    mixedStrategy,
-    chosenRecommended,
-    chosenLabelRu: opt ? opt.labelRu : null,
-    recLabelRu: actionLabel(solution.recommendedAction),
-    recFreq: solution.recommendedFrequency
-  });
+  const task = drill && drill.metadata && drill.metadata.task;
+  let feedbackRu;
+  if (task) {
+    const recommendedOpt = options.find((o) => solution.recommendedAction && sameAction(o.action, solution.recommendedAction))
+      || options.find((o) => o.labelRu === task.correct)
+      || options[0];
+    feedbackRu = buildTaskFeedback({
+      task,
+      chosenLabel: opt ? opt.labelRu : null,
+      recommendedLabel: recommendedOpt ? recommendedOpt.labelRu : task.correct,
+      grade,
+      evLossBb,
+      concept: drill.concept
+    });
+  } else {
+    feedbackRu = feedbackForGrade(grade, {
+      concept: drill && drill.concept,
+      evLossBb,
+      mixedStrategy,
+      chosenRecommended,
+      chosenLabelRu: opt ? opt.labelRu : null,
+      recLabelRu: actionLabel(solution.recommendedAction),
+      recFreq: solution.recommendedFrequency
+    });
+  }
 
   return {
     grade,
