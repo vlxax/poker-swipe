@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-20T14:59:17+03:00",
+  "retrieved_at": "2026-08-20T17:18:48+03:00",
   "city": "Москва",
   "count": 56,
   "clubs": [
@@ -258,6 +258,22 @@
           "date": "2026-08-20",
           "time": "19:15",
           "club": "DUCKS POKER CLUB",
+          "tournament": "FREEROLL BOUNTY",
+          "fee_rub": 0,
+          "type": "Баунти / Нокаут",
+          "source_url": "https://pokernomoney.ru/tournaments/10828",
+          "address": "проспект Мира, 102с25",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Баунти / Нокаут FREEROLL BOUNTY 19:15 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25"
+        },
+        {
+          "date": "2026-08-20",
+          "time": "19:15",
+          "club": "DUCKS POKER CLUB",
           "tournament": "BOUNTY TOURNAMENT",
           "fee_rub": 1000,
           "type": "Баунти / Нокаут",
@@ -269,22 +285,6 @@
           "reentry_cost_rub": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут BOUNTY TOURNAMENT 19:15 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
-        },
-        {
-          "date": "2026-08-20",
-          "time": "19:30",
-          "club": "DUCKS POKER CLUB",
-          "tournament": "FREEROLL BOUNTY",
-          "fee_rub": 0,
-          "type": "Баунти / Нокаут",
-          "source_url": "https://pokernomoney.ru/tournaments/10828",
-          "address": "проспект Мира, 102с25",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
-          "reentry_limit": null,
-          "reentry_cost_rub": null,
-          "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут FREEROLL BOUNTY 19:30 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25"
         }
       ],
       "upcoming": 2
@@ -507,12 +507,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10681",
           "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:37",
+          "late_reg_minutes": 157,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE TOURNAMENT 19:00 1 000 ₽ Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт."
+          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE TOURNAMENT 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт."
         }
       ],
       "upcoming": 1
@@ -888,7 +888,7 @@
           "club": "PRIDE",
           "tournament": "PRIDE DISCIPLINE",
           "fee_rub": 1200,
-          "type": "",
+          "type": "PKO",
           "source_url": "https://pokernomoney.ru/tournaments/10313",
           "address": "ул. Ладожская, д. 11",
           "late_reg_until": "21:30",
@@ -896,7 +896,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "PRIDE DISCIPLINE 19:00 1 200 ₽ вход до 21:30 PRIDE ул. Ладожская, д. 11"
+          "source_card_text": "PKO PRIDE DISCIPLINE 19:00 1 200 ₽ вход до 21:30 PRIDE ул. Ладожская, д. 11"
         }
       ]
     },
@@ -1269,9 +1269,9 @@
           "date": "2026-08-20",
           "time": "19:00",
           "club": "Дойл (Doyle poker club)",
-          "tournament": "Сателлит MPT",
+          "tournament": "Сателлит Сателлит MPT",
           "fee_rub": 1000,
-          "type": "Баунти / Нокаут",
+          "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10483",
           "address": "Б. Сухаревская пл. д. 14/7",
           "late_reg_until": null,
@@ -1279,7 +1279,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут Сателлит MPT 19:00 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7"
+          "source_card_text": "Сателлит Сателлит MPT 19:00 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7"
         }
       ]
     },
@@ -1360,12 +1360,12 @@
           "type": "Обучающий",
           "source_url": "https://pokernomoney.ru/tournaments/11191",
           "address": "Большая Никитская 43",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:10",
+          "late_reg_minutes": 250,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Обучающий Обучение 18:00 Бесплатно МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "Обучающий Обучение 18:00 Бесплатно вход до 22:10 МАКСИМУМ Большая Никитская 43"
         },
         {
           "date": "2026-08-20",
