@@ -1,14 +1,21 @@
-// Focused tests for the ranges onboarding / viewer UX.
+// UX tests for range narrowing trainer flow.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'fs';
 import { JSDOM } from 'jsdom';
 
 import { RangeController } from '../../ranges-ui/controller.js';
-import { isSelectionComplete, getCatalog, nextCtaLabel } from '../../ranges-ui/catalog.js';
 import { buildAtlasMatrix } from '../../ranges-ui/preflopAtlas.js';
 import { buildPushFoldMatrix } from '../../ranges-ui/pushFold.js';
-import { loadOnboarding, completeOnboarding, saveOnboarding, HINTS } from '../../ranges-ui/storage.js';
+import { getCatalog } from '../../ranges-ui/catalog.js';
+import { loadProgress, completeOnboarding, HINTS } from '../../ranges-ui/storage.js';
+import {
+  getScenarios,
+  scenarioCount,
+  allScenarioTruthIds,
+  getScenarioById
+} from '../../ranges-ui/narrowingScenarios.js';
+import { selectionFromReference, scoreStep } from '../../ranges-ui/narrowingEngine.js';
 import * as Renderer from '../../ranges-ui/renderer.js';
 
 function loadPack() {
@@ -36,152 +43,140 @@ function setupDom() {
   return dom.window.document.querySelector('#rangesArea');
 }
 
-function fieldOrder(html) {
-  const labels = ['ФОРМАТ', 'ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С', 'СТЕК'];
-  return labels
-    .map((label) => ({ label, idx: html.indexOf(label) }))
-    .filter((x) => x.idx >= 0)
-    .sort((a, b) => a.idx - b.idx)
-    .map((x) => x.label);
-}
-
-function selectComplete(ctl, { situation = 'rfi', position = 'BTN', stack = 20, dataSource = 'verified' } = {}) {
-  if (dataSource !== ctl.selection.dataSource) ctl.setField('dataSource', dataSource);
-  ctl.setField('position', position);
-  ctl.setField('situation', situation);
-  if (dataSource !== 'reference') ctl.setField('stack', stack);
-}
-
 const pack = loadPack();
 const rangesCss = readFileSync(new URL('../../ranges-ui/ranges.css', import.meta.url), 'utf8');
 
-test('first visit shows position-first onboarding hint', () => {
-  const storage = memStorage();
-  const ctl = new RangeController({ pack, storage });
+test('entry point is narrowing trainer intro, not reference chart browser', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
   const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'selector');
-  assert.equal(vm.title, 'РЕНДЖИ');
-  assert.match(vm.intro, /позици/i);
+  assert.equal(vm.phase, 'intro');
+  assert.equal(vm.title, 'СУЖЕНИЕ ДИАПАЗОНА');
+  assert.ok(vm.headline);
+  assert.ok(vm.cta.includes('НАЧАТЬ'));
+  assert.ok(!vm.dataSources);
+  assert.ok(!vm.showStack);
+});
+
+test('intro hides technical source selectors and reference labels', () => {
+  const root = setupDom();
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  Renderer.renderIntro(root, ctl.viewModel(), {});
+  const html = root.innerHTML.toLowerCase();
+  assert.ok(html.includes('сужение диапазона'));
+  assert.ok(!html.includes('источник'));
+  assert.ok(!html.includes('базовая стратегия'));
+  assert.ok(!html.includes('reference'));
+  assert.ok(!html.includes('verified'));
+  assert.ok(!html.includes('heuristic'));
+});
+
+test('first visit shows start hint', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  const vm = ctl.viewModel();
   assert.equal(vm.hints.length, 1);
   assert.equal(vm.hints[0].text, HINTS[0].text);
-  assert.equal(vm.cta, 'ВЫБЕРИ ПОЗИЦИЮ');
-  assert.equal(ctl.selection.dataSource, 'reference');
-  assert.equal(vm.showStack, false);
 });
 
-test('onboarding hints follow field completion order', () => {
+test('beginPlay opens interactive step with matrix task', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
-  assert.equal(ctl.viewModel().hints[0].text, HINTS[0].text);
-
-  ctl.setField('position', 'BTN');
-  assert.equal(ctl.viewModel().hints[0].text, HINTS[1].text);
-
-  ctl.setField('situation', 'vs_open');
-  assert.equal(ctl.viewModel().hints[0].text, HINTS[2].text);
-
-  ctl.setField('opener', 'CO');
-  assert.equal(ctl.viewModel().cta, 'ПОКАЗАТЬ РЕНДЖ');
-
-  ctl.showRange();
+  ctl.startScenario('read-open-btn');
+  ctl.beginPlay();
   const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'result');
-  assert.equal(vm.hints.length, 0);
-});
-
-test('progressive CTA reflects the next missing field', () => {
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('dataSource', 'verified');
-  assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ ПОЗИЦИЮ');
-  assert.equal(nextCtaLabel(ctl.selection), 'ВЫБЕРИ ПОЗИЦИЮ');
-
-  ctl.setField('position', 'BTN');
-  assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ СИТУАЦИЮ');
-
-  ctl.setField('situation', 'vs_open');
-  assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ ОТКРЫТИЕ');
-
-  ctl.setField('opener', 'CO');
-  assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ СТЕК');
-
-  ctl.setField('stack', 20);
-  assert.equal(ctl.viewModel().cta, 'ПОКАЗАТЬ РЕНДЖ');
-  assert.equal(ctl.viewModel().ctaEnabled, true);
-});
-
-test('user can choose position + stack + situation', () => {
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl, { dataSource: 'verified' });
-  assert.equal(isSelectionComplete(ctl.selection), true);
-  const vm = ctl.viewModel();
-  assert.equal(vm.cta, 'ПОКАЗАТЬ РЕНДЖ');
-  assert.equal(vm.ctaEnabled, true);
-});
-
-test('matrix does not render before sufficient selection', () => {
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('dataSource', 'verified');
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'rfi');
-  assert.equal(ctl.phase, 'selector');
-  const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'selector');
-  assert.equal(vm.ctaEnabled, false);
-});
-
-test('valid selection renders a range matrix', () => {
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl, { dataSource: 'verified' });
-  ctl.showRange();
-  const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'result');
-  assert.ok(vm.cells.AA);
-  assert.equal(vm.cells.AA.bucket, 'always');
+  assert.equal(vm.phase, 'play');
+  assert.ok(vm.question);
+  assert.ok(vm.matrix.length >= 169);
+  assert.ok(vm.candidateCount > 0);
 
   const root = setupDom();
-  Renderer.renderResult(root, vm, {});
+  Renderer.renderPlay(root, vm, {});
   assert.ok(root.querySelector('.rangesMatrix'));
-  assert.ok(root.innerHTML.includes('BTN'));
+  assert.ok(root.querySelector('#rangesConfirm'));
+  assert.ok(!root.innerHTML.includes('ИЗМЕНИТЬ СИТУАЦИЮ'));
 });
 
-test('unsupported selection shows explicit fallback', () => {
-  const emptyPack = { preflop: {} };
-  const ctl = new RangeController({ pack: emptyPack, storage: memStorage() });
-  selectComplete(ctl, { dataSource: 'verified' });
-  ctl.showRange();
+test('user toggles hands and completes scenario to summary', () => {
+  const storage = memStorage();
+  const ctl = new RangeController({ pack, storage });
+  ctl.startScenario('read-open-btn');
+  ctl.beginPlay();
+
+  const step = getScenarioById('read-open-btn').steps[0];
+  const truth = step.truth.hands;
+  for (const hand of ctl.userSelection) {
+    if (!truth.has(hand)) ctl.toggleHand(hand);
+  }
+
+  ctl.confirmStep();
   const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /нет готового ренджа/i);
-
-  const root = setupDom();
-  Renderer.renderResult(root, vm, {});
-  assert.ok(root.innerHTML.includes('нет готового ренджа') || root.innerHTML.includes('НЕТ'));
+  assert.equal(vm.phase, 'summary');
+  assert.ok(vm.avgAccuracy >= 90);
+  assert.ok(vm.steps[0].feedback.length > 0);
+  assert.equal(loadProgress(storage).runs, 1);
 });
 
-test('tapping a hand shows action detail', () => {
+test('two-step scenario narrows range across actions', () => {
+  const scenario = getScenarioById('btn-open-vs-3bet-sb');
+  assert.ok(scenario, 'expected btn vs sb 3bet scenario');
+  assert.equal(scenario.stepCount, 2);
+
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl, { dataSource: 'verified' });
-  ctl.showRange();
-  ctl.selectHand('AJo');
-  const vm = ctl.viewModel();
-  assert.ok(vm.handDetail);
-  assert.equal(vm.handDetail.hand, 'AJo');
-  assert.ok(vm.handDetail.actionLabel);
-  assert.ok(Number.isFinite(vm.handDetail.freqPct));
+  ctl.scenario = scenario;
+  ctl.beginPlay();
 
-  const root = setupDom();
-  Renderer.renderResult(root, vm, {});
-  assert.ok(root.innerHTML.includes('AJo'));
-  assert.ok(root.innerHTML.includes('Действие') || root.innerHTML.includes('Фолд') || root.innerHTML.includes('Рейз'));
+  const step1Truth = scenario.steps[0].truth.hands;
+  for (const hand of [...ctl.userSelection]) {
+    if (!step1Truth.has(hand)) ctl.toggleHand(hand);
+  }
+  ctl.confirmStep();
+  assert.equal(ctl.stepIndex, 1);
+  assert.ok(ctl.userSelection.size <= step1Truth.size);
+
+  const step2Truth = scenario.steps[1].truth.hands;
+  for (const hand of [...ctl.userSelection]) {
+    if (!step2Truth.has(hand)) ctl.toggleHand(hand);
+  }
+  ctl.confirmStep();
+  assert.equal(ctl.viewModel().phase, 'summary');
+});
+
+test('scenarios are built from greenline reference truth only', () => {
+  assert.ok(scenarioCount() > 0);
+  const truthIds = allScenarioTruthIds();
+  assert.equal(truthIds.size, 37);
+  for (const scenario of getScenarios()) {
+    for (const step of scenario.steps) {
+      assert.equal(step.truth.supported, true);
+      assert.ok(step.truth.hands.size > 0);
+    }
+  }
+});
+
+test('mixed frequency policies stay visible in play matrix', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.startScenario('read-btn-open-from-bb');
+  ctl.beginPlay();
+  const mixed = ctl.viewModel().matrix.filter((c) => c.mixed);
+  assert.ok(mixed.length > 0);
+});
+
+test('scoreStep reports kept and removed mistakes', () => {
+  const scenario = getScenarioById('read-open-utg');
+  const step = scenario.steps[0];
+  const candidates = new Set(step.candidateHands);
+  const truth = step.truth;
+  const user = new Set(truth.hands);
+  const extra = '72o';
+  user.add(extra);
+  const score = scoreStep(user, truth, candidates);
+  assert.ok(score.keptWrong.includes(extra));
+  assert.ok(score.accuracy < 100);
 });
 
 test('onboarding does not repeat after completion', () => {
   const storage = memStorage();
   completeOnboarding(storage);
   const ctl = new RangeController({ pack, storage });
-  ctl.setField('position', 'BTN');
-  const vm = ctl.viewModel();
-  assert.equal(vm.hints.length, 0);
-  assert.equal(loadOnboarding(storage).completed, true);
+  assert.equal(ctl.viewModel().hints.length, 0);
 });
 
 test('existing range atlas logic is not broken', () => {
@@ -197,124 +192,32 @@ test('existing range atlas logic is not broken', () => {
   assert.equal(Object.keys(push.cells).length, 169);
 });
 
-test('selector renders fields in spec order and hides irrelevant selectors', () => {
-  const root = setupDom();
-  const ctl = new RangeController({ pack, storage: memStorage() });
-
-  Renderer.renderSelector(root, ctl.viewModel(), {});
-  let order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ПОЗИЦИЯ']);
-  assert.ok(!root.innerHTML.includes('СИТУАЦИЯ'));
-  assert.ok(!root.innerHTML.includes('СТЕК'));
-
-  ctl.setField('position', 'BTN');
-  Renderer.renderSelector(root, ctl.viewModel(), {});
-  order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ']);
-  assert.ok(!root.innerHTML.includes('СТЕК'));
-
-  ctl.setField('situation', 'vs_open');
-  Renderer.renderSelector(root, ctl.viewModel(), {});
-  order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С']);
-  assert.ok(!root.innerHTML.includes('СТЕК'));
-
-  ctl.setField('opener', 'CO');
-  Renderer.renderSelector(root, ctl.viewModel(), {});
-  order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С']);
-  assert.ok(!root.innerHTML.includes('СТЕК'));
-});
-
-test('mobile matrix uses full-width grid with expanded touch targets', () => {
+test('mobile matrix uses full-width grid with touch targets', () => {
   assert.match(rangesCss, /grid-template-columns:\s*repeat\(13,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(rangesCss, /touch-action:\s*manipulation/);
   assert.match(rangesCss, /\.rangesCell::before/);
   assert.match(rangesCss, /\.rangesMix/);
   assert.doesNotMatch(rangesCss, /width:\s*max-content/);
   assert.match(rangesCss, /overflow-x:\s*hidden/);
+});
 
+test('mobile 390px layout renders intro and play without chart selectors', () => {
   const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'rfi');
-  ctl.showRange();
-  Renderer.renderResult(root, ctl.viewModel(), {});
-
-  const matrix = root.querySelector('.rangesMatrix');
-  const cells = root.querySelectorAll('.rangesCell');
-  assert.ok(matrix);
-  assert.equal(cells.length, 169);
-  assert.ok(root.querySelector('.rangesMatrixWrap'));
-  assert.ok(root.clientWidth <= 390 || root.clientWidth === 0);
-});
-
-test('9-max format exposes MP/LJ positions and honest unsupported for missing atlas', () => {
-  const catalog = getCatalog(pack, '9max', 'verified');
-  assert.ok(catalog.positions.includes('MP'));
-  assert.ok(catalog.positions.includes('LJ'));
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('dataSource', 'verified');
-  ctl.setField('format', '9max');
-  ctl.setField('position', 'MP');
-  ctl.setField('situation', 'rfi');
-  ctl.setField('stack', 20);
-  ctl.showRange();
-  const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'unsupported');
-  assert.match(vm.unsupportedMessage, /пока нет/i);
-});
-
-test('reference mode hides stack selector and shows baseline strategy header', () => {
-  const root = setupDom();
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  const selector = ctl.viewModel();
-  assert.equal(selector.showStack, false);
-  assert.ok(!selector.formats || selector.formats.length === 1);
-
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'vs_open');
-  ctl.setField('opener', 'UTG');
-  ctl.showRange();
-  const vm = ctl.viewModel();
-  assert.equal(vm.phase, 'result');
-  assert.equal(vm.headline, 'Базовая стратегия');
-  assert.match(vm.contextLine, /против открытия UTG/);
-  assert.match(vm.subtitle, /без привязки к глубине стека/);
-  assert.ok(vm.legendItems.some((item) => item.key === 'mixed'));
-  assert.ok(vm.cells['55'].isMixed);
-
-  Renderer.renderResult(root, vm, {});
-  assert.ok(root.innerHTML.includes('Базовая стратегия'));
-  assert.ok(!root.innerHTML.includes('20 ББ'));
-  assert.ok(root.querySelector('.rangesMix'));
-});
-
-test('reference hand detail shows real frequencies and source', () => {
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'vs_open');
-  ctl.setField('opener', 'UTG');
-  ctl.showRange();
-  ctl.selectHand('55');
-  const vm = ctl.viewModel();
-  assert.deepEqual(
-    vm.handDetail.actions.map((row) => `${row.label}:${row.pct}`).sort(),
-    ['Рейз:50', 'Фолд:50']
-  );
-  assert.equal(vm.handDetail.sourceLabel, 'Базовая стратегия');
-});
-
-test('mobile 390x844 has no horizontal overflow on selector and result', () => {
-  const root = setupDom();
-  const ctl = new RangeController({ pack, storage: memStorage() });
-  ctl.setField('position', 'BTN');
-  ctl.setField('situation', 'rfi');
-  Renderer.renderSelector(root, ctl.viewModel(), {});
-  assert.ok(root.querySelector('#rangesShow'));
-  ctl.showRange();
-  Renderer.renderResult(root, ctl.viewModel(), {});
+  Renderer.renderIntro(root, ctl.viewModel(), {});
+  assert.ok(root.querySelector('#rangesStart'));
+  ctl.beginPlay();
+  Renderer.renderPlay(root, ctl.viewModel(), {});
   const matrix = root.querySelector('.rangesMatrixWrap');
   assert.ok(matrix);
+  assert.equal(root.querySelectorAll('.rangesCell').length, 169);
   assert.ok(root.clientWidth <= 390 || root.clientWidth === 0);
+});
+
+test('reference selection helper still resolves greenline policies', () => {
+  const sel = { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'UTG' };
+  const truth = selectionFromReference(sel);
+  assert.equal(truth.supported, true);
+  assert.ok(truth.hands.has('AA'));
+  assert.ok(truth.policies['55']);
 });

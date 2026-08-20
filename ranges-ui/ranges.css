@@ -1,27 +1,33 @@
 .rangesStage{max-width:100%;overflow-x:hidden;padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
 .rangesStage .rangesHint{background:#1a1f28;border:1px solid #2f3848;border-radius:14px;padding:10px 12px;margin:10px 0;font-size:12px;color:#c8d0dc}
-.rangesSourceBadge{display:inline-block;margin:6px 0 10px;padding:4px 10px;border-radius:999px;background:#1c2414;border:1px solid #3a4a28;color:#c8ff8a;font-size:11px;font-weight:800;letter-spacing:.04em}
-.rangesField{margin:14px 0}
-.rangesField .ey{display:block;margin-bottom:8px}
-.rangesChips{display:flex;flex-wrap:wrap;gap:6px}
-.rangesChip{border:1px solid #343b45;background:#12161c;color:#e8ecf2;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:800;letter-spacing:.04em;touch-action:manipulation}
-.rangesChip.on{border-color:#c8ff3d;background:#1c2414;color:#eaffb8}
-.rangesChip:disabled{opacity:.35}
-.rangesCta{margin-top:18px;width:100%}
+.rangesLead{margin:8px 0 4px;font-size:18px;font-weight:800;line-height:1.25;color:#eef2f7}
+.rangesStepMeta{margin:12px 0 4px;font-size:11px;color:#9aa3af;letter-spacing:.06em;text-transform:uppercase}
+.rangesSitCard{margin:14px 0;padding:12px 14px;border:1px solid #2f3848;border-radius:16px;background:#141a22}
+.rangesSitRow{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:13px;border-bottom:1px solid #252a32}
+.rangesSitRow:last-child{border-bottom:0}
+.rangesSitRow span{color:#9aa3af}
+.rangesTimeline{margin:12px 0 0;padding-left:18px;color:#c5ccd6}
+.rangesTimeline li{margin:8px 0;font-size:12px;line-height:1.4}
+.rangesTimeline b{display:block;color:#eef2f7;font-size:13px}
+.rangesPlayTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rangesCounter{font-size:12px;font-weight:800;color:#c8ff8a;background:#1c2414;border:1px solid #3a4a28;border-radius:999px;padding:4px 10px}
+.rangesQuestion{margin:6px 0 10px;font-size:17px;line-height:1.3}
+.rangesActionChip{display:inline-block;margin:0 0 8px;padding:6px 10px;border-radius:999px;background:#1a2430;border:1px solid #2f4558;color:#b8d4ff;font-size:11px;font-weight:800;letter-spacing:.03em}
+.rangesNarrative{margin:0 0 10px;font-size:12px;line-height:1.45}
+.rangesCta{margin-top:16px;width:100%;min-height:48px;touch-action:manipulation}
 .rangesCta[disabled]{opacity:.45}
-.rangesHeader{margin:12px 0 8px}
-.rangesHeader b{display:block;font-size:18px;margin:4px 0;line-height:1.25;word-break:break-word}
-.rangesSubtitle{display:block;font-size:12px;color:#9aa3af;line-height:1.45;margin-top:4px}
-.rangesLegendBar{display:flex;flex-wrap:wrap;gap:10px 14px;margin:8px 0 12px}
-.rangesLegendItem{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#c5ccd6}
+.rangesLegendBar{display:flex;flex-wrap:wrap;gap:8px 12px;margin:8px 0 12px}
+.rangesLegendItem{display:inline-flex;align-items:center;gap:6px;font-size:10px;color:#c5ccd6}
 .rangesLegendSwatch{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid rgba(255,255,255,.08)}
-.rangesLegendSwatch.raise{background:linear-gradient(180deg,#8fd84a,#4ea828)}
-.rangesLegendSwatch.call{background:linear-gradient(180deg,#5da8ff,#2563eb)}
-.rangesLegendSwatch.fold{background:#1a1e24}
+.rangesLegendSwatch.kept,.rangesLegendSwatch.ok{background:linear-gradient(180deg,#8fd84a,#4ea828)}
+.rangesLegendSwatch.out{background:#3a3038}
+.rangesLegendSwatch.dead{background:#12161c}
+.rangesLegendSwatch.bad{background:linear-gradient(180deg,#ff6b8a,#d12a55)}
 .rangesLegendSwatch.mixed{background:linear-gradient(135deg,#4ea828 0 33%,#2563eb 33% 66%,#1a1e24 66% 100%)}
 .rangesMatrixWrap{overflow-x:hidden;width:100%;margin:8px 0 12px;max-width:100%}
 .rangesMatrix{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;width:100%;max-width:100%}
-.rangesCell{aspect-ratio:1;width:100%;min-width:0;border-radius:6px;border:1px solid #2a3038;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#0e1218;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;background:#1a1e24}
+.rangesCell{aspect-ratio:1;width:100%;min-width:0;border-radius:6px;border:1px solid #2a3038;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;cursor:default;color:#eef2f7;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;background:#12161c}
+button.rangesCell{cursor:pointer}
 .rangesCell::before{content:'';position:absolute;inset:-5px}
 .rangesCellLabel{position:relative;z-index:2;text-shadow:0 0 3px rgba(0,0,0,.85),0 1px 2px rgba(0,0,0,.9);pointer-events:none}
 .rangesMix{position:absolute;inset:0;display:flex;flex-direction:column;z-index:1}
@@ -29,29 +35,30 @@
 .rangesMixSeg.fold{background:#1a1e24}
 .rangesMixSeg.call{background:linear-gradient(180deg,#5da8ff,#2563eb)}
 .rangesMixSeg.raise{background:linear-gradient(180deg,#8fd84a,#4ea828)}
-.rangesCell.always{background:linear-gradient(180deg,#8fd84a,#4ea828)}
-.rangesCell.sometimes{background:linear-gradient(180deg,#d4c44a,#9a8a20);color:#1a1408}
-.rangesCell.never{background:#1a1e24;color:#5c6673}
-.rangesCell.mixed{background:#12161c;color:#eef2f7}
+.rangesCell.kept,.rangesCell.ok-kept{background:linear-gradient(180deg,#8fd84a,#4ea828);color:#0e1218}
+.rangesCell.out,.rangesCell.ok-out{background:#3a3038;color:#9aa3af}
+.rangesCell.dead,.rangesCell.isDisabled{background:#0f1218;color:#4a5563;border-color:#1a1f28;opacity:.55}
+.rangesCell.bad-kept{background:linear-gradient(180deg,#ff8aa8,#d12a55);color:#fff}
+.rangesCell.bad-out{background:linear-gradient(180deg,#ffd166,#c98712);color:#1a1408}
+.rangesCell.mixed,.rangesCell.kept.mixed,.rangesCell.bad-kept.mixed{background:#12161c;color:#eef2f7}
 .rangesCell.selected{outline:2px solid #ff2e84;outline-offset:1px;z-index:3}
-.rangesDetail{background:#141a22;border:1px solid #2f3848;border-radius:16px;padding:12px 14px;margin:10px 0}
-.rangesDetail h3{margin:0 0 8px;font-size:22px}
-.rangesDetail .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #252a32;font-size:13px;gap:12px}
-.rangesDetail .row:last-child{border-bottom:0}
-.rangesHelpBtn{background:none;border:0;color:#9aa3af;font-size:12px;text-decoration:underline;padding:0;margin:8px 0 0;cursor:pointer;touch-action:manipulation}
-.rangesBackBtn{margin-top:12px;width:100%}
+.rangesScoreBadge{display:inline-block;margin:8px 0 12px;padding:8px 14px;border-radius:14px;background:#1c2414;border:1px solid #3a4a28;color:#c8ff8a;font-size:24px;font-weight:900}
+.rangesReviewStep{margin:16px 0 0;padding-top:12px;border-top:1px solid #2f3848}
+.rangesReviewHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px}
+.rangesReviewHead span{font-weight:900;color:#c8ff8a}
+.rangesFeedbackLine,.rangesSummaryLine{margin:6px 0;font-size:12px;line-height:1.45;color:#c5ccd6}
+.rangesWrong{margin:6px 0;font-size:11px;color:#ff8aa8;line-height:1.4}
+.rangesHelpBtn{background:none;border:0;color:#9aa3af;font-size:12px;text-decoration:underline;padding:8px 0 0;margin-top:4px;cursor:pointer;touch-action:manipulation;width:100%;text-align:center}
 .rangesOverlay{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;padding:12px}
 .rangesHelpSheet{width:min(420px,100%);max-height:min(70vh,520px);overflow:auto;background:#141a22;border:1px solid #343b45;border-radius:20px 20px 16px 16px;padding:16px}
 .rangesHelpSheet h2{margin:0 0 10px;font-size:18px}
 .rangesHelpSheet p{margin:6px 0;font-size:13px;line-height:1.45;color:#c5ccd6}
-.rangesLinkRow{margin-top:14px}
-.rangesLinkRow button.secondary{width:100%}
 .rangesEmpty{text-align:center;padding:24px 12px}
 .rangesEmpty p{color:#9aa3af;font-size:13px;line-height:1.5}
 @media (max-width:430px){
   .rangesMatrix{gap:2px}
   .rangesCell{font-size:8px}
   .rangesCell::before{inset:-4px}
-  .rangesChip{padding:8px 10px;font-size:10px}
-  .rangesHeader b{font-size:16px}
+  .rangesQuestion{font-size:16px}
+  .rangesLead{font-size:16px}
 }

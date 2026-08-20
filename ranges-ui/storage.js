@@ -1,46 +1,54 @@
-// Onboarding persistence for the ranges section.
+// Onboarding and progress for range narrowing trainer.
 
-const KEY = 'ps_ranges_onboarding_v1';
+const KEY = 'ps_narrowing_progress_v1';
 
-export function loadOnboarding(storage) {
+export function loadProgress(storage) {
   try {
     const raw = storage && storage.getItem(KEY);
-    if (!raw) return { completed: false, hintsSeen: [] };
+    if (!raw) return { completed: false, hintsSeen: [], runs: 0 };
     const data = JSON.parse(raw);
     return {
       completed: !!data.completed,
-      hintsSeen: Array.isArray(data.hintsSeen) ? data.hintsSeen : []
+      hintsSeen: Array.isArray(data.hintsSeen) ? data.hintsSeen : [],
+      runs: Number(data.runs) || 0,
+      lastScenarioId: data.lastScenarioId || null,
+      lastAccuracy: data.lastAccuracy ?? null
     };
   } catch (e) {
-    return { completed: false, hintsSeen: [] };
+    return { completed: false, hintsSeen: [], runs: 0 };
   }
 }
 
-export function saveOnboarding(storage, data) {
-  if (!storage) return;
-  storage.setItem(KEY, JSON.stringify({
+export function saveProgress(storage, data) {
+  const next = {
     completed: !!data.completed,
-    hintsSeen: data.hintsSeen || []
-  }));
+    hintsSeen: data.hintsSeen || [],
+    runs: Number(data.runs) || 0,
+    lastScenarioId: data.lastScenarioId || null,
+    lastAccuracy: data.lastAccuracy ?? null
+  };
+  if (storage) storage.setItem(KEY, JSON.stringify(next));
+  return next;
 }
 
 export function markHintSeen(storage, hintId) {
-  const cur = loadOnboarding(storage);
+  const cur = loadProgress(storage);
   if (!cur.hintsSeen.includes(hintId)) cur.hintsSeen.push(hintId);
-  saveOnboarding(storage, cur);
-  return cur;
+  return saveProgress(storage, cur);
 }
 
 export function completeOnboarding(storage) {
-  const cur = loadOnboarding(storage);
+  const cur = loadProgress(storage);
   cur.completed = true;
-  saveOnboarding(storage, cur);
-  return cur;
+  return saveProgress(storage, cur);
 }
 
 export const HINTS = [
-  { id: 'position', text: 'Выбери позицию' },
-  { id: 'situation', text: 'Теперь выбери ситуацию' },
-  { id: 'opener', text: 'Если нужно — выбери позицию соперника' },
-  { id: 'hand', text: 'Смотрим диапазон' }
+  { id: 'start', text: 'Прочитай ситуацию и нажми «Начать задачу».' },
+  { id: 'toggle', text: 'Убирай из диапазона руки, которые не подходят под действие соперника.' },
+  { id: 'step', text: 'Диапазон сузился — следующее действие фильтрует его ещё раз.' }
 ];
+
+// Legacy aliases for older tests.
+export const loadOnboarding = loadProgress;
+export const saveOnboarding = saveProgress;

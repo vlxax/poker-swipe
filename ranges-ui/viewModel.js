@@ -1,171 +1,147 @@
-// View models for the ranges UI.
+// View models for range narrowing trainer.
 
-import {
-  getCatalog, isSelectionComplete, situationLabel, situationsForPosition,
-  stacksForSituation, openersForSituation, suggestNearby, nextCtaLabel, sanitizeSelection,
-  needsOpenerForSelection
-} from './catalog.js';
-import { resolveRangeMatrix, resolveHandDetail } from './rangeSources.js';
-import { REFERENCE_DISCLAIMER, REFERENCE_USER_LABEL } from './referenceRanges.js';
-import { legendActionsFromCells } from './matrix.js';
+import { matrixClasses, policySegments } from './matrix.js';
+import { matrixCellState } from './narrowingEngine.js';
 import { HINTS } from './storage.js';
 
-function selectorHints(selection, onboarding, needsOpener, openers) {
-  if (onboarding.completed) return [];
-  if (!selection.position) return [HINTS[0]];
-  if (!selection.situation) return [HINTS[1]];
-  if (needsOpener && !selection.opener) {
-    if (openers.length) return [HINTS[2]];
-    return [];
+function stepCandidates(step, answers) {
+  if (step.dependsOnStep != null && answers?.[step.dependsOnStep]) {
+    return new Set(answers[step.dependsOnStep]);
   }
-  if (selection.dataSource !== 'reference' && !selection.stack) return [];
+  return new Set(step.candidateHands || []);
+}
+
+function buildMatrixRows(step, userSelection, { review = false, answers = [] } = {}) {
+  const candidates = stepCandidates(step, answers);
+  const truthHands = step.truth?.hands || new Set();
+  const policies = step.truth?.policies
+    || Object.fromEntries(Object.entries(step.truth?.cells || {}).map(([h, c]) => [h, c.policy]));
+
+  return matrixClasses().map((hand) => matrixCellState(hand, {
+    candidates,
+    userHands: userSelection,
+    truthHands,
+    policies,
+    review
+  }));
+}
+
+export { policySegments };
+
+function introHints(progress) {
+  if (progress?.completed) return [];
+  if (!progress?.hintsSeen?.includes('start')) return [HINTS[0]];
   return [];
 }
 
-function buildReferenceContextLine(sel) {
-  const formatLabel = '6-max';
-  const pos = sel.position || '—';
-  const sit = sel.situation;
-
-  if (sit === 'rfi') {
-    return `${formatLabel} · ${pos} · ${situationLabel('rfi', 'reference')}`;
-  }
-  if (sit === 'vs_open' && sel.opener) {
-    return `${formatLabel} · ${pos} против открытия ${sel.opener}`;
-  }
-  if (sit === 'vs_3bet' && sel.opener) {
-    return `${formatLabel} · ${pos} против 3-бета ${sel.opener}`;
-  }
-  if (sit === 'vs_4bet' && sel.opener) {
-    return `${formatLabel} · ${pos} против 4-бета ${sel.opener}`;
-  }
-  return `${formatLabel} · ${pos}`;
-}
-
-function buildLegendItems(cells, selection) {
-  const seen = legendActionsFromCells(cells);
-  const raiseLabel = selection.situation === 'rfi' ? 'Открываем' : 'Рейз';
-  const items = [];
-  if (seen.RAISE) items.push({ key: 'raise', label: raiseLabel, className: 'raise' });
-  if (seen.CALL) items.push({ key: 'call', label: 'Колл', className: 'call' });
-  if (seen.FOLD) items.push({ key: 'fold', label: 'Фолд', className: 'fold' });
-  if (seen.MIXED) items.push({ key: 'mixed', label: 'Смешанная стратегия', className: 'mixed' });
-  return items;
-}
-
-export function selectorViewModel({ pack, selection, onboarding, showHelp = false }) {
-  const catalog = getCatalog(pack, selection.format || '6max', selection.dataSource || 'reference');
-  const sel = sanitizeSelection(selection, catalog);
-  const complete = isSelectionComplete(sel);
-  const positions = catalog.positions.filter((pos) => situationsForPosition(catalog, pos).length > 0);
-  const situations = sel.position ? situationsForPosition(catalog, sel.position) : [];
-  const stacks = sel.situation ? stacksForSituation(sel.situation, sel.dataSource) : [];
-  const needsOpener = needsOpenerForSelection(sel, catalog);
-  const openers = needsOpener && sel.situation && sel.position
-    ? openersForSituation(catalog, sel.situation, sel.position)
-    : [];
-
-  return {
-    phase: 'selector',
-    title: 'РЕНДЖИ',
-    intro: sel.dataSource === 'reference'
-      ? 'Выбери позицию и ситуацию — покажем справочный префлоп-диапазон без привязки к стеку.'
-      : 'Выбери позицию, ситуацию и стек — покажем, с какими руками играть.',
-    dataSources: catalog.dataSources,
-    sourceLabel: sel.dataSource === 'reference' ? REFERENCE_USER_LABEL : null,
-    formats: catalog.formats,
-    showFormat: catalog.formats.length > 1,
-    situations,
-    positions,
-    stacks,
-    openers,
-    showSituation: !!sel.position,
-    showStack: !!sel.situation && (!needsOpener || !!sel.opener) && stacks.length > 0,
-    needsOpener: needsOpener && !!sel.situation && openers.length > 0,
-    openerLabel: sel.situation === 'vs_3bet' ? '3-БЕТ ОТ' : sel.situation === 'vs_4bet' ? '4-БЕТ ОТ' : 'ОТКРЫТИЕ С',
-    selection: sel,
-    cta: complete ? 'ПОКАЗАТЬ РЕНДЖ' : nextCtaLabel(sel),
-    ctaEnabled: complete,
-    hints: selectorHints(sel, onboarding, needsOpener, openers),
-    showHelp,
-    xrayLink: sel.dataSource !== 'reference'
-  };
-}
-
-export function resultViewModel({ pack, selection, onboarding, selectedHand = null, showHelp = false }) {
-  const catalog = getCatalog(pack, selection.format || '6max', selection.dataSource || 'reference');
-  const sel = sanitizeSelection(selection, catalog);
-  const matrix = resolveRangeMatrix(pack, sel);
-
-  const unsupported = !matrix.supported;
-  const suggestions = unsupported ? suggestNearby(sel, catalog) : [];
-  const isReference = sel.dataSource === 'reference';
-
-  const posLine = sel.position || '—';
-  const stackLine = sel.stack != null ? `${sel.stack} ББ` : null;
-  const sitLine = situationLabel(sel.situation, sel.dataSource);
-  let contextLine = isReference
-    ? buildReferenceContextLine(sel)
-    : `${sel.format === '9max' ? '9-max' : '6-max'} · ${posLine}${stackLine ? ` · ${stackLine}` : ''}`;
-  if (!isReference && sel.opener && sel.situation !== 'rfi') {
-    contextLine = `${posLine} · ${stackLine} · против ${sel.opener}`;
-  }
-
+function playHints(progress, stepIndex) {
+  if (progress?.completed) return [];
   const hints = [];
-  if (!onboarding.completed && !onboarding.hintsSeen.includes('hand')) {
-    hints.push(HINTS[3]);
-  }
+  if (!progress?.hintsSeen?.includes('toggle')) hints.push(HINTS[1]);
+  if (stepIndex > 0 && !progress?.hintsSeen?.includes('step')) hints.push(HINTS[2]);
+  return hints;
+}
 
-  let handDetail = null;
-  if (selectedHand && matrix.cells[selectedHand]) {
-    handDetail = resolveHandDetail(pack, sel, selectedHand);
-    if (handDetail) {
-      handDetail.help = null;
-    }
-  }
-
-  const legendItems = buildLegendItems(matrix.cells, sel);
+export function introViewModel({ scenario, progress }) {
+  const steps = (scenario?.steps || []).map((step, i) => ({
+    index: i + 1,
+    actionLabel: step.actionLabel,
+    actionLine: step.actionLine
+  }));
 
   return {
-    phase: unsupported ? 'unsupported' : 'result',
-    title: 'РЕНДЖИ',
-    headline: isReference ? REFERENCE_USER_LABEL : 'РЕНДЖ',
-    contextLine,
-    situationLine: sitLine,
-    subtitle: isReference ? 'Справочный префлоп-диапазон без привязки к глубине стека.' : null,
-    sourceLabel: isReference ? REFERENCE_USER_LABEL : null,
-    sourceHelp: isReference ? REFERENCE_DISCLAIMER : null,
-    legendItems,
-    cells: matrix.cells,
-    unsupported,
-    unsupportedMessage: isReference
-      ? 'Не удалось загрузить справочный диапазон. Попробуй выбрать другую комбинацию или вернись к выбору.'
-      : sel.format === '9max' && !['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'].includes(String(sel.position || '').toUpperCase())
-        ? 'Для этой позиции в 9-max пока нет готового ренджа. Попробуй UTG, HJ, CO, BTN или SB — или выбери push/fold.'
-        : 'Для этой ситуации пока нет готового ренджа.',
-    suggestions,
-    handDetail,
-    hints,
-    showHelp,
-    selection: sel
+    phase: 'intro',
+    title: 'СУЖЕНИЕ ДИАПАЗОНА',
+    headline: scenario?.title || 'Задача',
+    subtitle: scenario?.subtitle || '',
+    formatLabel: scenario?.intro?.formatLabel || '6-max',
+    heroLabel: scenario?.heroLabel || null,
+    villainLabel: scenario?.villainLabel || null,
+    potLabel: scenario?.potLabel || null,
+    stepCount: scenario?.stepCount || 0,
+    steps,
+    cta: 'НАЧАТЬ ЗАДАЧУ →',
+    hints: introHints(progress),
+    runs: progress?.runs || 0
   };
 }
 
-export function helpViewModel(selection = {}) {
-  const ref = selection.dataSource === 'reference';
+export function playViewModel({ scenario, stepIndex, userSelection, answers = [], progress }) {
+  const step = scenario.steps[stepIndex];
+  const candidates = stepCandidates(step, answers);
+  const kept = [...userSelection].filter((h) => candidates.has(h)).length;
+  const totalSteps = scenario.steps.length;
+
+  const matrix = buildMatrixRows(step, userSelection, { answers });
+  const truthPolicies = step.truth?.policies || {};
+
   return {
-    title: 'Как читать таблицу?',
+    phase: 'play',
+    title: 'СУЖЕНИЕ ДИАПАЗОНА',
+    stepIndex,
+    stepTotal: totalSteps,
+    stepLabel: `Шаг ${stepIndex + 1}/${totalSteps}`,
+    actionLabel: step.actionLabel,
+    actionLine: step.actionLine,
+    question: step.question,
+    narrative: step.narrative,
+    matrix,
+    keptCount: kept,
+    candidateCount: candidates.size,
+    cta: stepIndex < totalSteps - 1 ? 'СЛЕДУЮЩИЙ ШАГ →' : 'ПОКАЗАТЬ РАЗБОР →',
+    hints: playHints(progress, stepIndex),
+    truthPolicies
+  };
+}
+
+export function summaryViewModel({ scenario, answers, scores }) {
+  const summary = scores.summary || { avgAccuracy: 0, lines: [] };
+  const steps = scenario.steps.map((step, i) => {
+    const score = scores[i] || {};
+    const userSet = answers[i] || new Set();
+    const matrix = buildMatrixRows(step, userSet, { review: true, answers });
+    return {
+      index: i + 1,
+      actionLabel: step.actionLabel,
+      question: step.question,
+      accuracy: score.accuracy || 0,
+      feedback: score.feedback || [],
+      keptWrong: score.keptWrong || [],
+      removedWrong: score.removedWrong || [],
+      matrix
+    };
+  });
+
+  return {
+    phase: 'summary',
+    title: 'СУЖЕНИЕ ДИАПАЗОНА',
+    headline: scenario.title,
+    avgAccuracy: summary.avgAccuracy,
+    summaryLines: summary.lines,
+    steps,
+    cta: 'СЛЕДУЮЩАЯ ЗАДАЧА →'
+  };
+}
+
+export function helpViewModel() {
+  return {
+    title: 'Как проходить задачу?',
     lines: [
-      'AA — карманные тузы',
-      'AKs — одномастные туз-король',
-      'AKo — разномастные туз-король',
+      'Тебе показывают покерную ситуацию и исходный диапазон.',
+      'После действия соперника нужно убрать руки, которые не остаются в диапазоне.',
+      'Нажми на клетку матрицы, чтобы убрать или вернуть класс рук.',
+      'Полосы в клетке — смешанные частоты. Не своди их к одному действию.',
       '',
-      'Строки и столбцы — ранги карт. Верхний левый угол — пары, выше диагонали — одномастные, ниже — разномастные.',
-      'Цветные полосы в клетке показывают долю рейза, колла и фолда. Если видно несколько цветов — это смешанная стратегия.',
-      ...(ref ? [
-        '',
-        'Диапазон взят из справочного набора Greenline. Это базовая стратегия без привязки к конкретной глубине стека и не solver-верифицированное решение конкретного турнирного спота.'
-      ] : [])
+      'В конце увидишь разбор: что оставил лишнего, что выкинул зря, и как меняется структура диапазона.'
     ]
   };
+}
+
+// Legacy exports kept for catalog/data tests importing viewModel paths.
+export function selectorViewModel() {
+  return introViewModel({ scenario: null, progress: {} });
+}
+
+export function resultViewModel() {
+  return { phase: 'legacy', title: 'СУЖЕНИЕ ДИАПАЗОНА' };
 }
