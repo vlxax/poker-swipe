@@ -276,3 +276,214 @@
 @media (max-width:340px){
   .t23DetailGrid,.t23FormGrid{grid-template-columns:1fr!important}
 }
+
+/* ============================================================
+   V72 working screen — «Мои турниры» overlay (#ps72TournamentScreen)
+   Visual-only Stitch layer mapped to existing ps72 DOM.
+   ============================================================ */
+#ps72TournamentScreen.ps-tournaments-premium,
+#ps72TournamentScreen.ps-tournaments-premium .ps72{
+  --mt-bg:#0d0d0d;
+  --mt-lime:#dfff00;
+  --mt-lime-dim:#b8d300;
+  --mt-red:#ff7d88;
+  --mt-line-soft:rgba(255,255,255,.07);
+}
+
+#ps72TournamentScreen.ps-tournaments-premium{
+  background:
+    radial-gradient(circle at 88% 0,rgba(223,255,0,.07),transparent 30%),
+    linear-gradient(180deg,#0d0d0d 0%,#101010 100%)!important;
+  color:#e5e2e1;
+  overflow-x:hidden;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72{
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72brand b{
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72hero h1 i{
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72hero p{
+  color:#a8aeb8!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72icon{
+  border-color:var(--mt-line-soft)!important;
+  background:#141414!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72icon.add{
+  border-color:rgba(223,255,0,.55)!important;
+  color:var(--mt-lime)!important;
+  background:rgba(223,255,0,.05)!important;
+  box-shadow:0 0 18px rgba(223,255,0,.08)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72tabs button{
+  border-color:var(--mt-line-soft)!important;
+  background:rgba(255,255,255,.03)!important;
+  color:#c8cbc3!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72tabs button.on,
+#ps72TournamentScreen.ps-tournaments-premium .ps72formatMenu button.on{
+  background:var(--mt-lime)!important;
+  border-color:var(--mt-lime)!important;
+  color:#111!important;
+  box-shadow:0 0 16px rgba(223,255,0,.14)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72formatMenu{
+  border-color:var(--mt-line-soft)!important;
+  background:#121212!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72sum,
+#ps72TournamentScreen.ps-tournaments-premium .ps72mini,
+#ps72TournamentScreen.ps-tournaments-premium .ps72insight{
+  border-color:var(--mt-line-soft)!important;
+  background:linear-gradient(145deg,rgba(38,38,38,.78),rgba(17,17,17,.96))!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72sum .ico{
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72sum.good b,
+#ps72TournamentScreen.ps-tournaments-premium .ps72metric.result.good b,
+#ps72TournamentScreen.ps-tournaments-premium .ps72d.good b,
+#ps72TournamentScreen.ps-tournaments-premium .ps72calc b{
+  color:var(--mt-lime)!important;
+  text-shadow:0 0 16px rgba(223,255,0,.14);
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72sum.good b,
+#ps72TournamentScreen.ps-tournaments-premium .ps72metric.result.bad b,
+#ps72TournamentScreen.ps-tournaments-premium .ps72d.bad b{
+  color:var(--mt-red)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72insights{
+  border-color:rgba(223,255,0,.12)!important;
+  background:rgba(255,255,255,.02)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72insightsHead{
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--mt-line-soft)!important;
+  background:linear-gradient(145deg,rgba(38,38,38,.78),rgba(17,17,17,.96))!important;
+  box-shadow:0 15px 42px rgba(0,0,0,.18)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72card::after{
+  content:"";
+  position:absolute;
+  width:130px;height:130px;
+  border-radius:50%;
+  right:-70px;top:-80px;
+  background:radial-gradient(circle,rgba(223,255,0,.07),transparent 70%);
+  pointer-events:none;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72card.expanded{
+  border-color:rgba(223,255,0,.28)!important;
+  box-shadow:0 0 24px rgba(223,255,0,.08)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72avatar{
+  border-color:rgba(223,255,0,.18)!important;
+  background:radial-gradient(circle at 30% 20%,rgba(223,255,0,.14),transparent 45%),#171717!important;
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72avatar.off{
+  border-color:rgba(223,255,0,.18)!important;
+  color:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72dot,
+#ps72TournamentScreen.ps-tournaments-premium .ps72dot.off{
+  background:var(--mt-lime)!important;
+}
+
+#ps72TournamentScreen.ps-tournaments-premium .ps72empty{
+  border:1px dashed rgba(223,255,0,.16)!important;
+  background:linear-gradient(145deg,rgba(223,255,0,.035),rgba(255,255,255,.018))!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72sheet,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72sheet{
+  border-color:rgba(255,255,255,.08)!important;
+  background:linear-gradient(180deg,#1a1a1a,#101010)!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72field input,
+#ps72Modal.ps-tournaments-premium .ps72field select,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72field input,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72field select{
+  border:1px solid rgba(255,255,255,.09)!important;
+  background:#171717!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72field input:focus,
+#ps72Modal.ps-tournaments-premium .ps72field select:focus,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72field input:focus,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72field select:focus{
+  border-color:rgba(223,255,0,.62)!important;
+  box-shadow:0 0 0 3px rgba(223,255,0,.08)!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72seg button.on,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72seg button.on{
+  background:var(--mt-lime)!important;
+  color:#111!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72save,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72save{
+  background:var(--mt-lime)!important;
+  color:#0b0d08!important;
+  box-shadow:0 8px 0 #667700,0 16px 32px rgba(0,0,0,.24)!important;
+}
+
+#ps72Modal.ps-tournaments-premium .ps72calc,
+#ps72TournamentScreen.ps-tournaments-premium ~ #ps72Modal .ps72calc{
+  border-color:rgba(223,255,0,.24)!important;
+  background:rgba(223,255,0,.04)!important;
+}
+
+@media (max-width:430px){
+  #ps72TournamentScreen.ps-tournaments-premium .ps72{padding-left:12px;padding-right:12px}
+  #ps72TournamentScreen.ps-tournaments-premium .ps72row{
+    grid-template-columns:40px minmax(0,1fr) 64px 64px 14px;
+    gap:6px;
+  }
+}
+
+@media (max-width:390px){
+  #ps72TournamentScreen.ps-tournaments-premium .ps72hero h1{font-size:39px}
+  #ps72TournamentScreen.ps-tournaments-premium .ps72summary{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:360px){
+  #ps72TournamentScreen.ps-tournaments-premium .ps72tabs button{min-width:88px;font-size:10px}
+}
+
+@media (max-width:320px){
+  #ps72TournamentScreen.ps-tournaments-premium .ps72{padding-left:10px;padding-right:10px}
+  #ps72TournamentScreen.ps-tournaments-premium .ps72hero h1{font-size:34px}
+  #ps72TournamentScreen.ps-tournaments-premium .ps72metric b{font-size:10px}
+}

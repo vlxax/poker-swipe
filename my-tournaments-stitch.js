@@ -9,7 +9,9 @@
       document.getElementById('screen-tournaments'),
       document.querySelector('[data-screen="tournaments"]'),
       document.querySelector('.tournamentsScreen'),
-      document.querySelector('.t23Screen')
+      document.querySelector('.t23Screen'),
+      document.getElementById('ps72TournamentScreen'),
+      document.getElementById('ps72Modal')
     ].filter(Boolean);
 
     candidates.forEach(el => el.classList.add('ps-tournaments-premium'));
@@ -33,8 +35,10 @@
 
   // Existing PokerSwipe re-renders screens dynamically.
   // Re-apply only harmless visual marker after DOM updates.
-  const observer = new MutationObserver(() => {
-    requestAnimationFrame(enhance);
-  });
-  observer.observe(document.documentElement,{subtree:true,childList:true});
+  if(typeof MutationObserver !== 'undefined'){
+    const observer = new MutationObserver(() => {
+      requestAnimationFrame(enhance);
+    });
+    observer.observe(document.documentElement,{subtree:true,childList:true});
+  }
 })();
