@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-20T12:18:23+03:00",
+  "retrieved_at": "2026-08-20T13:59:05+03:00",
   "city": "Москва",
   "count": 56,
   "clubs": [
@@ -800,12 +800,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11133",
           "address": "Шелепихинская наб., 34к2зд1",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:15",
+          "late_reg_minutes": 195,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Lucky sevens 19:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1"
+          "source_card_text": "Lucky sevens 19:00 1 000 ₽ вход до 22:15 Pocket Rockets Club Шелепихинская наб., 34к2зд1"
         }
       ]
     },
@@ -1004,7 +1004,7 @@
           "time": "19:30",
           "club": "Raise Club",
           "tournament": "Progressive Bounty",
-          "fee_rub": 500,
+          "fee_rub": 0,
           "type": "PKO",
           "source_url": "https://pokernomoney.ru/tournaments/10804",
           "address": "ул. Азовская 18 (4 этаж)",
@@ -1013,7 +1013,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "PKO Progressive Bounty 19:30 500 ₽ Raise Club ул. Азовская 18 (4 этаж)"
+          "source_card_text": "PKO Progressive Bounty 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
         }
       ]
     },
@@ -1356,16 +1356,16 @@
           "time": "19:00",
           "club": "МАКСИМУМ",
           "tournament": "Double Life Double Chance Tournament",
-          "fee_rub": 1200,
+          "fee_rub": 600,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10390",
           "address": "Большая Никитская 43",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:10",
+          "late_reg_minutes": 190,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Double Life Double Chance Tournament 19:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "Double Life Double Chance Tournament 19:00 600 ₽ вход до 22:10 МАКСИМУМ Большая Никитская 43"
         }
       ]
     },
