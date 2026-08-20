@@ -1,7 +1,7 @@
 // Reference 6-max preflop ranges from AHTOOOXA/poker-charts (greenline).
 // Loaded from generated pack; canonical JSON lives in data/ranges/reference/6max/.
 
-import { matrixClasses } from './matrix.js';
+import { matrixClasses, dominantBucket, isMixedPolicy, actionFrequencyRows } from './matrix.js';
 import { playBucket, primaryAction, ACTION_RU } from './preflopAtlas.js';
 import { REFERENCE_6MAX_METADATA, REFERENCE_6MAX_RANGES } from './referenceRangesPack.js';
 
@@ -14,8 +14,7 @@ export const REFERENCE_SITUATIONS = [
   { id: 'rfi', label: 'Первый вход в банк', needsOpener: false, heroFixed: null },
   { id: 'vs_open', label: 'Против открытия', needsOpener: true, heroFixed: null },
   { id: 'vs_3bet', label: 'Против 3-бета', needsOpener: true, heroFixed: null },
-  { id: 'vs_4bet', label: 'Против 4-бета', needsOpener: true, heroFixed: null },
-  { id: 'bb_defend', label: 'Защита BB', needsOpener: true, heroFixed: 'BB' }
+  { id: 'vs_4bet', label: 'Против 4-бета', needsOpener: true, heroFixed: null }
 ];
 
 const rangeIndex = new Map();
@@ -129,8 +128,31 @@ export function referenceCoverageReport() {
     vs4bet: bySit.vs_4bet || 0,
     frequencies: REFERENCE_6MAX_METADATA.frequencySupport ? 'YES' : 'NO',
     stackSpecific: REFERENCE_6MAX_METADATA.stackSpecific ? 'YES' : 'NO',
-    inventory: inv
+    inventory: inv,
+    uiScenarios: buildUiCoverageReport()
   };
+}
+
+export function buildUiCoverageReport() {
+  const inv = inventoryReference();
+  const report = {
+    rfi: [...inv.rfiPositions],
+    vsOpen: {},
+    vs3bet: {},
+    vs4bet: {}
+  };
+
+  for (const [hero, openers] of Object.entries(inv.vsOpenPairs || {})) {
+    report.vsOpen[hero] = openers.map((opener) => `${hero} vs ${opener}`);
+  }
+  for (const [hero, villains] of Object.entries(inv.vs3betPairs || {})) {
+    report.vs3bet[hero] = villains.map((v) => `${hero} vs ${v}`);
+  }
+  for (const [hero, villains] of Object.entries(inv.vs4betPairs || {})) {
+    report.vs4bet[hero] = villains.map((v) => `${hero} vs ${v}`);
+  }
+
+  return report;
 }
 
 export function buildReferenceMatrix(sel) {
@@ -144,18 +166,20 @@ export function buildReferenceMatrix(sel) {
   for (const hand of matrixClasses()) {
     const policy = rangeObj.range[hand] || { FOLD: 1, CALL: 0, RAISE: 0 };
     found++;
-    const meta = primaryAction(policy, sel.situation === 'bb_defend' ? 'bb_defend' : sel.situation);
-    const bucket = playBucket(meta.play);
+    const sit = sel.situation === 'bb_defend' ? 'bb_defend' : sel.situation;
+    const meta = primaryAction(policy, sit);
+    const bucketKey = dominantBucket(policy, sit);
     cells[hand] = {
       hand,
       supported: true,
       play: meta.play,
-      bucket: bucket.key,
-      bucketLabel: bucket.label,
+      bucket: bucketKey === 'mixed' ? 'mixed' : playBucket(meta.play).key,
+      bucketLabel: bucketKey === 'mixed' ? 'Смешанная стратегия' : playBucket(meta.play).label,
       action: meta.action,
       actionLabel: meta.label,
       freq: meta.freq,
-      policy
+      policy,
+      isMixed: isMixedPolicy(policy)
     };
   }
 
@@ -175,13 +199,16 @@ export function handDetailFromReference(sel, hand) {
   const sit = sel.situation === 'bb_defend' ? 'bb_defend' : sel.situation;
   const meta = primaryAction(policy, sit);
   const bucket = playBucket(meta.play);
+  const actions = actionFrequencyRows(policy, sit);
   return {
     hand,
     actionLabel: meta.label,
     actionCode: meta.action,
     freqPct: Math.round((meta.freq || meta.play) * 100),
-    bucketLabel: bucket.label,
+    bucketLabel: isMixedPolicy(policy) ? 'Смешанная стратегия' : bucket.label,
     sizeLabel: null,
+    sourceLabel: REFERENCE_USER_LABEL,
+    actions,
     policy
   };
 }

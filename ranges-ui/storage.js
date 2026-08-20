@@ -39,8 +39,8 @@ export function completeOnboarding(storage) {
 }
 
 export const HINTS = [
-  { id: 'position', text: 'Сначала выбери позицию' },
+  { id: 'position', text: 'Выбери позицию' },
   { id: 'situation', text: 'Теперь выбери ситуацию' },
-  { id: 'stack', text: 'Теперь выбери стек' },
-  { id: 'hand', text: 'Нажми на руку, чтобы увидеть действие' }
+  { id: 'opener', text: 'Если нужно — выбери позицию соперника' },
+  { id: 'hand', text: 'Смотрим диапазон' }
 ];

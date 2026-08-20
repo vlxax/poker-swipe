@@ -70,7 +70,9 @@ export function situationsForPosition(catalog, position) {
   if ((catalog.vs3betPositions || []).includes(pos)) ids.push('vs_3bet');
   if ((catalog.vs4betPositions || []).includes(pos)) ids.push('vs_4bet');
   if (catalog.vsOpenPairs && catalog.vsOpenPairs[pos]) ids.push('vs_open');
-  if (pos === 'BB') ids.push('bb_defend');
+  if (pos === 'BB' && !isReferenceSource(catalog.dataSource) && (catalog.bbDefendOpeners || []).length) {
+    ids.push('bb_defend');
+  }
   if (!isReferenceSource(catalog.dataSource)) ids.push('push_fold');
   return sitList.filter((s) => ids.includes(s.id));
 }
@@ -80,12 +82,14 @@ export function positionsForSituation(catalog, situation) {
   const sit = sitList.find((s) => s.id === situation);
   if (!sit) return [];
   if (sit.heroFixed) return [sit.heroFixed];
-  if (situation === 'rfi') return catalog.rfiPositions;
-  if (situation === 'vs_3bet') return catalog.vs3betPositions;
+  if (situation === 'rfi') return catalog.rfiPositions || [];
+  if (situation === 'vs_3bet') return catalog.vs3betPositions || [];
   if (situation === 'vs_4bet') return catalog.vs4betPositions || [];
   if (situation === 'vs_open') return Object.keys(catalog.vsOpenPairs || {}).sort();
   if (situation === 'push_fold') return catalog.positions || POSITIONS_6MAX;
-  return catalog.positions || POSITIONS_6MAX;
+  return (catalog.positions || POSITIONS_6MAX).filter((pos) =>
+    situationsForPosition(catalog, pos).some((s) => s.id === situation)
+  );
 }
 
 export function stacksForSituation(situation, dataSource = 'verified') {
@@ -174,7 +178,7 @@ export function suggestNearby(sel, catalog) {
 }
 
 export function sanitizeSelection(sel, catalog) {
-  const next = { ...sel, dataSource: sel.dataSource || catalog.dataSource || 'verified' };
+  const next = { ...sel, dataSource: sel.dataSource || catalog.dataSource || 'reference' };
   if (isReferenceSource(next.dataSource)) {
     next.format = '6max';
     next.stack = null;
@@ -187,10 +191,18 @@ export function sanitizeSelection(sel, catalog) {
     next.stack = null;
   }
 
+  if (next.position && !catalog.positions.includes(next.position)) {
+    next.position = null;
+    next.situation = null;
+    next.opener = null;
+    next.stack = null;
+    return next;
+  }
+
   if (!next.position) {
     next.situation = null;
     next.opener = null;
-    next.stack = isReferenceSource(next.dataSource) ? null : null;
+    next.stack = null;
     return next;
   }
   const allowedSit = situationsForPosition(catalog, next.position);

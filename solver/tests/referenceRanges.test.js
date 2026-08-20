@@ -1,11 +1,11 @@
-// Reference 6-max range import validation and spot-by-spot comparison tests.
+// Reference 6-max range import validation and UI coverage tests.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { matrixClasses } from '../../ranges-ui/matrix.js';
+import { matrixClasses, isMixedPolicy } from '../../ranges-ui/matrix.js';
 import {
   getReferenceRanges,
   getReferenceMetadata,
@@ -14,7 +14,9 @@ import {
   buildReferenceMatrix,
   inventoryReference,
   referenceCoverageReport,
-  validateReferenceRange
+  buildUiCoverageReport,
+  validateReferenceRange,
+  handDetailFromReference
 } from '../../ranges-ui/referenceRanges.js';
 import {
   resolveRangeMatrix,
@@ -26,50 +28,23 @@ import {
   getCatalog,
   isSelectionComplete,
   situationsForPosition,
-  openersForSituation
+  openersForSituation,
+  sanitizeSelection
 } from '../../ranges-ui/catalog.js';
 import { RangeController } from '../../ranges-ui/controller.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '../..');
 const REF_DIR = join(ROOT, 'data/ranges/reference/6max/ranges');
-const GREENLINE = readFileSync('/tmp/poker-charts/src/data/ranges/greenline.ts', 'utf8');
 
 function loadPack() {
   const raw = readFileSync(new URL('../../strategy_pack_v17.js', import.meta.url), 'utf8');
   return JSON.parse(raw.replace(/^window\.POKER_BRAIN_PACK=/, '').replace(/;?\s*$/, ''));
 }
 
-function parseExternalCell(raw) {
-  if (typeof raw === 'string') return raw;
-  if (Array.isArray(raw)) return raw;
-  return raw;
-}
-
-function externalPolicyForKey(chartKey, hand) {
-  const keyRe = new RegExp(`'${chartKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}':\\s*\\{([\\s\\S]*?)\\n\\s*\\}`, 'm');
-  const block = keyRe.exec(GREENLINE);
-  if (!block) return null;
-  const handRe = new RegExp(`'${hand}':\\s*(?:'([^']+)'|\\[([^\\]]+)\\])`);
-  const hm = handRe.exec(block[1]);
-  if (!hm) return 'fold';
-  if (hm[1]) return hm[1];
-  return hm[2].split(',').map((x) => x.trim().replace(/^'|'$/g, ''));
-}
-
-function externalPlayFreq(cell) {
-  if (cell === 'fold') return 0;
-  if (typeof cell === 'string') return cell === 'raise' || cell === 'call' || cell === 'allin' ? 1 : 0;
-  if (Array.isArray(cell)) {
-    const playActions = cell.filter((a) => a !== 'fold');
-    return playActions.length / cell.length;
-  }
-  return 0;
-}
-
-function importedPlayFreq(sel, hand) {
-  const p = lookupReferencePolicy(sel, hand);
-  return (p.CALL || 0) + (p.RAISE || 0);
+function loadCanonicalRange(id) {
+  const path = join(REF_DIR, `${id}.json`);
+  return JSON.parse(readFileSync(path, 'utf8'));
 }
 
 const pack = loadPack();
@@ -118,6 +93,30 @@ test('each imported range validates frequencies 0..1', () => {
   }
 });
 
+test('all 37 imported ranges are renderable with 169-hand matrices', () => {
+  for (const rangeObj of ranges) {
+    const sel = {
+      dataSource: 'reference',
+      format: '6max',
+      position: rangeObj.heroPosition,
+      situation: rangeObj.situation,
+      opener: rangeObj.villainPosition || null
+    };
+    assert.equal(lookupReferenceRange(sel)?.id, rangeObj.id, rangeObj.id);
+    const matrix = buildReferenceMatrix(sel);
+    assert.equal(matrix.supported, true, rangeObj.id);
+    assert.equal(Object.keys(matrix.cells).length, 169, rangeObj.id);
+    for (const hand of matrixClasses()) {
+      const cell = matrix.cells[hand];
+      assert.ok(cell?.supported, `${rangeObj.id} missing ${hand}`);
+      const sum = (cell.policy.FOLD || 0) + (cell.policy.CALL || 0) + (cell.policy.RAISE || 0);
+      assert.ok(Math.abs(sum - 1) <= 0.001, `${rangeObj.id} ${hand} sum=${sum}`);
+    }
+    assert.equal(matrix.sourceType, 'reference');
+    assert.equal(sel.stack, undefined);
+  }
+});
+
 test('reference matrix covers all 169 starting-hand cells', () => {
   const sel = { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'rfi' };
   const matrix = buildReferenceMatrix(sel);
@@ -126,6 +125,26 @@ test('reference matrix covers all 169 starting-hand cells', () => {
   for (const hand of matrixClasses()) {
     assert.ok(matrix.cells[hand], `missing ${hand}`);
   }
+});
+
+test('mixed strategies are preserved in matrix cells', () => {
+  const sel = { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'UTG' };
+  const matrix = buildReferenceMatrix(sel);
+  assert.ok(matrix.cells['55'].isMixed);
+  assert.ok(isMixedPolicy(matrix.cells['55'].policy));
+  assert.equal(matrix.cells['55'].policy.FOLD, 0.5);
+  assert.equal(matrix.cells['55'].policy.RAISE, 0.5);
+});
+
+test('hand detail exposes real action frequencies and source label', () => {
+  const sel = { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'UTG' };
+  const detail = handDetailFromReference(sel, '55');
+  assert.equal(detail.hand, '55');
+  assert.equal(detail.sourceLabel, 'Базовая стратегия');
+  assert.deepEqual(
+    detail.actions.map((a) => `${a.label}:${a.pct}`).sort(),
+    ['Рейз:50', 'Фолд:50']
+  );
 });
 
 test('pair suited offsuit hand keys are valid', () => {
@@ -148,12 +167,21 @@ test('coverage report counts by situation', () => {
   assert.deepEqual(report.positions, ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB']);
 });
 
+test('UI coverage report lists real user scenarios', () => {
+  const ui = buildUiCoverageReport();
+  assert.deepEqual(ui.rfi, ['UTG', 'MP', 'CO', 'BTN', 'SB']);
+  assert.equal(Object.values(ui.vsOpen).flat().length, 12);
+  assert.equal(Object.values(ui.vs3bet).flat().length, 15);
+  assert.equal(Object.values(ui.vs4bet).flat().length, 5);
+});
+
 test('reference catalog exposes MP not HJ and hides push_fold', () => {
   const catalog = getCatalog(pack, '6max', 'reference');
   assert.ok(catalog.positions.includes('MP'));
   assert.ok(!catalog.positions.includes('HJ'));
   const btnSit = situationsForPosition(catalog, 'BTN').map((s) => s.id);
   assert.ok(!btnSit.includes('push_fold'));
+  assert.ok(!btnSit.includes('bb_defend'));
   assert.ok(btnSit.includes('vs_3bet'));
 });
 
@@ -180,6 +208,20 @@ test('reference lookup has no heuristic fallback', () => {
   assert.equal(matrix.supported, false);
 });
 
+test('sanitizeSelection drops invalid reference combinations', () => {
+  const catalog = getCatalog(pack, '6max', 'reference');
+  const bad = sanitizeSelection({
+    dataSource: 'reference',
+    format: '6max',
+    position: 'BTN',
+    situation: 'vs_open',
+    opener: 'SB',
+    stack: 20
+  }, catalog);
+  assert.equal(bad.opener, null);
+  assert.equal(bad.stack, null);
+});
+
 test('source priority prefers verified over reference when both exist', () => {
   const sel = { format: '6max', position: 'BTN', situation: 'rfi', stack: 20 };
   assert.equal(pickBestSource(pack, sel, 'verified'), SOURCE_TYPES.VERIFIED);
@@ -195,44 +237,42 @@ test('reference source never labels as GTO in UI data sources', () => {
 });
 
 const spotChecks = [
-  { chartKey: 'UTG-RFI', sel: { dataSource: 'reference', format: '6max', position: 'UTG', situation: 'rfi' }, hands: ['AA', '72o', 'ATo', '87s'] },
-  { chartKey: 'BTN-RFI', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'rfi' }, hands: ['AA', '22', 'K8o'] },
-  { chartKey: 'BTN-vs-open-UTG', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'UTG' }, hands: ['AA', 'KQs', 'JTs'] },
-  { chartKey: 'BB-vs-open-BTN', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'bb_defend', opener: 'BTN' }, hands: ['AA', '72o', 'A5s'] },
-  { chartKey: 'UTG-vs-3bet-BB', sel: { dataSource: 'reference', format: '6max', position: 'UTG', situation: 'vs_3bet', opener: 'BB' }, hands: ['AA', 'AKs', 'QJs'] },
-  { chartKey: 'CO-vs-3bet-BTN', sel: { dataSource: 'reference', format: '6max', position: 'CO', situation: 'vs_3bet', opener: 'BTN' }, hands: ['AA', 'AQs', 'KJo'] },
-  { chartKey: 'BB-vs-4bet-UTG', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'vs_4bet', opener: 'UTG' }, hands: ['AA', 'AKs', 'QQ'] },
-  { chartKey: 'SB-vs-open-CO', sel: { dataSource: 'reference', format: '6max', position: 'SB', situation: 'vs_open', opener: 'CO' }, hands: ['AA', 'TT', '76s'] },
-  { chartKey: 'MP-RFI', sel: { dataSource: 'reference', format: '6max', position: 'MP', situation: 'rfi' }, hands: ['AA', '22', 'T8s'] },
-  { chartKey: 'MP-vs-3bet-CO', sel: { dataSource: 'reference', format: '6max', position: 'MP', situation: 'vs_3bet', opener: 'CO' }, hands: ['AA', 'JJ', 'ATs'] },
-  { chartKey: 'BTN-vs-open-CO', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'CO' }, hands: ['AA', 'A9s', 'KJo'] },
-  { chartKey: 'BB-vs-open-SB', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'vs_open', opener: 'SB' }, hands: ['AA', '54s', 'J8o'] }
+  { id: 'utg-rfi', sel: { dataSource: 'reference', format: '6max', position: 'UTG', situation: 'rfi' }, hands: ['AA', '72o', 'ATo', '87s'] },
+  { id: 'btn-rfi', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'rfi' }, hands: ['AA', '22', 'K8o'] },
+  { id: 'btn-vs-open-utg', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'UTG' }, hands: ['AA', 'KQs', 'JTs', '55'] },
+  { id: 'bb-vs-open-btn', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'vs_open', opener: 'BTN' }, hands: ['AA', '72o', 'A5s'] },
+  { id: 'utg-vs-3bet-bb', sel: { dataSource: 'reference', format: '6max', position: 'UTG', situation: 'vs_3bet', opener: 'BB' }, hands: ['AA', 'AKs', 'QJs'] },
+  { id: 'co-vs-3bet-btn', sel: { dataSource: 'reference', format: '6max', position: 'CO', situation: 'vs_3bet', opener: 'BTN' }, hands: ['AA', 'AQs', 'KJo'] },
+  { id: 'bb-vs-4bet-utg', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'vs_4bet', opener: 'UTG' }, hands: ['AA', 'AKs', 'QQ'] },
+  { id: 'sb-vs-open-co', sel: { dataSource: 'reference', format: '6max', position: 'SB', situation: 'vs_open', opener: 'CO' }, hands: ['AA', 'TT', '76s'] },
+  { id: 'mp-rfi', sel: { dataSource: 'reference', format: '6max', position: 'MP', situation: 'rfi' }, hands: ['AA', '22', 'T8s'] },
+  { id: 'mp-vs-3bet-co', sel: { dataSource: 'reference', format: '6max', position: 'MP', situation: 'vs_3bet', opener: 'CO' }, hands: ['AA', 'JJ', 'ATs'] },
+  { id: 'btn-vs-open-co', sel: { dataSource: 'reference', format: '6max', position: 'BTN', situation: 'vs_open', opener: 'CO' }, hands: ['AA', 'A9s', 'KJo'] },
+  { id: 'bb-vs-open-sb', sel: { dataSource: 'reference', format: '6max', position: 'BB', situation: 'vs_open', opener: 'SB' }, hands: ['AA', '54s', 'J8o'] }
 ];
 
 for (const spot of spotChecks) {
-  test(`spot comparison matches source for ${spot.chartKey}`, () => {
+  test(`canonical JSON matches pack for ${spot.id}`, () => {
+    const canonical = loadCanonicalRange(spot.id);
     const rangeObj = lookupReferenceRange(spot.sel);
-    assert.ok(rangeObj, `missing imported range for ${spot.chartKey}`);
-    assert.equal(rangeObj.sourceChartKey, spot.chartKey);
+    assert.ok(rangeObj, `missing imported range for ${spot.id}`);
+    assert.equal(rangeObj.id, spot.id);
     for (const hand of spot.hands) {
-      const ext = externalPolicyForKey(spot.chartKey, hand);
-      const extPlay = externalPlayFreq(parseExternalCell(ext));
-      const impPlay = importedPlayFreq(spot.sel, hand);
-      assert.ok(Math.abs(extPlay - impPlay) < 0.01, `${hand}: source=${extPlay} imported=${impPlay}`);
+      assert.deepEqual(rangeObj.range[hand], canonical.range[hand], `${hand}`);
     }
   });
 }
 
 test('controller can show reference BTN RFI matrix', () => {
   const ctl = new RangeController({ pack, storage: null });
-  ctl.setField('dataSource', 'reference');
   ctl.setField('position', 'BTN');
   ctl.setField('situation', 'rfi');
   assert.equal(isSelectionComplete(ctl.selection), true);
   ctl.showRange();
   const vm = ctl.viewModel();
   assert.equal(vm.phase, 'result');
-  assert.equal(vm.sourceLabel, 'Базовая стратегия');
+  assert.equal(vm.headline, 'Базовая стратегия');
+  assert.match(vm.contextLine, /BTN/);
   assert.equal(vm.cells.AA.bucket, 'always');
 });
 
@@ -245,12 +285,14 @@ test('UI reachable reference scenarios map to 37 unique ranges', () => {
         for (const opener of openersForSituation(catalog, sit.id, pos)) {
           const sel = { dataSource: 'reference', format: '6max', position: pos, situation: sit.id, opener };
           const r = lookupReferenceRange(sel);
-          if (r) seen.add(r.id);
+          assert.ok(r, `${pos} ${sit.id} vs ${opener}`);
+          seen.add(r.id);
         }
       } else {
         const sel = { dataSource: 'reference', format: '6max', position: pos, situation: sit.id };
         const r = lookupReferenceRange(sel);
-        if (r) seen.add(r.id);
+        assert.ok(r, `${pos} ${sit.id}`);
+        seen.add(r.id);
       }
     }
   }

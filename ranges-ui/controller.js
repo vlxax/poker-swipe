@@ -9,7 +9,7 @@ export class RangeController {
     this.pack = pack;
     this.storage = storage;
     this.selection = {
-      dataSource: 'verified',
+      dataSource: 'reference',
       format: '6max',
       situation: null,
       position: null,
@@ -103,6 +103,9 @@ export class RangeController {
       this.selection.stack = null;
       this.phase = 'selector';
       this.selectedHand = null;
+      if (!this.onboarding.hintsSeen.includes('opener')) {
+        this.onboarding = markHintSeen(this.storage, 'opener');
+      }
     }
 
     if (field === 'stack') {
@@ -120,6 +123,9 @@ export class RangeController {
     if (!isSelectionComplete(this.selection)) return this.viewModel();
     this.phase = 'result';
     this.selectedHand = null;
+    if (!this.onboarding.completed) {
+      this.onboarding = completeOnboarding(this.storage);
+    }
     return this.viewModel();
   }
 
@@ -133,9 +139,6 @@ export class RangeController {
     this.selectedHand = hand;
     if (!this.onboarding.hintsSeen.includes('hand')) {
       this.onboarding = markHintSeen(this.storage, 'hand');
-    }
-    if (this.onboarding.hintsSeen.length >= 3 && !this.onboarding.completed) {
-      this.onboarding = completeOnboarding(this.storage);
     }
     return this.viewModel();
   }

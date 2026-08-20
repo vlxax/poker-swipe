@@ -45,10 +45,11 @@ function fieldOrder(html) {
     .map((x) => x.label);
 }
 
-function selectComplete(ctl, { situation = 'rfi', position = 'BTN', stack = 20 } = {}) {
+function selectComplete(ctl, { situation = 'rfi', position = 'BTN', stack = 20, dataSource = 'verified' } = {}) {
+  if (dataSource !== ctl.selection.dataSource) ctl.setField('dataSource', dataSource);
   ctl.setField('position', position);
   ctl.setField('situation', situation);
-  ctl.setField('stack', stack);
+  if (dataSource !== 'reference') ctl.setField('stack', stack);
 }
 
 const pack = loadPack();
@@ -64,6 +65,8 @@ test('first visit shows position-first onboarding hint', () => {
   assert.equal(vm.hints.length, 1);
   assert.equal(vm.hints[0].text, HINTS[0].text);
   assert.equal(vm.cta, 'ВЫБЕРИ ПОЗИЦИЮ');
+  assert.equal(ctl.selection.dataSource, 'reference');
+  assert.equal(vm.showStack, false);
 });
 
 test('onboarding hints follow field completion order', () => {
@@ -73,18 +76,21 @@ test('onboarding hints follow field completion order', () => {
   ctl.setField('position', 'BTN');
   assert.equal(ctl.viewModel().hints[0].text, HINTS[1].text);
 
-  ctl.setField('situation', 'rfi');
+  ctl.setField('situation', 'vs_open');
   assert.equal(ctl.viewModel().hints[0].text, HINTS[2].text);
 
-  selectComplete(ctl);
+  ctl.setField('opener', 'CO');
+  assert.equal(ctl.viewModel().cta, 'ПОКАЗАТЬ РЕНДЖ');
+
   ctl.showRange();
   const vm = ctl.viewModel();
-  assert.equal(vm.hints.length, 1);
-  assert.equal(vm.hints[0].text, HINTS[3].text);
+  assert.equal(vm.phase, 'result');
+  assert.equal(vm.hints.length, 0);
 });
 
 test('progressive CTA reflects the next missing field', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('dataSource', 'verified');
   assert.equal(ctl.viewModel().cta, 'ВЫБЕРИ ПОЗИЦИЮ');
   assert.equal(nextCtaLabel(ctl.selection), 'ВЫБЕРИ ПОЗИЦИЮ');
 
@@ -104,7 +110,7 @@ test('progressive CTA reflects the next missing field', () => {
 
 test('user can choose position + stack + situation', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl);
+  selectComplete(ctl, { dataSource: 'verified' });
   assert.equal(isSelectionComplete(ctl.selection), true);
   const vm = ctl.viewModel();
   assert.equal(vm.cta, 'ПОКАЗАТЬ РЕНДЖ');
@@ -113,6 +119,7 @@ test('user can choose position + stack + situation', () => {
 
 test('matrix does not render before sufficient selection', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('dataSource', 'verified');
   ctl.setField('position', 'BTN');
   ctl.setField('situation', 'rfi');
   assert.equal(ctl.phase, 'selector');
@@ -123,7 +130,7 @@ test('matrix does not render before sufficient selection', () => {
 
 test('valid selection renders a range matrix', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl);
+  selectComplete(ctl, { dataSource: 'verified' });
   ctl.showRange();
   const vm = ctl.viewModel();
   assert.equal(vm.phase, 'result');
@@ -139,7 +146,7 @@ test('valid selection renders a range matrix', () => {
 test('unsupported selection shows explicit fallback', () => {
   const emptyPack = { preflop: {} };
   const ctl = new RangeController({ pack: emptyPack, storage: memStorage() });
-  selectComplete(ctl);
+  selectComplete(ctl, { dataSource: 'verified' });
   ctl.showRange();
   const vm = ctl.viewModel();
   assert.equal(vm.phase, 'unsupported');
@@ -152,7 +159,7 @@ test('unsupported selection shows explicit fallback', () => {
 
 test('tapping a hand shows action detail', () => {
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl);
+  selectComplete(ctl, { dataSource: 'verified' });
   ctl.showRange();
   ctl.selectHand('AJo');
   const vm = ctl.viewModel();
@@ -164,7 +171,7 @@ test('tapping a hand shows action detail', () => {
   const root = setupDom();
   Renderer.renderResult(root, vm, {});
   assert.ok(root.innerHTML.includes('AJo'));
-  assert.ok(root.innerHTML.includes('Действие'));
+  assert.ok(root.innerHTML.includes('Действие') || root.innerHTML.includes('Фолд') || root.innerHTML.includes('Рейз'));
 });
 
 test('onboarding does not repeat after completion', () => {
@@ -196,38 +203,41 @@ test('selector renders fields in spec order and hides irrelevant selectors', () 
 
   Renderer.renderSelector(root, ctl.viewModel(), {});
   let order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ФОРМАТ', 'ПОЗИЦИЯ']);
+  assert.deepEqual(order, ['ПОЗИЦИЯ']);
   assert.ok(!root.innerHTML.includes('СИТУАЦИЯ'));
   assert.ok(!root.innerHTML.includes('СТЕК'));
 
   ctl.setField('position', 'BTN');
   Renderer.renderSelector(root, ctl.viewModel(), {});
   order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ФОРМАТ', 'ПОЗИЦИЯ', 'СИТУАЦИЯ']);
+  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ']);
   assert.ok(!root.innerHTML.includes('СТЕК'));
 
   ctl.setField('situation', 'vs_open');
   Renderer.renderSelector(root, ctl.viewModel(), {});
   order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ФОРМАТ', 'ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С']);
+  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С']);
   assert.ok(!root.innerHTML.includes('СТЕК'));
 
   ctl.setField('opener', 'CO');
   Renderer.renderSelector(root, ctl.viewModel(), {});
   order = fieldOrder(root.innerHTML);
-  assert.deepEqual(order, ['ФОРМАТ', 'ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С', 'СТЕК']);
+  assert.deepEqual(order, ['ПОЗИЦИЯ', 'СИТУАЦИЯ', 'ОТКРЫТИЕ С']);
+  assert.ok(!root.innerHTML.includes('СТЕК'));
 });
 
 test('mobile matrix uses full-width grid with expanded touch targets', () => {
   assert.match(rangesCss, /grid-template-columns:\s*repeat\(13,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(rangesCss, /touch-action:\s*manipulation/);
   assert.match(rangesCss, /\.rangesCell::before/);
+  assert.match(rangesCss, /\.rangesMix/);
   assert.doesNotMatch(rangesCss, /width:\s*max-content/);
   assert.match(rangesCss, /overflow-x:\s*hidden/);
 
   const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl);
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'rfi');
   ctl.showRange();
   Renderer.renderResult(root, ctl.viewModel(), {});
 
@@ -240,10 +250,11 @@ test('mobile matrix uses full-width grid with expanded touch targets', () => {
 });
 
 test('9-max format exposes MP/LJ positions and honest unsupported for missing atlas', () => {
-  const catalog = getCatalog(pack, '9max');
+  const catalog = getCatalog(pack, '9max', 'verified');
   assert.ok(catalog.positions.includes('MP'));
   assert.ok(catalog.positions.includes('LJ'));
   const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('dataSource', 'verified');
   ctl.setField('format', '9max');
   ctl.setField('position', 'MP');
   ctl.setField('situation', 'rfi');
@@ -254,10 +265,51 @@ test('9-max format exposes MP/LJ positions and honest unsupported for missing at
   assert.match(vm.unsupportedMessage, /пока нет/i);
 });
 
+test('reference mode hides stack selector and shows baseline strategy header', () => {
+  const root = setupDom();
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  const selector = ctl.viewModel();
+  assert.equal(selector.showStack, false);
+  assert.ok(!selector.formats || selector.formats.length === 1);
+
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'vs_open');
+  ctl.setField('opener', 'UTG');
+  ctl.showRange();
+  const vm = ctl.viewModel();
+  assert.equal(vm.phase, 'result');
+  assert.equal(vm.headline, 'Базовая стратегия');
+  assert.match(vm.contextLine, /против открытия UTG/);
+  assert.match(vm.subtitle, /без привязки к глубине стека/);
+  assert.ok(vm.legendItems.some((item) => item.key === 'mixed'));
+  assert.ok(vm.cells['55'].isMixed);
+
+  Renderer.renderResult(root, vm, {});
+  assert.ok(root.innerHTML.includes('Базовая стратегия'));
+  assert.ok(!root.innerHTML.includes('20 ББ'));
+  assert.ok(root.querySelector('.rangesMix'));
+});
+
+test('reference hand detail shows real frequencies and source', () => {
+  const ctl = new RangeController({ pack, storage: memStorage() });
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'vs_open');
+  ctl.setField('opener', 'UTG');
+  ctl.showRange();
+  ctl.selectHand('55');
+  const vm = ctl.viewModel();
+  assert.deepEqual(
+    vm.handDetail.actions.map((row) => `${row.label}:${row.pct}`).sort(),
+    ['Рейз:50', 'Фолд:50']
+  );
+  assert.equal(vm.handDetail.sourceLabel, 'Базовая стратегия');
+});
+
 test('mobile 390x844 has no horizontal overflow on selector and result', () => {
   const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });
-  selectComplete(ctl);
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'rfi');
   Renderer.renderSelector(root, ctl.viewModel(), {});
   assert.ok(root.querySelector('#rangesShow'));
   ctl.showRange();

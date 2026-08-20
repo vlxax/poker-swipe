@@ -1,6 +1,7 @@
 // DOM renderer for the ranges section. Pure markup + handler wiring.
 
 import { MATRIX_RANKS_EXPORT as RANKS } from './matrix.js';
+import { policySegments } from './matrix.js';
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
@@ -9,13 +10,22 @@ function esc(s) {
 }
 
 function chips(items, selected, field) {
+  if (!items || !items.length) return '';
   return `<div class="rangesChips">${items.map((item) => {
-    const id = item.id || item;
     const label = item.label || item;
     const val = typeof item === 'object' ? item.id : item;
     const on = String(selected) === String(val);
     return `<button type="button" class="rangesChip${on ? ' on' : ''}" data-rfield="${esc(field)}" data-rval="${esc(val)}">${esc(label)}</button>`;
   }).join('')}</div>`;
+}
+
+function mixBarsHtml(policy = {}) {
+  const segs = policySegments(policy);
+  if (!segs.length) return '';
+  return `<span class="rangesMix" aria-hidden="true">${segs.map((seg) => {
+    const cls = seg.action.toLowerCase();
+    return `<span class="rangesMixSeg ${cls}" style="flex:${seg.frac.toFixed(4)}"></span>`;
+  }).join('')}</span>`;
 }
 
 function matrixGrid(cells, selectedHand) {
@@ -26,13 +36,21 @@ function matrixGrid(cells, selectedHand) {
       if (r === c) hand = RANKS[r] + RANKS[c];
       else if (r < c) hand = RANKS[r] + RANKS[c] + 's';
       else hand = RANKS[c] + RANKS[r] + 'o';
-      const cell = cells[hand] || { bucket: 'never', supported: false };
+      const cell = cells[hand] || { bucket: 'never', supported: false, policy: { FOLD: 1 } };
       const cls = cell.bucket || 'never';
       const sel = selectedHand === hand ? ' selected' : '';
-      rows.push(`<button type="button" class="rangesCell ${cls}${sel}" data-rhand="${esc(hand)}" aria-label="${esc(hand)}">${esc(hand)}</button>`);
+      const mix = cell.isMixed ? mixBarsHtml(cell.policy) : '';
+      rows.push(`<button type="button" class="rangesCell ${cls}${sel}" data-rhand="${esc(hand)}" aria-label="${esc(hand)}"><span class="rangesCellLabel">${esc(hand)}</span>${mix}</button>`);
     }
   }
   return `<div class="rangesMatrixWrap"><div class="rangesMatrix">${rows.join('')}</div></div>`;
+}
+
+function legendHtml(items = []) {
+  if (!items.length) return '';
+  return `<div class="rangesLegendBar">${items.map((item) =>
+    `<span class="rangesLegendItem"><i class="rangesLegendSwatch ${esc(item.className)}"></i>${esc(item.label)}</span>`
+  ).join('')}</div>`;
 }
 
 function hintsHtml(hints) {
@@ -42,12 +60,16 @@ function hintsHtml(hints) {
 
 function handDetailHtml(d) {
   if (!d) return '';
+  const actionRows = (d.actions && d.actions.length)
+    ? d.actions.map((row) => `<div class="row"><span>${esc(row.label)}</span><b>${row.pct}%</b></div>`).join('')
+    : `<div class="row"><span>Действие</span><b>${esc(d.actionLabel)}</b></div>
+       <div class="row"><span>Частота</span><b>${d.freqPct}%</b></div>`;
+
   return `<div class="rangesDetail">
     <h3>${esc(d.hand)}</h3>
-    <div class="row"><span>Действие</span><b>${esc(d.actionLabel)}</b></div>
-    <div class="row"><span>Частота</span><b>${d.freqPct}%</b></div>
+    ${actionRows}
+    ${d.sourceLabel ? `<div class="row"><span>Источник</span><b>${esc(d.sourceLabel)}</b></div>` : ''}
     ${d.sizeLabel ? `<div class="row"><span>Размер</span><b>${esc(d.sizeLabel)}</b></div>` : ''}
-    <p class="mut small" style="margin-top:8px">${esc(d.bucketLabel)}</p>
   </div>`;
 }
 
@@ -64,7 +86,7 @@ export function renderSelector(root, vm, handlers = {}) {
     ${sourceBadge}
     ${hintsHtml(vm.hints)}
     <div class="rangesField"><span class="ey">ИСТОЧНИК</span>${chips(vm.dataSources || [], s.dataSource, 'dataSource')}</div>
-    <div class="rangesField"><span class="ey">ФОРМАТ</span>${chips(vm.formats, s.format, 'format')}</div>
+    ${vm.showFormat ? `<div class="rangesField"><span class="ey">ФОРМАТ</span>${chips(vm.formats, s.format, 'format')}</div>` : ''}
     <div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>
     ${vm.showSituation ? `<div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>` : ''}
     ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">${esc(vm.openerLabel || 'ОТКРЫТИЕ С')}</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
@@ -98,18 +120,17 @@ export function renderResult(root, vm, handlers = {}) {
   }
 
   root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">РЕНДЖ</span>
-    ${vm.sourceLabel ? `<span class="rangesSourceBadge">${esc(vm.sourceLabel)}</span>` : ''}
+    <span class="ey">${esc(vm.headline || vm.sourceLabel || 'РЕНДЖ')}</span>
     <div class="rangesHeader">
       <b>${esc(vm.contextLine)}</b>
-      <span class="mut">${esc(vm.situationLine)}</span>
+      ${vm.subtitle ? `<span class="rangesSubtitle">${esc(vm.subtitle)}</span>` : `<span class="mut">${esc(vm.situationLine)}</span>`}
     </div>
-    <p class="rangesLegend">${esc(vm.legend)}<br>Жёлтые — играем иногда.</p>
+    ${legendHtml(vm.legendItems)}
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как читать таблицу?</button>
     ${hintsHtml(vm.hints)}
     ${matrixGrid(vm.cells, vm.handDetail && vm.handDetail.hand)}
     ${handDetailHtml(vm.handDetail)}
-    <button type="button" class="secondary" id="rangesBack" style="margin-top:12px">ИЗМЕНИТЬ СИТУАЦИЮ</button>
+    <button type="button" class="secondary rangesBackBtn" id="rangesBack">ИЗМЕНИТЬ СИТУАЦИЮ</button>
   </div>`;
 
   root.querySelectorAll('[data-rhand]').forEach((b) => {
