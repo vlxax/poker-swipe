@@ -36,21 +36,20 @@ const root = () => ensureScreen() || document.querySelector('#rangesArea');
 const ctl = new RangeController({ pack: getPack(), storage });
 
 const handlers = {
-  setField(field, value) {
-    const v = field === 'stack' ? Number(value) : value;
-    ctl.setField(field, v);
+  begin() {
+    ctl.beginPlay();
     paint();
   },
-  show() {
-    ctl.showRange();
+  toggle(hand) {
+    ctl.toggleHand(hand);
     paint();
   },
-  back() {
-    ctl.backToSelector();
+  confirm() {
+    ctl.confirmStep();
     paint();
   },
-  selectHand(hand) {
-    ctl.selectHand(hand);
+  next() {
+    ctl.nextScenario();
     paint();
   },
   help() {
@@ -60,9 +59,6 @@ const handlers = {
   close() {
     ctl.closeHelp();
     paint();
-  },
-  xray() {
-    if (typeof window.show === 'function') window.show('xray');
   }
 };
 
@@ -97,6 +93,7 @@ if (typeof origShow === 'function') {
     const r = origShow.apply(this, arguments);
     if (id === 'ranges') {
       try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
+      ctl.startScenario();
       paint();
     }
     return r;

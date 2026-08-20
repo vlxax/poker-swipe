@@ -1,7 +1,6 @@
-// DOM renderer for the ranges section. Pure markup + handler wiring.
+// DOM renderer for range narrowing trainer.
 
-import { MATRIX_RANKS_EXPORT as RANKS } from './matrix.js';
-import { policySegments } from './matrix.js';
+import { MATRIX_RANKS_EXPORT as RANKS, policySegments } from './matrix.js';
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
@@ -9,14 +8,9 @@ function esc(s) {
   }[c]));
 }
 
-function chips(items, selected, field) {
-  if (!items || !items.length) return '';
-  return `<div class="rangesChips">${items.map((item) => {
-    const label = item.label || item;
-    const val = typeof item === 'object' ? item.id : item;
-    const on = String(selected) === String(val);
-    return `<button type="button" class="rangesChip${on ? ' on' : ''}" data-rfield="${esc(field)}" data-rval="${esc(val)}">${esc(label)}</button>`;
-  }).join('')}</div>`;
+function hintsHtml(hints) {
+  if (!hints?.length) return '';
+  return hints.map((h) => `<div class="rangesHint">${esc(h.text)}</div>`).join('');
 }
 
 function mixBarsHtml(policy = {}) {
@@ -28,118 +22,138 @@ function mixBarsHtml(policy = {}) {
   }).join('')}</span>`;
 }
 
-function matrixGrid(cells, selectedHand) {
-  const rows = [];
+function matrixGrid(rows, { interactive = false, selectedHand = null } = {}) {
+  const cells = [];
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
       let hand;
       if (r === c) hand = RANKS[r] + RANKS[c];
       else if (r < c) hand = RANKS[r] + RANKS[c] + 's';
       else hand = RANKS[c] + RANKS[r] + 'o';
-      const cell = cells[hand] || { bucket: 'never', supported: false, policy: { FOLD: 1 } };
-      const cls = cell.bucket || 'never';
+
+      const cell = rows.find((x) => x.hand === hand) || { hand, state: 'dead', candidate: false };
+      const cls = cell.state || 'dead';
+      const mix = cell.mixed ? mixBarsHtml(cell.policy) : '';
       const sel = selectedHand === hand ? ' selected' : '';
-      const mix = cell.isMixed ? mixBarsHtml(cell.policy) : '';
-      rows.push(`<button type="button" class="rangesCell ${cls}${sel}" data-rhand="${esc(hand)}" aria-label="${esc(hand)}"><span class="rangesCellLabel">${esc(hand)}</span>${mix}</button>`);
+      const disabled = !interactive || !cell.candidate ? ' disabled' : '';
+      const tag = interactive && cell.candidate ? 'button' : 'div';
+      cells.push(
+        `<${tag} ${interactive && cell.candidate ? 'type="button"' : ''} class="rangesCell ${cls}${sel}${disabled ? ' isDisabled' : ''}" ${interactive && cell.candidate ? `data-rhand="${esc(hand)}"` : ''} aria-label="${esc(hand)}"><span class="rangesCellLabel">${esc(hand)}</span>${mix}</${tag}>`
+      );
     }
   }
-  return `<div class="rangesMatrixWrap"><div class="rangesMatrix">${rows.join('')}</div></div>`;
+  return `<div class="rangesMatrixWrap"><div class="rangesMatrix">${cells.join('')}</div></div>`;
 }
 
-function legendHtml(items = []) {
-  if (!items.length) return '';
-  return `<div class="rangesLegendBar">${items.map((item) =>
-    `<span class="rangesLegendItem"><i class="rangesLegendSwatch ${esc(item.className)}"></i>${esc(item.label)}</span>`
-  ).join('')}</div>`;
-}
-
-function hintsHtml(hints) {
-  if (!hints || !hints.length) return '';
-  return hints.map((h) => `<div class="rangesHint">${esc(h.text)}</div>`).join('');
-}
-
-function handDetailHtml(d) {
-  if (!d) return '';
-  const actionRows = (d.actions && d.actions.length)
-    ? d.actions.map((row) => `<div class="row"><span>${esc(row.label)}</span><b>${row.pct}%</b></div>`).join('')
-    : `<div class="row"><span>Действие</span><b>${esc(d.actionLabel)}</b></div>
-       <div class="row"><span>Частота</span><b>${d.freqPct}%</b></div>`;
-
-  return `<div class="rangesDetail">
-    <h3>${esc(d.hand)}</h3>
-    ${actionRows}
-    ${d.sourceLabel ? `<div class="row"><span>Источник</span><b>${esc(d.sourceLabel)}</b></div>` : ''}
-    ${d.sizeLabel ? `<div class="row"><span>Размер</span><b>${esc(d.sizeLabel)}</b></div>` : ''}
+function legendHtml() {
+  return `<div class="rangesLegendBar">
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch kept"></i>Оставил</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch out"></i>Убрал</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch dead"></i>Вне задачи</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch mixed"></i>Смешанная</span>
   </div>`;
 }
 
-export function renderSelector(root, vm, handlers = {}) {
+function reviewLegendHtml() {
+  return `<div class="rangesLegendBar">
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch ok"></i>Верно</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch bad"></i>Ошибка</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch mixed"></i>Mixed</span>
+  </div>`;
+}
+
+function situationCard(vm) {
+  const rows = [
+    vm.formatLabel ? `<div class="rangesSitRow"><span>Формат</span><b>${esc(vm.formatLabel)}</b></div>` : '',
+    vm.heroLabel ? `<div class="rangesSitRow"><span>Ты</span><b>${esc(vm.heroLabel)}</b></div>` : '',
+    vm.villainLabel ? `<div class="rangesSitRow"><span>Оппонент</span><b>${esc(vm.villainLabel)}</b></div>` : '',
+    vm.potLabel ? `<div class="rangesSitRow"><span>Банк</span><b>${esc(vm.potLabel)}</b></div>` : ''
+  ].filter(Boolean).join('');
+
+  const timeline = (vm.steps || []).map((s) =>
+    `<li><b>${esc(s.actionLabel)}</b><span>${esc(s.actionLine)}</span></li>`
+  ).join('');
+
+  return `<div class="rangesSitCard">${rows}
+    ${timeline ? `<ol class="rangesTimeline">${timeline}</ol>` : ''}
+  </div>`;
+}
+
+export function renderIntro(root, vm, handlers = {}) {
   if (!root) return;
-  const s = vm.selection || {};
-  const sourceBadge = vm.sourceLabel
-    ? `<span class="rangesSourceBadge">${esc(vm.sourceLabel)}</span>`
-    : '';
   root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">РЕНДЖИ</span>
+    <span class="ey">ТРЕНАЖЁР</span>
     <h1 class="impact">${esc(vm.title)}</h1>
-    <p class="mut">${esc(vm.intro)}</p>
-    ${sourceBadge}
+    <p class="rangesLead">${esc(vm.headline)}</p>
+    <p class="mut">${esc(vm.subtitle)}</p>
     ${hintsHtml(vm.hints)}
-    <div class="rangesField"><span class="ey">ИСТОЧНИК</span>${chips(vm.dataSources || [], s.dataSource, 'dataSource')}</div>
-    ${vm.showFormat ? `<div class="rangesField"><span class="ey">ФОРМАТ</span>${chips(vm.formats, s.format, 'format')}</div>` : ''}
-    <div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>
-    ${vm.showSituation ? `<div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>` : ''}
-    ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">${esc(vm.openerLabel || 'ОТКРЫТИЕ С')}</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
-    ${vm.showStack ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks.map((x) => ({ id: x, label: `${x} ББ` })), s.stack, 'stack')}</div>` : ''}
-    <button type="button" class="primary rangesCta" id="rangesShow" ${vm.ctaEnabled ? '' : 'disabled'}>${esc(vm.cta)} →</button>
-    ${vm.xrayLink ? `<div class="rangesLinkRow"><button type="button" class="secondary" id="rangesXray">СУЗИТЬ ДИАПЗОН ПО УЛИЦАМ →</button></div>` : ''}
+    ${situationCard(vm)}
+    <p class="rangesStepMeta">${vm.stepCount} шаг${vm.stepCount > 1 ? 'а' : ''} · hand reading</p>
+    <button type="button" class="primary rangesCta" id="rangesStart">${esc(vm.cta)}</button>
+    <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
   </div>`;
-  const show = root.querySelector('#rangesShow');
-  if (show) show.onclick = () => { if (vm.ctaEnabled && handlers.show) handlers.show(); };
-  const xr = root.querySelector('#rangesXray');
-  if (xr && handlers.xray) xr.onclick = () => handlers.xray();
-  root.querySelectorAll('[data-rfield]').forEach((b) => {
-    b.onclick = () => { if (handlers.setField) handlers.setField(b.dataset.rfield, b.dataset.rval); };
-  });
+
+  root.querySelector('#rangesStart').onclick = () => handlers.begin?.();
+  const help = root.querySelector('#rangesHelp');
+  if (help) help.onclick = () => handlers.help?.();
 }
 
-export function renderResult(root, vm, handlers = {}) {
+export function renderPlay(root, vm, handlers = {}) {
   if (!root) return;
-  if (vm.phase === 'unsupported') {
-    const sug = (vm.suggestions || []).map((x) => x.value).join(', ');
-    root.innerHTML = `<div class="panel rangesStage dailyStage rangesEmpty">
-      <span class="ey">РЕНДЖ</span>
-      <h1 class="impact">НЕТ<br><span class="pink">ДАННЫХ.</span></h1>
-      <p>${esc(vm.unsupportedMessage)}</p>
-      ${sug ? `<p class="mut small">Попробуй: ${esc(sug)}</p>` : ''}
-      <button type="button" class="primary" id="rangesBack" style="margin-top:16px">ИЗМЕНИТЬ СИТУАЦИЮ →</button>
-    </div>`;
-    const back = root.querySelector('#rangesBack');
-    if (back && handlers.back) back.onclick = () => handlers.back();
-    return;
-  }
-
   root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">${esc(vm.headline || vm.sourceLabel || 'РЕНДЖ')}</span>
-    <div class="rangesHeader">
-      <b>${esc(vm.contextLine)}</b>
-      ${vm.subtitle ? `<span class="rangesSubtitle">${esc(vm.subtitle)}</span>` : `<span class="mut">${esc(vm.situationLine)}</span>`}
+    <div class="rangesPlayTop">
+      <span class="ey">${esc(vm.stepLabel)}</span>
+      <span class="rangesCounter">${vm.keptCount}/${vm.candidateCount}</span>
     </div>
-    ${legendHtml(vm.legendItems)}
-    <button type="button" class="rangesHelpBtn" id="rangesHelp">Как читать таблицу?</button>
+    <h2 class="rangesQuestion">${esc(vm.question)}</h2>
+    <div class="rangesActionChip">${esc(vm.actionLine)}</div>
+    <p class="mut rangesNarrative">${esc(vm.narrative)}</p>
     ${hintsHtml(vm.hints)}
-    ${matrixGrid(vm.cells, vm.handDetail && vm.handDetail.hand)}
-    ${handDetailHtml(vm.handDetail)}
-    <button type="button" class="secondary rangesBackBtn" id="rangesBack">ИЗМЕНИТЬ СИТУАЦИЮ</button>
+    ${legendHtml()}
+    ${matrixGrid(vm.matrix, { interactive: true })}
+    <button type="button" class="primary rangesCta" id="rangesConfirm">${esc(vm.cta)}</button>
+    <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
   </div>`;
 
   root.querySelectorAll('[data-rhand]').forEach((b) => {
-    b.onclick = () => { if (handlers.selectHand) handlers.selectHand(b.dataset.rhand); };
+    b.onclick = () => handlers.toggle?.(b.dataset.rhand);
   });
+  root.querySelector('#rangesConfirm').onclick = () => handlers.confirm?.();
   const help = root.querySelector('#rangesHelp');
-  if (help && handlers.help) help.onclick = () => handlers.help();
-  const back = root.querySelector('#rangesBack');
-  if (back && handlers.back) back.onclick = () => handlers.back();
+  if (help) help.onclick = () => handlers.help?.();
+}
+
+export function renderSummary(root, vm, handlers = {}) {
+  if (!root) return;
+  const stepsHtml = (vm.steps || []).map((step) => {
+    const fb = (step.feedback || []).map((line) => `<p class="rangesFeedbackLine">${esc(line)}</p>`).join('');
+    const wrong = [
+      step.keptWrong.length ? `<p class="rangesWrong">Лишние: ${esc(step.keptWrong.slice(0, 8).join(', '))}${step.keptWrong.length > 8 ? '…' : ''}</p>` : '',
+      step.removedWrong.length ? `<p class="rangesWrong">Убрал зря: ${esc(step.removedWrong.slice(0, 8).join(', '))}${step.removedWrong.length > 8 ? '…' : ''}</p>` : ''
+    ].filter(Boolean).join('');
+    return `<section class="rangesReviewStep">
+      <div class="rangesReviewHead"><b>Шаг ${step.index}: ${esc(step.actionLabel)}</b><span>${step.accuracy}%</span></div>
+      <p class="mut">${esc(step.question)}</p>
+      ${reviewLegendHtml()}
+      ${matrixGrid(step.matrix, { interactive: false })}
+      ${wrong}
+      ${fb}
+    </section>`;
+  }).join('');
+
+  const summaryLines = (vm.summaryLines || []).map((line) => `<p class="rangesSummaryLine">${esc(line)}</p>`).join('');
+
+  root.innerHTML = `<div class="panel rangesStage dailyStage">
+    <span class="ey">РАЗБОР</span>
+    <h1 class="impact">${esc(vm.title)}</h1>
+    <div class="rangesScoreBadge">${vm.avgAccuracy}%</div>
+    <p class="rangesLead">${esc(vm.headline)}</p>
+    ${summaryLines}
+    ${stepsHtml}
+    <button type="button" class="primary rangesCta" id="rangesNext">${esc(vm.cta)}</button>
+  </div>`;
+
+  root.querySelector('#rangesNext').onclick = () => handlers.next?.();
 }
 
 export function renderHelpOverlay(root, vm, handlers = {}) {
@@ -153,10 +167,24 @@ export function renderHelpOverlay(root, vm, handlers = {}) {
   </div>`;
   host.querySelector('#rangesHelpClose').onclick = () => {
     host.remove();
-    if (handlers.close) handlers.close();
+    handlers.close?.();
   };
-  host.onclick = (e) => { if (e.target === host) { host.remove(); if (handlers.close) handlers.close(); } };
+  host.onclick = (e) => { if (e.target === host) { host.remove(); handlers.close?.(); } };
   root.appendChild(host);
+}
+
+// Legacy no-op exports for older test imports.
+export function renderSelector(root, vm, handlers) {
+  renderIntro(root, vm, { begin: handlers.show, help: handlers.help });
+}
+
+export function renderResult(root, vm, handlers) {
+  if (vm.phase === 'unsupported') {
+    root.innerHTML = `<div class="panel rangesStage dailyStage rangesEmpty"><p>${esc(vm.unsupportedMessage || 'Нет данных')}</p><button type="button" class="primary" id="rangesBack">НАЗАД</button></div>`;
+    root.querySelector('#rangesBack').onclick = () => handlers.back?.();
+    return;
+  }
+  renderPlay(root, vm, { toggle: handlers.selectHand, confirm: handlers.show, help: handlers.help });
 }
 
 export function paint(root, vm, handlers) {
@@ -166,6 +194,9 @@ export function paint(root, vm, handlers) {
     return;
   }
   document.querySelectorAll('.rangesOverlay').forEach((el) => el.remove());
-  if (vm.phase === 'selector') renderSelector(root, vm, handlers);
-  else renderResult(root, vm, handlers);
+
+  if (vm.phase === 'intro') renderIntro(root, vm, handlers);
+  else if (vm.phase === 'play') renderPlay(root, vm, handlers);
+  else if (vm.phase === 'summary') renderSummary(root, vm, handlers);
+  else renderIntro(root, vm, handlers);
 }
