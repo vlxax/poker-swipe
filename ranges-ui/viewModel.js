@@ -22,11 +22,13 @@ function selectorHints(selection, onboarding) {
 
 export function selectorViewModel({ pack, selection, onboarding, showHelp = false }) {
   const catalog = getCatalog(pack, selection.format || '6max');
-  const sel = sanitizeSelection(selection, catalog);
+  const sel = sanitizeSelection(selection, catalog, pack);
   const complete = isSelectionComplete(sel);
   const positions = catalog.positions;
   const situations = sel.position ? situationsForPosition(catalog, sel.position) : [];
-  const stacks = sel.situation ? stacksForSituation(sel.situation) : [];
+  const stacks = sel.situation
+    ? stacksForSituation(sel.situation, catalog, sel, pack)
+    : [];
   const needsOpener = sel.situation === 'vs_open' || sel.situation === 'bb_defend';
   const openers = needsOpener && sel.situation && sel.position
     ? openersForSituation(catalog, sel.situation, sel.position)
@@ -55,7 +57,7 @@ export function selectorViewModel({ pack, selection, onboarding, showHelp = fals
 
 export function resultViewModel({ pack, selection, onboarding, selectedHand = null, showHelp = false }) {
   const catalog = getCatalog(pack, selection.format || '6max');
-  const sel = sanitizeSelection(selection, catalog);
+  const sel = sanitizeSelection(selection, catalog, pack);
   let matrix;
   if (sel.situation === 'push_fold') {
     matrix = buildPushFoldMatrix(sel);
@@ -99,9 +101,7 @@ export function resultViewModel({ pack, selection, onboarding, selectedHand = nu
     mixedLegend: true,
     cells: matrix.cells,
     unsupported,
-    unsupportedMessage: sel.format === '9max' && !['UTG', 'HJ', 'CO', 'BTN', 'SB', 'BB'].includes(String(sel.position || '').toUpperCase())
-      ? 'Для этой позиции в 9-max пока нет готового ренджа. Попробуй UTG, HJ, CO, BTN или SB — или выбери push/fold.'
-      : 'Для этой ситуации пока нет готового ренджа.',
+    unsupportedMessage: 'Для этой комбинации не удалось загрузить рендж. Попробуй изменить параметры.',
     suggestions,
     handDetail,
     hints,

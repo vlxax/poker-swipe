@@ -24,7 +24,17 @@ export function pushFoldEval(handClass, pos, bb, mode = 'PUSH') {
     ? 54 + a * 3.3
     : 18 + a * 2.4 + b * 0.75 + (c.endsWith('s') ? 6 : 0)
       + (Math.abs(a - b) <= 2 ? 4 : 0) + (c[0] === 'A' ? 5 : 0);
-  x += ({ UTG: -11, HJ: -6, CO: 0, BTN: 8, SB: 12, BB: 3 }[pos] || 0);
+  x += ({
+    UTG: -11,
+    'UTG+1': -9,
+    MP: -8,
+    LJ: -8,
+    HJ: -6,
+    CO: 0,
+    BTN: 8,
+    SB: 12,
+    BB: 3
+  }[pos] || 0);
   x += (12 - bb) * 3.4;
   x += mode === 'CALL' ? -9 : 0;
   x = Math.max(3, Math.min(97, Math.round(x)));
