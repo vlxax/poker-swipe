@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-20T17:18:48+03:00",
-  "club_count": 56,
-  "event_count": 46,
-  "source_card_count": 46,
+  "updated_at": "2026-08-20T19:02:20+03:00",
+  "club_count": 57,
+  "event_count": 49,
+  "source_card_count": 49,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -31,8 +31,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-20",
+          "time": "19:00",
+          "club": "AK77",
+          "tournament": "Дип-стек DEEPSTACK",
+          "fee_rub": 1500,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11216",
+          "address": "ул. Софьи Ковалевской, 2",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Дип-стек DEEPSTACK 19:00 1 500 ₽ AK77 ул. Софьи Ковалевской, 2"
+        }
+      ]
     },
     {
       "name": "Aria Royale",
@@ -497,24 +514,24 @@
     },
     {
       "name": "Joker Poker Club Moscow",
-      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
+      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
       "contacts": {},
       "schedule": [
         {
           "date": "2026-08-20",
           "time": "19:00",
           "club": "Joker Poker Club Moscow",
-          "tournament": "Double Life DOUBLE LIFE TOURNAMENT",
+          "tournament": "Double Life DOUBLE LIFE",
           "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10681",
-          "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
+          "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
           "late_reg_until": "21:37",
           "late_reg_minutes": 157,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE TOURNAMENT 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт."
+          "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
         }
       ],
       "upcoming": 1
@@ -1457,6 +1474,30 @@
       "schedule": []
     },
     {
+      "name": "Покерный Клуб №1",
+      "address": "Москва, ул. Киевская, 2",
+      "contacts": {},
+      "schedule": [
+        {
+          "date": "2026-08-20",
+          "time": "18:00",
+          "club": "Покерный Клуб №1",
+          "tournament": "Онлайн турнир",
+          "fee_rub": 2000,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11217",
+          "address": "Москва, ул. Киевская, 2",
+          "late_reg_until": "19:00",
+          "late_reg_minutes": 60,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Онлайн турнир 18:00 2 000 ₽ вход до 19:00 Покерный Клуб №1 Москва, ул. Киевская, 2"
+        }
+      ],
+      "upcoming": 1
+    },
+    {
       "name": "Резиденция ПОКЕР",
       "address": "Денисовский пер., 30, стр. 1",
       "contacts": {},
@@ -1511,11 +1552,27 @@
       "schedule": [
         {
           "date": "2026-08-20",
+          "time": "18:00",
+          "club": "ХАРТС",
+          "tournament": "Бесплатное обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/11219",
+          "address": "Боровая, 19А",
+          "late_reg_until": "22:25",
+          "late_reg_minutes": 265,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Бесплатное обучение 18:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
+        },
+        {
+          "date": "2026-08-20",
           "time": "19:00",
           "club": "ХАРТС",
           "tournament": "HEART HUNTER TOURNEY",
           "fee_rub": 1000,
-          "type": "",
+          "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/10302",
           "address": "Боровая, 19А",
           "late_reg_until": "22:25",
@@ -1523,10 +1580,10 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "HEART HUNTER TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+          "source_card_text": "Баунти / Нокаут HEART HUNTER TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "ХРОНИКИ",
@@ -1600,6 +1657,54 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Обучающий Обучение 18:00 Бесплатно вход до 22:10 МАКСИМУМ Большая Никитская 43"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "18:00",
+      "club": "Покерный Клуб №1",
+      "tournament": "Онлайн турнир",
+      "fee_rub": 2000,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/11217",
+      "address": "Москва, ул. Киевская, 2",
+      "late_reg_until": "19:00",
+      "late_reg_minutes": 60,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Онлайн турнир 18:00 2 000 ₽ вход до 19:00 Покерный Клуб №1 Москва, ул. Киевская, 2"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "18:00",
+      "club": "ХАРТС",
+      "tournament": "Бесплатное обучение",
+      "fee_rub": 0,
+      "type": "Обучающий",
+      "source_url": "https://pokernomoney.ru/tournaments/11219",
+      "address": "Боровая, 19А",
+      "late_reg_until": "22:25",
+      "late_reg_minutes": 265,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Обучающий Бесплатное обучение 18:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "19:00",
+      "club": "AK77",
+      "tournament": "Дип-стек DEEPSTACK",
+      "fee_rub": 1500,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/11216",
+      "address": "ул. Софьи Ковалевской, 2",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Дип-стек DEEPSTACK 19:00 1 500 ₽ AK77 ул. Софьи Ковалевской, 2"
     },
     {
       "date": "2026-08-20",
@@ -1733,17 +1838,17 @@
       "date": "2026-08-20",
       "time": "19:00",
       "club": "Joker Poker Club Moscow",
-      "tournament": "Double Life DOUBLE LIFE TOURNAMENT",
+      "tournament": "Double Life DOUBLE LIFE",
       "fee_rub": 1000,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10681",
-      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт.",
+      "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
       "late_reg_until": "21:37",
       "late_reg_minutes": 157,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE TOURNAMENT 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт."
+      "source_card_text": "★ PREMIUM Double Life DOUBLE LIFE 19:00 1 000 ₽ вход до 21:37 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
     },
     {
       "date": "2026-08-20",
@@ -2071,7 +2176,7 @@
       "club": "ХАРТС",
       "tournament": "HEART HUNTER TOURNEY",
       "fee_rub": 1000,
-      "type": "",
+      "type": "Баунти / Нокаут",
       "source_url": "https://pokernomoney.ru/tournaments/10302",
       "address": "Боровая, 19А",
       "late_reg_until": "22:25",
@@ -2079,7 +2184,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "HEART HUNTER TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+      "source_card_text": "Баунти / Нокаут HEART HUNTER TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
     },
     {
       "date": "2026-08-20",
