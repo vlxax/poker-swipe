@@ -115,14 +115,17 @@ async function boot({returning = false} = {}) {
   const {window, document} = app;
   assert.equal(window.__pokerReadyV32, true);
   assert.ok(window.localStorage.getItem('pokerSwipeV32_user_test-device'), 'V32 state was not persisted');
-  assert.match(document.querySelector('#home').textContent, /Что делать сейчас/i);
-  assert.equal(document.querySelectorAll('.v32Metric').length, 4);
+  const homeText = document.querySelector('#home').textContent;
+  assert.match(homeText, /РАЗДАЧА ДНЯ/i, 'home missing daily section');
+  assert.match(homeText, /POKER DNA|Собираем честную выборку/i, 'home missing personalization block');
+  assert.ok(document.querySelectorAll('.v36Stat').length >= 3, 'home stats missing');
 
-  document.querySelector('.v32Metric').click();
-  assert.equal(document.querySelector('#modal').classList.contains('hidden'), false);
-  window.closeModal();
+  document.querySelector('#v36Player').click();
+  await wait(20);
+  assert.equal(document.querySelector('#profile').classList.contains('active'), true, 'profile did not open from stat');
+  window.show('home');
 
-  document.querySelector('#v31Swipe').click();
+  document.querySelector('#v36Swipe').click();
   await wait(20);
   assert.equal(document.querySelector('#swipe').classList.contains('active'), true);
   assert.ok(document.querySelector('#swipeCard .v31Passport'));
@@ -131,7 +134,7 @@ async function boot({returning = false} = {}) {
   assert.notEqual(window.getComputedStyle(document.querySelector('.swipeContext')).display, 'none');
 
   window.show('home');
-  document.querySelector('#v31Sizing').click();
+  document.querySelector('#v36Sizing').click();
   await wait(20);
   const sizing = document.querySelector('#sizeLock');
   assert.ok(document.querySelector('#sizeRange + .v33DirectInput'));
@@ -151,9 +154,9 @@ async function boot({returning = false} = {}) {
 
   window.show('profile');
   await wait(100);
-  assert.ok(document.querySelector('.v32ProfileTools'));
-  assert.ok(document.querySelector('#v32Heal'));
-  assert.match(document.querySelector('#players28Box').textContent, /временно отключены/i);
+  assert.ok(document.querySelector('.v38You'), 'profile v38 layout missing');
+  assert.match(document.querySelector('#profileArea').textContent, /ТВОЯ ИГРА/i);
+  assert.match(document.querySelector('#profileArea').textContent, /УРОВЕНЬ ИГРЫ/i);
 
   for (const screen of ['review', 'daily', 'xray']) {
     window.show(screen);

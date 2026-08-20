@@ -64,5 +64,30 @@ export {
   getTopLeaks, recordCandidate, recordTrainingResult,
   getDailyPersonalizedTraining, getDailyPersonalizedTrainingAsync, buildPersonalizedSessionAsync
 } from './training/personalizedTraining.js';
+// P0 night-build additions.
+export {
+  SKILLS, SKILL_TO_CONCEPTS, skillLabelRu, skillDefinitionRu, conceptsForSkill,
+  skillsForConcept, normalizeSkill, createSkillEvidence, recordSkillEvidence,
+  scoreFromEvidence, confidenceFromEvidence, trendFromEvidence, buildSkillProfile,
+  overallLabel, confidenceLabel, skillProfileId
+} from './training/skillProfile.js';
+export {
+  ERROR_CAUSES, errorCauseLabelRu, errorCauseTipRu, classifyErrorCause, errorCauseFromMistake
+} from './training/errorCause.js';
+export {
+  ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, gradeAssessmentItem, runAssessment
+} from './training/assessment.js';
+export {
+  SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
+  spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots,
+  SESSION_SLOT_KINDS, buildSkillTiers, sessionSlotOrder
+} from './training/spotSelector.js';
+export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
+export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
+export { drillFromLibraryTask } from './training/libraryDrill.js';
+export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
+export { spotFingerprint, diversityPenalty, isTooSimilar, sessionRepetitionPenalty } from './training/sessionDiversity.js';
+export { leakBoostForSpot, spotMatchesLeakConcept, LEAK_SPOT_MATCHERS } from './training/leakSpotMapping.js';
+export { createAnalytics, isKnownEvent } from './training/analytics.js';
 
 export default PokerSwipeSolver;

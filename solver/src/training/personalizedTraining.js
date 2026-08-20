@@ -1,10 +1,4 @@
-// Public, orchestration-level API for the personalised-training layer. It wires
-// the pure modules (candidates, leak profile, priority, session plan, drill
-// generation, grading, progress) to the persistent store and provides the
-// "Ты" connection (getTopLeaks), candidate recording (My Hands), result
-// recording, and the daily session (requirement 17) with async, cancellable,
-// budgeted, de-duplicated drill generation (requirement 21) and a general-drill
-// fallback (requirement 22). No ML anywhere — deterministic.
+// Public, orchestration-level API for the personalised-training layer.
 
 import { computePriority, rankLeaks } from './priority.js';
 import { createLeakProfile, recordLeakEvent, leakEventFromCandidate } from './leakProfile.js';
@@ -12,8 +6,10 @@ import { createConceptProgress, recordAttempt } from './progress.js';
 import { buildTrainingSession } from './sessionBuilder.js';
 import { generateDrill } from './drillGenerator.js';
 import { leakLabelRu, leakDefinitionRu, LEAKS } from './concepts.js';
-
-// ---- "Ты" connection (requirement 19) ---------------------------------------
+import { buildDailyPlan } from './planner.js';
+import { getTaskPool, getTaskById, hasUsablePlayerProfile } from './taskLibraryBridge.js';
+import { drillFromLibraryTask } from './libraryDrill.js';
+import { mapLeakConceptForTask } from './planner.js';
 
 export function getTopLeaks(store, { now = Date.now(), limit = 5 } = {}) {
   const profiles = (store.listProfiles() || [])
@@ -33,10 +29,6 @@ export function getTopLeaks(store, { now = Date.now(), limit = 5 } = {}) {
   }));
 }
 
-// ---- Recording ---------------------------------------------------------------
-
-// Record a normalised candidate from "My Hands" into the store + leak profile,
-// deduped by candidate identity (requirement 18).
 export function recordCandidate(store, candidate, { now = Date.now() } = {}) {
   if (!candidate) return { recorded: false, reason: 'no_candidate' };
   if (store.hasCandidate(candidate)) return { recorded: false, reason: 'duplicate', deduped: true };
@@ -49,20 +41,83 @@ export function recordCandidate(store, candidate, { now = Date.now() } = {}) {
   return { recorded: true, concept: candidate.concept, profile, event };
 }
 
-// Record a graded drill answer into concept progress + drill history.
 export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date.now() } = {}) {
   if (!drill) return { recorded: false, reason: 'no_drill' };
   const concept = drill.concept;
   const progress = store.loadProgress(concept) || createConceptProgress({ concept, now });
   recordAttempt(progress, { grade, evLossBb, now });
   store.saveProgress(progress);
-  store.addHistoryEntry({ concept, street: drill.street, drillId: drill.drillId, grade, evLossBb, at: now });
+  store.addHistoryEntry({
+    concept,
+    street: drill.street,
+    drillId: drill.drillId,
+    spotId: drill.sourceTaskId || drill.metadata?.taskId || null,
+    grade,
+    evLossBb,
+    at: now
+  });
   return { recorded: true, concept, progress };
 }
 
-// ---- Daily session (requirement 17, planner) ---------------------------------
+function buildProgressMap(store) {
+  const progressByConcept = {};
+  for (const p of store.listProgress() || []) {
+    if (p && p.concept) progressByConcept[p.concept] = p;
+  }
+  return progressByConcept;
+}
 
-export function getDailyPersonalizedTraining({ store, profiles, recentCandidates, history, count = 7, now = Date.now() } = {}) {
+function buildRecentResults(history) {
+  return (history || []).map((h) => ({
+    concept: h.concept,
+    grade: h.grade,
+    nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD'
+  }));
+}
+
+export function buildProfileDailyPlan({
+  store,
+  profiles,
+  history,
+  count = 7,
+  now = Date.now(),
+  rng = Math.random,
+  pool = null
+} = {}) {
+  const skillProfile = typeof store.loadSkillProfile === 'function' ? store.loadSkillProfile() : null;
+  const leakProfiles = profiles || store.listProfiles() || [];
+  const hist = history || store.loadHistory() || [];
+  const taskPool = pool || getTaskPool();
+
+  if (!hasUsablePlayerProfile(store) && !leakProfiles.length) {
+    return null;
+  }
+
+  return buildDailyPlan({
+    pool: taskPool,
+    progressByConcept: buildProgressMap(store),
+    history: hist,
+    recentResults: buildRecentResults(hist),
+    skillProfile,
+    leakProfiles,
+    count,
+    now,
+    rng
+  });
+}
+
+export function getDailyPersonalizedTraining({ store, profiles, recentCandidates, history, count = 7, now = Date.now(), rng = Math.random } = {}) {
+  const libraryPlan = buildProfileDailyPlan({ store, profiles, history, count, now, rng });
+  if (libraryPlan && libraryPlan.filled > 0) {
+    return {
+      sessionId: libraryPlan.sessionId,
+      primaryConcept: libraryPlan.primaryConcept,
+      personalized: libraryPlan.personalized,
+      plan: libraryPlan,
+      source: 'library'
+    };
+  }
+
   const profs = profiles || store.listProfiles() || [];
   const plan = buildTrainingSession({
     profiles: profs,
@@ -76,11 +131,10 @@ export function getDailyPersonalizedTraining({ store, profiles, recentCandidates
     sessionId: plan.sessionId,
     primaryConcept: plan.primaryConcept,
     personalized: plan.personalized,
-    plan
+    plan,
+    source: 'leak_queue'
   };
 }
-
-// ---- Async, cancellable, budgeted drill generation (requirement 21) ----------
 
 const inflight = new Map();
 
@@ -95,21 +149,40 @@ export async function buildPersonalizedSessionAsync({
   config = {},
   signal = null,
   now = Date.now(),
-  jobKey
+  jobKey,
+  rng = Math.random,
+  preparedPlan = null
 } = {}) {
-  const plan = buildTrainingSession({
-    profiles: profiles || store.listProfiles() || [],
-    recentCandidates: recentCandidates || store.listCandidates() || [],
-    history: history || store.loadHistory() || [],
-    count,
-    now,
-    leakSet: LEAKS
-  });
+  let plan;
+  let useLibrary = false;
+
+  if (preparedPlan && preparedPlan.filled > 0) {
+    plan = preparedPlan;
+    useLibrary = !!(plan.drills && plan.drills.some((d) => d.spotId));
+  } else {
+    const libraryPlan = buildProfileDailyPlan({ store, profiles, history, count, now, rng: config.rng || rng });
+
+    if (libraryPlan && libraryPlan.filled > 0) {
+      plan = libraryPlan;
+      useLibrary = true;
+    } else {
+      plan = buildTrainingSession({
+        profiles: profiles || store.listProfiles() || [],
+        recentCandidates: recentCandidates || store.listCandidates() || [],
+        history: history || store.loadHistory() || [],
+        count,
+        now,
+        leakSet: LEAKS
+      });
+    }
+  }
 
   const key = jobKey || plan.sessionId;
   if (inflight.has(key)) return inflight.get(key);
 
-  const job = runGeneration({ plan, store, solve, solveOpts, config, signal, now });
+  const job = runGeneration({
+    plan, store, solve, solveOpts, config, signal, now, useLibrary
+  });
   inflight.set(key, job);
   try {
     return await job;
@@ -118,7 +191,7 @@ export async function buildPersonalizedSessionAsync({
   }
 }
 
-async function runGeneration({ plan, store, solve, solveOpts, config, signal, now }) {
+async function runGeneration({ plan, store, solve, solveOpts, config, signal, now, useLibrary }) {
   const maxAttempts = config.maxAttempts || 8;
   const timeBudgetMs = config.timeBudgetMs || 20000;
   const started = Date.now();
@@ -127,10 +200,26 @@ async function runGeneration({ plan, store, solve, solveOpts, config, signal, no
   const failures = [];
 
   const candidates = store.listCandidates() || [];
+  const items = useLibrary ? (plan.drills || []) : (plan.drills || []);
 
-  for (const item of plan.drills) {
+  for (const item of items) {
     if (signal && signal.aborted) { failures.push({ concept: item.concept, reason: 'cancelled' }); break; }
     if (Date.now() - started > timeBudgetMs) { failures.push({ concept: item.concept, reason: 'time_budget' }); break; }
+
+    if (useLibrary && item.spotId) {
+      const task = getTaskById(item.spotId);
+      if (task) {
+        const leakConcept = mapLeakConceptForTask(task) || item.concept;
+        const gen = drillFromLibraryTask(task, { leakConcept });
+        if (gen.ok && !seenDrillIds.has(gen.drill.drillId)) {
+          seenDrillIds.add(gen.drill.drillId);
+          drills.push(gen.drill);
+          continue;
+        }
+      }
+      failures.push({ concept: item.concept, spotId: item.spotId, reason: 'library_task_missing' });
+      continue;
+    }
 
     const candidate = candidates.find((c) => c.concept === item.concept) || null;
     let generated = false;
@@ -147,15 +236,12 @@ async function runGeneration({ plan, store, solve, solveOpts, config, signal, no
         seenDrillIds.add(gen.drill.drillId);
         drills.push(gen.drill);
         generated = true;
-      } else if (gen.ok && seenDrillIds.has(gen.drill.drillId)) {
-        // exact repeat — try again
-      } else {
+      } else if (!gen.ok) {
         failures.push({ concept: item.concept, reason: gen.reason, attempt });
       }
     }
   }
 
-  // Fallback: fill shortfall with validated general drills (requirement 22).
   if (drills.length < plan.total && typeof config.generalDrill === 'function') {
     while (drills.length < plan.total) {
       if (signal && signal.aborted) break;
@@ -165,7 +251,7 @@ async function runGeneration({ plan, store, solve, solveOpts, config, signal, no
         seenDrillIds.add(g.drill.drillId);
         drills.push(g.drill);
       } else if (g && !g.ok) {
-        break; // general provider is failing — stop rather than loop
+        break;
       }
     }
   }
@@ -178,14 +264,13 @@ async function runGeneration({ plan, store, solve, solveOpts, config, signal, no
     drills,
     failures,
     filled: drills.length,
-    elapsedMs: Date.now() - started
+    elapsedMs: Date.now() - started,
+    source: useLibrary ? 'library' : 'leak_queue'
   };
 }
 
-// Convenience: build the daily plan + generate the drills in one async call.
 export async function getDailyPersonalizedTrainingAsync(opts = {}) {
   return buildPersonalizedSessionAsync(opts);
 }
 
-// Convenience re-export of the pure ranker for callers that already have profiles.
-export { rankLeaks };
+export { rankLeaks, hasUsablePlayerProfile };

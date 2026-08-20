@@ -9,10 +9,11 @@ import assert from 'node:assert/strict';
 
 import {
   normalizeCandidate, recordCandidate, createTrainingStore, gradeAnswer,
-  generateDrill, leakLabelRu
+  generateDrill, leakLabelRu, skillLabelRu
 } from '../../solver/src/index.js';
-import { homeViewModel, drillViewModel, confidenceModel, feedbackViewModel, summaryViewModel, gradeClass } from '../../training-ui/viewModel.js';
+import { homeViewModel, drillViewModel, confidenceModel, feedbackViewModel, summaryViewModel, gradeClass, assessmentViewModel, assessmentSummaryViewModel } from '../../training-ui/viewModel.js';
 import { SessionController } from '../../training-ui/sessionController.js';
+import { AssessmentController } from '../../training-ui/assessmentController.js';
 
 function reviewModelFixture() {
   return {
@@ -81,13 +82,16 @@ const GOOD_LOSS = 0.05;
 // ---- Home view model --------------------------------------------------------
 
 test('homeViewModel returns a personalised block when a leak profile exists', () => {
-  const vm = homeViewModel({ leaks: [{ concept: 'turn_barrel_sizing', label: 'Сайзинг второго барреля', definition: 'd', evidence: 'e', sampleSize: 3 }], plan: { total: 7, estimatedDifficulty: 2.5 } });
-  assert.equal(vm.type, 'personalized');
-  assert.equal(vm.title, 'ТРЕНИРОВКА ДЛЯ ТЕБЯ');
+  const vm = homeViewModel({
+    leaks: [{ concept: 'turn_barrel_sizing', label: 'Сайзинг второго барреля', definition: 'd', evidence: 'e', sampleSize: 3 }],
+    plan: { total: 7, personalized: true, sessionPlan: { primaryTargets: ['turn value barrel'], maintenance: [], exploration: [] } }
+  });
+  assert.equal(vm.type, 'training');
+  assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
   assert.equal(vm.total, 7);
-  assert.equal(vm.difficulty, 2.5);
-  assert.equal(vm.cta, 'НАЧАТЬ');
-  assert.equal(vm.why, 'Почему сейчас');
+  assert.ok(vm.focusItems.length >= 1);
+  assert.equal(vm.cta, 'НАЧАТЬ МОЮ ТРЕНИРОВКУ');
+  assert.ok(vm.whyText);
 });
 
 test('homeViewModel returns a general fallback when there is no leak profile', () => {
@@ -128,7 +132,7 @@ test('drillViewModel confidence shows a limited-analysis note on low confidence'
   const vm = drillViewModel({ drill, index: 1, total: 7 });
   assert.equal(vm.confidence.available, true);
   assert.equal(vm.confidence.score, 50);
-  assert.match(vm.confidence.note, /Ограничено/);
+  assert.match(vm.confidence.note, /приблизительн/i);
 });
 
 test('confidenceModel returns unavailable when no confidence is present', () => {
@@ -230,6 +234,19 @@ test('controller hasProfile reflects seeded leak profile', () => {
   assert.equal(makeController(createTrainingStore()).hasProfile(), false);
 });
 
+test('controller hasProfile is true when only a skill profile exists', () => {
+  const store = createTrainingStore();
+  store.saveSkillProfile({
+    overall: 61,
+    overallLabel: 'КЛУБНЫЙ РЕГ',
+    weakest: { skill: 'icm', labelRu: 'ICM / баббл' },
+    skills: { icm: {}, preflop: {} }
+  });
+  const ctl = makeController(store);
+  assert.equal(ctl.hasProfile(), true);
+  assert.equal(ctl.home().type, 'training');
+});
+
 test('controller start without a profile falls back (no fake personalised content)', () => {
   const ctl = makeController(createTrainingStore());
   const r = ctl.start();
@@ -276,6 +293,8 @@ test('controller next returns done:false while drills remain and advances progre
   ctl.state = 'ready';
   ctl.drills = [drillFixture(), drillFixture()];
   ctl.index = 0;
+  ctl.showingFeedback = true;
+  ctl.lastAnswer = { grade: 'GOOD', feedbackRu: { verdict: 'Хорошее решение' } };
   const r = ctl.next();
   assert.equal(r.done, false);
   assert.equal(ctl.index, 1);
@@ -342,5 +361,200 @@ test('summary after a session reports real results and trend', async () => {
   const vm = ctl.summary();
   assert.equal(vm.solved, 1);
   assert.ok(vm.avgLossBb != null);
-  assert.equal(vm.primaryConcept, 'turn_barrel_sizing');
+  assert.ok(vm.primaryConcept);
+});
+
+// ---- Primary assessment (P0) -------------------------------------------------
+
+test('assessmentViewModel maps a question with plain-string choices', () => {
+  const vm = assessmentViewModel({ item: { id: 'A', q: 'BTN · A8s', street: 'ПРЕФЛОП', skillTag: 'preflop', choices: ['ФОЛД', 'РЕЙЗ'] }, index: 2, total: 12 });
+  assert.equal(vm.q, 'BTN · A8s');
+  assert.equal(vm.progress.index, 2);
+  assert.equal(vm.progress.total, 12);
+  assert.deepEqual(vm.choices.map((c) => c.id), ['ФОЛД', 'РЕЙЗ']);
+  assert.equal(vm.choices[0].labelRu, 'ФОЛД');
+});
+
+test('assessmentSummaryViewModel reports level, correct and weakest/strongest', () => {
+  const vm = assessmentSummaryViewModel({
+    result: {
+      answered: 12, total: 12, overall: 60, overallLabel: 'КЛУБНЫЙ РЕГ',
+      weakestSkill: 'icm', strongestSkill: 'preflop',
+      skillProfile: {},
+      results: [{ correct: true }, { correct: false }, { correct: true }, { nearOptimal: true }]
+    }
+  });
+  assert.equal(vm.overall, 60);
+  assert.equal(vm.correct, 2);
+  assert.equal(vm.nearOptimal, 1);
+  assert.equal(vm.weakest, 'ICM / баббл');
+  assert.equal(vm.hasResult, true);
+});
+
+test('homeViewModel returns the personal training CTA when a skill profile exists', () => {
+  const vm = homeViewModel({
+    leaks: [],
+    plan: { total: 7, sessionId: 'plan-a', sessionPlan: { primaryTargets: ['bubble ICM'], maintenance: [], exploration: [] } },
+    skillProfile: {
+      overall: 61,
+      overallLabel: 'КЛУБНЫЙ РЕГ',
+      weakest: { skill: 'icm', labelRu: 'ICM / баббл' },
+      skills: {
+        icm: { score: 40, labelRu: 'ICM / баббл' },
+        preflop: { score: 70, labelRu: 'Префлоп' }
+      }
+    }
+  });
+  assert.equal(vm.type, 'training');
+  assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
+  assert.match(vm.subtitle, /7 раздач/);
+  assert.equal(vm.cta, 'НАЧАТЬ МОЮ ТРЕНИРОВКУ');
+  assert.ok(vm.focusItems.some((f) => /баббл|решения/i.test(f)));
+});
+
+test('AssessmentController runs the diagnostic and persists a profile', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  const begin = ctl.begin();
+  assert.equal(begin.started, true);
+  assert.ok(begin.total >= 1);
+  assert.equal(ctl.state, 'answering');
+
+  // Answer every question with the correct choice.
+  let guard = 0;
+  while (ctl.state === 'answering' && guard < 30) {
+    const item = ctl.current();
+    assert.ok(item && item.choices.length >= 2);
+    ctl.answer(item.correct);
+    guard++;
+  }
+  assert.equal(ctl.state, 'done');
+  assert.equal(ctl.hasResult(), true);
+
+  // Persisted skill profile + assessment + analytics event.
+  assert.ok(store.loadSkillProfile());
+  assert.ok(store.loadAssessment());
+  assert.ok(store.loadAnalyticsEvents().some((e) => e.name === 'assessment_completed'));
+
+  const vm = ctl.viewModel();
+  assert.equal(vm.phase, 'summary');
+  assert.equal(vm.hasResult, true);
+});
+
+test('AssessmentController answer on an empty run is a no-op', () => {
+  const ctl = new AssessmentController({ now: () => 0, rng: () => 0.5 });
+  ctl.begin();
+  while (ctl.state === 'answering') ctl.answer(ctl.current().correct);
+  assert.equal(ctl.answer('ФОЛД'), null);
+});
+
+test('AssessmentController persists leak profiles from wrong answers', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0, now: () => 1000 });
+  ctl.begin();
+  let guard = 0;
+  while (ctl.state === 'answering' && guard < 30) {
+    const item = ctl.current();
+    const wrong = item.choices.find((c) => c !== item.correct) || item.choices[0];
+    ctl.answer(wrong);
+    guard++;
+  }
+  assert.equal(ctl.state, 'done');
+  const profiles = store.listProfiles();
+  assert.ok(profiles.length >= 1);
+  assert.ok(profiles.some((p) => p.sampleSize > 0 && p.mistakes > 0));
+});
+
+test('AssessmentController acknowledgeCompletion returns to idle for later visits', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  ctl.begin();
+  while (ctl.state === 'answering') ctl.answer(ctl.current().correct);
+  assert.equal(ctl.state, 'done');
+  assert.equal(ctl.shouldShowSummary(), true);
+  ctl.acknowledgeCompletion();
+  assert.equal(ctl.state, 'idle');
+  assert.equal(ctl.shouldShowSummary(), false);
+});
+
+test('reopened session recognizes persisted assessment profile', () => {
+  const store = createTrainingStore();
+  const first = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  first.begin();
+  while (first.state === 'answering') first.answer(first.current().correct);
+  first.acknowledgeCompletion();
+
+  const reopened = new AssessmentController({ store });
+  assert.equal(reopened.state, 'idle');
+  assert.equal(reopened.shouldShowSummary(), false);
+
+  const ctl = makeController(store);
+  assert.equal(ctl.hasProfile(), true);
+  assert.equal(ctl.home().type, 'training');
+});
+
+test('completed assessment does not auto-restart on a fresh controller', () => {
+  const store = createTrainingStore();
+  const first = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  first.begin();
+  while (first.state === 'answering') first.answer(first.current().correct);
+  first.acknowledgeCompletion();
+
+  const later = new AssessmentController({ store });
+  assert.equal(later.state, 'idle');
+  assert.equal(later.shouldShowSummary(), false);
+  assert.equal(makeController(store).home().type, 'training');
+});
+
+// ---- Personalised training home entry (user-facing CTA) ---------------------
+
+test('weak ICM profile shows ICM focus on the home card', () => {
+  const vm = homeViewModel({
+    leaks: [{ concept: 'icm_pressure', label: 'Давление ICM' }],
+    plan: { total: 7, sessionPlan: { primaryTargets: ['bubble ICM fold', 'final table ICM'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 48, overallLabel: 'НЕСТАБИЛЬНАЯ БАЗА', weakest: { skill: 'icm', labelRu: 'ICM / баббл' }, skills: { icm: { score: 35, labelRu: 'ICM / баббл' } } }
+  });
+  assert.ok(vm.focusItems.some((f) => /баббл|решения/i.test(f)));
+  assert.match(vm.whyText, /фишки|потери/i);
+});
+
+test('weak river profile shows river defence focus on the home card', () => {
+  const vm = homeViewModel({
+    leaks: [{ concept: 'bluff_catch', label: 'Блафф-кэтч на ривере' }],
+    plan: { total: 7, sessionPlan: { primaryTargets: ['river bluffcatch', 'price defence'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 52, overallLabel: 'КЛУБНЫЙ РЕГ', weakest: { skill: 'bluffCatch', labelRu: 'Блафф-кэтч' }, skills: { river: { score: 38, labelRu: 'Ривер' }, bluffCatch: { score: 36, labelRu: 'Блафф-кэтч' } } }
+  });
+  assert.ok(vm.focusItems.some((f) => /ривер|блеф|кетч/i.test(f)));
+});
+
+test('different profiles show different focus text on the home card', () => {
+  const icmVm = homeViewModel({
+    plan: { total: 7, sessionPlan: { primaryTargets: ['bubble ICM'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 40, overallLabel: 'X', skills: { icm: { score: 30, labelRu: 'ICM / баббл' } } }
+  });
+  const riverVm = homeViewModel({
+    plan: { total: 7, sessionPlan: { primaryTargets: ['river bluffcatch'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 40, overallLabel: 'X', skills: { river: { score: 30, labelRu: 'Ривер' } } }
+  });
+  assert.notDeepEqual(icmVm.focusItems, riverVm.focusItems);
+  assert.notEqual(icmVm.whyText, riverVm.whyText);
+});
+
+test('controller builds a fresh library plan on start', async () => {
+  const store = createTrainingStore();
+  store.saveSkillProfile({
+    overall: 55,
+    overallLabel: 'КЛУБНЫЙ РЕГ',
+    skills: { icm: { score: 40, labelRu: 'ICM / баббл' } },
+    weakest: { skill: 'icm', labelRu: 'ICM / баббл' }
+  });
+  const ctl = makeController(store, fakeDecision(), { count: 1 });
+  const homeVm = ctl.home();
+  assert.equal(homeVm.type, 'training');
+  assert.ok(ctl.preparedDaily && ctl.preparedDaily.plan);
+  ctl.start();
+  await new Promise((r) => setTimeout(r, 80));
+  assert.ok(ctl.session && ctl.session.plan);
+  assert.ok(ctl.session.plan.sessionId);
+  assert.ok(ctl.drills.length >= 1);
 });

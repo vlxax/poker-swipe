@@ -1,0 +1,40 @@
+.rangesStage{max-width:100%;overflow-x:hidden;padding-bottom:12px}
+.rangesStage .rangesHint{background:#1a1f28;border:1px solid #2f3848;border-radius:14px;padding:10px 12px;margin:10px 0;font-size:12px;color:#c8d0dc}
+.rangesField{margin:14px 0}
+.rangesField .ey{display:block;margin-bottom:8px}
+.rangesChips{display:flex;flex-wrap:wrap;gap:6px}
+.rangesChip{border:1px solid #343b45;background:#12161c;color:#e8ecf2;border-radius:12px;padding:9px 12px;font-size:11px;font-weight:800;letter-spacing:.04em;touch-action:manipulation}
+.rangesChip.on{border-color:#c8ff3d;background:#1c2414;color:#eaffb8}
+.rangesChip:disabled{opacity:.35}
+.rangesCta{margin-top:18px;width:100%}
+.rangesCta[disabled]{opacity:.45}
+.rangesHeader{margin:12px 0 8px}
+.rangesHeader b{display:block;font-size:18px;margin:4px 0}
+.rangesLegend{font-size:12px;color:#9aa3af;margin:6px 0 12px;line-height:1.45}
+.rangesMatrixWrap{overflow-x:hidden;width:100%;margin:8px 0 12px;max-width:100%}
+.rangesMatrix{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:3px;width:100%;max-width:100%}
+.rangesCell{aspect-ratio:1;width:100%;min-width:0;border-radius:6px;border:1px solid #2a3038;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#0e1218;touch-action:manipulation;-webkit-tap-highlight-color:transparent;position:relative}
+.rangesCell::before{content:'';position:absolute;inset:-5px}
+.rangesCell.always{background:linear-gradient(180deg,#8fd84a,#4ea828)}
+.rangesCell.sometimes{background:linear-gradient(180deg,#d4c44a,#9a8a20);color:#1a1408}
+.rangesCell.never{background:#1a1e24;color:#5c6673}
+.rangesCell.selected{outline:2px solid #ff2e84;outline-offset:1px;z-index:1}
+.rangesDetail{background:#141a22;border:1px solid #2f3848;border-radius:16px;padding:12px 14px;margin:10px 0}
+.rangesDetail h3{margin:0 0 8px;font-size:22px}
+.rangesDetail .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #252a32;font-size:13px}
+.rangesDetail .row:last-child{border-bottom:0}
+.rangesHelpBtn{background:none;border:0;color:#9aa3af;font-size:12px;text-decoration:underline;padding:0;margin:8px 0 0;cursor:pointer;touch-action:manipulation}
+.rangesOverlay{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.rangesHelpSheet{width:min(420px,100%);max-height:min(70vh,520px);overflow:auto;background:#141a22;border:1px solid #343b45;border-radius:20px 20px 16px 16px;padding:16px}
+.rangesHelpSheet h2{margin:0 0 10px;font-size:18px}
+.rangesHelpSheet p{margin:6px 0;font-size:13px;line-height:1.45;color:#c5ccd6}
+.rangesLinkRow{margin-top:14px}
+.rangesLinkRow button.secondary{width:100%}
+.rangesEmpty{text-align:center;padding:24px 12px}
+.rangesEmpty p{color:#9aa3af;font-size:13px;line-height:1.5}
+@media (max-width:390px){
+  .rangesMatrix{gap:2px}
+  .rangesCell{font-size:8px}
+  .rangesCell::before{inset:-4px}
+  .rangesChip{padding:8px 10px;font-size:10px}
+}

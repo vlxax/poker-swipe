@@ -1,7 +1,7 @@
 
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "pokerswipe-polyana-sync",
+  "name": "poker-swipe",
   "main": "src/index.js",
   "compatibility_date": "2026-08-17",
   "observability": {
@@ -13,7 +13,7 @@
   "kv_namespaces": [
     {
       "binding": "POLYANA_KV",
-      "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+      "id": "74091d04ed984e31a25f0bbafee6d51a"
     }
   ],
   "vars": {
