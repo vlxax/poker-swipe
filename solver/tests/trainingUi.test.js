@@ -231,6 +231,19 @@ test('controller hasProfile reflects seeded leak profile', () => {
   assert.equal(makeController(createTrainingStore()).hasProfile(), false);
 });
 
+test('controller hasProfile is true when only a skill profile exists', () => {
+  const store = createTrainingStore();
+  store.saveSkillProfile({
+    overall: 61,
+    overallLabel: 'КЛУБНЫЙ РЕГ',
+    weakest: { skill: 'icm', labelRu: 'ICM / баббл' },
+    skills: { icm: {}, preflop: {} }
+  });
+  const ctl = makeController(store);
+  assert.equal(ctl.hasProfile(), true);
+  assert.equal(ctl.home().type, 'training');
+});
+
 test('controller start without a profile falls back (no fake personalised content)', () => {
   const ctl = makeController(createTrainingStore());
   const r = ctl.start();
@@ -418,4 +431,62 @@ test('AssessmentController answer on an empty run is a no-op', () => {
   ctl.begin();
   while (ctl.state === 'answering') ctl.answer(ctl.current().correct);
   assert.equal(ctl.answer('ФОЛД'), null);
+});
+
+test('AssessmentController persists leak profiles from wrong answers', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0, now: () => 1000 });
+  ctl.begin();
+  let guard = 0;
+  while (ctl.state === 'answering' && guard < 30) {
+    const item = ctl.current();
+    const wrong = item.choices.find((c) => c !== item.correct) || item.choices[0];
+    ctl.answer(wrong);
+    guard++;
+  }
+  assert.equal(ctl.state, 'done');
+  const profiles = store.listProfiles();
+  assert.ok(profiles.length >= 1);
+  assert.ok(profiles.some((p) => p.sampleSize > 0 && p.mistakes > 0));
+});
+
+test('AssessmentController acknowledgeCompletion returns to idle for later visits', () => {
+  const store = createTrainingStore();
+  const ctl = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  ctl.begin();
+  while (ctl.state === 'answering') ctl.answer(ctl.current().correct);
+  assert.equal(ctl.state, 'done');
+  assert.equal(ctl.shouldShowSummary(), true);
+  ctl.acknowledgeCompletion();
+  assert.equal(ctl.state, 'idle');
+  assert.equal(ctl.shouldShowSummary(), false);
+});
+
+test('reopened session recognizes persisted assessment profile', () => {
+  const store = createTrainingStore();
+  const first = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  first.begin();
+  while (first.state === 'answering') first.answer(first.current().correct);
+  first.acknowledgeCompletion();
+
+  const reopened = new AssessmentController({ store });
+  assert.equal(reopened.state, 'idle');
+  assert.equal(reopened.shouldShowSummary(), false);
+
+  const ctl = makeController(store);
+  assert.equal(ctl.hasProfile(), true);
+  assert.equal(ctl.home().type, 'training');
+});
+
+test('completed assessment does not auto-restart on a fresh controller', () => {
+  const store = createTrainingStore();
+  const first = new AssessmentController({ store, rng: () => 0.5, now: () => 1000 });
+  first.begin();
+  while (first.state === 'answering') first.answer(first.current().correct);
+  first.acknowledgeCompletion();
+
+  const later = new AssessmentController({ store });
+  assert.equal(later.state, 'idle');
+  assert.equal(later.shouldShowSummary(), false);
+  assert.equal(makeController(store).home().type, 'training');
 });

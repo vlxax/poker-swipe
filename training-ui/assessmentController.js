@@ -5,7 +5,9 @@
 // surfaces through analytics. Pure state + store calls; DOM stays in the
 // renderer. Deterministic given the same rng, so it is unit-testable.
 
-import { buildAssessmentSet, runAssessment, createAnalytics } from '../solver/src/index.js';
+import {
+  buildAssessmentSet, runAssessment, createAnalytics, buildLeakProfile
+} from '../solver/src/index.js';
 import { assessmentViewModel, assessmentSummaryViewModel } from './viewModel.js';
 
 export class AssessmentController {
@@ -21,6 +23,7 @@ export class AssessmentController {
     this.answers = [];
     this.index = 0;
     this.result = null;
+    this._pendingSummary = false;
   }
 
   _notify() {
@@ -31,12 +34,27 @@ export class AssessmentController {
     return !!(this.result && this.result.skillProfile);
   }
 
+  shouldShowSummary() {
+    return this._pendingSummary && this.state === 'done' && !!this.result;
+  }
+
+  // Leave the one-shot summary screen; later Daily visits show training home.
+  acknowledgeCompletion() {
+    this._pendingSummary = false;
+    this.state = 'idle';
+    this.set = [];
+    this.answers = [];
+    this.index = 0;
+    this._notify();
+  }
+
   // Start the diagnostic: build the question set and enter the answering state.
   begin() {
     this.set = buildAssessmentSet({ rng: this.rng, count: this.count });
     this.answers = [];
     this.index = 0;
     this.result = null;
+    this._pendingSummary = false;
     this.state = this.set.length ? 'answering' : 'done';
     if (this.set.length) {
       const analytics = createAnalytics({ store: this.store, now: this.now });
@@ -77,10 +95,17 @@ export class AssessmentController {
     const res = runAssessment({ items: this.set, answers: this.answers, now: this.now() });
     this.result = res;
     this.state = 'done';
+    this._pendingSummary = true;
     if (this.store) {
       try {
         this.store.saveAssessment(res);
         if (res.skillProfile) this.store.saveSkillProfile(res.skillProfile);
+        for (const [concept, prof] of Object.entries(res.leakProfiles || {})) {
+          const events = (prof && prof.attempts) || [];
+          if (!events.length) continue;
+          const profile = buildLeakProfile({ concept, events, now: this.now() });
+          this.store.saveProfile(profile);
+        }
         const analytics = createAnalytics({ store: this.store, now: this.now });
         analytics.assessmentCompleted({
           answered: res.answered,
@@ -88,6 +113,7 @@ export class AssessmentController {
           overall: res.overall,
           weakestSkill: res.weakestSkill
         });
+        if (res.skillProfile) analytics.profileUpdated(res.skillProfile);
       } catch (_) { /* non-fatal */ }
     }
     this._notify();

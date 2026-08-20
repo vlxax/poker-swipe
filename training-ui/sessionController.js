@@ -34,10 +34,17 @@ export class SessionController {
   home() {
     const leaks = getTopLeaks(this.store, { now: this.now() });
     const plan = getDailyPersonalizedTraining({ store: this.store, count: this.config.count || 7, now: this.now() });
-    return homeViewModel({ leaks, plan });
+    const skillProfile = typeof this.store.loadSkillProfile === 'function'
+      ? this.store.loadSkillProfile()
+      : null;
+    return homeViewModel({ leaks, plan, skillProfile });
   }
 
   hasProfile() {
+    const skillProfile = typeof this.store.loadSkillProfile === 'function'
+      ? this.store.loadSkillProfile()
+      : null;
+    if (skillProfile && skillProfile.overall != null) return true;
     return (getTopLeaks(this.store, { now: this.now() }) || []).length > 0;
   }
 

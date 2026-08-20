@@ -105,6 +105,7 @@ test('renderHome renders personal training CTA with start handler', () => {
 });
 
 test('viewModel builds a full per-question assessment view', () => {
+  const a = VM.assessmentViewModel({
     item: {
       q: 'На 4-bet?',
       street: 'ПРЕФЛОП',

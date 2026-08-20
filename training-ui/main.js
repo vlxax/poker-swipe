@@ -117,18 +117,20 @@ function paint() {
   const el = root();
   if (!el) return;
 
-  // Primary diagnostic flow takes precedence while it is active.
-  if (assessment.state === 'answering' || assessment.state === 'done') {
+  if (assessment.state === 'answering') {
+    R.renderAssessment(el, assessment.viewModel(), assessmentHandlers);
+    return;
+  }
+
+  if (assessment.shouldShowSummary()) {
     const vm = assessment.viewModel();
-    if (vm.phase === 'question') {
-      R.renderAssessment(el, vm, assessmentHandlers);
-    } else {
-      // A skill profile now exists → "К ТРЕНИРОВКЕ" starts the personalised
-      // session instead of dropping back to the legacy home screen.
-      R.renderAssessmentSummary(el, vm, {
-        back: () => { const r = ctl.start(); if (r.started) paint(); else goHome(); }
-      });
-    }
+    R.renderAssessmentSummary(el, vm, {
+      back: () => {
+        assessment.acknowledgeCompletion();
+        ctl.start();
+        paint();
+      }
+    });
     return;
   }
 
