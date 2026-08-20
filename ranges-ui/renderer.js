@@ -100,6 +100,7 @@ export function renderResult(root, vm, handlers = {}) {
       <span class="mut">${esc(vm.situationLine)}</span>
     </div>
     ${vm.statsLine ? `<p class="rangesStats">${esc(vm.statsLine)}</p>` : ''}
+    ${vm.sourceLabel ? `<p class="mut small rangesSource">Источник: ${esc(vm.sourceLabel)}</p>` : ''}
     <p class="rangesLegend">${esc(vm.legend)}<br>Жёлтые — играем иногда.</p>
     ${vm.sourceNote ? `<p class="mut small rangesNote">${esc(vm.sourceNote)}</p>` : ''}
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как читать таблицу?</button>

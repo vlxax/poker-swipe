@@ -3,7 +3,6 @@
 import { loadOnboarding, saveOnboarding, markHintSeen, completeOnboarding } from './storage.js';
 import { getCatalog, isSelectionComplete, sanitizeSelection, isSelectionAvailable } from './catalog.js';
 import { selectorViewModel, resultViewModel, helpViewModel } from './viewModel.js';
-import { formatOptionsFor } from './coverage.js';
 
 export class RangeController {
   constructor({ pack, storage = null } = {}) {
@@ -23,9 +22,10 @@ export class RangeController {
     this.onboarding = loadOnboarding(storage);
   }
 
+  // Deliberately cheap: the availability tree is only built once the section is
+  // actually rendered, not while the module is being imported at page boot.
   _defaultFormat() {
-    const available = formatOptionsFor(this.pack);
-    return available.includes('6max') ? '6max' : (available[0] || '6max');
+    return '6max';
   }
 
   _catalog() {
@@ -33,7 +33,20 @@ export class RangeController {
   }
 
   _syncSelection() {
-    this.selection = sanitizeSelection(this.selection, this._catalog());
+    let catalog = this._catalog();
+    const available = catalog.availableFormats.map((f) => f.id);
+    if (available.length && !available.includes(this.selection.format)) {
+      this.selection = {
+        ...this.selection,
+        format: available[0],
+        position: null,
+        situation: null,
+        opener: null,
+        stack: null
+      };
+      catalog = this._catalog();
+    }
+    this.selection = sanitizeSelection(this.selection, catalog);
   }
 
   viewModel() {

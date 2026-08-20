@@ -282,8 +282,27 @@ export function getAvailability(pack) {
   return availability;
 }
 
+// Per-pack memo for the report builders: they walk every legal combination and
+// are read on each selector render for the "unavailable" note.
+const REPORT_CACHE = new WeakMap();
+
+function memoPerPack(pack, name, compute) {
+  const key = pack || FALLBACK_PACK_KEY;
+  let cache = REPORT_CACHE.get(key);
+  if (!cache) {
+    cache = new Map();
+    REPORT_CACHE.set(key, cache);
+  }
+  if (!cache.has(name)) cache.set(name, compute());
+  return cache.get(name);
+}
+
 // Full audit across every legal combination, used by tests and reporting.
 export function buildCoverageReport(pack) {
+  return memoPerPack(pack, 'coverageReport', () => computeCoverageReport(pack));
+}
+
+function computeCoverageReport(pack) {
   const rows = [];
   for (const format of FORMAT_IDS) {
     for (const position of positionsForFormat(format)) {
@@ -355,6 +374,10 @@ export function enumerateSelectableCombinations(pack) {
 // Only whole formats and whole situations are listed; partial gaps (a depth the
 // push/fold model cannot cover, say) are already invisible in the chip lists.
 export function unavailableSummary(pack) {
+  return memoPerPack(pack, 'unavailableSummary', () => computeUnavailableSummary(pack));
+}
+
+function computeUnavailableSummary(pack) {
   const availability = getAvailability(pack);
   const hidden = hiddenScenarioSummary(pack);
   const out = [];
@@ -389,6 +412,10 @@ export function unavailableSummary(pack) {
 }
 
 export function hiddenScenarioSummary(pack) {
+  return memoPerPack(pack, 'hiddenScenarios', () => computeHiddenScenarios(pack));
+}
+
+function computeHiddenScenarios(pack) {
   const { rows } = buildCoverageReport(pack);
   const groups = new Map();
   for (const row of rows) {

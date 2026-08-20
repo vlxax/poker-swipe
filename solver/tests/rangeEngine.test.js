@@ -603,6 +603,28 @@ test('each situation is routed to its own source', () => {
   );
 });
 
+test('the result screen states which source the range came from', () => {
+  const root = setupDom();
+  const ctl = new RangeController({ pack, storage: memStorage() });
+
+  ctl.setField('position', 'CO');
+  ctl.setField('situation', 'rfi');
+  ctl.setField('stack', 30);
+  ctl.showRange();
+  Renderer.renderResult(root, ctl.viewModel(), {});
+  assert.match(root.innerHTML, /Источник: Preflop atlas · RFI/);
+  assert.match(root.innerHTML, /Играем 65% комбинаций \(862 из 1326\)/);
+
+  ctl.backToSelector();
+  ctl.setField('position', 'BTN');
+  ctl.setField('situation', 'push_fold');
+  ctl.setField('stack', 15);
+  ctl.showRange();
+  Renderer.renderResult(root, ctl.viewModel(), {});
+  assert.match(root.innerHTML, /Источник: Push\/fold модель/);
+  assert.match(root.innerHTML, /не смешивается с deep-stack/);
+});
+
 test('mobile 390x844 renders every offered combination without overflow', () => {
   const root = setupDom();
   const ctl = new RangeController({ pack, storage: memStorage() });
