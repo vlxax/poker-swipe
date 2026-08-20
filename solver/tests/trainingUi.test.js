@@ -82,13 +82,16 @@ const GOOD_LOSS = 0.05;
 // ---- Home view model --------------------------------------------------------
 
 test('homeViewModel returns a personalised block when a leak profile exists', () => {
-  const vm = homeViewModel({ leaks: [{ concept: 'turn_barrel_sizing', label: 'Сайзинг второго барреля', definition: 'd', evidence: 'e', sampleSize: 3 }], plan: { total: 7, estimatedDifficulty: 2.5 } });
-  assert.equal(vm.type, 'personalized');
-  assert.equal(vm.title, 'ТРЕНИРОВКА ДЛЯ ТЕБЯ');
+  const vm = homeViewModel({
+    leaks: [{ concept: 'turn_barrel_sizing', label: 'Сайзинг второго барреля', definition: 'd', evidence: 'e', sampleSize: 3 }],
+    plan: { total: 7, personalized: true, sessionPlan: { primaryTargets: ['turn value barrel'], maintenance: [], exploration: [] } }
+  });
+  assert.equal(vm.type, 'training');
+  assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
   assert.equal(vm.total, 7);
-  assert.equal(vm.difficulty, 2.5);
-  assert.equal(vm.cta, 'НАЧАТЬ');
-  assert.equal(vm.why, 'Почему сейчас');
+  assert.ok(vm.focusItems.length >= 1);
+  assert.equal(vm.cta, 'НАЧАТЬ ТРЕНИРОВКУ');
+  assert.ok(vm.whyText);
 });
 
 test('homeViewModel returns a general fallback when there is no leak profile', () => {
@@ -389,12 +392,22 @@ test('assessmentSummaryViewModel reports level, correct and weakest/strongest', 
 test('homeViewModel returns the personal training CTA when a skill profile exists', () => {
   const vm = homeViewModel({
     leaks: [],
-    plan: { total: 7, estimatedDifficulty: 3 },
-    skillProfile: { overall: 61, overallLabel: 'КЛУБНЫЙ РЕГ', weakest: { skill: 'icm', labelRu: 'ICM / баббл' }, skills: { icm: {}, preflop: {} } }
+    plan: { total: 7, sessionId: 'plan-a', sessionPlan: { primaryTargets: ['bubble ICM'], maintenance: [], exploration: [] } },
+    skillProfile: {
+      overall: 61,
+      overallLabel: 'КЛУБНЫЙ РЕГ',
+      weakest: { skill: 'icm', labelRu: 'ICM / баббл' },
+      skills: {
+        icm: { score: 40, labelRu: 'ICM / баббл' },
+        preflop: { score: 70, labelRu: 'Префлоп' }
+      }
+    }
   });
   assert.equal(vm.type, 'training');
   assert.equal(vm.title, 'ТВОЯ ТРЕНИРОВКА');
-  assert.ok(vm.cta.length > 0);
+  assert.match(vm.subtitle, /7 спотов/);
+  assert.equal(vm.cta, 'НАЧАТЬ ТРЕНИРОВКУ');
+  assert.ok(vm.focusItems.some((f) => /ICM/i.test(f)));
 });
 
 test('AssessmentController runs the diagnostic and persists a profile', () => {
@@ -489,4 +502,57 @@ test('completed assessment does not auto-restart on a fresh controller', () => {
   assert.equal(later.state, 'idle');
   assert.equal(later.shouldShowSummary(), false);
   assert.equal(makeController(store).home().type, 'training');
+});
+
+// ---- Personalised training home entry (user-facing CTA) ---------------------
+
+test('weak ICM profile shows ICM focus on the home card', () => {
+  const vm = homeViewModel({
+    leaks: [{ concept: 'icm_pressure', label: 'Давление ICM' }],
+    plan: { total: 7, sessionPlan: { primaryTargets: ['bubble ICM fold', 'final table ICM'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 48, overallLabel: 'НЕСТАБИЛЬНАЯ БАЗА', weakest: { skill: 'icm', labelRu: 'ICM / баббл' }, skills: { icm: { score: 35, labelRu: 'ICM / баббл' } } }
+  });
+  assert.ok(vm.focusItems.some((f) => /ICM/i.test(f)));
+  assert.match(vm.whyText, /баббл|ICM|ошиба/i);
+});
+
+test('weak river profile shows river defence focus on the home card', () => {
+  const vm = homeViewModel({
+    leaks: [{ concept: 'bluff_catch', label: 'Блафф-кэтч на ривере' }],
+    plan: { total: 7, sessionPlan: { primaryTargets: ['river bluffcatch', 'price defence'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 52, overallLabel: 'КЛУБНЫЙ РЕГ', weakest: { skill: 'bluffCatch', labelRu: 'Блафф-кэтч' }, skills: { river: { score: 38, labelRu: 'Ривер' }, bluffCatch: { score: 36, labelRu: 'Блафф-кэтч' } } }
+  });
+  assert.ok(vm.focusItems.some((f) => /ривер|блеф|защит/i.test(f)));
+});
+
+test('different profiles show different focus text on the home card', () => {
+  const icmVm = homeViewModel({
+    plan: { total: 7, sessionPlan: { primaryTargets: ['bubble ICM'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 40, overallLabel: 'X', skills: { icm: { score: 30, labelRu: 'ICM / баббл' } } }
+  });
+  const riverVm = homeViewModel({
+    plan: { total: 7, sessionPlan: { primaryTargets: ['river bluffcatch'], maintenance: [], exploration: [] } },
+    skillProfile: { overall: 40, overallLabel: 'X', skills: { river: { score: 30, labelRu: 'Ривер' } } }
+  });
+  assert.notDeepEqual(icmVm.focusItems, riverVm.focusItems);
+  assert.notEqual(icmVm.whyText, riverVm.whyText);
+});
+
+test('controller caches the home plan and launches it on start', async () => {
+  const store = createTrainingStore();
+  store.saveSkillProfile({
+    overall: 55,
+    overallLabel: 'КЛУБНЫЙ РЕГ',
+    skills: { icm: { score: 40, labelRu: 'ICM / баббл' } },
+    weakest: { skill: 'icm', labelRu: 'ICM / баббл' }
+  });
+  const ctl = makeController(store, fakeDecision(), { count: 1 });
+  const homeVm = ctl.home();
+  assert.equal(homeVm.type, 'training');
+  const expectedId = ctl.preparedDaily && ctl.preparedDaily.plan && ctl.preparedDaily.plan.sessionId;
+  assert.ok(expectedId);
+  ctl.start();
+  await new Promise((r) => setTimeout(r, 80));
+  assert.ok(ctl.session && ctl.session.plan);
+  assert.equal(ctl.session.plan.sessionId, expectedId);
 });

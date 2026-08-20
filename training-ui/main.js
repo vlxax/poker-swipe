@@ -149,7 +149,7 @@ function paint() {
   } else {
     // idle / fallback → show home; if not personalised, use legacy validated daily.
     const vm = ctl.home();
-    if (vm.type === 'personalized' || vm.type === 'training') {
+    if (vm.type === 'training') {
       R.renderHome(el, vm, { start: handlers.start });
     } else {
       // No leak or skill profile yet → offer the primary diagnostic as the entry

@@ -21,16 +21,21 @@ function streetDots(street) {
 export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
-  if (vm.type === 'personalized' || vm.type === 'training') {
+  if (vm.type === 'training') {
+    const levelLine = vm.levelLabel
+      ? `<div class="row"><span>Твой уровень</span><b>${esc(vm.levelLabel)}${vm.levelScore != null ? ' · ' + esc(vm.levelScore) : ''}</b></div>`
+      : '';
+    const focusHtml = (vm.focusItems || []).map((item) => `<div class="row"><span>•</span><b>${esc(item)}</b></div>`).join('');
     root.innerHTML = `<div class="panel dailyStage">
-      <span class="ey">ТРЕНИРОВКА · ПЕРСОНАЛЬНАЯ</span>
-      <h1 class="impact">${esc(vm.title)}<br><span class="pink">${esc(vm.label)}</span></h1>
-      <p class="mut">${esc(vm.definition)}</p>
-      <div class="row"><span>${esc(vm.spots)} ${vm.spots === 1 ? 'концепция' : 'концепций'}</span><b>${esc(vm.total)} спотов</b></div>
-      <div class="row"><span>Средняя сложность</span><b>${vm.difficulty != null ? vm.difficulty + ' / 5' : '—'}</b></div>
-      <h3 style="margin-top:16px">${esc(vm.why)}</h3>
-      <p class="mut small">${esc(vm.evidence)}</p>
-      <button class="primary" id="trStart">${esc(vm.cta)} →</button>
+      <span class="ey">ТРЕНИРОВКА</span>
+      <h1 class="impact">${esc(vm.title)}</h1>
+      <p class="mut">${esc(vm.subtitle)}</p>
+      ${levelLine}
+      <p class="ey" style="margin-top:16px">${esc(vm.focusHeading)}</p>
+      ${focusHtml}
+      <p class="ey" style="margin-top:14px">${esc(vm.whyHeading)}</p>
+      <p class="mut small">${esc(vm.whyText)}</p>
+      <button class="primary" id="trStart" style="margin-top:16px">${esc(vm.cta)} →</button>
     </div>`;
     const b = root.querySelector('#trStart');
     if (b && typeof h.start === 'function') b.onclick = () => h.start();

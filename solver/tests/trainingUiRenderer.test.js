@@ -86,20 +86,23 @@ test('renderHome renders personal training CTA with start handler', () => {
   const root = freshRoot();
   const vm = {
     type: 'training',
-    title: 'Адаптивные дрилзы',
-    label: 'ПОД ТВОЙ ПРОФИЛЬ',
-    definition: 'Редкое слово',
-    spots: 3,
-    total: 7,
-    difficulty: 2,
-    why: 'Почему',
-    evidence: 'Факты',
-    cta: 'НАЧАТЬ'
+    title: 'ТВОЯ ТРЕНИРОВКА',
+    subtitle: '7 спотов · ~5 минут',
+    levelLabel: 'КЛУБНЫЙ РЕГ',
+    levelScore: 61,
+    focusHeading: 'Сегодня в фокусе:',
+    focusItems: ['ICM', 'защита ривера'],
+    whyHeading: 'Почему:',
+    whyText: 'Ты чаще ошибаешься в решениях на баббле и в блеф-кетчах.',
+    cta: 'НАЧАТЬ ТРЕНИРОВКУ',
+    total: 7
   };
   let started = 0;
   R.renderHome(root, vm, { start: () => started++ });
-  assert.ok(root.innerHTML.includes('Адаптивные дрилзы'));
+  assert.ok(root.innerHTML.includes('ТВОЯ ТРЕНИРОВКА'));
   assert.ok(root.innerHTML.includes('7 спотов'));
+  assert.ok(root.innerHTML.includes('Сегодня в фокусе'));
+  assert.ok(root.innerHTML.includes('ICM'));
   root.querySelector('#trStart').onclick();
   assert.equal(started, 1);
 });

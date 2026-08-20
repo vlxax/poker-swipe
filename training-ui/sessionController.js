@@ -27,17 +27,23 @@ export class SessionController {
     this.abort = null;
     this.genToken = 0;
     this.answering = false;
+    this.preparedDaily = null;
   }
 
   // ---- Home -----------------------------------------------------------------
 
   home() {
     const leaks = getTopLeaks(this.store, { now: this.now() });
-    const plan = getDailyPersonalizedTraining({ store: this.store, count: this.config.count || 7, now: this.now() });
+    const daily = getDailyPersonalizedTraining({
+      store: this.store,
+      count: this.config.count || 7,
+      now: this.now()
+    });
+    this.preparedDaily = daily;
     const skillProfile = typeof this.store.loadSkillProfile === 'function'
       ? this.store.loadSkillProfile()
       : null;
-    return homeViewModel({ leaks, plan, skillProfile });
+    return homeViewModel({ leaks, plan: daily.plan, skillProfile });
   }
 
   hasProfile() {
@@ -84,7 +90,8 @@ export class SessionController {
       solveOpts: this.solveOpts,
       config: this.config,
       signal: ctrl.signal,
-      now: this.now()
+      now: this.now(),
+      preparedPlan: this.preparedDaily && this.preparedDaily.plan ? this.preparedDaily.plan : null
     }).then(
       (session) => this._onGenerated(token, session),
       (err) => this._onError(token, err)

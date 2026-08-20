@@ -3,6 +3,9 @@
 // the renderer consumes. Everything here is deterministic and unit-testable.
 
 import { leakLabelRu, actionLabelRu, skillLabelRu } from '../solver/src/index.js';
+import {
+  focusItemsFromProfile, whyTextForTraining, trainingSubtitle
+} from './trainingHomeCopy.js';
 
 export const STREET_RU = { preflop: 'ПРЕФЛОП', flop: 'ФЛОП', turn: 'ТЁРН', river: 'РИВЕР' };
 export const ASSESSMENT_STREET_RU = { 'ПРЕФЛОП': 'ПРЕФЛОП', 'ФЛОП': 'ФЛОП', 'ТЁРН': 'ТЁРН', 'РИВЕР': 'РИВЕР' };
@@ -16,35 +19,15 @@ export function gradeClass(grade) {
 
 // ---- Home -------------------------------------------------------------------
 
-// The training home is either a personalised block (leak profile available) or
-// a general-daily fallback. Never shows fake personalised content.
+// Personalised training home or generic fallback. Never shows fake personalisation.
 export function homeViewModel({ leaks = [], plan = null, skillProfile = null } = {}) {
-  const total = plan && plan.total ? plan.total : 7;
-  const difficulty = plan && plan.estimatedDifficulty != null ? plan.estimatedDifficulty : null;
+  const total = (plan && plan.total) || (plan && plan.filled) || 7;
   const leaksList = leaks || [];
+  const hasSkill = skillProfile && skillProfile.overall != null;
+  const hasLeaks = leaksList.length > 0;
+  const hasPlan = plan && (plan.personalized || plan.sessionPlan || plan.filled > 0);
 
-  // P0 personal CTA driven by the primary-assessment skill profile. Present once
-  // a profile exists (overall != null) — before that we fall through to leak- or
-  // general-daily. Never shows fake personalisation.
-  if (skillProfile && skillProfile.overall != null) {
-    const weakest = skillProfile.weakest;
-    return {
-      type: 'training',
-      title: 'ТВОЯ ТРЕНИРОВКА',
-      label: skillProfile.overallLabel || 'ПЕРСОНАЛЬНАЯ',
-      definition: weakest
-        ? `Слабый навык: ${weakest.labelRu || weakest.skill}. Начинаем с него.`
-        : 'Персональные споты под твой уровень.',
-      evidence: `Уровень ${skillProfile.overall} · навыков: ${Object.keys(skillProfile.skills || {}).length}`,
-      spots: Object.keys(skillProfile.skills || {}).length,
-      total,
-      difficulty,
-      why: 'Почему сейчас',
-      cta: 'НАЧАТЬ'
-    };
-  }
-
-  if (!leaksList.length) {
+  if (!hasSkill && !hasLeaks && !hasPlan) {
     return {
       type: 'fallback',
       title: 'ЕЖЕДНЕВНАЯ ТРЕНИРОВКА',
@@ -54,22 +37,24 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     };
   }
 
-  const primary = leaksList[0];
+  const focusItems = focusItemsFromProfile({ skillProfile, leaks: leaksList, plan, limit: 2 });
+  const whyText = whyTextForTraining({ skillProfile, leaks: leaksList, focusItems });
+  const levelLabel = hasSkill ? (skillProfile.overallLabel || 'ТВОЙ УРОВЕНЬ') : null;
+  const levelScore = hasSkill ? skillProfile.overall : null;
+
   return {
-    type: 'personalized',
-    title: 'ТРЕНИРОВКА ДЛЯ ТЕБЯ',
-    concept: primary.concept,
-    label: primary.label,
-    definition: primary.definition,
-    evidence: primary.evidence,
-    priority: primary.priority,
-    sampleSize: primary.sampleSize,
-    avgEvLossBb: primary.avgEvLossBb,
-    spots: leaksList.length,
+    type: 'training',
+    title: 'ТВОЯ ТРЕНИРОВКА',
+    subtitle: trainingSubtitle(total),
+    levelLabel,
+    levelScore,
+    focusHeading: 'Сегодня в фокусе:',
+    focusItems,
+    whyHeading: 'Почему:',
+    whyText,
+    planSessionId: plan && plan.sessionId ? plan.sessionId : null,
     total,
-    difficulty,
-    why: 'Почему сейчас',
-    cta: 'НАЧАТЬ'
+    cta: 'НАЧАТЬ ТРЕНИРОВКУ'
   };
 }
 

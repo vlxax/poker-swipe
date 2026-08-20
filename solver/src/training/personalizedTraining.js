@@ -150,24 +150,31 @@ export async function buildPersonalizedSessionAsync({
   signal = null,
   now = Date.now(),
   jobKey,
-  rng = Math.random
+  rng = Math.random,
+  preparedPlan = null
 } = {}) {
-  const libraryPlan = buildProfileDailyPlan({ store, profiles, history, count, now, rng: config.rng || rng });
-
   let plan;
   let useLibrary = false;
-  if (libraryPlan && libraryPlan.filled > 0) {
-    plan = libraryPlan;
-    useLibrary = true;
+
+  if (preparedPlan && preparedPlan.filled > 0) {
+    plan = preparedPlan;
+    useLibrary = !!(plan.drills && plan.drills.some((d) => d.spotId));
   } else {
-    plan = buildTrainingSession({
-      profiles: profiles || store.listProfiles() || [],
-      recentCandidates: recentCandidates || store.listCandidates() || [],
-      history: history || store.loadHistory() || [],
-      count,
-      now,
-      leakSet: LEAKS
-    });
+    const libraryPlan = buildProfileDailyPlan({ store, profiles, history, count, now, rng: config.rng || rng });
+
+    if (libraryPlan && libraryPlan.filled > 0) {
+      plan = libraryPlan;
+      useLibrary = true;
+    } else {
+      plan = buildTrainingSession({
+        profiles: profiles || store.listProfiles() || [],
+        recentCandidates: recentCandidates || store.listCandidates() || [],
+        history: history || store.loadHistory() || [],
+        count,
+        now,
+        leakSet: LEAKS
+      });
+    }
   }
 
   const key = jobKey || plan.sessionId;
