@@ -1,0 +1,51 @@
+{
+  "id": "bb-vs-4bet-utg",
+  "format": "6max",
+  "heroPosition": "BB",
+  "villainPosition": "UTG",
+  "situation": "vs_4bet",
+  "stackBB": null,
+  "range": {
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "BB-vs-4bet-UTG",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}

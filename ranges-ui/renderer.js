@@ -54,15 +54,20 @@ function handDetailHtml(d) {
 export function renderSelector(root, vm, handlers = {}) {
   if (!root) return;
   const s = vm.selection || {};
+  const sourceBadge = vm.sourceLabel
+    ? `<span class="rangesSourceBadge">${esc(vm.sourceLabel)}</span>`
+    : '';
   root.innerHTML = `<div class="panel rangesStage dailyStage">
     <span class="ey">РЕНДЖИ</span>
     <h1 class="impact">${esc(vm.title)}</h1>
     <p class="mut">${esc(vm.intro)}</p>
+    ${sourceBadge}
     ${hintsHtml(vm.hints)}
+    <div class="rangesField"><span class="ey">ИСТОЧНИК</span>${chips(vm.dataSources || [], s.dataSource, 'dataSource')}</div>
     <div class="rangesField"><span class="ey">ФОРМАТ</span>${chips(vm.formats, s.format, 'format')}</div>
     <div class="rangesField"><span class="ey">ПОЗИЦИЯ</span>${chips(vm.positions, s.position, 'position')}</div>
     ${vm.showSituation ? `<div class="rangesField"><span class="ey">СИТУАЦИЯ</span>${chips(vm.situations, s.situation, 'situation')}</div>` : ''}
-    ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">ОТКРЫТИЕ С</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
+    ${vm.needsOpener && vm.openers && vm.openers.length ? `<div class="rangesField"><span class="ey">${esc(vm.openerLabel || 'ОТКРЫТИЕ С')}</span>${chips(vm.openers, s.opener, 'opener')}</div>` : ''}
     ${vm.showStack ? `<div class="rangesField"><span class="ey">СТЕК</span>${chips(vm.stacks.map((x) => ({ id: x, label: `${x} ББ` })), s.stack, 'stack')}</div>` : ''}
     <button type="button" class="primary rangesCta" id="rangesShow" ${vm.ctaEnabled ? '' : 'disabled'}>${esc(vm.cta)} →</button>
     ${vm.xrayLink ? `<div class="rangesLinkRow"><button type="button" class="secondary" id="rangesXray">СУЗИТЬ ДИАПЗОН ПО УЛИЦАМ →</button></div>` : ''}
@@ -94,6 +99,7 @@ export function renderResult(root, vm, handlers = {}) {
 
   root.innerHTML = `<div class="panel rangesStage dailyStage">
     <span class="ey">РЕНДЖ</span>
+    ${vm.sourceLabel ? `<span class="rangesSourceBadge">${esc(vm.sourceLabel)}</span>` : ''}
     <div class="rangesHeader">
       <b>${esc(vm.contextLine)}</b>
       <span class="mut">${esc(vm.situationLine)}</span>

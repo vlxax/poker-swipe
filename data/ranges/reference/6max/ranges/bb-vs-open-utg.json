@@ -1,0 +1,346 @@
+{
+  "id": "bb-vs-open-utg",
+  "format": "6max",
+  "heroPosition": "BB",
+  "villainPosition": "UTG",
+  "situation": "vs_open",
+  "stackBB": null,
+  "range": {
+    "22": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "33": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "44": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "55": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "66": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "77": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "88": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "99": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AA": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AKs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AQs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "AJs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "ATs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A8s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A7s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A6s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A5s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A4s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "A3s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "A2s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AKo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KK": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KQs": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "KTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K8s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K7s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K6s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K5s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K4s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K3s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "K2s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AQo": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "KQo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "QQ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "QJs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "QTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "Q9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "Q8s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "Q7s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "AJo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "JJ": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "JTs": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "J9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "J8s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "ATo": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "TT": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "T9s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "T8s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "T7s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "98s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "97s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "96s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "87s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "86s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "85s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "76s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "75s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "74s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "65s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "64s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "54s": {
+      "FOLD": 0,
+      "CALL": 0,
+      "RAISE": 1
+    },
+    "53s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    },
+    "43s": {
+      "FOLD": 0,
+      "CALL": 1,
+      "RAISE": 0
+    }
+  },
+  "source": "AHTOOOXA/poker-charts",
+  "sourceProvider": "greenline",
+  "sourceChartKey": "BB-vs-open-UTG",
+  "sourceType": "reference",
+  "verified": false,
+  "solverVerified": false
+}
