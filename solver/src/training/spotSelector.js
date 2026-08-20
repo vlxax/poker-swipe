@@ -1,29 +1,25 @@
 // Spot Selection Engine (requirement P0). Picks which spots to show next from a
 // candidate pool, driven by the user's skill/leak profile, per-concept mastery
 // and drill history. Pure & deterministic given the same inputs, so it is unit
-// testable without a solver. Responsibilities:
-//   • adaptive difficulty 1..5 (smoothly follows recent accuracy),
-//   • spaced repetition by CONCEPT (not by hand) with a cooldown,
-//   • exploration / challenge / control buckets,
-//   • shown-spot cooldown (30–50) to avoid immediate repeats,
-//   • mastery gating (stop hammering a mastered concept),
-//   • error-chain handling (bias toward the earliest meaningful mistake),
-//   • a session goal the UI can surface.
+// testable without a solver.
 
 import { clamp, round } from './util.js';
+import {
+  leakBoostForSpot, weakSkillBoost, maintenanceSkillMatch, conceptLabelForPlan
+} from './leakSpotMapping.js';
+import { computePriority } from './priority.js';
 
-const DEFAULT_SHOWN_COOLDOWN = 40;        // spots before a shown spot may reappear
-const DEFAULT_MASTERY_GATE = 78;          // concept mastery % above which we slow down
-const EXPLORE_WEIGHT = 0.12;              // exploration share of a session
-const CHALLENGE_WEIGHT = 0.15;            // challenge share of a session
-const CONTROL_EVERY = 8;                  // one control spot per N drills
+const DEFAULT_SHOWN_COOLDOWN = 40;
+const DEFAULT_MASTERY_GATE = 78;
+const WEAKNESS_SHARE = 0.65;
+const MAINTENANCE_SHARE = 0.25;
+const EXPLORATION_SHARE = 0.10;
+const CHALLENGE_WEIGHT = 0.12;
+const CONTROL_EVERY = 8;
+const MAX_WEAK_PER_SKILL_SHARE = 0.4;
 
 export const SPOT_KINDS = ['weakness', 'maintenance', 'exploration', 'challenge', 'control'];
 
-// ---- Input normalisation ------------------------------------------------------
-
-// Every pool entry: { id, concept, street, difficulty (1..5), skillTags[], format,
-// stage, positions, stackDepth, decisionType }. Only fields used by selection.
 export function normalizeSpot(spot) {
   return {
     id: spot.id,
@@ -42,17 +38,15 @@ export function normalizeSpot(spot) {
   };
 }
 
-// ---- Concept mastery from progress (score 0..100) ------------------------------
-
 export function masteryOf(progress) {
   return progress && progress.masteryScore != null ? progress.masteryScore : null;
 }
+
 export function isMastered(progress, gate = DEFAULT_MASTERY_GATE) {
   const m = masteryOf(progress);
   return m != null && m >= gate;
 }
 
-// Recent accuracy across a list of graded attempts (EXCELLENT/GOOD = ok).
 export function recentAccuracy(results = [], window = 10) {
   const recent = results.slice(-window);
   if (!recent.length) return null;
@@ -60,26 +54,24 @@ export function recentAccuracy(results = [], window = 10) {
   return ok / recent.length;
 }
 
-// ---- Adaptive difficulty (requirement P0) -------------------------------------
-
-// Difficulty drifts toward the user's comfortable level. High recent accuracy
-// raises challenge up to +1; repeated failure lowers it down to 1.
-export function adaptiveDifficulty({ current = 3, recentResults = [], window = 10 } = {}) {
+export function adaptiveDifficulty({ current = 3, recentResults = [], window = 10, skillProfile = null } = {}) {
   const acc = recentAccuracy(recentResults, window);
-  if (acc == null) return clamp(current, 1, 5);
   let d = current;
-  if (acc >= 0.85) d += 0.35;
-  else if (acc <= 0.4) d -= 0.5;
-  else if (acc <= 0.55) d -= 0.2;
-  // slow creep toward comfort
-  d = 0.8 * d + 0.2 * current;
+  if (acc != null) {
+    if (acc >= 0.85) d += 0.35;
+    else if (acc <= 0.4) d -= 0.5;
+    else if (acc <= 0.55) d -= 0.2;
+    d = 0.8 * d + 0.2 * current;
+  }
+  if (skillProfile && skillProfile.overall != null) {
+    const overall = skillProfile.overall;
+    if (overall < 50) d -= 0.4;
+    else if (overall < 60) d -= 0.2;
+    else if (overall > 82) d += 0.25;
+  }
   return clamp(round(d, 2), 1, 5);
 }
 
-// ---- Spaced repetition by concept ----------------------------------------------
-
-// Next due time (ms) for a concept given its last-seen time and current mastery.
-// Uses an expanding interval so harder concepts come back sooner.
 export function spacedInterval({ lastSeenAt = null, mastery = null, now = Date.now(), baseDays = 1.5, masteryFactor = 3 } = {}) {
   const days = lastSeenAt == null
     ? 0
@@ -92,17 +84,11 @@ export function conceptDue({ lastSeenAt = null, mastery = null, now = Date.now()
   return now - lastSeenAt >= spacedInterval({ lastSeenAt, mastery, now, baseDays });
 }
 
-// ---- Shown-spot cooldown -------------------------------------------------------
-
-// A spot is eligible if it has not been shown within the cooldown window.
 export function spotEligible(spot, shownAt = {}, cooldown = DEFAULT_SHOWN_COOLDOWN) {
   const last = shownAt[spot.id];
   if (last == null) return true;
-  // cooldown is measured in "number of shows ago": approximate with a min-gap.
   return last.countAgo >= cooldown;
 }
-
-// ---- Session goal --------------------------------------------------------------
 
 export function sessionGoal({ weakestSkill = null, concept = null, overall = null } = {}) {
   if (weakestSkill) {
@@ -122,11 +108,6 @@ export function sessionGoal({ weakestSkill = null, concept = null, overall = nul
   return { type: 'general', focus: null, copyRu: 'Поддерживаем общую форму и ищем слабые места.' };
 }
 
-// ---- Error-chain selection -----------------------------------------------------
-
-// When a concept has repeated errors, we want the earliest meaningful mistake in
-// the chain (lowest difficulty that is still being missed) so the user rebuilds
-// the foundation before moving on.
 export function earliestMeaningful({ concepts = [], masteryByConcept = {}, recentResultsByConcept = {} } = {}) {
   const candidates = concepts.filter((c) => {
     const m = masteryByConcept[c];
@@ -141,15 +122,68 @@ export function earliestMeaningful({ concepts = [], masteryByConcept = {}, recen
   return candidates[0];
 }
 
-// ---- The selection engine ------------------------------------------------------
+function difficultyFit(spot, targetDiff) {
+  const dist = Math.abs(spot.difficulty - targetDiff);
+  if (dist <= 0.5) return 1;
+  if (dist <= 1) return 0.5;
+  if (dist <= 1.5) return 0;
+  return -1;
+}
+
+function bucketForSpot(spot, ctx) {
+  const { masteredConcepts, weakConcepts, weakestSkillConcepts, history, targetDiff } = ctx;
+  if (masteredConcepts.has(spot.concept) && spot.difficulty >= targetDiff + 1) return 'challenge';
+  if (weakConcepts.has(spot.concept)) return 'weakness';
+  if (weakestSkillConcepts && weakestSkillConcepts.has(spot.concept)) return 'weakness';
+  if (maintenanceSkillMatch(spot, ctx.skillProfile)) return 'maintenance';
+  if (!history.some((h) => h.concept === spot.concept)) return 'exploration';
+  return 'maintenance';
+}
+
+function weaknessScore(spot, ctx) {
+  let score = weakSkillBoost(spot, ctx.skillProfile) * 2;
+  score += leakBoostForSpot(spot, ctx.leakPriorities) * 4;
+  if (ctx.weakConcepts.has(spot.concept)) score += 2;
+  if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
+  score += difficultyFit(spot, ctx.targetDiff);
+  return score;
+}
+
+function weightedPick(scored, want, rng, usedIds, skillCap, skillCounts) {
+  const selected = [];
+  const pool = scored.slice().sort((a, b) => b.score - a.score);
+  while (selected.length < want && pool.length) {
+    const top = pool.slice(0, Math.min(8, pool.length));
+    const total = top.reduce((s, x) => s + Math.max(0.01, x.score), 0);
+    let r = rng() * total;
+    let pick = top[0];
+    for (const item of top) {
+      r -= Math.max(0.01, item.score);
+      if (r <= 0) { pick = item; break; }
+    }
+    const idx = pool.indexOf(pick);
+    pool.splice(idx, 1);
+    if (usedIds.has(pick.spot.id)) continue;
+    if (skillCap != null) {
+      const tags = pick.spot.skillTags || ['_'];
+      const blocked = tags.some((t) => (skillCounts[t] || 0) >= skillCap);
+      if (blocked) continue;
+    }
+    usedIds.add(pick.spot.id);
+    for (const t of pick.spot.skillTags || ['_']) skillCounts[t] = (skillCounts[t] || 0) + 1;
+    selected.push(pick);
+  }
+  return selected;
+}
 
 export function selectSpots({
   pool = [],
-  shownAt = {},                 // id → { countAgo }
-  history = [],                 // [{ concept, street, at }]
-  progressByConcept = {},       // concept → progress (masteryScore)
-  recentResults = [],           // [{ concept, grade, nearOptimal }]
-  skillProfile = null,          // for weakest skill
+  shownAt = {},
+  history = [],
+  progressByConcept = {},
+  recentResults = [],
+  skillProfile = null,
+  leakProfiles = [],
   count = 7,
   adaptiveCurrent = 3,
   now = Date.now(),
@@ -160,12 +194,13 @@ export function selectSpots({
   const spots = (pool || []).map(normalizeSpot).filter((s) => s.id);
   if (!spots.length) return { ok: false, reason: 'empty_pool', selected: [] };
 
-  const targetDiff = adaptiveDifficulty({ current: adaptiveCurrent, recentResults });
+  const targetDiff = adaptiveDifficulty({ current: adaptiveCurrent, recentResults, skillProfile });
 
-  const byConcept = {};
-  for (const s of spots) (byConcept[s.concept] = byConcept[s.concept] || []).push(s);
+  const leakPriorities = (leakProfiles || [])
+    .map((p) => ({ concept: p.concept, priority: computePriority(p, { now }) }))
+    .filter((p) => p.priority > 0)
+    .sort((a, b) => b.priority - a.priority);
 
-  // Which concepts are weak (leak) vs mastered vs fresh.
   const weakConcepts = new Set();
   const masteredConcepts = new Set();
   for (const [concept, prog] of Object.entries(progressByConcept || {})) {
@@ -173,7 +208,6 @@ export function selectSpots({
     else weakConcepts.add(concept);
   }
 
-  // Favour the weakest skill's concepts when no leak evidence exists yet.
   let weakestSkillConcepts = null;
   if (skillProfile && skillProfile.weakest && skillProfile.weakest.skill) {
     weakestSkillConcepts = new Set(
@@ -181,82 +215,116 @@ export function selectSpots({
     );
   }
 
-  const bucket = (spot) => {
-    // challenge: mastered concepts at higher difficulty
-    if (masteredConcepts.has(spot.concept) && spot.difficulty >= targetDiff + 1) return 'challenge';
-    // weakness: low mastery / on weak skill / known leak
-    if (weakConcepts.has(spot.concept)) return 'weakness';
-    if (weakestSkillConcepts && weakestSkillConcepts.has(spot.concept)) return 'weakness';
-    // exploration: brand-new concepts (never drilled) or theory/exploit variety
-    if (!history.some((h) => h.concept === spot.concept)) return 'exploration';
-    return 'maintenance';
+  const ctx = {
+    skillProfile,
+    leakPriorities,
+    weakConcepts,
+    masteredConcepts,
+    weakestSkillConcepts,
+    history,
+    targetDiff
   };
 
   const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown));
-
-  // If the pool is small we still prefer eligibility but fall back to all spots.
   const candidates = eligible.length >= count ? eligible : spots;
 
-  // Bucket pools.
-  const buckets = {
-    weakness: [], maintenance: [], exploration: [], challenge: [], control: []
-  };
-  for (const s of candidates) buckets[bucket(s)].push(s);
-
-  const selected = [];
-  const pickFrom = (arr, want) => {
-    const list = [...arr];
-    for (let i = 0; i < want && list.length; i++) {
-      const idx = Math.floor(rng() * list.length);
-      const s = list.splice(idx, 1)[0];
-      if (selected.some((x) => x.id === s.id)) continue;
-      selected.push(s);
-    }
-  };
-
-  // Composition: weakness + challenge + exploration + control, rest maintenance.
-  const explorationWant = Math.max(1, Math.round(count * EXPLORE_WEIGHT));
-  const challengeWant = Math.max(1, Math.round(count * CHALLENGE_WEIGHT));
+  const weaknessWant = Math.max(1, Math.round(count * WEAKNESS_SHARE));
+  const maintenanceWant = Math.max(1, Math.round(count * MAINTENANCE_SHARE));
+  const explorationWant = Math.max(1, Math.round(count * EXPLORATION_SHARE));
+  const challengeWant = Math.max(0, Math.round(count * CHALLENGE_WEIGHT));
   const controlWant = count >= CONTROL_EVERY ? 1 : 0;
-  const weaknessWant = count - explorationWant - challengeWant - controlWant;
+  const skillCap = Math.max(2, Math.ceil(weaknessWant * MAX_WEAK_PER_SKILL_SHARE));
 
-  pickFrom(buckets.weakness, weaknessWant);
-  pickFrom(buckets.challenge, challengeWant);
-  pickFrom(buckets.exploration, explorationWant);
-  pickFrom(buckets.control, controlWant);
-  // fill any remaining with maintenance then anything
-  if (selected.length < count) pickFrom(buckets.maintenance, count - selected.length);
-  if (selected.length < count) pickFrom([...buckets.exploration, ...buckets.challenge, ...buckets.weakness], count - selected.length);
-  // last resort: any candidate
-  if (selected.length < count) {
-    const rest = candidates.filter((s) => !selected.some((x) => x.id === s.id));
-    pickFrom(rest, count - selected.length);
+  const buckets = { weakness: [], maintenance: [], exploration: [], challenge: [], control: [] };
+  for (const s of candidates) {
+    const b = bucketForSpot(s, ctx);
+    const base = { spot: s, score: 1, bucket: b };
+    if (b === 'weakness') base.score = weaknessScore(s, ctx);
+    else if (b === 'exploration') base.score = 1 + (s.theoryOrExploit === 'exploit' ? 0.3 : 0);
+    else if (b === 'challenge') base.score = difficultyFit(s, targetDiff + 1) + 1;
+    else base.score = maintenanceSkillMatch(s, skillProfile) ? 1.5 : 1;
+    buckets[b].push(base);
   }
 
+  const usedIds = new Set();
+  const skillCounts = {};
+  const picked = [];
+
+  const take = (arr, want, cap) => {
+    const got = weightedPick(arr, want, rng, usedIds, cap, skillCounts);
+    for (const g of got) picked.push({ ...g, bucket: g.bucket || bucketForSpot(g.spot, ctx) });
+  };
+
+  take(buckets.weakness, weaknessWant, skillCap);
+  take(buckets.challenge, challengeWant, null);
+  take(buckets.exploration, explorationWant, null);
+  if (controlWant) take(buckets.control.length ? buckets.control : buckets.maintenance, controlWant, null);
+
+  const remain = count - picked.length;
+  if (remain > 0) take(buckets.maintenance, remain, null);
+  if (picked.length < count) {
+    const rest = candidates
+      .filter((s) => !usedIds.has(s.id))
+      .map((s) => ({ spot: s, score: 0.5, bucket: bucketForSpot(s, ctx) }));
+    take(rest, count - picked.length, null);
+  }
+
+  const selectedSpots = picked.map((p) => p.spot);
+  const bucketLabels = picked.map((p) => p.bucket);
+
+  const primaryTargets = unique(
+    selectedSpots
+      .filter((_, i) => bucketLabels[i] === 'weakness')
+      .map(conceptLabelForPlan)
+      .filter(Boolean)
+  );
+  const maintenance = unique(
+    selectedSpots
+      .filter((_, i) => bucketLabels[i] === 'maintenance')
+      .map(conceptLabelForPlan)
+      .filter(Boolean)
+  );
+  const exploration = unique(
+    selectedSpots
+      .filter((_, i) => bucketLabels[i] === 'exploration' || bucketLabels[i] === 'challenge')
+      .map(conceptLabelForPlan)
+      .filter(Boolean)
+  );
+
   const earliest = earliestMeaningful({
-    concepts: [...new Set(selected.map((s) => s.concept))],
-    masteryByConcept: Object.fromEntries(Object.entries(progressByConcept || {}).map(([k, p]) => [k, masteryOf(p) == null ? -1 : masteryOf(p)]))
+    concepts: [...new Set(selectedSpots.map((s) => s.concept))],
+    masteryByConcept: Object.fromEntries(
+      Object.entries(progressByConcept || {}).map(([k, p]) => [k, masteryOf(p) == null ? -1 : masteryOf(p)])
+    )
   });
 
   const goal = sessionGoal({
     weakestSkill: skillProfile && skillProfile.weakest ? skillProfile.weakest.skill : null,
-    concept: selected[0] ? selected[0].concept : null,
+    concept: selectedSpots[0] ? selectedSpots[0].concept : null,
     overall: skillProfile && skillProfile.overall
   });
 
   return {
     ok: true,
     targetDifficulty: targetDiff,
-    selected: selected.map((s) => s.id),
-    buckets: selected.map((s) => bucket(s)),
+    selected: selectedSpots.map((s) => s.id),
+    buckets: bucketLabels,
     goal,
     earliestMeaningful: earliest,
+    sessionPlan: { primaryTargets, maintenance, exploration },
     reason: {
       weakConcepts: [...weakConcepts],
       mastered: [...masteredConcepts],
+      leakPriorities: leakPriorities.slice(0, 5),
       exploration: explorationWant,
       challenge: challengeWant,
-      control: controlWant
+      control: controlWant,
+      weakness: weaknessWant,
+      maintenance: maintenanceWant
     }
   };
+}
+
+function unique(arr) {
+  return [...new Set(arr)];
 }
