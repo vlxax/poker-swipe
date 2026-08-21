@@ -85,33 +85,41 @@ export function installMiniAppHooks(store) {
     return orig();
   });
 
-  wrap('reviewReveal', (orig) => {
-    if (bridge.hasProfile()) {
-      const idx = pickReviewIndex();
-      if (idx != null) window.rv = idx;
-    }
-    return orig();
-  });
+  wrap('reviewReveal', (orig) => orig());
 
-  wrap('reviewRepair', (orig, pointOk, reasonOk) => {
-    if (bridge.hasProfile()) {
-      const idx = pickReviewIndex();
-      if (idx != null) window.rv = idx;
-    }
-    return orig(pointOk, reasonOk);
-  });
+  wrap('reviewRepair', (orig, pointOk, reasonOk) => orig(pointOk, reasonOk));
 
   wrap('renderXray', (orig) => {
-    state.xrayIndex = bridge.hasProfile() ? pickXrayIndex() : null;
-    return orig();
+    let savedRuns = null;
+    if (bridge.hasProfile()) {
+      state.xrayIndex = pickXrayIndex();
+      if (state.xrayIndex != null) {
+        savedRuns = window.S.xray.runs;
+        window.S.xray.runs = state.xrayIndex;
+      }
+    } else {
+      state.xrayIndex = null;
+    }
+    try {
+      return orig();
+    } finally {
+      if (savedRuns != null) window.S.xray.runs = savedRuns;
+    }
   });
 
   wrap('xrBegin', (orig, st) => {
-    if (bridge.hasProfile()) {
-      if (state.xrayIndex == null) state.xrayIndex = pickXrayIndex();
-      if (state.xrayIndex != null) window.xrI = state.xrayIndex;
+    const picked = bridge.hasProfile()
+      ? (state.xrayIndex != null ? state.xrayIndex : pickXrayIndex())
+      : null;
+    const result = orig(st);
+    if (picked != null && window.XR && window.XR[picked]) {
+      window.xrI = picked;
+      state.xrayIndex = picked;
+      const ref = window.XR[picked].ref[st === 0 ? 0 : st - 1];
+      window.xrCurrent = new Set(ref);
+      window.xrCandidate = new Set(window.xrCurrent);
     }
-    return orig(st);
+    return result;
   });
 
   wrap('xrReport', (orig) => {
