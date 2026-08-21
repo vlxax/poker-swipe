@@ -152,7 +152,7 @@ function filterPoolToSessionFocus(pool, tiers, ctx) {
   }
 
   if (filtered.length) return filtered;
-  return profileHasClearWeakness(ctx) ? [] : pool;
+  return pool;
 }
 
 function focusedSpotPool(spots, candidates, tiers, ctx, usedIds) {
@@ -160,7 +160,9 @@ function focusedSpotPool(spots, candidates, tiers, ctx, usedIds) {
   const focused = available.filter((s) => spotMatchesSessionFocus(s, tiers, ctx));
   if (focused.length) return focused;
   if (!profileHasClearWeakness(ctx)) return available;
-  return spots.filter((s) => !usedIds.has(s.id) && spotMatchesSessionFocus(s, tiers, ctx));
+  const strictFromAll = spots.filter((s) => !usedIds.has(s.id) && spotMatchesSessionFocus(s, tiers, ctx));
+  if (strictFromAll.length) return strictFromAll;
+  return available;
 }
 
 function spotMatchesFocus(spot, tiers) {
@@ -656,6 +658,24 @@ function selectSpotsProfileAware({
       if (usedIds.has(choice.spot.id)) continue;
       usedIds.add(choice.spot.id);
       picked.push(choice);
+    }
+    if (picked.length < count) {
+      const lastResort = candidates
+        .filter((s) => !usedIds.has(s.id))
+        .map((s) => ({
+          spot: s,
+          score: 0.2 + spotDifficultyFit(s, ctx, 'maintenance_medium') * 0.25
+            - diversityPenalty(s, picked, history),
+          bucket: bucketForSpot(s, ctx),
+          slotKind: 'maintenance_medium'
+        }))
+        .sort((a, b) => b.score - a.score);
+      while (picked.length < count && lastResort.length) {
+        const choice = lastResort.shift();
+        if (usedIds.has(choice.spot.id)) continue;
+        usedIds.add(choice.spot.id);
+        picked.push(choice);
+      }
     }
   }
 
