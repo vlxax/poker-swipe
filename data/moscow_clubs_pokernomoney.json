@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-21T10:59:50+03:00",
+  "retrieved_at": "2026-08-21T12:56:14+03:00",
   "city": "Москва",
   "count": 59,
   "clubs": [
@@ -144,8 +144,8 @@
           "date": "2026-08-21",
           "time": "20:00",
           "club": "BlackWood",
-          "tournament": "Gatsby Night",
-          "fee_rub": 1000,
+          "tournament": "Классика Gatsby Night",
+          "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10982",
           "address": "Олимпийский проспект, 12",
@@ -154,7 +154,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Gatsby Night 20:00 1 000 ₽ BlackWood Олимпийский проспект, 12"
+          "source_card_text": "Классика Gatsby Night 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12"
         }
       ]
     },
@@ -453,7 +453,7 @@
           "club": "Hi, Jack Club",
           "tournament": "ALKO KILL FISH",
           "fee_rub": 1000,
-          "type": "",
+          "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/10936",
           "address": "Люсиновская улица, 53к2",
           "late_reg_until": null,
@@ -461,7 +461,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "ALKO KILL FISH 19:10 1 000 ₽ Hi, Jack Club Люсиновская улица, 53к2"
+          "source_card_text": "Баунти / Нокаут ALKO KILL FISH 19:10 1 000 ₽ Hi, Jack Club Люсиновская улица, 53к2"
         }
       ],
       "upcoming": 1
@@ -626,19 +626,19 @@
       "schedule": [
         {
           "date": "2026-08-21",
-          "time": "19:00",
+          "time": "20:00",
           "club": "MIDNIGHT POKER CLUB",
           "tournament": "Alko Dealer's Choice",
           "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10942",
           "address": "Новослободская дом 39",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "23:10",
+          "late_reg_minutes": 190,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Alko Dealer's Choice 19:00 1 000 ₽ MIDNIGHT POKER CLUB Новослободская дом 39"
+          "source_card_text": "Alko Dealer's Choice 20:00 1 000 ₽ вход до 23:10 MIDNIGHT POKER CLUB Новослободская дом 39"
         }
       ],
       "upcoming": 1
@@ -730,7 +730,7 @@
       "schedule": [
         {
           "date": "2026-08-21",
-          "time": "19:00",
+          "time": "19:15",
           "club": "Ocean's Poker Club",
           "tournament": "SHARK HUNT TOURNAMENT",
           "fee_rub": 1000,
@@ -738,11 +738,11 @@
           "source_url": "https://pokernomoney.ru/tournaments/10557",
           "address": "Нижняя Красносельская улица, 35 с. 59",
           "late_reg_until": "22:15",
-          "late_reg_minutes": 195,
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SHARK HUNT TOURNAMENT 19:00 1 000 ₽ вход до 22:15 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+          "source_card_text": "SHARK HUNT TOURNAMENT 19:15 1 000 ₽ вход до 22:15 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
         }
       ],
       "upcoming": 1
@@ -909,12 +909,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10314",
           "address": "ул. Ладожская, д. 11",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "PRIDE | THE LION KING 19:00 1 200 ₽ PRIDE ул. Ладожская, д. 11"
+          "source_card_text": "PRIDE | THE LION KING 19:00 1 200 ₽ вход до 22:30 PRIDE ул. Ладожская, д. 11"
         }
       ]
     },
@@ -1459,8 +1459,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Покерный клуб ALL-IN",
+          "tournament": "BLACK FLAG",
+          "fee_rub": 0,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11266",
+          "address": "ул. Таганская, 29, стр. 1",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "BLACK FLAG 19:00 Бесплатно Покерный клуб ALL-IN ул. Таганская, 29, стр. 1"
+        }
+      ]
     },
     {
       "name": "Покерный Клуб №1",
