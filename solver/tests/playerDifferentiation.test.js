@@ -12,8 +12,6 @@ import {
   buildDifferentiationReport,
   generateDifferentiationPlan,
   overlapCount,
-  taskDistribution,
-  topWeaknesses,
   uniqueSkillCount,
   DIFFERENTIATION_PLAN_COUNT,
   DIFFERENTIATION_PLAN_NOW
@@ -24,10 +22,6 @@ const REPORT = {
   B: buildDifferentiationReport('B'),
   C: buildDifferentiationReport('C')
 };
-
-function skillTagCount(spots, skill) {
-  return spots.filter((s) => (s.skillTags || []).includes(skill)).length;
-}
 
 test('profiles A/B/C have expected weakness signatures', () => {
   const weakA = REPORT.A.weaknesses.map((w) => w.skill);
