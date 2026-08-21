@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-21T12:56:14+03:00",
+  "updated_at": "2026-08-21T14:03:04+03:00",
   "club_count": 59,
   "event_count": 50,
   "source_card_count": 50,
@@ -20,12 +20,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10525",
           "address": "улица Сергия Радонежского, 9с5",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:00",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Классика Classic 19:00 1 000 ₽ Ace Poker Club улица Сергия Радонежского, 9с5"
+          "source_card_text": "★ PREMIUM Классика Classic 19:00 1 000 ₽ вход до 22:00 Ace Poker Club улица Сергия Радонежского, 9с5"
         }
       ],
       "upcoming": 1
@@ -434,12 +434,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10700",
           "address": "проспект Мира, 26с2",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:10",
+          "late_reg_minutes": 190,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "VANILLA TOURNAMENT 19:00 1 000 ₽ HEADS UP проспект Мира, 26с2"
+          "source_card_text": "VANILLA TOURNAMENT 19:00 1 000 ₽ вход до 22:10 HEADS UP проспект Мира, 26с2"
         }
       ],
       "upcoming": 1
@@ -1683,12 +1683,12 @@
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10525",
       "address": "улица Сергия Радонежского, 9с5",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:00",
+      "late_reg_minutes": 180,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Классика Classic 19:00 1 000 ₽ Ace Poker Club улица Сергия Радонежского, 9с5"
+      "source_card_text": "★ PREMIUM Классика Classic 19:00 1 000 ₽ вход до 22:00 Ace Poker Club улица Сергия Радонежского, 9с5"
     },
     {
       "date": "2026-08-21",
@@ -1811,12 +1811,12 @@
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10700",
       "address": "проспект Мира, 26с2",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:10",
+      "late_reg_minutes": 190,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "VANILLA TOURNAMENT 19:00 1 000 ₽ HEADS UP проспект Мира, 26с2"
+      "source_card_text": "VANILLA TOURNAMENT 19:00 1 000 ₽ вход до 22:10 HEADS UP проспект Мира, 26с2"
     },
     {
       "date": "2026-08-21",
