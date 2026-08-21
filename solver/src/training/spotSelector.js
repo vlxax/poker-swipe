@@ -89,6 +89,11 @@ function spotMatchesFocus(spot, tiers) {
   return (spot.skillTags || []).some((t) => focus.includes(t));
 }
 
+function spotMatchesStrongSkillExemption(spot, tiers, ctx) {
+  if (hasAcutePrimaryWeakness(ctx, tiers)) return spotMatchesAcuteFocus(spot, tiers);
+  return spotMatchesFocus(spot, tiers);
+}
+
 function profileChallengesHighDifficulty(ctx, tiers) {
   if (!ctx || ctx.targetDiff < 4) return false;
   const ranked = tiers?.ranked || [];
@@ -101,6 +106,61 @@ function challengesHigh(ctx, tiers = null) {
   if (ctx.challengeHighDifficulty != null) return ctx.challengeHighDifficulty;
   if (tiers) return profileChallengesHighDifficulty(ctx, tiers);
   return ctx.targetDiff >= 4;
+}
+
+function prefersLowDifficulty(ctx) {
+  return ctx && ctx.targetDiff != null && ctx.targetDiff < 2.8;
+}
+
+function hasAcutePrimaryWeakness(ctx, tiers) {
+  return tiers.primary.some((s) => (ctx.skillProfile?.skills?.[s]?.score ?? 100) < 20);
+}
+
+function acuteWeaknessStrongSkillPenalty(spot, ctx, tiers) {
+  if (!hasAcutePrimaryWeakness(ctx, tiers)) return 0;
+  if (spotHasStrongSkill(spot, tiers) && !spotMatchesAcuteFocus(spot, tiers)) return -14;
+  return 0;
+}
+
+function primaryWeaknessTagGuard(spot, ctx, tiers, slotKind) {
+  if (slotKind !== 'primary_weakness' || !hasAcutePrimaryWeakness(ctx, tiers)) return 0;
+  const tags = spot.skillTags || [];
+  if (tiers.primary.some((s) => tags.includes(s))) return 0;
+  return -18;
+}
+
+function spotMatchesAcuteFocus(spot, tiers) {
+  const focus = [...(tiers.primary || []), ...(tiers.secondary || [])];
+  if (!focus.length) return false;
+  return (spot.skillTags || []).some((t) => focus.includes(t));
+}
+
+function spotMatchesWeaknessTiers(spot, ctx) {
+  const tiers = ctx.tiers;
+  if (!tiers) return false;
+  const tags = spot.skillTags || [];
+  return tiers.primary.some((s) => tags.includes(s)) || tiers.secondary.some((s) => tags.includes(s));
+}
+
+function lowTargetDifficultyAdjust(spot, ctx, slotKind = null) {
+  if (!prefersLowDifficulty(ctx)) return 0;
+  const weaknessFocus = spotMatchesWeaknessTiers(spot, ctx);
+  const df = spotDifficultyFit(spot, ctx, slotKind);
+  const hardMult = weaknessFocus ? 0.18 : 0.45;
+  const fitMult = weaknessFocus ? 0.45 : 1.1;
+  if (df < 0) return df * fitMult;
+  if (spot.difficulty >= 4) return -(spot.difficulty - ctx.targetDiff) * hardMult;
+  if (spot.difficulty <= 2) return weaknessFocus ? 0.12 : 0.35;
+  return 0;
+}
+
+function highTargetDifficultyBoost(spot, ctx, slotKind = null) {
+  if (!challengesHigh(ctx)) return 0;
+  const df = spotDifficultyFit(spot, ctx, slotKind);
+  if (df > 0) return df * 0.35;
+  if (spot.difficulty >= 4) return 0.25;
+  if (spot.difficulty <= 2) return -0.4;
+  return 0;
 }
 
 export function spacedInterval({ lastSeenAt = null, mastery = null, now = Date.now(), baseDays = 1.5, masteryFactor = 3 } = {}) {
@@ -278,46 +338,62 @@ function scoreForSessionSlot(spot, slotKind, ctx) {
     score += leakBoostForSpot(spot, leakPriorities) * 3;
     const diffFit = spotDifficultyFit(spot, ctx, slotKind);
     if (highChallenge && diffFit < 0) score += diffFit * 0.75;
+    score += lowTargetDifficultyAdjust(spot, ctx, slotKind);
+    score += highTargetDifficultyBoost(spot, ctx, slotKind);
+    score += acuteWeaknessStrongSkillPenalty(spot, ctx, tiers);
+    score += primaryWeaknessTagGuard(spot, ctx, tiers, slotKind);
   } else if (slotKind === 'secondary_weakness') {
     if (tiers.secondary.some((s) => tags.includes(s))) score += 5;
     else if (tiers.primary.some((s) => tags.includes(s))) score += 4;
-    else if (spotHasStrongSkill(spot, tiers) && !spotMatchesFocus(spot, tiers)) score -= 10;
+    else if (spotHasStrongSkill(spot, tiers) && !spotMatchesStrongSkillExemption(spot, tiers, ctx)) score -= 10;
     for (const { concept, priority } of (leakPriorities || []).slice(0, 3)) {
       if (concept && spotMatchesLeakConcept(spot, concept)) score += 3 + (priority || 0) * 4;
     }
     score += leakBoostForSpot(spot, leakPriorities) * 2.5;
     score += weakSkillBoost(spot, skillProfile) * 1.5;
     if (strongSkillSpotCount > 0 && spotHasStrongSkill(spot, tiers)) score -= 8;
+    score += lowTargetDifficultyAdjust(spot, ctx, slotKind);
+    score += highTargetDifficultyBoost(spot, ctx, slotKind);
+    score += acuteWeaknessStrongSkillPenalty(spot, ctx, tiers);
   } else if (slotKind === 'maintenance_medium') {
     if (tiers.medium.some((s) => tags.includes(s))) score += 5;
-    if (spotHasStrongSkill(spot, tiers) && !spotMatchesFocus(spot, tiers)) score -= 10;
+    if (spotHasStrongSkill(spot, tiers) && !spotMatchesStrongSkillExemption(spot, tiers, ctx)) score -= 10;
     if (tiers.primary.some((s) => tags.includes(s))) score -= 5;
     if (tiers.secondary.some((s) => tags.includes(s))) score -= 3;
     if (!tags.some((t) => tiers.strong.includes(t) || tiers.primary.includes(t))) {
       if (ctx.targetDiff < 4) score += 2;
       else if (!highChallenge) score -= 1.5;
     }
-    if (strongSkillSpotCount > 0 && spotHasStrongSkill(spot, tiers) && !spotMatchesFocus(spot, tiers)) score -= 12;
+    if (strongSkillSpotCount > 0 && spotHasStrongSkill(spot, tiers) && !spotMatchesStrongSkillExemption(spot, tiers, ctx)) score -= 12;
     if (highChallenge) {
       const df = spotDifficultyFit(spot, ctx, slotKind);
       score += df * 0.9;
       if (spot.difficulty <= 2 && df < 0) score += df * 0.4;
     }
+    score += lowTargetDifficultyAdjust(spot, ctx, slotKind);
+    score += highTargetDifficultyBoost(spot, ctx, slotKind);
+    score += acuteWeaknessStrongSkillPenalty(spot, ctx, tiers);
   } else if (slotKind === 'maintenance_strong') {
     if (strongMaintUsed) return -10;
     const top = tiers.ranked.length ? tiers.ranked[tiers.ranked.length - 1].skill : null;
     if (top && tags.includes(top)) score += 4;
     else if (tiers.strong.some((s) => tags.includes(s))) score += 2;
     if (tiers.primary.some((s) => tags.includes(s))) score -= 5;
-    if (highChallenge) score += spotDifficultyFit(spot, ctx, 'exploration') * 0.6;
+    if (highChallenge) score += spotDifficultyFit(spot, ctx, 'exploration') * 0.85;
+    score += highTargetDifficultyBoost(spot, ctx, slotKind);
   } else if (slotKind === 'exploration') {
     const focus = focusSkillsFromTiers(tiers);
     if (focus.some((s) => tags.includes(s))) score += 3;
-    const diffWeight = highChallenge ? 1.25 : 0.5;
+    const diffWeight = highChallenge ? 1.55 : (prefersLowDifficulty(ctx) ? 0.35 : 0.5);
     score += spotDifficultyFit(spot, ctx, slotKind) * diffWeight + 0.5;
+    score += lowTargetDifficultyAdjust(spot, ctx, slotKind);
+    score += highTargetDifficultyBoost(spot, ctx, slotKind);
+    score += acuteWeaknessStrongSkillPenalty(spot, ctx, tiers);
     if (spot.theoryOrExploit === 'exploit') score += 0.4;
     if (!ctx.history.some((h) => h.concept === spot.concept)) score += 1;
-    if (spotHasStrongSkill(spot, tiers) && focus.length && !spotMatchesFocus(spot, tiers)) score -= 3;
+    if (spotHasStrongSkill(spot, tiers) && focus.length && !spotMatchesStrongSkillExemption(spot, tiers, ctx)) {
+      score -= tiers.primary.length && tiers.primary.some((s) => (ctx.skillProfile?.skills?.[s]?.score ?? 100) < 45) ? 9 : 3;
+    }
   }
 
   let diversity = diversityPenalty(spot, picked, ctx.history);
@@ -372,6 +448,7 @@ function selectSpotsProfileAware({
 }) {
   const slotOrder = sessionSlotOrder(count);
   const tiers = buildSkillTiers(ctx.skillProfile);
+  ctx.tiers = tiers;
   ctx.challengeHighDifficulty = profileChallengesHighDifficulty(ctx, tiers);
   const usedIds = new Set();
   const picked = [];
@@ -390,10 +467,8 @@ function selectSpotsProfileAware({
     if (!choice) {
       const fallbackKinds = slotKind === 'exploration'
         ? ['maintenance_strong', 'secondary_weakness', 'maintenance_medium']
-        : slotKind === 'secondary_weakness' && challengesHigh(ctx, tiers)
-          ? ['exploration', 'maintenance_strong', 'primary_weakness', 'maintenance_medium']
-        : slotKind === 'secondary_weakness' && !tiers.secondary.length
-          ? ['primary_weakness', 'maintenance_medium']
+        : slotKind === 'secondary_weakness'
+          ? ['secondary_weakness', 'primary_weakness', 'exploration', 'maintenance_medium']
           : ['maintenance_medium', 'secondary_weakness', 'exploration'];
       for (const fb of fallbackKinds) {
         choice = pickOneSlot(candidates, fb, slotCtx, rng, usedIds);
@@ -406,11 +481,13 @@ function selectSpotsProfileAware({
         .filter((s) => !usedIds.has(s.id))
         .map((s) => ({
           spot: s,
-          score: 0.5 - diversityPenalty(s, picked, history),
-          bucket: 'maintenance',
-          slotKind: 'maintenance_medium'
-        }));
-      if (rest.length) choice = rest.sort((a, b) => b.score - a.score)[0];
+          score: scoreForSessionSlot(s, slotKind, slotCtx) - diversityPenalty(s, picked, history),
+          bucket: slotToLegacyBucket(slotKind),
+          slotKind
+        }))
+        .filter((x) => x.score > -5)
+        .sort((a, b) => b.score - a.score);
+      if (rest.length) choice = rest[0];
     }
 
     if (!choice) continue;
@@ -431,8 +508,10 @@ function selectSpotsProfileAware({
       .map((s) => ({
         spot: s,
         score: (highChallenge
-          ? 0.5 + spotDifficultyFit(s, ctx, 'exploration')
-          : 0.4) - diversityPenalty(s, picked, history),
+          ? 0.5 + spotDifficultyFit(s, ctx, 'exploration') + highTargetDifficultyBoost(s, ctx, 'exploration')
+          : 0.4 + lowTargetDifficultyAdjust(s, ctx, 'maintenance_medium')
+            + spotDifficultyFit(s, ctx, 'maintenance_medium') * 0.35)
+          - diversityPenalty(s, picked, history),
         bucket: bucketForSpot(s, ctx),
         slotKind: highChallenge ? 'exploration' : 'maintenance_medium'
       }));
@@ -456,9 +535,12 @@ function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   const diffBonus = spotDifficultyFit(spot, ctx);
   const highChallenge = challengesHigh(ctx);
   const diffWeight = highChallenge ? 0.85 : 0.4;
-  const missWeight = highChallenge ? 0.55 : 0.25;
+  const missWeight = highChallenge ? 0.55 : (prefersLowDifficulty(ctx) ? 0.9 : 0.25);
   if (diffBonus > 0) score += diffBonus * diffWeight;
   else if (diffBonus < 0) score += diffBonus * missWeight;
+  score += lowTargetDifficultyAdjust(spot, ctx);
+  score += highTargetDifficultyBoost(spot, ctx);
+  if (ctx.tiers) score += acuteWeaknessStrongSkillPenalty(spot, ctx, ctx.tiers);
   score += masteryBoostForSpot(spot, ctx.skillMasteryStates, ctx.skillProfile, { allowMasteredPenalty: false }) * 0.85;
   if (useSkillTargets && ctx.skillTargets) {
     for (const tag of spot.skillTags || []) {

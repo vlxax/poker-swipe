@@ -77,9 +77,9 @@ export function buildPlayerStore(profileId) {
     now = recordOnTasks(store, buckets.postflop, { grade: 'EXCELLENT', evLossBb: 0.01, count: 88, startAt: now });
   } else if (profileId === 'B') {
     // Weak postflop / bluff-catch / river; strong ICM / push-fold.
-    now = recordOnTasks(store, buckets.bluffCatch, { grade: 'MISTAKE', evLossBb: 0.98, count: 250, startAt: now });
-    now = recordOnTasks(store, buckets.river, { grade: 'MISTAKE', evLossBb: 0.95, count: 200, startAt: now });
-    now = recordOnTasks(store, buckets.postflop, { grade: 'MISTAKE', evLossBb: 0.88, count: 112, startAt: now });
+    now = recordOnTasks(store, buckets.bluffCatch, { grade: 'MISTAKE', evLossBb: 0.98, count: 320, startAt: now });
+    now = recordOnTasks(store, buckets.river, { grade: 'MISTAKE', evLossBb: 0.95, count: 280, startAt: now });
+    now = recordOnTasks(store, buckets.postflop, { grade: 'MISTAKE', evLossBb: 0.88, count: 180, startAt: now });
     now = recordOnTasks(store, buckets.icm, { grade: 'EXCELLENT', evLossBb: 0.01, count: 112, startAt: now });
     now = recordOnTasks(store, buckets.shortStack, { grade: 'EXCELLENT', evLossBb: 0.01, count: 88, startAt: now });
   } else if (profileId === 'C') {

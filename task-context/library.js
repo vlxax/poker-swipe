@@ -5,6 +5,7 @@
 
 import { emptyTask, OPPONENT_PROFILES } from './schema.js';
 import { ADVANCED_TASKS } from './advancedTasks.js';
+import { ADVANCED_TASKS_9B } from './advancedTasks9b.js';
 
 let _seq = 0;
 function T(o) {
@@ -176,7 +177,8 @@ export const TASKS = [
   T({ id:'PRE_BB_VS_SQZ', street:'ПРЕФЛОП', format:'MTT', blinds:[500,1000], ante:125, stage:'СРЕДНЯЯ', table:'6-MAX', left:'45 LEFT', position:'BB', hero:['8♥','7♥'], heroStack:45, villain:'SB', villainStack:30, opp:'АГРО-РЕГ', board:[], pot:11.5, history:[{street:'ПРЕФЛОП', text:'BTN открыл, SB с коротким стеком запушил сквиз 30 ББ, BTN сфолдил.', pot:11.5}], question:'Что делаешь с 87s в BB против сквиз-пуша?', options:['ФОЛД','КОЛЛ'], correct:'КОЛЛ', alsoOk:[], concept:'BB vs squeeze', explain:'87s в BB против сквиз-пуша при хорошей цене и блокерах на стрит — защита коллом с потенциалом.', difficulty:2, tags:['префлоп','сквиз','коннекторы'] }),
   T({ id:'PRE_4BET_AA_COLD', street:'ПРЕФЛОП', format:'MTT', blinds:[800,1600], ante:200, stage:'ПОЗДНЯЯ', table:'6-MAX', left:'25 LEFT', position:'CO', hero:['A♠','A♦'], heroStack:90, villain:'BTN', villainStack:85, opp:'АГРО-РЕГ', board:[], pot:14, history:[{street:'ПРЕФЛОП', text:'UTG открыл, ты заколлил, BTN 3-бетил 10 ББ, UTG сфолдил.', pot:14}], question:'Что делаешь с AA против колд-3-бета на баттоне?', options:['КОЛЛ','4-БЕТ'], correct:'4-БЕТ', alsoOk:[], concept:'cold 4-bet', explain:'AA против колд-3-бета — 4-бет по ценности: раздуваем банк против сильного, но более узкого диапазона BTN.', difficulty:1, tags:['префлоп','4-бет','AA'] }),
 
-  ...ADVANCED_TASKS
+  ...ADVANCED_TASKS,
+  ...ADVANCED_TASKS_9B
 ];
 
 export function buildLibrary() {

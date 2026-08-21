@@ -64,7 +64,7 @@ test('full library preserves existing tasks and adds levels 4–5', () => {
   const lib = buildLibrary();
   const res = validateLibrary(lib);
   assert.equal(res.ok, true, res.errors.join('\n'));
-  assert.equal(lib.length, 131);
+  assert.equal(lib.length, 180);
   assert.ok(lib.some((t) => t.id === 'PRE_RFI_BTN_A8S'), 'existing task preserved');
   assert.ok(lib.some((t) => t.id === 'ADV5_RIVER_BLOCKER_BLUFF'), 'advanced task included');
 
@@ -222,6 +222,7 @@ test('production selector: weak / average / strong difficulty separation', () =>
   }
 
   REPORT.productionSelector = report;
+  assert.ok(report.strong.avg >= 3.5, `strong avg ${report.strong.avg}`);
   assert.ok(report.strong.avg >= report.weak.avg + 0.4, `strong ${report.strong.avg} vs weak ${report.weak.avg}`);
   assert.ok(report.strong.hardRate >= report.weak.hardRate + 2, `strong hard ${report.strong.hardRate} vs weak ${report.weak.hardRate}`);
   assert.ok(report.strong.hardRate >= 6, `strong hard rate ${report.strong.hardRate}`);
@@ -230,8 +231,8 @@ test('production selector: weak / average / strong difficulty separation', () =>
 test('metadata audit reflects expanded library', () => {
   resetTaskLibraryCache();
   const audit = auditTaskMetadata();
-  assert.equal(audit.total, 131);
-  assert.ok(audit.fullyUsable >= 124);
+  assert.equal(audit.total, 180);
+  assert.ok(audit.fullyUsable >= 173);
 });
 
 test('report: task difficulty expansion summary', () => {
