@@ -148,6 +148,7 @@ export function buildDailyPlan({
   skillProfile = null,
   leakProfiles = [],
   skillTargets = null,
+  skillMasteryStates = null,
   count = DEFAULTS.count,
   now = Date.now(),
   rng = Math.random
@@ -180,6 +181,7 @@ export function buildDailyPlan({
     now,
     masteryGate: DEFAULTS.masteryGate,
     skillTargets: resolvedSkillTargets,
+    skillMasteryStates,
     allowRepeatIds,
     rng
   });

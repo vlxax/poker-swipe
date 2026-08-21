@@ -89,6 +89,12 @@ export {
   difficultyFit, pickRelevantSkillForSpot, recentResultsForSkill, adjustDifficultyFromPerformance,
   DIFFICULTY_MIN, DIFFICULTY_MAX
 } from './training/adaptiveDifficulty.js';
+export {
+  MASTERY_STATES, REVIEW_INTERVAL_DAYS, DAY_MS, createSkillMasteryRecord,
+  deriveMasteryState, buildSkillMasteryStates, applySkillMasteryTraining,
+  applyTrainingToMasteryStore, masteryBoostForSpot, updateSkillMasteryAfterTraining,
+  syncSkillMasteryStore, meetsMasteredCriteria, reviewIntervalDays, intervalMsForIndex
+} from './training/skillMastery.js';
 export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
 export { buildMiniAppPlan, MINI_APP_SPECS } from './training/miniAppPlanner.js';
 export {
