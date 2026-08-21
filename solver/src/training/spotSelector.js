@@ -9,9 +9,9 @@ import {
   spotMatchesLeakConcept
 } from './leakSpotMapping.js';
 import { computePriority } from './priority.js';
-import { diversityPenalty, sessionRepetitionPenalty } from './sessionDiversity.js';
+import { diversityPenalty, sessionRepetitionPenalty, contentFingerprint, recentFingerprints } from './sessionDiversity.js';
 
-const DEFAULT_SHOWN_COOLDOWN = 60;
+export const DEFAULT_SHOWN_COOLDOWN = 30;
 const DEFAULT_MASTERY_GATE = 78;
 const WEAKNESS_SHARE = 0.65;
 const MAINTENANCE_SHARE = 0.25;
@@ -86,10 +86,11 @@ export function conceptDue({ lastSeenAt = null, mastery = null, now = Date.now()
   return now - lastSeenAt >= spacedInterval({ lastSeenAt, mastery, now, baseDays });
 }
 
-export function spotEligible(spot, shownAt = {}, cooldown = DEFAULT_SHOWN_COOLDOWN) {
+export function spotEligible(spot, shownAt = {}, cooldown = DEFAULT_SHOWN_COOLDOWN, recentFingerprintsSet = null) {
   const last = shownAt[spot.id];
-  if (last == null) return true;
-  return last.countAgo >= cooldown;
+  if (last != null && last.countAgo < cooldown) return false;
+  if (recentFingerprintsSet && recentFingerprintsSet.has(contentFingerprint(spot))) return false;
+  return true;
 }
 
 export function sessionGoal({ weakestSkill = null, concept = null, overall = null } = {}) {
@@ -500,8 +501,9 @@ export function selectSpots({
   };
 
   const recentIds = new Set((history || []).slice(0, shownCooldown).map((h) => h.spotId).filter(Boolean));
-  const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown) && !recentIds.has(s.id));
-  const softEligible = spots.filter((s) => !recentIds.has(s.id));
+  const recentFps = recentFingerprints(history, shownCooldown);
+  const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown, recentFps) && !recentIds.has(s.id));
+  const softEligible = spots.filter((s) => !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s)));
   const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
 
   let picked = [];

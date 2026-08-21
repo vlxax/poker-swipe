@@ -1,16 +1,15 @@
-// Primary assessment (requirement P0). A short (~12-question) diagnostic pool
-// with variants. It produces an initial Player Skill Profile + initial leak
-// profile + confidence, so the product can personalise from the very first
-// session without a full analyzed-hand history. Deterministic: the same choices
-// always produce the same profile. Answers are graded on a 0..100 scale where
-// the optimal line is 100 and near-alternatives are lower but not zero.
+// Primary assessment (requirement P0). A short (~12-question) diagnostic built from
+// validated library tasks. Produces an initial Player Skill Profile + leak profile.
+// Selection is seeded per-user so two fresh profiles do not get identical task sets.
 
-import { buildSkillProfile, skillsForConcept, normalizeSkill } from './skillProfile.js';
+import { buildSkillProfile, skillsForConcept, normalizeSkill, SKILLS } from './skillProfile.js';
 import { buildLeakProfile } from './leakProfile.js';
 import { classifyErrorCause } from './errorCause.js';
+import { loadTaskLibrary } from './taskLibraryBridge.js';
+import { deriveSkillTags } from './planner.js';
+import { seededRng } from './personalizationSeed.js';
 
-// Assessment items reference decision spots. `correct` is the best line; a small
-// `alsoOk` set holds near-optimal alternatives. skillTag drives the skill profile.
+// Legacy fixed pool kept for backward-compatible tests / grading references.
 export const ASSESSMENT_POOL = [
   { id: 'A_RFI_BTN', skillTag: 'preflop', concept: 'open_range', street: 'ПРЕФЛОП', q: 'BTN · 30 ББ · до тебя фолд. A8s', choices: ['ФОЛД', 'РЕЙЗ'], correct: 'РЕЙЗ', alsoOk: [], score: 92 },
   { id: 'A_BB_DEF', skillTag: 'preflop', concept: 'defend_vs_open', street: 'ПРЕФЛОП', q: 'BB · K8s · BTN 2.2 ББ', choices: ['ФОЛД', 'КОЛЛ', '3-БЕТ'], correct: 'КОЛЛ', alsoOk: ['3-БЕТ'], score: 88 },
@@ -26,42 +25,132 @@ export const ASSESSMENT_POOL = [
   { id: 'A_ICM', skillTag: 'icm', concept: 'icm_pressure', street: 'ПРЕФЛОП', q: '5 left · баббл · short 6 ББ · BTN A7o', choices: ['ФОЛД', 'РЕЙЗ'], correct: 'РЕЙЗ', alsoOk: ['ФОЛД'], score: 65 }
 ];
 
-// Cover all skills at least once; pad with repeats for the weakest.
-const REQUIRED_SKILLS = ['preflop', 'postflop', 'betSizing', 'shortStack', 'river', 'bluffing', 'bluffCatch', 'icm', 'exploit', 'rangeReading', 'positionAwareness', 'stackDepthAwareness'];
+export const REQUIRED_SKILLS = [
+  'preflop', 'postflop', 'betSizing', 'shortStack', 'river', 'bluffing',
+  'bluffCatch', 'icm', 'exploit', 'rangeReading', 'positionAwareness', 'stackDepthAwareness'
+];
 
-export function buildAssessmentSet({ pool = ASSESSMENT_POOL, rng = Math.random, count = 12 } = {}) {
-  // Start with one item per covered skill, then fill with variety.
+function isValidAssessmentTask(task) {
+  if (!task || !task.id || !task.correct) return false;
+  if (!Array.isArray(task.options) || task.options.length < 2) return false;
+  if (!task.concept || task.difficulty == null || !task.street) return false;
+  if (!task.options.includes(task.correct)) return false;
+  return true;
+}
+
+function assessmentScoreFromDifficulty(difficulty) {
+  const d = Number(difficulty) || 2;
+  return Math.round(clamp(96 - d * 4, 60, 95));
+}
+
+function taskToAssessmentItem(task) {
+  const skillTags = deriveSkillTags(task);
+  const primarySkill = skillTags[0] || skillsForConcept(task.concept)[0] || 'preflop';
+  return {
+    id: task.id,
+    skillTag: primarySkill,
+    skillTags,
+    concept: task.concept,
+    street: task.street,
+    q: task.question || task.q || `${task.position || ''} · ${task.concept || ''}`.trim(),
+    choices: task.options.slice(),
+    correct: task.correct,
+    alsoOk: (task.alsoOk || []).slice(),
+    score: assessmentScoreFromDifficulty(task.difficulty),
+    difficulty: task.difficulty,
+    position: task.position || null,
+    heroStack: task.heroStack != null ? task.heroStack : null,
+    tags: task.tags || []
+  };
+}
+
+export function buildAssessmentEligiblePool(tasks = null) {
+  const source = tasks || loadTaskLibrary();
+  return source.filter(isValidAssessmentTask).map(taskToAssessmentItem);
+}
+
+let _eligibleCache = null;
+export function getAssessmentEligiblePool() {
+  if (!_eligibleCache) _eligibleCache = buildAssessmentEligiblePool();
+  return _eligibleCache;
+}
+
+function primarySkillForItem(item) {
+  if (item.skillTags && item.skillTags.length) return item.skillTags[0];
+  return normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0] || null;
+}
+
+function pickFromPool(list, rng, usedIds) {
+  const available = list.filter((item) => !usedIds.has(item.id));
+  if (!available.length) return null;
+  const idx = Math.floor(rng() * available.length);
+  return available[idx];
+}
+
+export function buildAssessmentSet({
+  pool = null,
+  rng = Math.random,
+  count = 12,
+  personalizationSeed = null
+} = {}) {
+  const eligible = pool || getAssessmentEligiblePool();
+  const random = personalizationSeed != null ? seededRng(personalizationSeed) : rng;
+
   const bySkill = {};
-  for (const item of pool) {
-    const skill = normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0] || null;
-    if (skill) (bySkill[skill] = bySkill[skill] || []).push(item);
+  for (const item of eligible) {
+    const tags = item.skillTags && item.skillTags.length ? item.skillTags : [primarySkillForItem(item)].filter(Boolean);
+    for (const skill of tags) {
+      if (!SKILLS.includes(skill)) continue;
+      (bySkill[skill] = bySkill[skill] || []).push(item);
+    }
   }
+
   const chosen = [];
   const usedIds = new Set();
-  const skills = REQUIRED_SKILLS.filter((s) => bySkill[s] && bySkill[s].length);
-  for (const s of skills) {
-    const list = bySkill[s];
-    const pick = list[Math.floor(rng() * list.length)];
-    if (usedIds.has(pick.id)) continue;
+  const coveredSkills = new Set();
+
+  for (const skill of REQUIRED_SKILLS) {
+    if (chosen.length >= count) break;
+    const list = bySkill[skill];
+    if (!list || !list.length) continue;
+    const pick = pickFromPool(list, random, usedIds);
+    if (!pick) continue;
     usedIds.add(pick.id);
     chosen.push(pick);
+    coveredSkills.add(skill);
   }
-  // Fill the remainder from unused items (no duplicates).
-  for (const item of pool) {
-    if (chosen.length >= count) break;
-    if (usedIds.has(item.id)) continue;
-    usedIds.add(item.id);
-    chosen.push(item);
+
+  const remaining = eligible
+    .filter((item) => !usedIds.has(item.id))
+    .sort((a, b) => {
+      const aNew = (a.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
+      const bNew = (b.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
+      return bNew - aNew;
+    });
+
+  while (chosen.length < count && remaining.length) {
+    const windowSize = Math.min(8, remaining.length);
+    const start = Math.floor(random() * Math.max(1, remaining.length - windowSize + 1));
+    const window = remaining.splice(start, windowSize);
+    window.sort((a, b) => {
+      const aNew = (a.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
+      const bNew = (b.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
+      return bNew - aNew;
+    });
+    const pick = window[0];
+    if (!pick || usedIds.has(pick.id)) continue;
+    usedIds.add(pick.id);
+    chosen.push(pick);
+    for (const s of (pick.skillTags || [])) coveredSkills.add(s);
   }
+
   return chosen.slice(0, count);
 }
 
-// Grade one assessment choice → { score, correct, nearOptimal, evLossBb, cause }.
 export function gradeAssessmentItem(item, choice) {
   if (!item) return { score: 0, correct: false };
   const correct = choice === item.correct;
   const nearOptimal = !correct && (item.alsoOk || []).includes(choice);
-  // EV loss scaled from the item's design: optimal = 0, near = small, else larger.
   const evLossBb = correct ? 0 : nearOptimal ? 0.08 : 0.5;
   const score = correct ? item.score : nearOptimal ? Math.round(item.score * 0.85) : Math.round(item.score * 0.3);
   const cause = classifyErrorCause({
@@ -74,24 +163,27 @@ export function gradeAssessmentItem(item, choice) {
   return { score, correct, nearOptimal, evLossBb, cause };
 }
 
-// Run a full assessment → skill profile + leak profile + summary.
 export function runAssessment({
   items = null,
-  answers = [],          // [{ id, choice, confidence }]
-  pool = ASSESSMENT_POOL,
+  answers = [],
+  pool = null,
   rng = Math.random,
+  personalizationSeed = null,
   now = Date.now()
 } = {}) {
-  const set = items || buildAssessmentSet({ pool, rng });
+  const set = items || buildAssessmentSet({ pool, rng, personalizationSeed });
   const results = [];
   for (const a of answers) {
-    const item = set.find((i) => i.id === a.id) || pool.find((i) => i.id === a.id);
+    const item = set.find((i) => i.id === a.id)
+      || (pool || getAssessmentEligiblePool()).find((i) => i.id === a.id)
+      || ASSESSMENT_POOL.find((i) => i.id === a.id);
     if (!item) continue;
     const g = gradeAssessmentItem(item, a.choice);
     results.push({
       id: item.id,
       concept: item.concept,
       skillTag: item.skillTag,
+      skillTags: item.skillTags || [item.skillTag].filter(Boolean),
       street: item.street,
       q: item.q,
       choice: a.choice,
@@ -106,7 +198,6 @@ export function runAssessment({
   }
   const assessed = buildSkillProfile({ assessment: { results }, now });
 
-  // Initial leak profile from wrong answers (each wrong item → a small leak event).
   const leakEvents = results
     .filter((r) => !r.correct)
     .map((r) => ({
@@ -153,4 +244,6 @@ function choiceToType(choice) {
   return null;
 }
 
-export { REQUIRED_SKILLS };
+function clamp(n, lo, hi) {
+  return Math.max(lo, Math.min(hi, n));
+}

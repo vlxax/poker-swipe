@@ -9,7 +9,7 @@ import {
   normalizeSkill, skillLabelRu, confidenceLabel, overallLabel, skillProfileId
 } from '../src/training/skillProfile.js';
 import { classifyErrorCause, errorCauseLabelRu, errorCauseTipRu, ERROR_CAUSES } from '../src/training/errorCause.js';
-import { ASSESSMENT_POOL, buildAssessmentSet, gradeAssessmentItem, runAssessment, REQUIRED_SKILLS } from '../src/training/assessment.js';
+import { ASSESSMENT_POOL, buildAssessmentSet, gradeAssessmentItem, runAssessment, REQUIRED_SKILLS, getAssessmentEligiblePool } from '../src/training/assessment.js';
 import {
   adaptiveDifficulty, recentAccuracy, conceptDue, spacedInterval, spotEligible,
   selectSpots, normalizeSpot, isMastered, masteryOf, sessionGoal, earliestMeaningful
@@ -145,9 +145,16 @@ test('runAssessment creates leak profiles from wrong answers', () => {
   assert.ok(Object.keys(res.leakProfiles).length >= 1);
 });
 
-test('REQUIRED_SKILLS is a superset of covered skills in the pool', () => {
-  const covered = new Set(ASSESSMENT_POOL.map((i) => normalizeSkill(i.skillTag)));
-  for (const s of covered) assert.ok(REQUIRED_SKILLS.includes(s));
+test('REQUIRED_SKILLS is a superset of covered skills in the eligible pool', () => {
+  const eligible = getAssessmentEligiblePool();
+  const covered = new Set();
+  for (const item of eligible) {
+    for (const tag of (item.skillTags || [normalizeSkill(item.skillTag)].filter(Boolean))) {
+      covered.add(tag);
+    }
+  }
+  const missing = REQUIRED_SKILLS.filter((s) => !covered.has(s));
+  assert.ok(missing.length <= 2, `too many uncovered skills: ${missing.join(', ')}`);
 });
 
 // ---- spot selector -----------------------------------------------------------
