@@ -86,6 +86,12 @@ export {
 } from './training/spotSelector.js';
 export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
 export { buildMiniAppPlan, MINI_APP_SPECS } from './training/miniAppPlanner.js';
+export {
+  buildPlayerStore, buildDifferentiationReport, generateDifferentiationPlan,
+  taskDistribution, topWeaknesses, overlapCount, uniqueSkillCount,
+  classifyTrainingBucket, PLAYER_PROFILE_SEEDS, DIFFERENTIATION_PLAN_COUNT,
+  DIFFERENTIATION_PLAN_NOW
+} from './training/playerDifferentiationFixtures.js';
 export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
 export { drillFromLibraryTask } from './training/libraryDrill.js';
 export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
