@@ -94,9 +94,13 @@ export function buildPlayerStore(profileId) {
 
 export function classifyTrainingBucket(spot) {
   const tags = spot.skillTags || [];
+  const street = String(spot.street || '').toLowerCase();
+  const isPostflopStreet = /флоп|flop|тёрн|turn|ривер|river/.test(street)
+    && !/префлоп|preflop/.test(street);
+  if (tags.includes('bluffCatch')) return 'postRiver';
+  if (isPostflopStreet && (tags.includes('postflop') || tags.includes('river'))) return 'postRiver';
   if (tags.includes('icm')) return 'icmPush';
   if (tags.includes('shortStack') && spot.street === 'preflop') return 'icmPush';
-  if (tags.includes('bluffCatch')) return 'postRiver';
   if (spot.street === 'river' || tags.includes('river')) return 'postRiver';
   if (spot.street === 'flop' || spot.street === 'turn') return 'postRiver';
   return 'other';

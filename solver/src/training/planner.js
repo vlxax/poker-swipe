@@ -389,7 +389,26 @@ export function deriveSkillTags(t) {
     }
   }
   if (/флоп|flop|тёрн|turn/.test(concat)) tags.add('postflop');
-  if (/ривер|river/.test(concat)) tags.add('river');
+  if (/ривер|river/.test(concat)) {
+    tags.add('river');
+    tags.add('postflop');
+  }
+
+  const fmt = String(t.format || '');
+  const stageText = String(t.stage || '').toLowerCase();
+  const streetText = String(t.street || '').toLowerCase();
+  const tournamentFmt = /MTT|PKO|SNG/i.test(fmt);
+  const icmStage = /баббл|itm|финальн|bubble|финал|pko/.test(stageText);
+  if (/PKO/i.test(fmt)) tags.add('icm');
+  if (tournamentFmt && tags.has('shortStack')) tags.add('icm');
+  if (tournamentFmt && icmStage) tags.add('icm');
+  if (tournamentFmt && /префлоп|preflop/.test(streetText)
+    && heroStack != null && heroStack <= 25 && /поздн|late|баббл|itm|финал|bubble/.test(stageText)) {
+    tags.add('icm');
+  }
+  if (tournamentFmt && heroStack != null && heroStack <= 15 && !/префлоп|preflop/.test(streetText)) {
+    tags.add('icm');
+  }
 
   return [...tags];
 }
