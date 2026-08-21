@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-21T22:13:40+03:00",
+  "retrieved_at": "2026-08-21T22:55:57+03:00",
   "city": "Москва",
   "count": 59,
   "clubs": [
@@ -1246,7 +1246,7 @@
       "schedule": [
         {
           "date": "2026-08-21",
-          "time": "18:00",
+          "time": "19:00",
           "club": "БЛЕФ?",
           "tournament": "CLASSIC ONE TOURNAMENT",
           "fee_rub": 1000,
@@ -1258,7 +1258,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут CLASSIC ONE TOURNAMENT 18:00 1 000 ₽ БЛЕФ? Проспект Мира, 102с12, подъезд 6"
+          "source_card_text": "Баунти / Нокаут CLASSIC ONE TOURNAMENT 19:00 1 000 ₽ БЛЕФ? Проспект Мира, 102с12, подъезд 6"
         }
       ],
       "upcoming": 1
