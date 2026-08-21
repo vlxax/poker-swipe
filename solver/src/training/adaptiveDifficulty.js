@@ -148,13 +148,30 @@ export function getSpotTargetDifficulty(spot, profile, recentResults = [], opts 
   return getTargetDifficulty(profile || {}, skill, { recentResults, ...opts }).target;
 }
 
-export function difficultyFit(spot, targetDiff, targetInfo = null) {
+export function difficultyFit(spot, targetDiff, targetInfo = null, { poolMax = DIFFICULTY_MAX } = {}) {
   const d = clamp(Number(spot && spot.difficulty) || 1, DIFFICULTY_MIN, DIFFICULTY_MAX);
-  const target = targetInfo && targetInfo.target != null ? targetInfo.target : targetDiff;
+  const rawTarget = targetInfo && targetInfo.target != null ? targetInfo.target : targetDiff;
+  const target = clamp(rawTarget, DIFFICULTY_MIN, poolMax);
+
+  if (rawTarget > poolMax) {
+    const dist = poolMax - d;
+    if (dist <= 0) return 1;
+    if (dist === 1) return 0.65;
+    return 0.3;
+  }
+
+  if (rawTarget <= 1.5) {
+    const dist = d - DIFFICULTY_MIN;
+    if (dist <= 0) return 1;
+    if (dist === 1) return 0.65;
+    return 0.25;
+  }
 
   if (targetInfo && targetInfo.min != null && targetInfo.max != null) {
-    if (d >= targetInfo.min && d <= targetInfo.max) return 1;
-    const dist = d < targetInfo.min ? targetInfo.min - d : d - targetInfo.max;
+    const min = Math.min(targetInfo.min, poolMax);
+    const max = Math.min(targetInfo.max, poolMax);
+    if (d >= min && d <= max) return 1;
+    const dist = d < min ? min - d : d - max;
     if (dist <= 0.5) return 0.65;
     if (dist <= 1) return 0.25;
     return -0.75;
@@ -167,10 +184,10 @@ export function difficultyFit(spot, targetDiff, targetInfo = null) {
   return -1;
 }
 
-export function spotDifficultyScore(spot, profile, recentResults = [], { slotKind = null } = {}) {
+export function spotDifficultyScore(spot, profile, recentResults = [], { slotKind = null, poolMax = DIFFICULTY_MAX } = {}) {
   const skill = pickRelevantSkillForSpot(spot, profile);
   const info = getTargetDifficulty(profile || {}, skill, { recentResults });
-  let score = difficultyFit(spot, info.target, info);
+  let score = difficultyFit(spot, info.target, info, { poolMax });
 
   if (slotKind === 'exploration' && info.prefers.challenge.includes(spot.difficulty)) {
     score += 0.35;
