@@ -3,6 +3,7 @@
 
 import { selectSpots, normalizeSpot, adaptiveDifficulty, conceptDue } from './spotSelector.js';
 import { skillLabelRu } from './skillProfile.js';
+import { computeDynamicSkillTargets } from './dynamicPlayerProfile.js';
 import { errorCauseLabelRu } from './errorCause.js';
 import { stableHash } from '../integration/pokerSwipeHandAdapter.js';
 import { skillsForConcept } from './skillProfile.js';
@@ -146,6 +147,7 @@ export function buildDailyPlan({
   history = [],
   recentResults = [],
   skillProfile = null,
+  dynamicProfile = null,
   leakProfiles = [],
   skillTargets = null,
   skillMasteryStates = null,
@@ -167,7 +169,9 @@ export function buildDailyPlan({
   const allowSet = new Set(allowRepeatIds);
   const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0 || allowSet.has(s.id));
 
-  const resolvedSkillTargets = skillTargets || computeSkillTargets(skillProfile, count);
+  const resolvedSkillTargets = skillTargets
+    || computeDynamicSkillTargets(dynamicProfile || skillProfile?.dynamic, count)
+    || computeSkillTargets(skillProfile, count);
 
   const result = selectSpots({
     pool: eligiblePool.length ? eligiblePool : spots,
@@ -176,6 +180,7 @@ export function buildDailyPlan({
     progressByConcept,
     recentResults,
     skillProfile,
+    dynamicProfile: dynamicProfile || skillProfile?.dynamic || null,
     leakProfiles,
     count,
     now,
