@@ -13,7 +13,7 @@ import {
 } from '../solver/src/index.js';
 import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
-import { drillViewModel } from './viewModel.js';
+import { installMiniAppHooks } from './miniAppHooks.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import * as R from './renderer.js';
 
@@ -27,6 +27,7 @@ const storage = (() => {
 })();
 
 const store = createTrainingStore({ storage });
+const miniApps = installMiniAppHooks(store);
 
 const SESSION_CONFIG = {
   count: 7,
@@ -176,7 +177,8 @@ window.PersonalizedTrainingUi = {
   controller: ctl,
   assessment,
   paint,
-  beginAssessment: () => { assessment.begin(); paint(); }
+  beginAssessment: () => { assessment.begin(); paint(); },
+  miniApps
 };
 
 export { store, ctl, paint, assessment };

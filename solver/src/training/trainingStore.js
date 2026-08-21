@@ -4,6 +4,7 @@
 // decision from the same hand must never be recorded twice).
 
 import { candidateIdentity } from './candidateNormalizer.js';
+import { createPersonalizationSeed } from './personalizationSeed.js';
 
 const STORE_VERSION = 2;
 
@@ -165,6 +166,30 @@ export function createTrainingStore({
     return loadJSON('assessment', null);
   }
 
+  // ---- personalization seed ------------------------------------------------
+  function loadPersonalizationSeed() {
+    return loadJSON('personalizationSeed', null);
+  }
+  function savePersonalizationSeed(seed) {
+    if (!seed) return;
+    saveJSON('personalizationSeed', { seed: String(seed), savedAt: now() });
+  }
+  function getOrCreatePersonalizationSeed() {
+    const existing = loadPersonalizationSeed();
+    if (existing && existing.seed) return existing.seed;
+    const seed = createPersonalizationSeed();
+    savePersonalizationSeed(seed);
+    return seed;
+  }
+
+  // ---- per-skill evidence (accumulated training + assessment) -------------
+  function loadSkillEvidence() {
+    return loadJSON('skillEvidence', {});
+  }
+  function saveSkillEvidence(evidence) {
+    saveJSON('skillEvidence', evidence || {});
+  }
+
   // ---- analytics events (append-only, capped) ------------------------------
   function addAnalyticsEvent(event) {
     const events = loadJSON('analytics', []);
@@ -195,6 +220,11 @@ export function createTrainingStore({
     loadSkillProfile,
     saveAssessment,
     loadAssessment,
+    loadPersonalizationSeed,
+    savePersonalizationSeed,
+    getOrCreatePersonalizationSeed,
+    loadSkillEvidence,
+    saveSkillEvidence,
     addAnalyticsEvent,
     loadAnalyticsEvents,
     reset

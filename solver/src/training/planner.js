@@ -15,18 +15,38 @@ const DEFAULTS = {
   masteryGate: 78
 };
 
-const CONCEPT_TO_SKILL = {
-  rfi: 'preflop', 'префлоп': 'preflop', defence: 'preflop', defense: 'preflop', defend: 'preflop',
-  '3-bet': 'preflop', '3-бет': 'preflop', '4-bet': 'preflop', squeeze: 'preflop', push: 'shortStack',
-  'push-fold': 'shortStack', 'c-bet': 'postflop', 'с-бет': 'postflop', check: 'postflop', флоп: 'postflop',
-  flop: 'postflop', turn: 'postflop', тёрн: 'postflop', river: 'river', ривер: 'river',
-  bluff: 'bluffing', блеф: 'bluffing', bluffcatch: 'bluffCatch', 'bluff catch': 'bluffCatch',
-  'bluff-catch': 'bluffCatch', value: 'betSizing', sizing: 'betSizing', сайзинг: 'betSizing',
-  overbet: 'betSizing', icm: 'icm', баббл: 'icm', bubble: 'icm', itm: 'icm', 'final table': 'icm',
-  'финальный': 'icm', exploit: 'exploit', эксплойт: 'exploit', nit: 'exploit', station: 'exploit',
-  maniac: 'exploit', position: 'positionAwareness', rfi: 'positionAwareness', spr: 'stackDepthAwareness',
-  stack: 'stackDepthAwareness', 'короткий': 'shortStack', pko: 'icm', bounty: 'icm', баунти: 'icm',
-  range: 'rangeReading', paired: 'postflop', barrel: 'postflop', баррел: 'postflop'
+const CONCEPT_SKILL_RULES = [
+  { pattern: /rfi|open|оупен/, street: /префлоп|preflop/, skills: ['preflop', 'positionAwareness'] },
+  { pattern: /bb defence|bb defend|защита bb|defend/, skills: ['preflop', 'positionAwareness'] },
+  { pattern: /3-bet|3-бет|squeeze|сквиз/, skills: ['preflop', 'bluffing'] },
+  { pattern: /push|пуш|push-fold|олл-ин/, skills: ['shortStack', 'stackDepthAwareness'] },
+  { pattern: /bubble|баббл|icm|itm|финальн|pko|баунти/, skills: ['icm'] },
+  { pattern: /bluffcatch|bluff catch|блеф-кетч|price defence/, skills: ['bluffCatch', 'river', 'rangeReading'] },
+  { pattern: /dry board|dynamic board|c-bet|с-бет|barrel|барелл/, skills: ['postflop'] },
+  { pattern: /thin value|river value|river bluff/, skills: ['river', 'betSizing'] },
+  { pattern: /exploit|эксплойт|нит|station|маниак|любитель/, skills: ['exploit'] },
+  { pattern: /range|диапазон/, skills: ['rangeReading'] },
+  { pattern: /sizing|сайзинг|overbet|поляризац/, skills: ['betSizing'] },
+  { pattern: /блеф|bluff/, skills: ['bluffing'] }
+];
+
+const CONCEPT_TO_SKILLS = {
+  rfi: ['preflop', 'positionAwareness'],
+  defence: ['preflop'], defense: ['preflop'], defend: ['preflop'],
+  '3-bet': ['preflop', 'bluffing'], '3-бет': ['preflop', 'bluffing'],
+  '4-bet': ['preflop'], squeeze: ['preflop', 'bluffing'],
+  push: ['shortStack', 'stackDepthAwareness'], 'push-fold': ['shortStack', 'stackDepthAwareness'],
+  'c-bet': ['postflop'], 'с-бет': ['postflop'], check: ['postflop'],
+  флоп: ['postflop'], flop: ['postflop'], turn: ['postflop'], тёрн: ['postflop'],
+  river: ['river'], ривер: ['river'],
+  bluff: ['bluffing'], блеф: ['bluffing'], bluffcatch: ['bluffCatch'], 'bluff catch': ['bluffCatch'],
+  'bluff-catch': ['bluffCatch'], value: ['betSizing'], sizing: ['betSizing'], сайзинг: ['betSizing'],
+  overbet: ['betSizing'], icm: ['icm'], баббл: ['icm'], bubble: ['icm'], itm: ['icm'],
+  'final table': ['icm'], 'финальный': ['icm'], exploit: ['exploit'], эксплойт: ['exploit'],
+  nit: ['exploit'], station: ['exploit'], maniac: ['exploit'],
+  position: ['positionAwareness'], spr: ['stackDepthAwareness'], stack: ['stackDepthAwareness'],
+  'короткий': ['shortStack'], pko: ['icm'], bounty: ['icm'], баунти: ['icm'],
+  range: ['rangeReading'], paired: ['postflop'], barrel: ['postflop'], баррел: ['postflop']
 };
 
 const TASK_CONCEPT_TO_LEAK = {
@@ -127,6 +147,7 @@ export function buildDailyPlan({
   recentResults = [],
   skillProfile = null,
   leakProfiles = [],
+  skillTargets = null,
   count = DEFAULTS.count,
   now = Date.now(),
   rng = Math.random
@@ -141,9 +162,11 @@ export function buildDailyPlan({
     const mastery = progress && progress.masteryScore != null ? progress.masteryScore : null;
     if (conceptDue({ lastSeenAt: last ? last.at : null, mastery, now })) dueConcepts.add(spot.concept);
   }
-  const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0);
+  const allowRepeatIds = buildSpacedReviewAllowIds(spots, history, progressByConcept, now);
+  const allowSet = new Set(allowRepeatIds);
+  const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0 || allowSet.has(s.id));
 
-  const skillTargets = computeSkillTargets(skillProfile, count);
+  const resolvedSkillTargets = skillTargets || computeSkillTargets(skillProfile, count);
 
   const result = selectSpots({
     pool: eligiblePool.length ? eligiblePool : spots,
@@ -156,7 +179,8 @@ export function buildDailyPlan({
     count,
     now,
     masteryGate: DEFAULTS.masteryGate,
-    skillTargets,
+    skillTargets: resolvedSkillTargets,
+    allowRepeatIds,
     rng
   });
 
@@ -233,6 +257,14 @@ export function planSummaryRu(plan) {
   return parts.join(' ');
 }
 
+function buildSpacedReviewAllowIds(spots, history, progressByConcept, now) {
+  const allow = new Set();
+  for (const h of (history || [])) {
+    if (h && h.spacedReview && h.spotId) allow.add(h.spotId);
+  }
+  return [...allow];
+}
+
 function buildShownAt(history) {
   const shown = {};
   const entries = (history || []).slice().reverse();
@@ -303,18 +335,56 @@ function isExploitTask(t) {
 }
 
 export function deriveSkillTags(t) {
-  const tags = [];
-  const concat = [t.concept, ...(t.tags || []), t.street, t.stage, t.position].map((x) => String(x || '').toLowerCase()).join(' ');
-  for (const [key, skill] of Object.entries(CONCEPT_TO_SKILL)) {
-    if (concat.includes(key) && !tags.includes(skill)) tags.push(skill);
-  }
-  const leak = mapLeakConceptForTask(t);
-  if (leak) {
-    for (const sk of skillsForConcept(leak)) {
-      if (!tags.includes(sk)) tags.push(sk);
+  const tags = new Set();
+  const concat = [t.concept, ...(t.tags || []), t.street, t.stage, t.position]
+    .map((x) => String(x || '').toLowerCase()).join(' ');
+
+  for (const rule of CONCEPT_SKILL_RULES) {
+    const streetOk = !rule.street || rule.street.test(concat);
+    if (rule.pattern.test(concat) && streetOk) {
+      for (const skill of rule.skills) tags.add(skill);
     }
   }
-  return tags;
+
+  for (const [key, skills] of Object.entries(CONCEPT_TO_SKILLS)) {
+    if (concat.includes(key)) {
+      for (const skill of skills) tags.add(skill);
+    }
+  }
+
+  const heroStack = t.heroStack != null ? Number(t.heroStack) : (t.effStack != null ? Number(t.effStack) : null);
+  if (heroStack != null && heroStack <= 15) {
+    tags.add('shortStack');
+    tags.add('stackDepthAwareness');
+  } else if (heroStack != null && heroStack <= 25) {
+    tags.add('stackDepthAwareness');
+  }
+
+  if (/rfi|open|оупен|steal|стил/.test(concat) && /btn|co|hj|sb|баттон/.test(concat)) {
+    tags.add('positionAwareness');
+  }
+
+  if (/bubble|баббл|icm|itm|финальн|pko/.test(concat) && /push|пуш|steal|стил|open|оупен/.test(concat)) {
+    tags.add('shortStack');
+    tags.add('icm');
+    tags.add('positionAwareness');
+    tags.add('stackDepthAwareness');
+  }
+
+  const leak = mapLeakConceptForTask(t);
+  if (leak) {
+    for (const sk of skillsForConcept(leak)) tags.add(sk);
+  }
+
+  if (/префлоп|preflop/.test(concat) && !tags.has('postflop') && !tags.has('river')) {
+    if ([...tags].some((s) => ['preflop', 'shortStack', 'icm'].includes(s)) === false && /defen|защит|3-bet|3-бет|rfi|open/.test(concat)) {
+      tags.add('preflop');
+    }
+  }
+  if (/флоп|flop|тёрн|turn/.test(concat)) tags.add('postflop');
+  if (/ривер|river/.test(concat)) tags.add('river');
+
+  return [...tags];
 }
 
 function clamp(n, lo, hi) {

@@ -8,6 +8,7 @@
 import {
   buildAssessmentSet, runAssessment, createAnalytics, buildLeakProfile
 } from '../solver/src/index.js';
+import { seedSkillEvidenceFromAssessment, buildSkillProfile } from '../solver/src/training/skillProfile.js';
 import { assessmentViewModel, assessmentSummaryViewModel } from './viewModel.js';
 
 export class AssessmentController {
@@ -50,7 +51,10 @@ export class AssessmentController {
 
   // Start the diagnostic: build the question set and enter the answering state.
   begin() {
-    this.set = buildAssessmentSet({ rng: this.rng, count: this.count });
+    const seed = this.store && typeof this.store.getOrCreatePersonalizationSeed === 'function'
+      ? this.store.getOrCreatePersonalizationSeed()
+      : null;
+    this.set = buildAssessmentSet({ rng: this.rng, count: this.count, personalizationSeed: seed });
     this.answers = [];
     this.index = 0;
     this.result = null;
@@ -99,7 +103,14 @@ export class AssessmentController {
     if (this.store) {
       try {
         this.store.saveAssessment(res);
-        if (res.skillProfile) this.store.saveSkillProfile(res.skillProfile);
+        seedSkillEvidenceFromAssessment(this.store, res, this.now());
+        if (res.skillProfile) {
+          const stored = this.store.loadSkillEvidence ? this.store.loadSkillEvidence() : null;
+          const profile = stored && Object.keys(stored).length
+            ? buildSkillProfile({ storedEvidence: stored, now: this.now() })
+            : res.skillProfile;
+          this.store.saveSkillProfile(profile);
+        }
         for (const [concept, prof] of Object.entries(res.leakProfiles || {})) {
           const events = (prof && prof.attempts) || [];
           if (!events.length) continue;

@@ -122,6 +122,18 @@ export function scoreFromEvidence(ev) {
   return Math.round(score);
 }
 
+export function scoredSkillFromEvidence(ev) {
+  if (!ev || !ev.sampleSize) return null;
+  const raw = scoreFromEvidence(ev);
+  if (raw == null) return null;
+  if (ev.sampleSize < SCORE_MIN_SAMPLE) {
+    const prior = 55;
+    const weight = ev.sampleSize / SCORE_MIN_SAMPLE;
+    return Math.round(prior * (1 - weight) + raw * weight);
+  }
+  return raw;
+}
+
 // Confidence grows with sample size and the solver's own confidence. Never
 // confident on a tiny sample.
 export function confidenceFromEvidence(ev) {
@@ -157,7 +169,7 @@ export function recordSkillEvidence(ev, { evLossBb = 0, grade = null, confidence
   e.totalEvLossBb = round(attempts.reduce((s, a) => s + a.evLossBb, 0), 4);
   e.avgEvLossBb = e.sampleSize ? round(e.totalEvLossBb / e.sampleSize, 4) : 0;
   e.highConfidenceMistakes = attempts.filter((a) => a.evLossBb > 0.0005 && (a.confidenceScore == null || a.confidenceScore >= 0.6)).length;
-  e.score = scoreFromEvidence(e);
+  e.score = scoredSkillFromEvidence(e);
   e.confidence = confidenceFromEvidence(e);
   e.recentTrend = trendFromEvidence(e);
   if (at != null) e.lastSeenAt = at;
@@ -166,62 +178,30 @@ export function recordSkillEvidence(ev, { evLossBb = 0, grade = null, confidence
 
 // ---- Building the full profile ------------------------------------------------
 
-// From leak profiles (concept → leakProfile) aggregate per-skill evidence.
-export function buildSkillProfile({ leakProfiles = [], assessment = null, now = Date.now() } = {}) {
-  const bySkill = {};
-  const init = (s) => { if (!bySkill[s]) bySkill[s] = createSkillEvidence({ skill: s, now }); };
+export function evidenceToSkillEntry(ev, skill) {
+  return {
+    skill,
+    labelRu: skillLabelRu(skill),
+    score: ev.score,
+    confidence: round(ev.confidence, 3),
+    confidenceLabel: confidenceLabel(ev.confidence),
+    sampleSize: ev.sampleSize,
+    recentTrend: ev.recentTrend,
+    avgEvLossBb: ev.avgEvLossBb
+  };
+}
 
-  for (const prof of (leakProfiles || [])) {
-    if (!prof || !prof.concept) continue;
-    const skills = skillsForConcept(prof.concept);
-    for (const skill of skills) {
-      init(skill);
-      for (const attempt of (prof.attempts || [])) {
-        recordSkillEvidence(bySkill[skill], {
-          evLossBb: attempt.evLossBb,
-          confidenceScore: attempt.confidenceScore,
-          at: attempt.at != null ? attempt.at : now
-        });
-      }
-    }
-  }
-
-  // Assessment items carry explicit skill tags (skill-pool questions).
-  if (assessment && assessment.results) {
-    for (const item of assessment.results) {
-      const skill = normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0] || null;
-      if (!skill) continue;
-      init(skill);
-      const loss = (item.evLossBb != null) ? item.evLossBb : (item.correct === true ? 0 : 0.35);
-      recordSkillEvidence(bySkill[skill], {
-        evLossBb: loss,
-        grade: item.grade || null,
-        confidenceScore: item.confidence != null ? item.confidence / 100 : null,
-        at: item.at != null ? item.at : now
-      });
-    }
-  }
-
+export function finalizeSkillProfile(bySkill, now = Date.now()) {
   const skills = {};
   for (const s of SKILLS) {
     if (!bySkill[s]) continue;
-    const ev = bySkill[s];
-    skills[s] = {
-      skill: s,
-      labelRu: skillLabelRu(s),
-      score: ev.score,
-      confidence: round(ev.confidence, 3),
-      confidenceLabel: confidenceLabel(ev.confidence),
-      sampleSize: ev.sampleSize,
-      recentTrend: ev.recentTrend,
-      avgEvLossBb: ev.avgEvLossBb
-    };
+    skills[s] = evidenceToSkillEntry(bySkill[s], s);
   }
 
   const present = Object.values(skills).filter((s) => s.sampleSize > 0);
   const scored = present.filter((s) => s.score != null);
   const overall = scored.length
-    ? Math.round(scored.reduce((s, x) => s + x.score, 0) / scored.length)
+    ? Math.round(scored.reduce((sum, x) => sum + x.score, 0) / scored.length)
     : null;
 
   return {
@@ -229,12 +209,125 @@ export function buildSkillProfile({ leakProfiles = [], assessment = null, now = 
     skills,
     overall,
     overallLabel: overall != null ? overallLabel(overall) : null,
-    sampleSize: present.reduce((s, x) => s + x.sampleSize, 0),
-    confidence: present.length ? round(present.reduce((s, x) => s + x.confidence, 0) / present.length, 3) : 0,
+    sampleSize: present.reduce((sum, x) => sum + x.sampleSize, 0),
+    confidence: present.length ? round(present.reduce((sum, x) => sum + x.confidence, 0) / present.length, 3) : 0,
     updatedAt: now,
     weakest: [...Object.values(skills)].sort((a, b) => (a.score ?? 999) - (b.score ?? 999))[0] || null,
     strongest: [...Object.values(skills)].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0] || null
   };
+}
+
+export function recordSkillEvidenceForTags(bySkill, skillTags, payload, now = Date.now()) {
+  const tags = [...new Set((skillTags || []).filter(Boolean))];
+  for (const skill of tags) {
+    if (!bySkill[skill]) bySkill[skill] = createSkillEvidence({ skill, now });
+    recordSkillEvidence(bySkill[skill], { ...payload, at: payload.at != null ? payload.at : now });
+  }
+  return bySkill;
+}
+
+export function mergeStoredSkillEvidence(bySkill, stored = {}, now = Date.now()) {
+  for (const [skill, ev] of Object.entries(stored || {})) {
+    if (!ev || !SKILLS.includes(skill)) continue;
+    if (!bySkill[skill]) bySkill[skill] = createSkillEvidence({ skill, now });
+    for (const attempt of (ev.attempts || [])) {
+      recordSkillEvidence(bySkill[skill], attempt);
+    }
+  }
+  return bySkill;
+}
+
+export function updateSkillProfileInStore(store, {
+  skillTags = [],
+  evLossBb = 0,
+  grade = null,
+  confidenceScore = null,
+  now = Date.now()
+} = {}) {
+  if (!store || typeof store.loadSkillEvidence !== 'function') return null;
+  const stored = store.loadSkillEvidence() || {};
+  const bySkill = {};
+  mergeStoredSkillEvidence(bySkill, stored, now);
+  recordSkillEvidenceForTags(bySkill, skillTags, { evLossBb, grade, confidenceScore, at: now }, now);
+
+  const nextStored = { ...stored };
+  for (const skill of skillTags) {
+    if (bySkill[skill]) nextStored[skill] = bySkill[skill];
+  }
+  store.saveSkillEvidence(nextStored);
+
+  const assessment = typeof store.loadAssessment === 'function' ? store.loadAssessment() : null;
+  const leakProfiles = typeof store.listProfiles === 'function' ? store.listProfiles() : [];
+  const profile = buildSkillProfile({
+    storedEvidence: nextStored,
+    now
+  });
+  if (typeof store.saveSkillProfile === 'function') store.saveSkillProfile(profile);
+  return profile;
+}
+
+// From leak profiles (concept → leakProfile) aggregate per-skill evidence.
+export function buildSkillProfile({ leakProfiles = [], assessment = null, storedEvidence = null, now = Date.now() } = {}) {
+  const bySkill = {};
+  const init = (s) => { if (!bySkill[s]) bySkill[s] = createSkillEvidence({ skill: s, now }); };
+  const hasStored = storedEvidence && Object.keys(storedEvidence).length > 0;
+
+  if (hasStored) {
+    mergeStoredSkillEvidence(bySkill, storedEvidence, now);
+  } else {
+    for (const prof of (leakProfiles || [])) {
+      if (!prof || !prof.concept) continue;
+      const skills = skillsForConcept(prof.concept);
+      for (const skill of skills) {
+        init(skill);
+        for (const attempt of (prof.attempts || [])) {
+          recordSkillEvidence(bySkill[skill], {
+            evLossBb: attempt.evLossBb,
+            confidenceScore: attempt.confidenceScore,
+            at: attempt.at != null ? attempt.at : now
+          });
+        }
+      }
+    }
+
+    if (assessment && assessment.results) {
+      for (const item of assessment.results) {
+        const tags = item.skillTags && item.skillTags.length
+          ? item.skillTags
+          : [normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0]].filter(Boolean);
+        const loss = (item.evLossBb != null) ? item.evLossBb : (item.correct === true ? 0 : 0.35);
+        recordSkillEvidenceForTags(bySkill, tags, {
+          evLossBb: loss,
+          grade: item.grade || null,
+          confidenceScore: item.confidence != null ? item.confidence / 100 : null,
+          at: item.at != null ? item.at : now
+        }, now);
+      }
+    }
+  }
+
+  return finalizeSkillProfile(bySkill, now);
+}
+
+export function seedSkillEvidenceFromAssessment(store, assessmentResult, now = Date.now()) {
+  if (!store || !assessmentResult || !assessmentResult.results) return null;
+  const stored = typeof store.loadSkillEvidence === 'function' ? (store.loadSkillEvidence() || {}) : {};
+  const bySkill = {};
+  mergeStoredSkillEvidence(bySkill, stored, now);
+  for (const item of assessmentResult.results) {
+    const tags = item.skillTags && item.skillTags.length
+      ? item.skillTags
+      : [normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0]].filter(Boolean);
+    const loss = (item.evLossBb != null) ? item.evLossBb : (item.correct === true ? 0 : 0.35);
+    recordSkillEvidenceForTags(bySkill, tags, {
+      evLossBb: loss,
+      grade: item.correct ? 'GOOD' : 'MISTAKE',
+      confidenceScore: item.confidence != null ? item.confidence / 100 : null,
+      at: item.at != null ? item.at : now
+    }, now);
+  }
+  if (typeof store.saveSkillEvidence === 'function') store.saveSkillEvidence(bySkill);
+  return bySkill;
 }
 
 export function overallLabel(score) {
