@@ -90,10 +90,26 @@ test('renderHome renders personal training CTA with start handler', () => {
     subtitle: '7 раздач · около 5 минут',
     levelLabel: 'КЛУБНЫЙ РЕГ',
     levelScore: 61,
+    playerProfile: {
+      strongest: { label: 'Ривер', score: 78, diagnosis: 'освоено' },
+      weakest: { label: 'ICM', score: 42, diagnosis: 'слабое место' },
+      tracks: [
+        {
+          skill: 'icm', label: 'ICM', score: 42,
+          masteryState: 'в работе', trend: 'падает', trendArrow: '↓',
+          mistakeFrequency: '38%', diagnosis: 'слабое место'
+        }
+      ]
+    },
+    profileHeading: 'ТВОЙ ПРОФИЛЬ',
+    strongestHeading: 'Сильный навык',
+    weakestHeading: 'Слабый навык',
+    tracksHeading: 'НАВЫКИ',
+    mistakesHeading: 'ошибки',
     focusHeading: 'Сегодня тренируем:',
     focusItems: ['решения на баббле', 'блеф-кетчи на ривере'],
     whyHeading: 'Почему:',
-    whyText: 'Именно здесь ты сейчас чаще всего теряешь фишки.',
+    whyText: 'Раздачи подобраны под слабые зоны: icm и ривер.',
     cta: 'НАЧАТЬ ТРЕНИРОВКУ',
     total: 7
   };
@@ -101,6 +117,11 @@ test('renderHome renders personal training CTA with start handler', () => {
   R.renderHome(root, vm, { start: () => started++ });
   assert.ok(root.innerHTML.includes('ТВОЯ ТРЕНИРОВКА'));
   assert.ok(root.innerHTML.includes('7 раздач'));
+  assert.ok(root.innerHTML.includes('ТВОЙ ПРОФИЛЬ'));
+  assert.ok(root.innerHTML.includes('Сильный навык'));
+  assert.ok(root.innerHTML.includes('Слабый навык'));
+  assert.ok(root.innerHTML.includes('ICM'));
+  assert.ok(root.innerHTML.includes('38%'));
   assert.ok(root.innerHTML.includes('Сегодня тренируем'));
   assert.ok(root.innerHTML.includes('баббле'));
   root.querySelector('#trStart').onclick();

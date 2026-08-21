@@ -22,7 +22,17 @@ export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
   if (vm.type === 'training') {
-    const scoresHtml = (vm.skillScores || []).length
+    const pp = vm.playerProfile;
+    const profileHtml = pp ? `<div class="rangesField" style="margin-top:12px">
+      <span class="ey">${esc(vm.profileHeading || 'ТВОЙ ПРОФИЛЬ')}</span>
+      ${pp.strongest ? `<div class="row"><span>${esc(vm.strongestHeading || 'Сильный навык')}</span><b>${esc(pp.strongest.label)} · ${esc(pp.strongest.score)}</b></div>` : ''}
+      ${pp.weakest ? `<div class="row"><span>${esc(vm.weakestHeading || 'Слабый навык')}</span><b>${esc(pp.weakest.label)} · ${esc(pp.weakest.score)}</b></div>` : ''}
+      <span class="ey" style="margin-top:10px;display:block">${esc(vm.tracksHeading || 'НАВЫКИ')}</span>
+      ${(pp.tracks || []).map((t) =>
+        `<div class="row"><span>${esc(t.label)}</span><b>${esc(t.score)} · ${esc(t.masteryState)} · ${esc(t.trendArrow)} ${esc(t.trend)} · ${esc(vm.mistakesHeading || 'ошибки')} ${esc(t.mistakeFrequency)}</b></div>`
+      ).join('')}
+    </div>` : '';
+    const scoresHtml = !pp && (vm.skillScores || []).length
       ? `<div class="rangesField" style="margin-top:12px"><span class="ey">${esc(vm.levelHeading || 'ТВОЙ УРОВЕНЬ')}</span>${(vm.skillScores || []).map((s) =>
         `<div class="row"><span>${esc(s.label)}</span><b>${esc(s.score)}</b></div>`).join('')}</div>`
       : '';
@@ -31,6 +41,7 @@ export const renderHome = (root, vm, handlers = {}) => {
       <span class="ey">ТРЕНИРОВКА</span>
       <h1 class="impact">${esc(vm.title)}</h1>
       <p class="mut">${esc(vm.subtitle)}</p>
+      ${profileHtml}
       ${scoresHtml}
       <p class="ey" style="margin-top:16px">${esc(vm.focusHeading)}</p>
       ${focusHtml}
