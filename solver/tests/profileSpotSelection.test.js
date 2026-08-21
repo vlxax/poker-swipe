@@ -91,7 +91,7 @@ test('2: river bluff-catch leak prioritizes river defense spots', () => {
 
   assert.ok(bluffCatchSpotCount(plan) >= 2, `expected >=2 bluff-catch spots, got ${bluffCatchSpotCount(plan)}`);
   assert.ok(
-    plan.sessionPlan.primaryTargets.some((t) => /bluff|price|fold|catch/i.test(t)),
+    plan.sessionPlan.primaryTargets.some((t) => /bluff|price|fold|catch|блеф|кетч|цена|фолд|ривер/i.test(t)),
     'primary targets should mention river defense'
   );
 });

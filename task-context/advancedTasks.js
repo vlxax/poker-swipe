@@ -1,7 +1,7 @@
 // Phase 9: difficulty 4–5 training tasks — reg-level spots with competing factors.
 // Uses the same schema as library.js; imported into the main task library.
 
-import { emptyTask, OPPONENT_PROFILES } from './schema.js';
+import { emptyTask, OPPONENT_PROFILES, normalizeTaskTerminology } from './schema.js';
 
 function T(o) {
   const d = emptyTask();
@@ -15,7 +15,7 @@ function T(o) {
   if (!spot.effStack && spot.heroStack) {
     spot.effStack = Math.min(spot.heroStack, spot.villainStack || spot.heroStack);
   }
-  return spot;
+  return normalizeTaskTerminology(spot);
 }
 
 export const ADVANCED_TASKS = [
@@ -147,8 +147,8 @@ export const ADVANCED_TASKS = [
     id: 'ADV_ICM_SHORT_COVER',
     street: 'ПРЕФЛОП', format: 'MTT', blinds: [2000, 4000], ante: 500, stage: 'ФИНАЛЬНЫЙ СТОЛ',
     table: '6-MAX', left: '4 LEFT', position: 'SB', hero: ['K♠', 'Q♠'], heroStack: 18, villain: 'BB',
-    villainStack: 45, opp: 'РЕГ', board: [], pot: 12.5,
-    history: [{ street: 'ПРЕФЛОП', text: 'Финальный стол, 4 left. Все до SB сфолдили. BB — чиплидер 45 ББ.', pot: 12.5 }],
+    villainStack: 45, opp: 'РЕГ', board: [], pot: 2.25,
+    history: [{ street: 'ПРЕФЛОП', text: 'Финальный стол, 4 left. Все до SB сфолдили. BB — чиплидер 45 ББ.', pot: 2.25 }],
     question: 'Что делаешь с KQs в SB при 18 ББ на финальном столе?',
     options: ['ФОЛД', 'РЕЙЗ', 'ОЛЛ-ИН'], correct: 'ОЛЛ-ИН', alsoOk: ['РЕЙЗ'],
     concept: 'final table ICM shove', explain: 'При 18 ББ KQs — пуш из SB: ICM давит на BB, но рука слишком сильна для фолда. Рейз-фолд теряет fold equity.',
@@ -195,7 +195,7 @@ export const ADVANCED_TASKS = [
     history: [{ street: 'ПРЕФЛОП', text: 'Баббл: 7 left, призовых 6. SB запушил 28 ББ. Средний стек за столом ~22 ББ.', pot: 8.2 }],
     question: 'Что делаешь с QQ в BB при 16 ББ на баббле против пуша SB?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'КОЛЛ', alsoOk: [],
-    concept: 'bubble ICM QQ call', explain: 'QQ слишком сильна для ICM-фолда даже на баббле: доминируем AJ/TT/99 и часть Ax. Риск вылета компенсируется chipEV.',
+    concept: 'bubble ICM QQ call', explain: 'QQ слишком сильна для ICM-фолда даже на баббле: колл доминирует AJ/TT/99 и часть Ax. Риск вылета компенсируется chipEV.',
     difficulty: 5, tags: ['баббл', 'ICM', 'колл', 'пары']
   }),
   T({

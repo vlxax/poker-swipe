@@ -73,12 +73,12 @@ const TASK_CONCEPT_TO_LEAK = {
 };
 
 export function mapLeakConceptForTask(task) {
-  const key = String(task.concept || '').toLowerCase().trim();
+  const key = String(task.conceptKey || task.concept || '').toLowerCase().trim();
   if (TASK_CONCEPT_TO_LEAK[key]) return TASK_CONCEPT_TO_LEAK[key];
   for (const [pattern, leak] of Object.entries(TASK_CONCEPT_TO_LEAK)) {
     if (key.includes(pattern)) return leak;
   }
-  const concat = [task.concept, ...(task.tags || []), task.street, task.stage]
+  const concat = [task.conceptKey || task.concept, ...(task.tags || []), task.street, task.stage]
     .map((x) => String(x || '').toLowerCase()).join(' ');
   if (/icm|баббл|bubble|itm|финальный|pko|баунти/.test(concat)) return 'icm_pressure';
   if (/bluffcatch|bluff catch|bluff-catch|блеф-кетч|price defence/.test(concat)) return 'bluff_catch';
@@ -337,13 +337,14 @@ function icmFromTags(tags) {
 }
 
 function isExploitTask(t) {
-  const concat = [t.concept, ...(t.tags || []), t.opp && t.opp.name].join(' ').toLowerCase();
+  const concat = [t.conceptKey || t.concept, ...(t.tags || []), t.opp && t.opp.name].join(' ').toLowerCase();
   return /эксплойт|exploit|нит|station|маниак|любитель|nit|maniac|lover/.test(concat);
 }
 
 export function deriveSkillTags(t) {
   const tags = new Set();
-  const concat = [t.concept, ...(t.tags || []), t.street, t.stage, t.position]
+  const conceptSource = t.conceptKey || t.concept;
+  const concat = [conceptSource, ...(t.tags || []), t.street, t.stage, t.position]
     .map((x) => String(x || '').toLowerCase()).join(' ');
 
   for (const rule of CONCEPT_SKILL_RULES) {
@@ -389,7 +390,26 @@ export function deriveSkillTags(t) {
     }
   }
   if (/флоп|flop|тёрн|turn/.test(concat)) tags.add('postflop');
-  if (/ривер|river/.test(concat)) tags.add('river');
+  if (/ривер|river/.test(concat)) {
+    tags.add('river');
+    tags.add('postflop');
+  }
+
+  const fmt = String(t.format || '');
+  const stageText = String(t.stage || '').toLowerCase();
+  const streetText = String(t.street || '').toLowerCase();
+  const tournamentFmt = /MTT|PKO|SNG/i.test(fmt);
+  const icmStage = /баббл|itm|финальн|bubble|финал|pko/.test(stageText);
+  if (/PKO/i.test(fmt)) tags.add('icm');
+  if (tournamentFmt && tags.has('shortStack')) tags.add('icm');
+  if (tournamentFmt && icmStage) tags.add('icm');
+  if (tournamentFmt && /префлоп|preflop/.test(streetText)
+    && heroStack != null && heroStack <= 25 && /поздн|late|баббл|itm|финал|bubble/.test(stageText)) {
+    tags.add('icm');
+  }
+  if (tournamentFmt && heroStack != null && heroStack <= 15 && !/префлоп|preflop/.test(streetText)) {
+    tags.add('icm');
+  }
 
   return [...tags];
 }

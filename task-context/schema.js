@@ -114,3 +114,149 @@ export function blindsLabel(spot) {
   const base = `${spot.blinds[0]}/${spot.blinds[1]}`;
   return spot.ante ? `${base} + анте ${spot.ante}` : base;
 }
+
+const HAND_SHORT_RE = /\b([AKQJT2-9]{1,2})([so])\b/gi;
+const ALLOWED_HAND_TOKEN = /^(AA|KK|QQ|JJ|TT|AK|AQ|AJ|AT|KQ)$/i;
+
+const COPY_PHRASES = [
+  [/check-check/gi, 'чек-чек'],
+  [/check-raise/gi, 'чек-рейз'],
+  [/fold equity/gi, 'фолд-эквити'],
+  [/fold-equity/gi, 'фолд-эквити'],
+  [/5-bet/gi, '5-бет'],
+  [/4-bet/gi, '4-бет'],
+  [/3-bet/gi, '3-бет'],
+  [/dry board/gi, 'сухая доска'],
+  [/dynamic board/gi, 'динамичная доска'],
+  [/small bet/gi, 'малая ставка'],
+  [/top pair/gi, 'топ-пара'],
+  [/Broadways/g, 'бродвеи'],
+  [/broadways/g, 'бродвеи'],
+  [/suited/gi, 'одномастные'],
+  [/offsuit/gi, 'разномастные'],
+  [/semi-?bluff/gi, 'полублеф'],
+  [/bluffcatch/gi, 'блеф-кетч'],
+  [/bluff-catch/gi, 'блеф-кетч'],
+  [/bluff catch/gi, 'блеф-кетч'],
+  [/thin value/gi, 'тонкий вэлью'],
+  [/final table/gi, 'финальный стол'],
+  [/short stack/gi, 'короткий стек'],
+  [/deep stack/gi, 'глубокий стек'],
+  [/push-fold/gi, 'пуш-фолд'],
+  [/set-mining/gi, 'сет-майнинг'],
+  [/c-bet/gi, 'с-бет'],
+  [/overbet/gi, 'овербет'],
+  [/backdoor/gi, 'бэкдор'],
+  [/blockers/gi, 'блокеры'],
+  [/blocker/gi, 'блокер'],
+  [/showdown/gi, 'шоудаун'],
+  [/defence/gi, 'защита'],
+  [/defense/gi, 'защита'],
+  [/equity/gi, 'эквити'],
+  [/overlay/gi, 'оверлей'],
+  [/squeeze/gi, 'сквиз'],
+  [/exploit/gi, 'эксплойт'],
+  [/station/gi, 'коллер'],
+  [/maniac/gi, 'манiac'],
+  [/lover/gi, 'любитель'],
+  [/polarized/gi, 'поляризованный'],
+  [/polar/gi, 'полярный'],
+  [/barrel/gi, 'баррель'],
+  [/float/gi, 'флоат'],
+  [/bubble/gi, 'баббл'],
+  [/river/gi, 'ривер'],
+  [/turn/gi, 'тёрн'],
+  [/flop/gi, 'флоп'],
+  [/value/gi, 'вэлью'],
+  [/bluff/gi, 'блеф'],
+  [/fold/gi, 'фолд'],
+  [/call/gi, 'колл'],
+  [/raise/gi, 'рейз'],
+  [/push/gi, 'пуш'],
+  [/shove/gi, 'пуш'],
+  [/steal/gi, 'стил'],
+  [/open/gi, 'оупен'],
+  [/defend/gi, 'защита'],
+  [/pot/gi, 'банк'],
+  [/stack/gi, 'стек'],
+  [/pair/gi, 'пара'],
+  [/table/gi, 'стол'],
+  [/deep/gi, 'глубокий'],
+  [/short/gi, 'короткий'],
+  [/cover/gi, 'ковер'],
+  [/price/gi, 'цена'],
+  [/multiway/gi, 'мультипот'],
+  [/monotone/gi, 'монотонная'],
+  [/paired/gi, 'спаренная'],
+  [/coordinated/gi, 'координированная'],
+  [/flat/gi, 'колл'],
+  [/cold/gi, 'холодный'],
+  [/merge/gi, 'мёрдж'],
+  [/cash/gi, 'кэш'],
+  [/nit/gi, 'нит'],
+  [/iso-raise/gi, 'изолейт-рейз'],
+  [/give up/gi, 'сдача'],
+  [/range/gi, 'диапазон'],
+  [/sizing/gi, 'сайзинг'],
+  [/odds/gi, 'шансы'],
+  [/required/gi, 'нужный'],
+  [/check/gi, 'чек'],
+  [/bet/gi, 'ставка'],
+  [/set/gi, 'сет'],
+  [/high/gi, 'хай'],
+  [/батон(?!н)/gi, 'баттон']
+];
+
+const CONCEPT_PREFIX = [
+  [/^RFI /i, 'оупен '],
+  [/^BB /i, 'BB '],
+  [/^3bet /i, '3-бет-банк '],
+  [/^5-bet /i, '5-бет-банк '],
+  [/^4-bet /i, '4-бет '],
+  [/^3-bet /i, '3-бет ']
+];
+
+function applyCopyPhrases(text) {
+  if (!text) return text;
+  let out = String(text);
+  for (const [re, rep] of COPY_PHRASES) out = out.replace(re, rep);
+  return out;
+}
+
+function normalizeHandShorthand(text) {
+  if (!text) return text;
+  return String(text).replace(HAND_SHORT_RE, (full, ranks, suffix) => {
+    const token = `${ranks}${suffix}`;
+    if (ALLOWED_HAND_TOKEN.test(ranks)) return ranks;
+    return ranks;
+  });
+}
+
+function normalizeConceptLabel(concept) {
+  if (!concept) return concept;
+  let out = String(concept).trim();
+  for (const [re, rep] of CONCEPT_PREFIX) out = out.replace(re, rep);
+  out = applyCopyPhrases(out);
+  return out.replace(/\s+/g, ' ').trim();
+}
+
+export function normalizeTaskTerminology(task) {
+  if (!task || typeof task !== 'object') return task;
+  if (task.concept && !task.conceptKey) task.conceptKey = task.concept;
+  if (task.concept) task.concept = normalizeConceptLabel(task.concept);
+  if (task.question) {
+    task.question = normalizeHandShorthand(applyCopyPhrases(task.question));
+  }
+  if (task.explain) {
+    task.explain = normalizeHandShorthand(applyCopyPhrases(task.explain));
+  }
+  if (Array.isArray(task.history)) {
+    task.history = task.history.map((row) => ({
+      ...row,
+      text: row && row.text
+        ? normalizeHandShorthand(applyCopyPhrases(row.text))
+        : row.text
+    }));
+  }
+  return task;
+}

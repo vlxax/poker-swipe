@@ -2,7 +2,8 @@
 
 import {
   getTaskPool, hasUsablePlayerProfile, recordTrainingResult,
-  updateSkillProfileInStore, deriveSkillTags, drillFromLibraryTask
+  updateSkillProfileInStore, deriveSkillTags, drillFromLibraryTask,
+  libraryTaskToBrainSpot
 } from '../solver/src/index.js';
 import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';
 import { buildMiniAppPlan, MINI_APP_SPECS } from '../solver/src/training/miniAppPlanner.js';
@@ -23,25 +24,9 @@ export function letterGradeToEvLoss(letter) {
 }
 
 function libraryTaskToSwipe(task) {
-  const gen = drillFromLibraryTask(task);
-  return {
-    id: task.id,
-    street: task.street,
-    pos: [task.position, task.villain ? `vs ${task.villain}` : ''].filter(Boolean).join(' '),
-    hero: task.hero || [],
-    board: task.board || [],
-    ctx: (task.history && task.history[0] && task.history[0].text) || task.question || '',
-    stack: task.heroStack != null ? task.heroStack : 30,
-    pot: task.pot != null ? task.pot : 5,
-    actions: task.options || [],
-    preferred: [task.correct],
-    live: task.alsoOk || [],
-    concept: task.concept,
-    why: task.explain || '',
-    sizeZone: null,
-    _drill: gen.ok ? gen.drill : null,
-    _library: true
-  };
+  const spot = libraryTaskToBrainSpot(task);
+  if (!spot) return null;
+  return spot;
 }
 
 function spotToLegacyItem(spot) {
