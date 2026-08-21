@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-21T08:18:55+03:00",
+  "updated_at": "2026-08-21T10:59:50+03:00",
   "club_count": 59,
-  "event_count": 47,
-  "source_card_count": 47,
+  "event_count": 49,
+  "source_card_count": 49,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -739,12 +739,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10557",
           "address": "Нижняя Красносельская улица, 35 с. 59",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:15",
+          "late_reg_minutes": 195,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SHARK HUNT TOURNAMENT 19:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+          "source_card_text": "SHARK HUNT TOURNAMENT 19:00 1 000 ₽ вход до 22:15 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
         }
       ],
       "upcoming": 1
@@ -843,16 +843,16 @@
           "time": "20:00",
           "club": "Poker Room GTO",
           "tournament": "SECRET BOSS EDITION",
-          "fee_rub": 1000,
+          "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10496",
           "address": "Даев пер., д. 2",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "00:00",
+          "late_reg_minutes": 240,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SECRET BOSS EDITION 20:00 1 000 ₽ Poker Room GTO Даев пер., д. 2"
+          "source_card_text": "SECRET BOSS EDITION 20:00 1 500 ₽ вход до 00:00 Poker Room GTO Даев пер., д. 2"
         }
       ],
       "upcoming": 1
@@ -1108,16 +1108,16 @@
           "time": "19:00",
           "club": "SRP EQUITY",
           "tournament": "HEAD HUNTERS TOURNAMENT POKER",
-          "fee_rub": 1000,
+          "fee_rub": 0,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10441",
           "address": "Новолесная улица, д. 8/12",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "HEAD HUNTERS TOURNAMENT POKER 19:00 1 000 ₽ SRP EQUITY Новолесная улица, д. 8/12"
+          "source_card_text": "HEAD HUNTERS TOURNAMENT POKER 19:00 Бесплатно вход до 22:30 SRP EQUITY Новолесная улица, д. 8/12"
         }
       ],
       "upcoming": 1
@@ -1266,7 +1266,7 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 1,
+      "upcoming": 2,
       "schedule": [
         {
           "date": "2026-08-21",
@@ -1283,6 +1283,22 @@
           "reentry_cost_rub": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут Нокаут + Бонус 19:00 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7"
+        },
+        {
+          "date": "2026-08-21",
+          "time": "19:10",
+          "club": "Дойл (Doyle poker club)",
+          "tournament": "Knockout + Bonus",
+          "fee_rub": 1000,
+          "type": "Баунти / Нокаут",
+          "source_url": "https://pokernomoney.ru/tournaments/11261",
+          "address": "Б. Сухаревская пл. д. 14/7",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Баунти / Нокаут Knockout + Bonus 19:10 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7"
         }
       ]
     },
@@ -1387,12 +1403,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10391",
           "address": "Большая Никитская 43",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:10",
+          "late_reg_minutes": 190,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Bonus Tournament 19:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "Bonus Tournament 19:00 1 200 ₽ вход до 22:10 МАКСИМУМ Большая Никитская 43"
         }
       ]
     },
@@ -1534,10 +1550,26 @@
       "schedule": [
         {
           "date": "2026-08-21",
+          "time": "18:00",
+          "club": "ХАРТС",
+          "tournament": "Бесплатное обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/11265",
+          "address": "Боровая, 19А",
+          "late_reg_until": "22:25",
+          "late_reg_minutes": 265,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Бесплатное обучение 18:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
+        },
+        {
+          "date": "2026-08-21",
           "time": "19:00",
           "club": "ХАРТС",
           "tournament": "DOUBLE HEART TOURNEY",
-          "fee_rub": 1000,
+          "fee_rub": 0,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10303",
           "address": "Боровая, 19А",
@@ -1546,10 +1578,10 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "DOUBLE HEART TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+          "source_card_text": "DOUBLE HEART TOURNEY 19:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "ХРОНИКИ",
@@ -1608,6 +1640,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут CLASSIC ONE TOURNAMENT 18:00 1 000 ₽ БЛЕФ? Проспект Мира, 102с12, подъезд 6"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "18:00",
+      "club": "ХАРТС",
+      "tournament": "Бесплатное обучение",
+      "fee_rub": 0,
+      "type": "Обучающий",
+      "source_url": "https://pokernomoney.ru/tournaments/11265",
+      "address": "Боровая, 19А",
+      "late_reg_until": "22:25",
+      "late_reg_minutes": 265,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Обучающий Бесплатное обучение 18:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
     },
     {
       "date": "2026-08-21",
@@ -1858,12 +1906,12 @@
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10557",
       "address": "Нижняя Красносельская улица, 35 с. 59",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:15",
+      "late_reg_minutes": 195,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "SHARK HUNT TOURNAMENT 19:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+      "source_card_text": "SHARK HUNT TOURNAMENT 19:00 1 000 ₽ вход до 22:15 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
     },
     {
       "date": "2026-08-21",
@@ -1966,16 +2014,16 @@
       "time": "19:00",
       "club": "SRP EQUITY",
       "tournament": "HEAD HUNTERS TOURNAMENT POKER",
-      "fee_rub": 1000,
+      "fee_rub": 0,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10441",
       "address": "Новолесная улица, д. 8/12",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:30",
+      "late_reg_minutes": 210,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "HEAD HUNTERS TOURNAMENT POKER 19:00 1 000 ₽ SRP EQUITY Новолесная улица, д. 8/12"
+      "source_card_text": "HEAD HUNTERS TOURNAMENT POKER 19:00 Бесплатно вход до 22:30 SRP EQUITY Новолесная улица, д. 8/12"
     },
     {
       "date": "2026-08-21",
@@ -2050,12 +2098,12 @@
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10391",
       "address": "Большая Никитская 43",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:10",
+      "late_reg_minutes": 190,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Bonus Tournament 19:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
+      "source_card_text": "Bonus Tournament 19:00 1 200 ₽ вход до 22:10 МАКСИМУМ Большая Никитская 43"
     },
     {
       "date": "2026-08-21",
@@ -2094,7 +2142,7 @@
       "time": "19:00",
       "club": "ХАРТС",
       "tournament": "DOUBLE HEART TOURNEY",
-      "fee_rub": 1000,
+      "fee_rub": 0,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10303",
       "address": "Боровая, 19А",
@@ -2103,7 +2151,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "DOUBLE HEART TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+      "source_card_text": "DOUBLE HEART TOURNEY 19:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
     },
     {
       "date": "2026-08-21",
@@ -2152,6 +2200,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "ALKO KILL FISH 19:10 1 000 ₽ Hi, Jack Club Люсиновская улица, 53к2"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:10",
+      "club": "Дойл (Doyle poker club)",
+      "tournament": "Knockout + Bonus",
+      "fee_rub": 1000,
+      "type": "Баунти / Нокаут",
+      "source_url": "https://pokernomoney.ru/tournaments/11261",
+      "address": "Б. Сухаревская пл. д. 14/7",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Баунти / Нокаут Knockout + Bonus 19:10 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7"
     },
     {
       "date": "2026-08-21",
@@ -2286,16 +2350,16 @@
       "time": "20:00",
       "club": "Poker Room GTO",
       "tournament": "SECRET BOSS EDITION",
-      "fee_rub": 1000,
+      "fee_rub": 1500,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10496",
       "address": "Даев пер., д. 2",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "00:00",
+      "late_reg_minutes": 240,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "SECRET BOSS EDITION 20:00 1 000 ₽ Poker Room GTO Даев пер., д. 2"
+      "source_card_text": "SECRET BOSS EDITION 20:00 1 500 ₽ вход до 00:00 Poker Room GTO Даев пер., д. 2"
     },
     {
       "date": "2026-08-21",
