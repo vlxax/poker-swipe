@@ -217,6 +217,26 @@ test('deriveSkillTags returns multiple skills for RFI tasks', () => {
   assert.ok(tags.includes('positionAwareness'));
 });
 
+test('intentional spaced review can repeat a flagged task', () => {
+  const store = freshStore('spaced-review');
+  const set = buildAssessmentSet({ personalizationSeed: 'spaced-review', count: 12 });
+  const res = runAssessment({ items: set, answers: set.map((i) => ({ id: i.id, choice: i.correct })) });
+  seedSkillEvidenceFromAssessment(store, res);
+  store.saveSkillProfile(buildSkillProfile({ storedEvidence: store.loadSkillEvidence() }));
+
+  const task = getTaskById('PRE_RFI_BTN_A8S');
+  const history = [{
+    spotId: task.id,
+    concept: task.concept,
+    contentFingerprint: contentFingerprint(task),
+    at: 1,
+    spacedReview: true
+  }];
+  const plan = buildProfileDailyPlan({ store, history, count: 7, now: 100 });
+  assert.ok(plan);
+  assert.ok((plan.spotIds || []).includes(task.id));
+});
+
 test('recordTrainingResult records all skill tags for a drill', () => {
   const task = getTaskById('PRE_RFI_BTN_A8S');
   const gen = drillFromLibraryTask(task);

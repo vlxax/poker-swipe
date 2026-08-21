@@ -161,7 +161,9 @@ export function buildDailyPlan({
     const mastery = progress && progress.masteryScore != null ? progress.masteryScore : null;
     if (conceptDue({ lastSeenAt: last ? last.at : null, mastery, now })) dueConcepts.add(spot.concept);
   }
-  const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0);
+  const allowRepeatIds = buildSpacedReviewAllowIds(spots, history, progressByConcept, now);
+  const allowSet = new Set(allowRepeatIds);
+  const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0 || allowSet.has(s.id));
 
   const skillTargets = computeSkillTargets(skillProfile, count);
 
@@ -177,6 +179,7 @@ export function buildDailyPlan({
     now,
     masteryGate: DEFAULTS.masteryGate,
     skillTargets,
+    allowRepeatIds,
     rng
   });
 
@@ -251,6 +254,14 @@ export function planSummaryRu(plan) {
     parts.push(`Главная концепция: ${plan.primaryConcept}.`);
   }
   return parts.join(' ');
+}
+
+function buildSpacedReviewAllowIds(spots, history, progressByConcept, now) {
+  const allow = new Set();
+  for (const h of (history || [])) {
+    if (h && h.spacedReview && h.spotId) allow.add(h.spotId);
+  }
+  return [...allow];
 }
 
 function buildShownAt(history) {
