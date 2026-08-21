@@ -77,11 +77,23 @@ export {
 } from './training/errorCause.js';
 export {
   ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, buildAssessmentEligiblePool,
-  getAssessmentEligiblePool, getDiagnosticEligiblePool, gradeAssessmentItem, runAssessment,
+  getAssessmentEligiblePool, getDiagnosticEligiblePool, getPlacementEligiblePool,
+  gradeAssessmentItem, runAssessment,
   createDiagnosticSession, createDiagnosticSessionSeed, selectNextDiagnosticItem,
   submitDiagnosticAnswer, simulateDiagnosticRun, validateDiagnosticItem, validateDiagnosticPool,
-  getDiagnosticPoolSize, DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX
+  getDiagnosticPoolSize, DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX,
+  PLACEMENT_TEST_V2, PLACEMENT_COUNT_DEFAULT, PLACEMENT_COUNT_MIN, PLACEMENT_COUNT_MAX,
+  createPlacementSession, createPlacementSessionSeed, selectNextPlacementItem,
+  submitPlacementAnswer, simulatePlacementRun, placementSessionSummary, placementEvidenceWeight,
+  getPlacementPoolStats
 } from './training/assessment.js';
+export {
+  PLACEMENT_MODES, getValidatedMttTasks, libraryTaskToPlacementItem,
+  assignMiniAppMode, formatPlacementContext
+} from './training/placementTaskAdapter.js';
+export {
+  PLACEMENT_SKILLS, CALIBRATION_TIERS
+} from './training/placementTestV2.js';
 export {
   DIAGNOSTIC_CATEGORIES, DIAGNOSTIC_CATEGORY_IDS, getDiagnosticPool,
   getDiagnosticPoolByCategory, formatDiagnosticQuestion

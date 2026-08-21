@@ -213,10 +213,69 @@ export const renderCancelled = (root, vm = {}) => {
   if (b && typeof vm.back === 'function') b.onclick = () => vm.back();
 };
 
-// ---- Primary assessment (P0) -------------------------------------------------
+// ---- Placement Test V2 (structured MTT context per mini-app mode) ------------
+
+function placementContextHtml(vm) {
+  const ctx = vm.context || {};
+  const board = (ctx.board || []).map(cardHtml).join('');
+  const hero = (ctx.heroCards || []).map((c) => cardHtml(c)).join('');
+  const hist = (ctx.actionHistory || []).map((h) =>
+    `<div class="row"><span class="mut small">${esc(h.street)}</span><b>${esc(h.text)}</b></div>`
+  ).join('');
+
+  return `<div class="dailyPot">
+      <div><span class="ey">MTT</span><b>${esc(ctx.formatLine || 'MTT')}</b></div>
+      <div><span class="ey">СТАДИЯ</span><b>${esc(ctx.stageLine || '—')}</b></div>
+    </div>
+    <div class="row"><span class="mut small">${esc(ctx.stacksLine || '')}</span></div>
+    ${ctx.opponent ? `<div class="row"><span class="mut small">Соперник</span><b>${esc(ctx.opponent)}</b></div>` : ''}
+    ${hist ? `<div class="rangesField" style="margin-top:8px"><span class="ey">ИСТОРИЯ</span>${hist}</div>` : ''}
+    ${board ? `<div class="dailyBoard">${board}</div>` : ''}
+    ${hero ? `<div class="cards">${hero}</div>` : ''}`;
+}
+
+function placementReviewHtml(vm) {
+  const nodes = vm.reviewNodes || [];
+  if (!nodes.length) return '';
+  return `<div class="timeline">${nodes.map((n) =>
+    `<div class="node"><span class="ey">${esc(n.street)}</span><b>${esc(n.text)}</b></div>`
+  ).join('')}</div>`;
+}
+
+export const renderPlacementTask = (root, vm = {}, handlers = {}) => {
+  if (!root || !vm) return;
+  const p = vm.progress || {};
+  const mode = vm.mode || 'swipe';
+  const ctxBlock = placementContextHtml(vm);
+  const reviewBlock = mode === 'review' ? placementReviewHtml(vm) : '';
+  const sizingHint = mode === 'sizing' && vm.sizingTargetPct != null
+    ? `<p class="mut small">Выбери размер относительно банка ${vm.context?.potBb != null ? vm.context.potBb + ' BB' : ''}</p>`
+    : '';
+
+  root.innerHTML = `<div class="panel dailyStage placement-${esc(mode)}">
+    <span class="ey">${esc(vm.modeLabel || 'PLACEMENT')} · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>
+    <h1 class="impact">${esc(vm.heading || 'ЧТО СДЕЛАЕШЬ?')}</h1>
+    ${ctxBlock}
+    ${reviewBlock}
+    ${sizingHint}
+    <h2>${esc(vm.prompt || '')}</h2>
+    <div class="grid2">${(vm.choices || []).map((c) =>
+      `<button class="choice" data-achoice="${esc(c.id)}">${esc(c.labelRu)}</button>`).join('')}</div>
+  </div>`;
+  root.querySelectorAll('[data-achoice]').forEach((b) => {
+    b.onclick = () => { if (typeof handlers.answer === 'function') handlers.answer(b.dataset.achoice); };
+  });
+};
+
+// ---- Primary assessment (P0) — delegates to placement V2 renderer ------------
 
 export const renderAssessment = (root, vm = {}, handlers = {}) => {
-  if (!root || !vm || !vm.q) return;
+  if (!root || !vm) return;
+  if (vm.context || vm.mode) {
+    renderPlacementTask(root, vm, handlers);
+    return;
+  }
+  if (!vm.q) return;
   const p = vm.progress || {};
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">УРОВЕНЬ · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>

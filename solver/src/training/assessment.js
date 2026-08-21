@@ -1,8 +1,8 @@
-// Primary assessment (requirement P0). Adaptive 12–15 question placement test built
-// from the dedicated diagnostic pool — NOT the training task library.
-// Produces an initial Player Skill Profile + leak profile + recommended difficulty.
+// Primary assessment (P0). Placement Test V2 — adaptive 12–15 task MTT placement
+// built from validated task-context library tasks with mini-app presentation.
+// Produces initial Player Skill Profile + leak profile + recommended difficulty.
 
-import { buildSkillProfile, skillsForConcept, normalizeSkill, SKILLS } from './skillProfile.js';
+import { buildSkillProfile } from './skillProfile.js';
 import { buildLeakProfile } from './leakProfile.js';
 import { classifyErrorCause } from './errorCause.js';
 import {
@@ -13,19 +13,27 @@ import {
   getDiagnosticPoolSize
 } from './diagnosticPool.js';
 import {
-  createDiagnosticSession,
-  createDiagnosticSessionSeed,
-  selectNextDiagnosticItem,
-  submitDiagnosticAnswer,
-  simulateDiagnosticRun,
+  createPlacementSession,
+  createPlacementSessionSeed,
+  selectNextPlacementItem,
+  submitPlacementAnswer,
+  simulatePlacementRun,
+  placementSessionSummary,
+  placementEvidenceWeight,
   recommendedStartingDifficulty,
-  diagnosticSessionSummary,
-  evidenceWeight,
-  DIAGNOSTIC_COUNT_DEFAULT,
-  DIAGNOSTIC_COUNT_MIN,
-  DIAGNOSTIC_COUNT_MAX
-} from './diagnosticSelection.js';
-import { seededRng } from './personalizationSeed.js';
+  PLACEMENT_COUNT_DEFAULT,
+  PLACEMENT_COUNT_MIN,
+  PLACEMENT_COUNT_MAX,
+  getValidatedMttTasks,
+  getPlacementPoolStats
+} from './placementTestV2.js';
+import { libraryTaskToPlacementItem } from './placementTaskAdapter.js';
+
+export const DIAGNOSTIC_COUNT_DEFAULT = PLACEMENT_COUNT_DEFAULT;
+export const DIAGNOSTIC_COUNT_MIN = PLACEMENT_COUNT_MIN;
+export const DIAGNOSTIC_COUNT_MAX = PLACEMENT_COUNT_MAX;
+
+export const PLACEMENT_TEST_V2 = true;
 
 // Legacy fixed pool kept for backward-compatible grading references in old tests.
 export const ASSESSMENT_POOL = [
@@ -48,16 +56,25 @@ export const REQUIRED_SKILLS = [
   'bluffCatch', 'icm', 'exploit', 'rangeReading', 'positionAwareness', 'stackDepthAwareness'
 ];
 
+export function getPlacementEligiblePool() {
+  return getValidatedMttTasks().map((t) => libraryTaskToPlacementItem(t));
+}
+
 export function getDiagnosticEligiblePool() {
-  return getDiagnosticPool().map(diagnosticItemToAssessmentItem);
+  return getPlacementEligiblePool();
 }
 
 export function buildAssessmentEligiblePool() {
-  return getDiagnosticEligiblePool();
+  return getPlacementEligiblePool();
 }
 
 export function getAssessmentEligiblePool() {
-  return getDiagnosticEligiblePool();
+  return getPlacementEligiblePool();
+}
+
+export function evidenceWeight(item, grade) {
+  const tier = item.difficulty || item.tier || 2;
+  return placementEvidenceWeight(tier, grade);
 }
 
 export function gradeAssessmentItem(item, choice) {
@@ -73,40 +90,37 @@ export function gradeAssessmentItem(item, choice) {
     sizingSensitive: /%/.test(choice) || /%/.test(item.correct),
     confidence: null
   });
-  const weight = evidenceWeight(
-    { difficulty: item.difficulty, tier: item.tier },
-    { correct, nearOptimal }
-  );
+  const weight = placementEvidenceWeight(item.tier || item.difficulty || 2, { correct, nearOptimal });
   return { score, correct, nearOptimal, evLossBb, cause, evidenceWeight: weight };
 }
 
 function resolveSessionSeed({ sessionSeed, diagnosticSessionSeed, personalizationSeed, rng } = {}) {
   if (diagnosticSessionSeed) return diagnosticSessionSeed;
   if (sessionSeed) return sessionSeed;
-  if (personalizationSeed != null) return `dx-${personalizationSeed}`;
+  if (personalizationSeed != null) return `pt2-${personalizationSeed}`;
   if (typeof rng === 'function') {
     const n = Math.floor(rng() * 1e9);
-    return `dx-${n}`;
+    return `pt2-${n}`;
   }
-  return createDiagnosticSessionSeed();
+  return createPlacementSessionSeed();
 }
 
 export function buildAssessmentSet({
   pool = null,
   rng = Math.random,
-  count = DIAGNOSTIC_COUNT_DEFAULT,
+  count = PLACEMENT_COUNT_DEFAULT,
   sessionSeed = null,
   diagnosticSessionSeed = null,
   personalizationSeed = null,
   answerFn = null
 } = {}) {
   const seed = resolveSessionSeed({ sessionSeed, diagnosticSessionSeed, personalizationSeed, rng });
-  const targetCount = clamp(Number(count) || DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX);
+  const targetCount = clamp(Number(count) || PLACEMENT_COUNT_DEFAULT, PLACEMENT_COUNT_MIN, PLACEMENT_COUNT_MAX);
   const choose = answerFn || ((item) => item.correct);
-  const { items } = simulateDiagnosticRun({
+  const { items } = simulatePlacementRun({
     sessionSeed: seed,
     targetCount,
-    pool: pool || getDiagnosticPool(),
+    library: pool,
     answerFn: choose,
     gradeFn: (item, choice) => gradeAssessmentItem(item, choice)
   });
@@ -133,28 +147,22 @@ export function runAssessment({
   });
 
   const results = [];
-  let totalEvidence = 0;
-  let weightedScoreSum = 0;
 
   for (const a of answers) {
     const item = set.find((i) => i.id === a.id)
-      || getDiagnosticEligiblePool().find((i) => i.id === a.id)
+      || getPlacementEligiblePool().find((i) => i.id === a.id)
+      || getDiagnosticPool().map(diagnosticItemToAssessmentItem).find((i) => i.id === a.id)
       || ASSESSMENT_POOL.find((i) => i.id === a.id);
     if (!item) continue;
     const g = gradeAssessmentItem(item, a.choice);
-    const w = g.evidenceWeight || evidenceWeight(
-      { difficulty: item.difficulty, tier: item.tier },
-      g
-    );
-    totalEvidence += w;
-    weightedScoreSum += g.score * w;
+    const w = g.evidenceWeight;
     results.push({
       id: item.id,
       concept: item.concept,
       skillTag: item.skillTag,
       skillTags: item.skillTags || [item.skillTag].filter(Boolean),
       street: item.street,
-      q: item.q,
+      q: item.prompt || item.q,
       choice: a.choice,
       confidence: a.confidence != null ? a.confidence : null,
       score: g.score,
@@ -166,6 +174,7 @@ export function runAssessment({
       difficulty: item.difficulty,
       tier: item.tier,
       category: item.category,
+      miniAppMode: item.miniAppMode || null,
       at: now
     });
   }
@@ -204,10 +213,11 @@ export function runAssessment({
     };
   }
 
-  const diagSummary = session ? diagnosticSessionSummary(session) : summarizeFromResults(set, results);
+  const diagSummary = session ? placementSessionSummary(session) : summarizeFromResults(set, results);
 
   return {
-    version: 2,
+    version: 3,
+    placementVersion: 2,
     completedAt: now,
     answered: results.length,
     total: set.length,
@@ -223,6 +233,7 @@ export function runAssessment({
     weakestAreas,
     recommendedStartingDifficulty: recDifficulty,
     diagnosticSummary: diagSummary,
+    placementSummary: diagSummary,
     sessionSeed: session?.sessionSeed || null
   };
 }
@@ -233,7 +244,7 @@ function buildSkillConfidence(results) {
     const tags = r.skillTags && r.skillTags.length ? r.skillTags : [r.skillTag].filter(Boolean);
     for (const skill of tags) {
       if (!bySkill[skill]) bySkill[skill] = { weight: 0, correct: 0, total: 0 };
-      const w = r.evidenceWeight || 1;
+      const w = Math.abs(r.evidenceWeight || 1);
       bySkill[skill].weight += w;
       bySkill[skill].total += 1;
       if (r.correct || r.nearOptimal) bySkill[skill].correct += w;
@@ -284,7 +295,7 @@ function summarizeFromResults(set, results) {
 
 function choiceToType(choice) {
   const c = String(choice || '');
-  if (c.includes('СТАВКА') || c.includes('ОЛЛ') || c.includes('РЕЙЗ')) return 'bet';
+  if (c.includes('СТАВКА') || c.includes('ОЛЛ') || c.includes('РЕЙЗ') || /^\d+%$/.test(c)) return 'bet';
   if (c === 'КОЛЛ') return 'call';
   if (c === 'ЧЕК') return 'check';
   if (c === 'ФОЛД') return 'fold';
@@ -300,16 +311,27 @@ function round(n, d) {
   return Math.round(n * f) / f;
 }
 
+// V2 aliases — controllers import these names
+export const createDiagnosticSession = createPlacementSession;
+export const createDiagnosticSessionSeed = createPlacementSessionSeed;
+export const selectNextDiagnosticItem = selectNextPlacementItem;
+export const submitDiagnosticAnswer = submitPlacementAnswer;
+export const simulateDiagnosticRun = simulatePlacementRun;
+export const diagnosticSessionSummary = placementSessionSummary;
+
 export {
-  createDiagnosticSession,
-  createDiagnosticSessionSeed,
-  selectNextDiagnosticItem,
-  submitDiagnosticAnswer,
-  simulateDiagnosticRun,
+  createPlacementSession,
+  createPlacementSessionSeed,
+  selectNextPlacementItem,
+  submitPlacementAnswer,
+  simulatePlacementRun,
+  placementSessionSummary,
+  placementEvidenceWeight,
   validateDiagnosticItem,
   validateDiagnosticPool,
   getDiagnosticPoolSize,
-  DIAGNOSTIC_COUNT_DEFAULT,
-  DIAGNOSTIC_COUNT_MIN,
-  DIAGNOSTIC_COUNT_MAX
+  getPlacementPoolStats,
+  PLACEMENT_COUNT_DEFAULT,
+  PLACEMENT_COUNT_MIN,
+  PLACEMENT_COUNT_MAX
 };

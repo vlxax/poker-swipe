@@ -238,21 +238,71 @@ export function summaryViewModel({ session = null, results = [], baselineLosses 
   };
 }
 
-// ---- Primary assessment (P0) --------------------------------------------------
+// ---- Primary assessment / Placement Test V2 -----------------------------------
 
-// A single question from the 12-item primary diagnostic. Choices are plain
-// strings (e.g. 'ФОЛД'/'РЕЙЗ'), exposed as { id, labelRu } pairs for the renderer.
-export function assessmentViewModel({ item = null, index = 1, total = 1 } = {}) {
-  if (!item) return { q: null, choices: [], progress: { index: 0, total: 0 } };
+const MODE_LABELS = {
+  swipe: 'SWIPE',
+  sizing: 'SIZING',
+  review: 'LINE REVIEW',
+  xray: 'X-RAY',
+  quick: 'QUICK'
+};
+
+const MODE_HEADINGS = {
+  swipe: 'ЧТО СДЕЛАЕШЬ?',
+  sizing: 'КАКОЙ РАЗМЕР?',
+  review: 'ГДЕ ЛИНИЯ СЛОМАЛАСЬ?',
+  xray: 'КТО ВПЕРЕДИ?',
+  quick: 'БЫСТРОЕ РЕШЕНИЕ'
+};
+
+export function placementViewModel({ item = null, index = 1, total = 1 } = {}) {
+  if (!item) {
+    return { mode: 'swipe', choices: [], progress: { index: 0, total: 0 }, context: null };
+  }
+
+  const ctx = item.context || {};
+  const mode = item.miniAppMode || 'swipe';
+
   return {
+    version: item.version || 2,
     id: item.id,
-    q: item.q,
+    mode,
+    modeLabel: MODE_LABELS[mode] || 'PLACEMENT',
+    heading: MODE_HEADINGS[mode] || 'ЧТО СДЕЛАЕШЬ?',
+    prompt: item.prompt || item.q || 'Твоё решение?',
     street: item.street,
     streetRu: ASSESSMENT_STREET_RU[item.street] || String(item.street || '').toUpperCase(),
     skillTag: item.skillTag,
     concept: item.concept,
     progress: { index, total },
-    choices: (item.choices || []).map((c) => ({ id: c, labelRu: c }))
+    choices: (item.choices || []).map((c) => ({ id: c, labelRu: c })),
+    context: {
+      formatLine: ctx.formatLine || 'MTT',
+      stageLine: ctx.stageLine || '',
+      tableLine: ctx.tableLine || '',
+      stacksLine: ctx.stacksLine || '',
+      heroPosition: ctx.heroPosition || '',
+      villainPosition: ctx.villainPosition || '',
+      heroCards: ctx.heroCards || [],
+      board: ctx.board || [],
+      potBb: ctx.potBb,
+      effStackBb: ctx.effStackBb,
+      actionHistory: ctx.actionHistory || [],
+      opponent: ctx.opponent || null
+    },
+    reviewNodes: item.reviewNodes || null,
+    sizingTargetPct: item.sizingTargetPct
+  };
+}
+
+// Backward-compatible wrapper — delegates to placement V2 view model.
+export function assessmentViewModel({ item = null, index = 1, total = 1 } = {}) {
+  if (!item) return { q: null, choices: [], progress: { index: 0, total: 0 } };
+  const vm = placementViewModel({ item, index, total });
+  return {
+    ...vm,
+    q: vm.prompt
   };
 }
 
