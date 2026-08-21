@@ -104,7 +104,12 @@ export {
   DIFFERENTIATION_PLAN_NOW
 } from './training/playerDifferentiationFixtures.js';
 export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
-export { drillFromLibraryTask } from './training/libraryDrill.js';
+export {
+  drillFromLibraryTask,
+  libraryTaskToBrainSpot,
+  choiceToActionType,
+  explanationMatchesTask
+} from './training/libraryDrill.js';
 export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
 export { spotFingerprint, contentFingerprint, diversityPenalty, isTooSimilar, sessionRepetitionPenalty, recentFingerprints } from './training/sessionDiversity.js';
 export { createPersonalizationSeed, seededRng, seedToNumber } from './training/personalizationSeed.js';
