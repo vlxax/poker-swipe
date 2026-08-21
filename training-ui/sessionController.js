@@ -7,6 +7,7 @@ import {
   buildPersonalizedSessionAsync, gradeAnswer, recordTrainingResult,
   getTopLeaks, getDailyPersonalizedTraining
 } from '../solver/src/index.js';
+import { rebuildSkillProfileFromStore } from '../solver/src/training/dynamicPlayerProfile.js';
 import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
 
 export class SessionController {
@@ -42,9 +43,10 @@ export class SessionController {
       now: this.now()
     });
     this.preparedDaily = daily;
-    const skillProfile = typeof this.store.loadSkillProfile === 'function'
-      ? this.store.loadSkillProfile()
-      : null;
+    const skillProfile = rebuildSkillProfileFromStore(this.store, {
+      now: this.now(),
+      history: typeof this.store.loadHistory === 'function' ? this.store.loadHistory() : null
+    });
     return homeViewModel({ leaks, plan: daily.plan, skillProfile });
   }
 

@@ -7,6 +7,9 @@ import { skillScoresForHome } from '../solver/src/training/taskFeedback.js';
 import {
   focusItemsFromProfile, whyTextForTraining, trainingSubtitle
 } from './trainingHomeCopy.js';
+import {
+  skillSummaryVm, trackRowVm, whyTextFromDynamicProfile, focusTracksFromProfile
+} from './playerProfileCopy.js';
 
 export const STREET_RU = { preflop: 'ПРЕФЛОП', flop: 'ФЛОП', turn: 'ТЁРН', river: 'РИВЕР' };
 export const ASSESSMENT_STREET_RU = { 'ПРЕФЛОП': 'ПРЕФЛОП', 'ФЛОП': 'ФЛОП', 'ТЁРН': 'ТЁРН', 'РИВЕР': 'РИВЕР' };
@@ -16,6 +19,31 @@ export function gradeClass(grade) {
   if (grade === 'EXCELLENT' || grade === 'GOOD') return 'g';
   if (grade === 'INACCURACY') return 'y';
   return 'r';
+}
+
+// ---- Player profile (dynamic) -----------------------------------------------
+
+export function playerProfileViewModel(skillProfile) {
+  const tracks = skillProfile?.tracks || skillProfile?.dynamic?.tracks;
+  if (!tracks || !Object.keys(tracks).length) return null;
+
+  const trackRows = Object.values(tracks)
+    .filter((t) => t && t.score != null)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .map(trackRowVm);
+
+  const weakest = skillProfile.weakest || skillProfile.dynamic?.weakest;
+  const strongest = skillProfile.strongest || skillProfile.dynamic?.strongest;
+  const focusTracks = focusTracksFromProfile(skillProfile, 3).map(trackRowVm);
+
+  return {
+    strongest: skillSummaryVm(strongest),
+    weakest: skillSummaryVm(weakest),
+    tracks: trackRows,
+    focusTracks,
+    overall: skillProfile.overall ?? skillProfile.dynamic?.overall ?? null,
+    overallLabel: skillProfile.overallLabel ?? skillProfile.dynamic?.overallLabel ?? null
+  };
 }
 
 // ---- Home -------------------------------------------------------------------
@@ -38,8 +66,10 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     };
   }
 
+  const playerProfile = playerProfileViewModel(skillProfile);
   const focusItems = focusItemsFromProfile({ skillProfile, leaks: leaksList, plan, limit: 3 });
-  const whyText = whyTextForTraining({ skillProfile, leaks: leaksList, focusItems, plan });
+  const dynamicWhy = whyTextFromDynamicProfile(skillProfile);
+  const whyText = dynamicWhy || whyTextForTraining({ skillProfile, leaks: leaksList, focusItems, plan });
   const skillScores = hasSkill ? skillScoresForHome(skillProfile) : [];
 
   return {
@@ -48,6 +78,14 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     subtitle: trainingSubtitle(total),
     levelHeading: 'ТВОЙ УРОВЕНЬ',
     skillScores,
+    playerProfile,
+    profileHeading: 'ТВОЙ ПРОФИЛЬ',
+    strongestHeading: 'Сильный навык',
+    weakestHeading: 'Слабый навык',
+    tracksHeading: 'НАВЫКИ',
+    masteryHeading: 'мастерство',
+    trendHeading: 'тренд',
+    mistakesHeading: 'ошибки',
     focusHeading: 'СЕГОДНЯ В ФОКУСЕ',
     focusItems,
     whyHeading: 'ПОЧЕМУ',
