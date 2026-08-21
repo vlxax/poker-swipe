@@ -18,6 +18,7 @@ import {
   scoreToBaseDifficulty
 } from './adaptiveDifficulty.js';
 import { buildSkillMasteryStates, masteryBoostForSpot } from './skillMastery.js';
+import { dynamicWeaknessBoost } from './dynamicPlayerProfile.js';
 
 export { recentAccuracy } from './adaptiveDifficulty.js';
 
@@ -335,6 +336,7 @@ function scoreForSessionSlot(spot, slotKind, ctx) {
       if (concept && spotMatchesLeakConcept(spot, concept)) score += 5 + (priority || 0) * 6;
     }
     score += weaknessScore(spot, ctx, { useSkillTargets: true }) * 0.6;
+    if (ctx.dynamicProfile) score += dynamicWeaknessBoost(spot, ctx.dynamicProfile) * 0.5;
     score += leakBoostForSpot(spot, leakPriorities) * 3;
     const diffFit = spotDifficultyFit(spot, ctx, slotKind);
     if (highChallenge && diffFit < 0) score += diffFit * 0.75;
@@ -529,6 +531,7 @@ function selectSpotsProfileAware({
 
 function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   let score = weakSkillBoost(spot, ctx.skillProfile) * 2;
+  if (ctx.dynamicProfile) score += dynamicWeaknessBoost(spot, ctx.dynamicProfile) * 1.15;
   score += leakBoostForSpot(spot, ctx.leakPriorities) * 4;
   if (ctx.weakConcepts.has(spot.concept)) score += 2;
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
@@ -599,6 +602,7 @@ export function selectSpots({
   progressByConcept = {},
   recentResults = [],
   skillProfile = null,
+  dynamicProfile = null,
   leakProfiles = [],
   count = 7,
   adaptiveCurrent = 3,
@@ -650,6 +654,7 @@ export function selectSpots({
 
   const ctx = {
     skillProfile,
+    dynamicProfile: dynamicProfile || skillProfile?.dynamic || null,
     leakPriorities,
     weakConcepts,
     masteredConcepts,
