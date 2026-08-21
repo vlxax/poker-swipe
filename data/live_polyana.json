@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-21T17:10:12+03:00",
+  "updated_at": "2026-08-21T18:55:27+03:00",
   "club_count": 59,
-  "event_count": 50,
-  "source_card_count": 50,
+  "event_count": 52,
+  "source_card_count": 52,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -48,8 +48,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-21",
+          "time": "23:00",
+          "club": "AK77",
+          "tournament": "Турбо LET'S GO GAMBLE! Классический холдем",
+          "fee_rub": 500,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11299",
+          "address": "ул. Софьи Ковалевской, 2",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Турбо LET'S GO GAMBLE! Классический холдем 23:00 500 ₽ AK77 ул. Софьи Ковалевской, 2"
+        }
+      ]
     },
     {
       "name": "Aria Royale",
@@ -147,7 +164,7 @@
           "time": "20:00",
           "club": "BlackWood",
           "tournament": "Классика Gatsby Night",
-          "fee_rub": 0,
+          "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10982",
           "address": "Олимпийский проспект, 12",
@@ -156,7 +173,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Классика Gatsby Night 20:00 Бесплатно BlackWood Олимпийский проспект, 12"
+          "source_card_text": "Классика Gatsby Night 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12"
         }
       ]
     },
@@ -1054,8 +1071,24 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 1,
+      "upcoming": 2,
       "schedule": [
+        {
+          "date": "2026-08-21",
+          "time": "19:00",
+          "club": "Showdown",
+          "tournament": "Обучение по покеру",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/11306",
+          "address": "Новый Арбат, 19",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Обучение по покеру 19:00 Бесплатно Showdown Новый Арбат, 19"
+        },
         {
           "date": "2026-08-21",
           "time": "20:00",
@@ -1981,6 +2014,22 @@
     {
       "date": "2026-08-21",
       "time": "19:00",
+      "club": "Showdown",
+      "tournament": "Обучение по покеру",
+      "fee_rub": 0,
+      "type": "Обучающий",
+      "source_url": "https://pokernomoney.ru/tournaments/11306",
+      "address": "Новый Арбат, 19",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Обучающий Обучение по покеру 19:00 Бесплатно Showdown Новый Арбат, 19"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "19:00",
       "club": "SNAP CALL CLUB",
       "tournament": "BOSS HUNTER",
       "fee_rub": 1000,
@@ -2351,7 +2400,7 @@
       "time": "20:00",
       "club": "BlackWood",
       "tournament": "Классика Gatsby Night",
-      "fee_rub": 0,
+      "fee_rub": 1500,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10982",
       "address": "Олимпийский проспект, 12",
@@ -2360,7 +2409,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Классика Gatsby Night 20:00 Бесплатно BlackWood Олимпийский проспект, 12"
+      "source_card_text": "Классика Gatsby Night 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12"
     },
     {
       "date": "2026-08-21",
@@ -2425,6 +2474,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут Черная пятница в Showdown 20:00 1 000 ₽ Showdown Новый Арбат, 19"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "23:00",
+      "club": "AK77",
+      "tournament": "Турбо LET'S GO GAMBLE! Классический холдем",
+      "fee_rub": 500,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/11299",
+      "address": "ул. Софьи Ковалевской, 2",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Турбо LET'S GO GAMBLE! Классический холдем 23:00 500 ₽ AK77 ул. Софьи Ковалевской, 2"
     }
   ]
 }
