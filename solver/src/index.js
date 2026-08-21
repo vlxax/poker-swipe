@@ -84,6 +84,11 @@ export {
   spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots,
   SESSION_SLOT_KINDS, buildSkillTiers, sessionSlotOrder
 } from './training/spotSelector.js';
+export {
+  getTargetDifficulty, getSpotTargetDifficulty, scoreToBaseDifficulty, spotDifficultyScore,
+  difficultyFit, pickRelevantSkillForSpot, recentResultsForSkill, adjustDifficultyFromPerformance,
+  DIFFICULTY_MIN, DIFFICULTY_MAX
+} from './training/adaptiveDifficulty.js';
 export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
 export { buildMiniAppPlan, MINI_APP_SPECS } from './training/miniAppPlanner.js';
 export {
