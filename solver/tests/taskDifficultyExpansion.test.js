@@ -134,15 +134,27 @@ test('strong profile target ~5 receives harder tasks than weak profile target ~2
   assert.ok(strongTarget >= 4.3, `strong target ${strongTarget}`);
   assert.ok(weakTarget <= 2.5, `weak target ${weakTarget}`);
 
-  const strongPlan = selectSpots({ pool, skillProfile: strong, count: 20, rng: () => 0.37 });
-  const weakPlan = selectSpots({ pool, skillProfile: weak, count: 20, rng: () => 0.42 });
-  const strongSpots = strongPlan.selected.map((id) => pool.find((s) => s.id === id));
-  const weakSpots = weakPlan.selected.map((id) => pool.find((s) => s.id === id));
+  let strongAvgSum = 0;
+  let weakAvgSum = 0;
+  let strongHardSum = 0;
+  let weakHardSum = 0;
+  const runs = 25;
+  for (let i = 0; i < runs; i++) {
+    const rng = () => ((i + 1) * 0.041) % 1;
+    const strongPlan = selectSpots({ pool, skillProfile: strong, count: 20, rng });
+    const weakPlan = selectSpots({ pool, skillProfile: weak, count: 20, rng: () => 1 - rng() });
+    const strongSpots = strongPlan.selected.map((id) => pool.find((s) => s.id === id));
+    const weakSpots = weakPlan.selected.map((id) => pool.find((s) => s.id === id));
+    strongAvgSum += averageDifficulty(strongSpots);
+    weakAvgSum += averageDifficulty(weakSpots);
+    strongHardSum += strongSpots.filter((s) => s.difficulty >= 4).length;
+    weakHardSum += weakSpots.filter((s) => s.difficulty >= 4).length;
+  }
 
-  const strongAvg = averageDifficulty(strongSpots);
-  const weakAvg = averageDifficulty(weakSpots);
-  const strongHard = strongSpots.filter((s) => s.difficulty >= 4).length;
-  const weakHard = weakSpots.filter((s) => s.difficulty >= 4).length;
+  const strongAvg = Math.round((strongAvgSum / runs) * 100) / 100;
+  const weakAvg = Math.round((weakAvgSum / runs) * 100) / 100;
+  const strongHard = Math.round((strongHardSum / runs) * 10) / 10;
+  const weakHard = Math.round((weakHardSum / runs) * 10) / 10;
 
   REPORT.strongVsWeak = {
     strongTarget,
@@ -153,11 +165,66 @@ test('strong profile target ~5 receives harder tasks than weak profile target ~2
     weakHard
   };
 
-  assert.ok(strongHard > weakHard, `hard tasks strong ${strongHard} vs weak ${weakHard}`);
-  assert.ok(
-    strongAvg > weakAvg || strongHard >= weakHard + 2,
-    `strong avg ${strongAvg} vs weak ${weakAvg}, hard ${strongHard} vs ${weakHard}`
-  );
+  assert.ok(strongHard > weakHard + 2, `hard tasks strong ${strongHard} vs weak ${weakHard}`);
+  assert.ok(strongAvg >= weakAvg + 0.4, `strong avg ${strongAvg} vs weak ${weakAvg}`);
+});
+
+test('production selector: weak / average / strong difficulty separation', () => {
+  resetTaskLibraryCache();
+  const pool = getTaskPool();
+
+  function directProfile(scores) {
+    const entries = {};
+    let total = 0;
+    let count = 0;
+    for (const [skill, score] of Object.entries(scores)) {
+      entries[skill] = {
+        skill,
+        score,
+        confidence: score >= 80 ? 0.75 : 0.5,
+        sampleSize: score >= 80 ? 12 : 8
+      };
+      total += score;
+      count++;
+    }
+    const ranked = Object.values(entries).sort((a, b) => a.score - b.score);
+    return {
+      skills: entries,
+      overall: Math.round(total / count),
+      confidence: 0.75,
+      sampleSize: count * 10,
+      weakest: ranked[0]
+    };
+  }
+
+  const profiles = {
+    weak: directProfile({ icm: 28, preflop: 35, postflop: 40, river: 38, bluffCatch: 32 }),
+    average: directProfile({ icm: 55, preflop: 58, postflop: 52, river: 54, bluffCatch: 50 }),
+    strong: directProfile({ preflop: 92, postflop: 90, icm: 88, river: 91, bluffCatch: 89, betSizing: 90 })
+  };
+
+  const report = {};
+  for (const [name, prof] of Object.entries(profiles)) {
+    let avgSum = 0;
+    let hardSum = 0;
+    const runs = 20;
+    for (let i = 0; i < runs; i++) {
+      const plan = selectSpots({ pool, skillProfile: prof, count: 20, rng: () => ((i + 1) * 0.043) % 1 });
+      const spots = plan.selected.map((id) => pool.find((s) => s.id === id));
+      avgSum += averageDifficulty(spots);
+      hardSum += spots.filter((s) => s.difficulty >= 4).length;
+    }
+    report[name] = {
+      target: getTargetDifficulty(prof, prof.weakest.skill).target,
+      avg: Math.round((avgSum / runs) * 100) / 100,
+      hardRate: Math.round((hardSum / runs) * 10) / 10
+    };
+  }
+
+  REPORT.productionSelector = report;
+  assert.ok(report.strong.avg >= report.weak.avg + 0.4, `strong ${report.strong.avg} vs weak ${report.weak.avg}`);
+  assert.ok(report.strong.hardRate >= report.weak.hardRate + 2, `strong hard ${report.strong.hardRate} vs weak ${report.weak.hardRate}`);
+  assert.ok(report.strong.hardRate >= 6, `strong hard rate ${report.strong.hardRate}`);
 });
 
 test('metadata audit reflects expanded library', () => {
@@ -172,4 +239,7 @@ test('report: task difficulty expansion summary', () => {
   console.log('\nTASKS BY DIFFICULTY:', JSON.stringify(REPORT.byDifficulty));
   console.log('LEVEL 4–5 SKILL COVERAGE:', REPORT.skillCoverage.skills.join(', '));
   console.log('STRONG vs WEAK:', JSON.stringify(REPORT.strongVsWeak));
+  if (REPORT.productionSelector) {
+    console.log('PRODUCTION SELECTOR:', JSON.stringify(REPORT.productionSelector));
+  }
 });
