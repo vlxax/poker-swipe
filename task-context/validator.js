@@ -21,7 +21,7 @@ export function validateTask(spot) {
   if (!FORMATS.includes(spot.format)) add(`format "${spot.format}" вне ${FORMATS.join('/')}`);
   if (!STAGES.includes(spot.stage)) add(`stage "${spot.stage}" вне ${STAGES.join('/')}`);
   if (!TABLES.includes(spot.table)) add(`table "${spot.table}" вне ${TABLES.join('/')}`);
-  if (!DIFFICULTIES.includes(spot.difficulty)) add(`difficulty ${spot.difficulty} вне 1..3`);
+  if (!DIFFICULTIES.includes(spot.difficulty)) add(`difficulty ${spot.difficulty} вне 1..5`);
 
   if (!Array.isArray(spot.hero) || spot.hero.length !== 2) add('hero должен быть ровно из 2 карт');
   else spot.hero.forEach((c, i) => { if (!isValidCard(c)) add(`hero[${i}] "${c}" не карта`); });
