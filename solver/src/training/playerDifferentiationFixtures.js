@@ -71,20 +71,20 @@ export function buildPlayerStore(profileId) {
 
   if (profileId === 'A') {
     // Weak ICM / push-fold; strong postflop / river.
-    now = recordOnTasks(store, buckets.icm, { grade: 'MISTAKE', evLossBb: 0.95, count: 80, startAt: now });
-    now = recordOnTasks(store, buckets.shortStack, { grade: 'MISTAKE', evLossBb: 0.92, count: 60, startAt: now });
-    now = recordOnTasks(store, buckets.river, { grade: 'EXCELLENT', evLossBb: 0.01, count: 40, startAt: now });
-    now = recordOnTasks(store, buckets.postflop, { grade: 'EXCELLENT', evLossBb: 0.01, count: 35, startAt: now });
+    now = recordOnTasks(store, buckets.icm, { grade: 'MISTAKE', evLossBb: 0.95, count: 200, startAt: now });
+    now = recordOnTasks(store, buckets.shortStack, { grade: 'MISTAKE', evLossBb: 0.92, count: 150, startAt: now });
+    now = recordOnTasks(store, buckets.river, { grade: 'EXCELLENT', evLossBb: 0.01, count: 100, startAt: now });
+    now = recordOnTasks(store, buckets.postflop, { grade: 'EXCELLENT', evLossBb: 0.01, count: 88, startAt: now });
   } else if (profileId === 'B') {
     // Weak postflop / bluff-catch / river; strong ICM / push-fold.
-    now = recordOnTasks(store, buckets.bluffCatch, { grade: 'MISTAKE', evLossBb: 0.98, count: 100, startAt: now });
-    now = recordOnTasks(store, buckets.river, { grade: 'MISTAKE', evLossBb: 0.95, count: 80, startAt: now });
-    now = recordOnTasks(store, buckets.postflop, { grade: 'MISTAKE', evLossBb: 0.88, count: 45, startAt: now });
-    now = recordOnTasks(store, buckets.icm, { grade: 'EXCELLENT', evLossBb: 0.01, count: 45, startAt: now });
-    now = recordOnTasks(store, buckets.shortStack, { grade: 'EXCELLENT', evLossBb: 0.01, count: 35, startAt: now });
+    now = recordOnTasks(store, buckets.bluffCatch, { grade: 'MISTAKE', evLossBb: 0.98, count: 250, startAt: now });
+    now = recordOnTasks(store, buckets.river, { grade: 'MISTAKE', evLossBb: 0.95, count: 200, startAt: now });
+    now = recordOnTasks(store, buckets.postflop, { grade: 'MISTAKE', evLossBb: 0.88, count: 112, startAt: now });
+    now = recordOnTasks(store, buckets.icm, { grade: 'EXCELLENT', evLossBb: 0.01, count: 112, startAt: now });
+    now = recordOnTasks(store, buckets.shortStack, { grade: 'EXCELLENT', evLossBb: 0.01, count: 88, startAt: now });
   } else if (profileId === 'C') {
     // Balanced strong player — broad good results, no major weakness.
-    now = recordOnTasks(store, buckets.balanced, { grade: 'EXCELLENT', evLossBb: 0.02, count: 160, startAt: now });
+    now = recordOnTasks(store, buckets.balanced, { grade: 'EXCELLENT', evLossBb: 0.02, count: 280, startAt: now });
   } else {
     throw new Error(`Unknown profile: ${profileId}`);
   }

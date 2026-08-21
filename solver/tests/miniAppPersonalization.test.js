@@ -54,7 +54,8 @@ function simulateAssessment(store, answerFn, seed) {
 }
 
 function bluffCatchTask() {
-  return POOL.find((t) => deriveSkillTags(t).includes('bluffCatch'))
+  return getTaskById('R_PRICE_DEF')
+    || POOL.find((t) => deriveSkillTags(t).includes('bluffCatch'))
     || getTaskById('POST_RIVER_BLUFFCATCH_KQ');
 }
 
@@ -78,7 +79,7 @@ test('cross-app: xray mistake updates shared profile used by quick5 selection', 
 
   const gen = drillFromLibraryTask(task);
   assert.ok(gen.ok);
-  recordTrainingResult(store, { drill: gen.drill, grade: 'MISTAKE', evLossBb: 0.85, now: Date.now() + 1 });
+  recordTrainingResult(store, { drill: gen.drill, grade: 'MISTAKE', evLossBb: 1.05, now: Date.now() + 1 });
 
   const profile = store.loadSkillProfile();
   assert.ok(profile);

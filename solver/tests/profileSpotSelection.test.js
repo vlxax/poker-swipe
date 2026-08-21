@@ -46,8 +46,8 @@ function skillProfileWithScores(scores, now = 1000) {
 
 test('metadata audit: most library tasks have usable personalization fields', () => {
   const audit = auditTaskMetadata();
-  assert.equal(audit.total, 107);
-  assert.ok(audit.fullyUsable >= 100, `expected >=100 fully usable, got ${audit.fullyUsable}`);
+  assert.equal(audit.total, 131);
+  assert.ok(audit.fullyUsable >= 124, `expected >=124 fully usable, got ${audit.fullyUsable}`);
   assert.ok(audit.withSkillTags >= 100);
 });
 

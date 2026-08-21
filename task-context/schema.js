@@ -9,7 +9,7 @@ export const STREETS = ['ПРЕФЛОП', 'ФЛОП', 'ТЁРН', 'РИВЕР'];
 export const FORMATS = ['MTT', 'PKO', 'SNG', 'CASH', '3MAX', 'HU'];
 export const STAGES = ['РАННЯЯ', 'СРЕДНЯЯ', 'ПОЗДНЯЯ', 'БАББЛ', 'ITM', 'ФИНАЛЬНЫЙ СТОЛ'];
 export const TABLES = ['3-MAX', '6-MAX', '8-MAX', '9-MAX', 'HU'];
-export const DIFFICULTIES = [1, 2, 3];
+export const DIFFICULTIES = [1, 2, 3, 4, 5];
 
 // Позиции и их полные русские названия (для первого появления).
 export const POSITIONS = {

@@ -27,7 +27,7 @@ const CONCEPT_SKILL_RULES = [
   { pattern: /exploit|эксплойт|нит|station|маниак|любитель/, skills: ['exploit'] },
   { pattern: /range|диапазон/, skills: ['rangeReading'] },
   { pattern: /sizing|сайзинг|overbet|поляризац/, skills: ['betSizing'] },
-  { pattern: /блеф|bluff/, skills: ['bluffing'] }
+  { pattern: /блеф(?!-кет)|bluff(?!catch|-catch|- catch)/i, skills: ['bluffing'] }
 ];
 
 const CONCEPT_TO_SKILLS = {

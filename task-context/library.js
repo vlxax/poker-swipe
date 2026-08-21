@@ -4,6 +4,7 @@
 // турнирные стадии (баббл/ICM/ITM/PKO/финальный стол/анте), типы соперников.
 
 import { emptyTask, OPPONENT_PROFILES } from './schema.js';
+import { ADVANCED_TASKS } from './advancedTasks.js';
 
 let _seq = 0;
 function T(o) {
@@ -173,7 +174,9 @@ export const TASKS = [
   T({ id:'R_BLUF_CATCH_PRICE', street:'РИВЕР', format:'MTT', blinds:[500,1000], ante:125, stage:'СРЕДНЯЯ', table:'6-MAX', left:'37 LEFT', position:'BB', hero:['T♥','T♣'], heroStack:36, villain:'BTN', villainStack:34, opp:'АГРО-РЕГ', board:['Q♦','9♠','4♣','3♥','6♦'], pot:20, history:[{street:'ПРЕФЛОП', text:'BTN открыл, BB заколлил.', pot:4.7},{street:'ФЛОП', text:'check-check.', pot:4.7},{street:'ТЁРН', text:'BB ставит 50%, BTN колл.', pot:11},{street:'РИВЕР', text:'BTN ставит 40% банка.', pot:20}], question:'Что делаешь с TT против маленькой ставки на ривере?', options:['ФОЛД','КОЛЛ'], correct:'КОЛЛ', alsoOk:[], concept:'river price bluffcatch', explain:'TT — средняя пара на ривере. Маленький размер даёт отличную цену против агрессивного рега — колл-кетч.', difficulty:2, tags:['ривер','блеф-кетч','цена'] }),
   T({ id:'PRE_RFI_UTG_99', street:'ПРЕФЛОП', format:'MTT', blinds:[800,1600], ante:200, stage:'СРЕДНЯЯ', table:'9-MAX', left:'54 LEFT', position:'UTG', hero:['9♣','9♦'], heroStack:58, villain:'BB', villainStack:55, opp:'РЕГ', board:[], pot:6.6, history:[{street:'ПРЕФЛОП', text:'Ты первый в раздаче.', pot:6.6}], question:'Что делаешь с 99 в UTG?', options:['ФОЛД','РЕЙЗ'], correct:'РЕЙЗ', alsoOk:[], concept:'RFI UTG pairs', explain:'99 — открываемая рука из ранней позиции на глубоких стеках: сильная пара, реализует сет-ценность.', difficulty:1, tags:['префлоп','RFI','ранняя позиция'] }),
   T({ id:'PRE_BB_VS_SQZ', street:'ПРЕФЛОП', format:'MTT', blinds:[500,1000], ante:125, stage:'СРЕДНЯЯ', table:'6-MAX', left:'45 LEFT', position:'BB', hero:['8♥','7♥'], heroStack:45, villain:'SB', villainStack:30, opp:'АГРО-РЕГ', board:[], pot:11.5, history:[{street:'ПРЕФЛОП', text:'BTN открыл, SB с коротким стеком запушил сквиз 30 ББ, BTN сфолдил.', pot:11.5}], question:'Что делаешь с 87s в BB против сквиз-пуша?', options:['ФОЛД','КОЛЛ'], correct:'КОЛЛ', alsoOk:[], concept:'BB vs squeeze', explain:'87s в BB против сквиз-пуша при хорошей цене и блокерах на стрит — защита коллом с потенциалом.', difficulty:2, tags:['префлоп','сквиз','коннекторы'] }),
-  T({ id:'PRE_4BET_AA_COLD', street:'ПРЕФЛОП', format:'MTT', blinds:[800,1600], ante:200, stage:'ПОЗДНЯЯ', table:'6-MAX', left:'25 LEFT', position:'CO', hero:['A♠','A♦'], heroStack:90, villain:'BTN', villainStack:85, opp:'АГРО-РЕГ', board:[], pot:14, history:[{street:'ПРЕФЛОП', text:'UTG открыл, ты заколлил, BTN 3-бетил 10 ББ, UTG сфолдил.', pot:14}], question:'Что делаешь с AA против колд-3-бета на баттоне?', options:['КОЛЛ','4-БЕТ'], correct:'4-БЕТ', alsoOk:[], concept:'cold 4-bet', explain:'AA против колд-3-бета — 4-бет по ценности: раздуваем банк против сильного, но более узкого диапазона BTN.', difficulty:1, tags:['префлоп','4-бет','AA'] })
+  T({ id:'PRE_4BET_AA_COLD', street:'ПРЕФЛОП', format:'MTT', blinds:[800,1600], ante:200, stage:'ПОЗДНЯЯ', table:'6-MAX', left:'25 LEFT', position:'CO', hero:['A♠','A♦'], heroStack:90, villain:'BTN', villainStack:85, opp:'АГРО-РЕГ', board:[], pot:14, history:[{street:'ПРЕФЛОП', text:'UTG открыл, ты заколлил, BTN 3-бетил 10 ББ, UTG сфолдил.', pot:14}], question:'Что делаешь с AA против колд-3-бета на баттоне?', options:['КОЛЛ','4-БЕТ'], correct:'4-БЕТ', alsoOk:[], concept:'cold 4-bet', explain:'AA против колд-3-бета — 4-бет по ценности: раздуваем банк против сильного, но более узкого диапазона BTN.', difficulty:1, tags:['префлоп','4-бет','AA'] }),
+
+  ...ADVANCED_TASKS
 ];
 
 export function buildLibrary() {
