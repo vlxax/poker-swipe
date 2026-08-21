@@ -62,6 +62,7 @@ export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date
 
   const taskId = drill.sourceTaskId || drill.metadata?.taskId || null;
   const fingerprint = taskId ? contentFingerprint(getTaskById(taskId) || drill.scenario || drill) : contentFingerprint(drill.scenario || drill);
+  const skillTags = skillTagsForDrill(drill);
 
   store.addHistoryEntry({
     concept,
@@ -71,10 +72,10 @@ export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date
     contentFingerprint: fingerprint,
     grade,
     evLossBb,
+    skillTags,
     at: now
   });
 
-  const skillTags = skillTagsForDrill(drill);
   const skillProfile = updateSkillProfileInStore(store, {
     skillTags,
     evLossBb: evLossBb != null ? evLossBb : 0,
@@ -97,7 +98,8 @@ function buildRecentResults(history) {
   return (history || []).map((h) => ({
     concept: h.concept,
     grade: h.grade,
-    nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD'
+    nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD',
+    skillTags: h.skillTags || []
   }));
 }
 

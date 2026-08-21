@@ -10,6 +10,15 @@ import {
 } from './leakSpotMapping.js';
 import { computePriority } from './priority.js';
 import { diversityPenalty, sessionRepetitionPenalty, contentFingerprint, recentFingerprints } from './sessionDiversity.js';
+import {
+  adaptiveDifficulty as computeAdaptiveDifficulty,
+  recentAccuracy,
+  spotDifficultyScore,
+  difficultyFit as difficultyFitForTarget,
+  scoreToBaseDifficulty
+} from './adaptiveDifficulty.js';
+
+export { recentAccuracy } from './adaptiveDifficulty.js';
 
 export const DEFAULT_SHOWN_COOLDOWN = 30;
 const DEFAULT_MASTERY_GATE = 78;
@@ -49,29 +58,15 @@ export function isMastered(progress, gate = DEFAULT_MASTERY_GATE) {
   return m != null && m >= gate;
 }
 
-export function recentAccuracy(results = [], window = 10) {
-  const recent = results.slice(-window);
-  if (!recent.length) return null;
-  const ok = recent.filter((r) => r.grade === 'EXCELLENT' || r.grade === 'GOOD' || (r.nearOptimal === true)).length;
-  return ok / recent.length;
+export function adaptiveDifficulty(opts = {}) {
+  return computeAdaptiveDifficulty(opts);
 }
 
-export function adaptiveDifficulty({ current = 3, recentResults = [], window = 10, skillProfile = null } = {}) {
-  const acc = recentAccuracy(recentResults, window);
-  let d = current;
-  if (acc != null) {
-    if (acc >= 0.85) d += 0.35;
-    else if (acc <= 0.4) d -= 0.5;
-    else if (acc <= 0.55) d -= 0.2;
-    d = 0.8 * d + 0.2 * current;
+function spotDifficultyFit(spot, ctx, slotKind = null) {
+  if (ctx.skillProfile && ctx.recentResults) {
+    return spotDifficultyScore(spot, ctx.skillProfile, ctx.recentResults, { slotKind });
   }
-  if (skillProfile && skillProfile.overall != null) {
-    const overall = skillProfile.overall;
-    if (overall < 50) d -= 0.4;
-    else if (overall < 60) d -= 0.2;
-    else if (overall > 82) d += 0.25;
-  }
-  return clamp(round(d, 2), 1, 5);
+  return difficultyFitForTarget(spot, ctx.targetDiff);
 }
 
 export function spacedInterval({ lastSeenAt = null, mastery = null, now = Date.now(), baseDays = 1.5, masteryFactor = 3 } = {}) {
@@ -125,12 +120,11 @@ export function earliestMeaningful({ concepts = [], masteryByConcept = {}, recen
   return candidates[0];
 }
 
-function difficultyFit(spot, targetDiff) {
-  const dist = Math.abs(spot.difficulty - targetDiff);
-  if (dist <= 0.5) return 1;
-  if (dist <= 1) return 0.5;
-  if (dist <= 1.5) return 0;
-  return -1;
+function difficultyFit(spot, targetDiff, ctx = null, slotKind = null) {
+  if (ctx && ctx.skillProfile) {
+    return spotDifficultyFit(spot, ctx, slotKind);
+  }
+  return difficultyFitForTarget(spot, targetDiff);
 }
 
 function bucketForSpot(spot, ctx) {
@@ -264,7 +258,7 @@ function scoreForSessionSlot(spot, slotKind, ctx) {
   } else if (slotKind === 'exploration') {
     const focus = [...tiers.primary, ...tiers.secondary, ...tiers.medium];
     if (focus.some((s) => tags.includes(s))) score += 3;
-    score += difficultyFit(spot, targetDiff + 0.5) + 0.5;
+    score += spotDifficultyFit(spot, ctx, slotKind) + 0.5;
     if (spot.theoryOrExploit === 'exploit') score += 0.4;
     if (!ctx.history.some((h) => h.concept === spot.concept)) score += 1;
     if (spotHasStrongSkill(spot, tiers) && !focus.some((s) => tags.includes(s))) score -= 3;
@@ -392,7 +386,8 @@ function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   score += leakBoostForSpot(spot, ctx.leakPriorities) * 4;
   if (ctx.weakConcepts.has(spot.concept)) score += 2;
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
-  score += difficultyFit(spot, ctx.targetDiff);
+  const diffBonus = spotDifficultyFit(spot, ctx);
+  if (diffBonus > 0) score += diffBonus * 0.4;
   if (useSkillTargets && ctx.skillTargets) {
     for (const tag of spot.skillTags || []) {
       const want = ctx.skillTargets[tag];
@@ -408,7 +403,7 @@ function scoredPool(candidates, ctx, bucket) {
     const base = { spot: s, score: 1, bucket };
     if (bucket === 'weakness') base.score = weaknessScore(s, ctx);
     else if (bucket === 'exploration') base.score = 1 + (s.theoryOrExploit === 'exploit' ? 0.3 : 0);
-    else if (bucket === 'challenge') base.score = difficultyFit(s, ctx.targetDiff + 1) + 1;
+    else if (bucket === 'challenge') base.score = spotDifficultyFit(s, ctx, 'exploration') + 1;
     else base.score = maintenanceSkillMatch(s, ctx.skillProfile) ? 1.5 : 1;
     base.score -= diversityPenalty(s, ctx.picked || [], ctx.history || []);
     return base;
@@ -463,7 +458,9 @@ export function selectSpots({
   const spots = (pool || []).map(normalizeSpot).filter((s) => s.id);
   if (!spots.length) return { ok: false, reason: 'empty_pool', selected: [] };
 
-  const targetDiff = adaptiveDifficulty({ current: adaptiveCurrent, recentResults, skillProfile });
+  const targetDiff = skillProfile && skillProfile.overall != null
+    ? scoreToBaseDifficulty(skillProfile.overall)
+    : adaptiveDifficulty({ current: adaptiveCurrent, recentResults, skillProfile });
 
   const leakPriorities = (leakProfiles || [])
     .map((p) => {
@@ -496,6 +493,7 @@ export function selectSpots({
     masteredConcepts,
     weakestSkillConcepts,
     history,
+    recentResults,
     targetDiff,
     skillTargets,
     skillCounts: {},

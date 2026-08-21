@@ -64,7 +64,8 @@ export function buildMiniAppPlan(store, appId, {
     recentResults: hist.map((h) => ({
       concept: h.concept,
       grade: h.grade,
-      nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD' || h.grade === 'g'
+      nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD' || h.grade === 'g',
+      skillTags: h.skillTags || []
     })),
     skillProfile,
     leakProfiles: store.listProfiles() || [],
