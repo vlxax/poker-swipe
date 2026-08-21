@@ -69,13 +69,15 @@ export {
   SKILLS, SKILL_TO_CONCEPTS, skillLabelRu, skillDefinitionRu, conceptsForSkill,
   skillsForConcept, normalizeSkill, createSkillEvidence, recordSkillEvidence,
   scoreFromEvidence, confidenceFromEvidence, trendFromEvidence, buildSkillProfile,
-  overallLabel, confidenceLabel, skillProfileId
+  overallLabel, confidenceLabel, skillProfileId, updateSkillProfileInStore,
+  seedSkillEvidenceFromAssessment, recordSkillEvidenceForTags, scoredSkillFromEvidence
 } from './training/skillProfile.js';
 export {
   ERROR_CAUSES, errorCauseLabelRu, errorCauseTipRu, classifyErrorCause, errorCauseFromMistake
 } from './training/errorCause.js';
 export {
-  ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, gradeAssessmentItem, runAssessment
+  ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, buildAssessmentEligiblePool,
+  getAssessmentEligiblePool, gradeAssessmentItem, runAssessment
 } from './training/assessment.js';
 export {
   SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
@@ -86,7 +88,8 @@ export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLea
 export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
 export { drillFromLibraryTask } from './training/libraryDrill.js';
 export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
-export { spotFingerprint, diversityPenalty, isTooSimilar, sessionRepetitionPenalty } from './training/sessionDiversity.js';
+export { spotFingerprint, contentFingerprint, diversityPenalty, isTooSimilar, sessionRepetitionPenalty, recentFingerprints } from './training/sessionDiversity.js';
+export { createPersonalizationSeed, seededRng, seedToNumber } from './training/personalizationSeed.js';
 export { leakBoostForSpot, spotMatchesLeakConcept, LEAK_SPOT_MATCHERS } from './training/leakSpotMapping.js';
 export { createAnalytics, isKnownEvent } from './training/analytics.js';
 

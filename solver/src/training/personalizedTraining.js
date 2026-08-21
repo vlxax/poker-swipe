@@ -6,10 +6,13 @@ import { createConceptProgress, recordAttempt } from './progress.js';
 import { buildTrainingSession } from './sessionBuilder.js';
 import { generateDrill } from './drillGenerator.js';
 import { leakLabelRu, leakDefinitionRu, LEAKS } from './concepts.js';
-import { buildDailyPlan } from './planner.js';
+import { buildDailyPlan, deriveSkillTags } from './planner.js';
 import { getTaskPool, getTaskById, hasUsablePlayerProfile } from './taskLibraryBridge.js';
 import { drillFromLibraryTask } from './libraryDrill.js';
 import { mapLeakConceptForTask } from './planner.js';
+import { skillsForConcept, updateSkillProfileInStore } from './skillProfile.js';
+import { contentFingerprint } from './sessionDiversity.js';
+import { seededRng } from './personalizationSeed.js';
 
 export function getTopLeaks(store, { now = Date.now(), limit = 5 } = {}) {
   const profiles = (store.listProfiles() || [])
@@ -41,22 +44,45 @@ export function recordCandidate(store, candidate, { now = Date.now() } = {}) {
   return { recorded: true, concept: candidate.concept, profile, event };
 }
 
+export function skillTagsForDrill(drill) {
+  const taskId = drill.sourceTaskId || drill.metadata?.taskId || drill.spotId || null;
+  if (taskId) {
+    const task = getTaskById(taskId);
+    if (task) return deriveSkillTags(task);
+  }
+  return skillsForConcept(drill.concept);
+}
+
 export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date.now() } = {}) {
   if (!drill) return { recorded: false, reason: 'no_drill' };
   const concept = drill.concept;
   const progress = store.loadProgress(concept) || createConceptProgress({ concept, now });
   recordAttempt(progress, { grade, evLossBb, now });
   store.saveProgress(progress);
+
+  const taskId = drill.sourceTaskId || drill.metadata?.taskId || null;
+  const fingerprint = taskId ? contentFingerprint(getTaskById(taskId) || drill.scenario || drill) : contentFingerprint(drill.scenario || drill);
+
   store.addHistoryEntry({
     concept,
     street: drill.street,
     drillId: drill.drillId,
-    spotId: drill.sourceTaskId || drill.metadata?.taskId || null,
+    spotId: taskId,
+    contentFingerprint: fingerprint,
     grade,
     evLossBb,
     at: now
   });
-  return { recorded: true, concept, progress };
+
+  const skillTags = skillTagsForDrill(drill);
+  const skillProfile = updateSkillProfileInStore(store, {
+    skillTags,
+    evLossBb: evLossBb != null ? evLossBb : 0,
+    grade,
+    now
+  });
+
+  return { recorded: true, concept, progress, skillProfile, skillTags };
 }
 
 function buildProgressMap(store) {
@@ -88,6 +114,10 @@ export function buildProfileDailyPlan({
   const leakProfiles = profiles || store.listProfiles() || [];
   const hist = history || store.loadHistory() || [];
   const taskPool = pool || getTaskPool();
+  const seed = typeof store.getOrCreatePersonalizationSeed === 'function'
+    ? store.getOrCreatePersonalizationSeed()
+    : null;
+  const seeded = seed != null ? seededRng(`${seed}|plan|${now}`) : rng;
 
   if (!hasUsablePlayerProfile(store) && !leakProfiles.length) {
     return null;
@@ -102,7 +132,7 @@ export function buildProfileDailyPlan({
     leakProfiles,
     count,
     now,
-    rng
+    rng: seeded
   });
 }
 
