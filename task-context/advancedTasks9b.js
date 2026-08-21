@@ -1,7 +1,7 @@
 // Phase 9B: expanded difficulty 4–5 library — balanced skill coverage.
 // Imported into library.js alongside advancedTasks.js.
 
-import { emptyTask, OPPONENT_PROFILES } from './schema.js';
+import { emptyTask, OPPONENT_PROFILES, normalizeTaskTerminology } from './schema.js';
 
 function T(o) {
   const d = emptyTask();
@@ -15,7 +15,7 @@ function T(o) {
   if (!spot.effStack && spot.heroStack) {
     spot.effStack = Math.min(spot.heroStack, spot.villainStack || spot.heroStack);
   }
-  return spot;
+  return normalizeTaskTerminology(spot);
 }
 
 export const ADVANCED_TASKS_9B = [

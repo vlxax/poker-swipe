@@ -1,7 +1,7 @@
 // Phase 9: difficulty 4–5 training tasks — reg-level spots with competing factors.
 // Uses the same schema as library.js; imported into the main task library.
 
-import { emptyTask, OPPONENT_PROFILES } from './schema.js';
+import { emptyTask, OPPONENT_PROFILES, normalizeTaskTerminology } from './schema.js';
 
 function T(o) {
   const d = emptyTask();
@@ -15,7 +15,7 @@ function T(o) {
   if (!spot.effStack && spot.heroStack) {
     spot.effStack = Math.min(spot.heroStack, spot.villainStack || spot.heroStack);
   }
-  return spot;
+  return normalizeTaskTerminology(spot);
 }
 
 export const ADVANCED_TASKS = [

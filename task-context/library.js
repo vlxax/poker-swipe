@@ -3,7 +3,7 @@
 // ~96 сценариев: префлоп (RFI/защита/3-бет/сквиз/пуш-фолд), постфлоп,
 // турнирные стадии (баббл/ICM/ITM/PKO/финальный стол/анте), типы соперников.
 
-import { emptyTask, OPPONENT_PROFILES } from './schema.js';
+import { emptyTask, OPPONENT_PROFILES, normalizeTaskTerminology } from './schema.js';
 import { ADVANCED_TASKS } from './advancedTasks.js';
 import { ADVANCED_TASKS_9B } from './advancedTasks9b.js';
 
@@ -17,7 +17,7 @@ function T(o) {
   }
   if (!spot.effStack && spot.heroStack) spot.effStack = Math.min(spot.heroStack, spot.villainStack || spot.heroStack);
   if (!spot.id) spot.id = 'LIB_' + (++_seq);
-  return spot;
+  return normalizeTaskTerminology(spot);
 }
 
 const H = (a) => a.split('').length === 1 ? a : a; // noop, keep authoring explicit
