@@ -18,6 +18,10 @@ import {
   scoreToBaseDifficulty
 } from './adaptiveDifficulty.js';
 import { buildSkillMasteryStates, masteryBoostForSpot } from './skillMastery.js';
+import {
+  difficultyCalibrationBonus,
+  libraryMaxDifficulty
+} from './difficultyCalibration.js';
 
 export { recentAccuracy } from './adaptiveDifficulty.js';
 
@@ -63,9 +67,19 @@ export function adaptiveDifficulty(opts = {}) {
   return computeAdaptiveDifficulty(opts);
 }
 
+function calibrationWeightForSlot(slotKind) {
+  if (slotKind === 'exploration') return 1.35;
+  if (slotKind === 'maintenance_strong') return 1.05;
+  if (slotKind === 'maintenance_medium') return 0.85;
+  return 0.4;
+}
+
 function spotDifficultyFit(spot, ctx, slotKind = null) {
   if (ctx.skillProfile && ctx.recentResults) {
-    return spotDifficultyScore(spot, ctx.skillProfile, ctx.recentResults, { slotKind });
+    return spotDifficultyScore(spot, ctx.skillProfile, ctx.recentResults, {
+      slotKind,
+      poolMax: ctx.poolMax
+    });
   }
   return difficultyFitForTarget(spot, ctx.targetDiff);
 }
@@ -276,6 +290,11 @@ function scoreForSessionSlot(spot, slotKind, ctx) {
       || slotKind === 'maintenance_strong'
       || slotKind === 'exploration'
   }) * 0.85;
+  score += difficultyCalibrationBonus(spot, ctx.skillProfile, ctx.recentResults, {
+    masteryStates: ctx.skillMasteryStates,
+    slotKind,
+    poolMax: ctx.poolMax
+  }) * calibrationWeightForSlot(slotKind);
   score -= diversity;
   return score;
 }
@@ -393,7 +412,7 @@ function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   if (ctx.weakConcepts.has(spot.concept)) score += 2;
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
   const diffBonus = spotDifficultyFit(spot, ctx);
-  if (diffBonus > 0) score += diffBonus * 0.4;
+  if (diffBonus > 0) score += diffBonus * 0.55;
   score += masteryBoostForSpot(spot, ctx.skillMasteryStates, ctx.skillProfile, { allowMasteredPenalty: false }) * 0.85;
   if (useSkillTargets && ctx.skillTargets) {
     for (const tag of spot.skillTags || []) {
@@ -501,6 +520,8 @@ export function selectSpots({
     now
   });
 
+  const poolMax = libraryMaxDifficulty(spots);
+
   const ctx = {
     skillProfile,
     leakPriorities,
@@ -513,7 +534,8 @@ export function selectSpots({
     targetDiff,
     skillTargets,
     skillCounts: {},
-    picked: []
+    picked: [],
+    poolMax
   };
 
   const repeatAllow = new Set(allowRepeatIds || []);
@@ -535,6 +557,7 @@ export function selectSpots({
     return !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s));
   });
   const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
+  ctx.poolMax = libraryMaxDifficulty(candidates);
 
   let picked = [];
   let slotKinds = [];
