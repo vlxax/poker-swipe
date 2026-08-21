@@ -147,6 +147,7 @@ export function buildDailyPlan({
   recentResults = [],
   skillProfile = null,
   leakProfiles = [],
+  skillTargets = null,
   count = DEFAULTS.count,
   now = Date.now(),
   rng = Math.random
@@ -165,7 +166,7 @@ export function buildDailyPlan({
   const allowSet = new Set(allowRepeatIds);
   const eligiblePool = spots.filter((s) => dueConcepts.has(s.concept) || dueConcepts.size === 0 || allowSet.has(s.id));
 
-  const skillTargets = computeSkillTargets(skillProfile, count);
+  const resolvedSkillTargets = skillTargets || computeSkillTargets(skillProfile, count);
 
   const result = selectSpots({
     pool: eligiblePool.length ? eligiblePool : spots,
@@ -178,7 +179,7 @@ export function buildDailyPlan({
     count,
     now,
     masteryGate: DEFAULTS.masteryGate,
-    skillTargets,
+    skillTargets: resolvedSkillTargets,
     allowRepeatIds,
     rng
   });

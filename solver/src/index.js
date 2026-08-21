@@ -85,6 +85,7 @@ export {
   SESSION_SLOT_KINDS, buildSkillTiers, sessionSlotOrder
 } from './training/spotSelector.js';
 export { poolFromLibrary, buildDailyPlan, planSummaryRu, deriveSkillTags, mapLeakConceptForTask, computeSkillTargets } from './training/planner.js';
+export { buildMiniAppPlan, MINI_APP_SPECS } from './training/miniAppPlanner.js';
 export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
 export { drillFromLibraryTask } from './training/libraryDrill.js';
 export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
