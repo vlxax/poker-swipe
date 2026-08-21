@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-21T14:03:04+03:00",
+  "retrieved_at": "2026-08-21T15:03:55+03:00",
   "city": "Москва",
   "count": 59,
   "clubs": [
@@ -1023,7 +1023,7 @@
           "club": "Raise Club",
           "tournament": "KO BONUS RUSH Freeroll",
           "fee_rub": 0,
-          "type": "Баунти / Нокаут",
+          "type": "Freezeout",
           "source_url": "https://pokernomoney.ru/tournaments/10805",
           "address": "ул. Азовская 18 (4 этаж)",
           "late_reg_until": null,
@@ -1031,7 +1031,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут KO BONUS RUSH Freeroll 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
+          "source_card_text": "Freezeout KO BONUS RUSH Freeroll 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
         }
       ]
     },
