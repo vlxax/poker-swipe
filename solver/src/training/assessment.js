@@ -1,15 +1,33 @@
-// Primary assessment (requirement P0). A short (~12-question) diagnostic built from
-// validated library tasks. Produces an initial Player Skill Profile + leak profile.
-// Selection is seeded per-user so two fresh profiles do not get identical task sets.
+// Primary assessment (requirement P0). Adaptive 12–15 question placement test built
+// from the dedicated diagnostic pool — NOT the training task library.
+// Produces an initial Player Skill Profile + leak profile + recommended difficulty.
 
 import { buildSkillProfile, skillsForConcept, normalizeSkill, SKILLS } from './skillProfile.js';
 import { buildLeakProfile } from './leakProfile.js';
 import { classifyErrorCause } from './errorCause.js';
-import { loadTaskLibrary } from './taskLibraryBridge.js';
-import { deriveSkillTags } from './planner.js';
+import {
+  getDiagnosticPool,
+  diagnosticItemToAssessmentItem,
+  validateDiagnosticItem,
+  validateDiagnosticPool,
+  getDiagnosticPoolSize
+} from './diagnosticPool.js';
+import {
+  createDiagnosticSession,
+  createDiagnosticSessionSeed,
+  selectNextDiagnosticItem,
+  submitDiagnosticAnswer,
+  simulateDiagnosticRun,
+  recommendedStartingDifficulty,
+  diagnosticSessionSummary,
+  evidenceWeight,
+  DIAGNOSTIC_COUNT_DEFAULT,
+  DIAGNOSTIC_COUNT_MIN,
+  DIAGNOSTIC_COUNT_MAX
+} from './diagnosticSelection.js';
 import { seededRng } from './personalizationSeed.js';
 
-// Legacy fixed pool kept for backward-compatible tests / grading references.
+// Legacy fixed pool kept for backward-compatible grading references in old tests.
 export const ASSESSMENT_POOL = [
   { id: 'A_RFI_BTN', skillTag: 'preflop', concept: 'open_range', street: 'ПРЕФЛОП', q: 'BTN · 30 ББ · до тебя фолд. A8s', choices: ['ФОЛД', 'РЕЙЗ'], correct: 'РЕЙЗ', alsoOk: [], score: 92 },
   { id: 'A_BB_DEF', skillTag: 'preflop', concept: 'defend_vs_open', street: 'ПРЕФЛОП', q: 'BB · K8s · BTN 2.2 ББ', choices: ['ФОЛД', 'КОЛЛ', '3-БЕТ'], correct: 'КОЛЛ', alsoOk: ['3-БЕТ'], score: 88 },
@@ -30,125 +48,20 @@ export const REQUIRED_SKILLS = [
   'bluffCatch', 'icm', 'exploit', 'rangeReading', 'positionAwareness', 'stackDepthAwareness'
 ];
 
-function isValidAssessmentTask(task) {
-  if (!task || !task.id || !task.correct) return false;
-  if (!Array.isArray(task.options) || task.options.length < 2) return false;
-  if (!task.concept || task.difficulty == null || !task.street) return false;
-  if (!task.options.includes(task.correct)) return false;
-  return true;
+export function getDiagnosticEligiblePool() {
+  return getDiagnosticPool().map(diagnosticItemToAssessmentItem);
 }
 
-function assessmentScoreFromDifficulty(difficulty) {
-  const d = Number(difficulty) || 2;
-  return Math.round(clamp(96 - d * 4, 60, 95));
+export function buildAssessmentEligiblePool() {
+  return getDiagnosticEligiblePool();
 }
 
-function taskToAssessmentItem(task) {
-  const skillTags = deriveSkillTags(task);
-  const primarySkill = skillTags[0] || skillsForConcept(task.concept)[0] || 'preflop';
-  return {
-    id: task.id,
-    skillTag: primarySkill,
-    skillTags,
-    concept: task.concept,
-    street: task.street,
-    q: task.question || task.q || `${task.position || ''} · ${task.concept || ''}`.trim(),
-    choices: task.options.slice(),
-    correct: task.correct,
-    alsoOk: (task.alsoOk || []).slice(),
-    score: assessmentScoreFromDifficulty(task.difficulty),
-    difficulty: task.difficulty,
-    position: task.position || null,
-    heroStack: task.heroStack != null ? task.heroStack : null,
-    tags: task.tags || []
-  };
-}
-
-export function buildAssessmentEligiblePool(tasks = null) {
-  const source = tasks || loadTaskLibrary();
-  return source.filter(isValidAssessmentTask).map(taskToAssessmentItem);
-}
-
-let _eligibleCache = null;
 export function getAssessmentEligiblePool() {
-  if (!_eligibleCache) _eligibleCache = buildAssessmentEligiblePool();
-  return _eligibleCache;
-}
-
-function primarySkillForItem(item) {
-  if (item.skillTags && item.skillTags.length) return item.skillTags[0];
-  return normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0] || null;
-}
-
-function pickFromPool(list, rng, usedIds) {
-  const available = list.filter((item) => !usedIds.has(item.id));
-  if (!available.length) return null;
-  const idx = Math.floor(rng() * available.length);
-  return available[idx];
-}
-
-export function buildAssessmentSet({
-  pool = null,
-  rng = Math.random,
-  count = 12,
-  personalizationSeed = null
-} = {}) {
-  const eligible = pool || getAssessmentEligiblePool();
-  const random = personalizationSeed != null ? seededRng(personalizationSeed) : rng;
-
-  const bySkill = {};
-  for (const item of eligible) {
-    const tags = item.skillTags && item.skillTags.length ? item.skillTags : [primarySkillForItem(item)].filter(Boolean);
-    for (const skill of tags) {
-      if (!SKILLS.includes(skill)) continue;
-      (bySkill[skill] = bySkill[skill] || []).push(item);
-    }
-  }
-
-  const chosen = [];
-  const usedIds = new Set();
-  const coveredSkills = new Set();
-
-  for (const skill of REQUIRED_SKILLS) {
-    if (chosen.length >= count) break;
-    const list = bySkill[skill];
-    if (!list || !list.length) continue;
-    const pick = pickFromPool(list, random, usedIds);
-    if (!pick) continue;
-    usedIds.add(pick.id);
-    chosen.push(pick);
-    coveredSkills.add(skill);
-  }
-
-  const remaining = eligible
-    .filter((item) => !usedIds.has(item.id))
-    .sort((a, b) => {
-      const aNew = (a.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
-      const bNew = (b.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
-      return bNew - aNew;
-    });
-
-  while (chosen.length < count && remaining.length) {
-    const windowSize = Math.min(8, remaining.length);
-    const start = Math.floor(random() * Math.max(1, remaining.length - windowSize + 1));
-    const window = remaining.splice(start, windowSize);
-    window.sort((a, b) => {
-      const aNew = (a.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
-      const bNew = (b.skillTags || []).filter((s) => !coveredSkills.has(s)).length;
-      return bNew - aNew;
-    });
-    const pick = window[0];
-    if (!pick || usedIds.has(pick.id)) continue;
-    usedIds.add(pick.id);
-    chosen.push(pick);
-    for (const s of (pick.skillTags || [])) coveredSkills.add(s);
-  }
-
-  return chosen.slice(0, count);
+  return getDiagnosticEligiblePool();
 }
 
 export function gradeAssessmentItem(item, choice) {
-  if (!item) return { score: 0, correct: false };
+  if (!item) return { score: 0, correct: false, nearOptimal: false, evLossBb: 0.5, cause: null, evidenceWeight: 0 };
   const correct = choice === item.correct;
   const nearOptimal = !correct && (item.alsoOk || []).includes(choice);
   const evLossBb = correct ? 0 : nearOptimal ? 0.08 : 0.5;
@@ -160,7 +73,44 @@ export function gradeAssessmentItem(item, choice) {
     sizingSensitive: /%/.test(choice) || /%/.test(item.correct),
     confidence: null
   });
-  return { score, correct, nearOptimal, evLossBb, cause };
+  const weight = evidenceWeight(
+    { difficulty: item.difficulty, tier: item.tier },
+    { correct, nearOptimal }
+  );
+  return { score, correct, nearOptimal, evLossBb, cause, evidenceWeight: weight };
+}
+
+function resolveSessionSeed({ sessionSeed, diagnosticSessionSeed, personalizationSeed, rng } = {}) {
+  if (diagnosticSessionSeed) return diagnosticSessionSeed;
+  if (sessionSeed) return sessionSeed;
+  if (personalizationSeed != null) return `dx-${personalizationSeed}`;
+  if (typeof rng === 'function') {
+    const n = Math.floor(rng() * 1e9);
+    return `dx-${n}`;
+  }
+  return createDiagnosticSessionSeed();
+}
+
+export function buildAssessmentSet({
+  pool = null,
+  rng = Math.random,
+  count = DIAGNOSTIC_COUNT_DEFAULT,
+  sessionSeed = null,
+  diagnosticSessionSeed = null,
+  personalizationSeed = null,
+  answerFn = null
+} = {}) {
+  const seed = resolveSessionSeed({ sessionSeed, diagnosticSessionSeed, personalizationSeed, rng });
+  const targetCount = clamp(Number(count) || DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX);
+  const choose = answerFn || ((item) => item.correct);
+  const { items } = simulateDiagnosticRun({
+    sessionSeed: seed,
+    targetCount,
+    pool: pool || getDiagnosticPool(),
+    answerFn: choose,
+    gradeFn: (item, choice) => gradeAssessmentItem(item, choice)
+  });
+  return items;
 }
 
 export function runAssessment({
@@ -168,17 +118,36 @@ export function runAssessment({
   answers = [],
   pool = null,
   rng = Math.random,
+  sessionSeed = null,
+  diagnosticSessionSeed = null,
   personalizationSeed = null,
+  session = null,
   now = Date.now()
 } = {}) {
-  const set = items || buildAssessmentSet({ pool, rng, personalizationSeed });
+  const set = items || buildAssessmentSet({
+    pool,
+    rng,
+    sessionSeed,
+    diagnosticSessionSeed,
+    personalizationSeed
+  });
+
   const results = [];
+  let totalEvidence = 0;
+  let weightedScoreSum = 0;
+
   for (const a of answers) {
     const item = set.find((i) => i.id === a.id)
-      || (pool || getAssessmentEligiblePool()).find((i) => i.id === a.id)
+      || getDiagnosticEligiblePool().find((i) => i.id === a.id)
       || ASSESSMENT_POOL.find((i) => i.id === a.id);
     if (!item) continue;
     const g = gradeAssessmentItem(item, a.choice);
+    const w = g.evidenceWeight || evidenceWeight(
+      { difficulty: item.difficulty, tier: item.tier },
+      g
+    );
+    totalEvidence += w;
+    weightedScoreSum += g.score * w;
     results.push({
       id: item.id,
       concept: item.concept,
@@ -193,10 +162,24 @@ export function runAssessment({
       nearOptimal: g.nearOptimal,
       evLossBb: g.evLossBb,
       cause: g.cause,
+      evidenceWeight: w,
+      difficulty: item.difficulty,
+      tier: item.tier,
+      category: item.category,
       at: now
     });
   }
+
   const assessed = buildSkillProfile({ assessment: { results }, now });
+  const ability = session?.ability ?? estimateAbilityFromResults(results);
+  const recDifficulty = recommendedStartingDifficulty({
+    ability,
+    overall: assessed.overall
+  });
+
+  const skillConfidence = buildSkillConfidence(results);
+  const strongestAreas = rankSkillsByScore(assessed, 'desc').slice(0, 3);
+  const weakestAreas = rankSkillsByScore(assessed, 'asc').slice(0, 3);
 
   const leakEvents = results
     .filter((r) => !r.correct)
@@ -211,6 +194,7 @@ export function runAssessment({
       highConfidence: r.confidence != null && r.confidence >= 60,
       at: now
     }));
+
   const leakProfiles = {};
   for (const ev of leakEvents) {
     if (!leakProfiles[ev.concept]) leakProfiles[ev.concept] = buildLeakProfile({ concept: ev.concept, now });
@@ -220,8 +204,10 @@ export function runAssessment({
     };
   }
 
+  const diagSummary = session ? diagnosticSessionSummary(session) : summarizeFromResults(set, results);
+
   return {
-    version: 1,
+    version: 2,
     completedAt: now,
     answered: results.length,
     total: set.length,
@@ -231,7 +217,68 @@ export function runAssessment({
     overall: assessed.overall,
     overallLabel: assessed.overallLabel,
     weakestSkill: assessed.weakest ? assessed.weakest.skill : null,
-    strongestSkill: assessed.strongest ? assessed.strongest.skill : null
+    strongestSkill: assessed.strongest ? assessed.strongest.skill : null,
+    skillConfidence,
+    strongestAreas,
+    weakestAreas,
+    recommendedStartingDifficulty: recDifficulty,
+    diagnosticSummary: diagSummary,
+    sessionSeed: session?.sessionSeed || null
+  };
+}
+
+function buildSkillConfidence(results) {
+  const bySkill = {};
+  for (const r of results) {
+    const tags = r.skillTags && r.skillTags.length ? r.skillTags : [r.skillTag].filter(Boolean);
+    for (const skill of tags) {
+      if (!bySkill[skill]) bySkill[skill] = { weight: 0, correct: 0, total: 0 };
+      const w = r.evidenceWeight || 1;
+      bySkill[skill].weight += w;
+      bySkill[skill].total += 1;
+      if (r.correct || r.nearOptimal) bySkill[skill].correct += w;
+    }
+  }
+  const out = {};
+  for (const [skill, data] of Object.entries(bySkill)) {
+    const rate = data.weight ? data.correct / data.weight : 0;
+    const sampleFactor = Math.min(1, data.total / 3);
+    out[skill] = round(0.2 + 0.8 * sampleFactor * (0.4 + 0.6 * rate), 3);
+  }
+  return out;
+}
+
+function rankSkillsByScore(profile, dir) {
+  const skills = Object.values((profile && profile.skills) || {})
+    .filter((s) => s && s.score != null)
+    .sort((a, b) => dir === 'desc' ? (b.score - a.score) : (a.score - b.score));
+  return skills.map((s) => ({ skill: s.skill, score: s.score, labelRu: s.labelRu }));
+}
+
+function estimateAbilityFromResults(results) {
+  if (!results.length) return 50;
+  let ability = 50;
+  for (const r of results) {
+    const diff = r.difficulty || r.tier || 2;
+    if (r.correct) ability += diff * 3;
+    else if (r.nearOptimal) ability += diff * 2;
+    else ability -= diff * 4;
+    ability = clamp(ability, 0, 100);
+  }
+  return ability;
+}
+
+function summarizeFromResults(set, results) {
+  const tiers = results.map((r) => r.tier || r.difficulty || 2);
+  const avgTier = tiers.length ? tiers.reduce((s, t) => s + t, 0) / tiers.length : 0;
+  const advancedCount = results.filter((r) => (r.tier || r.difficulty || 0) >= 4).length;
+  return {
+    answered: results.length,
+    targetCount: set.length,
+    avgTier: round(avgTier, 2),
+    advancedCount,
+    advancedShare: results.length ? round(advancedCount / results.length, 3) : 0,
+    itemIds: set.map((i) => i.id)
   };
 }
 
@@ -247,3 +294,22 @@ function choiceToType(choice) {
 function clamp(n, lo, hi) {
   return Math.max(lo, Math.min(hi, n));
 }
+
+function round(n, d) {
+  const f = Math.pow(10, d);
+  return Math.round(n * f) / f;
+}
+
+export {
+  createDiagnosticSession,
+  createDiagnosticSessionSeed,
+  selectNextDiagnosticItem,
+  submitDiagnosticAnswer,
+  simulateDiagnosticRun,
+  validateDiagnosticItem,
+  validateDiagnosticPool,
+  getDiagnosticPoolSize,
+  DIAGNOSTIC_COUNT_DEFAULT,
+  DIAGNOSTIC_COUNT_MIN,
+  DIAGNOSTIC_COUNT_MAX
+};

@@ -1,25 +1,36 @@
-// Assessment controller for the primary (12-question) diagnostic (requirement
-// P0). Owns the per-question lifecycle (idle → answering → done), builds the
-// question set, records answers, and on completion runs the assessment to
-// produce a skill profile + leak profile which it persists to the store and
-// surfaces through analytics. Pure state + store calls; DOM stays in the
-// renderer. Deterministic given the same rng, so it is unit-testable.
+// Assessment controller for the adaptive initial diagnostic (requirement P0).
+// Uses dedicated diagnosticSessionSeed — NOT training personalizationSeed.
 
 import {
-  buildAssessmentSet, runAssessment, createAnalytics, buildLeakProfile
+  createDiagnosticSession,
+  createDiagnosticSessionSeed,
+  selectNextDiagnosticItem,
+  submitDiagnosticAnswer,
+  gradeAssessmentItem,
+  runAssessment,
+  createAnalytics,
+  buildLeakProfile,
+  DIAGNOSTIC_COUNT_DEFAULT
 } from '../solver/src/index.js';
 import { seedSkillEvidenceFromAssessment, buildSkillProfile } from '../solver/src/training/skillProfile.js';
 import { assessmentViewModel, assessmentSummaryViewModel } from './viewModel.js';
 
 export class AssessmentController {
-  constructor({ store = null, rng = Math.random, now = Date.now, count = 12, onStateChange = null } = {}) {
+  constructor({
+    store = null,
+    rng = Math.random,
+    now = Date.now,
+    count = DIAGNOSTIC_COUNT_DEFAULT,
+    onStateChange = null
+  } = {}) {
     this.store = store;
     this.rng = rng;
     this.now = now;
     this.count = count;
     this.onStateChange = onStateChange;
 
-    this.state = 'idle'; // idle | answering | done
+    this.state = 'idle';
+    this.session = null;
     this.set = [];
     this.answers = [];
     this.index = 0;
@@ -31,6 +42,18 @@ export class AssessmentController {
     if (typeof this.onStateChange === 'function') this.onStateChange(this.state);
   }
 
+  _sessionSeed() {
+    if (this.store && typeof this.store.loadDiagnosticSessionSeed === 'function') {
+      const stored = this.store.loadDiagnosticSessionSeed();
+      if (stored) return stored;
+    }
+    const seed = createDiagnosticSessionSeed();
+    if (this.store && typeof this.store.saveDiagnosticSessionSeed === 'function') {
+      this.store.saveDiagnosticSessionSeed(seed);
+    }
+    return seed;
+  }
+
   hasResult() {
     return !!(this.result && this.result.skillProfile);
   }
@@ -39,64 +62,79 @@ export class AssessmentController {
     return this._pendingSummary && this.state === 'done' && !!this.result;
   }
 
-  // Leave the one-shot summary screen; later Daily visits show training home.
   acknowledgeCompletion() {
     this._pendingSummary = false;
     this.state = 'idle';
+    this.session = null;
     this.set = [];
     this.answers = [];
     this.index = 0;
     this._notify();
   }
 
-  // Start the diagnostic: build the question set and enter the answering state.
   begin() {
-    const seed = this.store && typeof this.store.getOrCreatePersonalizationSeed === 'function'
-      ? this.store.getOrCreatePersonalizationSeed()
-      : null;
-    this.set = buildAssessmentSet({ rng: this.rng, count: this.count, personalizationSeed: seed });
+    const sessionSeed = this._sessionSeed();
+    this.session = createDiagnosticSession({
+      sessionSeed,
+      targetCount: this.count
+    });
+    this.set = [];
     this.answers = [];
     this.index = 0;
     this.result = null;
     this._pendingSummary = false;
-    this.state = this.set.length ? 'answering' : 'done';
-    if (this.set.length) {
-      const analytics = createAnalytics({ store: this.store, now: this.now });
-      analytics.assessmentStarted();
+
+    const first = selectNextDiagnosticItem(this.session);
+    if (!first) {
+      this.state = 'done';
+      this._notify();
+      return { started: false, total: 0 };
     }
+
+    this.state = 'answering';
+    const analytics = createAnalytics({ store: this.store, now: this.now });
+    analytics.assessmentStarted();
     this._notify();
-    return { started: this.set.length > 0, total: this.set.length };
+    return { started: true, total: this.session.targetCount };
   }
 
   current() {
-    return this.set[this.index] || null;
+    return this.session?._currentItem || null;
   }
 
   progress() {
-    return { index: this.set.length ? this.index + 1 : 0, total: this.set.length };
+    const total = this.session?.targetCount || this.count;
+    return { index: this.session ? this.session.index + 1 : 0, total };
   }
 
-  // Record a choice for the current question and advance. On the last question
-  // the assessment is finalised automatically.
   answer(choice) {
-    if (this.state !== 'answering') return null;
+    if (this.state !== 'answering' || !this.session) return null;
     const item = this.current();
     if (!item) return null;
+
+    const grade = gradeAssessmentItem(item, choice);
+    submitDiagnosticAnswer(this.session, choice, grade);
     this.answers.push({ id: item.id, choice, confidence: null });
-    this.index++;
-    const done = this.index >= this.set.length;
+    this.set.push(item);
+    this.index = this.session.index;
+
+    const done = this.session.done;
     if (done) {
       this.finish();
-      this._notify();
+    } else {
+      selectNextDiagnosticItem(this.session);
     }
-    return { done, correct: choice === item.correct, answered: this.index };
+    this._notify();
+    return { done, correct: grade.correct, answered: this.index };
   }
 
-  // Finalise: run the assessment, persist the skill profile + assessment, record
-  // the completion event, and move to 'done'. Best-effort persistence — never
-  // throws into the caller.
   finish() {
-    const res = runAssessment({ items: this.set, answers: this.answers, now: this.now() });
+    const res = runAssessment({
+      items: this.set,
+      answers: this.answers,
+      session: this.session,
+      now: this.now()
+    });
     this.result = res;
     this.state = 'done';
     this._pendingSummary = true;
@@ -131,15 +169,17 @@ export class AssessmentController {
     return res;
   }
 
-  // View model for the current phase: a question while answering, the result
-  // summary once done.
   viewModel() {
     if (this.state === 'done' && this.result) {
       return { phase: 'summary', ...assessmentSummaryViewModel({ result: this.result }) };
     }
     return {
       phase: 'question',
-      ...assessmentViewModel({ item: this.current(), index: this.index + 1, total: this.set.length })
+      ...assessmentViewModel({
+        item: this.current(),
+        index: this.progress().index,
+        total: this.progress().total
+      })
     };
   }
 }

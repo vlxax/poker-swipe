@@ -77,8 +77,19 @@ export {
 } from './training/errorCause.js';
 export {
   ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, buildAssessmentEligiblePool,
-  getAssessmentEligiblePool, gradeAssessmentItem, runAssessment
+  getAssessmentEligiblePool, getDiagnosticEligiblePool, gradeAssessmentItem, runAssessment,
+  createDiagnosticSession, createDiagnosticSessionSeed, selectNextDiagnosticItem,
+  submitDiagnosticAnswer, simulateDiagnosticRun, validateDiagnosticItem, validateDiagnosticPool,
+  getDiagnosticPoolSize, DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX
 } from './training/assessment.js';
+export {
+  DIAGNOSTIC_CATEGORIES, DIAGNOSTIC_CATEGORY_IDS, getDiagnosticPool,
+  getDiagnosticPoolByCategory, formatDiagnosticQuestion
+} from './training/diagnosticPool.js';
+export {
+  recommendedStartingDifficulty, diagnosticSessionSummary, evidenceWeight,
+  getDiagnosticCategoryCoverage, getDiagnosticDifficultyCoverage, getDiagnosticSkillCoverage
+} from './training/diagnosticSelection.js';
 export {
   SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
   spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots,
