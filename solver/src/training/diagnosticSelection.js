@@ -52,23 +52,63 @@ function updateAbility(ability, item, grade) {
   return clamp(ability + delta, 0, 100);
 }
 
-function pickFromTier(items, tier, rng, usedIds) {
-  const tierItems = items.filter((i) => i.tier === tier && !usedIds.has(i.id));
-  if (!tierItems.length) {
-    const any = items.filter((i) => !usedIds.has(i.id));
-    if (!any.length) return null;
-    return any[Math.floor(rng() * any.length)];
-  }
-  return tierItems[Math.floor(rng() * tierItems.length)];
+function abilityMaxTier(ability) {
+  if (ability >= 64) return 4;
+  if (ability >= 50) return 3;
+  if (ability >= 36) return 2;
+  return 2;
 }
 
-function pickWithFallback(items, targetTier, rng, usedIds) {
-  for (let t = targetTier; t >= 1; t--) {
-    const pick = pickFromTier(items, t, rng, usedIds);
-    if (pick) return pick;
+function abilityMinFloor(ability, categoryVisit = 0) {
+  if (categoryVisit > 0) return ability >= 64 ? 2 : 1;
+  if (ability >= 78) return 3;
+  if (ability >= 64) return 2;
+  if (ability >= 50) return 2;
+  return 1;
+}
+
+function categoryVisitIndex(session, categoryId) {
+  return (session.answers || []).filter((a) => a.category === categoryId).length;
+}
+
+function shuffleWithRng(list, rng) {
+  const arr = list.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  const any = items.filter((i) => !usedIds.has(i.id));
-  return any.length ? any[Math.floor(rng() * any.length)] : null;
+  return arr;
+}
+
+function pickDiverseWithinCategory(categoryItems, session, categoryId) {
+  const isCalibration = session.index < 2;
+  const maxTier = isCalibration ? 2 : abilityMaxTier(session.ability);
+  const visit = categoryVisitIndex(session, categoryId);
+  const minTier = isCalibration ? 1 : abilityMinFloor(session.ability, visit);
+  const slotRng = seededRng(`${session.sessionSeed}|pick|${session.index}|${categoryId}`);
+
+  const tiers = [];
+  for (let t = minTier; t <= maxTier; t++) {
+    if (categoryItems.some((i) => i.tier === t && !session.usedIds.has(i.id))) tiers.push(t);
+  }
+
+  if (tiers.length) {
+    const tierOrder = shuffleWithRng(tiers, seededRng(`${session.sessionSeed}|tierOrder|${session.index}|${categoryId}`));
+    const start = Math.floor(slotRng() * tierOrder.length);
+    for (let attempt = 0; attempt < tierOrder.length; attempt++) {
+      const tierPick = tierOrder[(start + attempt) % tierOrder.length];
+      const atTier = categoryItems.filter((i) => !session.usedIds.has(i.id) && i.tier === tierPick);
+      if (atTier.length) {
+        const pickRng = seededRng(`${session.sessionSeed}|item|${session.index}|${categoryId}|${tierPick}`);
+        return atTier[Math.floor(pickRng() * atTier.length)];
+      }
+    }
+  }
+
+  let pool = categoryItems.filter((i) => !session.usedIds.has(i.id) && i.tier >= minTier && i.tier <= maxTier);
+  if (!pool.length) pool = categoryItems.filter((i) => !session.usedIds.has(i.id) && i.tier <= maxTier);
+  if (!pool.length) pool = categoryItems.filter((i) => !session.usedIds.has(i.id));
+  return pool.length ? pool[Math.floor(slotRng() * pool.length)] : null;
 }
 
 function buildCategoryPlan(_sessionSeed, targetCount, _rng) {
@@ -87,8 +127,7 @@ export function createDiagnosticSession({
   const count = clamp(Number(targetCount) || DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX);
   const sourcePool = pool || getDiagnosticPool();
   const categoryPlan = buildCategoryPlan(seed, count, rng);
-
-  return {
+  const draft = {
     version: 1,
     sessionSeed: seed,
     targetCount: count,
@@ -101,6 +140,7 @@ export function createDiagnosticSession({
     answers: [],
     pool: sourcePool
   };
+  return draft;
 }
 
 export function selectNextDiagnosticItem(session, { gradeFn = null } = {}) {
@@ -112,16 +152,8 @@ export function selectNextDiagnosticItem(session, { gradeFn = null } = {}) {
 
   const categoryId = session.categoryPlan[session.index];
   const categoryItems = session.pool.filter((i) => i.category === categoryId);
-  const slotRng = seededRng(`${session.sessionSeed}|${session.index}|${categoryId}`);
 
-  let targetTier;
-  if (session.index < 2) {
-    targetTier = 1;
-  } else {
-    targetTier = tierFromAbility(session.ability);
-  }
-
-  const raw = pickWithFallback(categoryItems, targetTier, slotRng, session.usedIds);
+  const raw = pickDiverseWithinCategory(categoryItems, session, categoryId);
   if (!raw) {
     session.done = true;
     return null;

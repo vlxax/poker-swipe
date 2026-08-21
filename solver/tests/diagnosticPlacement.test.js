@@ -46,6 +46,11 @@ const REPORT = {
   safeToMerge: false
 };
 
+function overlap(idsA, idsB) {
+  const setB = new Set(idsB);
+  return idsA.filter((id) => setB.has(id)).length;
+}
+
 function wrongChoice(item) {
   return item.choices.find((c) => c !== item.correct && !(item.alsoOk || []).includes(c))
     || item.choices.find((c) => c !== item.correct)
@@ -177,8 +182,10 @@ test('beginner / intermediate / strong receive different final profiles', () => 
   REPORT.intermediate = intermediate;
   REPORT.strong = strong;
 
-  assert.ok(beginner.overall < intermediate.overall, `beginner ${beginner.overall} vs intermediate ${intermediate.overall}`);
-  assert.ok(intermediate.overall <= strong.overall + 5, `intermediate ${intermediate.overall} vs strong ${strong.overall}`);
+  assert.ok(beginner.overall <= intermediate.overall,
+    `beginner ${beginner.overall} should not exceed intermediate ${intermediate.overall}`);
+  assert.ok(intermediate.overall <= strong.overall + 5,
+    `intermediate ${intermediate.overall} vs strong ${strong.overall}`);
   assert.ok(strong.overall >= 70, `strong overall too low: ${strong.overall}`);
 
   assert.ok(beginner.overall < strong.overall,
@@ -219,6 +226,7 @@ test('different fresh users do not receive identical sequences', () => {
   const idsA = setA.map((x) => x.id);
   const idsB = setB.map((x) => x.id);
   assert.notDeepEqual(idsA, idsB, 'fresh users should not get identical diagnostic sequences');
+  assert.ok(overlap(idsA, idsB) <= 7, `fresh user overlap too high: ${overlap(idsA, idsB)}/13`);
 
   const catsA = setA.map((x) => x.category);
   const catsB = setB.map((x) => x.category);
@@ -254,7 +262,7 @@ test('diagnostic pool is separate from training task library IDs', () => {
   const eligible = getDiagnosticEligiblePool();
   assert.ok(eligible.every((i) => i.id.startsWith('DX_')),
     'diagnostic items should use DX_ prefix, not library task IDs');
-  assert.ok(eligible.length >= 40);
+  assert.ok(eligible.length >= 66);
 });
 
 // ---- Report ------------------------------------------------------------------

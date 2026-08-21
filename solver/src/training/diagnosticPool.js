@@ -3,6 +3,7 @@
 // difficulty tier (1–5), and whether it is a calibration question.
 
 import { SKILLS } from './skillProfile.js';
+import { VARIANT_B_POOL } from './diagnosticPoolVariants.js';
 
 export const DIAGNOSTIC_CATEGORIES = [
   { id: 'preflop_fundamentals', skill: 'preflop', labelRu: 'Префлоп база' },
@@ -604,7 +605,7 @@ const POOL = [
 let _poolCache = null;
 
 export function getDiagnosticPool() {
-  if (!_poolCache) _poolCache = POOL.slice();
+  if (!_poolCache) _poolCache = POOL.concat(VARIANT_B_POOL);
   return _poolCache;
 }
 
