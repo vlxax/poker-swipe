@@ -14,6 +14,7 @@ import {
 import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
+import { installOnboardingHooks } from './onboardingHooks.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import * as R from './renderer.js';
 
@@ -27,7 +28,7 @@ const storage = (() => {
 })();
 
 const store = createTrainingStore({ storage });
-const miniApps = installMiniAppHooks(store);
+const miniApps = installMiniAppHooks(store, { appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const SESSION_CONFIG = {
   count: 7,
@@ -70,6 +71,8 @@ const assessment = new AssessmentController({
   store,
   onStateChange: () => paint()
 });
+
+  const onboarding = installOnboardingHooks({ store, assessment, appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const goHome = () => {
   if (typeof window.show === 'function') window.show('home');
@@ -176,6 +179,7 @@ window.PersonalizedTrainingUi = {
   store,
   controller: ctl,
   assessment,
+  onboarding,
   paint,
   beginAssessment: () => { assessment.begin(); paint(); },
   miniApps

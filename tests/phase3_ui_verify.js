@@ -92,7 +92,7 @@ async function boot() {
 
   const store = createTrainingStore({ storage: dom.window.localStorage });
   seedTrainingProfile(store);
-  const miniApps = installMiniAppHooks(store);
+  const miniApps = installMiniAppHooks(store, { appWindow: dom.window });
   dom.window.PersonalizedTrainingUi = { store, miniApps };
 
   return { dom, window: dom.window, document: dom.window.document, errors, store, miniApps };
