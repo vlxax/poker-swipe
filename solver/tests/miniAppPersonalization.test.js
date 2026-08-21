@@ -18,7 +18,7 @@ import { buildMiniAppPlan, MINI_APP_SPECS } from '../src/training/miniAppPlanner
 import { legacyXrayToSpot } from '../../training-ui/legacyPoolAdapter.js';
 import { createMiniAppBridge } from '../../training-ui/miniAppBridge.js';
 
-const POOL = getTaskPool();
+const TEST_NOW = 1_750_000_000_000;
 
 function memoryStorage() {
   const map = new Map();
@@ -37,25 +37,26 @@ function freshStore(seed) {
   return store;
 }
 
-function simulateAssessment(store, answerFn, seed) {
+function simulateAssessment(store, answerFn, seed, now = TEST_NOW) {
   const set = buildAssessmentSet({ personalizationSeed: seed, count: 12 });
   const answers = set.map((item) => ({
     id: item.id,
     choice: answerFn(item),
     confidence: 70
   }));
-  const res = runAssessment({ items: set, answers, now: Date.now() });
+  const res = runAssessment({ items: set, answers, now });
   store.saveAssessment(res);
-  seedSkillEvidenceFromAssessment(store, res, Date.now());
-  const profile = buildSkillProfile({ storedEvidence: store.loadSkillEvidence(), now: Date.now() });
+  seedSkillEvidenceFromAssessment(store, res, now);
+  const profile = buildSkillProfile({ storedEvidence: store.loadSkillEvidence(), now });
   store.saveSkillProfile(profile);
   for (const prof of Object.values(res.leakProfiles || {})) store.saveProfile(prof);
   return profile;
 }
 
 function bluffCatchTask() {
+  const pool = getTaskPool();
   return getTaskById('R_PRICE_DEF')
-    || POOL.find((t) => deriveSkillTags(t).includes('bluffCatch'))
+    || pool.find((t) => deriveSkillTags(t).includes('bluffCatch'))
     || getTaskById('POST_RIVER_BLUFFCATCH_KQ');
 }
 
@@ -79,7 +80,7 @@ test('cross-app: xray mistake updates shared profile used by quick5 selection', 
 
   const gen = drillFromLibraryTask(task);
   assert.ok(gen.ok);
-  recordTrainingResult(store, { drill: gen.drill, grade: 'MISTAKE', evLossBb: 1.05, now: Date.now() + 1 });
+  recordTrainingResult(store, { drill: gen.drill, grade: 'MISTAKE', evLossBb: 1.05, now: TEST_NOW + 1 });
 
   const profile = store.loadSkillProfile();
   assert.ok(profile);
@@ -91,7 +92,7 @@ test('cross-app: xray mistake updates shared profile used by quick5 selection', 
   assert.ok(history.length >= 1, 'shared history should record the answer');
   assert.equal(history[history.length - 1].grade, 'MISTAKE');
 
-  const after = buildMiniAppPlan(store, 'quick5', { pool: POOL, count: 5, now: Date.now() + 2 });
+  const after = buildMiniAppPlan(store, 'quick5', { pool: getTaskPool(), count: 5, now: TEST_NOW + 2 });
   assert.equal(after.filled, 5);
   const weakestHits = after.spots.filter((s) => (s.skillTags || []).includes('bluffCatch')).length;
   assert.ok(weakestHits >= 1, `quick5 should prioritize weakest skill bluffCatch (${weakestHits}/5 spots)`);
@@ -123,7 +124,7 @@ test('bridge writeback uses same store profile and history', () => {
 test('sizing plan prioritizes betSizing skill targets', () => {
   const store = freshStore('sizing-focus-001');
   simulateAssessment(store, (item) => item.correct, 'sizing-focus-001');
-  const plan = buildMiniAppPlan(store, 'sizing', { pool: POOL, count: 1 });
+  const plan = buildMiniAppPlan(store, 'sizing', { pool: getTaskPool(), count: 1, now: TEST_NOW });
   assert.equal(plan.filled, 1);
   const tags = plan.spots[0].skillTags || [];
   assert.ok(tags.includes('betSizing') || tags.includes('postflop'), 'sizing mini-app should surface sizing-related skills');
