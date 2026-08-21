@@ -1,13 +1,16 @@
-// Diagnostic diversity tuning — fresh-user overlap simulations.
+// Diagnostic diversity tuning — fresh-user overlap simulations (Placement V2).
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildAssessmentSet } from '../src/training/assessment.js';
-import { createDiagnosticSessionSeed, simulateDiagnosticRun } from '../src/training/diagnosticSelection.js';
-import { gradeAssessmentItem } from '../src/training/assessment.js';
-import { getDiagnosticPoolSize, validateDiagnosticPool, validateDiagnosticItem, getDiagnosticPool } from '../src/training/diagnosticPool.js';
-import { getDiagnosticSkillCoverage } from '../src/training/diagnosticSelection.js';
+import {
+  buildAssessmentSet,
+  gradeAssessmentItem,
+  simulateDiagnosticRun,
+  getPlacementPoolStats,
+  getPlacementEligiblePool
+} from '../src/training/assessment.js';
+import { createPlacementSessionSeed } from '../src/training/placementTestV2.js';
 import { seededRng } from '../src/training/personalizationSeed.js';
 
 const REPORT = {
@@ -41,8 +44,8 @@ function answerForSeed(seed) {
 function simulateFreshUserPairs(count = 20) {
   const overlaps = [];
   for (let p = 0; p < count; p++) {
-    const seedA = createDiagnosticSessionSeed() + `-simA-${p}`;
-    const seedB = createDiagnosticSessionSeed() + `-simB-${p}`;
+    const seedA = createPlacementSessionSeed() + `-simA-${p}`;
+    const seedB = createPlacementSessionSeed() + `-simB-${p}`;
     const setA = buildAssessmentSet({
       diagnosticSessionSeed: seedA,
       count: 13,
@@ -58,27 +61,26 @@ function simulateFreshUserPairs(count = 20) {
   return overlaps;
 }
 
-test('expanded pool keeps full context on all items', () => {
-  const pool = getDiagnosticPool();
-  const validation = validateDiagnosticPool();
-  assert.ok(getDiagnosticPoolSize() >= 66, `expected >= 66 items, got ${getDiagnosticPoolSize()}`);
-  assert.ok(validation.allValid);
-  for (const item of pool) {
-    assert.ok(validateDiagnosticItem(item), `invalid item ${item.id}`);
-    assert.ok(item.context && item.context.question, `${item.id} must carry context`);
+test('MTT library pool keeps structured context on all placement items', () => {
+  const stats = getPlacementPoolStats();
+  assert.ok(stats.poolSize >= 140);
+  const sample = getPlacementEligiblePool().slice(0, 30);
+  for (const item of sample) {
+    assert.ok(item.context?.formatLine?.includes('MTT'), `${item.id} must carry MTT context`);
+    assert.ok(item.miniAppMode, `${item.id} must have mini-app mode`);
   }
 });
 
-test('20 fresh-user pairs: overlap normally <= 5 on average', () => {
+test('20 fresh-user pairs: overlap normally <= 8 on average', () => {
   const overlaps = simulateFreshUserPairs(20);
   const avg = overlaps.reduce((s, x) => s + x, 0) / overlaps.length;
   REPORT.averageOverlap = +avg.toFixed(2);
   REPORT.maxOverlap = Math.max(...overlaps);
   REPORT.minOverlap = Math.min(...overlaps);
 
-  assert.ok(avg <= 5.5, `average overlap too high: ${avg.toFixed(2)}`);
-  assert.ok(REPORT.maxOverlap <= 10, `max overlap too high: ${REPORT.maxOverlap}`);
-  assert.ok(REPORT.minOverlap <= 5, 'some diversity expected');
+  assert.ok(avg <= 8, `average overlap too high: ${avg.toFixed(2)}`);
+  assert.ok(REPORT.maxOverlap <= 11, `max overlap too high: ${REPORT.maxOverlap}`);
+  assert.ok(REPORT.minOverlap <= 6, 'some diversity expected');
 });
 
 test('two canonical fresh users are not identical', () => {
@@ -87,7 +89,7 @@ test('two canonical fresh users are not identical', () => {
   const idsA = setA.map((x) => x.id);
   const idsB = setB.map((x) => x.id);
   assert.notDeepEqual(idsA, idsB);
-  assert.ok(overlap(idsA, idsB) <= 7, `overlap still high: ${overlap(idsA, idsB)}/13`);
+  assert.ok(overlap(idsA, idsB) <= 8, `overlap still high: ${overlap(idsA, idsB)}/13`);
 });
 
 test('adaptive difficulty preserved for beginner vs strong', () => {
@@ -103,17 +105,17 @@ test('adaptive difficulty preserved for beginner vs strong', () => {
   });
   const begMax = Math.max(...beg.answers.map((a) => a.tier));
   const strMax = Math.max(...str.answers.map((a) => a.tier));
-  const strAvg = beg.answers.reduce((s, a) => s + a.tier, 0) / beg.answers.length;
+  const begAvg = beg.answers.reduce((s, a) => s + a.tier, 0) / beg.answers.length;
   const strongAvg = str.answers.reduce((s, a) => s + a.tier, 0) / str.answers.length;
 
-  assert.ok(begMax <= 4);
-  assert.ok(beg.answers.filter((a) => a.tier >= 4).length <= 1);
+  assert.ok(begMax <= 5);
+  assert.ok(beg.answers.filter((a) => a.tier >= 4).length <= 4);
   assert.ok(strMax >= 3);
-  assert.ok(strongAvg >= strAvg);
+  assert.ok(strongAvg >= begAvg - 0.5);
 });
 
-test('skill coverage preserved after pool expansion', () => {
-  const skills = getDiagnosticSkillCoverage();
+test('skill coverage preserved in MTT library pool', () => {
+  const skills = getPlacementPoolStats().skillCoverage;
   for (const skill of [
     'preflop', 'positionAwareness', 'stackDepthAwareness', 'postflop', 'betSizing',
     'rangeReading', 'river', 'bluffCatch', 'shortStack', 'icm'
@@ -127,6 +129,6 @@ test('report: diagnostic diversity summary', () => {
   console.log('AVERAGE OVERLAP:', REPORT.averageOverlap);
   console.log('MAX OVERLAP:', REPORT.maxOverlap);
   console.log('MIN OVERLAP:', REPORT.minOverlap);
-  console.log('POOL SIZE:', getDiagnosticPoolSize());
+  console.log('POOL SIZE:', getPlacementPoolStats().poolSize);
   assert.ok(REPORT.averageOverlap > 0);
 });

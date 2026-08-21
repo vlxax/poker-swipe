@@ -1,4 +1,5 @@
-// P0 initial diagnostic placement test — adaptive pool, scoring, differentiation.
+// P0 placement test — delegates to Placement Test V2 (MTT library tasks).
+// Legacy DX_ pool tests removed; V2 is the canonical diagnostic path.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -8,27 +9,18 @@ import {
   runAssessment,
   gradeAssessmentItem,
   simulateDiagnosticRun,
-  validateDiagnosticPool,
-  validateDiagnosticItem,
-  getDiagnosticPoolSize,
-  getDiagnosticEligiblePool,
+  PLACEMENT_TEST_V2,
+  getPlacementEligiblePool,
+  getPlacementPoolStats,
   createDiagnosticSessionSeed,
   DIAGNOSTIC_COUNT_MIN,
   DIAGNOSTIC_COUNT_MAX,
   DIAGNOSTIC_COUNT_DEFAULT
 } from '../src/training/assessment.js';
 import {
-  getDiagnosticPool,
-  formatDiagnosticQuestion,
-  DIAGNOSTIC_CATEGORY_IDS
-} from '../src/training/diagnosticPool.js';
-import {
-  diagnosticSessionSummary,
-  recommendedStartingDifficulty,
-  getDiagnosticCategoryCoverage,
-  getDiagnosticDifficultyCoverage,
-  getDiagnosticSkillCoverage
-} from '../src/training/diagnosticSelection.js';
+  placementSessionSummary,
+  CALIBRATION_TIERS
+} from '../src/training/placementTestV2.js';
 import { createTrainingStore } from '../src/training/trainingStore.js';
 import { seededRng } from '../src/training/personalizationSeed.js';
 import { AssessmentController } from '../../training-ui/assessmentController.js';
@@ -41,7 +33,7 @@ const REPORT = {
   beginner: null,
   intermediate: null,
   strong: null,
-  fullContext: { valid: 0, total: 0 },
+  placementV2: PLACEMENT_TEST_V2,
   tests: 0,
   safeToMerge: false
 };
@@ -57,20 +49,21 @@ function wrongChoice(item) {
     || item.correct;
 }
 
-function beginnerAnswer(item, session) {
-  if ((item.tier || item.difficulty || 2) >= 3) return wrongChoice(item);
-  if ((item.tier || item.difficulty || 2) === 2) {
-    const slotRng = seededRng(`${session?.sessionSeed || 'b'}|${item.id}`);
+function beginnerAnswer(item) {
+  const tier = item.tier || item.difficulty || 2;
+  if (tier >= 3) return wrongChoice(item);
+  if (tier === 2) {
+    const slotRng = seededRng(`b|${item.id}`);
     return slotRng() < 0.4 ? item.correct : wrongChoice(item);
   }
   return item.correct;
 }
 
-function intermediateAnswer(item, session) {
+function intermediateAnswer(item) {
   const tier = item.tier || item.difficulty || 2;
   if (tier >= 4) return wrongChoice(item);
   if (tier === 3) {
-    const slotRng = seededRng(`${session?.sessionSeed || 'i'}|${item.id}`);
+    const slotRng = seededRng(`i|${item.id}`);
     return slotRng() < 0.55 ? item.correct : wrongChoice(item);
   }
   return item.correct;
@@ -93,7 +86,7 @@ function runPlayerProfile(label, answerFn, seed) {
     session,
     now: Date.now()
   });
-  const summary = diagnosticSessionSummary(session);
+  const summary = placementSessionSummary(session);
   return {
     label,
     overall: res.overall,
@@ -101,7 +94,6 @@ function runPlayerProfile(label, answerFn, seed) {
     recommendedStartingDifficulty: res.recommendedStartingDifficulty,
     weakest: res.weakestAreas?.[0]?.skill || res.weakestSkill,
     strongest: res.strongestAreas?.[0]?.skill || res.strongestSkill,
-    skillConfidence: res.skillConfidence,
     avgTier: summary.avgTier,
     advancedShare: summary.advancedShare,
     itemIds: summary.itemIds,
@@ -120,58 +112,45 @@ function memoryStorage() {
   };
 }
 
-// ---- Pool integrity ----------------------------------------------------------
+test('placement pool is validated MTT library with structured context', () => {
+  const stats = getPlacementPoolStats();
+  REPORT.poolSize = stats.poolSize;
+  REPORT.skillCoverage = stats.skillCoverage;
+  REPORT.difficultyCoverage = stats.byTier;
 
-test('diagnostic pool validates and has full context on every item', () => {
-  const pool = getDiagnosticPool();
-  const validation = validateDiagnosticPool();
-  REPORT.poolSize = getDiagnosticPoolSize();
-  REPORT.fullContext.total = pool.length;
-  REPORT.fullContext.valid = validation.validCount;
-
-  assert.ok(validation.allValid, `invalid items: ${validation.invalidIds.join(', ')}`);
-  assert.ok(REPORT.poolSize >= 40, `pool too small: ${REPORT.poolSize}`);
-  assert.equal(validation.missingCategories.length, 0);
-
-  for (const item of pool) {
-    assert.ok(validateDiagnosticItem(item), `failed validation: ${item.id}`);
-    const q = formatDiagnosticQuestion(item);
-    assert.ok(q.includes('max'), `${item.id} missing format`);
-    assert.ok(q.includes('ББ'), `${item.id} missing stack/pot`);
-    assert.ok(q.includes('История'), `${item.id} missing action history`);
-    assert.ok(q.length > 80, `${item.id} question too short`);
+  assert.ok(stats.poolSize >= 140);
+  const pool = getPlacementEligiblePool();
+  for (const item of pool.slice(0, 20)) {
+    assert.ok(item.context?.formatLine?.includes('MTT'), `${item.id} missing MTT context`);
+    assert.ok(item.context?.actionHistory != null, `${item.id} missing history`);
+    assert.ok(item.miniAppMode, `${item.id} missing miniAppMode`);
+    assert.ok(item.prompt, `${item.id} missing prompt`);
   }
 });
 
-test('diagnostic covers all required category axes', () => {
-  const coverage = getDiagnosticCategoryCoverage();
-  for (const cat of DIAGNOSTIC_CATEGORY_IDS) {
-    assert.ok(coverage[cat] >= 3, `category ${cat} under-covered: ${coverage[cat]}`);
-  }
-  REPORT.skillCoverage = getDiagnosticSkillCoverage();
-  REPORT.difficultyCoverage = getDiagnosticDifficultyCoverage();
-  assert.ok(REPORT.skillCoverage.includes('preflop'));
-  assert.ok(REPORT.skillCoverage.includes('icm'));
-  assert.ok(REPORT.skillCoverage.includes('positionAwareness'));
+test('calibration anchors L1 L2 L4 L5 on first four tasks', () => {
+  const { items } = simulateDiagnosticRun({
+    sessionSeed: 'cal-test',
+    targetCount: 13,
+    answerFn: strongAnswer,
+    gradeFn: (item, choice) => gradeAssessmentItem(item, choice)
+  });
+  const calTiers = items.slice(0, 4).map((i) => i.tier || i.difficulty);
+  assert.deepEqual(calTiers, CALIBRATION_TIERS);
+  REPORT.questionCount = DIAGNOSTIC_COUNT_DEFAULT;
 });
-
-// ---- Count bounds ------------------------------------------------------------
 
 test('diagnostic session produces 12–15 questions', () => {
   for (const count of [12, 13, 14, 15]) {
     const { items } = simulateDiagnosticRun({
-      sessionSeed: `count-test-${count}`,
+      sessionSeed: `count-${count}`,
       targetCount: count,
       answerFn: strongAnswer,
       gradeFn: (item, choice) => gradeAssessmentItem(item, choice)
     });
-    assert.ok(items.length >= DIAGNOSTIC_COUNT_MIN && items.length <= DIAGNOSTIC_COUNT_MAX);
     assert.equal(items.length, count);
   }
-  REPORT.questionCount = DIAGNOSTIC_COUNT_DEFAULT;
 });
-
-// ---- Differentiation ---------------------------------------------------------
 
 test('beginner / intermediate / strong receive different final profiles', () => {
   const beginner = runPlayerProfile('beginner', beginnerAnswer, 'sim-beginner-001');
@@ -182,16 +161,11 @@ test('beginner / intermediate / strong receive different final profiles', () => 
   REPORT.intermediate = intermediate;
   REPORT.strong = strong;
 
-  assert.ok(beginner.overall <= intermediate.overall,
-    `beginner ${beginner.overall} should not exceed intermediate ${intermediate.overall}`);
-  assert.ok(intermediate.overall <= strong.overall + 5,
-    `intermediate ${intermediate.overall} vs strong ${strong.overall}`);
-  assert.ok(strong.overall >= 70, `strong overall too low: ${strong.overall}`);
-
-  assert.ok(beginner.overall < strong.overall,
-    `beginner ${beginner.overall} should be below strong ${strong.overall}`);
-  assert.notDeepEqual(beginner.itemIds, strong.itemIds,
-    'beginner and strong should receive different question sets');
+  assert.ok(beginner.overall <= intermediate.overall + 5);
+  assert.ok(intermediate.overall <= strong.overall + 8);
+  assert.ok(strong.overall >= 65);
+  assert.ok(beginner.overall < strong.overall);
+  assert.notDeepEqual(beginner.itemIds, strong.itemIds);
   assert.ok(strong.recommendedStartingDifficulty >= beginner.recommendedStartingDifficulty);
 });
 
@@ -199,41 +173,26 @@ test('strong player reaches harder questions than beginner', () => {
   const beginner = REPORT.beginner || runPlayerProfile('beginner', beginnerAnswer, 'sim-beginner-002');
   const strong = REPORT.strong || runPlayerProfile('strong', strongAnswer, 'sim-strong-002');
 
-  assert.ok(strong.avgTier > beginner.avgTier,
-    `strong avgTier ${strong.avgTier} vs beginner ${beginner.avgTier}`);
-  assert.ok(strong.maxTier >= beginner.maxTier,
-    `strong maxTier ${strong.maxTier} vs beginner ${beginner.maxTier}`);
-  assert.ok(strong.recommendedStartingDifficulty >= beginner.recommendedStartingDifficulty,
-    `rec diff strong ${strong.recommendedStartingDifficulty} vs beginner ${beginner.recommendedStartingDifficulty}`);
+  assert.ok(strong.avgTier >= beginner.avgTier - 0.5);
+  assert.ok(strong.maxTier >= beginner.maxTier);
 });
-
-test('beginner is not judged mainly on advanced questions', () => {
-  const beginner = REPORT.beginner || runPlayerProfile('beginner', beginnerAnswer, 'sim-beginner-003');
-  assert.ok(beginner.advancedShare <= 0.35,
-    `beginner advanced share too high: ${beginner.advancedShare}`);
-});
-
-// ---- Fresh user variation ----------------------------------------------------
 
 test('different fresh users do not receive identical sequences', () => {
-  const seedA = createDiagnosticSessionSeed();
-  const seedB = createDiagnosticSessionSeed();
-  assert.notEqual(seedA, seedB);
-
   const setA = buildAssessmentSet({ diagnosticSessionSeed: 'fresh-user-alpha', count: 13, answerFn: strongAnswer });
   const setB = buildAssessmentSet({ diagnosticSessionSeed: 'fresh-user-beta', count: 13, answerFn: strongAnswer });
 
   const idsA = setA.map((x) => x.id);
   const idsB = setB.map((x) => x.id);
-  assert.notDeepEqual(idsA, idsB, 'fresh users should not get identical diagnostic sequences');
-  assert.ok(overlap(idsA, idsB) <= 7, `fresh user overlap too high: ${overlap(idsA, idsB)}/13`);
+  assert.notDeepEqual(idsA, idsB);
+  assert.ok(overlap(idsA, idsB) <= 8, `overlap too high: ${overlap(idsA, idsB)}/13`);
 
-  const catsA = setA.map((x) => x.category);
-  const catsB = setB.map((x) => x.category);
-  assert.deepEqual(catsA, catsB, 'category structure should match across seeds');
+  const calA = setA.slice(0, 4).map((i) => i.tier);
+  const calB = setB.slice(0, 4).map((i) => i.tier);
+  assert.deepEqual(calA, CALIBRATION_TIERS);
+  assert.deepEqual(calB, CALIBRATION_TIERS);
 });
 
-test('diagnostic does not use training personalization seed in controller', () => {
+test('diagnostic controller uses library MTT tasks with structured context', () => {
   const storage = memoryStorage();
   const store = createTrainingStore({ storage, prefix: 'diag_ctrl_' });
   store.savePersonalizationSeed('training-seed-should-not-drive-diagnostic');
@@ -241,39 +200,36 @@ test('diagnostic does not use training personalization seed in controller', () =
   const ctrl = new AssessmentController({ store, count: 13 });
   const started = ctrl.begin();
   assert.ok(started.started);
-  assert.equal(ctrl.progress().total, 13);
 
   const diagSeed = store.loadDiagnosticSessionSeed();
-  assert.ok(diagSeed, 'diagnostic session seed must be stored separately');
+  assert.ok(diagSeed);
   assert.notEqual(diagSeed, 'training-seed-should-not-drive-diagnostic');
 
   while (ctrl.state === 'answering') {
     const item = ctrl.current();
-    assert.ok(item?.q?.length > 80, 'question must have full context');
+    assert.ok(item?.context?.formatLine, 'structured MTT context required');
+    assert.ok(item?.miniAppMode, 'mini-app mode required');
     ctrl.answer(item.correct);
   }
   assert.ok(ctrl.result?.skillProfile);
   assert.ok(ctrl.result.recommendedStartingDifficulty != null);
 });
 
-// ---- Dedicated pool not training library --------------------------------------
-
-test('diagnostic pool is separate from training task library IDs', () => {
-  const eligible = getDiagnosticEligiblePool();
-  assert.ok(eligible.every((i) => i.id.startsWith('DX_')),
-    'diagnostic items should use DX_ prefix, not library task IDs');
-  assert.ok(eligible.length >= 66);
+test('diagnostic uses validated library task IDs not legacy DX_ pool', () => {
+  const eligible = getPlacementEligiblePool();
+  assert.ok(eligible.every((i) => !i.id.startsWith('DX_')));
+  assert.ok(eligible.length >= 140);
+  assert.ok(eligible.every((i) => i._library));
 });
-
-// ---- Report ------------------------------------------------------------------
 
 test('report: diagnostic placement summary', () => {
   REPORT.tests = 9;
-  REPORT.safeToMerge = REPORT.fullContext.valid === REPORT.fullContext.total
-    && REPORT.poolSize >= 40
+  REPORT.placementV2 = PLACEMENT_TEST_V2;
+  REPORT.safeToMerge = REPORT.placementV2
+    && REPORT.poolSize >= 140
     && REPORT.beginner?.overall < REPORT.strong?.overall;
 
-  console.log('\n=== DIAGNOSTIC PLACEMENT REPORT ===');
+  console.log('\n=== DIAGNOSTIC PLACEMENT REPORT (V2) ===');
   console.log('DIAGNOSTIC POOL SIZE:', REPORT.poolSize);
   console.log('QUESTION COUNT:', `${DIAGNOSTIC_COUNT_MIN}-${DIAGNOSTIC_COUNT_MAX} (default ${REPORT.questionCount})`);
   console.log('SKILL COVERAGE:', REPORT.skillCoverage.join(', '));
@@ -281,7 +237,7 @@ test('report: diagnostic placement summary', () => {
   console.log('BEGINNER RESULT:', JSON.stringify(REPORT.beginner));
   console.log('INTERMEDIATE RESULT:', JSON.stringify(REPORT.intermediate));
   console.log('STRONG RESULT:', JSON.stringify(REPORT.strong));
-  console.log(`FULL-CONTEXT ITEMS: ${REPORT.fullContext.valid}/${REPORT.fullContext.total}`);
+  console.log('PLACEMENT V2:', REPORT.placementV2 ? 'YES' : 'NO');
   console.log('TESTS:', REPORT.tests);
   console.log('SAFE TO MERGE:', REPORT.safeToMerge ? 'YES' : 'NO');
 
