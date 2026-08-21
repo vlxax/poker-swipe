@@ -13,6 +13,7 @@ import { mapLeakConceptForTask } from './planner.js';
 import { skillsForConcept, updateSkillProfileInStore } from './skillProfile.js';
 import { contentFingerprint } from './sessionDiversity.js';
 import { seededRng } from './personalizationSeed.js';
+import { updateSkillMasteryAfterTraining, buildSkillMasteryStates } from './skillMastery.js';
 
 export function getTopLeaks(store, { now = Date.now(), limit = 5 } = {}) {
   const profiles = (store.listProfiles() || [])
@@ -83,6 +84,13 @@ export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date
     now
   });
 
+  updateSkillMasteryAfterTraining(store, {
+    skillTags,
+    skillProfile,
+    grade,
+    now
+  });
+
   return { recorded: true, concept, progress, skillProfile, skillTags };
 }
 
@@ -120,6 +128,14 @@ export function buildProfileDailyPlan({
     ? store.getOrCreatePersonalizationSeed()
     : null;
   const seeded = seed != null ? seededRng(`${seed}|plan|${now}`) : rng;
+  const recentResults = buildRecentResults(hist);
+  const masteryStore = typeof store.loadSkillMastery === 'function' ? store.loadSkillMastery() : {};
+  const skillMasteryStates = buildSkillMasteryStates({
+    skillProfile,
+    masteryStore,
+    recentResults,
+    now
+  });
 
   if (!hasUsablePlayerProfile(store) && !leakProfiles.length) {
     return null;
@@ -129,9 +145,10 @@ export function buildProfileDailyPlan({
     pool: taskPool,
     progressByConcept: buildProgressMap(store),
     history: hist,
-    recentResults: buildRecentResults(hist),
+    recentResults,
     skillProfile,
     leakProfiles,
+    skillMasteryStates,
     count,
     now,
     rng: seeded

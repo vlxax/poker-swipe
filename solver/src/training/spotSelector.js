@@ -17,6 +17,7 @@ import {
   difficultyFit as difficultyFitForTarget,
   scoreToBaseDifficulty
 } from './adaptiveDifficulty.js';
+import { buildSkillMasteryStates, masteryBoostForSpot } from './skillMastery.js';
 
 export { recentAccuracy } from './adaptiveDifficulty.js';
 
@@ -270,6 +271,11 @@ function scoreForSessionSlot(spot, slotKind, ctx) {
       && spotMatchesLeakConcept(spot, topLeak)) {
     diversity *= 0.25;
   }
+  score += masteryBoostForSpot(spot, ctx.skillMasteryStates, ctx.skillProfile, {
+    allowMasteredPenalty: slotKind === 'maintenance_medium'
+      || slotKind === 'maintenance_strong'
+      || slotKind === 'exploration'
+  }) * 0.85;
   score -= diversity;
   return score;
 }
@@ -388,6 +394,7 @@ function weaknessScore(spot, ctx, { useSkillTargets = false } = {}) {
   if (ctx.weakestSkillConcepts && ctx.weakestSkillConcepts.has(spot.concept)) score += 1.5;
   const diffBonus = spotDifficultyFit(spot, ctx);
   if (diffBonus > 0) score += diffBonus * 0.4;
+  score += masteryBoostForSpot(spot, ctx.skillMasteryStates, ctx.skillProfile, { allowMasteredPenalty: false }) * 0.85;
   if (useSkillTargets && ctx.skillTargets) {
     for (const tag of spot.skillTags || []) {
       const want = ctx.skillTargets[tag];
@@ -452,6 +459,7 @@ export function selectSpots({
   shownCooldown = DEFAULT_SHOWN_COOLDOWN,
   masteryGate = DEFAULT_MASTERY_GATE,
   skillTargets = null,
+  skillMasteryStates = null,
   allowRepeatIds = [],
   rng = Math.random
 } = {}) {
@@ -486,6 +494,13 @@ export function selectSpots({
     );
   }
 
+  const resolvedMasteryStates = buildSkillMasteryStates({
+    skillProfile,
+    masteryStore: skillMasteryStates || {},
+    recentResults,
+    now
+  });
+
   const ctx = {
     skillProfile,
     leakPriorities,
@@ -494,6 +509,7 @@ export function selectSpots({
     weakestSkillConcepts,
     history,
     recentResults,
+    skillMasteryStates: resolvedMasteryStates,
     targetDiff,
     skillTargets,
     skillCounts: {},

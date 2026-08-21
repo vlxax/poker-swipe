@@ -4,7 +4,8 @@
 import { createTrainingStore } from './trainingStore.js';
 import { getTaskPool } from './taskLibraryBridge.js';
 import { deriveSkillTags } from './planner.js';
-import { recordTrainingResult, buildProfileDailyPlan } from './personalizedTraining.js';
+import { buildProfileDailyPlan, recordTrainingResult } from './personalizedTraining.js';
+import { intervalMsForIndex } from './skillMastery.js';
 import { drillFromLibraryTask } from './libraryDrill.js';
 
 export const DIFFERENTIATION_PLAN_COUNT = 20;
@@ -120,6 +121,21 @@ export function topWeaknesses(store, limit = 3) {
     .map((s) => ({ skill: s.skill, score: s.score }));
 }
 
+export function alignMasteryReviewsBeforePlan(store, planNow = DIFFERENTIATION_PLAN_NOW) {
+  if (!store || typeof store.loadSkillMastery !== 'function') return;
+  const mastery = store.loadSkillMastery() || {};
+  for (const skill of Object.keys(mastery)) {
+    const rec = mastery[skill];
+    if (!rec) continue;
+    if (rec.state === 'MASTERED' || rec.nextReviewAt != null) {
+      rec.state = 'MASTERED';
+      rec.lastReviewAt = planNow;
+      rec.nextReviewAt = planNow + intervalMsForIndex(rec.intervalIndex ?? 0);
+    }
+  }
+  store.saveSkillMastery(mastery);
+}
+
 export function generateDifferentiationPlan(store, {
   count = DIFFERENTIATION_PLAN_COUNT,
   now = DIFFERENTIATION_PLAN_NOW
@@ -129,6 +145,7 @@ export function generateDifferentiationPlan(store, {
 
 export function buildDifferentiationReport(profileId) {
   const store = buildPlayerStore(profileId);
+  alignMasteryReviewsBeforePlan(store);
   const plan = generateDifferentiationPlan(store);
   const weaknesses = topWeaknesses(store);
   const distribution = taskDistribution(plan.spots || []);

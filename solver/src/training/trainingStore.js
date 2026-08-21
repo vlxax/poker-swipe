@@ -190,6 +190,14 @@ export function createTrainingStore({
     saveJSON('skillEvidence', evidence || {});
   }
 
+  // ---- per-skill mastery / spaced repetition --------------------------------
+  function loadSkillMastery() {
+    return loadJSON('skillMastery', {});
+  }
+  function saveSkillMastery(mastery) {
+    saveJSON('skillMastery', mastery || {});
+  }
+
   // ---- analytics events (append-only, capped) ------------------------------
   function addAnalyticsEvent(event) {
     const events = loadJSON('analytics', []);
@@ -225,6 +233,8 @@ export function createTrainingStore({
     getOrCreatePersonalizationSeed,
     loadSkillEvidence,
     saveSkillEvidence,
+    loadSkillMastery,
+    saveSkillMastery,
     addAnalyticsEvent,
     loadAnalyticsEvents,
     reset
