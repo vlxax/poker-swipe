@@ -226,8 +226,9 @@ function spotHasStrongSkill(spot, tiers) {
 }
 
 function scoreForSessionSlot(spot, slotKind, ctx) {
-  const { tiers, skillProfile, leakPriorities, targetDiff, picked, strongMaintUsed, strongSkillSpotCount } = ctx;
+  const { tiers, skillProfile, leakPriorities, targetDiff, picked, strongMaintUsed, strongSkillSpotCount, repeatAllow } = ctx;
   let score = 0.5;
+  if (repeatAllow && repeatAllow.has(spot.id)) score += 50;
   const tags = spot.skillTags || [];
 
   if (slotKind === 'primary_weakness') {
@@ -321,7 +322,7 @@ function selectSpotsProfileAware({
   let strongMaintUsed = false;
   let strongSkillSpotCount = 0;
 
-  const slotCtx = { ...ctx, tiers, picked, strongMaintUsed: false, strongSkillSpotCount: 0 };
+  const slotCtx = { ...ctx, tiers, picked, strongMaintUsed: false, strongSkillSpotCount: 0, repeatAllow: ctx.repeatAllow };
 
   for (const slotKind of slotOrder) {
     slotCtx.strongMaintUsed = strongMaintUsed;
@@ -456,6 +457,7 @@ export function selectSpots({
   shownCooldown = DEFAULT_SHOWN_COOLDOWN,
   masteryGate = DEFAULT_MASTERY_GATE,
   skillTargets = null,
+  allowRepeatIds = [],
   rng = Math.random
 } = {}) {
   const spots = (pool || []).map(normalizeSpot).filter((s) => s.id);
@@ -500,10 +502,24 @@ export function selectSpots({
     picked: []
   };
 
-  const recentIds = new Set((history || []).slice(0, shownCooldown).map((h) => h.spotId).filter(Boolean));
-  const recentFps = recentFingerprints(history, shownCooldown);
-  const eligible = spots.filter((s) => spotEligible(s, shownAt, shownCooldown, recentFps) && !recentIds.has(s.id));
-  const softEligible = spots.filter((s) => !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s)));
+  const repeatAllow = new Set(allowRepeatIds || []);
+  for (const h of (history || [])) {
+    if (h && h.spacedReview && h.spotId) repeatAllow.add(h.spotId);
+  }
+
+  const cooldownHistory = (history || []).filter((h) => !h || !h.spacedReview);
+  const recentIds = new Set(
+    cooldownHistory.slice(0, shownCooldown).map((h) => h.spotId).filter(Boolean)
+  );
+  const recentFps = recentFingerprints(cooldownHistory, shownCooldown);
+  const eligible = spots.filter((s) => {
+    if (repeatAllow.has(s.id)) return true;
+    return spotEligible(s, shownAt, shownCooldown, recentFps) && !recentIds.has(s.id);
+  });
+  const softEligible = spots.filter((s) => {
+    if (repeatAllow.has(s.id)) return true;
+    return !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s));
+  });
   const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
 
   let picked = [];
@@ -513,7 +529,7 @@ export function selectSpots({
 
   if (useProfileSlots) {
     picked = selectSpotsProfileAware({
-      spots, candidates, count, ctx, rng, shownAt, shownCooldown, history
+      spots, candidates, count, ctx: { ...ctx, repeatAllow }, rng, shownAt, shownCooldown, history
     });
     slotKinds = picked.map((p) => p.slotKind);
   } else {
