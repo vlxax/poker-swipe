@@ -195,7 +195,7 @@ export const ADVANCED_TASKS = [
     history: [{ street: 'ПРЕФЛОП', text: 'Баббл: 7 left, призовых 6. SB запушил 28 ББ. Средний стек за столом ~22 ББ.', pot: 8.2 }],
     question: 'Что делаешь с QQ в BB при 16 ББ на баббле против пуша SB?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'КОЛЛ', alsoOk: [],
-    concept: 'bubble ICM QQ call', explain: 'QQ слишком сильна для ICM-фолда даже на баббле: доминируем AJ/TT/99 и часть Ax. Риск вылета компенсируется chipEV.',
+    concept: 'bubble ICM QQ call', explain: 'QQ слишком сильна для ICM-фолда даже на баббле: колл доминирует AJ/TT/99 и часть Ax. Риск вылета компенсируется chipEV.',
     difficulty: 5, tags: ['баббл', 'ICM', 'колл', 'пары']
   }),
   T({

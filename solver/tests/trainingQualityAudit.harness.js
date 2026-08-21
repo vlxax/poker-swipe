@@ -14,7 +14,7 @@ import {
   recordTrainingResult,
   buildPersonalizedSessionAsync
 } from '../src/training/personalizedTraining.js';
-import { drillFromLibraryTask } from '../src/training/libraryDrill.js';
+import { drillFromLibraryTask, libraryTaskToBrainSpot, choiceToActionType, explanationMatchesTask } from '../src/training/libraryDrill.js';
 import { gradeAnswer } from '../src/training/answerEvaluator.js';
 import { contentFingerprint, isTooSimilar } from '../src/training/sessionDiversity.js';
 import { validateTask } from '../../task-context/validator.js';
@@ -158,22 +158,7 @@ function answerForProfile(profile, task) {
 }
 
 function libraryTaskToSwipe(task) {
-  const gen = drillFromLibraryTask(task);
-  return {
-    id: task.id,
-    street: task.street,
-    pos: [task.position, task.villain ? `vs ${task.villain}` : ''].filter(Boolean).join(' '),
-    hero: task.hero || [],
-    board: task.board || [],
-    ctx: (task.history && task.history[0] && task.history[0].text) || task.question || '',
-    stack: task.heroStack != null ? task.heroStack : 30,
-    pot: task.pot != null ? task.pot : 5,
-    actions: task.options || [],
-    preferred: [task.correct],
-    live: task.alsoOk || [],
-    concept: task.concept,
-    why: task.explain || ''
-  };
+  return libraryTaskToBrainSpot(task) || {};
 }
 
 let _brain = null;
@@ -246,14 +231,6 @@ function facingKind(task) {
   return 'checked_to';
 }
 
-function choiceToActionType(choice) {
-  const c = String(choice || '');
-  if (c.includes('СТАВКА') || c.includes('ОЛЛ') || c.includes('РЕЙЗ') || c.includes('3-БЕТ') || c.includes('4-БЕТ')) return 'bet';
-  if (c === 'КОЛЛ') return 'call';
-  if (c === 'ЧЕК') return 'check';
-  if (c === 'ФОЛД') return 'fold';
-  return 'other';
-}
 
 function illegalActionIssues(task) {
   const kind = facingKind(task);
@@ -342,23 +319,7 @@ function boardIssues(task) {
 }
 
 function explanationMatch(task) {
-  const ex = String(task.explain || '').toLowerCase();
-  const q = String(task.question || '').toLowerCase();
-  if (!ex.trim()) return { ok: false, reason: 'empty_explain' };
-  const map = {
-    ФОЛД: ['фолд', 'пас', 'сдава'],
-    КОЛЛ: ['колл', 'защит', 'кэтч', 'кетч', 'плат', 'лов'],
-    ЧЕК: ['чек'],
-    СТАВКА: ['ставк', 'бет', 'с-бет', 'баррел', 'барел', 'добир', 'value', 'вэлью', 'ценност'],
-    РЕЙЗ: ['рейз', '3-бет', '4-бет', 'агрес', 'чек-рейз'],
-    '3-БЕТ': ['3-бет', 'трибет', 'сквиз'],
-    '4-БЕТ': ['4-бет'],
-    'ОЛЛ-ИН': ['олл-ин', 'пуш', 'шов', 'push', 'изолир']
-  };
-  const keys = map[task.correct] || [String(task.correct || '').toLowerCase()];
-  const hit = keys.some((k) => ex.includes(k));
-  const questionMentionsHand = /с [akqjt0-9]|что делаешь/i.test(q);
-  return { ok: hit, reason: hit ? null : 'explain_omits_correct_action', questionMentionsHand };
+  return explanationMatchesTask(task);
 }
 
 const ALLOWED_LATIN = /\b(EV|ICM|SPR|VPIP|PFR|MTT|PKO|SNG|HU|BB|BTN|SB|CO|HJ|MP|UTG|AA|KK|QQ|JJ|TT|AK|AQ|AJ|AT|KQ|ITM)\b/g;
@@ -418,22 +379,11 @@ function brainContextReport(task) {
   const Brain = loadPokerBrain();
   const swipe = libraryTaskToSwipe(task);
   const ctx = Brain.contextForSpot(swipe);
-  const full = Brain.contextForSpot({
-    ...swipe,
-    format: task.format,
-    stage: task.stage,
-    ctx: lastHistory(task) || swipe.ctx,
-    currentLine: lastHistory(task),
-    actionHistory: (task.history || []).map((h) => `${h.street}: ${h.text}`),
-    pot: task.pot,
-    stack: task.heroStack,
-    effStack: task.effStack
-  });
   return {
     productionScore: ctx.score,
-    fullScore: full.score,
+    fullScore: ctx.score,
     productionMissing: ctx.missing || [],
-    fullMissing: full.missing || [],
+    fullMissing: ctx.missing || [],
     assumptions: ctx.assumptions || []
   };
 }
@@ -704,13 +654,13 @@ export async function runTrainingQualityAudit({
     && overlapAB < Math.min(icmIds.length, riverIds.length) * 0.85;
   const trainingQualityPass = pokerLogicPass
     && duplicatesPass
-    && explainRate >= 90
+    && explainRate >= 100
     && advancedHardRate >= 25
     && beginnerEasyRate >= 70
     && skillSet.size >= 8
     && vmErrors === 0
     && gradingUnique.length === 0
-    && brainIssueRate < 40
+    && brainIssueRate === 0
     && termUnique.length <= total * 0.25;
 
   const p0 = [];

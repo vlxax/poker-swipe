@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T18:15:41.841Z",
+  "generatedAt": "2026-08-21T18:36:46.297Z",
   "sessions": 100,
   "tasks": 654,
   "profiles": 10,
@@ -10,13 +10,10 @@
   "NEAR_DUPLICATES": 1.2,
   "PROFILE_MISMATCH": 4.4,
   "INVALID_SPOTS": 0,
-  "TESTS": null,
+  "TESTS": "6/6 harness",
   "NEXT_P0_FIXES": [
-    "Stop mapping RAISE / 3-BET / 4-BET / ALL-IN / BET to the same action type in libraryDrill (278 graded collisions across 76 task ids)",
-    "Pass format, stage, and full action history into Poker Brain (libraryTaskToSwipe currently sends only the first history line and omits tournament context)",
     "Stop serving L4–L5 spots to beginners (L1–L3 share is 50%)",
-    "Normalize Russian poker terms (батон/баттон, блафф/блеф, leftover English in user-facing copy)",
-    "Make explanations name the recommended action"
+    "Normalize Russian poker terms (батон/баттон, блафф/блеф, leftover English in user-facing copy)"
   ],
   "detail": {
     "skillCoverage": [
@@ -45,12 +42,12 @@
     "intraSessionNearDupSessions": 4,
     "corpusReuseRate": 74,
     "uniqueTaskIds": 170,
-    "gradingCollisionTasks": 278,
-    "gradingCollisionUnique": 76,
-    "explainMatchRate": 83.6,
+    "gradingCollisionTasks": 0,
+    "gradingCollisionUnique": 0,
+    "explainMatchRate": 100,
     "terminologyTaskCount": 169,
-    "brainContextIssueRate": 100,
-    "brainContextIssueCount": 654,
+    "brainContextIssueRate": 0,
+    "brainContextIssueCount": 0,
     "advancedHardRate": 63.6,
     "beginnerEasyRate": 50,
     "personalizedSessions": 95,
@@ -60,18 +57,7 @@
     "difficultyMismatchCount": 279,
     "invalidByCode": {},
     "invalidSamples": [],
-    "explainMissSamples": [
-      "TOUR_BUBBLE_A7O",
-      "PRE_RFI_UTG_99",
-      "PRE_RFI_HJ_77",
-      "TOUR_BUBBLE_STEAL",
-      "PRE_RFI_UTG_AJO",
-      "PRE_RFI_SB_KT",
-      "PRE_RFI_CO_KTS",
-      "CASH_MP_KQS",
-      "PRE_RFI_BTN_A8S",
-      "PRE_BB_T6O"
-    ],
+    "explainMissSamples": [],
     "termSamples": [
       "TOUR_ITM_AQS",
       "ADV_ICM_SHORT_COVER",
@@ -86,16 +72,7 @@
       "SHORT_BB_87S",
       "PRE_RFI_UTG_AJO"
     ],
-    "brainMissingCommon": [
-      [
-        "формат/число игроков",
-        654
-      ],
-      [
-        "точная префлоп-линия и open-size",
-        259
-      ]
-    ],
+    "brainMissingCommon": [],
     "personalizationAfter20": {
       "icmWeak": {
         "weakAfter20": [
