@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-22T10:47:38+03:00",
+  "retrieved_at": "2026-08-22T12:02:51+03:00",
   "city": "Москва",
   "count": 62,
   "clubs": [
@@ -195,12 +195,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10504",
           "address": "Волоколамское шоссе, 124",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Дип-стек CLASSIC DEEPSTACK TOURNAMENT 18:00 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124"
+          "source_card_text": "Дип-стек CLASSIC DEEPSTACK TOURNAMENT 18:00 1 000 ₽ вход до 21:30 CARTEL POKER CLUB Волоколамское шоссе, 124"
         }
       ],
       "upcoming": 1
@@ -786,19 +786,19 @@
       "schedule": [
         {
           "date": "2026-08-22",
-          "time": "18:00",
+          "time": "18:30",
           "club": "Ocean's Poker Club",
           "tournament": "SURVIVAL TOURNAMENT",
           "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10558",
           "address": "Нижняя Красносельская улица, 35 с. 59",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:30",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SURVIVAL TOURNAMENT 18:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+          "source_card_text": "SURVIVAL TOURNAMENT 18:30 1 000 ₽ вход до 21:30 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
         }
       ],
       "upcoming": 1
@@ -918,12 +918,12 @@
           "type": "Bomb Pot",
           "source_url": "https://pokernomoney.ru/tournaments/10497",
           "address": "Даев пер., д. 2",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "00:00",
+          "late_reg_minutes": 240,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Bomb Pot BOMBPOT 20:00 1 500 ₽ Poker Room GTO Даев пер., д. 2"
+          "source_card_text": "Bomb Pot BOMBPOT 20:00 1 500 ₽ вход до 00:00 Poker Room GTO Даев пер., д. 2"
         }
       ],
       "upcoming": 1
@@ -1223,12 +1223,12 @@
           "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/10442",
           "address": "Новолесная улица, д. 8/12",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут BOUNTY TOURNAMENT POKER 18:00 1 000 ₽ SRP EQUITY Новолесная улица, д. 8/12"
+          "source_card_text": "Баунти / Нокаут BOUNTY TOURNAMENT POKER 18:00 1 000 ₽ вход до 21:30 SRP EQUITY Новолесная улица, д. 8/12"
         }
       ],
       "upcoming": 2
