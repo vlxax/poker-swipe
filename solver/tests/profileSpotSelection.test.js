@@ -28,7 +28,12 @@ function bluffCatchSpotCount(plan) {
 
 function skillProfileWithScores(scores, now = 1000) {
   const leakProfiles = Object.entries(scores).map(([skill, score]) => {
-    const evLoss = score < 50 ? 0.6 : score < 70 ? 0.3 : 0.05;
+    const evLoss = score >= 85 ? 0.02
+      : score >= 80 ? 0.08
+      : score >= 75 ? 0.15
+      : score < 50 ? 0.6
+      : score < 70 ? 0.3
+      : 0.05;
     const concept = skill === 'icm' ? 'icm_pressure'
       : skill === 'bluffCatch' ? 'bluff_catch'
       : skill === 'preflop' ? 'open_range'

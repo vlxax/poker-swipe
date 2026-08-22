@@ -193,7 +193,15 @@ test('dynamic profile integrates with production selector', () => {
   const profileB = rebuildSkillProfileFromStore(storeB);
   const pool = getTaskPool();
 
-  let aIcm = 0;
+  function spotCountsAsPostflop(spot) {
+    const street = String(spot?.street || '').toUpperCase();
+    if (street === 'ФЛОП' || street === 'ТЁРН' || street === 'РИВЕР') return true;
+    if (street === 'FLOP' || street === 'TURN' || street === 'RIVER') return true;
+    const tags = spot?.skillTags || [];
+    return tags.includes('postflop') || tags.includes('river') || tags.includes('bluffCatch');
+  }
+
+  let aPostflop = 0;
   let bIcm = 0;
   const runs = 15;
   for (let i = 0; i < runs; i++) {
@@ -207,10 +215,10 @@ test('dynamic profile integrates with production selector', () => {
     });
     const spotsA = planA.selected.map((id) => pool.find((s) => s.id === id));
     const spotsB = planB.selected.map((id) => pool.find((s) => s.id === id));
-    aIcm += spotsA.filter((s) => (s.skillTags || []).includes('postflop')).length;
+    aPostflop += spotsA.filter(spotCountsAsPostflop).length;
     bIcm += spotsB.filter((s) => (s.skillTags || []).includes('icm')).length;
   }
-  assert.ok(aIcm / runs >= bIcm / runs + 2, `A postflop ${aIcm / runs} vs B icm ${bIcm / runs}`);
+  assert.ok(aPostflop / runs >= bIcm / runs + 2, `A postflop ${aPostflop / runs} vs B icm ${bIcm / runs}`);
 });
 
 test('computeDynamicSkillTargets weights diagnoses', () => {

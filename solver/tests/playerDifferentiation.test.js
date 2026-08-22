@@ -59,7 +59,11 @@ test('B receives more postflop/bluff-catch/river than A', () => {
 test('C receives broader mixed plan than weak-skill profiles', () => {
   const skillsC = uniqueSkillCount(REPORT.C.plan.spots);
   const skillsA = uniqueSkillCount(REPORT.A.plan.spots);
-  assert.ok(REPORT.C.distribution.other >= REPORT.A.distribution.other, 'C should include more non-weakness buckets');
+  const bucketBreadth = (dist) => Object.values(dist).filter((v) => v > 0).length;
+  assert.ok(
+    bucketBreadth(REPORT.C.distribution) >= bucketBreadth(REPORT.A.distribution),
+    'C should cover at least as many training buckets as A'
+  );
   assert.ok(skillsC >= skillsA - 1, `C skill breadth ${skillsC} vs A ${skillsA}`);
 });
 

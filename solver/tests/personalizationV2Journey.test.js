@@ -66,6 +66,7 @@ function wrongChoice(item) {
 
 function itemTags(item) {
   if (item.skillTags?.length) return item.skillTags;
+  if (item.primarySkill) return [item.primarySkill, ...(item.skillTags || [])].filter(Boolean);
   if (item._task) return deriveSkillTags(item._task);
   return deriveSkillTags({
     concept: item.concept,
@@ -74,6 +75,33 @@ function itemTags(item) {
     position: item.position || item.context?.heroPosition,
     heroStack: item.heroStack || item.context?.heroStackBb
   });
+}
+
+function primarySkillOf(item) {
+  return item.primarySkill || item.skillTag || itemTags(item)[0] || null;
+}
+
+function shouldFailUserA(item) {
+  const primary = primarySkillOf(item);
+  if (['icm', 'shortStack', 'stackDepthAwareness'].includes(primary)) return true;
+  const tags = itemTags(item);
+  return tags.some((t) => ['icm', 'shortStack', 'stackDepthAwareness'].includes(t))
+    && primary !== 'preflop';
+}
+
+function shouldFailUserB(item) {
+  const primary = primarySkillOf(item);
+  if (['icm', 'shortStack', 'stackDepthAwareness'].includes(primary)) return false;
+  if (['postflop', 'river', 'bluffCatch', 'bluffing'].includes(primary)) return true;
+  const tags = itemTags(item);
+  if (tags.includes('icm') || tags.includes('shortStack') || tags.includes('stackDepthAwareness')) {
+    return false;
+  }
+  const kind = streetKind(item.street);
+  if (tags.includes('bluffCatch') || tags.includes('river')) return true;
+  if (tags.includes('bluffing') && (kind === 'flop' || kind === 'turn' || kind === 'river')) return true;
+  if (tags.includes('postflop') && (kind === 'flop' || kind === 'turn' || kind === 'river')) return true;
+  return false;
 }
 
 function streetKind(street) {
@@ -85,32 +113,10 @@ function streetKind(street) {
   return 'other';
 }
 
-function shouldFailUserA(tags) {
-  return tags.some((t) => ['icm', 'shortStack', 'stackDepthAwareness'].includes(t));
-}
-
-function shouldFailUserB(item, tags) {
-  if (tags.includes('icm') || tags.includes('shortStack') || tags.includes('stackDepthAwareness')) {
-    return false;
-  }
-  if (tags.includes('preflop') && !tags.includes('postflop') && !tags.includes('river')) return false;
-  const kind = streetKind(item.street);
-  if (tags.includes('bluffCatch') || tags.includes('river')) return true;
-  if (tags.includes('bluffing') && (kind === 'flop' || kind === 'turn' || kind === 'river')) return true;
-  if (tags.includes('postflop') && (kind === 'flop' || kind === 'turn' || kind === 'river')) return true;
-  if (tags.includes('postflop')
-    && !tags.includes('preflop')
-    && !tags.includes('shortStack')
-    && !tags.includes('icm')) return true;
-  return false;
-}
-
 function answerForUser(userId) {
   return (item, index = 0) => {
-    const tags = itemTags(item);
-    if (userId === 'A') return shouldFailUserA(tags) ? wrongChoice(item) : item.correct;
-    if (userId === 'B') return shouldFailUserB(item, tags) ? wrongChoice(item) : item.correct;
-    // C: mixed — fail every third question deterministically
+    if (userId === 'A') return shouldFailUserA(item) ? wrongChoice(item) : item.correct;
+    if (userId === 'B') return shouldFailUserB(item) ? wrongChoice(item) : item.correct;
     return index % 3 === 0 ? wrongChoice(item) : item.correct;
   };
 }
