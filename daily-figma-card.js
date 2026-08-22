@@ -1,20 +1,41 @@
 (() => {
 'use strict';
 
-/*
-  PokerSwipe · asset swap patch
-  1) Раздача дня: old chip/cards -> animated Demon
-  2) Сколько ставим: old CSS pink chips -> 3 green PokerSwipe chip assets
+const BUILD = 'pokerswipe-visual-assets-v3';
 
-  Assets are already expected in the repository:
-    assets/daily-hand/demon-cards-v2.webp
-    assets/daily-hand/demon-cards-v2.png
-    assets/bet-sizing/poker-chip-green.webp
-    assets/bet-sizing/poker-chip-green.png
-*/
+const ASSETS = {
+  bg: 'assets/app-background/pokerswipe-global-bg-v3.jpg',
+  tournaments: 'assets/my-tournaments/winner-demon-v3.png',
+  hands: 'assets/my-hands/lounge-demon-v3.png',
+  chips: 'assets/bet-sizing/neon-chips-v3.png',
+  dailyWebp: 'assets/daily-hand/demon-cards-v2.webp',
+  dailyPng: 'assets/daily-hand/demon-cards-v2.png'
+};
 
-const BUILD='daily-figma-card-v4-demon-cards';
+function makeImg(cls, src, alt=''){
+  const img=document.createElement('img');
+  img.className=cls;
+  img.src=src;
+  img.alt=alt;
+  img.draggable=false;
+  img.setAttribute('aria-hidden', alt ? 'false' : 'true');
+  return img;
+}
 
+function mountGlobalBackground(){
+  document.documentElement.classList.add('psVisualV3');
+  document.body.classList.add('psVisualV3Body');
+
+  let probe=document.getElementById('psVisualV3BgPreload');
+  if(!probe){
+    probe=makeImg('psVisualV3BgPreload',ASSETS.bg);
+    probe.id='psVisualV3BgPreload';
+    probe.style.display='none';
+    document.body.appendChild(probe);
+  }
+}
+
+/* Preserve current Daily Hand Demon from previous patch. */
 function addDailyCta(card){
   const copy=card?.querySelector('.v36DailyCopy');
   if(copy && !copy.querySelector('.dailyFigmaCta')){
@@ -26,80 +47,87 @@ function addDailyCta(card){
     copy.appendChild(btn);
   }
 }
-
-function mountDemon(card){
+function mountDailyDemon(){
+  const card=document.querySelector('#home #v36Daily, #home .v36Daily');
   if(!card)return;
-
+  card.classList.add('v36DailyFigma');
+  card.dataset.dailyFigmaBuild=BUILD;
+  addDailyCta(card);
   const art=card.querySelector('.v36Cards');
   if(!art)return;
-
   art.classList.remove('dailyChipVisual');
   art.classList.add('dailyDemonVisual');
-
-  /* Remove the old Q/J/? cards and any previous daily chip. */
   art.querySelectorAll('i,.dailyPokerChip,.dailyDemonAsset').forEach(el=>el.remove());
-
-  const demon=document.createElement('img');
-  demon.className='dailyDemonAsset';
-  demon.src='assets/daily-hand/demon-cards-v2.webp';
-  demon.alt='';
-  demon.setAttribute('aria-hidden','true');
-  demon.draggable=false;
-
-  /* Static poster if animated WebP fails for any reason. */
+  const demon=makeImg('dailyDemonAsset',ASSETS.dailyWebp);
   demon.onerror=()=>{
     if(!demon.dataset.fallback){
       demon.dataset.fallback='1';
-      demon.src='assets/daily-hand/demon-cards-v2.png';
+      demon.src=ASSETS.dailyPng;
     }
   };
-
   art.appendChild(demon);
 }
 
+/* HOME → «Сколько ставим?» : replace the current old chips with the new single prepared asset. */
 function mountSizingChips(){
-  const sizing=document.querySelector('#home #v36Sizing, #home .v36Sizing');
+  const candidates=[
+    document.querySelector('#home #v36Sizing'),
+    document.querySelector('#home .v36Sizing'),
+    document.querySelector('#home .sizingTile')
+  ].filter(Boolean);
+  const sizing=candidates[0];
   if(!sizing)return;
 
-  const holder=sizing.querySelector('.v36Chips');
-  if(!holder)return;
+  let holder=sizing.querySelector('.v36Chips,.chipsPreview');
+  if(!holder){
+    holder=document.createElement('div');
+    holder.className='v36Chips psSizingAssetHolder';
+    sizing.appendChild(holder);
+  }
+  holder.classList.add('psSizingAssetHolder');
+  holder.querySelectorAll('i,.v36ChipAsset,.psSizingChipsAsset').forEach(el=>el.remove());
+  holder.appendChild(makeImg('psSizingChipsAsset',ASSETS.chips));
+}
 
-  holder.classList.add('v36ChipsAsset');
+/* «Мои турниры» : winner demon in the hero/right side. Supports several current screen versions. */
+function mountMyTournaments(){
+  const roots=[
+    document.querySelector('#ps72TournamentScreen'),
+    document.querySelector('#tournamentsArea'),
+    document.querySelector('#tournaments')
+  ].filter(Boolean);
 
-  /* Remove old CSS-generated pink/lime discs. */
-  holder.querySelectorAll('i').forEach(el=>el.remove());
+  for(const root of roots){
+    let hero=root.querySelector('.ps72hero,.t23Hero,.v48Hero,.t23,.panel');
+    if(!hero)hero=root;
+    hero.classList.add('psTournamentHeroV3');
+    if(!hero.querySelector(':scope > .psTournamentDemonV3')){
+      hero.appendChild(makeImg('psTournamentDemonV3',ASSETS.tournaments));
+    }
+    break;
+  }
+}
 
-  if(holder.querySelector('.v36ChipAsset'))return;
+/* «Мои раздачи» : lounge demon in the header on the right. */
+function mountMyHands(){
+  const root=document.querySelector('#myhands,#myArea,#my');
+  if(!root)return;
 
-  for(let n=0;n<3;n++){
-    const chip=document.createElement('img');
-    chip.className=`v36ChipAsset v36ChipAsset${n+1}`;
-    chip.src='assets/bet-sizing/poker-chip-green.webp';
-    chip.alt='';
-    chip.setAttribute('aria-hidden','true');
-    chip.draggable=false;
-    chip.onerror=()=>{
-      if(!chip.dataset.fallback){
-        chip.dataset.fallback='1';
-        chip.src='assets/bet-sizing/poker-chip-green.png';
-      }
-    };
-    holder.appendChild(chip);
+  let hero=root.querySelector('.my18,.myHero,.panel,.myHandsHero');
+  if(!hero)hero=root;
+  hero.classList.add('psMyHandsHeroV3');
+
+  if(!hero.querySelector(':scope > .psMyHandsDemonV3')){
+    hero.appendChild(makeImg('psMyHandsDemonV3',ASSETS.hands));
   }
 }
 
 function enhance(){
-  const card=document.querySelector('#home #v36Daily, #home .v36Daily');
-
-  if(card){
-    card.classList.add('v36DailyFigma');
-    card.dataset.dailyFigmaBuild=BUILD;
-    addDailyCta(card);
-    mountDemon(card);
-  }
-
+  mountGlobalBackground();
+  mountDailyDemon();
   mountSizingChips();
-  return !!card;
+  mountMyTournaments();
+  mountMyHands();
 }
 
 let queued=false;
@@ -115,18 +143,14 @@ function schedule(){
 function start(){
   enhance();
 
-  const home=document.getElementById('home');
-  if(home){
-    new MutationObserver(schedule).observe(home,{
-      subtree:true,
-      childList:true
-    });
-  }
+  new MutationObserver(schedule).observe(document.body,{
+    subtree:true,
+    childList:true
+  });
 
-  document.addEventListener('click',e=>{
-    if(e.target.closest?.('[data-nav="home"]')){
-      setTimeout(schedule,0);
-    }
+  document.addEventListener('click',()=>{
+    setTimeout(schedule,0);
+    setTimeout(schedule,120);
   },true);
 
   window.addEventListener('pageshow',schedule);
@@ -134,12 +158,7 @@ function start(){
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',start,{once:true});
-}else{
-  start();
-}
+}else start();
 
-window.PokerSwipeDailyFigma={
-  build:BUILD,
-  refresh:enhance
-};
+window.PokerSwipeVisualAssetsV3={build:BUILD,refresh:enhance,assets:ASSETS};
 })();

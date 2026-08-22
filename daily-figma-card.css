@@ -1,109 +1,176 @@
 /*
- PokerSwipe · Demon + green chip asset patch
- Keeps the existing Daily Hand visual style but replaces:
- - Daily Hand visual with animated Demon
- - Sizing CSS chips with actual green PokerSwipe chip assets
+PokerSwipe — Visual Assets Patch V3
+- global app background
+- winner Demon in «Мои турниры»
+- lounge Demon in «Мои раздачи»
+- new neon chips in «Сколько ставим?»
+- preserves existing Daily Hand Demon
 */
 
-/* =========================
-   DAILY HAND CARD BASE
-   ========================= */
-
-#home .v36Daily.v36DailyFigma{
-  min-height:238px;
-  padding:20px 18px;
-  overflow:hidden;
-  border-color:rgba(200,255,61,.22);
-  background:
-    radial-gradient(circle at 82% 34%,rgba(22,118,67,.38),transparent 34%),
-    radial-gradient(circle at 58% 68%,rgba(200,255,61,.055),transparent 32%),
-    linear-gradient(138deg,#11151a 0%,#0c1c14 56%,#0a160f 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.035),
-    0 20px 48px rgba(0,0,0,.28);
+/* ========================================
+   GLOBAL BACKGROUND — UNDER THE WHOLE APP
+   ======================================== */
+html.psVisualV3,
+body.psVisualV3Body{
+  background:#03110f!important;
 }
 
-#home .v36Daily.v36DailyFigma:before{
+body.psVisualV3Body{
+  position:relative;
+  min-height:100vh;
+}
+
+body.psVisualV3Body::before{
   content:"";
-  position:absolute;
+  position:fixed;
+  z-index:-2;
   inset:0;
+  background:
+    linear-gradient(rgba(1,12,10,.11),rgba(1,12,10,.11)),
+    url("assets/app-background/pokerswipe-global-bg-v3.jpg") center top / cover no-repeat;
+  background-attachment:fixed;
   pointer-events:none;
-  background:linear-gradient(
-    115deg,
-    transparent 0 44%,
-    rgba(255,255,255,.035) 49%,
-    transparent 55%
-  );
-  opacity:.55;
 }
 
+body.psVisualV3Body::after{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  inset:0;
+  background:linear-gradient(
+    180deg,
+    rgba(0,10,8,.08) 0%,
+    rgba(0,8,7,.18) 44%,
+    rgba(0,8,7,.28) 100%
+  );
+  pointer-events:none;
+}
+
+/* Make the app shell/screens reveal the new base background. */
+body.psVisualV3Body .app{
+  background:transparent!important;
+}
+body.psVisualV3Body .screen{
+  background:transparent;
+}
+
+/* ========================================
+   MY TOURNAMENTS — WINNER DEMON
+   ======================================== */
+.psTournamentHeroV3{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:145px;
+}
+
+.psTournamentDemonV3{
+  position:absolute;
+  z-index:1;
+  right:-12px;
+  bottom:-6px;
+  width:min(46%,210px);
+  height:auto;
+  max-height:170px;
+  object-fit:contain;
+  object-position:right bottom;
+  pointer-events:none;
+  user-select:none;
+  filter:
+    drop-shadow(0 14px 18px rgba(0,0,0,.48))
+    drop-shadow(0 0 12px rgba(182,255,45,.18));
+}
+
+/* Keep tournament hero text/actions above art */
+.psTournamentHeroV3 > *:not(.psTournamentDemonV3){
+  position:relative;
+  z-index:2;
+}
+.psTournamentHeroV3 h1,
+.psTournamentHeroV3 p{
+  max-width:62%;
+}
+
+/* ========================================
+   MY HANDS — LOUNGE DEMON, HEADER RIGHT
+   ======================================== */
+.psMyHandsHeroV3{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:185px;
+}
+
+.psMyHandsDemonV3{
+  position:absolute;
+  z-index:1;
+  right:-30px;
+  top:2px;
+  width:min(55%,245px);
+  height:auto;
+  max-height:180px;
+  object-fit:contain;
+  object-position:right top;
+  pointer-events:none;
+  user-select:none;
+  filter:
+    drop-shadow(0 16px 20px rgba(0,0,0,.5))
+    drop-shadow(0 0 11px rgba(182,255,45,.16));
+}
+
+.psMyHandsHeroV3 > *:not(.psMyHandsDemonV3){
+  position:relative;
+  z-index:2;
+}
+.psMyHandsHeroV3 h1,
+.psMyHandsHeroV3 p,
+.psMyHandsHeroV3 .my18Intro{
+  max-width:58%;
+}
+
+/* ========================================
+   «СКОЛЬКО СТАВИМ?» — NEW CHIP ASSET
+   ======================================== */
+#home .psSizingAssetHolder{
+  position:absolute!important;
+  left:12px!important;
+  bottom:10px!important;
+  width:155px!important;
+  height:78px!important;
+  z-index:4!important;
+  pointer-events:none!important;
+}
+
+#home .psSizingAssetHolder > i,
+#home .psSizingAssetHolder .v36ChipAsset{
+  display:none!important;
+}
+
+#home .psSizingChipsAsset{
+  position:absolute;
+  left:0;
+  bottom:0;
+  display:block;
+  width:150px;
+  height:76px;
+  object-fit:contain;
+  object-position:left bottom;
+  filter:
+    drop-shadow(0 9px 12px rgba(0,0,0,.42))
+    drop-shadow(0 0 9px rgba(184,255,50,.18));
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* ========================================
+   EXISTING DAILY HAND DEMON — PRESERVE
+   ======================================== */
+#home .v36Daily.v36DailyFigma{
+  overflow:hidden;
+}
 #home .v36Daily.v36DailyFigma .v36DailyCopy{
   position:relative;
   z-index:5;
   max-width:52%;
 }
-
-#home .v36Daily.v36DailyFigma .v36Eyebrow{
-  color:#8bcf48;
-  font-size:10px;
-  letter-spacing:.16em;
-}
-
-#home .v36Daily.v36DailyFigma h2{
-  margin:8px 0 12px;
-  font-size:39px;
-  line-height:.88;
-  letter-spacing:-.065em;
-}
-
-#home .v36Daily.v36DailyFigma h2 em{
-  color:#baff42;
-}
-
-#home .v36Daily.v36DailyFigma p{
-  position:relative;
-  z-index:7;
-  max-width:150px;
-  margin:0;
-  color:#b4b5b9;
-  font-size:13px;
-  line-height:1.38;
-}
-
-#home .v36Daily.v36DailyFigma .dailyFigmaCta{
-  position:relative;
-  z-index:8;
-  display:inline-flex;
-  align-items:center;
-  gap:9px;
-  margin-top:12px;
-  min-height:36px;
-  padding:0 14px;
-  border:1px solid rgba(200,255,61,.34);
-  border-radius:11px;
-  background:linear-gradient(
-    180deg,
-    rgba(200,255,61,.13),
-    rgba(200,255,61,.07)
-  );
-  color:#caff58;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.05),
-    0 8px 22px rgba(0,0,0,.16);
-  font-size:11px;
-  font-weight:950;
-}
-
-#home .v36Daily.v36DailyFigma .dailyFigmaCta b{
-  font-size:16px;
-  line-height:1;
-}
-
-
-/* =========================
-   DAILY HAND — DEMON
-   ========================= */
-
 #home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual{
   position:absolute;
   z-index:3;
@@ -115,191 +182,50 @@
   display:flex;
   justify-content:center;
   align-items:flex-end;
-  filter:none;
 }
-
-#home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual i{
-  display:none!important;
-}
-
-#home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual:before{
-  content:"";
-  position:absolute;
-  z-index:0;
-  width:175px;
-  height:175px;
-  right:4px;
-  bottom:5px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(186,255,66,.26) 0%,rgba(36,157,83,.16) 42%,transparent 73%);
-  filter:blur(14px);
-  animation:dailyDemonGlow 2.5s ease-in-out infinite;
-}
-
+#home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual i{display:none!important}
 #home .v36Daily.v36DailyFigma .dailyDemonAsset{
-  position:relative;
-  z-index:2;
   display:block;
   width:100%;
   height:100%;
   object-fit:contain;
   object-position:center bottom;
-  user-select:none;
-  -webkit-user-drag:none;
   filter:drop-shadow(0 15px 18px rgba(0,0,0,.38)) drop-shadow(0 0 10px rgba(186,255,66,.13));
 }
-
 #home .v36Daily.v36DailyFigma .v36Arrow{display:none}
 
-@keyframes dailyDemonGlow{
-  0%,100%{opacity:.60;transform:scale(.96)}
-  50%{opacity:1;transform:scale(1.035)}
-}
-
-/* =========================
-   SIZING — REAL GREEN CHIPS
-   ========================= */
-
-#home .v36Sizing .v36Chips.v36ChipsAsset{
-  position:absolute;
-  left:13px;
-  bottom:14px!important;
-  width:150px;
-  height:72px;
-  z-index:3;
-  pointer-events:none;
-}
-
-/* Kill every old pink/CSS chip. */
-#home .v36Sizing .v36Chips.v36ChipsAsset i{
-  display:none!important;
-}
-
-#home .v36Sizing .v36ChipAsset{
-  position:absolute;
-  display:block;
-  width:63px;
-  height:63px;
-  object-fit:contain;
-  user-select:none;
-  -webkit-user-drag:none;
-  filter:
-    drop-shadow(0 7px 9px rgba(0,0,0,.38))
-    drop-shadow(0 0 7px rgba(186,255,66,.17));
-  animation:v40RealChipFloat 3s ease-in-out infinite;
-}
-
-#home .v36Sizing .v36ChipAsset1{
-  left:0;
-  bottom:0;
-  transform:rotate(-14deg);
-  animation-delay:-.4s;
-}
-
-#home .v36Sizing .v36ChipAsset2{
-  left:43px;
-  bottom:6px;
-  transform:rotate(5deg);
-  animation-delay:-1.1s;
-}
-
-#home .v36Sizing .v36ChipAsset3{
-  left:85px;
-  bottom:1px;
-  transform:rotate(15deg);
-  animation-delay:-1.8s;
-}
-
-@keyframes v40RealChipFloat{
-  0%,100%{translate:0 0}
-  50%{translate:0 -3px}
-}
-
-/* Existing sizing glow remains subtle behind the real assets. */
-#home .v36Sizing::after{
-  content:"";
-  position:absolute;
-  width:125px;
-  height:85px;
-  left:8px;
-  bottom:-10px;
-  background:rgba(200,255,61,.08);
-  filter:blur(25px);
-  pointer-events:none;
-}
-
-
-/* =========================
-   MOBILE TUNING
-   ========================= */
-
+/* ========================================
+   MOBILE
+   ======================================== */
 @media(max-width:390px){
-  #home .v36Daily.v36DailyFigma{
-    min-height:230px;
-    padding:18px 16px;
+  .psTournamentDemonV3{
+    right:-18px;
+    width:45%;
+    max-height:152px;
   }
+  .psTournamentHeroV3 h1,
+  .psTournamentHeroV3 p{max-width:61%}
 
-  #home .v36Daily.v36DailyFigma .v36DailyCopy{
-    max-width:49%;
+  .psMyHandsDemonV3{
+    right:-38px;
+    top:5px;
+    width:55%;
+    max-height:165px;
   }
+  .psMyHandsHeroV3 h1,
+  .psMyHandsHeroV3 p,
+  .psMyHandsHeroV3 .my18Intro{max-width:57%}
 
-  #home .v36Daily.v36DailyFigma h2{
-    font-size:35px;
-  }
-
-  #home .v36Daily.v36DailyFigma p{
-    max-width:142px;
-    font-size:12px;
-  }
-
-  #home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual{
-    right:0;
-    bottom:2px;
-    transform:scale(.98);
-    transform-origin:right bottom;
-  }
-
-  #home .v36Sizing .v36Chips.v36ChipsAsset{
-    left:12px;
-    bottom:14px!important;
+  #home .psSizingAssetHolder{
+    left:9px!important;
+    bottom:9px!important;
     transform:scale(.94);
     transform-origin:left bottom;
   }
 }
 
 @media(max-width:350px){
-  #home .v36Daily.v36DailyFigma .v36DailyCopy{
-    max-width:50%;
-  }
-
-  #home .v36Daily.v36DailyFigma h2{
-    font-size:32px;
-  }
-
-  #home .v36Daily.v36DailyFigma p{
-    max-width:126px;
-    font-size:11px;
-  }
-
-  #home .v36Daily.v36DailyFigma .dailyFigmaCta{
-    margin-top:10px;
-    padding:0 11px;
-  }
-
-  #home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual{
-    right:-2px;
-    transform:scale(.92);
-  }
-
-  #home .v36Sizing .v36Chips.v36ChipsAsset{
-    left:8px;
-    transform:scale(.86);
-  }
-}
-
-@media(prefers-reduced-motion:reduce){
-  #home .v36Daily.v36DailyFigma .v36Cards.dailyDemonVisual:before,
-  #home .v36Sizing .v36ChipAsset{
-    animation:none!important;
-  }
+  .psTournamentDemonV3{transform:scale(.91);transform-origin:right bottom}
+  .psMyHandsDemonV3{transform:scale(.90);transform-origin:right top}
+  #home .psSizingAssetHolder{transform:scale(.86)}
 }
