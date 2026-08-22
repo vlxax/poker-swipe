@@ -7,13 +7,13 @@
   2) Сколько ставим: old CSS pink chips -> 3 green PokerSwipe chip assets
 
   Assets are already expected in the repository:
-    assets/daily-hand/dino-chaos.webp
-    assets/daily-hand/dino-poster.png
+    assets/daily-hand/demon-cards-v2.webp
+    assets/daily-hand/demon-cards-v2.png
     assets/bet-sizing/poker-chip-green.webp
     assets/bet-sizing/poker-chip-green.png
 */
 
-const BUILD='daily-figma-card-v3-demon-green-chips';
+const BUILD='daily-figma-card-v4-demon-cards';
 
 function addDailyCta(card){
   const copy=card?.querySelector('.v36DailyCopy');
@@ -41,7 +41,7 @@ function mountDemon(card){
 
   const demon=document.createElement('img');
   demon.className='dailyDemonAsset';
-  demon.src='assets/daily-hand/dino-chaos.webp';
+  demon.src='assets/daily-hand/demon-cards-v2.webp';
   demon.alt='';
   demon.setAttribute('aria-hidden','true');
   demon.draggable=false;
@@ -50,7 +50,7 @@ function mountDemon(card){
   demon.onerror=()=>{
     if(!demon.dataset.fallback){
       demon.dataset.fallback='1';
-      demon.src='assets/daily-hand/dino-poster.png';
+      demon.src='assets/daily-hand/demon-cards-v2.png';
     }
   };
 
