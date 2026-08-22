@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T01:52:46+03:00",
+  "retrieved_at": "2026-08-23T02:47:20+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -59,7 +59,7 @@
           "time": "18:00",
           "club": "Aria Royale",
           "tournament": "Классика ARIA CLASSIC",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10679",
           "address": "ул. Братиславская, д. 28 (2 этаж)",
@@ -68,7 +68,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Классика ARIA CLASSIC 18:00 уточняйте Aria Royale ул. Братиславская, д. 28 (2 этаж)"
+          "source_card_text": "Классика ARIA CLASSIC 18:00 1 000 ₽ Aria Royale ул. Братиславская, д. 28 (2 этаж)"
         }
       ],
       "upcoming": 1
@@ -237,7 +237,7 @@
           "time": "17:00",
           "club": "CHECK-RAISE CLUB MOSCOW",
           "tournament": "Классика Классический покерный турнир",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11091",
           "address": "Старопетровский проезд, 1с1",
@@ -246,7 +246,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Классика Классический покерный турнир 17:00 уточняйте CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1"
+          "source_card_text": "Классика Классический покерный турнир 17:00 1 000 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1"
         }
       ],
       "upcoming": 1
@@ -572,7 +572,7 @@
           "time": "18:00",
           "club": "Magnum Club",
           "tournament": "Классика CLASSIC TOURNAMENT",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10269",
           "address": "Большая Новодмитровская ул., д. 36с13",
@@ -581,7 +581,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Классика CLASSIC TOURNAMENT 18:00 уточняйте Magnum Club Большая Новодмитровская ул., д. 36с13"
+          "source_card_text": "Классика CLASSIC TOURNAMENT 18:00 1 000 ₽ Magnum Club Большая Новодмитровская ул., д. 36с13"
         }
       ],
       "upcoming": 1
@@ -870,7 +870,7 @@
           "time": "20:00",
           "club": "Poker Room GTO",
           "tournament": "TIR POKER",
-          "fee_rub": 0,
+          "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10498",
           "address": "Даев пер., д. 2",
@@ -879,7 +879,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "TIR POKER 20:00 уточняйте Poker Room GTO Даев пер., д. 2"
+          "source_card_text": "TIR POKER 20:00 1 500 ₽ Poker Room GTO Даев пер., д. 2"
         }
       ],
       "upcoming": 1
@@ -966,7 +966,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 уточняйте QQ POKER CLUB Нагатинская улица, 16"
+          "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16"
         }
       ],
       "upcoming": 1
@@ -1013,7 +1013,7 @@
           "time": "18:00",
           "club": "Quantum",
           "tournament": "SPECIAL CARDS",
-          "fee_rub": 0,
+          "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10295",
           "address": "Новая Басманная улица, 19 ст7",
@@ -1022,7 +1022,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM SPECIAL CARDS 18:00 уточняйте Quantum Новая Басманная улица, 19 ст7"
+          "source_card_text": "★ PREMIUM SPECIAL CARDS 18:00 1 500 ₽ Quantum Новая Басманная улица, 19 ст7"
         }
       ]
     },
@@ -1441,7 +1441,7 @@
           "time": "18:00",
           "club": "МАКСИМУМ",
           "tournament": "Evening at the Maximum",
-          "fee_rub": 0,
+          "fee_rub": 1200,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10393",
           "address": "Большая Никитская 43",
@@ -1450,7 +1450,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Evening at the Maximum 18:00 уточняйте МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "Evening at the Maximum 18:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
         },
         {
           "date": "2026-08-23",
