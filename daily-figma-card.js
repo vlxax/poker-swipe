@@ -1,10 +1,10 @@
 (() => {
 'use strict';
 
-const BUILD = 'pokerswipe-visual-assets-v3';
+const BUILD = 'pokerswipe-visual-assets-v4';
 
 const ASSETS = {
-  bg: 'assets/app-background/pokerswipe-global-bg-v3.jpg',
+  bg: 'assets/app-background/pokerswipe-global-bg-v4.jpg',
   tournaments: 'assets/my-tournaments/winner-demon-v3.png',
   hands: 'assets/my-hands/lounge-demon-v3.png',
   chips: 'assets/bet-sizing/neon-chips-v3.png',
@@ -160,5 +160,5 @@ if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',start,{once:true});
 }else start();
 
-window.PokerSwipeVisualAssetsV3={build:BUILD,refresh:enhance,assets:ASSETS};
+window.PokerSwipeVisualAssetsV4={build:BUILD,refresh:enhance,assets:ASSETS};
 })();

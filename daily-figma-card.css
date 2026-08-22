@@ -1,6 +1,6 @@
 /*
-PokerSwipe — Visual Assets Patch V3
-- global app background
+PokerSwipe — Visual Assets Patch V4
+- global app background on every screen including onboarding
 - winner Demon in «Мои турниры»
 - lounge Demon in «Мои раздачи»
 - new neon chips in «Сколько ставим?»
@@ -8,50 +8,112 @@ PokerSwipe — Visual Assets Patch V3
 */
 
 /* ========================================
-   GLOBAL BACKGROUND — UNDER THE WHOLE APP
+   GLOBAL BACKGROUND V4 — EVERY SCREEN
+   Starts from onboarding / diagnostic test.
+   This is a real CSS background, NOT an overlay:
+   it cannot cover text, cards, buttons or touches.
    ======================================== */
+
+/* Put the supplied artwork at the lowest possible visual layer. */
+html,
+body,
 html.psVisualV3,
 body.psVisualV3Body{
-  background:#03110f!important;
+  min-height:100%;
+  background-color:#03110f!important;
+  background-image:
+    linear-gradient(rgba(1,10,9,.12),rgba(1,10,9,.12)),
+    url("assets/app-background/pokerswipe-global-bg-v4.jpg")!important;
+  background-position:center top!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  background-attachment:fixed!important;
 }
 
-body.psVisualV3Body{
-  position:relative;
-  min-height:100vh;
-}
-
-body.psVisualV3Body::before{
-  content:"";
-  position:fixed;
-  z-index:-2;
-  inset:0;
-  background:
-    linear-gradient(rgba(1,12,10,.11),rgba(1,12,10,.11)),
-    url("assets/app-background/pokerswipe-global-bg-v3.jpg") center top / cover no-repeat;
-  background-attachment:fixed;
-  pointer-events:none;
-}
-
+/*
+  IMPORTANT:
+  no ::before / ::after layer is used for the background.
+  Therefore nothing is placed above the interface and no clicks can be blocked.
+*/
+body.psVisualV3Body::before,
 body.psVisualV3Body::after{
-  content:"";
-  position:fixed;
-  z-index:-1;
-  inset:0;
-  background:linear-gradient(
-    180deg,
-    rgba(0,10,8,.08) 0%,
-    rgba(0,8,7,.18) 44%,
-    rgba(0,8,7,.28) 100%
-  );
-  pointer-events:none;
+  content:none!important;
+  display:none!important;
 }
 
-/* Make the app shell/screens reveal the new base background. */
-body.psVisualV3Body .app{
-  background:transparent!important;
+/* Main application shells reveal the same base image. */
+body .app,
+body #app,
+body #mainApp,
+body .mainApp,
+body .screen,
+body [data-screen]{
+  background-color:transparent!important;
 }
-body.psVisualV3Body .screen{
-  background:transparent;
+
+/* Onboarding + initial placement test must show the same background too. */
+body #onboarding,
+body .onboarding,
+body #story{
+  background-color:rgba(3,10,9,.10)!important;
+  background-image:none!important;
+}
+
+/* Training / diagnostic wrappers stay readable but no longer hide the base. */
+body .v31DiagWrap,
+body .v31Result,
+body .v31ResultHero{
+  background-color:transparent!important;
+}
+
+/* Large screen roots used across PokerSwipe. */
+body #home,
+body #my,
+body #myArea,
+body #myhands,
+body #profile,
+body #profileArea,
+body #tournaments,
+body #tournamentsArea,
+body #ps72TournamentScreen,
+body #polyana,
+body #ranges,
+body #heal,
+body #review,
+body #daily,
+body #sizing,
+body #xray{
+  background-color:transparent!important;
+}
+
+/*
+  Cards/panels are intentionally NOT made transparent.
+  Their existing dark surfaces remain above the background,
+  so text contrast and UI hierarchy stay intact.
+*/
+
+@media (max-width:600px){
+  html,
+  body,
+  html.psVisualV3,
+  body.psVisualV3Body{
+    /* Keep the full vertical composition stable on iPhone. */
+    background-position:center top!important;
+    background-size:cover!important;
+  }
+}
+
+@supports (-webkit-touch-callout:none){
+  html,
+  body,
+  html.psVisualV3,
+  body.psVisualV3Body{
+    /*
+      iOS Safari can be unstable with fixed backgrounds.
+      Scroll attachment keeps the same image without creating an overlay.
+    */
+    background-attachment:scroll!important;
+  }
 }
 
 /* ========================================
