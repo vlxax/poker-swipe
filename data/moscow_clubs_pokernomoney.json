@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-22T08:59:19+03:00",
+  "retrieved_at": "2026-08-22T10:47:38+03:00",
   "city": "Москва",
   "count": 62,
   "clubs": [
@@ -294,8 +294,25 @@
       "name": "DUCKS POKER CLUB",
       "address": "проспект Мира, 102с25",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-22",
+          "time": "19:15",
+          "club": "DUCKS POKER CLUB",
+          "tournament": "СУББОТНИЙ КВАРТИРНИК",
+          "fee_rub": 1000,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11367",
+          "address": "проспект Мира, 102с25",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "СУББОТНИЙ КВАРТИРНИК 19:15 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "EMPIRE POKER CLUB",
@@ -897,7 +914,7 @@
           "time": "20:00",
           "club": "Poker Room GTO",
           "tournament": "BOMBPOT",
-          "fee_rub": 1000,
+          "fee_rub": 1500,
           "type": "Bomb Pot",
           "source_url": "https://pokernomoney.ru/tournaments/10497",
           "address": "Даев пер., д. 2",
@@ -906,7 +923,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Bomb Pot BOMBPOT 20:00 1 000 ₽ Poker Room GTO Даев пер., д. 2"
+          "source_card_text": "Bomb Pot BOMBPOT 20:00 1 500 ₽ Poker Room GTO Даев пер., д. 2"
         }
       ],
       "upcoming": 1
