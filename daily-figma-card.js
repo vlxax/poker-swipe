@@ -4,10 +4,10 @@
 /*
   PokerSwipe · Раздача дня · Figma Make card port
   Safe visual patch over the existing #v36Daily card.
-  No React/Vite files are added to PokerSwipe.
+  Cards on the right are replaced by the animated Poker DNA chip.
 */
 
-const BUILD='daily-figma-card-v1';
+const BUILD='daily-figma-card-v2-chip';
 
 function enhance(){
   const card=document.querySelector('#home #v36Daily, #home .v36Daily');
@@ -24,6 +24,22 @@ function enhance(){
     btn.setAttribute('aria-label','Разобрать раздачу дня');
     btn.innerHTML='<span>Разобрать</span><b>→</b>';
     copy.appendChild(btn);
+  }
+
+  const art=card.querySelector('.v36Cards');
+  if(art){
+    art.classList.add('dailyChipVisual');
+    art.querySelectorAll('i').forEach(el=>el.remove());
+
+    if(!art.querySelector('.dailyPokerChip')){
+      const chip=document.createElement('img');
+      chip.className='dailyPokerChip';
+      chip.src='assets/daily-chip/daily-chip-anim.webp';
+      chip.alt='';
+      chip.setAttribute('aria-hidden','true');
+      chip.draggable=false;
+      art.appendChild(chip);
+    }
   }
 
   return true;

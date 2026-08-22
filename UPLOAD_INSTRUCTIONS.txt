@@ -1,7 +1,14 @@
-UPLOAD ONLY — Freak Lady patch
+POKERSWIPE — РАЗДАЧА ДНЯ / ANIMATED CHIP PATCH
 
-Do NOT replace/delete the whole repository.
-Extract this ZIP and upload its contents into the ROOT of the existing poker-swipe repository.
-Allow index.html to replace the existing index.html.
-The assets/freak-lady folders must keep their paths.
-Total files in this patch: 17.
+Что меняется:
+- старые 3 карты справа в «Раздача дня» удаляются;
+- вместо них вставляется ваша анимированная фишка Poker DNA 58;
+- текст, кнопка и остальная карточка не меняются.
+
+Куда загрузить в существующий репозиторий vlxax/poker-swipe:
+1. daily-figma-card.js -> заменить файл в корне репозитория
+2. daily-figma-card.css -> заменить файл в корне репозитория
+3. assets/daily-chip/daily-chip-anim.webp -> добавить с сохранением этого пути
+
+Всего в патче: 4 файла вместе с этой инструкцией.
+НЕ удаляйте остальные файлы репозитория.
