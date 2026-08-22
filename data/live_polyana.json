@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-22T16:44:09+03:00",
+  "updated_at": "2026-08-22T17:45:00+03:00",
   "club_count": 62,
-  "event_count": 58,
-  "source_card_count": 58,
+  "event_count": 59,
+  "source_card_count": 59,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -1752,6 +1752,22 @@
       "schedule": [
         {
           "date": "2026-08-22",
+          "time": "17:00",
+          "club": "ХАРТС",
+          "tournament": "Обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/11406",
+          "address": "Боровая, 19А",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Обучение 17:00 Бесплатно ХАРТС Боровая, 19А"
+        },
+        {
+          "date": "2026-08-22",
           "time": "18:00",
           "club": "ХАРТС",
           "tournament": "Классика CLASSIC TOURNEY",
@@ -1767,7 +1783,7 @@
           "source_card_text": "Классика CLASSIC TOURNEY 18:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "ХРОНИКИ",
@@ -2113,6 +2129,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "SHARK TEAM TOURNAMENT 17:00 1 000 ₽ СТРИТ Средняя первомайская ул, дом 4"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "17:00",
+      "club": "ХАРТС",
+      "tournament": "Обучение",
+      "fee_rub": 0,
+      "type": "Обучающий",
+      "source_url": "https://pokernomoney.ru/tournaments/11406",
+      "address": "Боровая, 19А",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Обучающий Обучение 17:00 Бесплатно ХАРТС Боровая, 19А"
     },
     {
       "date": "2026-08-22",
