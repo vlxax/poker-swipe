@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-22T18:41:00+03:00",
+  "updated_at": "2026-08-22T19:54:10+03:00",
   "date": "2026-08-22",
   "city": "Москва",
   "source_card_count": 60,
@@ -416,12 +416,12 @@
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/11408",
       "address": "проспект Мира, 26с2",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "22:30",
+      "late_reg_minutes": 270,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Финал ТВ-стол 18:00 1 000 ₽ HEADS UP проспект Мира, 26с2"
+      "source_card_text": "Финал ТВ-стол 18:00 1 000 ₽ вход до 22:30 HEADS UP проспект Мира, 26с2"
     },
     {
       "date": "2026-08-22",
