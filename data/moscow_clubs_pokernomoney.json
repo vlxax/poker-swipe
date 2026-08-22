@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-22T19:54:10+03:00",
+  "retrieved_at": "2026-08-22T20:50:10+03:00",
   "city": "Москва",
   "count": 62,
   "clubs": [
@@ -1803,8 +1803,25 @@
       "name": "ХРОНИКИ",
       "address": "Садовая-Кудринская улица, 3А, Москва",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-22",
+          "time": "18:00",
+          "club": "ХРОНИКИ",
+          "tournament": "МИНИ МЕЙН ХРОНИКИ",
+          "fee_rub": 1200,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11421",
+          "address": "Садовая-Кудринская улица, 3А, Москва",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "МИНИ МЕЙН ХРОНИКИ 18:00 1 200 ₽ ХРОНИКИ Садовая-Кудринская улица, 3А, Москва"
+        }
+      ],
+      "upcoming": 1
     }
   ]
 }
