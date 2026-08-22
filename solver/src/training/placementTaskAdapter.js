@@ -5,6 +5,7 @@
 import { validateTask } from '../../../task-context/validator.js';
 import { loadTaskLibrary } from './taskLibraryBridge.js';
 import { deriveSkillTags } from './planner.js';
+import { derivePrimarySkill, assessmentSkillWeights } from './placementSkillAttribution.js';
 import { drillFromLibraryTask } from './libraryDrill.js';
 
 export const PLACEMENT_MODES = ['swipe', 'sizing', 'review', 'xray', 'quick'];
@@ -140,7 +141,8 @@ export function libraryTaskToPlacementItem(task, { slotIndex = 0, modePlan = nul
   const mode = forceMode || assignMiniAppMode(task, { slotIndex, modePlan });
   const ctx = formatPlacementContext(task);
   const skillTags = deriveSkillTags(task);
-  const skillTag = skillTags[0] || 'postflop';
+  const primarySkill = derivePrimarySkill(task);
+  const skillTag = primarySkill;
   const tier = task.difficulty || 2;
 
   let choices = (task.options || []).slice();
@@ -177,6 +179,7 @@ export function libraryTaskToPlacementItem(task, { slotIndex = 0, modePlan = nul
 
   const gen = drillFromLibraryTask(task);
   const scoreBase = 70 + tier * 4;
+  const skillWeights = assessmentSkillWeights({ skillTags, primarySkill, _task: task });
 
   return {
     version: 2,
@@ -185,7 +188,9 @@ export function libraryTaskToPlacementItem(task, { slotIndex = 0, modePlan = nul
     tier,
     difficulty: tier,
     skillTag,
+    primarySkill,
     skillTags,
+    skillWeights,
     concept: task.concept,
     street: task.street,
     category: skillTag,

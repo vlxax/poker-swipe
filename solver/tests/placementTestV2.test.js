@@ -82,21 +82,23 @@ function strongAnswer(item) {
 }
 
 function mixedPreflopStrongPostflopWeak(item) {
-  const tags = item.skillTags || [item.skillTag];
-  if (tags.includes('postflop') || tags.includes('river') || tags.includes('bluffCatch')) {
+  const primary = item.primarySkill || item.skillTag;
+  if (['postflop', 'river', 'bluffCatch'].includes(primary)) {
     return wrongChoice(item);
   }
   return item.correct;
 }
 
 function mixedWeakPreflopStrongIcm(item) {
+  const primary = item.primarySkill || item.skillTag;
   const tags = item.skillTags || [item.skillTag];
-  if (tags.includes('preflop') && !tags.includes('icm') && !tags.includes('shortStack')) {
+  if (primary === 'preflop' || (tags.includes('preflop') && !tags.includes('icm') && !tags.includes('shortStack'))) {
     return wrongChoice(item);
   }
-  if (tags.includes('icm') || tags.includes('shortStack')) return item.correct;
-  const tier = item.tier || 2;
-  return tier <= 2 ? item.correct : wrongChoice(item);
+  if (primary === 'icm' || primary === 'shortStack' || tags.includes('icm') || tags.includes('shortStack')) {
+    return item.correct;
+  }
+  return item.correct;
 }
 
 function runPlayerProfile(label, answerFn, seed) {
@@ -216,16 +218,32 @@ test('beginner / intermediate / strong produce different profiles', () => {
   assert.ok(intermediate.overall <= strong.overall + 8);
   assert.ok(strong.overall >= 65);
   assert.ok(beginner.overall < strong.overall);
+  assert.ok(beginner.overall <= 58, `beginner overall too high: ${beginner.overall}`);
+  assert.ok(strong.overall - beginner.overall >= 18, 'beginner vs strong spread too narrow');
   assert.ok(strong.avgTier > beginner.avgTier);
   assert.ok(strong.recommendedStartingDifficulty >= beginner.recommendedStartingDifficulty);
 });
 
 test('mixed profiles: strong preflop / weak postflop vs weak preflop / strong ICM', () => {
   const mixedA = runPlayerProfile('strong-pf-weak-post', mixedPreflopStrongPostflopWeak, 'sim-mixed-a');
-  const mixedB = runPlayerProfile('weak-pf-strong-icm', mixedWeakPreflopStrongIcm, 'sim-mixed-b');
+  const mixedB = runPlayerProfile('weak-pf-strong-icm', mixedWeakPreflopStrongIcm, 'sim-mixed-b-20');
 
   REPORT.mixedPreflopPostflop = mixedA;
   REPORT.mixedPreflopIcm = mixedB;
+
+  const postflopWeak = ['postflop', 'river', 'bluffCatch', 'betSizing'];
+  assert.ok(
+    postflopWeak.includes(mixedA.weakest) || mixedA.weakestAreas?.some((a) => postflopWeak.includes(a.skill)),
+    `A weakest should be postflop-related, got ${mixedA.weakest}`
+  );
+  assert.equal(mixedA.strongest, 'preflop', 'A strongest should be preflop');
+
+  assert.equal(mixedB.weakest, 'preflop', 'B weakest should be preflop');
+  const icmStrong = ['icm', 'shortStack'];
+  assert.ok(
+    icmStrong.includes(mixedB.strongest) || mixedB.strongestAreas?.some((a) => icmStrong.includes(a.skill)),
+    `B strongest should be ICM/shortStack, got ${mixedB.strongest}`
+  );
 
   assert.notDeepEqual(mixedA.weakest, mixedB.weakest,
     'mixed profiles should surface different weakest skills');
@@ -280,6 +298,10 @@ test('report: placement test V2 summary', () => {
   REPORT.tests = 8;
   REPORT.liveUsesV2 = PLACEMENT_TEST_V2;
   REPORT.safeToMerge = REPORT.beginner?.overall < REPORT.strong?.overall
+    && REPORT.beginner?.overall <= 58
+    && (REPORT.strong?.overall - REPORT.beginner?.overall) >= 18
+    && REPORT.mixedPreflopPostflop?.strongest === 'preflop'
+    && REPORT.mixedPreflopIcm?.weakest === 'preflop'
     && REPORT.miniAppTypes.length >= 3
     && REPORT.skillCoverage.includes('preflop')
     && REPORT.skillCoverage.includes('icm');

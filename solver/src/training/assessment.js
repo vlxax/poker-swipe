@@ -3,6 +3,7 @@
 // Produces initial Player Skill Profile + leak profile + recommended difficulty.
 
 import { buildSkillProfile } from './skillProfile.js';
+import { assessmentSkillWeights, assessmentOverallScore } from './placementSkillAttribution.js';
 import { buildLeakProfile } from './leakProfile.js';
 import { classifyErrorCause } from './errorCause.js';
 import {
@@ -159,8 +160,10 @@ export function runAssessment({
     results.push({
       id: item.id,
       concept: item.concept,
-      skillTag: item.skillTag,
+      skillTag: item.primarySkill || item.skillTag,
+      primarySkill: item.primarySkill || item.skillTag,
       skillTags: item.skillTags || [item.skillTag].filter(Boolean),
+      skillWeights: item.skillWeights || assessmentSkillWeights(item),
       street: item.street,
       q: item.prompt || item.q,
       choice: a.choice,
