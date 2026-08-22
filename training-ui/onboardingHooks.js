@@ -3,7 +3,7 @@
 // onboarding visuals; bypasses legacy DIAG / D25 fixed-array runtime when the
 // shared training profile should drive the app.
 
-import { assessmentViewModel, assessmentSummaryViewModel } from './viewModel.js';
+import { placementViewModel, assessmentSummaryViewModel } from './viewModel.js';
 import { skillLabelRu } from '../solver/src/index.js';
 
 export function installOnboardingHooks({ assessment, appWindow = null } = {}) {
@@ -75,33 +75,50 @@ export function installOnboardingHooks({ assessment, appWindow = null } = {}) {
   function renderQuestion() {
     const { $, $$, esc } = dom();
     const vm = {
-      ...assessmentViewModel({
+      ...placementViewModel({
         item: assessment.current(),
         index: assessment.progress().index,
         total: assessment.progress().total
       }),
       phase: 'question'
     };
-    if (!vm.q) return;
+    if (!vm.prompt && !vm.q) return;
 
     const total = vm.progress.total || 12;
     const index = vm.progress.index || 1;
     const pct = total ? ((index - 1) / total) * 100 : 0;
+    const ctx = vm.context || {};
+    const board = (ctx.board || []).map((c) => (typeof root.card === 'function' ? root.card(c, true) : c)).join('');
+    const hero = (ctx.heroCards || []).map((c) => (typeof root.card === 'function' ? root.card(c, true) : c)).join('');
+    const hist = (ctx.actionHistory || []).map((h) =>
+      `<div style="display:flex;gap:8px;margin:4px 0"><span style="font-size:9px;color:#827b86;min-width:52px">${esc(h.street)}</span><span style="font-size:11px">${esc(h.text)}</span></div>`
+    ).join('');
+    const reviewNodes = vm.mode === 'review' && vm.reviewNodes
+      ? `<div class="timeline" style="margin:12px 0">${vm.reviewNodes.map((n) =>
+        `<div class="node" style="text-align:left;padding:8px;margin:4px 0;border:1px solid #2a2830;border-radius:10px"><span class="ey">${esc(n.street)}</span><b style="display:block;margin-top:4px;font-size:11px">${esc(n.text)}</b></div>`
+      ).join('')}</div>`
+      : '';
 
     $('#story').onclick = null;
     $('#story').innerHTML = `<div class="v31DiagWrap">
       <div class="v31DiagCard">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
-          <span class="ey">ВХОДНАЯ ДИАГНОСТИКА · ${index}/${total}</span>
+          <span class="ey">${esc(vm.modeLabel || 'PLACEMENT')} · ${index}/${total}</span>
           <b style="font-size:10px;color:#ff82b4">${esc(vm.streetRu || '')}</b>
         </div>
         <div class="d25Bar" style="margin:10px 0 14px"><i style="width:${pct}%"></i></div>
-        <h2 class="v31Question">${esc(vm.q)}</h2>
+        <div style="font-size:10px;color:#a69fa8;margin-bottom:8px">${esc(ctx.formatLine || 'MTT')} · ${esc(ctx.stageLine || '')}</div>
+        <div style="font-size:11px;margin-bottom:6px">${esc(ctx.stacksLine || '')}</div>
+        ${hist ? `<div style="margin:10px 0;padding:10px;border:1px solid #2a2830;border-radius:12px"><span class="ey">ИСТОРИЯ</span>${hist}</div>` : ''}
+        ${board ? `<div style="margin:8px 0">${board}</div>` : ''}
+        ${hero ? `<div style="margin:8px 0">${hero}</div>` : ''}
+        ${reviewNodes}
+        <h2 class="v31Question">${esc(vm.prompt || vm.q)}</h2>
         <div id="psAssessChoices">${(vm.choices || []).map((c, i) =>
           `<button type="button" class="v31DiagChoice" data-ps-choice-idx="${i}"><span>${esc(c.labelRu)}</span><span>→</span></button>`
         ).join('')}</div>
       </div>
-      <p style="font-size:10px;color:#7f7882;text-align:center;margin:10px 20px">12 персональных решений — набор зависит от твоего профиля.</p>
+      <p style="font-size:10px;color:#7f7882;text-align:center;margin:10px 20px">MTT placement · ${total} задач · разные механики</p>
     </div>`;
 
     $$('[data-ps-choice-idx]').forEach((b) => {

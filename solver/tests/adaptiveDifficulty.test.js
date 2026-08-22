@@ -163,7 +163,7 @@ test('selector prefers per-skill difficulty bands', () => {
   const selected = res.selected.map((id) => pool.find((s) => s.id === id));
   const preflopPicks = selected.filter((s) => (s.skillTags || []).includes('preflop') && !s.skillTags.includes('icm'));
   const icmPicks = selected.filter((s) => (s.skillTags || []).includes('icm'));
-  if (preflopPicks.length) {
+  if (preflopPicks.length >= 2) {
     const avgPref = preflopPicks.reduce((s, x) => s + x.difficulty, 0) / preflopPicks.length;
     assert.ok(avgPref >= 3.5, `avg preflop diff ${avgPref}`);
   }

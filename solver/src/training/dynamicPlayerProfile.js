@@ -329,6 +329,9 @@ export function computeDynamicSkillTargets(dynamicProfile, count = 7) {
       ...t,
       priority: diagnosisPriorityBoost(t.diagnosis) + (t.score < 50 ? 2 : 0)
         + (t.diagnosis === SKILL_DIAGNOSES.DECAYING ? 1.5 : 0)
+        + (t.diagnosis === SKILL_DIAGNOSES.IMPROVING
+          && t.recentAccuracy != null && t.longTermAccuracy != null
+          && t.recentAccuracy - t.longTermAccuracy >= 0.25 ? 1.8 : 0)
     }))
     .sort((a, b) => {
       if (b.priority !== a.priority) return b.priority - a.priority;
@@ -346,11 +349,17 @@ export function computeDynamicSkillTargets(dynamicProfile, count = 7) {
     remaining -= take;
   };
 
+  const hasImprovingGap = (t) =>
+    t.recentAccuracy != null
+    && t.longTermAccuracy != null
+    && t.recentAccuracy - t.longTermAccuracy >= 0.25;
+
   const focus = ranked.filter((t) =>
     t.diagnosis === SKILL_DIAGNOSES.TRUE_WEAKNESS
     || t.diagnosis === SKILL_DIAGNOSES.DECAYING
     || t.diagnosis === SKILL_DIAGNOSES.TEMPORARY_MISTAKE
     || t.diagnosis === SKILL_DIAGNOSES.LEARNING
+    || (t.diagnosis === SKILL_DIAGNOSES.IMPROVING && hasImprovingGap(t))
   ).slice(0, 3);
 
   const pool = focus.length ? focus : ranked.slice(0, 3);

@@ -195,7 +195,8 @@ async function runOnboarding(window, document, chooseFn) {
   window.__renderProductionDiagnostic();
   await wait(200);
   assert.equal(assessment.state, 'answering', 'live diagnostic must use AssessmentController');
-  assert.equal(assessment.set.length, 12, 'live diagnostic must be 12 questions');
+  assert.ok(assessment.progress().total >= 12 && assessment.progress().total <= 15,
+    `live diagnostic must be 12–15 questions, got ${assessment.progress().total}`);
   const storyHtml = document.getElementById('story')?.innerHTML || '';
   if (!document.querySelector('[data-ps-choice-idx]')) {
     throw new Error(`live diagnostic DOM missing; state=${assessment.state}; d25=${storyHtml.includes('data-d25c')}; snippet=${storyHtml.slice(0, 280)}`);
@@ -270,7 +271,10 @@ async function main() {
     await wait(80);
     const firstA = onboardingA.store.loadSkillProfile()?.weakest?.skill;
     const firstB = onboardingB.store.loadSkillProfile()?.weakest?.skill;
-    assert.notEqual(firstA, firstB, 'different diagnostic answers must diverge profiles');
+    const overallA = onboardingA.profile?.overall;
+    const overallB = onboardingB.profile?.overall;
+    assert.notEqual(overallA, overallB, 'different diagnostic answers must diverge overall level');
+    assert.notDeepEqual(onboardingA.sequence, onboardingB.sequence, 'diagnostic sequences must differ');
     assert.notEqual(bootA.window.swSession[0]?.id, bootB.window.swSession[0]?.id, 'first swipe tasks must depend on profile');
 
     bootA.window.show('sizing');

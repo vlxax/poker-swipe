@@ -232,8 +232,13 @@ function lowTargetDifficultyAdjust(spot, ctx, slotKind = null) {
   const weaknessFocus = spotMatchesWeaknessTiers(spot, ctx);
   const df = spotDifficultyFit(spot, ctx, slotKind);
   const fitMult = weaknessFocus ? 0.55 : 1.1;
-  if (spot.difficulty >= 5) return weaknessFocus ? -2.4 : -2.8;
-  if (spot.difficulty >= 4) return weaknessFocus ? -1.5 : -1.9;
+  const overall = ctx.skillProfile?.overall;
+  const strictLowOverall = overall != null && overall <= 50;
+  if (spot.difficulty >= 5) return strictLowOverall ? -4.2 : (weaknessFocus ? -2.4 : -2.8);
+  if (spot.difficulty >= 4) {
+    if (strictLowOverall) return -4.0;
+    return weaknessFocus ? -1.5 : -1.9;
+  }
   if (df < 0) return df * fitMult;
   if (spot.difficulty <= 2) return weaknessFocus ? 0.45 : 0.65;
   if (spot.difficulty === 3 && slotKind === 'exploration') return 0.2;
@@ -242,14 +247,15 @@ function lowTargetDifficultyAdjust(spot, ctx, slotKind = null) {
 
 function lowDifficultyPoolPreference(pool, slotKind, ctx) {
   if (!prefersLowDifficulty(ctx) || !pool.length) return pool;
+  const strictLowOverall = ctx.skillProfile?.overall != null && ctx.skillProfile.overall <= 50;
   if (slotKind === 'exploration') {
     const easy = pool.filter((x) => (x.spot.difficulty || 1) <= 3);
-    const stretch = pool.filter((x) => (x.spot.difficulty || 1) <= 4);
+    const stretch = pool.filter((x) => (x.spot.difficulty || 1) <= (strictLowOverall ? 3 : 4));
     return easy.length >= 2 ? easy : (stretch.length ? stretch : pool);
   }
   const easy = pool.filter((x) => (x.spot.difficulty || 1) <= 3);
   if (easy.length >= 2) return easy;
-  const stretch = pool.filter((x) => (x.spot.difficulty || 1) <= 4);
+  const stretch = pool.filter((x) => (x.spot.difficulty || 1) <= (strictLowOverall ? 3 : 4));
   return stretch.length >= 2 ? stretch : pool;
 }
 

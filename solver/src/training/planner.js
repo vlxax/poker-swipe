@@ -19,7 +19,7 @@ const DEFAULTS = {
 const CONCEPT_SKILL_RULES = [
   { pattern: /rfi|open|оупен/, street: /префлоп|preflop/, skills: ['preflop', 'positionAwareness'] },
   { pattern: /bb defence|bb defend|защита bb|defend/, skills: ['preflop', 'positionAwareness'] },
-  { pattern: /3-bet|3-бет|squeeze|сквиз/, skills: ['preflop', 'bluffing'] },
+  { pattern: /3-bet|3-бет|squeeze|сквиз/, street: /префлоп|preflop/, skills: ['preflop', 'bluffing'] },
   { pattern: /push|пуш|push-fold|олл-ин/, skills: ['shortStack', 'stackDepthAwareness'] },
   { pattern: /bubble|баббл|icm|itm|финальн|pko|баунти/, skills: ['icm'] },
   { pattern: /bluffcatch|bluff catch|блеф-кетч|price defence/, skills: ['bluffCatch', 'river', 'rangeReading'] },
@@ -341,20 +341,41 @@ function isExploitTask(t) {
   return /эксплойт|exploit|нит|station|маниак|любитель|nit|maniac|lover/.test(concat);
 }
 
+function normalizeStreetKind(street) {
+  const s = String(street || '').toUpperCase();
+  if (s === 'ПРЕФЛОП') return 'preflop';
+  if (s === 'ФЛОП') return 'flop';
+  if (s === 'ТЁРН') return 'turn';
+  if (s === 'РИВЕР') return 'river';
+  return null;
+}
+
+function isPostflopConceptKey(key) {
+  return ['флоп', 'flop', 'turn', 'тёрн', 'river', 'ривер', 'c-bet', 'с-бет', 'barrel', 'баррел'].includes(key);
+}
+
 export function deriveSkillTags(t) {
   const tags = new Set();
+  const streetKind = normalizeStreetKind(t.street);
   const conceptSource = t.conceptKey || t.concept;
   const concat = [conceptSource, ...(t.tags || []), t.street, t.stage, t.position]
     .map((x) => String(x || '').toLowerCase()).join(' ');
 
   for (const rule of CONCEPT_SKILL_RULES) {
     const streetOk = !rule.street || rule.street.test(concat);
+    const postflopOnly = rule.skills.length === 1 && rule.skills[0] === 'postflop';
+    if (postflopOnly && streetKind === 'preflop') continue;
     if (rule.pattern.test(concat) && streetOk) {
       for (const skill of rule.skills) tags.add(skill);
     }
   }
 
+  const PREFLOP_ONLY_KEYS = new Set([
+    'rfi', 'defence', 'defense', 'defend', '3-bet', '3-бет', '4-bet', 'squeeze'
+  ]);
   for (const [key, skills] of Object.entries(CONCEPT_TO_SKILLS)) {
+    if (isPostflopConceptKey(key) && streetKind === 'preflop') continue;
+    if (PREFLOP_ONLY_KEYS.has(key) && streetKind && streetKind !== 'preflop') continue;
     if (concat.includes(key)) {
       for (const skill of skills) tags.add(skill);
     }
@@ -389,11 +410,14 @@ export function deriveSkillTags(t) {
       tags.add('preflop');
     }
   }
-  if (/флоп|flop|тёрн|turn/.test(concat)) tags.add('postflop');
-  if (/ривер|river/.test(concat)) {
+
+  const streetKindFinal = normalizeStreetKind(t.street);
+  if (streetKindFinal === 'flop' || streetKindFinal === 'turn') tags.add('postflop');
+  if (streetKindFinal === 'river') {
     tags.add('river');
     tags.add('postflop');
   }
+  if (streetKindFinal === 'preflop') tags.add('preflop');
 
   const fmt = String(t.format || '');
   const stageText = String(t.stage || '').toLowerCase();
@@ -409,6 +433,10 @@ export function deriveSkillTags(t) {
   }
   if (tournamentFmt && heroStack != null && heroStack <= 15 && !/префлоп|preflop/.test(streetText)) {
     tags.add('icm');
+  }
+
+  if (streetKindFinal === 'flop' || streetKindFinal === 'turn' || streetKindFinal === 'river') {
+    tags.delete('preflop');
   }
 
   return [...tags];
