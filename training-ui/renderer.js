@@ -92,7 +92,7 @@ export const renderDrill = (root, vm, handlers = {}) => {
     ${vm.contextLine ? `<p class="mut small">${esc(vm.contextLine)}</p>` : ''}
     ${vm.historyLine ? `<p class="mut small">${esc(vm.historyLine)}</p>` : ''}
     <div class="dailyBoard">${board || ''}</div>
-    ${hero ? `<div class="cards">${hero}</div>` : ''}
+    ${hero ? `<div class="cards holeCards">${hero}</div>` : ''}
     ${vm.confidence && vm.confidence.available
       ? `<p class="mut small">УВЕРЕННОСТЬ В РАЗБОРЕ ${vm.confidence.score}%${vm.confidence.note ? ' — ' + esc(vm.confidence.note) : ''}</p>` : ''}
     <h2>${esc(vm.prompt)}</h2>
@@ -231,7 +231,7 @@ function placementContextHtml(vm) {
     ${ctx.opponent ? `<div class="row"><span class="mut small">Соперник</span><b>${esc(ctx.opponent)}</b></div>` : ''}
     ${hist ? `<div class="rangesField" style="margin-top:8px"><span class="ey">ИСТОРИЯ</span>${hist}</div>` : ''}
     ${board ? `<div class="dailyBoard">${board}</div>` : ''}
-    ${hero ? `<div class="cards">${hero}</div>` : ''}`;
+    ${hero ? `<div class="cards holeCards">${hero}</div>` : ''}`;
 }
 
 function placementReviewHtml(vm) {

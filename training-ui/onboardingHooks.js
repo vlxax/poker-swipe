@@ -110,8 +110,8 @@ export function installOnboardingHooks({ assessment, appWindow = null } = {}) {
         <div style="font-size:10px;color:#a69fa8;margin-bottom:8px">${esc(ctx.formatLine || 'MTT')} · ${esc(ctx.stageLine || '')}</div>
         <div style="font-size:11px;margin-bottom:6px">${esc(ctx.stacksLine || '')}</div>
         ${hist ? `<div style="margin:10px 0;padding:10px;border:1px solid #2a2830;border-radius:12px"><span class="ey">ИСТОРИЯ</span>${hist}</div>` : ''}
-        ${board ? `<div style="margin:8px 0">${board}</div>` : ''}
-        ${hero ? `<div style="margin:8px 0">${hero}</div>` : ''}
+        ${board ? `<div class="dailyBoard cards" style="display:flex;gap:4px;justify-content:center;margin:8px 0">${board}</div>` : ''}
+        ${hero ? `<div class="cards holeCards" style="display:flex;gap:7px;justify-content:center;margin:8px 0">${hero}</div>` : ''}
         ${reviewNodes}
         <h2 class="v31Question">${esc(vm.prompt || vm.q)}</h2>
         <div id="psAssessChoices">${(vm.choices || []).map((c, i) =>

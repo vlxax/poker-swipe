@@ -126,7 +126,7 @@ export {
   classifyTrainingBucket, PLAYER_PROFILE_SEEDS, DIFFERENTIATION_PLAN_COUNT,
   DIFFERENTIATION_PLAN_NOW
 } from './training/playerDifferentiationFixtures.js';
-export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
+export { getTaskPool, getMttTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
 export {
   drillFromLibraryTask,
   libraryTaskToBrainSpot,

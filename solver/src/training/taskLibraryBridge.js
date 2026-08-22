@@ -17,6 +17,15 @@ export function getTaskPool() {
   return _cachedPool;
 }
 
+/** Training/diagnostic pool: MTT-family formats only (no cash). */
+export function getMttTaskPool() {
+  const tasks = loadTaskLibrary().filter((t) => {
+    const fmt = String(t.format || 'MTT').toUpperCase();
+    return fmt === 'MTT' || fmt === 'PKO' || fmt === 'SNG';
+  });
+  return poolFromLibrary(tasks);
+}
+
 export function getTaskById(id) {
   const tasks = loadTaskLibrary();
   return tasks.find((t) => t.id === id) || null;
