@@ -1,10 +1,10 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-22T12:02:51+03:00",
+  "updated_at": "2026-08-22T12:59:06+03:00",
   "date": "2026-08-22",
   "city": "Москва",
-  "source_card_count": 54,
-  "parsed_event_count": 54,
+  "source_card_count": 55,
+  "parsed_event_count": 55,
   "exact_homepage_match": true,
   "events": [
     {
@@ -416,12 +416,12 @@
       "type": "Фрирол",
       "source_url": "https://pokernomoney.ru/tournaments/10806",
       "address": "ул. Азовская 18 (4 этаж)",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "21:30",
+      "late_reg_minutes": 210,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Фрирол Excommunicado Freeroll 18:00 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
+      "source_card_text": "Фрирол Excommunicado Freeroll 18:00 Бесплатно вход до 21:30 Raise Club ул. Азовская 18 (4 этаж)"
     },
     {
       "date": "2026-08-22",
@@ -571,7 +571,7 @@
       "date": "2026-08-22",
       "time": "19:00",
       "club": "Free Poker Moscow",
-      "tournament": "Турнир",
+      "tournament": "Покер в субботу вечером",
       "fee_rub": 0,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/11267",
@@ -581,7 +581,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Турнир 19:00 Бесплатно Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1"
+      "source_card_text": "Покер в субботу вечером 19:00 Бесплатно Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1"
     },
     {
       "date": "2026-08-22",
@@ -630,22 +630,6 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Freezeout FREEZOUT 19:00 1 500 ₽ MASK OFF POKER Сущевский вал, д.16с1"
-    },
-    {
-      "date": "2026-08-22",
-      "time": "19:00",
-      "club": "MIDNIGHT POKER CLUB",
-      "tournament": "Alko Boom Pot Tournament",
-      "fee_rub": 1000,
-      "type": "",
-      "source_url": "https://pokernomoney.ru/tournaments/10943",
-      "address": "Новослободская дом 39",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "duration_minutes": null,
-      "source_card_text": "Alko Boom Pot Tournament 19:00 1 000 ₽ MIDNIGHT POKER CLUB Новослободская дом 39"
     },
     {
       "date": "2026-08-22",
@@ -838,6 +822,38 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "HI, LADIES! 19:30 Бесплатно Hi, Jack Club Люсиновская улица, 53к2"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "20:00",
+      "club": "BlackWood",
+      "tournament": "Bounty",
+      "fee_rub": 500,
+      "type": "Баунти / Нокаут",
+      "source_url": "https://pokernomoney.ru/tournaments/11379",
+      "address": "Олимпийский проспект, 12",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Баунти / Нокаут Bounty 20:00 500 ₽ BlackWood Олимпийский проспект, 12"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "20:00",
+      "club": "MIDNIGHT POKER CLUB",
+      "tournament": "Alko Boom Pot Tournament",
+      "fee_rub": 1000,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/10943",
+      "address": "Новослободская дом 39",
+      "late_reg_until": "23:10",
+      "late_reg_minutes": 190,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Alko Boom Pot Tournament 20:00 1 000 ₽ вход до 23:10 MIDNIGHT POKER CLUB Новослободская дом 39"
     },
     {
       "date": "2026-08-22",
