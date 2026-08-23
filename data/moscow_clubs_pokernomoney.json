@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T16:46:19+03:00",
+  "retrieved_at": "2026-08-23T17:55:39+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -264,7 +264,7 @@
           "time": "18:10",
           "club": "Check-Check Club",
           "tournament": "Х2 MYSTERY",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "Mystery Bounty",
           "source_url": "https://pokernomoney.ru/tournaments/11562",
           "address": "Нижний Сусальный пер., д. 5с1",
@@ -273,7 +273,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Mystery Bounty Х2 MYSTERY 18:10 уточняйте Check-Check Club Нижний Сусальный пер., д. 5с1"
+          "source_card_text": "Mystery Bounty Х2 MYSTERY 18:10 1 000 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1"
         }
       ]
     },
@@ -1153,8 +1153,24 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 1,
+      "upcoming": 2,
       "schedule": [
+        {
+          "date": "2026-08-23",
+          "time": "19:00",
+          "club": "Showdown",
+          "tournament": "Обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/11594",
+          "address": "Новый Арбат, 19",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Обучение 19:00 Бесплатно Showdown Новый Арбат, 19"
+        },
         {
           "date": "2026-08-23",
           "time": "20:00",
