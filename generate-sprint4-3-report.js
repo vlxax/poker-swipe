@@ -1,0 +1,5 @@
+'use strict';
+const fs=require('fs');function r(f){return JSON.parse(fs.readFileSync(f,'utf8'));}
+const e=r('execution-sprint4-3-results.json'),s=r('sprint4-3-screen-contract-results.json'),a=r('sprint4-3-api-results.json'),mA=r('sprint4-3-mass-runA.json'),mB=r('sprint4-3-mass-runB.json');
+const md=`# EXPLOIT SPRINT 4.3 REPORT\n\n## UI INTEGRATION\n\n- Screen contract: ${s.fail===0?'✅ PASS':'❌ FAIL'}\n- Demo API: ${a.fail===0?'✅ PASS':'❌ FAIL'}\n- Mass A: ${mA.ready?'✅ PASS':'❌ FAIL'}\n- Mass B: ${mB.ready?'✅ PASS':'❌ FAIL'}\n- Determinism: ${e.determinismReady?'✅ PASS':'❌ FAIL'}\n- Sprint 4.2 regression: ${e.sprint42Pass?'✅ PASS':'❌ FAIL'}\n- Demo artifact: ${e.demoReady?'✅ PASS':'❌ FAIL'}\n\n## FINAL VERDICT\n\n| Parameter | Status |\n|---|---|\n| SPRINT 4.3 READY | ${e.sprint43Ready?'✅ YES':'❌ NO'} |\n| FULL RUN READY | ${e.fullRunReady?'✅ YES':'❌ NO'} |\n| CAN START SPRINT 4.4 | ${e.fullRunReady?'✅ YES':'❌ NO'} |\n`;
+fs.writeFileSync('EXPLOIT_SPRINT_4_3_REPORT.md',md);console.log('✅ EXPLOIT_SPRINT_4_3_REPORT.md');

@@ -1,0 +1,11 @@
+'use strict';
+const {spawnSync}=require('child_process');const fs=require('fs');const path=require('path');
+const startTime=new Date().toISOString();const files=['exploit-screen-presenter.js','exploit-demo-api.js','exploit-demo-server.js','exploit-sprint4-3-screen-contract-tests.js','exploit-sprint4-3-api-tests.js','exploit-sprint4-3-mass-tests.js','generate-sprint4-3-report.js','demo/index.html','demo/styles.css','demo/app.js'];
+const fileContractReady=files.every(f=>fs.existsSync(path.join(__dirname,f)));
+let syntaxReady=fileContractReady;for(const f of files.filter(x=>x.endsWith('.js'))){if(spawnSync(process.execPath,['--check',f],{cwd:__dirname}).status!==0)syntaxReady=false;}
+const reg=spawnSync(process.execPath,['run-sprint4-2.js'],{cwd:__dirname,stdio:'inherit'});const sprint42Pass=reg.status===0;
+function run(script,env={}){return spawnSync(process.execPath,[script],{cwd:__dirname,env:{...process.env,...env},stdio:'inherit'}).status===0;}
+const screenPass=run('exploit-sprint4-3-screen-contract-tests.js');const apiPass=run('exploit-sprint4-3-api-tests.js');const massAPass=run('exploit-sprint4-3-mass-tests.js',{RUN_ID:'A'});const massBPass=run('exploit-sprint4-3-mass-tests.js',{RUN_ID:'B'});
+function read(f){try{return JSON.parse(fs.readFileSync(path.join(__dirname,f),'utf8'));}catch{return null;}}const a=read('sprint4-3-mass-runA.json'),b=read('sprint4-3-mass-runB.json');const determinismReady=Boolean(a&&b&&a.hash===b.hash);const demoReady=files.slice(-3).every(f=>fs.statSync(path.join(__dirname,f)).size>0);
+const sprint43Ready=fileContractReady&&syntaxReady&&sprint42Pass&&screenPass&&apiPass&&massAPass&&massBPass&&determinismReady&&demoReady;const exec={startTime,endTime:new Date().toISOString(),fileContractReady,syntaxReady,sprint42Pass,screenPass,apiPass,massAPass,massBPass,determinismReady,demoReady,sprint43Ready,fullRunReady:sprint43Ready};fs.writeFileSync('execution-sprint4-3-results.json',JSON.stringify(exec,null,2));
+spawnSync(process.execPath,['generate-sprint4-3-report.js'],{cwd:__dirname,stdio:'inherit'});console.log('\n=== SPRINT 4.3 FINAL VERDICT ===');console.log('SPRINT 4.3 READY:',sprint43Ready?'✅ YES':'❌ NO');console.log('FULL RUN READY:',sprint43Ready?'✅ YES':'❌ NO');console.log('CAN START SPRINT 4.4:',sprint43Ready?'✅ YES':'❌ NO');process.exitCode=sprint43Ready?0:1;

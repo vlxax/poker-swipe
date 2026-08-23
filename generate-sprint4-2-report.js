@@ -1,0 +1,5 @@
+'use strict';
+const fs=require('fs');function read(f){return JSON.parse(fs.readFileSync(f,'utf8'));}
+const e=read('execution-sprint4-2-results.json');const s=read('sprint4-2-session-results.json');const p=read('sprint4-2-public-contract-results.json');const d=read('sprint4-2-determinism-results.json');const m=read('sprint4-2-mass-results.json');
+const md=`# SPRINT 4.2 REPORT\n\n## PURPOSE\nUser-facing exploit training session runtime on top of the green Sprint 4.1.2 engine.\n\n## GATES\n\n| Gate | Status |\n|---|---|\n| Sprint 4.1.2 regression | ${e.baselinePass?'✅':'❌'} |\n| Syntax | ${e.syntaxPass?'✅':'❌'} |\n| Session contract | ${s.fail===0?'✅':'❌'} |\n| Public no-leak contract | ${p.fail===0?'✅':'❌'} |\n| Determinism | ${d.pass?'✅':'❌'} |\n| 2k session mass | ${m.pass?'✅':'❌'} |\n\n## MASS\nRequested: ${m.requested}  \nAnswered: ${m.answered}  \nLeaks: ${m.leaks}\n\n## FINAL VERDICT\n\nSPRINT 4.2 READY: ${e.sprint42Ready?'✅ YES':'❌ NO'}  \nFULL RUN READY: ${e.fullRunReady?'✅ YES':'❌ NO'}  \nCAN START SPRINT 4.3: ${e.fullRunReady?'✅ YES':'❌ NO'}\n`;
+fs.writeFileSync('EXPLOIT_SPRINT_4_2_REPORT.md',md);console.log('✅ EXPLOIT_SPRINT_4_2_REPORT.md generated');
