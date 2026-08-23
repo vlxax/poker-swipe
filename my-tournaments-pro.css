@@ -39,6 +39,7 @@
 
 #ps72TournamentScreen *,
 #mtProModal *,
+#mtProAnalytics *,
 #mtProDetailOverlay * {
   box-sizing: border-box;
 }
@@ -88,6 +89,145 @@
 .mt-pro-head h2 em {
   font-style: normal;
   color: var(--mt-lime);
+}
+
+.mt-pro-summary {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid var(--mt-border);
+  border-radius: var(--mt-radius-lg);
+  overflow: hidden;
+}
+
+.mt-pro-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 6px;
+  text-align: center;
+  min-width: 0;
+  border-right: 1px solid var(--mt-border-soft);
+}
+
+.mt-pro-summary-item:last-child { border-right: none; }
+
+.mt-pro-summary-item .k {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mt-muted);
+  margin-bottom: 5px;
+  white-space: nowrap;
+}
+
+.mt-pro-summary-item .v {
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  word-break: break-word;
+}
+
+.mt-pro-summary-item .v.pos { color: var(--mt-lime); }
+.mt-pro-summary-item .v.neg { color: var(--mt-coral); }
+.mt-pro-summary-item .v.neutral { color: var(--mt-muted); }
+.mt-pro-summary-item .v.muted { color: var(--mt-muted); font-size: 13px; }
+
+.mt-pro-summary-empty {
+  grid-column: 1 / -1;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--mt-muted);
+}
+
+.mt-pro-hero-insight {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(120deg, rgba(200, 255, 61, 0.08), rgba(200, 255, 61, 0.02));
+  border: 1px solid rgba(200, 255, 61, 0.2);
+  border-radius: var(--mt-radius-md);
+}
+
+.mt-pro-hero-tag {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mt-lime);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.mt-pro-hero-text {
+  font-size: 13px;
+  color: var(--mt-text);
+  line-height: 1.35;
+}
+
+.mt-pro-hero-text strong {
+  color: var(--mt-lime);
+  font-weight: 700;
+}
+
+.mt-pro-hero-val {
+  margin-top: 4px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.mt-pro-hero-val.pos { color: var(--mt-lime); }
+.mt-pro-hero-val.neg { color: var(--mt-coral); }
+
+.mt-pro-show-all {
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px;
+  background: transparent;
+  border: 1px dashed var(--mt-border);
+  border-radius: var(--mt-radius-sm);
+  color: var(--mt-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mt-pro-show-all:active { background: var(--mt-surf-1); color: var(--mt-lime); }
+
+.mt-pro-analytics-btn {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--mt-surf-1);
+  border: 1px solid var(--mt-border);
+  border-radius: var(--mt-radius-md);
+  color: var(--mt-text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mt-pro-analytics-btn:active {
+  background: var(--mt-surf-2);
+  border-color: rgba(200, 255, 61, 0.3);
+  color: var(--mt-lime);
+}
+
+.mt-pro-recent .mt-pro-list-head {
+  padding: 16px 0 8px;
 }
 
 .mt-pro-eyebrow {
@@ -172,12 +312,12 @@
 
 .mt-pro-chip {
   flex-shrink: 0;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.03em;
   color: var(--mt-muted);
   background: var(--mt-surf-1);
   border: 1px solid var(--mt-border-soft);
-  padding: 6px 12px;
+  padding: 7px 13px;
   border-radius: 100px;
   cursor: pointer;
   white-space: nowrap;
@@ -330,9 +470,16 @@
   background: var(--mt-surf-1);
   border: 1px solid var(--mt-border-soft);
   border-radius: var(--mt-radius-lg);
-  padding: 14px 12px 10px;
+  padding: 16px 14px 12px;
   position: relative;
   overflow: hidden;
+}
+
+.mt-pro-chart {
+  width: 100%;
+  height: 160px;
+  display: block;
+  cursor: pointer;
 }
 
 .mt-pro-chart-head {
@@ -346,7 +493,7 @@
 
 .mt-pro-chart-title {
   font-weight: 800;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -358,13 +505,6 @@
 
 .mt-pro-chart-end.pos { color: var(--mt-lime); }
 .mt-pro-chart-end.neg { color: var(--mt-coral); }
-
-.mt-pro-chart {
-  width: 100%;
-  height: 140px;
-  display: block;
-  cursor: pointer;
-}
 
 .mt-pro-chart-tip {
   position: absolute;
@@ -633,23 +773,99 @@
 }
 
 .mt-pro-card {
-  background: var(--mt-surf-1);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--mt-border-soft);
   border-radius: var(--mt-radius-md);
-  padding: 12px 13px;
+  padding: 12px 14px 10px;
   position: relative;
-  overflow: hidden;
 }
 
-.mt-pro-card.win { border-color: rgba(200, 255, 61, 0.22); }
+.mt-pro-card.win { border-color: rgba(200, 255, 61, 0.18); }
 
-.mt-pro-card-top {
+.mt-pro-card-row1 {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 5px;
 }
+
+.mt-pro-card-title {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+  min-width: 0;
+  flex: 1;
+  word-break: break-word;
+}
+
+.mt-pro-card-result {
+  font-weight: 800;
+  font-size: 15px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.mt-pro-card-result.pos { color: var(--mt-lime); }
+.mt-pro-card-result.neg { color: var(--mt-coral); }
+.mt-pro-card-result.pts { color: var(--mt-gold); }
+
+.mt-pro-card-row2,
+.mt-pro-card-row3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.mt-pro-card-meta {
+  font-size: 12px;
+  color: var(--mt-muted);
+}
+
+.mt-pro-card-venue {
+  font-size: 11px;
+  color: var(--mt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mt-pro-card-buyin {
+  font-size: 12px;
+  color: var(--mt-muted);
+  flex-shrink: 0;
+}
+
+.mt-pro-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--mt-border-soft);
+}
+
+.mt-pro-card-actions button {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 2px 0;
+  color: var(--mt-muted-2);
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mt-pro-card-actions button.danger { color: var(--mt-muted-2); }
+.mt-pro-card-actions button:active { color: var(--mt-lime); }
+.mt-pro-card-actions button.danger:active { color: var(--mt-coral); }
 
 .mt-pro-badges {
   display: flex;
@@ -660,9 +876,9 @@
 }
 
 .mt-pro-badge {
-  font-size: 7.5px;
+  font-size: 9px;
   letter-spacing: 0.06em;
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: 4px;
   text-transform: uppercase;
   font-weight: 800;
@@ -674,83 +890,6 @@
 .mt-pro-badge.pko { background: var(--mt-coral-dim); color: var(--mt-coral); }
 .mt-pro-badge.reentry { background: var(--mt-purple-dim); color: var(--mt-purple); }
 .mt-pro-badge.bucket { background: var(--mt-surf-2); color: var(--mt-muted); }
-
-.mt-pro-venue {
-  font-weight: 800;
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--mt-text);
-}
-
-.mt-pro-date {
-  font-size: 9px;
-  color: var(--mt-muted-2);
-  flex-shrink: 0;
-}
-
-.mt-pro-card-name {
-  font-size: 9px;
-  color: var(--mt-muted);
-  margin-bottom: 7px;
-  word-break: break-word;
-}
-
-.mt-pro-card-mid {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.mt-pro-place {
-  font-weight: 900;
-  font-size: 18px;
-  line-height: 1;
-}
-
-.mt-pro-place span {
-  font-size: 11px;
-  color: var(--mt-muted-2);
-  font-weight: 500;
-}
-
-.mt-pro-profit {
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.mt-pro-profit.pos { color: var(--mt-lime); }
-.mt-pro-profit.neg { color: var(--mt-coral); }
-.mt-pro-profit.pts { color: var(--mt-gold); }
-
-.mt-pro-card-foot {
-  font-size: 8.5px;
-  color: var(--mt-muted-2);
-  padding-top: 6px;
-  border-top: 1px solid var(--mt-border-soft);
-  word-break: break-word;
-}
-
-.mt-pro-card-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-  border-top: 1px solid var(--mt-border-soft);
-  padding-top: 6px;
-  flex-wrap: wrap;
-}
-
-.mt-pro-card-actions button {
-  background: var(--mt-surf-2);
-  border: 1px solid var(--mt-border);
-  border-radius: var(--mt-radius-sm);
-  padding: 4px 10px;
-  color: var(--mt-muted-2);
-  font-size: 8px;
-  cursor: pointer;
-}
-
-.mt-pro-card-actions button.danger:hover { border-color: var(--mt-coral); color: var(--mt-coral); }
 
 .mt-pro-empty {
   padding: 28px 12px;
@@ -788,6 +927,59 @@
 }
 
 /* Modals */
+#mtProAnalytics {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483150;
+  background: rgba(0, 0, 0, 0.64);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  backdrop-filter: blur(10px);
+}
+
+#mtProAnalytics.on { display: flex; }
+
+.mt-pro-analytics-sheet {
+  width: min(760px, 100%);
+  max-height: min(94vh, 820px);
+  overflow: auto;
+  border: 1px solid var(--mt-border);
+  border-radius: 26px 26px 0 0;
+  background: linear-gradient(180deg, #14160f 0%, #0c0d0a 100%);
+  padding: 14px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  animation: mtSheetIn 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+  color: var(--mt-text);
+  -webkit-overflow-scrolling: touch;
+}
+
+.mt-pro-analytics-head {
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mt-pro-filters-analytics { padding-top: 0; }
+
+.mt-pro-analytics-export {
+  padding: 12px 0 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.mt-pro-analytics-export .mt-pro-export {
+  width: 100%;
+  justify-content: center;
+  padding: 12px 16px;
+  font-size: 11px;
+}
+
 #mtProModal {
   position: fixed;
   inset: 0;
@@ -1072,6 +1264,9 @@
 
 @media (max-width: 430px) {
   .mt-pro { padding-left: 12px; padding-right: 12px; }
-  .mt-pro-stat .val { font-size: 15px; }
+  .mt-pro-summary-item .v { font-size: 14px; }
+  .mt-pro-summary-item .k { font-size: 9px; }
+  .mt-pro-card-title { font-size: 13px; }
+  .mt-pro-card-meta { font-size: 11px; }
   .mt-pro-insight-grid { grid-template-columns: 1fr 1fr; }
 }

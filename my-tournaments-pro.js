@@ -17,6 +17,7 @@
   const TYPES = [['all', 'ВСЕ'], ['offline', 'ОФЛ'], ['online', 'ОНЛ'], ['sport', 'СПОРТ']];
   const MONTHS = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
 
+  const RECENT_LIMIT = 4;
   let periodFilter = 'all';
   let typeFilter = 'all';
   let bucketFilter = 'all';
@@ -26,6 +27,7 @@
   let selCurr = 'RUB';
   let chartData = [];
   let typeData = [];
+  let analyticsOpen = false;
 
   const num = (v) => {
     const n = Number(String(v ?? 0).replace(/\s/g, '').replace(',', '.'));
@@ -160,6 +162,11 @@
     return arr.sort((a, b) => dateSortKey(b) - dateSortKey(a));
   };
 
+  const filteredForMain = () =>
+    list()
+      .filter((t) => inPeriod(t))
+      .sort((a, b) => dateSortKey(b) - dateSortKey(a));
+
   const groupBy = (arr, keyFn) => {
     const map = {};
     arr.forEach((t) => {
@@ -173,6 +180,7 @@
   const rootEl = document.getElementById('myTournamentsRoot');
   let SCREEN = document.getElementById('ps72TournamentScreen');
   let MODAL = document.getElementById('mtProModal');
+  let ANALYTICS = document.getElementById('mtProAnalytics');
   let DETAIL_OVERLAY = document.getElementById('mtProDetailOverlay');
   let DETAIL = document.getElementById('mtProDetail');
   let TOAST = document.getElementById('mtProToast');
@@ -214,87 +222,156 @@
       TOAST.className = 'mt-pro-toast';
       document.body.appendChild(TOAST);
     }
-    if (!SCREEN.querySelector('.mt-pro')) {
+    if (!ANALYTICS) {
+      ANALYTICS = document.createElement('div');
+      ANALYTICS.id = 'mtProAnalytics';
+      ANALYTICS.innerHTML = `<div class="mt-pro-analytics-sheet" id="mtProAnalyticsBody"></div>`;
+      document.body.appendChild(ANALYTICS);
+      ANALYTICS.addEventListener('click', (e) => {
+        if (e.target === ANALYTICS) closeAnalytics();
+      });
+    }
+    if (!SCREEN.querySelector('.mt-pro') || !SCREEN.querySelector('#mtSummaryBlock')) {
+      if (SCREEN.querySelector('.mt-pro')) SCREEN.innerHTML = '';
       SCREEN.innerHTML = `<div class="mt-pro">
         <div class="mt-pro-glow"></div>
         <div class="mt-pro-head mt-pro-hero">
-          <div>
-            <h2>ТУРНИРЫ<em>.</em></h2>
-            <div class="mt-pro-eyebrow"><i></i>MTT PERFORMANCE</div>
-          </div>
+          <h2>МОИ <em>ТУРНИРЫ</em></h2>
           <div class="mt-pro-actions">
-            <button type="button" class="mt-pro-export" data-mt="export">📥 CSV</button>
             <button type="button" class="mt-pro-add" data-mt="add">+ Добавить</button>
           </div>
         </div>
         <div class="mt-pro-filters">
           <div class="mt-pro-filter-row" id="mtPeriodRow"></div>
-          <div class="mt-pro-filter-row" id="mtTypeRow"></div>
-          <div class="mt-pro-filter-row" id="mtBucketRow" style="display:none"></div>
         </div>
-        <div class="mt-pro-dash">
-          <div class="mt-pro-dash-title">
-            <span>МОЯ ИГРА</span>
-            <div class="mt-pro-pro-toggle" data-mt="pro-toggle">
-              <span>🔬 Профи-режим</span>
-              <div class="mt-pro-switch" id="mtProSwitch"><i></i></div>
-            </div>
-          </div>
-          <div class="mt-pro-stat-grid" id="mtStatGrid"></div>
-          <div id="mtSampleNote"></div>
-          <div class="mt-pro-add-stats" id="mtAddStats"></div>
-        </div>
+        <div class="mt-pro-summary" id="mtSummaryBlock"></div>
+        <div class="mt-pro-hero-insight" id="mtHeroInsight" style="display:none"></div>
         <div class="mt-pro-chart-wrap">
           <div class="mt-pro-chart-card">
             <div class="mt-pro-chart-head">
-              <div class="mt-pro-chart-title" id="mtChartTitle">ГРАФИК РЕЗУЛЬТАТА</div>
+              <div class="mt-pro-chart-title" id="mtChartTitle">ГРАФИК РЕЗУЛЬТАТОВ</div>
               <div class="mt-pro-chart-end" id="mtChartEnd"></div>
             </div>
             <svg class="mt-pro-chart" id="mtChartSvg" viewBox="0 0 340 140" preserveAspectRatio="none"></svg>
             <div class="mt-pro-chart-tip" id="mtChartTip"></div>
           </div>
         </div>
-        <div class="mt-pro-section" id="mtBucketsSection" style="display:none">
-          <div class="mt-pro-section-title">💰 ROI ПО БАЙ-ИН ДИАПАЗОНАМ <span class="mt-pro-badge-count" id="mtBucketsCount"></span></div>
-          <div class="mt-pro-buckets" id="mtBucketsGrid"></div>
+        <div class="mt-pro-recent" id="mtRecentSection">
+          <div class="mt-pro-list-head">
+            <div class="mt-pro-list-title">ПОСЛЕДНИЕ ТУРНИРЫ</div>
+          </div>
+          <div class="mt-pro-list" id="mtList"></div>
+          <button type="button" class="mt-pro-show-all" id="mtShowAllBtn" data-mt="show-all" style="display:none">ПОКАЗАТЬ ВСЕ →</button>
+          <div class="mt-pro-empty" id="mtEmpty" style="display:none">
+            <h3>Ещё нет турниров</h3>
+            <p>Добавь результат — и здесь появится аналитика по нему.</p>
+            <button type="button" class="cta" data-mt="add">+ ДОБАВИТЬ ТУРНИР</button>
+          </div>
         </div>
-        <div class="mt-pro-section" id="mtRollingSection" style="display:none">
-          <div class="mt-pro-section-title">📈 ROI СКОЛЬЗЯЩИМ ОКНОМ</div>
-          <div class="mt-pro-rolling" id="mtRollingGrid"></div>
-        </div>
-        <div class="mt-pro-section" id="mtInsightsSection">
-          <div class="mt-pro-section-title">📊 КЛЮЧЕВЫЕ ИНСАЙТЫ</div>
-          <div class="mt-pro-insight-grid" id="mtInsightsGrid"></div>
-          <div class="mt-pro-warning" id="mtInsightWarning" style="display:none"><span>⚠️</span><p id="mtWarningText"></p></div>
-        </div>
-        <div class="mt-pro-section" id="mtSplitSection">
-          <div class="mt-pro-section-title">🌍 ОФЛАЙН VS ОНЛАЙН</div>
-          <div class="mt-pro-split" id="mtSplitCard"></div>
-        </div>
-        <div class="mt-pro-section" id="mtFormatSection">
-          <div class="mt-pro-section-title">🏷️ ПО ТИПАМ ТУРНИРОВ <span class="n" id="mtFormatN"></span></div>
-          <div class="mt-pro-bar-list" id="mtFormatList"></div>
-        </div>
-        <div class="mt-pro-section" id="mtVenueSection">
-          <div class="mt-pro-section-title" id="mtVenueTitle">🏢 ПО РУМАМ / КЛУБАМ</div>
-          <div class="mt-pro-bar-list" id="mtVenueList"></div>
-        </div>
-        <div class="mt-pro-list-head">
-          <div class="mt-pro-list-title">📋 ИСТОРИЯ <span class="count" id="mtListCount">(0)</span></div>
-        </div>
-        <div class="mt-pro-list" id="mtList"></div>
-        <div class="mt-pro-empty" id="mtEmpty" style="display:none">
-          <h3>Ещё нет турниров в этом фильтре</h3>
-          <p>Добавь результат — и здесь появится аналитика по нему.</p>
-          <button type="button" class="cta" data-mt="add">+ ДОБАВИТЬ ТУРНИР</button>
-        </div>
+        <button type="button" class="mt-pro-analytics-btn" data-mt="analytics-open">ПОДРОБНАЯ АНАЛИТИКА →</button>
       </div>`;
+      ensureAnalyticsDom();
       bindStaticEvents();
     }
   }
 
+  function ensureAnalyticsDom() {
+    const body = document.getElementById('mtProAnalyticsBody');
+    if (!body || body.dataset.ready) return;
+    body.dataset.ready = '1';
+    body.innerHTML = `
+      <div class="mt-pro-sheet-handle"></div>
+      <div class="mt-pro-analytics-head">
+        <span>ПОДРОБНАЯ АНАЛИТИКА</span>
+        <button type="button" class="mt-pro-sheet-close" data-mt="analytics-close">✕</button>
+      </div>
+      <div class="mt-pro-filters mt-pro-filters-analytics">
+        <div class="mt-pro-filter-row" id="mtTypeRow"></div>
+        <div class="mt-pro-filter-row" id="mtBucketRow" style="display:none"></div>
+      </div>
+      <div class="mt-pro-dash">
+        <div class="mt-pro-dash-title">
+          <span>МОЯ ИГРА</span>
+          <div class="mt-pro-pro-toggle" data-mt="pro-toggle">
+            <span>🔬 Профи-режим</span>
+            <div class="mt-pro-switch" id="mtProSwitch"><i></i></div>
+          </div>
+        </div>
+        <div class="mt-pro-stat-grid" id="mtStatGrid"></div>
+        <div id="mtSampleNote"></div>
+        <div class="mt-pro-add-stats" id="mtAddStats"></div>
+      </div>
+      <div class="mt-pro-section" id="mtBucketsSection" style="display:none">
+        <div class="mt-pro-section-title">💰 ROI ПО БАЙ-ИН ДИАПАЗОНАМ <span class="mt-pro-badge-count" id="mtBucketsCount"></span></div>
+        <div class="mt-pro-buckets" id="mtBucketsGrid"></div>
+      </div>
+      <div class="mt-pro-section" id="mtRollingSection" style="display:none">
+        <div class="mt-pro-section-title">📈 ROI СКОЛЬЗЯЩИМ ОКНОМ</div>
+        <div class="mt-pro-rolling" id="mtRollingGrid"></div>
+      </div>
+      <div class="mt-pro-section" id="mtInsightsSection">
+        <div class="mt-pro-section-title">📊 КЛЮЧЕВЫЕ ИНСАЙТЫ</div>
+        <div class="mt-pro-insight-grid" id="mtInsightsGrid"></div>
+        <div class="mt-pro-warning" id="mtInsightWarning" style="display:none"><span>⚠️</span><p id="mtWarningText"></p></div>
+      </div>
+      <div class="mt-pro-section" id="mtSplitSection">
+        <div class="mt-pro-section-title">🌍 ОФЛАЙН VS ОНЛАЙН</div>
+        <div class="mt-pro-split" id="mtSplitCard"></div>
+      </div>
+      <div class="mt-pro-section" id="mtFormatSection">
+        <div class="mt-pro-section-title">🏷️ ПО ТИПАМ ТУРНИРОВ <span class="n" id="mtFormatN"></span></div>
+        <div class="mt-pro-bar-list" id="mtFormatList"></div>
+      </div>
+      <div class="mt-pro-section" id="mtVenueSection">
+        <div class="mt-pro-section-title" id="mtVenueTitle">🏢 ПО РУМАМ / КЛУБАМ</div>
+        <div class="mt-pro-bar-list" id="mtVenueList"></div>
+      </div>
+      <div class="mt-pro-analytics-export">
+        <button type="button" class="mt-pro-export" data-mt="export">📥 Экспорт CSV</button>
+      </div>
+      <div class="mt-pro-list-head">
+        <div class="mt-pro-list-title">📋 ИСТОРИЯ <span class="count" id="mtListCount">(0)</span></div>
+      </div>
+      <div class="mt-pro-list" id="mtFullList"></div>`;
+    body.addEventListener('click', onAnalyticsClick);
+  }
+
   function $(id) {
-    return SCREEN.querySelector('#' + id);
+    return SCREEN.querySelector('#' + id) || document.getElementById(id);
+  }
+
+  function openAnalytics() {
+    ensureDom();
+    ensureAnalyticsDom();
+    analyticsOpen = true;
+    ANALYTICS.classList.add('on');
+    document.body.style.overflow = 'hidden';
+    renderAnalytics();
+  }
+
+  function closeAnalytics() {
+    analyticsOpen = false;
+    ANALYTICS?.classList.remove('on');
+    if (!MODAL?.classList.contains('on')) document.body.style.overflow = '';
+  }
+
+  function onAnalyticsClick(e) {
+    const t = e.target.closest('[data-mt]');
+    if (!t) return;
+    const action = t.dataset.mt;
+    if (action === 'analytics-close') closeAnalytics();
+    else if (action === 'export') exportCSV();
+    else if (action === 'pro-toggle') toggleProMode();
+    else if (action === 'type') {
+      typeFilter = t.dataset.val;
+      render();
+    } else if (action === 'bucket') {
+      bucketFilter = t.dataset.val;
+      render();
+    } else if (action === 'edit') editTournament(t.dataset.id);
+    else if (action === 'delete') deleteTournament(t.dataset.id);
+    else if (action === 'bar-detail') showDetailList((t.dataset.ids || '').split('|').filter(Boolean), t.dataset.title || '');
+    else if (action === 'type-insight') showTypeList();
   }
 
   function showToast(msg, isErr) {
@@ -318,21 +395,13 @@
     if (!t) return;
     const action = t.dataset.mt;
     if (action === 'add') openSheet();
-    else if (action === 'export') exportCSV();
-    else if (action === 'pro-toggle') toggleProMode();
     else if (action === 'period') {
       periodFilter = t.dataset.val;
       render();
-    } else if (action === 'type') {
-      typeFilter = t.dataset.val;
-      render();
-    } else if (action === 'bucket') {
-      bucketFilter = t.dataset.val;
-      render();
     } else if (action === 'edit') editTournament(t.dataset.id);
     else if (action === 'delete') deleteTournament(t.dataset.id);
-    else if (action === 'bar-detail') showDetailList((t.dataset.ids || '').split('|').filter(Boolean), t.dataset.title || '');
-    else if (action === 'type-insight') showTypeList();
+    else if (action === 'show-all') openAnalytics();
+    else if (action === 'analytics-open') openAnalytics();
   }
 
   function toggleProMode() {
@@ -346,6 +415,7 @@
       ([k, l]) =>
         `<button type="button" class="mt-pro-chip ${periodFilter === k ? 'active' : ''}" data-mt="period" data-val="${k}">${l}</button>`
     ).join('');
+    if (!document.getElementById('mtTypeRow')) return;
     $('mtTypeRow').innerHTML = TYPES.map(([k, l]) => {
       let cls = 'mt-pro-chip';
       if (typeFilter === k) {
@@ -370,6 +440,89 @@
     $('mtProSwitch')?.classList.toggle('on', proMode);
     $('mtBucketsSection').style.display = proMode ? '' : 'none';
     $('mtRollingSection').style.display = proMode ? '' : 'none';
+  }
+
+  function periodLabel() {
+    const p = PERIODS.find(([k]) => k === periodFilter);
+    return p ? p[1] : 'ВСЁ';
+  }
+
+  function renderCompactSummary(arr, isSportOnly) {
+    const el = $('mtSummaryBlock');
+    if (isSportOnly) {
+      const sp = sportOnlyList(arr);
+      const totalPts = sp.reduce((s, t) => s + num(t.points), 0);
+      const avg = sp.length ? Math.round(totalPts / sp.length) : 0;
+      el.innerHTML = `
+        <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${sp.length}</span></div>
+        <div class="mt-pro-summary-item"><span class="k">Points</span><span class="v pos">${totalPts}</span></div>
+        <div class="mt-pro-summary-item"><span class="k">Среднее</span><span class="v">${avg}</span></div>
+        <div class="mt-pro-summary-item"><span class="k">Период</span><span class="v muted">${periodLabel()}</span></div>`;
+      return;
+    }
+    const m = moneyList(arr);
+    const n = m.length;
+    if (n === 0) {
+      el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
+      return;
+    }
+    const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
+    const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
+    const net = totalRet - totalInv;
+    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
+    const itmPct = Math.round((m.filter(isITM).length / n) * 100);
+    el.innerHTML = `
+      <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${n}</span></div>
+      <div class="mt-pro-summary-item"><span class="k">Профит</span><span class="v ${net >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span></div>
+      <div class="mt-pro-summary-item"><span class="k">ROI</span><span class="v ${roi === null ? 'neutral' : roi >= 0 ? 'pos' : 'neg'}">${roi === null ? '—' : (roi >= 0 ? '+' : '') + roi + '%'}</span></div>
+      <div class="mt-pro-summary-item"><span class="k">ITM</span><span class="v">${itmPct}%</span></div>`;
+  }
+
+  function renderHeroInsight(arr) {
+    const el = $('mtHeroInsight');
+    const m = moneyList(arr);
+    if (m.length < 2 || typeFilter === 'sport') {
+      el.style.display = 'none';
+      return;
+    }
+    const calc = (items) => {
+      const inv = items.reduce((s, t) => s + investedRub(t), 0);
+      const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
+      const roi = inv ? Math.round(((ret - inv) / inv) * 1000) / 10 : null;
+      return { roi, n: items.length };
+    };
+    const off = calc(m.filter((t) => cat(t) === 'offline'));
+    const on = calc(m.filter((t) => cat(t) === 'online'));
+    let label = '';
+    let roi = null;
+    if (off.n >= 1 && on.n >= 1) {
+      if ((off.roi ?? -Infinity) >= (on.roi ?? -Infinity)) {
+        label = 'офлайне';
+        roi = off.roi;
+      } else {
+        label = 'онлайне';
+        roi = on.roi;
+      }
+    } else if (off.n >= 1) {
+      label = 'офлайне';
+      roi = off.roi;
+    } else if (on.n >= 1) {
+      label = 'онлайне';
+      roi = on.roi;
+    } else {
+      el.style.display = 'none';
+      return;
+    }
+    if (roi === null) {
+      el.style.display = 'none';
+      return;
+    }
+    const periodTxt = periodFilter === 'all' ? 'ЗА ВСЁ ВРЕМЯ' : `ЗА ${periodLabel()}`;
+    el.style.display = 'block';
+    el.innerHTML = `
+      <div class="mt-pro-hero-tag">⚡ ${periodTxt}</div>
+      <div class="mt-pro-hero-text">Лучший результат у тебя в <strong>${label}</strong></div>
+      <div class="mt-pro-hero-val ${roi >= 0 ? 'pos' : 'neg'}">ROI ${roi >= 0 ? '+' : ''}${roi}%</div>`;
   }
 
   function renderStats(arr, isSportOnly) {
@@ -456,7 +609,7 @@
     const titleEl = $('mtChartTitle');
     const endEl = $('mtChartEnd');
     const tip = $('mtChartTip');
-    titleEl.textContent = isSportOnly ? 'ДИНАМИКА POINTS' : 'ГРАФИК РЕЗУЛЬТАТА';
+    titleEl.textContent = isSportOnly ? 'ДИНАМИКА POINTS' : 'ГРАФИК РЕЗУЛЬТАТОВ';
 
     const src = (isSportOnly ? sportOnlyList(arr) : moneyList(arr))
       .slice()
@@ -771,60 +924,82 @@
     renderBarList($('mtVenueList'), entries, isSportOnly);
   }
 
-  function renderHistory(arr) {
+  function cardHtml(t) {
+    const isSport = cat(t) === 'sport';
+    const p = profitRub(t);
+    const win = isSport ? num(t.points) > 0 : p > 0;
+    const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
+    const resHtml = isSport
+      ? `<div class="mt-pro-card-result pts">${fmtPts(num(t.points))}</div>`
+      : `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
+    const buyinTxt = isSport
+      ? `${baseBuy(t).toLocaleString('ru-RU')} ${currency(t)}`
+      : proMode
+        ? '$' + (buyinRub(t) / RATE).toFixed(0)
+        : buyinRub(t).toLocaleString('ru-RU') + ' ₽';
+    const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? '/' + num(t.field) : ''}` : '—';
+    return `<div class="mt-pro-card ${win ? 'win' : ''}">
+      <div class="mt-pro-card-row1">
+        <div class="mt-pro-card-title">${esc(title(t))}</div>
+        ${resHtml}
+      </div>
+      <div class="mt-pro-card-row2">
+        <span class="mt-pro-card-meta">${fmtDateShort(t.date)} · ${esc(fmtDisplay(t))}</span>
+        <span class="mt-pro-card-meta">${placeTxt}</span>
+      </div>
+      <div class="mt-pro-card-row3">
+        <span class="mt-pro-card-venue"><span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span> ${esc(venue(t))}</span>
+        <span class="mt-pro-card-buyin">BI ${buyinTxt}</span>
+      </div>
+      <div class="mt-pro-card-actions">
+        <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
+        <button type="button" class="danger" data-mt="delete" data-id="${esc(t.id)}">Удалить</button>
+      </div>
+    </div>`;
+  }
+
+  function renderRecentHistory(arr) {
     const el = $('mtList');
     const empty = $('mtEmpty');
-    $('mtListCount').textContent = `(${arr.length})`;
+    const showAllBtn = $('mtShowAllBtn');
     if (arr.length === 0) {
+      el.innerHTML = '';
       el.style.display = 'none';
+      showAllBtn.style.display = 'none';
       empty.style.display = 'flex';
       return;
     }
-    el.style.display = 'flex';
     empty.style.display = 'none';
-
-    el.innerHTML = arr
-      .map((t) => {
-        const isSport = cat(t) === 'sport';
-        const p = profitRub(t);
-        const win = isSport ? num(t.points) > 0 : p > 0;
-        const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
-        const pkoBadge = isBountyFmt(t) ? '<span class="mt-pro-badge pko">PKO</span>' : '';
-        const reBadge =
-          reentryCount(t) > 0 ? `<span class="mt-pro-badge reentry">×${entries(t)}</span>` : '';
-        const bucket = !isSport ? getBucket(buyinRub(t)) : null;
-        const bucketBadge = bucket ? `<span class="mt-pro-badge bucket">${bucket.icon}</span>` : '';
-        const resHtml = isSport
-          ? `<div class="mt-pro-profit pts">${fmtPts(num(t.points))}</div>`
-          : `<div class="mt-pro-profit ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
-        const foot = isSport
-          ? `Вход ${baseBuy(t)} ${currency(t)} · ${reentryCount(t)} ре-энтри${t.field ? ' · ' + num(t.field) + ' уч.' : ''}`
-          : `Инв. ${proMode ? '$' + (investedRub(t) / RATE).toFixed(0) : investedRub(t).toLocaleString('ru-RU') + ' ₽'} · Возвр. ${proMode ? '$' + (totalReturnedRub(t) / RATE).toFixed(0) : totalReturnedRub(t).toLocaleString('ru-RU') + ' ₽'}`;
-        const note = t.note ? `<span style="color:#888;font-size:7px;margin-left:auto">📝 ${esc(t.note)}</span>` : '';
-        return `<div class="mt-pro-card ${win ? 'win' : ''}">
-          <div class="mt-pro-card-top">
-            <div class="mt-pro-badges"><span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span>${pkoBadge}${reBadge}${bucketBadge}<span class="mt-pro-venue">${esc(venue(t))}</span></div>
-            <div class="mt-pro-date">${fmtDateShort(t.date)}</div>
-          </div>
-          <div class="mt-pro-card-name">${esc(title(t))} · ${esc(fmtDisplay(t))}</div>
-          <div class="mt-pro-card-mid">
-            <div class="mt-pro-place">${num(t.place) || '—'}${t.field ? ` <span>/ ${num(t.field)}</span>` : ''}</div>
-            <div style="display:flex;align-items:center">${resHtml}${num(t.place) <= 3 ? '<span> 🏆</span>' : ''}</div>
-          </div>
-          <div class="mt-pro-card-foot">${foot}</div>
-          <div class="mt-pro-card-actions">
-            <button type="button" data-mt="edit" data-id="${esc(t.id)}">✎ Редактировать</button>
-            <button type="button" class="danger" data-mt="delete" data-id="${esc(t.id)}">✕ Удалить</button>
-            ${note}
-          </div>
-        </div>`;
-      })
-      .join('');
+    el.style.display = 'flex';
+    const recent = arr.slice(0, RECENT_LIMIT);
+    el.innerHTML = recent.map(cardHtml).join('');
+    showAllBtn.style.display = arr.length > RECENT_LIMIT ? 'block' : 'none';
   }
 
-  function render() {
-    ensureDom();
-    $('mtChartTip').style.opacity = 0;
+  function renderFullHistory(arr) {
+    const el = $('mtFullList');
+    if (!el) return;
+    $('mtListCount').textContent = `(${arr.length})`;
+    if (arr.length === 0) {
+      el.innerHTML = '<div class="mt-pro-summary-empty" style="padding:12px 0">Нет турниров в этом фильтре</div>';
+      return;
+    }
+    el.innerHTML = arr.map(cardHtml).join('');
+  }
+
+  function renderMain() {
+    renderFilters();
+    const arr = filteredForMain();
+    const hasSportOnly = arr.length > 0 && arr.every((t) => cat(t) === 'sport');
+    renderCompactSummary(arr, hasSportOnly);
+    if (!hasSportOnly) renderHeroInsight(arr);
+    else $('mtHeroInsight').style.display = 'none';
+    renderChart(arr, hasSportOnly);
+    renderRecentHistory(arr);
+  }
+
+  function renderAnalytics() {
+    ensureAnalyticsDom();
     renderFilters();
     const arr = filtered();
     const isSportOnly = typeFilter === 'sport';
@@ -832,7 +1007,6 @@
     $('mtInsightsSection').style.display = isSportOnly ? 'none' : '';
     $('mtVenueTitle').textContent = isSportOnly ? '🏢 ПО КЛУБАМ' : '🏢 ПО РУМАМ / КЛУБАМ';
     renderStats(arr, isSportOnly);
-    renderChart(arr, isSportOnly);
     if (proMode && !isSportOnly) {
       renderBuckets(arr);
       renderRollingROI(arr);
@@ -841,7 +1015,14 @@
     if (!isSportOnly) renderSplit(arr);
     renderFormatBreakdown(arr, isSportOnly);
     renderVenueBreakdown(arr, isSportOnly);
-    renderHistory(arr);
+    renderFullHistory(arr);
+  }
+
+  function render() {
+    ensureDom();
+    $('mtChartTip').style.opacity = 0;
+    renderMain();
+    if (analyticsOpen) renderAnalytics();
   }
 
   function showDetailList(idKeys, detailTitle) {
@@ -1144,6 +1325,7 @@
     SCREEN.classList.remove('on');
     SCREEN.setAttribute('aria-hidden', 'true');
     MODAL?.classList.remove('on');
+    closeAnalytics();
     closeDetail();
     document.body.style.overflow = '';
   }

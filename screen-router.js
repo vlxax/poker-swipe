@@ -18,6 +18,7 @@
     ps72?.classList.remove('on');
     ps72?.setAttribute('aria-hidden', 'true');
     document.getElementById('mtProModal')?.classList.remove('on');
+    document.getElementById('mtProAnalytics')?.classList.remove('on');
     document.getElementById('mtProDetailOverlay')?.classList.remove('on');
     document.getElementById('mtProDetail')?.classList.remove('on');
     document.body.style.overflow = '';

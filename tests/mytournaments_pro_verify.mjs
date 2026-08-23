@@ -69,9 +69,11 @@ async function audit(page) {
       navCount,
       headerCount,
       myTourActive: myTour?.classList.contains('active'),
-      statGrid: document.getElementById('mtStatGrid')?.innerText || '',
+      summary: document.getElementById('mtSummaryBlock')?.innerText || '',
       chartSvg: document.getElementById('mtChartSvg')?.innerHTML?.length || 0,
+      recentCards: document.querySelectorAll('#mtList .mt-pro-card').length,
       listCount: document.getElementById('mtListCount')?.innerText || '',
+      analyticsReady: !!document.getElementById('mtProAnalyticsBody')?.dataset.ready,
       tournamentsLen: window.S?.tournaments?.length || 0
     };
   });
@@ -107,9 +109,10 @@ try {
   assert.equal(a.navCount, 1, 'single bottom nav');
   assert.equal(a.headerCount, 1, 'single app header');
   assert.ok(a.scrollW <= a.clientW + 1, `no horizontal scroll: ${a.scrollW} > ${a.clientW}`);
-  assert.ok(a.statGrid.includes('ROI') || a.statGrid.includes('points'), 'dashboard rendered');
+  assert.ok(a.summary.includes('ROI') || a.summary.includes('Points'), 'compact summary rendered');
   assert.ok(a.chartSvg > 20, 'chart has SVG content');
-  assert.match(a.listCount, /\(1\)/, 'legacy tournament visible');
+  assert.equal(a.recentCards, 1, 'legacy tournament visible in recent list');
+  assert.equal(a.analyticsReady, true, 'analytics sheet DOM ready');
 
   fs.mkdirSync(OUT, { recursive: true });
   await page.screenshot({ path: `${OUT}/screenshot_mt_pro_dashboard.png`, fullPage: false });
@@ -117,9 +120,14 @@ try {
   await page.click('[data-mt="period"][data-val="30"]');
   await page.waitForTimeout(400);
 
+  await page.click('[data-mt="analytics-open"]');
+  await page.waitForSelector('#mtProAnalytics.on', { timeout: 5000 });
   await page.click('[data-mt="pro-toggle"]');
   await page.waitForTimeout(400);
   await page.screenshot({ path: `${OUT}/screenshot_mt_pro_mode.png`, fullPage: false });
+
+  await page.click('[data-mt="analytics-close"]');
+  await page.waitForTimeout(300);
 
   await page.click('[data-mt="add"]');
   await page.waitForSelector('#mtProModal.on', { timeout: 5000 });
@@ -134,7 +142,7 @@ try {
   await page.waitForTimeout(700);
   let c = await audit(page);
   assert.equal(c.tournamentsLen, 2);
-  assert.match(c.listCount, /\(2\)/);
+  assert.equal(c.recentCards, 2);
   await page.screenshot({ path: `${OUT}/screenshot_mt_pro_after_add.png`, fullPage: false });
 
   await page.click('[data-mt="edit"]');
@@ -143,11 +151,15 @@ try {
   await page.click('[data-mt="save"]');
   await page.waitForTimeout(500);
 
+  await page.click('[data-mt="analytics-open"]');
+  await page.waitForSelector('#mtProAnalytics.on');
   const [download] = await Promise.all([
     page.waitForEvent('download', { timeout: 8000 }),
     page.click('[data-mt="export"]')
   ]);
   assert.ok(download.suggestedFilename().includes('.csv'));
+  await page.click('[data-mt="analytics-close"]');
+  await page.waitForTimeout(300);
 
   page.once('dialog', (d) => d.accept());
   await page.locator('[data-mt="delete"]').first().click();
