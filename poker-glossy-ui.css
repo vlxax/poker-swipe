@@ -1,0 +1,829 @@
+/**
+ * PokerSwipe — Premium Glossy UI Design System
+ * Dark graphite surfaces + neon-lime 3D glossy buttons & cards.
+ * Load LAST in index.html to unify legacy style layers.
+ */
+
+:root {
+  /* ── Surfaces ── */
+  --ps-bg: #050608;
+  --ps-bg-elevated: #0a0c0a;
+  --ps-surface: #101310;
+  --ps-surface-2: #151915;
+  --ps-surface-3: #1a1f1a;
+  --ps-graphite: #121612;
+  --ps-line: rgba(200, 255, 61, 0.14);
+  --ps-line-soft: rgba(255, 255, 255, 0.08);
+
+  /* ── Accent (lime — maps to legacy --pink) ── */
+  --ps-lime: #c8ff3d;
+  --ps-lime-hi: #e2ff87;
+  --ps-lime-mid: #a8e028;
+  --ps-lime-deep: #5a7218;
+  --ps-lime-glow: rgba(200, 255, 61, 0.38);
+  --ps-lime-glow-soft: rgba(200, 255, 61, 0.14);
+  --ps-lime-border: rgba(200, 255, 61, 0.42);
+  --ps-lime-border-strong: rgba(200, 255, 61, 0.62);
+
+  /* ── Text ── */
+  --ps-text: #f5f8f2;
+  --ps-text-soft: rgba(245, 248, 242, 0.78);
+  --ps-text-muted: rgba(154, 163, 154, 0.95);
+
+  /* ── Radius ── */
+  --ps-r-sm: 14px;
+  --ps-r-md: 18px;
+  --ps-r-lg: 24px;
+  --ps-r-xl: 28px;
+  --ps-r-2xl: 32px;
+
+  /* ── Depth ── */
+  --ps-shadow-card:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -10px 28px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(200, 255, 61, 0.06),
+    0 0 32px var(--ps-lime-glow-soft),
+    0 18px 44px rgba(0, 0, 0, 0.42);
+  --ps-shadow-btn:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(200, 255, 61, 0.22),
+    0 0 22px var(--ps-lime-glow-soft),
+    0 7px 0 var(--ps-lime-deep),
+    0 14px 32px rgba(0, 0, 0, 0.38);
+  --ps-shadow-btn-pressed:
+    inset 0 2px 6px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(200, 255, 61, 0.18),
+    0 2px 0 var(--ps-lime-deep),
+    0 6px 16px rgba(0, 0, 0, 0.28);
+
+  /* Bridge legacy tokens */
+  --pink: var(--ps-lime);
+  --pink2: var(--ps-lime-hi);
+  --bg: var(--ps-bg);
+  --panel: var(--ps-surface);
+  --panel2: var(--ps-surface-2);
+  --line: rgba(200, 255, 61, 0.12);
+  --mut: var(--ps-text-muted);
+  --hot: var(--ps-lime);
+}
+
+/* ── App shell ── */
+html, body {
+  background: var(--ps-bg) !important;
+  color: var(--ps-text);
+}
+
+.app {
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -15%, rgba(200, 255, 61, 0.09), transparent 42%),
+    radial-gradient(circle at 8% 88%, rgba(99, 230, 166, 0.035), transparent 32%),
+    var(--ps-bg) !important;
+}
+
+.app:before {
+  opacity: 0.45 !important;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(200, 255, 61, 0.05), transparent 22%),
+    radial-gradient(circle at 88% 68%, rgba(99, 230, 166, 0.04), transparent 27%) !important;
+}
+
+/* ── Reusable primitives ── */
+.ps-glossy-surface {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, var(--ps-surface-3) 0%, var(--ps-surface) 52%, var(--ps-bg-elevated) 100%);
+  border: 1px solid var(--ps-lime-border);
+  border-radius: var(--ps-r-lg);
+  box-shadow: var(--ps-shadow-card);
+}
+
+.ps-glossy-surface::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.03) 22%,
+    transparent 48%,
+    transparent 72%,
+    rgba(200, 255, 61, 0.04) 100%
+  );
+}
+
+.ps-glossy-btn {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(226, 255, 135, 0.5);
+  border-radius: var(--ps-r-md);
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  );
+  color: #0a0d07 !important;
+  font-weight: 950;
+  box-shadow: var(--ps-shadow-btn);
+  transform: translateY(-1px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.ps-glossy-btn::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 2px;
+  height: 42%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
+  opacity: 0.85;
+}
+
+.ps-glossy-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: var(--ps-shadow-btn-pressed);
+}
+
+.ps-glossy-btn-secondary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, rgba(26, 31, 26, 0.98), rgba(10, 12, 10, 0.99));
+  border: 1px solid var(--ps-lime-border);
+  border-radius: var(--ps-r-md);
+  color: var(--ps-text) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -6px 18px rgba(0, 0, 0, 0.32),
+    0 0 18px var(--ps-lime-glow-soft),
+    0 10px 28px rgba(0, 0, 0, 0.32);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.ps-glossy-btn-secondary:active:not(:disabled) {
+  transform: translateY(2px) scale(0.985);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.35),
+    0 0 12px var(--ps-lime-glow-soft),
+    0 4px 14px rgba(0, 0, 0, 0.28);
+}
+
+/* ── Primary CTA ── */
+.primary,
+.p40Primary,
+.v35Start,
+.v36Personal button,
+button.primary {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 255, 135, 0.52) !important;
+  border-radius: var(--ps-r-md) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  ) !important;
+  color: #0a0d07 !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+  transform: translateY(-1px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+  filter: none !important;
+}
+
+.primary::before,
+.p40Primary::before,
+.v35Start::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 3px;
+  height: 40%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52), transparent);
+}
+
+.primary:active:not(:disabled),
+.p40Primary:active,
+.v35Start:active,
+.v36Personal button:active {
+  transform: translateY(4px) !important;
+  box-shadow: var(--ps-shadow-btn-pressed) !important;
+}
+
+.primary:focus-visible,
+.secondary:focus-visible,
+.choice:focus-visible,
+.tile:focus-visible,
+.action:focus-visible {
+  outline: 2px solid var(--ps-lime-hi);
+  outline-offset: 2px;
+}
+
+.primary:disabled,
+.secondary:disabled,
+.choice:disabled {
+  opacity: 0.38 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.35);
+  pointer-events: none;
+}
+
+/* ── Secondary / choice buttons ── */
+.secondary,
+.choice,
+.diagChoice,
+.builderActions button,
+.resultOptions button,
+.reasonGrid button,
+.segs18 button,
+.stages18 button,
+.pos18 button,
+.p40Secondary,
+.p40Choice,
+.p40Ghost,
+.t23Filters button,
+.cardRankGrid18 button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-md) !important;
+  color: var(--ps-text) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -5px 16px rgba(0, 0, 0, 0.28),
+    0 0 14px var(--ps-lime-glow-soft),
+    0 8px 22px rgba(0, 0, 0, 0.28) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease !important;
+}
+
+.secondary:active,
+.choice:active,
+.builderActions button:active {
+  transform: translateY(2px) scale(0.985) !important;
+}
+
+.choice.selected,
+.choice.on,
+.node.selected,
+.resultOptions button.on,
+.reasonGrid button.on,
+.segs18 button.on,
+.stages18 button.on,
+.pos18 button.on,
+.p40Choice.on,
+.t23Filters button.on,
+.cardRankGrid18 button.on {
+  border-color: var(--ps-lime-border-strong) !important;
+  background: linear-gradient(168deg, rgba(32, 42, 24, 0.98), rgba(14, 18, 12, 0.99)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(200, 255, 61, 0.14),
+    0 0 24px var(--ps-lime-glow-soft),
+    0 10px 26px rgba(0, 0, 0, 0.3) !important;
+  color: #fff !important;
+}
+
+/* Onboarding / story shell */
+.onboard {
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 0%, rgba(200, 255, 61, 0.07), transparent 45%),
+    var(--ps-bg) !important;
+}
+
+.story {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, var(--ps-surface-3) 0%, var(--ps-surface) 48%, var(--ps-bg-elevated) 100%) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-2xl) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+  color: var(--ps-text) !important;
+}
+
+.story::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.08) 0%, transparent 35%, transparent 70%, rgba(200, 255, 61, 0.04) 100%);
+}
+
+.story input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-md) !important;
+  color: var(--ps-text) !important;
+}
+
+.story .primary {
+  border: 2px solid rgba(10, 13, 7, 0.85) !important;
+  color: #0a0d07 !important;
+}
+
+.storyTap21,
+.tap {
+  color: var(--ps-text-muted) !important;
+}
+
+/* ── Glossy cards (sections, panels, tiles) ── */
+.hero,
+.panel,
+.lab,
+.tile,
+.quick5,
+.metric,
+.youFocus,
+.verdict,
+.builderStep,
+.swipeCardV,
+.xrStage,
+.myEntry,
+.my18Tool,
+.homeHandLab,
+.v35Today,
+.v35Leak,
+.v35Hand,
+.v35Tool,
+.v36Stat,
+.v36Daily,
+.v36Personal,
+.v36Tile,
+.v36Quick,
+.v36Hand,
+.v30Mode,
+.v30Hero,
+.t23Hero,
+.t23Stat,
+.t23Card,
+.p40Event,
+.p40Series,
+.p40TripHero,
+.p40Field,
+.p40Summary,
+.creatorVerdict,
+.healHero,
+.shareCard {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, var(--ps-surface-3) 0%, var(--ps-surface) 50%, var(--ps-bg-elevated) 100%) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-lg) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease !important;
+}
+
+.hero::after,
+.panel::after,
+.lab::after,
+.tile::after,
+.my18Tool::after,
+.v36Tile::after,
+.myEntry::after {
+  content: "" !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    transparent 30%,
+    transparent 65%,
+    rgba(200, 255, 61, 0.05) 100%
+  ) !important;
+  opacity: 0.75 !important;
+}
+
+.tile:active,
+.quick5:active,
+.metric:active,
+.myEntry:active,
+.my18Tool:active,
+.v36Tile:active,
+.v36Daily:active,
+.v36Quick:active,
+.v36Hand:active,
+.v35Hand:active,
+.homeHandLab:active {
+  transform: scale(0.985) translateY(1px) !important;
+  border-color: var(--ps-lime-border-strong) !important;
+  box-shadow:
+    inset 0 2px 10px rgba(0, 0, 0, 0.35),
+    0 0 28px var(--ps-lime-glow-soft),
+    0 10px 28px rgba(0, 0, 0, 0.38) !important;
+}
+
+.tile .go,
+.v36Arrow,
+.v36Tile > strong,
+.my18Tool .go,
+.homeHandLab > strong {
+  color: var(--ps-lime) !important;
+  text-shadow: 0 0 16px var(--ps-lime-glow-soft);
+}
+
+/* Home mode accents — keep identity, unify material */
+.dailyTile {
+  background:
+    radial-gradient(circle at 70% 35%, rgba(51, 155, 92, 0.22), transparent 42%),
+    linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated) 78%) !important;
+}
+
+.sizingTile,
+.xrayTile {
+  background:
+    radial-gradient(circle at 85% 10%, rgba(200, 255, 61, 0.12), transparent 36%),
+    linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+}
+
+.myEntry.primaryEntry {
+  border-color: var(--ps-lime-border-strong) !important;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(200, 255, 61, 0.14), transparent 38%),
+    linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+}
+
+/* ── Action bar (fold / call / raise) — semantic + glossy ── */
+.action {
+  background: linear-gradient(168deg, rgba(20, 24, 20, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-line-soft) !important;
+  border-radius: var(--ps-r-md) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.28) !important;
+}
+
+.action.fold { border-color: rgba(255, 98, 118, 0.45) !important; box-shadow: 0 0 16px rgba(255, 98, 118, 0.08), inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.28) !important; }
+.action.call { border-color: rgba(255, 210, 106, 0.4) !important; }
+.action.raise { border-color: rgba(99, 230, 166, 0.42) !important; box-shadow: 0 0 16px rgba(99, 230, 166, 0.08), inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.28) !important; }
+
+.action.selected:not(.grade-g):not(.grade-y):not(.grade-r) {
+  border-color: var(--ps-lime-border-strong) !important;
+  background: linear-gradient(168deg, rgba(32, 42, 24, 0.98), rgba(12, 16, 10, 0.99)) !important;
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.16), 0 0 22px var(--ps-lime-glow-soft) !important;
+}
+
+/* ── Nav ── */
+.nav {
+  background: rgba(5, 6, 8, 0.94) !important;
+  border-top: 1px solid var(--ps-lime-border) !important;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45), 0 0 24px var(--ps-lime-glow-soft) !important;
+  backdrop-filter: blur(16px);
+}
+
+.nav button.on {
+  background: rgba(200, 255, 61, 0.06) !important;
+  color: var(--ps-text) !important;
+  box-shadow: inset 0 0 0 1px rgba(200, 255, 61, 0.1), 0 0 18px var(--ps-lime-glow-soft) !important;
+}
+
+.nav button.on i {
+  color: var(--ps-lime) !important;
+  filter: drop-shadow(0 0 8px var(--ps-lime-glow)) !important;
+}
+
+/* ── Modals / sheets ── */
+.modal .sheet,
+.sheet {
+  background: linear-gradient(168deg, var(--ps-surface-2), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  box-shadow: 0 -8px 48px rgba(0, 0, 0, 0.55), 0 0 32px var(--ps-lime-glow-soft) !important;
+}
+
+/* ── Remove legacy pink glow leaks ── */
+.creatorVerdict,
+.youFocus,
+.homeCreator,
+.handResultBox,
+.v30Hero {
+  border-color: var(--ps-lime-border) !important;
+  background: linear-gradient(168deg, rgba(24, 30, 20, 0.96), var(--ps-bg-elevated) 72%) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.brand {
+  text-shadow: 0 0 20px var(--ps-lime-glow-soft) !important;
+}
+
+.nickEdit i {
+  border-color: var(--ps-lime-border) !important;
+  background: rgba(200, 255, 61, 0.08) !important;
+}
+
+.t23AddMini {
+  border-color: var(--ps-lime-border) !important;
+  background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
+  color: var(--ps-lime) !important;
+  box-shadow: 0 0 22px var(--ps-lime-glow-soft), 0 8px 0 var(--ps-lime-deep) !important;
+}
+
+/* ── Icon / compact action buttons ── */
+.p40Add,
+.v35Start,
+.close,
+.build {
+  border-radius: var(--ps-r-sm) !important;
+}
+
+.build {
+  background: var(--ps-lime) !important;
+  color: #0a0d07 !important;
+  border: 1px solid rgba(226, 255, 135, 0.5) !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+}
+
+/* ── Progress / accents ── */
+.bar > span,
+.swipeProgress span,
+.builderProgress i.on,
+.diagProgress span {
+  background: linear-gradient(90deg, var(--ps-lime), var(--ps-lime-hi)) !important;
+}
+
+.range,
+.scrub {
+  accent-color: var(--ps-lime) !important;
+}
+
+.pink,
+.impact .pink,
+h1 .pink,
+h2 .pink {
+  color: var(--ps-lime) !important;
+  text-shadow: 0 0 18px var(--ps-lime-glow-soft);
+}
+
+/* ── My Hands / tools panels ── */
+.panel18,
+.tool18Panel,
+.hr22Hero,
+.hr22ReportHero,
+.hr22StreetReport {
+  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-lg) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.cardPick18 {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-sm) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 12px var(--ps-lime-glow-soft),
+    0 6px 16px rgba(0, 0, 0, 0.24) !important;
+}
+
+.cardPick18:active {
+  transform: scale(0.98) !important;
+}
+
+/* ── Diagnostic card ── */
+.d25Card,
+.v31DiagCard {
+  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-xl) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.d25Choices button,
+.d25ResultActions button {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-md) !important;
+  color: var(--ps-text) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 14px var(--ps-lime-glow-soft),
+    0 8px 20px rgba(0, 0, 0, 0.26) !important;
+}
+
+.d25Choices button:active {
+  transform: translateY(2px) scale(0.985) !important;
+}
+
+/* ── Rank ladder cards ── */
+.rank28Card {
+  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-md) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.rank28Card:active:not(.locked) {
+  transform: scale(0.985) !important;
+  border-color: var(--ps-lime-border-strong) !important;
+}
+
+/* ── Timeline / review nodes ── */
+.node,
+.reviewNone {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-md) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 12px var(--ps-lime-glow-soft),
+    0 6px 18px rgba(0, 0, 0, 0.24) !important;
+}
+
+/* ── Clubs / trips / planner ── */
+.v48ClubCard,
+.v56ClubCard,
+.v55ClubCard,
+.v59Card,
+.v58PlannerCard {
+  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-lg) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease !important;
+}
+
+.v48ClubCard:active,
+.v56ClubCard:active,
+.v59Card:active {
+  transform: scale(0.985) !important;
+  border-color: var(--ps-lime-border-strong) !important;
+}
+
+.v58Primary {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 255, 135, 0.52) !important;
+  border-radius: var(--ps-r-md) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  ) !important;
+  color: #0a0d07 !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+}
+
+/* ── Tournaments (override stitch layer harmoniously) ── */
+.t23Add,
+.t23Form .primary,
+.t23DetailActions24 .primary {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 255, 135, 0.52) !important;
+  border-radius: var(--ps-r-md) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  ) !important;
+  color: #0a0d07 !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+}
+
+.t23Card,
+.t23Row,
+.t23Tournament,
+.t23Item {
+  border-color: var(--ps-lime-border) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.t23Filter.on,
+.t23Chip.on,
+.t23Type button.on,
+.t23Status.on {
+  border-color: var(--ps-lime-border-strong) !important;
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.12), 0 0 20px var(--ps-lime-glow-soft) !important;
+}
+
+/* ── V72 tournament journal (ps72) ── */
+#ps72TournamentScreen.on {
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(200, 255, 61, 0.07), transparent 42%),
+    var(--ps-bg) !important;
+}
+
+.ps72card,
+.ps72sum,
+.ps72mini,
+.ps72insight,
+.ps72formatMenu {
+  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-lg) !important;
+  box-shadow: var(--ps-shadow-card) !important;
+}
+
+.ps72card.expanded {
+  border-color: var(--ps-lime-border-strong) !important;
+  box-shadow:
+    0 0 0 1px rgba(200, 255, 61, 0.12),
+    0 0 28px var(--ps-lime-glow-soft),
+    var(--ps-shadow-card) !important;
+}
+
+.ps72tabs button,
+.ps72formatMenu button,
+.ps72seg button {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  border-radius: var(--ps-r-sm) !important;
+  color: var(--ps-text-soft) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 12px var(--ps-lime-glow-soft),
+    0 6px 16px rgba(0, 0, 0, 0.22) !important;
+}
+
+.ps72tabs button.on,
+.ps72formatMenu button.on,
+.ps72seg button.on {
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  ) !important;
+  border-color: rgba(226, 255, 135, 0.52) !important;
+  color: #0a0d07 !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+}
+
+.ps72icon {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-lime-border) !important;
+  box-shadow: 0 0 16px var(--ps-lime-glow-soft), 0 8px 20px rgba(0, 0, 0, 0.28) !important;
+}
+
+.ps72icon.add {
+  border-color: var(--ps-lime-border-strong) !important;
+  color: var(--ps-lime) !important;
+  background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
+}
+
+.ps72save {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 255, 135, 0.52) !important;
+  border-radius: var(--ps-r-md) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 255, 160, 0.98) 0%,
+    rgba(200, 255, 61, 0.96) 48%,
+    rgba(143, 184, 42, 0.98) 100%
+  ) !important;
+  color: #0a0d07 !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+}
+
+.ps72cancel,
+.ps72delete {
+  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  border: 1px solid var(--ps-line-soft) !important;
+  border-radius: var(--ps-r-md) !important;
+  color: var(--ps-text-soft) !important;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .secondary,
+  .choice,
+  .tile,
+  .action,
+  .nav button,
+  .ps-glossy-btn,
+  .ps-glossy-btn-secondary {
+    transition: none !important;
+  }
+  .tile:before {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .primary,
+  .secondary,
+  .choice {
+    border-radius: var(--ps-r-sm) !important;
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+  }
+  .tile,
+  .v36Tile {
+    border-radius: var(--ps-r-md) !important;
+  }
+}
