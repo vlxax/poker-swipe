@@ -25,6 +25,10 @@
   let addType = null;
   let editingId = null;
   let selCurr = 'RUB';
+  let formAddOn = false;
+  let formBounty = false;
+  let polyanaClubs = [];
+  let polyanaClubsLoading = false;
   let chartData = [];
   let typeData = [];
   let analyticsOpen = false;
@@ -73,11 +77,20 @@
 
   const toRub = (t, amount) => (currency(t) === 'USD' ? Math.round(amount * RATE) : amount);
 
+  const addOnInvestedRub = (t) => {
+    if (t.addOnEnabled || num(t.addOnCount) > 0) {
+      return num(t.addOnCount) * num(t.addOnCost || 0);
+    }
+    return num(t.addOn);
+  };
+
   const investedRub = (t) => {
     if (cat(t) === 'sport') {
-      return toRub(t, baseBuy(t) + reentryCostVal(t) * reentryCount(t));
+      let inv = baseBuy(t) + reentryCostVal(t) * reentryCount(t) + addOnInvestedRub(t);
+      if (t.bountyEnabled) inv += num(t.bountyValue) * Math.max(1, num(t.bountyCount) || 1);
+      return toRub(t, inv);
     }
-    return toRub(t, unitCost(t) * entries(t) + num(t.addOn));
+    return toRub(t, unitCost(t) * entries(t) + addOnInvestedRub(t));
   };
 
   const totalReturnedRub = (t) => {
@@ -86,9 +99,11 @@
   };
 
   const profitRub = (t) => {
-    if (cat(t) === 'sport') return num(t.points);
+    if (cat(t) === 'sport') return 0;
     return totalReturnedRub(t) - investedRub(t);
   };
+
+  const sportPoints = (t) => (cat(t) === 'sport' ? num(t.points) : 0);
 
   const buyinRub = (t) => toRub(t, baseBuy(t));
 
@@ -1000,9 +1015,24 @@
     const p = profitRub(t);
     const win = isSport ? num(t.points) > 0 : p > 0;
     const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
-    const resHtml = isSport
-      ? `<div class="mt-pro-card-result pts">${fmtPts(num(t.points))}</div>`
-      : `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
+    if (isSport) {
+      const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? ' / ' + num(t.field) : ''}` : '—';
+      const ptsTxt = (num(t.points) > 0 ? '+' : '') + Math.round(num(t.points)) + ' POINTS';
+      return `<div class="mt-pro-card mt-pro-card-sport ${win ? 'win' : ''}">
+      <div class="mt-pro-card-venue">${esc(venue(t))}</div>
+      <div class="mt-pro-card-title">${esc(title(t))}</div>
+      <div class="mt-pro-card-sport-meta">
+        <span class="mt-pro-card-place-line">${placeTxt}</span>
+        <span class="mt-pro-card-result pts">${ptsTxt}</span>
+      </div>
+      <div class="mt-pro-card-actions">
+        <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
+        <span class="mt-pro-card-actions-sep">/</span>
+        <button type="button" class="danger" data-mt="delete" data-id="${esc(t.id)}">Удалить</button>
+      </div>
+    </div>`;
+    }
+    const resHtml = `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
     const buyinTxt = isSport
       ? `${baseBuy(t).toLocaleString('ru-RU')} ${currency(t)}`
       : proMode
@@ -1165,34 +1195,100 @@
 
   /* ── Form / CRUD ── */
   const SHEET = () => document.getElementById('mtProSheet');
+  const DEFAULT_ROOMS = ['PokerOK', 'PokerStars', 'PokerDom', '888Poker', 'GG Poker', 'Winamax'];
+
+  function todayIso() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  async function ensurePolyanaClubs() {
+    if (polyanaClubs.length) return polyanaClubs;
+    if (polyanaClubsLoading) return polyanaClubs;
+    polyanaClubsLoading = true;
+    try {
+      if (typeof window.PolyanaClubsAdapter?.loadPolyanaClubs === 'function') {
+        polyanaClubs = await window.PolyanaClubsAdapter.loadPolyanaClubs();
+      }
+    } catch (_) {
+      polyanaClubs = [];
+    }
+    polyanaClubsLoading = false;
+    return polyanaClubs;
+  }
+
+  function knownRooms() {
+    const set = new Set(DEFAULT_ROOMS);
+    list()
+      .filter((t) => cat(t) === 'online')
+      .forEach((t) => {
+        const r = (t.room || t.clubOrRoom || '').trim();
+        if (r) set.add(r);
+      });
+    return [...set].sort((a, b) => a.localeCompare(b, 'ru'));
+  }
+
+  function recordAddOnEnabled(t) {
+    if (!t) return false;
+    if (t.addOnEnabled) return true;
+    return num(t.addOnCount) > 0 || num(t.addOn) > 0;
+  }
+
+  function recordBountyEnabled(t) {
+    if (!t) return false;
+    if (t.bountyEnabled) return true;
+    return num(t.bountyCount) > 0 || num(t.bountyValue) > 0;
+  }
 
   function openSheet() {
     editingId = null;
-    addType = null;
+    addType = 'offline';
     selCurr = 'RUB';
+    formAddOn = false;
+    formBounty = false;
     MODAL.classList.add('on');
     renderSheetShell();
+    ensurePolyanaClubs().then(() => renderAddForm('offline'));
   }
 
   function closeSheet() {
     MODAL.classList.remove('on');
     addType = null;
     editingId = null;
+    formAddOn = false;
+    formBounty = false;
   }
 
   function renderSheetShell() {
     SHEET().innerHTML = `
       <div class="mt-pro-sheet-handle"></div>
       <div class="mt-pro-sheet-title"><span id="mtSheetTitle">Добавить турнир</span><button type="button" class="mt-pro-sheet-close" data-mt="sheet-close">✕</button></div>
-      <div class="mt-pro-choice">
-        <button type="button" id="mtChoiceOffline" data-mt="pick-type" data-val="offline">Офлайн</button>
-        <button type="button" id="mtChoiceOnline" data-mt="pick-type" data-val="online">Онлайн</button>
-        <button type="button" id="mtChoiceSport" data-mt="pick-type" data-val="sport">Спорт</button>
+      <div class="mt-pro-type-seg" id="mtTypeSeg">
+        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="offline">ОФЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="online">ОНЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="sport">СПОРТ</button>
       </div>
-      <div class="mt-pro-fields" id="mtSheetFields"></div>`;
+      <div class="mt-pro-form-body" id="mtFormBody">
+        <div class="mt-pro-fields" id="mtSheetFields"></div>
+        <div class="mt-pro-form-footer" id="mtFormFooter"></div>
+      </div>`;
     SHEET().querySelector('[data-mt="sheet-close"]').addEventListener('click', closeSheet);
     SHEET().querySelectorAll('[data-mt="pick-type"]').forEach((b) => {
-      b.addEventListener('click', () => selectAddType(b.dataset.val));
+      b.addEventListener('click', () => {
+        if (addType === b.dataset.val) return;
+        formAddOn = false;
+        formBounty = false;
+        renderAddForm(b.dataset.val);
+      });
+    });
+  }
+
+  function updateTypePickerUI() {
+    SHEET()?.querySelectorAll('[data-mt="pick-type"]').forEach((b) => {
+      const on = b.dataset.val === addType;
+      b.classList.toggle('active', on);
+      b.classList.toggle('offline', on && b.dataset.val === 'offline');
+      b.classList.toggle('online', on && b.dataset.val === 'online');
+      b.classList.toggle('sport', on && b.dataset.val === 'sport');
     });
   }
 
@@ -1211,130 +1307,427 @@
     return 'MTT';
   }
 
-  function selectAddType(type, old) {
-    addType = type;
-    ['Offline', 'Online', 'Sport'].forEach((s) => {
-      const el = document.getElementById('mtChoice' + s);
-      if (!el) return;
-      const val = s.toLowerCase();
-      el.className = addType === val ? 'sel ' + val : '';
+  function ynSegHtml(field, yes) {
+    return `<div class="mt-pro-yn-seg" data-yn="${field}">
+      <button type="button" class="mt-pro-yn-btn ${yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="1">Да</button>
+      <button type="button" class="mt-pro-yn-btn ${!yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="0">Нет</button>
+    </div>`;
+  }
+
+  function formatSelectHtml(fmtVal) {
+    return `<select id="mtFFmt">
+      <option value="MTT" ${fmtVal === 'MTT' ? 'selected' : ''}>MTT</option>
+      <option value="PKO" ${fmtVal === 'PKO' ? 'selected' : ''}>PKO / Bounty</option>
+      <option value="Mystery Bounty" ${fmtVal === 'Mystery Bounty' ? 'selected' : ''}>Mystery Bounty</option>
+      <option value="SNG" ${fmtVal === 'SNG' ? 'selected' : ''}>SNG</option>
+      <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>
+    </select>`;
+  }
+
+  function clubOptionsHtml(rec, allowCustom) {
+    const selId = rec.venueId || rec.clubId || '';
+    const name = rec.venueName || rec.clubOrRoom || rec.club || '';
+    let html = `<option value="">— выберите клуб —</option>`;
+    if (allowCustom) html += `<option value="__custom__" ${!selId && name ? 'selected' : ''}>Другой клуб…</option>`;
+    polyanaClubs.forEach((c) => {
+      const selected = (selId && selId === c.id) || (!selId && name && name.toLowerCase() === c.name.toLowerCase());
+      html += `<option value="${esc(c.id || c.name)}" data-name="${esc(c.name)}" ${selected ? 'selected' : ''}>${esc(c.name)}</option>`;
     });
-    const fields = document.getElementById('mtSheetFields');
-    const vLabel = type === 'offline' ? 'Клуб' : type === 'online' ? 'Рум' : 'Клуб';
-    const vPh = type === 'offline' ? 'Название клуба' : type === 'online' ? 'PokerOK, PokerDom...' : 'Название клуба';
+    return html;
+  }
+
+  function roomOptionsHtml(rec) {
+    const room = (rec.room || rec.clubOrRoom || rec.club || '').trim();
+    const rooms = knownRooms();
+    let html = `<option value="">— выберите рум —</option><option value="__custom__" ${room && !rooms.includes(room) ? 'selected' : ''}>Другой рум…</option>`;
+    rooms.forEach((r) => {
+      html += `<option value="${esc(r)}" ${room === r ? 'selected' : ''}>${esc(r)}</option>`;
+    });
+    return html;
+  }
+
+  function formFooterHtml() {
+    const label = editingId ? 'СОХРАНИТЬ ИЗМЕНЕНИЯ →' : 'ДОБАВИТЬ ТУРНИР →';
+    return `<div class="mt-pro-form-errors" id="mtFormErrors"></div>
+      <button type="button" class="mt-pro-save-primary" data-mt="save">${label}</button>
+      <div class="mt-pro-form-safe-spacer" aria-hidden="true"></div>`;
+  }
+
+  function renderAddForm(type, old) {
+    addType = type;
     const rec = old || {};
+    if (old) {
+      formAddOn = recordAddOnEnabled(old);
+      formBounty = recordBountyEnabled(old) || isBountyFmt(old);
+      selCurr = currency(old) === 'EUR' ? 'RUB' : currency(old);
+    }
+    updateTypePickerUI();
+    const fields = document.getElementById('mtSheetFields');
+    const footer = document.getElementById('mtFormFooter');
+    if (!fields || !footer) return;
+
+    const dateVal = rec.date || todayIso();
     const fmtVal = old ? mapFormatFromRecord(old) : 'MTT';
-    const cur = old ? currency(old) : selCurr;
-    selCurr = cur === 'EUR' ? 'RUB' : cur;
+    const showPko = fmtVal === 'PKO' || fmtVal === 'Mystery Bounty';
+    const addOnBlock = formAddOn
+      ? `<div class="mt-pro-conditional" id="mtAddOnBlock">
+          <div class="mt-pro-field-row">
+            <div class="mt-pro-field"><label>Кол-во add-on</label><input type="number" id="mtFAddOnCount" min="0" value="${old ? num(rec.addOnCount) || (num(rec.addOn) ? 1 : 0) : 0}"></div>
+            <div class="mt-pro-field"><label>Стоимость add-on</label><input type="number" id="mtFAddOnCost" min="0" value="${old ? num(rec.addOnCost) || num(rec.addOn) : ''}" placeholder="500"></div>
+          </div>
+        </div>`
+      : '';
 
-    fields.innerHTML = `
-      <div class="mt-pro-field"><label>Дата</label><input type="date" id="mtFDate" value="${esc(rec.date || new Date().toISOString().slice(0, 10))}"></div>
-      <div class="mt-pro-field"><label>Валюта</label><div class="mt-pro-curr-row">
-        <button type="button" class="mt-pro-curr-btn ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
-        <button type="button" class="mt-pro-curr-btn ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
-      </div></div>
-      <div class="mt-pro-field"><label>${vLabel}</label><input type="text" id="mtFVenue" value="${esc(rec.clubOrRoom || rec.club || rec.room || '')}" placeholder="${esc(vPh)}"></div>
-      <div class="mt-pro-field"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
-      <div class="mt-pro-field"><label>Тип турнира</label><select id="mtFFmt">
-        <option value="MTT" ${fmtVal === 'MTT' ? 'selected' : ''}>Regular (MTT)</option>
-        <option value="PKO" ${fmtVal === 'PKO' ? 'selected' : ''}>PKO / Bounty</option>
-        <option value="Mystery Bounty" ${fmtVal === 'Mystery Bounty' ? 'selected' : ''}>Mystery Bounty</option>
-        <option value="SNG" ${fmtVal === 'SNG' ? 'selected' : ''}>SNG</option>
-        <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>
-      </select></div>
-      <div class="mt-pro-field-row">
-        <div class="mt-pro-field"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
-        <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
-      </div>
-      <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in + fee"></div>
-      <div class="mt-pro-field-row">
-        <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(old.place) || '' : ''}" placeholder="3"></div>
-        <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && old.field ? num(old.field) : ''}" placeholder="необязательно"></div>
-      </div>
-      ${type !== 'sport' ? `<div class="mt-pro-field"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(old.prize) : 0}"></div>
-      <div class="mt-pro-field"><label>Получено bounty</label><input type="number" id="mtFBounty" min="0" value="${old ? num(old.bountyWon) : 0}"></div>` : `<div class="mt-pro-field"><label>Получено points</label><input type="number" id="mtFPoints" min="0" value="${old ? num(old.points) : ''}" placeholder="180"></div>`}
-      <details class="mt-pro-advanced"><summary>Детали (fee, add-on, bounty contribution)</summary><div class="mt-pro-advanced-body">
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field"><label>Bounty contribution</label><input type="number" id="mtFBC" min="0" value="${old ? num(old.bountyContribution) : 0}"></div>
-          <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(old.fee) : 0}"></div>
+    const sportBountyBlock =
+      formBounty && type === 'sport'
+        ? `<div class="mt-pro-conditional" id="mtBountyBlock">
+            <div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>Bounty / нокауты, шт</label><input type="number" id="mtFBountyCount" min="0" value="${old ? num(rec.bountyCount) : 0}"></div>
+              <div class="mt-pro-field"><label>Стоимость bounty</label><input type="number" id="mtFBountyValue" min="0" value="${old ? num(rec.bountyValue) : ''}" placeholder="500"></div>
+            </div>
+          </div>`
+        : '';
+
+    const moneyBountyBlock =
+      showPko && type !== 'sport'
+        ? `<div class="mt-pro-conditional" id="mtPkoBlock">
+            <div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>Bounty в buy-in</label><input type="number" id="mtFBC" min="0" value="${old ? num(rec.bountyContribution) : 0}"></div>
+              <div class="mt-pro-field"><label>Получено bounty</label><input type="number" id="mtFBountyWon" min="0" value="${old ? num(rec.bountyWon) : 0}"></div>
+            </div>
+          </div>`
+        : '';
+
+    if (type === 'offline') {
+      const customClub = !rec.venueId && !rec.clubId && (rec.clubOrRoom || rec.club);
+      fields.innerHTML = `
+        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldClub"><label>Клуб / площадка</label>
+          <select id="mtFClubSelect">${clubOptionsHtml(rec, true)}</select>
+          <input type="text" id="mtFClubCustom" class="mt-pro-custom-input" style="display:${customClub ? 'block' : 'none'}" value="${esc(customClub ? rec.clubOrRoom || rec.club || '' : '')}" placeholder="Название клуба">
         </div>
-        <div class="mt-pro-field"><label>Add-on</label><input type="number" id="mtFAddOn" min="0" value="${old ? num(old.addOn) : 0}"></div>
-      </div></details>
-      <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="100" value="${esc(rec.note || '')}" placeholder="Баббл-колл, ошибка..."></div>
-      <div class="mt-pro-form-errors" id="mtFormErrors"></div>
-      <button type="button" class="mt-pro-save" data-mt="save">${editingId ? '✎ Сохранить изменения' : '+ Добавить турнир'}</button>`;
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
+        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        ${moneyBountyBlock}
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        </div>
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>
+        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+    } else if (type === 'online') {
+      const customRoom = rec.room || rec.clubOrRoom;
+      const rooms = knownRooms();
+      const isCustomRoom = customRoom && !rooms.includes(customRoom);
+      fields.innerHTML = `
+        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldRoom"><label>Рум</label>
+          <select id="mtFRoomSelect">${roomOptionsHtml(rec)}</select>
+          <input type="text" id="mtFRoomCustom" class="mt-pro-custom-input" style="display:${isCustomRoom ? 'block' : 'none'}" value="${esc(isCustomRoom ? customRoom : '')}" placeholder="Название рума">
+        </div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
+        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>
+        <div class="mt-pro-field"><label>Валюта</label><div class="mt-pro-curr-row">
+          <button type="button" class="mt-pro-curr-btn ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
+          <button type="button" class="mt-pro-curr-btn ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
+        </div></div>
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="800"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        ${moneyBountyBlock}
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="4"></div>
+          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="156"></div>
+        </div>
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>
+        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+    } else {
+      fields.innerHTML = `
+        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldClub"><label>Клуб</label>
+          <select id="mtFClubSelect">${clubOptionsHtml(rec, false)}</select>
+        </div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Вход / Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        <div class="mt-pro-field"><label>Bounty</label>${ynSegHtml('bounty', formBounty)}</div>
+        ${sportBountyBlock}
+        <div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        </div>
+        <div class="mt-pro-field" id="mtFieldPoints"><label>Рейтинг / Points</label><input type="number" id="mtFPoints" value="${old ? num(rec.points) : ''}" placeholder="125"></div>
+        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+    }
 
-    fields.querySelectorAll('[data-mt="curr"]').forEach((b) => {
+    footer.innerHTML = formFooterHtml();
+    bindFormEvents(type);
+    if (editingId) document.getElementById('mtSheetTitle').textContent = 'Редактировать турнир';
+  }
+
+  function snapshotFormFields() {
+    const snap = {};
+    document.querySelectorAll('#mtSheetFields input, #mtSheetFields select').forEach((el) => {
+      if (el.id) snap[el.id] = el.value;
+    });
+    return snap;
+  }
+
+  function restoreFormFields(snap) {
+    Object.entries(snap || {}).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.value = val;
+    });
+  }
+
+  function bindFormEvents(type) {
+    const root = document.getElementById('mtFormBody');
+    if (!root) return;
+
+    root.querySelectorAll('[data-mt="curr"]').forEach((b) => {
       b.addEventListener('click', () => {
         selCurr = b.dataset.val;
-        fields.querySelectorAll('[data-mt="curr"]').forEach((x) => x.classList.toggle('sel', x === b));
+        root.querySelectorAll('[data-mt="curr"]').forEach((x) => x.classList.toggle('sel', x === b));
       });
     });
-    fields.querySelector('[data-mt="save"]').addEventListener('click', saveTournament);
-    if (editingId) document.getElementById('mtSheetTitle').textContent = '✎ Редактировать турнир';
+
+    root.querySelectorAll('[data-mt="yn"]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const field = b.dataset.field;
+        const yes = b.dataset.val === '1';
+        const snap = snapshotFormFields();
+        const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+        if (field === 'addon') formAddOn = yes;
+        if (field === 'bounty') formBounty = yes;
+        renderAddForm(addType, old || undefined);
+        restoreFormFields(snap);
+      });
+    });
+
+    const clubSel = document.getElementById('mtFClubSelect');
+    const clubCustom = document.getElementById('mtFClubCustom');
+    if (clubSel && clubCustom) {
+      clubSel.addEventListener('change', () => {
+        clubCustom.style.display = clubSel.value === '__custom__' ? 'block' : 'none';
+        if (clubSel.value !== '__custom__') clubCustom.value = '';
+      });
+    }
+
+    const roomSel = document.getElementById('mtFRoomSelect');
+    const roomCustom = document.getElementById('mtFRoomCustom');
+    if (roomSel && roomCustom) {
+      roomSel.addEventListener('change', () => {
+        roomCustom.style.display = roomSel.value === '__custom__' ? 'block' : 'none';
+        if (roomSel.value !== '__custom__') roomCustom.value = '';
+      });
+    }
+
+    const fmtSel = document.getElementById('mtFFmt');
+    if (fmtSel && type !== 'sport') {
+      fmtSel.addEventListener('change', () => {
+        const snap = snapshotFormFields();
+        const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+        renderAddForm(addType, old || undefined);
+        restoreFormFields(snap);
+      });
+    }
+
+    root.querySelector('[data-mt="save"]')?.addEventListener('click', saveTournament);
+  }
+
+  function setFieldInvalid(wrapId, message) {
+    const wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    wrap.classList.add('invalid');
+    let hint = wrap.querySelector('.mt-pro-field-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'mt-pro-field-hint';
+      wrap.appendChild(hint);
+    }
+    hint.textContent = message;
+  }
+
+  function clearFieldInvalids() {
+    document.querySelectorAll('.mt-pro-field.invalid').forEach((el) => {
+      el.classList.remove('invalid');
+      el.querySelector('.mt-pro-field-hint')?.remove();
+    });
+    const err = document.getElementById('mtFormErrors');
+    if (err) err.textContent = '';
+  }
+
+  function readVenueFromForm(type) {
+    if (type === 'online') {
+      const sel = document.getElementById('mtFRoomSelect');
+      const custom = document.getElementById('mtFRoomCustom');
+      if (!sel) return { room: '', venueName: '' };
+      if (sel.value === '__custom__') {
+        const room = custom?.value.trim() || '';
+        return { room, venueName: room, clubOrRoom: room };
+      }
+      const room = sel.value.trim();
+      return { room, venueName: room, clubOrRoom: room };
+    }
+    const sel = document.getElementById('mtFClubSelect');
+    const custom = document.getElementById('mtFClubCustom');
+    if (!sel) return { venueId: null, venueName: '', clubOrRoom: '' };
+    if (sel.value === '__custom__') {
+      const name = custom?.value.trim() || '';
+      return { venueId: null, venueName: name, clubOrRoom: name };
+    }
+    if (!sel.value) return { venueId: null, venueName: '', clubOrRoom: '' };
+    const opt = sel.options[sel.selectedIndex];
+    const name = opt?.dataset?.name || opt?.textContent?.trim() || sel.value;
+    const venueId = sel.value !== name ? sel.value : null;
+    return { venueId, venueName: name, clubOrRoom: name };
   }
 
   function validateForm() {
+    clearFieldInvalids();
     const errs = [];
-    const place = num(document.getElementById('mtFPlace')?.value);
-    const field = num(document.getElementById('mtFField')?.value);
-    const reentry = num(document.getElementById('mtFReentry')?.value);
-    if (place < 1) errs.push('Место >= 1');
-    if (field > 0 && place > field) errs.push('Место ≤ поле');
+    const g = (id) => document.getElementById(id);
+    const date = g('mtFDate')?.value?.trim();
+    const name = g('mtFName')?.value?.trim();
+    const buyin = num(g('mtFBuyin')?.value);
+    const place = num(g('mtFPlace')?.value);
+    const field = num(g('mtFField')?.value);
+    const reentry = num(g('mtFReentry')?.value);
+
+    if (!date) {
+      errs.push('Укажите дату');
+      setFieldInvalid('mtFieldDate', 'Обязательное поле');
+    }
+    if (!name) {
+      errs.push('Укажите название');
+      setFieldInvalid('mtFieldName', 'Обязательное поле');
+    }
+
+    const venue = readVenueFromForm(addType);
+    if (addType === 'online') {
+      if (!venue.room) {
+        errs.push('Выберите рум');
+        setFieldInvalid('mtFieldRoom', 'Обязательное поле');
+      }
+      const buyinRaw = g('mtFBuyin')?.value;
+      if (buyinRaw === '' || buyinRaw === null) {
+        errs.push('Укажите buy-in');
+        setFieldInvalid('mtFieldBuyin', 'Обязательное поле');
+      }
+    } else if (addType === 'offline') {
+      if (!venue.clubOrRoom) {
+        errs.push('Выберите клуб');
+        setFieldInvalid('mtFieldClub', 'Обязательное поле');
+      }
+      const buyinRaw = g('mtFBuyin')?.value;
+      if (buyinRaw === '' || buyinRaw === null) {
+        errs.push('Укажите buy-in');
+        setFieldInvalid('mtFieldBuyin', 'Обязательное поле');
+      }
+    } else if (addType === 'sport') {
+      if (!venue.clubOrRoom) {
+        errs.push('Выберите клуб из Поляны');
+        setFieldInvalid('mtFieldClub', 'Обязательное поле');
+      }
+    }
+
+    if (place > 0 && field > 0 && place > field) errs.push('Место не может быть больше поля');
     if (reentry < 0) errs.push('Re-entry ≥ 0');
-    document.getElementById('mtFormErrors').textContent = errs.join(' · ');
+
+    const errEl = g('mtFormErrors');
+    if (errEl) errEl.textContent = errs.join(' · ');
     return errs.length === 0;
   }
 
   function saveTournament() {
     if (!addType) {
-      selectAddType('offline');
+      renderAddForm('offline');
       return;
     }
     if (!validateForm()) return;
+
     const g = (id) => document.getElementById(id);
     const name = g('mtFName').value.trim();
-    if (!name) {
-      g('mtFName').focus();
-      return;
-    }
-    const buyin = Math.max(0, num(g('mtFBuyin').value));
-    const reentry = Math.max(0, Math.round(num(g('mtFReentry').value)));
-    const reentryCost = Math.max(0, num(g('mtFReentryCost').value) || buyin + num(g('mtFFee')?.value));
-    const fmtVal = g('mtFFmt').value;
+    const buyin = Math.max(0, num(g('mtFBuyin')?.value));
+    const reentry = Math.max(0, Math.round(num(g('mtFReentry')?.value)));
+    const reentryCost = Math.max(0, num(g('mtFReentryCost')?.value) || buyin + num(g('mtFFee')?.value));
+    const fmtVal = g('mtFFmt')?.value || 'MTT';
     const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+    const venue = readVenueFromForm(addType);
+
+    const addOnCount = formAddOn ? Math.max(0, Math.round(num(g('mtFAddOnCount')?.value))) : 0;
+    const addOnCost = formAddOn ? Math.max(0, num(g('mtFAddOnCost')?.value)) : 0;
 
     const rec = {
       ...(old || {}),
       id: old?.id || 'mt_' + Date.now(),
       type: addType,
-      format: mapFormatToSave(fmtVal),
+      format: addType === 'sport' ? 'NLH' : mapFormatToSave(fmtVal),
       tournamentName: name,
       name,
-      clubOrRoom: g('mtFVenue').value.trim(),
       date: g('mtFDate').value,
-      currency: selCurr,
+      currency: addType === 'online' ? selCurr : 'RUB',
       baseBuyin: buyin,
       buyin,
-      bountyContribution: Math.max(0, num(g('mtFBC')?.value)),
       fee: Math.max(0, num(g('mtFFee')?.value)),
       entries: reentry + 1,
       reentryCost,
-      addOn: Math.max(0, num(g('mtFAddOn')?.value)),
-      place: Math.max(0, Math.round(num(g('mtFPlace').value))),
-      field: Math.max(0, Math.round(num(g('mtFField').value))) || undefined,
-      note: g('mtFNote').value.trim(),
+      addOnEnabled: formAddOn,
+      addOnCount,
+      addOnCost,
+      addOn: formAddOn ? addOnCount * addOnCost : 0,
+      place: Math.max(0, Math.round(num(g('mtFPlace')?.value))) || undefined,
+      field: Math.max(0, Math.round(num(g('mtFField')?.value))) || undefined,
+      note: g('mtFNote')?.value.trim() || '',
+      venueId: venue.venueId || undefined,
+      venueName: venue.venueName || venue.clubOrRoom || undefined,
+      clubOrRoom: venue.clubOrRoom || venue.room || '',
       updatedAt: Date.now(),
       createdAt: old?.createdAt || Date.now()
     };
 
+    if (addType === 'online') {
+      rec.room = venue.room;
+      rec.clubId = undefined;
+    } else {
+      rec.clubId = venue.venueId || undefined;
+      rec.room = undefined;
+    }
+
     if (addType === 'sport') {
-      rec.points = Math.max(0, num(g('mtFPoints')?.value));
+      rec.points = num(g('mtFPoints')?.value);
       rec.prize = 0;
       rec.bountyWon = 0;
+      rec.bountyEnabled = formBounty;
+      rec.bountyCount = formBounty ? Math.max(0, Math.round(num(g('mtFBountyCount')?.value))) : 0;
+      rec.bountyValue = formBounty ? Math.max(0, num(g('mtFBountyValue')?.value)) : 0;
+      rec.bountyContribution = 0;
     } else {
+      const pko = fmtVal === 'PKO' || fmtVal === 'Mystery Bounty';
+      rec.bountyContribution = pko ? Math.max(0, num(g('mtFBC')?.value)) : 0;
+      rec.bountyWon = pko ? Math.max(0, num(g('mtFBountyWon')?.value)) : 0;
+      rec.bountyEnabled = pko;
+      rec.bountyCount = 0;
+      rec.bountyValue = 0;
       rec.prize = Math.max(0, num(g('mtFCash')?.value));
-      rec.bountyWon = Math.max(0, num(g('mtFBounty')?.value));
       rec.points = undefined;
     }
 
@@ -1352,10 +1745,12 @@
     editingId = t.id;
     addType = cat(t);
     selCurr = currency(t);
+    formAddOn = recordAddOnEnabled(t);
+    formBounty = recordBountyEnabled(t) || isBountyFmt(t);
     MODAL.classList.add('on');
     renderSheetShell();
-    selectAddType(addType, t);
-    document.getElementById('mtSheetTitle').textContent = '✎ Редактировать турнир';
+    ensurePolyanaClubs().then(() => renderAddForm(addType, t));
+    document.getElementById('mtSheetTitle').textContent = 'Редактировать турнир';
   }
 
   function deleteTournament(id) {

@@ -1311,39 +1311,139 @@
   font-size: 14px;
 }
 
-.mt-pro-choice {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 4px;
+.mt-pro-choice,
+.mt-pro-type-seg {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 4px;
+  background: var(--mt-surf-1);
+  border: 1px solid var(--mt-border-soft);
+  border-radius: var(--mt-radius-md);
 }
 
-.mt-pro-choice button {
+.mt-pro-choice button,
+.mt-pro-type-btn {
   flex: 1;
-  padding: 11px 6px;
+  padding: 12px 6px;
   border-radius: var(--mt-radius-sm);
-  border: 1px solid var(--mt-border);
-  background: var(--mt-surf-1);
-  color: var(--mt-text);
+  border: 1px solid var(--mt-border-soft);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.12) 100%);
+  color: var(--mt-muted);
   font-weight: 800;
   font-size: 10px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.mt-pro-type-btn:active:not(.active) {
+  transform: scale(0.98);
+}
+
+.mt-pro-type-btn.active.offline {
+  background: var(--mt-lime);
+  border-color: var(--mt-lime);
+  color: #0a0b08;
+  box-shadow: 0 0 16px rgba(200, 255, 61, 0.28);
+}
+
+.mt-pro-type-btn.active.online {
+  background: var(--mt-purple-dim);
+  border-color: rgba(185, 166, 255, 0.45);
+  color: var(--mt-purple);
+  box-shadow: 0 0 14px rgba(185, 166, 255, 0.18);
+}
+
+.mt-pro-type-btn.active.sport {
+  background: var(--mt-gold-dim);
+  border-color: rgba(245, 200, 76, 0.45);
+  color: var(--mt-gold);
+  box-shadow: 0 0 14px rgba(245, 200, 76, 0.18);
 }
 
 .mt-pro-choice button.sel.offline { background: var(--mt-lime-dim); border-color: rgba(200, 255, 61, 0.4); color: var(--mt-lime); }
 .mt-pro-choice button.sel.online { background: var(--mt-purple-dim); border-color: rgba(185, 166, 255, 0.4); color: var(--mt-purple); }
 .mt-pro-choice button.sel.sport { background: var(--mt-gold-dim); border-color: rgba(245, 200, 76, 0.4); color: var(--mt-gold); }
 
-.mt-pro-fields { margin-top: 14px; }
+.mt-pro-form-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
 
-.mt-pro-field { margin-bottom: 10px; }
+.mt-pro-form-footer {
+  margin-top: 8px;
+  padding-top: 4px;
+}
+
+.mt-pro-form-safe-spacer {
+  height: calc(16px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px)));
+  flex-shrink: 0;
+}
+
+.mt-pro-yn-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.mt-pro-yn-btn {
+  padding: 10px 8px;
+  border-radius: var(--mt-radius-sm);
+  border: 1px solid var(--mt-border-soft);
+  background: var(--mt-surf-1);
+  color: var(--mt-muted);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+}
+
+.mt-pro-yn-btn:active:not(.active) { transform: scale(0.98); }
+
+.mt-pro-yn-btn.active {
+  background: var(--mt-lime-dim);
+  border-color: rgba(200, 255, 61, 0.4);
+  color: var(--mt-lime);
+  box-shadow: 0 0 10px rgba(200, 255, 61, 0.12);
+}
+
+.mt-pro-conditional {
+  margin: 2px 0 10px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(200, 255, 61, 0.18);
+  border-radius: var(--mt-radius-sm);
+  background: rgba(200, 255, 61, 0.03);
+}
+
+.mt-pro-custom-input { margin-top: 8px; }
+
+.mt-pro-field.invalid input,
+.mt-pro-field.invalid select {
+  border-color: var(--mt-error);
+  box-shadow: 0 0 0 1px rgba(255, 107, 91, 0.25);
+}
+
+.mt-pro-field-hint {
+  margin-top: 4px;
+  font-size: 10px;
+  color: var(--mt-error);
+}
+
+.mt-pro-fields { margin-top: 4px; }
+
+.mt-pro-field { margin-bottom: 12px; }
 .mt-pro-field label {
   display: block;
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.1em;
   color: var(--mt-muted-2);
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  font-weight: 700;
 }
 
 .mt-pro-field input,
@@ -1411,18 +1511,63 @@
 
 .mt-pro-advanced-body { padding: 0 12px 12px; }
 
-.mt-pro-save {
+.mt-pro-save,
+.mt-pro-save-primary {
   width: 100%;
-  margin-top: 4px;
-  padding: 13px;
+  margin-top: 8px;
+  padding: 16px 18px;
   border: none;
   border-radius: 100px;
-  background: var(--mt-lime);
+  background: linear-gradient(180deg, #d4ff55 0%, var(--mt-lime) 48%, #a8e020 100%);
   color: #0a0b08;
   font-weight: 800;
   font-size: 13px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
+  box-shadow: 0 4px 20px rgba(200, 255, 61, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.08s ease, box-shadow 0.12s ease;
+}
+
+.mt-pro-save-primary:active {
+  transform: scale(0.985);
+  box-shadow: 0 2px 12px rgba(200, 255, 61, 0.2);
+}
+
+.mt-pro-card-sport .mt-pro-card-venue {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mt-gold);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.mt-pro-card-sport .mt-pro-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.mt-pro-card-sport-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mt-pro-card-place-line {
+  font-size: 13px;
+  color: var(--mt-muted);
+  font-weight: 700;
+}
+
+.mt-pro-card-sport .mt-pro-card-result.pts {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mt-gold);
+  letter-spacing: 0.04em;
 }
 
 .mt-pro-form-errors {
