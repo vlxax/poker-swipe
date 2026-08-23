@@ -1267,10 +1267,13 @@
   width: min(760px, 100%);
   max-height: min(91vh, 780px);
   overflow: auto;
-  border: 1px solid var(--mt-border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 26px 26px 18px 18px;
-  background: linear-gradient(180deg, #14160f 0%, #0c0d0a 100%);
-  padding: 14px 18px calc(24px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px)));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 18%),
+    linear-gradient(180deg, #14160f 0%, #0a0b08 100%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 14px 16px calc(20px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px)));
   animation: mtSheetIn 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
   color: var(--mt-text);
 }
@@ -1315,152 +1318,389 @@
 .mt-pro-type-seg {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 12px;
-  padding: 4px;
-  background: var(--mt-surf-1);
-  border: 1px solid var(--mt-border-soft);
-  border-radius: var(--mt-radius-md);
+  gap: 5px;
+  margin-bottom: 10px;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), inset 0 -8px 16px rgba(0, 0, 0, 0.22);
 }
 
 .mt-pro-choice button,
 .mt-pro-type-btn {
-  flex: 1;
-  padding: 12px 6px;
-  border-radius: var(--mt-radius-sm);
-  border: 1px solid var(--mt-border-soft);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.12) 100%);
+  position: relative;
+  padding: 13px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(0, 0, 0, 0.18) 100%);
   color: var(--mt-muted);
   font-weight: 800;
   font-size: 10px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, transform 0.08s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition:
+    transform 0.14s cubic-bezier(0.2, 0.9, 0.25, 1),
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    color 0.18s ease;
 }
 
-.mt-pro-type-btn:active:not(.active) {
-  transform: scale(0.98);
+.mt-pro-type-btn.is-pressed:not(.active) {
+  transform: scale(0.97);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .mt-pro-type-btn.active.offline {
-  background: var(--mt-lime);
-  border-color: var(--mt-lime);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(200, 255, 61, 0.95) 42%, rgba(168, 224, 32, 0.92) 100%);
+  border-color: rgba(200, 255, 61, 0.72);
   color: #0a0b08;
-  box-shadow: 0 0 16px rgba(200, 255, 61, 0.28);
+  box-shadow:
+    0 0 18px rgba(200, 255, 61, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .mt-pro-type-btn.active.online {
-  background: var(--mt-purple-dim);
-  border-color: rgba(185, 166, 255, 0.45);
-  color: var(--mt-purple);
-  box-shadow: 0 0 14px rgba(185, 166, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(185, 166, 255, 0.22) 100%);
+  border-color: rgba(185, 166, 255, 0.42);
+  color: #ece6ff;
+  box-shadow: 0 0 16px rgba(185, 166, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .mt-pro-type-btn.active.sport {
-  background: var(--mt-gold-dim);
-  border-color: rgba(245, 200, 76, 0.45);
-  color: var(--mt-gold);
-  box-shadow: 0 0 14px rgba(245, 200, 76, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(245, 200, 76, 0.22) 100%);
+  border-color: rgba(245, 200, 76, 0.42);
+  color: #ffe7a8;
+  box-shadow: 0 0 16px rgba(245, 200, 76, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-.mt-pro-choice button.sel.offline { background: var(--mt-lime-dim); border-color: rgba(200, 255, 61, 0.4); color: var(--mt-lime); }
-.mt-pro-choice button.sel.online { background: var(--mt-purple-dim); border-color: rgba(185, 166, 255, 0.4); color: var(--mt-purple); }
-.mt-pro-choice button.sel.sport { background: var(--mt-gold-dim); border-color: rgba(245, 200, 76, 0.4); color: var(--mt-gold); }
-
-.mt-pro-form-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+.mt-pro-form-section {
+  margin-bottom: 12px;
 }
 
-.mt-pro-form-footer {
-  margin-top: 8px;
-  padding-top: 4px;
+.mt-pro-form-section-label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mt-muted-2);
+  margin: 0 0 8px 2px;
+  font-weight: 800;
 }
 
-.mt-pro-form-safe-spacer {
-  height: calc(16px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px)));
-  flex-shrink: 0;
-}
+.mt-pro-form-body { display: flex; flex-direction: column; min-height: 0; }
+.mt-pro-form-footer { margin-top: 6px; padding-top: 2px; }
+.mt-pro-form-safe-spacer { height: calc(16px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px))); flex-shrink: 0; }
 
-.mt-pro-yn-seg {
+.mt-pro-yn-seg,
+.mt-pro-bubble-seg {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 5px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .mt-pro-yn-btn {
-  padding: 10px 8px;
-  border-radius: var(--mt-radius-sm);
-  border: 1px solid var(--mt-border-soft);
-  background: var(--mt-surf-1);
+  padding: 11px 8px;
+  min-height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.16) 100%);
   color: var(--mt-muted);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+  transition: transform 0.14s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
 }
 
-.mt-pro-yn-btn:active:not(.active) { transform: scale(0.98); }
+.mt-pro-yn-btn.is-pressed:not(.active) { transform: scale(0.97); }
 
 .mt-pro-yn-btn.active {
-  background: var(--mt-lime-dim);
-  border-color: rgba(200, 255, 61, 0.4);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(200, 255, 61, 0.18) 100%);
+  border-color: rgba(200, 255, 61, 0.42);
   color: var(--mt-lime);
-  box-shadow: 0 0 10px rgba(200, 255, 61, 0.12);
+  box-shadow: 0 0 12px rgba(200, 255, 61, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
-.mt-pro-conditional {
-  margin: 2px 0 10px;
+.mt-pro-subcard {
+  margin: 4px 0 10px;
   padding: 10px 12px;
-  border: 1px dashed rgba(200, 255, 61, 0.18);
-  border-radius: var(--mt-radius-sm);
-  background: rgba(200, 255, 61, 0.03);
+  border-radius: var(--mt-radius-md);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.mt-pro-subcard-reveal {
+  animation: mtSubReveal 0.22s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+
+@keyframes mtSubReveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.mt-pro-subcard-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mt-lime);
+  opacity: 0.82;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.mt-pro-glass-input,
+.mt-pro-field input,
+.mt-pro-field select {
+  width: 100%;
+  min-height: 44px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.18) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 11px 13px;
+  color: var(--mt-text);
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.mt-pro-glass-input::placeholder { color: #6d7468; font-weight: 500; }
+
+.mt-pro-glass-input:focus,
+.mt-pro-field input:focus,
+.mt-pro-field select:focus {
+  border-color: rgba(200, 255, 61, 0.48);
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.18), 0 0 16px rgba(200, 255, 61, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.mt-pro-native-select {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.mt-pro-picker-wrap { position: relative; }
+
+.mt-pro-glass-trigger {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.18) 100%);
+  color: var(--mt-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform 0.14s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.mt-pro-glass-trigger.is-pressed { transform: scale(0.985); }
+
+.mt-pro-glass-trigger-val {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.mt-pro-glass-trigger-icon {
+  color: var(--mt-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.mt-pro-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483250;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px;
+  padding-bottom: calc(12px + var(--mt-bottom-safe, env(safe-area-inset-bottom, 0px)));
+}
+
+.mt-pro-picker-overlay.on {
+  display: flex;
+  animation: mtPickerFade 0.18s ease;
+}
+
+@keyframes mtPickerFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mt-pro-picker-panel {
+  width: min(760px, 100%);
+  max-height: min(68vh, 560px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px 20px 16px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #15170f 0%, #0a0b08 100%);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  animation: mtPickerUp 0.22s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+@keyframes mtPickerUp {
+  from { transform: translateY(16px); opacity: 0.92; }
+  to { transform: none; opacity: 1; }
+}
+
+.mt-pro-picker-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--mt-muted-2);
+}
+
+.mt-pro-picker-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--mt-muted);
+  cursor: pointer;
+}
+
+.mt-pro-picker-search {
+  margin: 10px 12px 0;
+}
+
+.mt-pro-picker-list {
+  overflow: auto;
+  padding: 8px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mt-pro-picker-item {
+  width: 100%;
+  text-align: left;
+  padding: 12px 13px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--mt-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.12s ease;
+}
+
+.mt-pro-picker-item.is-pressed { transform: scale(0.985); }
+
+.mt-pro-picker-item.active,
+.mt-pro-picker-item:hover {
+  background: rgba(200, 255, 61, 0.1);
+  border-color: rgba(200, 255, 61, 0.24);
+  color: var(--mt-lime);
+}
+
+.mt-pro-field-points label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mt-pro-points-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mt-lime);
+  box-shadow: 0 0 8px rgba(200, 255, 61, 0.55);
+  flex-shrink: 0;
+}
+
+.mt-pro-points-input {
+  border-color: rgba(200, 255, 61, 0.18);
 }
 
 .mt-pro-custom-input { margin-top: 8px; }
 
+.mt-pro-field.invalid .mt-pro-glass-input,
+.mt-pro-field.invalid .mt-pro-glass-trigger,
 .mt-pro-field.invalid input,
 .mt-pro-field.invalid select {
   border-color: var(--mt-error);
   box-shadow: 0 0 0 1px rgba(255, 107, 91, 0.25);
 }
 
-.mt-pro-field-hint {
-  margin-top: 4px;
-  font-size: 10px;
-  color: var(--mt-error);
-}
+.mt-pro-field-hint { margin-top: 4px; font-size: 10px; color: var(--mt-error); }
 
-.mt-pro-fields { margin-top: 4px; }
+.mt-pro-fields { margin-top: 2px; }
+.mt-pro-field { margin-bottom: 10px; }
 
-.mt-pro-field { margin-bottom: 12px; }
 .mt-pro-field label {
   display: block;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: var(--mt-muted-2);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--mt-muted);
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   font-weight: 700;
 }
 
-.mt-pro-field input,
-.mt-pro-field select {
-  width: 100%;
-  background: var(--mt-surf-1);
-  border: 1px solid var(--mt-border);
-  border-radius: var(--mt-radius-sm);
-  padding: 10px 12px;
-  color: var(--mt-text);
-  font-size: 13px;
-  outline: none;
+.mt-pro-pressable { touch-action: manipulation; user-select: none; }
+
+.mt-pro-curr-row { display: flex; gap: 5px; }
+
+.mt-pro-curr-btn {
+  flex: 1;
+  min-height: 42px;
+  padding: 10px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.16) 100%);
+  color: var(--mt-muted);
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.14s ease, background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.mt-pro-field input:focus,
-.mt-pro-field select:focus {
-  border-color: var(--mt-lime);
+.mt-pro-curr-btn.is-pressed:not(.sel) { transform: scale(0.97); }
+
+.mt-pro-curr-btn.sel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(200, 255, 61, 0.22) 100%);
+  border-color: rgba(200, 255, 61, 0.42);
+  color: var(--mt-lime);
+  box-shadow: 0 0 12px rgba(200, 255, 61, 0.12);
 }
 
 .mt-pro-field-row {
@@ -1469,26 +1709,6 @@
 }
 
 .mt-pro-field-row .mt-pro-field { flex: 1; min-width: 0; }
-
-.mt-pro-curr-row { display: flex; gap: 5px; }
-
-.mt-pro-curr-btn {
-  flex: 1;
-  padding: 9px 5px;
-  border-radius: var(--mt-radius-sm);
-  border: 1px solid var(--mt-border);
-  background: var(--mt-surf-1);
-  color: var(--mt-muted);
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.mt-pro-curr-btn.sel {
-  background: var(--mt-lime-dim);
-  border-color: rgba(200, 255, 61, 0.4);
-  color: var(--mt-lime);
-}
 
 .mt-pro-advanced {
   margin: 10px 0;
@@ -1514,24 +1734,36 @@
 .mt-pro-save,
 .mt-pro-save-primary {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 10px;
+  min-height: 52px;
   padding: 16px 18px;
-  border: none;
-  border-radius: 100px;
-  background: linear-gradient(180deg, #d4ff55 0%, var(--mt-lime) 48%, #a8e020 100%);
+  border: 1px solid rgba(200, 255, 61, 0.55);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(200, 255, 61, 0.98) 38%, rgba(168, 224, 32, 0.96) 100%);
   color: #0a0b08;
   font-weight: 800;
   font-size: 13px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(200, 255, 61, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transition: transform 0.08s ease, box-shadow 0.12s ease;
+  box-shadow:
+    0 8px 24px rgba(200, 255, 61, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.12);
+  transition: transform 0.14s cubic-bezier(0.2, 0.9, 0.25, 1), box-shadow 0.16s ease, filter 0.16s ease;
 }
 
+.mt-pro-save-primary.is-pressed,
 .mt-pro-save-primary:active {
   transform: scale(0.985);
-  box-shadow: 0 2px 12px rgba(200, 255, 61, 0.2);
+  box-shadow: 0 4px 14px rgba(200, 255, 61, 0.18), inset 0 2px 8px rgba(0, 0, 0, 0.14);
+  filter: brightness(0.98);
+}
+
+.mt-pro-save-primary.is-saving {
+  opacity: 0.88;
+  pointer-events: none;
 }
 
 .mt-pro-card-sport .mt-pro-card-venue {

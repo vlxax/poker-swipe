@@ -117,14 +117,14 @@ try {
   report.ctaPresent = await page.evaluate(() => !!document.querySelector('.mt-pro-save-primary[data-mt="save"]'));
 
   // Save SPORT
+  await page.click('[data-mt="picker-open"][data-target="mtFClubSelect"]');
+  await page.waitForSelector('#mtProPickerOverlay.on');
   const clubVal = await page.evaluate(() => {
-    const sel = document.getElementById('mtFClubSelect');
-    if (!sel) return '';
-    for (const o of sel.options) if (o.value && o.value !== '__custom__') return o.value;
-    return '';
+    const item = document.querySelector('.mt-pro-picker-item[data-target="mtFClubSelect"]:not([data-value=""])');
+    return item?.dataset.value || '';
   });
+  await page.click(`.mt-pro-picker-item[data-target="mtFClubSelect"][data-value="${clubVal}"]`);
   await page.fill('#mtFName', 'Sport QA Main');
-  await page.selectOption('#mtFClubSelect', clubVal);
   await page.fill('#mtFPoints', '125');
   await page.fill('#mtFPlace', '3');
   await page.fill('#mtFField', '48');
@@ -142,7 +142,9 @@ try {
   await page.waitForSelector('#mtProModal.on');
   await page.click('[data-mt="pick-type"][data-val="online"]');
   await page.waitForTimeout(200);
-  await page.selectOption('#mtFRoomSelect', 'PokerStars');
+  await page.click('[data-mt="picker-open"][data-target="mtFRoomSelect"]');
+  await page.waitForSelector('#mtProPickerOverlay.on');
+  await page.click('.mt-pro-picker-item[data-target="mtFRoomSelect"][data-value="PokerStars"]');
   await page.fill('#mtFName', 'Online QA Major');
   await page.fill('#mtFBuyin', '800');
   await page.fill('#mtFCash', '2400');
@@ -158,7 +160,9 @@ try {
   await page.waitForSelector('#mtProModal.on');
   await page.click('[data-mt="pick-type"][data-val="offline"]');
   await page.waitForTimeout(200);
-  await page.selectOption('#mtFClubSelect', '__custom__');
+  await page.click('[data-mt="picker-open"][data-target="mtFClubSelect"]');
+  await page.waitForSelector('#mtProPickerOverlay.on');
+  await page.click('.mt-pro-picker-item[data-target="mtFClubSelect"][data-value="__custom__"]');
   await page.fill('#mtFClubCustom', 'QA Offline Club');
   await page.fill('#mtFName', 'Offline QA Event');
   await page.fill('#mtFBuyin', '1500');

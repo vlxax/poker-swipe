@@ -133,7 +133,9 @@ try {
   await page.waitForSelector('#mtProModal.on', { timeout: 5000 });
   await page.click('[data-mt="pick-type"][data-val="online"]');
   await page.waitForTimeout(300);
-  await page.selectOption('#mtFRoomSelect', 'PokerOK');
+  await page.click('[data-mt="picker-open"][data-target="mtFRoomSelect"]');
+  await page.waitForSelector('#mtProPickerOverlay.on');
+  await page.click('.mt-pro-picker-item[data-target="mtFRoomSelect"][data-value="PokerOK"]');
   await page.fill('#mtFName', 'QA Online Major');
   await page.fill('#mtFBuyin', '1200');
   await page.fill('#mtFPlace', '3');

@@ -1263,9 +1263,9 @@
       <div class="mt-pro-sheet-handle"></div>
       <div class="mt-pro-sheet-title"><span id="mtSheetTitle">Добавить турнир</span><button type="button" class="mt-pro-sheet-close" data-mt="sheet-close">✕</button></div>
       <div class="mt-pro-type-seg" id="mtTypeSeg">
-        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="offline">ОФЛАЙН</button>
-        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="online">ОНЛАЙН</button>
-        <button type="button" class="mt-pro-type-btn" data-mt="pick-type" data-val="sport">СПОРТ</button>
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="offline">ОФЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="online">ОНЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="sport">СПОРТ</button>
       </div>
       <div class="mt-pro-form-body" id="mtFormBody">
         <div class="mt-pro-fields" id="mtSheetFields"></div>
@@ -1308,20 +1308,125 @@
   }
 
   function ynSegHtml(field, yes) {
-    return `<div class="mt-pro-yn-seg" data-yn="${field}">
-      <button type="button" class="mt-pro-yn-btn ${yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="1">Да</button>
-      <button type="button" class="mt-pro-yn-btn ${!yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="0">Нет</button>
+    return `<div class="mt-pro-yn-seg mt-pro-bubble-seg" data-yn="${field}">
+      <button type="button" class="mt-pro-yn-btn mt-pro-pressable ${yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="1">ДА</button>
+      <button type="button" class="mt-pro-yn-btn mt-pro-pressable ${!yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="0">НЕТ</button>
+    </div>`;
+  }
+
+  function formSection(label, inner) {
+    return `<div class="mt-pro-form-section"><div class="mt-pro-form-section-label">${label}</div>${inner}</div>`;
+  }
+
+  function customSelectWrap(selectId, optionsHtml, searchable) {
+    return `<div class="mt-pro-picker-wrap" data-picker="${selectId}" data-searchable="${searchable ? '1' : '0'}">
+      <button type="button" class="mt-pro-glass-trigger mt-pro-pressable" data-mt="picker-open" data-target="${selectId}">
+        <span class="mt-pro-glass-trigger-val" id="${selectId}Label">—</span>
+        <span class="mt-pro-glass-trigger-icon" aria-hidden="true">▾</span>
+      </button>
+      <select id="${selectId}" class="mt-pro-native-select" tabindex="-1" aria-hidden="true">${optionsHtml}</select>
     </div>`;
   }
 
   function formatSelectHtml(fmtVal) {
-    return `<select id="mtFFmt">
+    const opts = `
       <option value="MTT" ${fmtVal === 'MTT' ? 'selected' : ''}>MTT</option>
       <option value="PKO" ${fmtVal === 'PKO' ? 'selected' : ''}>PKO / Bounty</option>
       <option value="Mystery Bounty" ${fmtVal === 'Mystery Bounty' ? 'selected' : ''}>Mystery Bounty</option>
       <option value="SNG" ${fmtVal === 'SNG' ? 'selected' : ''}>SNG</option>
-      <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>
-    </select>`;
+      <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>`;
+    return customSelectWrap('mtFFmt', opts, false);
+  }
+
+  function ensurePickerOverlay() {
+    if (document.getElementById('mtProPickerOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'mtProPickerOverlay';
+    el.className = 'mt-pro-picker-overlay';
+    el.innerHTML = `
+      <div class="mt-pro-picker-panel" role="dialog" aria-modal="true">
+        <div class="mt-pro-picker-head">
+          <span id="mtPickerTitle">Выбор</span>
+          <button type="button" class="mt-pro-picker-close mt-pro-pressable" data-mt="picker-close">✕</button>
+        </div>
+        <input type="search" id="mtPickerSearch" class="mt-pro-glass-input mt-pro-picker-search" placeholder="Поиск..." autocomplete="off">
+        <div id="mtPickerList" class="mt-pro-picker-list"></div>
+      </div>`;
+    MODAL.appendChild(el);
+    el.addEventListener('click', (e) => {
+      if (e.target === el) closePicker();
+    });
+  }
+
+  let activePickerId = null;
+
+  function pickerLabelFromSelect(sel) {
+    if (!sel) return '—';
+    const opt = sel.options[sel.selectedIndex];
+    if (!sel.value) return opt?.textContent?.trim() || '— выберите —';
+    return opt?.textContent?.trim() || sel.value;
+  }
+
+  function syncPickerLabel(selectId) {
+    const sel = document.getElementById(selectId);
+    const label = document.getElementById(selectId + 'Label');
+    if (label && sel) label.textContent = pickerLabelFromSelect(sel);
+  }
+
+  function syncAllPickerLabels() {
+    document.querySelectorAll('.mt-pro-picker-wrap').forEach((wrap) => {
+      syncPickerLabel(wrap.dataset.picker);
+    });
+  }
+
+  function closePicker() {
+    const overlay = document.getElementById('mtProPickerOverlay');
+    if (overlay) overlay.classList.remove('on');
+    activePickerId = null;
+  }
+
+  function openPicker(selectId) {
+    ensurePickerOverlay();
+    const sel = document.getElementById(selectId);
+    const wrap = document.querySelector(`.mt-pro-picker-wrap[data-picker="${selectId}"]`);
+    if (!sel || !wrap) return;
+    activePickerId = selectId;
+    const overlay = document.getElementById('mtProPickerOverlay');
+    const list = document.getElementById('mtPickerList');
+    const search = document.getElementById('mtPickerSearch');
+    const title = document.getElementById('mtPickerTitle');
+    const searchable = wrap.dataset.searchable === '1' || sel.options.length > 8;
+    title.textContent =
+      selectId === 'mtFClubSelect' ? 'КЛУБ' : selectId === 'mtFRoomSelect' ? 'РУМ' : selectId === 'mtFFmt' ? 'ФОРМАТ' : 'ВЫБОР';
+    search.style.display = searchable ? 'block' : 'none';
+    search.value = '';
+    const renderList = (filter) => {
+      const q = (filter || '').trim().toLowerCase();
+      list.innerHTML = [...sel.options]
+        .filter((o) => !q || o.textContent.toLowerCase().includes(q))
+        .map((o) => {
+          const active = o.value === sel.value;
+          return `<button type="button" class="mt-pro-picker-item mt-pro-pressable ${active ? 'active' : ''}" data-mt="picker-pick" data-target="${selectId}" data-value="${esc(o.value)}" data-name="${esc(o.dataset.name || '')}">${esc(o.textContent.trim())}</button>`;
+        })
+        .join('');
+    };
+    renderList('');
+    search.oninput = () => renderList(search.value);
+    overlay.classList.add('on');
+    bindPressable(list);
+    if (searchable) setTimeout(() => search.focus(), 120);
+  }
+
+  function bindPressable(root) {
+    (root || document).querySelectorAll('.mt-pro-pressable').forEach((el) => {
+      if (el.dataset.pressBound) return;
+      el.dataset.pressBound = '1';
+      el.addEventListener('pointerdown', () => el.classList.add('is-pressed'));
+      const up = () => el.classList.remove('is-pressed');
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointerleave', up);
+      el.addEventListener('pointercancel', up);
+    });
   }
 
   function clubOptionsHtml(rec, allowCustom) {
@@ -1349,8 +1454,14 @@
   function formFooterHtml() {
     const label = editingId ? 'СОХРАНИТЬ ИЗМЕНЕНИЯ →' : 'ДОБАВИТЬ ТУРНИР →';
     return `<div class="mt-pro-form-errors" id="mtFormErrors"></div>
-      <button type="button" class="mt-pro-save-primary" data-mt="save">${label}</button>
+      <button type="button" class="mt-pro-save-primary mt-pro-pressable" data-mt="save">${label}</button>
       <div class="mt-pro-form-safe-spacer" aria-hidden="true"></div>`;
+  }
+
+  function subcardBlock(label, inner, id) {
+    return `<div class="mt-pro-subcard mt-pro-subcard-reveal" ${id ? `id="${id}"` : ''}>
+      <div class="mt-pro-subcard-label">${label}</div>${inner}
+    </div>`;
   }
 
   function renderAddForm(type, old) {
@@ -1370,116 +1481,162 @@
     const fmtVal = old ? mapFormatFromRecord(old) : 'MTT';
     const showPko = fmtVal === 'PKO' || fmtVal === 'Mystery Bounty';
     const addOnBlock = formAddOn
-      ? `<div class="mt-pro-conditional" id="mtAddOnBlock">
-          <div class="mt-pro-field-row">
-            <div class="mt-pro-field"><label>Кол-во add-on</label><input type="number" id="mtFAddOnCount" min="0" value="${old ? num(rec.addOnCount) || (num(rec.addOn) ? 1 : 0) : 0}"></div>
-            <div class="mt-pro-field"><label>Стоимость add-on</label><input type="number" id="mtFAddOnCost" min="0" value="${old ? num(rec.addOnCost) || num(rec.addOn) : ''}" placeholder="500"></div>
-          </div>
-        </div>`
+      ? subcardBlock(
+          'ADD-ON',
+          `<div class="mt-pro-field-row">
+            <div class="mt-pro-field"><label>Количество</label><input class="mt-pro-glass-input" type="number" id="mtFAddOnCount" min="0" value="${old ? num(rec.addOnCount) || (num(rec.addOn) ? 1 : 0) : 0}"></div>
+            <div class="mt-pro-field"><label>Стоимость</label><input class="mt-pro-glass-input" type="number" id="mtFAddOnCost" min="0" value="${old ? num(rec.addOnCost) || num(rec.addOn) : ''}" placeholder="500"></div>
+          </div>`,
+          'mtAddOnBlock'
+        )
       : '';
 
     const sportBountyBlock =
       formBounty && type === 'sport'
-        ? `<div class="mt-pro-conditional" id="mtBountyBlock">
-            <div class="mt-pro-field-row">
-              <div class="mt-pro-field"><label>Bounty / нокауты, шт</label><input type="number" id="mtFBountyCount" min="0" value="${old ? num(rec.bountyCount) : 0}"></div>
-              <div class="mt-pro-field"><label>Стоимость bounty</label><input type="number" id="mtFBountyValue" min="0" value="${old ? num(rec.bountyValue) : ''}" placeholder="500"></div>
-            </div>
-          </div>`
+        ? subcardBlock(
+            'BOUNTY',
+            `<div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>Нокауты, шт</label><input class="mt-pro-glass-input" type="number" id="mtFBountyCount" min="0" value="${old ? num(rec.bountyCount) : 0}"></div>
+              <div class="mt-pro-field"><label>Стоимость</label><input class="mt-pro-glass-input" type="number" id="mtFBountyValue" min="0" value="${old ? num(rec.bountyValue) : ''}" placeholder="500"></div>
+            </div>`,
+            'mtBountyBlock'
+          )
         : '';
 
     const moneyBountyBlock =
       showPko && type !== 'sport'
-        ? `<div class="mt-pro-conditional" id="mtPkoBlock">
-            <div class="mt-pro-field-row">
-              <div class="mt-pro-field"><label>Bounty в buy-in</label><input type="number" id="mtFBC" min="0" value="${old ? num(rec.bountyContribution) : 0}"></div>
-              <div class="mt-pro-field"><label>Получено bounty</label><input type="number" id="mtFBountyWon" min="0" value="${old ? num(rec.bountyWon) : 0}"></div>
-            </div>
-          </div>`
+        ? subcardBlock(
+            'BOUNTY',
+            `<div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>В buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBC" min="0" value="${old ? num(rec.bountyContribution) : 0}"></div>
+              <div class="mt-pro-field"><label>Получено</label><input class="mt-pro-glass-input" type="number" id="mtFBountyWon" min="0" value="${old ? num(rec.bountyWon) : 0}"></div>
+            </div>`,
+            'mtPkoBlock'
+          )
         : '';
 
     if (type === 'offline') {
       const customClub = !rec.venueId && !rec.clubId && (rec.clubOrRoom || rec.club);
-      fields.innerHTML = `
-        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
         <div class="mt-pro-field" id="mtFieldClub"><label>Клуб / площадка</label>
-          <select id="mtFClubSelect">${clubOptionsHtml(rec, true)}</select>
-          <input type="text" id="mtFClubCustom" class="mt-pro-custom-input" style="display:${customClub ? 'block' : 'none'}" value="${esc(customClub ? rec.clubOrRoom || rec.club || '' : '')}" placeholder="Название клуба">
+          ${customSelectWrap('mtFClubSelect', clubOptionsHtml(rec, true), true)}
+          <input type="text" id="mtFClubCustom" class="mt-pro-glass-input mt-pro-custom-input" style="display:${customClub ? 'block' : 'none'}" value="${esc(customClub ? rec.clubOrRoom || rec.club || '' : '')}" placeholder="Название клуба">
         </div>
-        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
-        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
-          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
+        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
         </div>
-        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
         <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
         ${addOnBlock}
-        ${moneyBountyBlock}
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
-          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        ${moneyBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
         </div>
-        <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
-        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>
-        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input class="mt-pro-glass-input" type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input class="mt-pro-glass-input" type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
     } else if (type === 'online') {
       const customRoom = rec.room || rec.clubOrRoom;
       const rooms = knownRooms();
       const isCustomRoom = customRoom && !rooms.includes(customRoom);
-      fields.innerHTML = `
-        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
         <div class="mt-pro-field" id="mtFieldRoom"><label>Рум</label>
-          <select id="mtFRoomSelect">${roomOptionsHtml(rec)}</select>
-          <input type="text" id="mtFRoomCustom" class="mt-pro-custom-input" style="display:${isCustomRoom ? 'block' : 'none'}" value="${esc(isCustomRoom ? customRoom : '')}" placeholder="Название рума">
+          ${customSelectWrap('mtFRoomSelect', roomOptionsHtml(rec), true)}
+          <input type="text" id="mtFRoomCustom" class="mt-pro-glass-input mt-pro-custom-input" style="display:${isCustomRoom ? 'block' : 'none'}" value="${esc(isCustomRoom ? customRoom : '')}" placeholder="Название рума">
         </div>
-        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
         <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>
         <div class="mt-pro-field"><label>Валюта</label><div class="mt-pro-curr-row">
-          <button type="button" class="mt-pro-curr-btn ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
-          <button type="button" class="mt-pro-curr-btn ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
-        </div></div>
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="800"></div>
-          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+          <button type="button" class="mt-pro-curr-btn mt-pro-pressable ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
+          <button type="button" class="mt-pro-curr-btn mt-pro-pressable ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
+        </div></div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="800"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
         </div>
-        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
         <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
         ${addOnBlock}
-        ${moneyBountyBlock}
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="4"></div>
-          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="156"></div>
+        ${moneyBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="4"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="156"></div>
         </div>
-        <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
-        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>
-        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input class="mt-pro-glass-input" type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input class="mt-pro-glass-input" type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
     } else {
-      fields.innerHTML = `
-        <div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
         <div class="mt-pro-field" id="mtFieldClub"><label>Клуб</label>
-          <select id="mtFClubSelect">${clubOptionsHtml(rec, false)}</select>
+          ${customSelectWrap('mtFClubSelect', clubOptionsHtml(rec, false), true)}
         </div>
-        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field" id="mtFieldBuyin"><label>Вход / Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
-          <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Вход / Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
         </div>
-        <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
         <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
         ${addOnBlock}
         <div class="mt-pro-field"><label>Bounty</label>${ynSegHtml('bounty', formBounty)}</div>
-        ${sportBountyBlock}
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
-          <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        ${sportBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
         </div>
-        <div class="mt-pro-field" id="mtFieldPoints"><label>Рейтинг / Points</label><input type="number" id="mtFPoints" value="${old ? num(rec.points) : ''}" placeholder="125"></div>
-        <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`;
+        <div class="mt-pro-field mt-pro-field-points" id="mtFieldPoints"><label><span class="mt-pro-points-indicator" aria-hidden="true"></span>Рейтинг / Points</label><input class="mt-pro-glass-input mt-pro-points-input" type="number" id="mtFPoints" value="${old ? num(rec.points) : ''}" placeholder="125"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
     }
 
     footer.innerHTML = formFooterHtml();
     bindFormEvents(type);
+    ensurePickerOverlay();
+    syncAllPickerLabels();
+    bindPressable(document.getElementById('mtFormBody'));
+    bindPressable(document.getElementById('mtTypeSeg'));
     if (editingId) document.getElementById('mtSheetTitle').textContent = 'Редактировать турнир';
   }
 
@@ -1496,11 +1653,35 @@
       const el = document.getElementById(id);
       if (el && val !== undefined) el.value = val;
     });
+    syncAllPickerLabels();
   }
 
   function bindFormEvents(type) {
     const root = document.getElementById('mtFormBody');
     if (!root) return;
+
+    if (!MODAL.dataset.pickerBound) {
+      MODAL.addEventListener('click', (e) => {
+        const openBtn = e.target.closest('[data-mt="picker-open"]');
+        if (openBtn) {
+          openPicker(openBtn.dataset.target);
+          return;
+        }
+        const pickBtn = e.target.closest('[data-mt="picker-pick"]');
+        if (pickBtn) {
+          const sel = document.getElementById(pickBtn.dataset.target);
+          if (sel) {
+            sel.value = pickBtn.dataset.value;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            syncPickerLabel(pickBtn.dataset.target);
+          }
+          closePicker();
+          return;
+        }
+        if (e.target.closest('[data-mt="picker-close"]')) closePicker();
+      });
+      MODAL.dataset.pickerBound = '1';
+    }
 
     root.querySelectorAll('[data-mt="curr"]').forEach((b) => {
       b.addEventListener('click', () => {
@@ -1550,7 +1731,12 @@
       });
     }
 
-    root.querySelector('[data-mt="save"]')?.addEventListener('click', saveTournament);
+    root.querySelector('[data-mt="save"]')?.addEventListener('click', () => {
+      const btn = root.querySelector('[data-mt="save"]');
+      btn?.classList.add('is-saving');
+      saveTournament();
+      btn?.classList.remove('is-saving');
+    });
   }
 
   function setFieldInvalid(wrapId, message) {

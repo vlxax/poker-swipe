@@ -1,5 +1,5 @@
 /**
- * Add tournament form visual QA — 7 screenshots @390×844
+ * Add form visual polish QA — 7 screenshots @390×844
  */
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = '/opt/cursor/artifacts/mt_add_form_qa';
-const PORT = 8811;
+const OUT = '/opt/cursor/artifacts/mt_add_form_polish_qa';
+const PORT = 8812;
 const BASE = `http://127.0.0.1:${PORT}/tests/bubble_ui_bootstrap.html`;
 
 const server = spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: root, stdio: 'ignore' });
@@ -32,60 +32,49 @@ try {
   await page.click('[data-nav="mytournaments"]');
   await page.waitForSelector('#ps72TournamentScreen.on');
 
-  // 1 OFFLINE
+  // A OFFLINE top + active tab
   await openAdd();
-  await page.click('[data-mt="pick-type"][data-val="offline"]');
-  await page.waitForTimeout(400);
-  await page.screenshot({ path: `${OUT}/01_offline_form.png`, fullPage: false });
+  await page.screenshot({ path: `${OUT}/A_offline_active_tab.png`, fullPage: false });
 
-  // 2 ONLINE
+  // B ONLINE
   await page.click('[data-mt="pick-type"][data-val="online"]');
   await page.waitForTimeout(400);
-  await page.screenshot({ path: `${OUT}/02_online_form.png`, fullPage: false });
+  await page.screenshot({ path: `${OUT}/B_online_form.png`, fullPage: false });
 
-  // 3 SPORT
+  // C SPORT club + points
   await page.click('[data-mt="pick-type"][data-val="sport"]');
   await page.waitForTimeout(600);
-  await page.screenshot({ path: `${OUT}/03_sport_form.png`, fullPage: false });
+  await page.screenshot({ path: `${OUT}/C_sport_form.png`, fullPage: false });
 
-  // 4 SPORT club dropdown open
+  // D custom club dropdown open
   await page.click('[data-mt="picker-open"][data-target="mtFClubSelect"]');
   await page.waitForSelector('#mtProPickerOverlay.on');
   await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/04_sport_club_dropdown.png`, fullPage: false });
+  await page.screenshot({ path: `${OUT}/D_sport_club_picker.png`, fullPage: false });
   await page.click('[data-mt="picker-close"]');
   await page.waitForTimeout(200);
 
-  // 5 SPORT add-on + bounty
+  // E add-on + bounty expanded
   await page.click('[data-mt="yn"][data-field="addon"][data-val="1"]');
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(220);
   await page.click('[data-mt="yn"][data-field="bounty"][data-val="1"]');
-  await page.waitForTimeout(300);
-  await page.screenshot({ path: `${OUT}/05_sport_addon_bounty.png`, fullPage: false });
+  await page.waitForTimeout(280);
+  await page.screenshot({ path: `${OUT}/E_sport_addon_bounty.png`, fullPage: false });
 
-  // 6 bottom CTA
+  // F bottom CTA
   await page.evaluate(() => {
     const sheet = document.querySelector('.mt-pro-sheet');
     if (sheet) sheet.scrollTop = sheet.scrollHeight;
   });
   await page.waitForTimeout(400);
-  await page.screenshot({ path: `${OUT}/06_form_bottom_cta.png`, fullPage: false });
+  await page.screenshot({ path: `${OUT}/F_bottom_cta.png`, fullPage: false });
 
-  // 7 saved sport in history
-  const clubVal = await page.evaluate(() => {
-    const item = document.querySelector('.mt-pro-picker-item[data-target="mtFClubSelect"]:not([data-value=""])');
-    return item?.dataset.value || '';
-  });
-  await page.click('[data-mt="picker-open"][data-target="mtFClubSelect"]');
-  await page.waitForSelector('#mtProPickerOverlay.on');
-  await page.click(`.mt-pro-picker-item[data-target="mtFClubSelect"][data-value="${clubVal}"]`);
-  await page.fill('#mtFName', 'Sunday Main');
-  await page.fill('#mtFPoints', '125');
-  await page.fill('#mtFPlace', '3');
-  await page.fill('#mtFField', '48');
-  await page.click('[data-mt="save"]');
-  await page.waitForTimeout(700);
-  await page.screenshot({ path: `${OUT}/07_saved_sport_card.png`, fullPage: false });
+  // G pressed state on primary CTA
+  const cta = page.locator('.mt-pro-save-primary');
+  await cta.dispatchEvent('pointerdown');
+  await page.waitForTimeout(120);
+  await page.screenshot({ path: `${OUT}/G_cta_pressed_state.png`, fullPage: false });
+  await cta.dispatchEvent('pointerup');
 
   console.log(JSON.stringify({ ok: true, out: OUT, files: fs.readdirSync(OUT).sort() }, null, 2));
 } finally {
