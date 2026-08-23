@@ -37,7 +37,7 @@
     const id = 'daily_' + D.id;
 
     const area = document.getElementById('dailyArea');
-    area.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby pgEnter">
+    area.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
       ${hudStrip(ctx, id, { title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>', subtitle: '#' + D.number + ' · ' + esc(D.theme) })}
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: D.board.slice(0, 3), hero: D.hero, pot: D.pot, street: 'ФЛОП', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       <div class="pgDailyChallenge">
@@ -73,7 +73,7 @@
     ctx.pot = potNow + ' ББ';
 
     const area = document.getElementById('dailyArea');
-    area.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill pgEnter">
+    area.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill">
       ${hudStrip(ctx, id, { title: '<h2>Разбор решения</h2>', subtitle: streetLabels[window.dStreet] })}
       <div class="pgStreetDots">${streets.map((x, i) => `<span class="${i < window.dStreet ? 'done' : i === window.dStreet ? 'on' : ''}">${x}</span>`).join('')}</div>
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: n ? D.board.slice(0, n) : [], hero: D.hero, pot: potNow, street: streetLabels[window.dStreet], heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>

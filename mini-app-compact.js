@@ -263,7 +263,7 @@
       const action = v === 0 ? 'CHECK' : 'BET';
       const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
       const g = br?.grade || 'y';
-      window.PsMotion?.decisionLock(lockBtn, { grade: g });
+      window.PsMotion?.decisionLock(lockBtn);
       window.recordEvent({
         spotId: s.id, mode: 'sizing', concept: s.concept, conceptId: br?.concept, street: s.street,
         action, sizePct: v || null, grade: g, gradeAction: br?.actionGrade, gradeSize: br?.sizeGrade,

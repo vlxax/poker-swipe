@@ -35,14 +35,18 @@
     return 'warn';
   }
 
-  function pulseArena(root, grade) {
-    const arena = root?.querySelector('.pgArena, .pgFelt');
-    if (!arena) return;
+  function pulseTarget(root, grade, selector) {
+    const el = root?.querySelector(selector || '.pgVerdictCompact, .verdict, #swipeVerdict .swipeFlash');
+    if (!el) return;
     const kind = gradePulse(grade);
-    arena.classList.remove('ps-pulse-good', 'ps-pulse-bad', 'ps-pulse-warn');
-    void arena.offsetWidth;
-    arena.classList.add('ps-pulse-' + kind);
-    setTimeout(() => arena.classList.remove('ps-pulse-' + kind), 520);
+    el.classList.remove('ps-pulse-good', 'ps-pulse-bad', 'ps-pulse-warn', 'ps-feedback-good', 'ps-feedback-bad', 'ps-feedback-warn');
+    void el.offsetWidth;
+    el.classList.add('ps-pulse-' + kind);
+    setTimeout(() => el.classList.remove('ps-pulse-' + kind), 560);
+  }
+
+  function pulseArena(root, grade) {
+    pulseTarget(root, grade, '.pgVerdictCompact, .verdict');
   }
 
   /* ── Bubble press (delegated) ── */
@@ -114,7 +118,6 @@
 
       const back = (DEPTH[id] ?? 1) < (DEPTH[prev.id] ?? 1);
       document.body.classList.add('ps-transitioning');
-      if (id !== 'home') document.body.classList.add('ps-bg-recede');
 
       prev.classList.add(back ? 'ps-screen-back-out' : 'ps-screen-out');
 
@@ -123,7 +126,6 @@
         orig(id);
         const next = document.querySelector('.screen.active');
         if (next) next.classList.add(back ? 'ps-screen-back-in' : 'ps-screen-in');
-        document.body.classList.remove('ps-bg-recede');
         syncNavIndicator();
 
         const screenDur = ms('--motion-screen', 280);
@@ -154,33 +156,22 @@
     if (shell) afterShell(shell, { mode: 'enter' });
   }
 
-  /* ── Home tile entry arm ── */
-  function bindHomeTiles() {
-    document.addEventListener('click', (e) => {
-      const tile = e.target.closest('.tile[id^="home"], .v35Tool, .v30Mode');
-      if (!tile) return;
-      tile.classList.add('ps-tile-armed');
-      setTimeout(() => tile.classList.remove('ps-tile-armed'), ms('--motion-tap', 120));
-    }, true);
-  }
+  /* ── Home tile — bubble press handles feedback ── */
+  function bindHomeTiles() {}
 
   /* ── After shell render ── */
   function afterShell(shell, opts = {}) {
     if (!shell) return;
-    shell.classList.remove('ps-hand-starting', 'ps-dim-surround');
+    shell.classList.remove('ps-hand-starting', 'ps-dim-surround', 'pgEnter');
     bindBubblePress();
 
     const dealWrap = shell.querySelector('.pgArenaWrap, .pgDealIn');
-    if (dealWrap) runCardDeal(dealWrap, opts);
+    if (dealWrap && opts.deal !== false) runCardDeal(dealWrap, opts);
 
     if (opts.mode === 'hand-start') {
-      shell.classList.add('ps-hand-starting', 'ps-dim-surround');
-      setTimeout(() => shell.classList.remove('ps-hand-starting', 'ps-dim-surround'), ms('--motion-hand', 520));
-    }
-
-    if (opts.mode === 'enter' && !reduced()) {
-      shell.classList.add('pgEnter');
-      setTimeout(() => shell.classList.remove('pgEnter'), ms('--motion-screen', 280));
+      shell.classList.add('ps-hand-starting');
+      if (opts.dim) shell.classList.add('ps-dim-surround');
+      setTimeout(() => shell.classList.remove('ps-hand-starting', 'ps-dim-surround'), ms('--motion-hand', 480));
     }
 
     shell.querySelectorAll('input.range').forEach((r) => {
@@ -212,13 +203,12 @@
   /* ── Decision lock ── */
   function decisionLock(btn, opts = {}) {
     if (!btn) return;
-    btn.classList.add('ps-decision-locked', 'ps-pressed');
+    btn.classList.add('ps-decision-locked');
     const grid = btn.closest('.pgDecisionGrid, .grid2, .pgActionRow, #swipeActions, .actions');
     grid?.querySelectorAll('button').forEach((b) => { if (b !== btn) b.disabled = true; });
-
-    const shell = btn.closest('.pgShell, .swipeShell, #swipeCard');
     if (opts.grade != null) {
-      setTimeout(() => pulseArena(shell, opts.grade), ms('--motion-tap', 120));
+      const area = btn.closest('.pgShell, .swipeShell, #swipeCard, #swipeVerdict');
+      setTimeout(() => pulseTarget(area, opts.grade), ms('--motion-tap', 160) + 80);
     }
   }
 
@@ -226,12 +216,11 @@
   function startHand(root, runFn) {
     if (!root) { runFn?.(); return; }
     const shell = root.querySelector('.pgShell') || root;
-    shell.classList.add('ps-dim-surround');
     if (!reduced()) {
-      shell.classList.add('ps-hand-starting');
-      wait(ms('--motion-tap', 120)).then(() => {
+      shell.classList.add('ps-dim-surround');
+      wait(ms('--motion-tap', 160)).then(() => {
         runFn?.();
-        afterShell(shell.querySelector('.pgShell') || shell, { mode: 'hand-start' });
+        afterShell(shell.querySelector('.pgShell') || shell, { mode: 'hand-start', dim: false, deal: true });
       });
     } else {
       runFn?.();
@@ -240,10 +229,11 @@
 
   /* ── Sizing confirm ── */
   function sizingConfirm(area, grade) {
-    pulseArena(area, grade);
+    const verdict = area?.querySelector('#sizeResult .verdict, .pgVerdictCompact');
+    if (verdict) pulseTarget(area, grade, '#sizeResult .verdict, .pgVerdictCompact');
     area?.querySelector('.pgPot, .pgPotLabel')?.classList.add('ps-bet-to-pot');
-    setTimeout(() => area?.querySelector('.pgPot, .pgPotLabel')?.classList.remove('ps-bet-to-pot'), 450);
-    progressiveReveal(area?.querySelector('#sizeResult .verdict'), { delay: 80 });
+    setTimeout(() => area?.querySelector('.pgPot, .pgPotLabel')?.classList.remove('ps-bet-to-pot'), 400);
+    progressiveReveal(area?.querySelector('#sizeResult .verdict'), { delay: 100 });
   }
 
   /* ── Progressive reveal ── */
@@ -287,17 +277,19 @@
 
         const pick = window.rvPick;
         const culIdx = bm.culpritIndex;
-        pulseArena(area, (bm.clean && pick === 'none') || (!bm.clean && pick === culIdx) ? 'g' : 'r');
+        const ok = (bm.clean && pick === 'none') || (!bm.clean && pick === culIdx);
 
         if (!reduced()) {
           reviewTimelineReveal(area, culIdx, bm.clean);
-          wait(Math.min(520, 80 + (bm.clean ? 4 : culIdx + 1) * 120 + 100)).then(() => {
+          wait(Math.min(480, 80 + (bm.clean ? 4 : culIdx + 1) * 100 + 80)).then(() => {
             orig();
             progressiveReveal(area?.querySelector('.panel, .pgShell'));
+            pulseTarget(area, ok ? 'g' : 'r', '.pgVerdictCompact, .verdict, .brainPanel');
           });
         } else {
           orig();
           progressiveReveal(area?.querySelector('.panel, .pgShell'));
+          pulseTarget(area, ok ? 'g' : 'r', '.pgVerdictCompact, .verdict, .brainPanel');
         }
       };
       window.__psReviewWrapped = true;
@@ -313,10 +305,7 @@
   function rangesCellFlash(cell) {
     if (!cell) return;
     cell.classList.add('ps-cell-press');
-    setTimeout(() => cell.classList.remove('ps-cell-press'), ms('--motion-tap', 120));
-    cell.classList.remove('ps-cell-flash');
-    void cell.offsetWidth;
-    cell.classList.add('ps-cell-flash');
+    setTimeout(() => cell.classList.remove('ps-cell-press'), ms('--motion-tap', 160));
   }
 
   /* ── Swipe verdict pulse + reveal ── */
@@ -328,7 +317,7 @@
         orig(s, a, size);
         const btn = document.querySelector('[data-sa].selected');
         const g = btn?.classList.contains('grade-r') ? 'r' : btn?.classList.contains('grade-y') ? 'y' : 'g';
-        pulseArena(document.getElementById('swipeCard'), g);
+        pulseTarget(document.getElementById('swipeCard'), g, '#swipeVerdict .swipeFlash, #swipeVerdict .verdict');
         progressiveReveal(document.getElementById('swipeVerdict'));
       };
       window.__psSwipeWrapped = true;
@@ -351,9 +340,8 @@
         const shell = area.querySelector('.pgShell, .swipeShell');
         if (shell && !shell.dataset.psMotionDone) {
           shell.dataset.psMotionDone = '1';
-          const mode = shell.classList.contains('pgDailyDrill') ? 'hand-start'
-            : shell.classList.contains('pgDailyLobby') ? 'enter' : 'enter';
-          afterShell(shell, { mode });
+          const mode = shell.classList.contains('pgDailyDrill') ? 'enter' : 'enter';
+          afterShell(shell, { mode, deal: shell.classList.contains('pgDailyDrill') });
           setTimeout(() => delete shell.dataset.psMotionDone, 600);
         }
       });
@@ -393,6 +381,7 @@
     startHand,
     decisionLock,
     pulseArena,
+    pulseTarget,
     sizingConfirm,
     progressiveReveal,
     reviewTimelineReveal,
