@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const MY_TOUR_MARKERS = ['.v59Journal', '.t23', '.v58JournalHero', '.ps72hero'];
+  const MY_TOUR_MARKERS = ['.v59Journal', '.t23', '.v58JournalHero', '.mt-pro-hero', '.ps72hero'];
 
   function reparentPs72() {
     const root = document.getElementById('myTournamentsRoot');
@@ -17,7 +17,9 @@
     const ps72 = document.getElementById('ps72TournamentScreen');
     ps72?.classList.remove('on');
     ps72?.setAttribute('aria-hidden', 'true');
-    document.getElementById('ps72Modal')?.classList.remove('on');
+    document.getElementById('mtProModal')?.classList.remove('on');
+    document.getElementById('mtProDetailOverlay')?.classList.remove('on');
+    document.getElementById('mtProDetail')?.classList.remove('on');
     document.body.style.overflow = '';
   }
 
