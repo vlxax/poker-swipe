@@ -307,8 +307,7 @@ function filterSheet(){
 }
 
 function shell(){
-  return `<div class="pspTop"><div class="pspLogo">POKER <i>SWIPE</i></div><div class="pspBy">by ФРИКОВАЯ ДАМА 💋</div></div>
-  <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
+  return `<div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
   <div class="pspTabs"><button type="button" class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button type="button" class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button type="button" class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
   <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
   <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>
