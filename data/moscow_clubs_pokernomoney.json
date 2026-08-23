@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T22:51:27+03:00",
+  "retrieved_at": "2026-08-23T23:54:09+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -195,9 +195,25 @@
           "reentry_cost_rub": null,
           "duration_minutes": null,
           "source_card_text": "Колесо Фортуны Варфоломеева 18:00 1 000 ₽ BLEF BET Измайловское ш., д. 73Ж"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "19:00",
+          "club": "BLEF BET",
+          "tournament": "Random Bounty Варфоломеева",
+          "fee_rub": 500,
+          "type": "Баунти / Нокаут",
+          "source_url": "https://pokernomoney.ru/tournaments/11719",
+          "address": "Измайловское ш., д. 73Ж",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Баунти / Нокаут Random Bounty Варфоломеева 19:00 500 ₽ BLEF BET Измайловское ш., д. 73Ж"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "CARTEL POKER CLUB",
