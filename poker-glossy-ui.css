@@ -36,26 +36,68 @@
   --ps-r-lg: 24px;
   --ps-r-xl: 28px;
   --ps-r-2xl: 32px;
+  --ps-r-pill: 999px;
 
-  /* ── Depth ── */
+  /* ── Depth — tactile game UI ── */
   --ps-shadow-card:
-    inset 0 1px 0 rgba(255, 255, 255, 0.09),
-    inset 0 -10px 28px rgba(0, 0, 0, 0.38),
-    0 0 0 1px rgba(200, 255, 61, 0.06),
-    0 0 32px var(--ps-lime-glow-soft),
-    0 18px 44px rgba(0, 0, 0, 0.42);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -14px 32px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 0 1px rgba(200, 255, 61, 0.08),
+    0 0 28px rgba(200, 255, 61, 0.1),
+    0 4px 0 rgba(0, 0, 0, 0.35),
+    0 22px 48px rgba(0, 0, 0, 0.45);
+  --ps-shadow-card-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -14px 32px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(200, 255, 61, 0.14),
+    0 0 36px rgba(200, 255, 61, 0.16),
+    0 6px 0 rgba(0, 0, 0, 0.32),
+    0 28px 56px rgba(0, 0, 0, 0.48);
+  --ps-shadow-card-pressed:
+    inset 0 3px 14px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(200, 255, 61, 0.12),
+    0 0 22px rgba(200, 255, 61, 0.1),
+    0 1px 0 rgba(0, 0, 0, 0.4),
+    0 10px 28px rgba(0, 0, 0, 0.38);
   --ps-shadow-btn:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(200, 255, 61, 0.22),
-    0 0 22px var(--ps-lime-glow-soft),
-    0 7px 0 var(--ps-lime-deep),
-    0 14px 32px rgba(0, 0, 0, 0.38);
+    inset 0 2px 0 rgba(255, 255, 255, 0.48),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(226, 255, 135, 0.35),
+    0 0 24px rgba(200, 255, 61, 0.22),
+    0 0 48px rgba(200, 255, 61, 0.08),
+    0 8px 0 var(--ps-lime-deep),
+    0 16px 36px rgba(0, 0, 0, 0.4);
+  --ps-shadow-btn-hover:
+    inset 0 2px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(232, 255, 160, 0.45),
+    0 0 32px rgba(200, 255, 61, 0.32),
+    0 0 64px rgba(200, 255, 61, 0.12),
+    0 9px 0 var(--ps-lime-deep),
+    0 20px 44px rgba(0, 0, 0, 0.42);
   --ps-shadow-btn-pressed:
-    inset 0 2px 6px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(200, 255, 61, 0.18),
+    inset 0 4px 10px rgba(0, 0, 0, 0.28),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(200, 255, 61, 0.2),
+    0 0 16px rgba(200, 255, 61, 0.18),
     0 2px 0 var(--ps-lime-deep),
-    0 6px 16px rgba(0, 0, 0, 0.28);
+    0 8px 20px rgba(0, 0, 0, 0.32);
+  --ps-shadow-btn-secondary:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(200, 255, 61, 0.1),
+    0 0 16px rgba(200, 255, 61, 0.08),
+    0 5px 0 rgba(0, 0, 0, 0.28),
+    0 12px 28px rgba(0, 0, 0, 0.32);
+  --ps-shadow-btn-secondary-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(200, 255, 61, 0.18),
+    0 0 24px rgba(200, 255, 61, 0.14),
+    0 6px 0 rgba(0, 0, 0, 0.26),
+    0 16px 32px rgba(0, 0, 0, 0.34);
+  --ps-ease-tactile: cubic-bezier(0.22, 0.95, 0.35, 1);
 
   /* Bridge legacy tokens */
   --pink: var(--ps-lime);
@@ -117,104 +159,306 @@ html, body {
 .ps-glossy-btn {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(226, 255, 135, 0.5);
-  border-radius: var(--ps-r-md);
+  isolation: isolate;
+  border: 1px solid rgba(226, 255, 135, 0.55);
+  border-radius: var(--ps-r-pill);
   background: linear-gradient(
     180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
+    #eaff96 0%,
+    #d4ff57 38%,
+    var(--ps-lime) 58%,
+    #9fd428 100%
   );
   color: #0a0d07 !important;
   font-weight: 950;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
   box-shadow: var(--ps-shadow-btn);
-  transform: translateY(-1px);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  transform: translateY(-2px);
+  transition:
+    transform 0.14s var(--ps-ease-tactile),
+    box-shadow 0.14s var(--ps-ease-tactile),
+    filter 0.14s ease,
+    border-color 0.14s ease;
 }
 
 .ps-glossy-btn::before {
   content: "";
   pointer-events: none;
   position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 2px;
-  height: 42%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
-  opacity: 0.85;
+  z-index: 1;
+  left: 10%;
+  right: 10%;
+  top: 3px;
+  height: 44%;
+  border-radius: var(--ps-r-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.08) 100%);
+  opacity: 0.9;
+}
+
+.ps-glossy-btn::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+@media (hover: hover) {
+  .ps-glossy-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: var(--ps-shadow-btn-hover);
+    border-color: rgba(240, 255, 180, 0.65);
+  }
 }
 
 .ps-glossy-btn:active:not(:disabled) {
-  transform: translateY(4px);
+  transform: translateY(5px) scale(0.985);
   box-shadow: var(--ps-shadow-btn-pressed);
+}
+
+.ps-glossy-btn:disabled {
+  opacity: 0.42;
+  transform: none;
+  filter: grayscale(0.4) saturate(0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
 }
 
 .ps-glossy-btn-secondary {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(168deg, rgba(26, 31, 26, 0.98), rgba(10, 12, 10, 0.99));
+  isolation: isolate;
+  background: linear-gradient(168deg, rgba(28, 34, 28, 0.98) 0%, rgba(12, 14, 12, 0.99) 100%);
   border: 1px solid var(--ps-lime-border);
-  border-radius: var(--ps-r-md);
+  border-radius: var(--ps-r-pill);
   color: var(--ps-text) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -6px 18px rgba(0, 0, 0, 0.32),
-    0 0 18px var(--ps-lime-glow-soft),
-    0 10px 28px rgba(0, 0, 0, 0.32);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  box-shadow: var(--ps-shadow-btn-secondary);
+  transform: translateY(-1px);
+  transition:
+    transform 0.14s var(--ps-ease-tactile),
+    box-shadow 0.14s var(--ps-ease-tactile),
+    border-color 0.14s ease;
+}
+
+.ps-glossy-btn-secondary::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 42%);
+}
+
+@media (hover: hover) {
+  .ps-glossy-btn-secondary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--ps-lime-border-strong);
+    box-shadow: var(--ps-shadow-btn-secondary-hover);
+  }
 }
 
 .ps-glossy-btn-secondary:active:not(:disabled) {
-  transform: translateY(2px) scale(0.985);
+  transform: translateY(3px) scale(0.985);
   box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.35),
-    0 0 12px var(--ps-lime-glow-soft),
-    0 4px 14px rgba(0, 0, 0, 0.28);
+    inset 0 3px 10px rgba(0, 0, 0, 0.38),
+    0 0 14px rgba(200, 255, 61, 0.1),
+    0 2px 0 rgba(0, 0, 0, 0.3),
+    0 6px 16px rgba(0, 0, 0, 0.28);
 }
 
-/* ── Primary CTA ── */
+.ps-glossy-btn-secondary:disabled {
+  opacity: 0.4;
+  transform: none;
+  filter: grayscale(0.35);
+  pointer-events: none;
+}
+
+/* Neon gaming variant — stronger edge glow */
+.ps-glossy-btn-neon {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--ps-r-pill);
+  border: 1px solid rgba(226, 255, 135, 0.7);
+  background: linear-gradient(180deg, #eeffaa 0%, var(--ps-lime) 55%, #8ec824 100%);
+  color: #0a0d07 !important;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  box-shadow:
+    var(--ps-shadow-btn),
+    0 0 0 2px rgba(200, 255, 61, 0.12),
+    0 0 40px rgba(200, 255, 61, 0.25);
+  transform: translateY(-2px);
+  transition: transform 0.14s var(--ps-ease-tactile), box-shadow 0.14s var(--ps-ease-tactile);
+}
+
+.ps-glossy-btn-neon::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 3px;
+  height: 42%;
+  border-radius: var(--ps-r-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), transparent);
+}
+
+@media (hover: hover) {
+  .ps-glossy-btn-neon:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow:
+      var(--ps-shadow-btn-hover),
+      0 0 0 2px rgba(200, 255, 61, 0.18),
+      0 0 52px rgba(200, 255, 61, 0.32);
+  }
+}
+
+.ps-glossy-btn-neon:active:not(:disabled) {
+  transform: translateY(5px) scale(0.985);
+  box-shadow: var(--ps-shadow-btn-pressed);
+}
+
+/* Soft glow variant */
+.ps-glossy-btn-glow {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--ps-r-pill);
+  border: 1px solid rgba(226, 255, 135, 0.5);
+  background: linear-gradient(180deg, #e8ff88 0%, var(--ps-lime) 100%);
+  color: #0a0d07 !important;
+  font-weight: 950;
+  box-shadow: var(--ps-shadow-btn), 0 0 56px rgba(200, 255, 61, 0.18);
+  transform: translateY(-2px);
+  transition: transform 0.14s var(--ps-ease-tactile), box-shadow 0.14s var(--ps-ease-tactile);
+}
+
+.ps-glossy-btn-glow::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 2px;
+  height: 40%;
+  border-radius: var(--ps-r-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+}
+
+@media (hover: hover) {
+  .ps-glossy-btn-glow:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: var(--ps-shadow-btn-hover), 0 0 72px rgba(200, 255, 61, 0.22);
+  }
+}
+
+.ps-glossy-btn-glow:active:not(:disabled) {
+  transform: translateY(5px) scale(0.985);
+  box-shadow: var(--ps-shadow-btn-pressed);
+}
+
+/* Forced pressed look (HUD / demo) */
+.ps-glossy-btn-pressed,
+.ps-glossy-btn.is-pressed {
+  transform: translateY(5px) scale(0.985) !important;
+  box-shadow: var(--ps-shadow-btn-pressed) !important;
+}
+
+/* ── Primary CTA — pill tactile game button ── */
 .primary,
 .p40Primary,
 .v35Start,
+.v58Primary,
 .v36Personal button,
+.ps72save,
+.t23Add,
+.t23Form .primary,
+.t23DetailActions24 .primary,
 button.primary {
   position: relative !important;
   overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
+  isolation: isolate;
+  border: 1px solid rgba(226, 255, 135, 0.58) !important;
+  border-radius: var(--ps-r-pill) !important;
   background: linear-gradient(
     180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
+    #eaff96 0%,
+    #d4ff57 36%,
+    var(--ps-lime) 58%,
+    #9fd428 100%
   ) !important;
   color: #0a0d07 !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.045em !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) !important;
   box-shadow: var(--ps-shadow-btn) !important;
-  transform: translateY(-1px);
-  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+  transform: translateY(-2px);
+  transition:
+    transform 0.14s var(--ps-ease-tactile),
+    box-shadow 0.14s var(--ps-ease-tactile),
+    border-color 0.14s ease !important;
   filter: none !important;
 }
 
 .primary::before,
 .p40Primary::before,
-.v35Start::before {
+.v35Start::before,
+.v58Primary::before,
+.ps72save::before,
+.t23Add::before {
   content: "";
   pointer-events: none;
   position: absolute;
-  left: 7%;
-  right: 7%;
+  z-index: 1;
+  left: 8%;
+  right: 8%;
   top: 3px;
-  height: 40%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52), transparent);
+  height: 44%;
+  border-radius: var(--ps-r-pill);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.06) 100%);
+}
+
+.primary::after,
+.p40Primary::after,
+.v35Start::after,
+.v58Primary::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+}
+
+@media (hover: hover) {
+  .primary:hover:not(:disabled),
+  .p40Primary:hover:not(:disabled),
+  .v35Start:hover:not(:disabled),
+  .v58Primary:hover:not(:disabled),
+  .ps72save:hover:not(:disabled),
+  .t23Add:hover:not(:disabled),
+  button.primary:hover:not(:disabled) {
+    transform: translateY(-3px) !important;
+    box-shadow: var(--ps-shadow-btn-hover) !important;
+    border-color: rgba(240, 255, 180, 0.68) !important;
+  }
 }
 
 .primary:active:not(:disabled),
-.p40Primary:active,
-.v35Start:active,
-.v36Personal button:active {
-  transform: translateY(4px) !important;
+.p40Primary:active:not(:disabled),
+.v35Start:active:not(:disabled),
+.v58Primary:active:not(:disabled),
+.v36Personal button:active:not(:disabled),
+.ps72save:active:not(:disabled),
+.t23Add:active:not(:disabled),
+button.primary:active:not(:disabled) {
+  transform: translateY(5px) scale(0.985) !important;
   box-shadow: var(--ps-shadow-btn-pressed) !important;
 }
 
@@ -224,20 +468,21 @@ button.primary {
 .tile:focus-visible,
 .action:focus-visible {
   outline: 2px solid var(--ps-lime-hi);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .primary:disabled,
 .secondary:disabled,
-.choice:disabled {
-  opacity: 0.38 !important;
+.choice:disabled,
+button.primary:disabled {
+  opacity: 0.4 !important;
   transform: none !important;
-  box-shadow: none !important;
-  filter: grayscale(0.35);
+  filter: grayscale(0.45) saturate(0.55) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.22) !important;
   pointer-events: none;
 }
 
-/* ── Secondary / choice buttons ── */
+/* ── Secondary / choice — dark volumetric pills ── */
 .secondary,
 .choice,
 .diagChoice,
@@ -251,25 +496,61 @@ button.primary {
 .p40Choice,
 .p40Ghost,
 .t23Filters button,
-.cardRankGrid18 button {
+.cardRankGrid18 button,
+.ps72cancel,
+.ps72delete,
+.d25Choices button {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  isolation: isolate;
+  background: linear-gradient(168deg, rgba(28, 34, 28, 0.98) 0%, rgba(11, 13, 11, 0.99) 100%) !important;
   border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-md) !important;
+  border-radius: var(--ps-r-pill) !important;
   color: var(--ps-text) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -5px 16px rgba(0, 0, 0, 0.28),
-    0 0 14px var(--ps-lime-glow-soft),
-    0 8px 22px rgba(0, 0, 0, 0.28) !important;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.03em;
+  box-shadow: var(--ps-shadow-btn-secondary) !important;
+  transform: translateY(-1px);
+  transition:
+    transform 0.14s var(--ps-ease-tactile),
+    box-shadow 0.14s var(--ps-ease-tactile),
+    border-color 0.14s ease !important;
 }
 
-.secondary:active,
-.choice:active,
-.builderActions button:active {
-  transform: translateY(2px) scale(0.985) !important;
+.secondary::before,
+.choice::before,
+.diagChoice::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, transparent 45%);
+}
+
+@media (hover: hover) {
+  .secondary:hover:not(:disabled),
+  .choice:hover:not(:disabled),
+  .diagChoice:hover:not(:disabled),
+  .builderActions button:hover:not(:disabled),
+  .d25Choices button:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    border-color: var(--ps-lime-border-strong) !important;
+    box-shadow: var(--ps-shadow-btn-secondary-hover) !important;
+  }
+}
+
+.secondary:active:not(:disabled),
+.choice:active:not(:disabled),
+.diagChoice:active:not(:disabled),
+.builderActions button:active:not(:disabled),
+.d25Choices button:active:not(:disabled) {
+  transform: translateY(3px) scale(0.985) !important;
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.38),
+    0 0 14px rgba(200, 255, 61, 0.1),
+    0 2px 0 rgba(0, 0, 0, 0.28),
+    0 6px 16px rgba(0, 0, 0, 0.28) !important;
 }
 
 .choice.selected,
@@ -336,7 +617,7 @@ button.primary {
   color: var(--ps-text-muted) !important;
 }
 
-/* ── Glossy cards (sections, panels, tiles) ── */
+/* ── Glossy cards — elevated game panels ── */
 .hero,
 .panel,
 .lab,
@@ -373,14 +654,24 @@ button.primary {
 .p40Summary,
 .creatorVerdict,
 .healHero,
-.shareCard {
+.shareCard,
+.d25Card,
+.v31DiagCard,
+.rank28Card {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(168deg, var(--ps-surface-3) 0%, var(--ps-surface) 50%, var(--ps-bg-elevated) 100%) !important;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at calc(100% - 15px) 15px, rgba(200, 255, 61, 0.35) 0, rgba(200, 255, 61, 0.08) 4px, transparent 5px),
+    linear-gradient(168deg, rgba(28, 34, 28, 0.96) 0%, var(--ps-surface) 48%, rgba(8, 10, 8, 0.98) 100%) !important;
   border: 1px solid var(--ps-lime-border) !important;
   border-radius: var(--ps-r-lg) !important;
   box-shadow: var(--ps-shadow-card) !important;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease !important;
+  transform: translateY(0);
+  transition:
+    transform 0.16s var(--ps-ease-tactile),
+    box-shadow 0.16s var(--ps-ease-tactile),
+    border-color 0.16s ease !important;
 }
 
 .hero::after,
@@ -393,16 +684,42 @@ button.primary {
   content: "" !important;
   pointer-events: none !important;
   position: absolute !important;
+  z-index: 1 !important;
   inset: 0 !important;
   border-radius: inherit !important;
   background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.09) 0%,
-    transparent 30%,
-    transparent 65%,
-    rgba(200, 255, 61, 0.05) 100%
+    145deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.02) 24%,
+    transparent 52%,
+    transparent 68%,
+    rgba(200, 255, 61, 0.06) 100%
   ) !important;
-  opacity: 0.75 !important;
+  opacity: 0.82 !important;
+}
+
+/* Kill legacy sheen sweep on glossy cards */
+.tile::before,
+.my18Tool::before,
+.v36Tile::before {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+@media (hover: hover) {
+  .tile:hover,
+  .quick5:hover,
+  .metric:hover,
+  .myEntry:hover,
+  .my18Tool:hover,
+  .v36Tile:hover,
+  .v36Daily:hover,
+  .v36Quick:hover,
+  .v36Hand:hover {
+    transform: translateY(-3px) !important;
+    border-color: var(--ps-lime-border-strong) !important;
+    box-shadow: var(--ps-shadow-card-hover) !important;
+  }
 }
 
 .tile:active,
@@ -416,12 +733,9 @@ button.primary {
 .v36Hand:active,
 .v35Hand:active,
 .homeHandLab:active {
-  transform: scale(0.985) translateY(1px) !important;
+  transform: translateY(2px) scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
-  box-shadow:
-    inset 0 2px 10px rgba(0, 0, 0, 0.35),
-    0 0 28px var(--ps-lime-glow-soft),
-    0 10px 28px rgba(0, 0, 0, 0.38) !important;
+  box-shadow: var(--ps-shadow-card-pressed) !important;
 }
 
 .tile .go,
@@ -430,7 +744,9 @@ button.primary {
 .my18Tool .go,
 .homeHandLab > strong {
   color: var(--ps-lime) !important;
-  text-shadow: 0 0 16px var(--ps-lime-glow-soft);
+  font-weight: 950 !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 0 14px rgba(200, 255, 61, 0.45), 0 1px 0 rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Home mode accents — keep identity, unify material */
@@ -454,14 +770,37 @@ button.primary {
     linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
 }
 
-/* ── Action bar (fold / call / raise) — semantic + glossy ── */
+/* ── Action bar (fold / call / raise) — tactile game chips ── */
 .action {
-  background: linear-gradient(168deg, rgba(20, 24, 20, 0.98), rgba(10, 12, 10, 0.99)) !important;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(168deg, rgba(24, 28, 24, 0.98), rgba(9, 11, 9, 0.99)) !important;
   border: 1px solid var(--ps-line-soft) !important;
-  border-radius: var(--ps-r-md) !important;
+  border-radius: var(--ps-r-pill) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.28) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.3),
+    0 4px 0 rgba(0, 0, 0, 0.25),
+    0 10px 22px rgba(0, 0, 0, 0.28) !important;
+  transform: translateY(-1px);
+  transition: transform 0.14s var(--ps-ease-tactile), box-shadow 0.14s ease !important;
+}
+
+@media (hover: hover) {
+  .action:hover:not(:disabled):not(.selected) {
+    transform: translateY(-2px) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 18px rgba(200, 255, 61, 0.08),
+      0 5px 0 rgba(0, 0, 0, 0.22),
+      0 14px 28px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+.action:active:not(:disabled) {
+  transform: translateY(3px) scale(0.98) !important;
 }
 
 .action.fold { border-color: rgba(255, 98, 118, 0.45) !important; box-shadow: 0 0 16px rgba(255, 98, 118, 0.08), inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.28) !important; }
@@ -523,24 +862,21 @@ button.primary {
 
 .t23AddMini {
   border-color: var(--ps-lime-border) !important;
-  background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
-  color: var(--ps-lime) !important;
-  box-shadow: 0 0 22px var(--ps-lime-glow-soft), 0 8px 0 var(--ps-lime-deep) !important;
-}
-
-/* ── Icon / compact action buttons ── */
-.p40Add,
-.v35Start,
-.close,
-.build {
-  border-radius: var(--ps-r-sm) !important;
-}
-
-.build {
-  background: var(--ps-lime) !important;
+  border-radius: var(--ps-r-pill) !important;
+  background: linear-gradient(180deg, #eaff96 0%, var(--ps-lime) 55%, #9fd428 100%) !important;
   color: #0a0d07 !important;
-  border: 1px solid rgba(226, 255, 135, 0.5) !important;
+  font-weight: 950 !important;
   box-shadow: var(--ps-shadow-btn) !important;
+  transform: translateY(-2px);
+}
+
+.build {
+  border-radius: var(--ps-r-pill) !important;
+  background: linear-gradient(180deg, #eaff96 0%, var(--ps-lime) 55%, #9fd428 100%) !important;
+  color: #0a0d07 !important;
+  border: 1px solid rgba(226, 255, 135, 0.55) !important;
+  box-shadow: var(--ps-shadow-btn) !important;
+  font-weight: 950 !important;
 }
 
 /* ── Progress / accents ── */
@@ -590,39 +926,13 @@ h2 .pink {
   transform: scale(0.98) !important;
 }
 
-/* ── Diagnostic card ── */
-.d25Card,
-.v31DiagCard {
-  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-xl) !important;
-  box-shadow: var(--ps-shadow-card) !important;
-}
-
-.d25Choices button,
-.d25ResultActions button {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-md) !important;
-  color: var(--ps-text) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 14px var(--ps-lime-glow-soft),
-    0 8px 20px rgba(0, 0, 0, 0.26) !important;
-}
+/* ── Diagnostic card — inherits elevated panel from card block above ── */
 
 .d25Choices button:active {
-  transform: translateY(2px) scale(0.985) !important;
+  transform: translateY(3px) scale(0.985) !important;
 }
 
 /* ── Rank ladder cards ── */
-.rank28Card {
-  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-md) !important;
-  box-shadow: var(--ps-shadow-card) !important;
-}
-
 .rank28Card:active:not(.locked) {
   transform: scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
@@ -656,43 +966,11 @@ h2 .pink {
 .v48ClubCard:active,
 .v56ClubCard:active,
 .v59Card:active {
-  transform: scale(0.985) !important;
+  transform: translateY(2px) scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
 }
 
-.v58Primary {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
 /* ── Tournaments (override stitch layer harmoniously) ── */
-.t23Add,
-.t23Form .primary,
-.t23DetailActions24 .primary {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
 .t23Card,
 .t23Row,
 .t23Tournament,
@@ -751,13 +1029,9 @@ h2 .pink {
 .ps72tabs button.on,
 .ps72formatMenu button.on,
 .ps72seg button.on {
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  border-color: rgba(226, 255, 135, 0.52) !important;
+  border-radius: var(--ps-r-pill) !important;
+  background: linear-gradient(180deg, #eaff96 0%, var(--ps-lime) 58%, #9fd428 100%) !important;
+  border-color: rgba(226, 255, 135, 0.58) !important;
   color: #0a0d07 !important;
   box-shadow: var(--ps-shadow-btn) !important;
 }
@@ -774,28 +1048,7 @@ h2 .pink {
   background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
 }
 
-.ps72save {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
-.ps72cancel,
-.ps72delete {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-line-soft) !important;
-  border-radius: var(--ps-r-md) !important;
-  color: var(--ps-text-soft) !important;
-}
+/* ps72save / ps72cancel covered by .primary / .secondary blocks */
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
@@ -818,12 +1071,13 @@ h2 .pink {
   .primary,
   .secondary,
   .choice {
-    border-radius: var(--ps-r-sm) !important;
-    padding-top: 13px !important;
-    padding-bottom: 13px !important;
+    border-radius: var(--ps-r-pill) !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    min-height: 48px;
   }
   .tile,
   .v36Tile {
-    border-radius: var(--ps-r-md) !important;
+    border-radius: var(--ps-r-lg) !important;
   }
 }
