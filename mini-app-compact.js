@@ -1,22 +1,18 @@
 /**
- * PokerSwipe — Compact Mini-App UX
- * Restructures training mini-apps: compact context, cards-first, timeline, less text.
+ * PokerSwipe — Game Interface Mini-Apps
+ * The poker hand IS the screen: HUD + arena + controls.
  */
 (function () {
   'use strict';
   window.__maCompactLayout = true;
+  window.__maGameLayout = true;
 
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-  function pc(c, small) {
-    return `<span class="pc ${/[♥♦]/.test(c) ? 'suit-red' : ''}" style="${small ? 'width:42px;height:58px;font-size:17px' : ''}">${esc(c)}</span>`;
-  }
-  function handHtml(a) {
-    return `<div class="cards holeCards">${(a || []).map((x) => pc(x)).join('')}</div>`;
-  }
-  function boardHtml(a) {
-    return `<div class="dailyBoard cards">${(a || []).map((x) => pc(x, true)).join('')}</div>`;
+  function pc(c, zone) {
+    const cls = zone === 'hero' ? 'pgHeroCard' : 'pgBoardCard';
+    return `<span class="pc ${cls} ${/[♥♦]/.test(c) ? 'suit-red' : ''}">${esc(c)}</span>`;
   }
 
   function parsePosStack(raw) {
@@ -33,9 +29,9 @@
       blinds: c.blinds || spot?.blinds || null,
       pot: spot?.pot != null ? `${spot.pot} ББ` : c.pot || null,
       eff: c.eff || (spot?.stack != null ? `${spot.stack} ББ` : null),
-      heroPos: hero.pos,
+      heroPos: hero.pos || (spot?.pos ? String(spot.pos).split(/\s+/)[0] : 'BTN'),
       heroStack: hero.stack,
-      villainPos: vill.pos,
+      villainPos: vill.pos || 'BB',
       villainStack: vill.stack,
       villainType: c.opp || 'рег',
       note: c.note || '',
@@ -47,22 +43,35 @@
     };
   }
 
-  function compactContextCard(ctx, id) {
-    const tags = (ctx.tags || []).map((t) => `<span class="maCtxTag">${esc(t)}</span>`).join('');
-    const rows = [
-      ctx.blinds ? `<div><span>БЛАЙНДЫ</span><b>${esc(ctx.blinds)}</b></div>` : '',
-      ctx.eff ? `<div><span>ЭФФ. СТЕК</span><b>${esc(ctx.eff)}</b></div>` : '',
-      ctx.pot ? `<div><span>БАНК</span><b>${esc(ctx.pot)}</b></div>` : '',
-      `<div><span>ТЫ</span><b>${esc(ctx.heroPos)}</b></div>`,
-      `<div><span>СОПЕРНИК</span><b>${esc(ctx.villainPos)} · ${esc(ctx.villainType)}</b></div>`
-    ].filter(Boolean).join('');
+  const CTX30_SAFE = {
+    swipe: [
+      { event: 'MTT', stage: 'БАББЛ', table: '6-MAX', left: '19 LEFT', eff: '24 BB', hero: 'BTN · 27 BB', villain: 'BB · 24 BB', opp: 'АГРО-РЕГ' },
+      { event: 'MTT', stage: 'СРЕДНЯЯ', table: '8-MAX', left: '54 LEFT', eff: '31 BB', hero: 'CO · 34 BB', villain: 'BTN · 31 BB', opp: 'РЕГ' },
+      { event: 'MTT', stage: 'РАННЯЯ', table: '9-MAX', left: '146 LEFT', eff: '58 BB', hero: 'HJ · 62 BB', villain: 'BB · 58 BB', opp: 'ЛЮБИТЕЛЬ' },
+      { event: 'PKO', stage: 'ITM', table: '6-MAX', left: '37 LEFT', eff: '18 BB', hero: 'BTN · 21 BB', villain: 'SB · 18 BB', opp: 'НИТ' }
+    ],
+    sizing: { event: 'MTT', stage: 'ITM', table: '6-MAX', left: '42 LEFT', eff: '32 BB', hero: 'BTN · 35 BB', villain: 'BB · 32 BB', opp: 'РЕГ' },
+    daily: { event: 'MTT', stage: 'FINAL TABLE', table: '7 LEFT', left: '7 LEFT', eff: '21 BB', hero: 'CO · 26 BB', villain: 'BB · 21 BB', opp: 'РЕГ' },
+    review: { event: 'MTT', stage: 'ПОЗДНЯЯ', table: '8-MAX', left: '28 LEFT', eff: '29 BB', hero: 'HJ · 35 BB', villain: 'BTN · 29 BB', opp: 'РЕГ' },
+    heal: { event: 'MTT', stage: 'СРЕДНЯЯ', table: '6-MAX', left: '8 из 8', eff: '24 BB', hero: 'BTN · 24 BB', villain: 'BB · 22 BB', opp: 'РЕГ' },
+    xray: { event: 'MTT', stage: 'СРЕДНЯЯ', table: '6-MAX', left: '—', eff: '40 BB', hero: 'IP · 40 BB', villain: 'OOP · 40 BB', opp: 'РЕГ' }
+  };
 
-    return `<div class="maCtx" data-ma-ctx-id="${esc(id || 'ctx')}">
-      <div class="maCtxTags">${tags}</div>
-      <div class="maCtxGrid">${rows}</div>
-      <button type="button" class="secondary maCtxFullBtn" data-ma-ctx-full="${esc(id || 'ctx')}">ВСЕ УСЛОВИЯ →</button>
-    </div>`;
+  function ctx30For(name, spot) {
+    if (name === 'swipe') {
+      const list = CTX30_SAFE.swipe;
+      const idx = typeof window.swIndex === 'number' ? window.swIndex : 0;
+      return list[idx % list.length];
+    }
+    return CTX30_SAFE[name] || CTX30_SAFE.sizing;
   }
+
+  function getCtx30(name, spot) {
+    return ctxFromLegacy(ctx30For(name, spot), spot);
+  }
+
+  const ctxStore = new Map();
+  function registerCtx(id, ctx) { ctxStore.set(id, ctx); }
 
   function fullContextModal(ctx) {
     const hist = Array.isArray(ctx.history)
@@ -90,9 +99,6 @@
     </div><button type="button" class="primary ctxCloseBtn">ПОНЯТНО →</button></div>`;
   }
 
-  const ctxStore = new Map();
-  function registerCtx(id, ctx) { ctxStore.set(id, ctx); }
-
   function wireContextButtons(root) {
     if (!root) return;
     root.querySelectorAll('[data-ma-ctx-full]').forEach((btn) => {
@@ -107,65 +113,52 @@
     });
   }
 
-  function cardsBlock(boardCards, heroCards) {
-    return `<div class="maCards">
-      <div class="maCardsBoard"><span class="ey">БОРД</span>${boardCards?.length ? boardHtml(boardCards) : '<span class="mut">—</span>'}</div>
-      <div class="maCardsHero"><span class="ey">ТВОЯ РУКА</span>${heroCards?.length ? handHtml(heroCards) : ''}</div>
+  /** Compact HUD strip — chips + stat counters, not a text card */
+  function hudStrip(ctx, id, { title, subtitle } = {}) {
+    const tags = (ctx.tags || []).map((t) => `<span class="pgChip">${esc(t)}</span>`).join('');
+    const stats = [
+      ctx.blinds ? `<div class="pgStat"><span>БЛАЙНДЫ</span><b>${esc(ctx.blinds)}</b></div>` : '',
+      ctx.eff ? `<div class="pgStat"><span>ЭФФ.</span><b>${esc(ctx.eff)}</b></div>` : '',
+      ctx.pot ? `<div class="pgStat"><span>БАНК</span><b>${esc(ctx.pot)}</b></div>` : '',
+      `<div class="pgStat"><span>ТЫ</span><b>${esc(ctx.heroPos)}</b></div>`,
+      `<div class="pgStat"><span>VILL</span><b>${esc(ctx.villainPos)} · ${esc(ctx.villainType)}</b></div>`
+    ].filter(Boolean).join('');
+
+    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">
+      ${title ? `<div class="pgHudTitle">${title}${subtitle ? `<span class="ey">${esc(subtitle)}</span>` : ''}</div>` : ''}
+      ${tags}${stats}
+      <button type="button" class="secondary pgHudMore" data-ma-ctx-full="${esc(id || 'ctx')}">ВСЕ УСЛОВИЯ →</button>
     </div>`;
   }
 
-  function tableVisual(boardCards, heroCards, potLabel) {
-    return `<div class="maTable">
-      ${potLabel ? `<div class="maTablePot">БАНК ${esc(potLabel)}</div>` : ''}
-      <div class="maTableBoard">${boardCards?.length ? boardHtml(boardCards) : ''}</div>
-      <div class="maTableHero">${heroCards?.length ? handHtml(heroCards) : ''}</div>
+  /** Central poker table arena */
+  function gameArena({ board = [], hero = [], pot, street, heroPos, villainPos, villainType } = {}) {
+    const boardHtml = (board || []).map((c) => pc(c)).join('') || '<span class="mut" style="font-size:9px">—</span>';
+    const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
+    const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
+    return `<div class="pgArena">
+      <div class="pgFelt">
+        ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
+        ${potLabel ? `<div class="pgPot"><div class="pgPotChips"><i></i><i></i><i></i></div><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
+        <div class="pgBoardZone">${boardHtml}</div>
+        ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
+        ${heroPos ? `<div class="pgSeat hero">ТЫ · ${esc(heroPos)}</div>` : ''}
+        ${villainPos ? `<div class="pgSeat villain">${esc(villainPos)} · ${esc(villainType || 'рег')}</div>` : ''}
+      </div>
     </div>`;
   }
 
-  function timelineRows(nodes, { pickable = false, selected = null } = {}) {
-    return `<div class="maTimeline">${(nodes || []).map((n, i) => {
+  /** Vertical glowing path timeline */
+  function gamePath(nodes, { pickable = false } = {}) {
+    const rows = (nodes || []).map((n, i) => {
       const street = n[0] || n.street || '';
       const action = n[1] || n.text || '';
-      const sel = selected === i || selected === 'node-' + i ? ' selected' : '';
       if (pickable) {
-        return `<button type="button" class="maTimelineRow node${sel}" data-rn="${i}"><span class="maStreet">${esc(street)}</span><span class="maAction">${esc(action)}</span></button>`;
+        return `<button type="button" class="pgPathNode node" data-rn="${i}"><span class="pgPathStreet">${esc(street)}</span><span class="pgPathAction">${esc(action)}</span></button>`;
       }
-      return `<div class="maTimelineRow"><span class="maStreet">${esc(street)}</span><span class="maAction">${esc(action)}</span></div>`;
-    }).join('')}</div>`;
-  }
-
-  function linePreview(title, text) {
-    if (!text) return '';
-    return `<div class="maLinePreview"><span class="ey">${esc(title)}</span><p>${esc(text)}</p></div>`;
-  }
-
-  /* CTX30 lives in a later script block; the v32 getter can recurse — never touch window.CTX30. */
-  const CTX30_SAFE = {
-    swipe: [
-      { event: 'MTT', stage: 'БАББЛ', table: '6-MAX', left: '19 LEFT', eff: '24 BB', hero: 'BTN · 27 BB', villain: 'BB · 24 BB', opp: 'АГРО-РЕГ' },
-      { event: 'MTT', stage: 'СРЕДНЯЯ', table: '8-MAX', left: '54 LEFT', eff: '31 BB', hero: 'CO · 34 BB', villain: 'BTN · 31 BB', opp: 'РЕГ' },
-      { event: 'MTT', stage: 'РАННЯЯ', table: '9-MAX', left: '146 LEFT', eff: '58 BB', hero: 'HJ · 62 BB', villain: 'BB · 58 BB', opp: 'ЛЮБИТЕЛЬ' },
-      { event: 'PKO', stage: 'ITM', table: '6-MAX', left: '37 LEFT', eff: '18 BB', hero: 'BTN · 21 BB', villain: 'SB · 18 BB', opp: 'НИТ' }
-    ],
-    sizing: { event: 'MTT', stage: 'ITM', table: '6-MAX', left: '42 LEFT', eff: '32 BB', hero: 'BTN · 35 BB', villain: 'BB · 32 BB', opp: 'РЕГ' },
-    daily: { event: 'MTT', stage: 'FINAL TABLE', table: '7 LEFT', left: '7 LEFT', eff: '21 BB', hero: 'CO · 26 BB', villain: 'BB · 21 BB', opp: 'РЕГ' },
-    review: { event: 'MTT', stage: 'ПОЗДНЯЯ', table: '8-MAX', left: '28 LEFT', eff: '29 BB', hero: 'HJ · 35 BB', villain: 'BTN · 29 BB', opp: 'РЕГ' },
-    heal: { event: 'MTT', stage: 'СРЕДНЯЯ', table: '6-MAX', left: '8 из 8', eff: '24 BB', hero: 'BTN · 24 BB', villain: 'BB · 22 BB', opp: 'РЕГ' },
-    xray: { event: 'MTT', stage: 'СРЕДНЯЯ', table: '6-MAX', left: '—', eff: '40 BB', hero: 'IP · 40 BB', villain: 'OOP · 40 BB', opp: 'РЕГ' }
-  };
-
-  function ctx30For(name, spot) {
-    if (name === 'swipe') {
-      const list = CTX30_SAFE.swipe;
-      const idx = typeof window.swIndex === 'number' ? window.swIndex : 0;
-      return list[idx % list.length];
-    }
-    const base = CTX30_SAFE[name] || CTX30_SAFE.sizing;
-    return base;
-  }
-
-  function getCtx30(name, spot) {
-    return ctxFromLegacy(ctx30For(name, spot), spot);
+      return `<div class="pgPathNode"><span class="pgPathStreet">${esc(street)}</span><span class="pgPathAction">${esc(action)}</span></div>`;
+    }).join('');
+    return `<div class="pgPath"><div class="pgPathLabel">ТАЙМЛАЙН РАЗДАЧИ</div><div class="pgPathTrack">${rows}</div></div>`;
   }
 
   function replaceRender(name, fn) {
@@ -175,24 +168,26 @@
     fn._maOrig = orig;
   }
 
-  /* ── REVIEW ── */
-  replaceRender('renderReview', function renderReviewCompact() {
+  /* ── REVIEW: Loss Map game interface ── */
+  replaceRender('renderReview', function renderReviewGame() {
     const R = window.REVIEWS[window.rv % window.REVIEWS.length];
     window.rvPick = null;
     const ctx = getCtx30('review', R);
     ctx.history = R.nodes;
+    ctx.pot = ctx.pot || '—';
     const id = 'review_' + R.id;
     registerCtx(id, ctx);
 
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('review') : '';
     const area = document.getElementById('reviewArea');
-    area.innerHTML = `${qb}<div class="panel maShell">
-      <div class="maHead"><span class="ey">РАЗБОР · LOSS MAP</span><h1 class="impact">ГДЕ ЛИНИЯ<br><span class="pink">СЛОМАЛАСЬ?</span></h1></div>
-      ${compactContextCard(ctx, id)}
-      ${cardsBlock(R.board, R.hero)}
-      ${timelineRows(R.nodes, { pickable: true })}
-      <button type="button" class="choice reviewNone" id="rvNone">НИГДЕ. ЛИНИЯ НОРМАЛЬНАЯ.</button>
-      <div id="rvGo"></div>
+    area.innerHTML = `${qb}<div class="panel pgShell pgReview">
+      ${hudStrip(ctx, id, { title: '<h1 class="impact">ГДЕ ЛИНИЯ <span class="pink">СЛОМАЛАСЬ?</span></h1>', subtitle: 'LOSS MAP' })}
+      ${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      ${gamePath(R.nodes, { pickable: true })}
+      <div class="pgControls">
+        <button type="button" class="choice reviewNone" id="rvNone">НИГДЕ. ЛИНИЯ НОРМАЛЬНАЯ.</button>
+        <div id="rvGo"></div>
+      </div>
     </div>`;
 
     area.querySelectorAll('[data-rn]').forEach((b) => {
@@ -200,7 +195,7 @@
         area.querySelectorAll('[data-rn],#rvNone').forEach((x) => x.classList.remove('selected'));
         b.classList.add('selected');
         window.rvPick = +b.dataset.rn;
-        document.getElementById('rvGo').innerHTML = '<button class="primary" id="rvSure">Я УВЕРЕН →</button>';
+        document.getElementById('rvGo').innerHTML = '<button class="primary pgCta" id="rvSure">Я УВЕРЕН →</button>';
         document.getElementById('rvSure').onclick = window.reviewReveal;
       };
     });
@@ -208,14 +203,14 @@
       area.querySelectorAll('[data-rn],#rvNone').forEach((x) => x.classList.remove('selected'));
       document.getElementById('rvNone').classList.add('selected');
       window.rvPick = 'none';
-      document.getElementById('rvGo').innerHTML = '<button class="primary" id="rvSure">Я УВЕРЕН →</button>';
+      document.getElementById('rvGo').innerHTML = '<button class="primary pgCta" id="rvSure">Я УВЕРЕН →</button>';
       document.getElementById('rvSure').onclick = window.reviewReveal;
     };
     wireContextButtons(area);
   });
 
-  /* ── SIZING ── */
-  replaceRender('renderSizing', function renderSizingCompact() {
+  /* ── SIZING: table-dominant game interface ── */
+  replaceRender('renderSizing', function renderSizingGame() {
     const s = window.SIZING[window.sz % window.SIZING.length];
     const ctx = getCtx30('sizing', s);
     ctx.pot = `${s.pot} ББ`;
@@ -226,33 +221,43 @@
 
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('sizing') : '';
     const area = document.getElementById('sizingArea');
-    area.innerHTML = `${qb}<div class="panel maShell">
-      <div class="maHead"><span class="ey">${esc(s.street)} · САЙЗИНГ</span><h2 class="maQuestion">Какой сайз?</h2></div>
-      ${compactContextCard(ctx, id)}
-      ${tableVisual(s.board, s.hero, s.pot + ' ББ')}
-      <div class="maSizingControls">
-        <div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot * 0.5).toFixed(1)} ББ</strong></div>
+    area.innerHTML = `${qb}<div class="panel pgShell pgSizing">
+      ${hudStrip(ctx, id, { title: '<h2>Какой сайз?</h2>', subtitle: esc(s.street) + ' · САЙЗИНГ' })}
+      ${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgControls">
+        <div class="pgControlsHead">ТВОЁ РЕШЕНИЕ</div>
+        <div class="pgDecisionReadout"><b id="sizePct">50%</b><strong id="sizeBB">${(s.pot * 0.5).toFixed(1)} ББ</strong></div>
         <input class="range" id="sizeRange" type="range" min="0" max="150" value="50">
         <div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div>
-        <div class="maSizePills">${[25, 33, 50, 75, 100, 125].map((v) => `<button type="button" class="choice maSizePill" data-size-pill="${v}">${v}%</button>`).join('')}<button type="button" class="choice maSizePill" data-size-pill="150">ALL-IN</button></div>
-        <button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button>
+        <div class="pgActionRow">
+          <button type="button" class="action call" id="sizeCheck">CHECK</button>
+          <button type="button" class="action raise on" id="sizeBet">BET</button>
+          <button type="button" class="action fold" id="sizeAllin">ALL-IN</button>
+        </div>
+        <div class="pgSizeRow">${[25, 33, 50, 75, 100, 125].map((v) => `<button type="button" class="choice pgSizeBtn" data-size-pill="${v}">${v}%</button>`).join('')}<button type="button" class="choice pgSizeBtn" data-size-pill="150">ALL-IN</button></div>
+        <button class="primary pgCta" id="sizeLock">ПОСТАВИТЬ 50% →</button>
         <div id="sizeResult"></div>
       </div>
     </div>`;
 
     const r = document.getElementById('sizeRange');
+    let mode = 'bet';
     const upd = () => {
-      const v = +r.value;
+      const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
+      if (mode !== 'bet') r.value = v;
       document.getElementById('sizePct').textContent = v ? v + '%' : 'CHECK';
       document.getElementById('sizeBB').textContent = v ? (s.pot * v / 100).toFixed(1) + ' ББ' : '0 ББ';
       document.getElementById('sizeLock').textContent = v ? `ПОСТАВИТЬ ${v}% →` : 'CHECK →';
     };
-    r.oninput = upd;
-    area.querySelectorAll('[data-size-pill]').forEach((b) => { b.onclick = () => { r.value = b.dataset.sizePill; upd(); }; });
+    r.oninput = () => { mode = 'bet'; upd(); };
+    document.getElementById('sizeCheck').onclick = () => { mode = 'check'; r.value = 0; upd(); };
+    document.getElementById('sizeBet').onclick = () => { mode = 'bet'; if (+r.value === 0) r.value = 50; upd(); };
+    document.getElementById('sizeAllin').onclick = () => { mode = 'allin'; r.value = 150; upd(); };
+    area.querySelectorAll('[data-size-pill]').forEach((b) => { b.onclick = () => { mode = 'bet'; r.value = b.dataset.sizePill; upd(); }; });
     upd();
 
     document.getElementById('sizeLock').onclick = () => {
-      const v = +r.value;
+      const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
       const action = v === 0 ? 'CHECK' : 'BET';
       const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
       const g = br?.grade || 'y';
@@ -261,18 +266,18 @@
         action, sizePct: v || null, grade: g, gradeAction: br?.actionGrade, gradeSize: br?.sizeGrade,
         why: br?.explanation || s.why, brainSource: br?.source, brainConfidence: br?.confidence, policyScore: br?.score
       });
-      document.getElementById('sizeResult').innerHTML = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
+      document.getElementById('sizeResult').innerHTML = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
       window.FreakLady?.react(document.getElementById('sizeResult')?.querySelector('.verdict'), g, 'sizing');
       document.getElementById('sizeNext').onclick = () => { window.quick?.active ? window.quickAdvance() : (window.sz++, window.renderSizing()); };
     };
     wireContextButtons(area);
   });
 
-  /* ── SWIPE ── */
-  replaceRender('renderSwipe', function renderSwipeCompact() {
+  /* ── SWIPE: table-centric decision ── */
+  replaceRender('renderSwipe', function renderSwipeGame() {
     if (!window.swSession?.length || window.swIndex >= window.swSession.length) {
       if (typeof window.newSwipeSession === 'function') window.newSwipeSession();
-      else return renderSwipeCompact._maOrig?.();
+      else return renderSwipeGame._maOrig?.();
     }
     if (!window.swSession?.length || window.swIndex >= window.swSession.length) return;
     const s = window.swSession[window.swIndex];
@@ -293,7 +298,14 @@
 
     const mem = window.quick?.active && window.quick.flow[window.quick.index] === 'memory';
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('swipe') : '';
-    document.getElementById('swipeCard').innerHTML = `${qb}<div class="swipeShell maShell"><div class="swipeTop"><span class="ey">${mem ? 'ПАМЯТЬ · ' : ''}${esc(s.street)} · ${esc(s.pos)}</span><span class="ey">${mem ? 'CONCEPT' : 'РУКА ' + (window.swIndex + 1) + '/10'}</span></div><div class="swipeProgress"><span style="width:${window.swIndex / 10 * 100}%"></span></div><div class="swipeCardV in" id="swipeVisual"><h2 class="maQuestion">Твоё решение?</h2>${compactContextCard(ctx, id)}${cardsBlock(s.board, s.hero)}</div></div>`;
+    document.getElementById('swipeCard').innerHTML = `${qb}<div class="swipeShell pgSwipeWrap">
+      <div class="swipeTop"><span class="ey">${mem ? 'ПАМЯТЬ · ' : ''}${esc(s.street)} · ${esc(s.pos)}</span><span class="ey">${mem ? 'CONCEPT' : 'РУКА ' + (window.swIndex + 1) + '/10'}</span></div>
+      <div class="swipeProgress"><span style="width:${window.swIndex / 10 * 100}%"></span></div>
+      <div class="swipeCardV in" id="swipeVisual">
+        ${hudStrip(ctx, id, { title: '<h2>Твоё решение?</h2>' })}
+        ${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      </div>
+    </div>`;
 
     document.getElementById('swipeActions').innerHTML = s.actions.map((a) =>
       `<button class="action ${/ФОЛД/.test(a) ? 'fold' : /КОЛЛ|ЧЕК/.test(a) ? 'call' : 'raise'}" data-sa="${a}">${a}</button>`
@@ -302,8 +314,8 @@
     wireContextButtons(document.getElementById('swipeCard'));
   });
 
-  /* ── DAILY intro (legacy path — captured by training-ui as legacyRenderDaily) ── */
-  replaceRender('renderDaily', function renderDailyCompact() {
+  /* ── DAILY intro ── */
+  replaceRender('renderDaily', function renderDailyGame() {
     const D = window.dailyToday();
     const done = window.S.dailyArchive.find((x) => x.date === window.today());
     const ctx = getCtx30('daily', D);
@@ -313,33 +325,35 @@
     const id = 'daily_' + D.id;
     registerCtx(id, ctx);
 
-    document.getElementById('dailyArea').innerHTML = `<div class="panel dailyStage maShell">
-      <div class="maHead"><span class="ey">РАЗБОР #${D.number} · ${esc(D.theme)}</span><h1 class="impact">РАЗБОР<br><span class="pink">РЕШЕНИЯ</span></h1></div>
-      ${compactContextCard(ctx, id)}
-      ${handHtml(D.hero)}
-      <button class="primary" id="dStart">${done ? 'ПЕРЕСМОТРЕТЬ' : 'СЕСТЬ ЗА СТОЛ'} →</button>
+    document.getElementById('dailyArea').innerHTML = `<div class="panel pgShell pgDaily">
+      ${hudStrip(ctx, id, { title: '<h1 class="impact">РАЗБОР <span class="pink">РЕШЕНИЯ</span></h1>', subtitle: '#' + D.number + ' · ' + esc(D.theme) })}
+      ${gameArena({ board: D.board.slice(0, 3), hero: D.hero, pot: D.pot, street: 'ФЛОП', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgControls"><button class="primary pgCta" id="dStart">${done ? 'ПЕРЕСМОТРЕТЬ' : 'СЕСТЬ ЗА СТОЛ'} →</button></div>
     </div>`;
     document.getElementById('dStart').onclick = () => { window.dStreet = 0; window.dArgs = {}; window.dChoice = null; window.dSize = null; window.dStart = window.now(); window.dailyStreet(); };
     wireContextButtons(document.getElementById('dailyArea'));
   });
 
-  /* ── DAILY street ── */
-  replaceRender('dailyStreet', function dailyStreetCompact() {
+  /* ── DAILY street: progressive table ── */
+  replaceRender('dailyStreet', function dailyStreetGame() {
     const D = window.dailyToday();
     const ctx = getCtx30('daily', D);
     const id = 'daily_st_' + D.id;
     registerCtx(id, ctx);
     const n = window.dStreet === 0 ? 0 : window.dStreet === 1 ? 3 : window.dStreet === 2 ? 4 : 5;
     const streets = ['PRE', 'FLOP', 'TURN', 'RIVER'];
+    const streetLabels = ['ПРЕФЛОП', 'ФЛОП', 'ТЁРН', 'РИВЕР'];
     const potNow = window.dStreet === 3 ? D.pot : (D.pot * [.12, .28, .55, 1][window.dStreet]).toFixed(1);
     ctx.pot = potNow + ' ББ';
 
     const area = document.getElementById('dailyArea');
-    area.innerHTML = `<div class="panel dailyStage maShell">
-      <div class="maSplitTop">${compactContextCard(ctx, id)}${linePreview('ЛИНИЯ ДО РЕШЕНИЯ', D.line.slice(0, window.dStreet + 1).filter(Boolean).join(' → '))}</div>
-      <div class="streetDots">${streets.map((x, i) => `<span class="${i < window.dStreet ? 'done' : i === window.dStreet ? 'on' : ''}">${x}</span>`).join('')}</div>
-      ${n ? boardHtml(D.board.slice(0, n)) : ''}
-      ${window.dStreet < 3 ? '<button class="primary" id="dNext">ПРОДОЛЖИТЬ →</button>' : `<div class="maDecision"><h2 class="maQuestion">Твой ход</h2><div class="grid2">${D.decision.map((x) => `<button class="choice" data-dchoice="${x}">${x}</button>`).join('')}</div><div id="dDecision"></div></div>`}
+    area.innerHTML = `<div class="panel pgShell pgDaily">
+      ${hudStrip(ctx, id, { title: '<h2>Разбор решения</h2>', subtitle: streetLabels[window.dStreet] })}
+      <div class="pgStreetDots">${streets.map((x, i) => `<span class="${i < window.dStreet ? 'done' : i === window.dStreet ? 'on' : ''}">${x}</span>`).join('')}</div>
+      ${gameArena({ board: n ? D.board.slice(0, n) : [], hero: D.hero, pot: potNow, street: streetLabels[window.dStreet], heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgControls">
+        ${window.dStreet < 3 ? '<button class="primary pgCta" id="dNext">ПРОДОЛЖИТЬ →</button>' : `<div class="pgControlsHead">ТВОЙ ХОД</div><div class="grid2">${D.decision.map((x) => `<button class="choice" data-dchoice="${x}">${x}</button>`).join('')}</div><div id="dDecision"></div>`}
+      </div>
     </div>`;
 
     if (window.dStreet < 3) document.getElementById('dNext').onclick = () => { window.dStreet++; window.dailyStreet(); };
@@ -354,10 +368,10 @@
   });
 
   /* ── X-RAY intro ── */
-  replaceRender('renderXray', function renderXrayCompact() {
+  replaceRender('renderXray', function renderXrayGame() {
     const area = document.getElementById('xrayArea');
     if (!window.S?.xray?.onboarded) {
-      area.innerHTML = `<div class="xrStage maShell"><span class="ey">◎ РЕНТГЕН</span><h1 class="impact">СОБЕРИ<br><span class="pink">ДИАПАЗОН.</span></h1><button class="primary" id="xrOnboard">ПОПРОБОВАТЬ →</button></div>`;
+      area.innerHTML = `<div class="xrStage pgShell"><div class="pgHud"><div class="pgHudTitle"><h1 class="impact">СОБЕРИ <span class="pink">ДИАПАЗОН</span></h1><span class="ey">◎ РЕНТГЕН</span></div></div><div class="pgControls"><button class="primary pgCta" id="xrOnboard">ПОПРОБОВАТЬ →</button></div></div>`;
       document.getElementById('xrOnboard').onclick = () => { window.S.xray.onboarded = true; window.save(); window.renderXray(); };
       return;
     }
@@ -365,14 +379,21 @@
     const ctx = getCtx30('xray', { villain: s.villain, concept: s.title, history: s.line });
     const id = 'xray_i';
     registerCtx(id, ctx);
-    area.innerHTML = `<div class="xrStage maShell"><span class="ey">◎ ${esc(s.title)}</span><h2 class="maQuestion">Сузь диапазон</h2>${compactContextCard(ctx, id)}<button class="primary" id="xrFull">РАЗОБРАТЬ →</button><button class="secondary" id="xrQuick">С ТЁРНА →</button></div>`;
+    area.innerHTML = `<div class="xrStage pgShell pgXray">
+      ${hudStrip(ctx, id, { title: '<h2>Сузь диапазон</h2>', subtitle: '◎ ' + esc(s.title) })}
+      ${gameArena({ board: s.board.slice(0, 3), hero: s.hero, pot: '8', street: 'ФЛОП', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgControls">
+        <button class="primary pgCta" id="xrFull">РАЗОБРАТЬ →</button>
+        <button class="secondary" id="xrQuick">С ТЁРНА →</button>
+      </div>
+    </div>`;
     document.getElementById('xrFull').onclick = () => window.xrBegin(0);
     document.getElementById('xrQuick').onclick = () => window.xrBegin(2);
     wireContextButtons(area);
   });
 
-  /* ── X-RAY stage ── */
-  replaceRender('renderXrayStage', function renderXrayStageCompact() {
+  /* ── X-RAY stage: range inspection arena ── */
+  replaceRender('renderXrayStage', function renderXrayStageGame() {
     const s = window.XR[window.xrI];
     const dead = window.xrDead(window.xrStage, false);
     const ref = new Set(s.ref[window.xrStage]);
@@ -383,13 +404,14 @@
     const id = 'xray_st_' + window.xrStage;
     registerCtx(id, ctx);
 
-    document.getElementById('xrayArea').innerHTML = `<div class="xrStage maShell maXrayPlay">
-      <div class="maHead"><span class="ey">${streetNames[window.xrStage]}</span><h2 class="maQuestion">${esc(window.xrStreetQuestion(s, window.xrStage))}</h2></div>
-      ${compactContextCard(ctx, id)}
-      ${cardsBlock(boardSlice, s.hero)}
-      <div class="dailyPot"><div><span class="ey">КОМБО</span><b id="xrLive">${live}</b></div></div>
-      ${window.xrGrid()}
-      <button class="primary" id="xrLock">ЗАФИКСИРОВАТЬ →</button>
+    document.getElementById('xrayArea').innerHTML = `<div class="xrStage pgShell pgXray">
+      ${hudStrip(ctx, id, { title: `<h2>${esc(window.xrStreetQuestion(s, window.xrStage))}</h2>`, subtitle: streetNames[window.xrStage] })}
+      <div class="pgXrayArena">
+        <div class="pgXrayBoard">${boardSlice.map((c) => pc(c)).join('')}</div>
+        <div class="pgXrayCombo"><div><span class="ey">КОМБО</span><b id="xrLive">${live}</b></div><div><span class="ey">БОРД</span><b>${boardSlice.length || 0}</b></div></div>
+        <div class="pgXrayMatrix">${window.xrGrid()}</div>
+      </div>
+      <div class="pgControls"><button class="primary pgCta" id="xrLock">ЗАФИКСИРОВАТЬ →</button></div>
     </div>`;
 
     document.querySelectorAll('[data-xc]').forEach((b) => {
@@ -415,18 +437,15 @@
     wireContextButtons(document.getElementById('xrayArea'));
   });
 
-  /* Disable v30 prepend30 duplicate context */
-  if (typeof window.prepend30 === 'function') {
-    window.prepend30 = function () {};
-  }
+  if (typeof window.prepend30 === 'function') window.prepend30 = function () {};
   if (typeof window.passport30 === 'function') {
     window.passport30 = function (c) {
       const ctx = ctxFromLegacy(c);
       const id = 'pp_' + Math.random().toString(36).slice(2, 7);
       registerCtx(id, ctx);
-      return compactContextCard(ctx, id);
+      return hudStrip(ctx, id);
     };
   }
 
-  window.MaCompact = { compactContextCard, cardsBlock, tableVisual, timelineRows };
+  window.MaCompact = { hudStrip, gameArena, gamePath, getCtx30 };
 })();

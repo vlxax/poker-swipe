@@ -1,332 +1,598 @@
 /**
- * PokerSwipe — Compact Mini-App Layout System
- * Mobile-first: context → cards → timeline → question → action
+ * PokerSwipe — Game Interface Layout
+ * The poker hand IS the screen. HUD + arena + controls.
  */
 
-.maShell {
-  display: grid;
-  gap: 14px;
+/* ── Shell per mini-app ── */
+.pgShell {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 118px);
+  gap: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  background: #060806;
 }
 
-.maShell .panel,
-.maShell .swipeCardV,
-.maShell .xrStage,
-.maShell .dailyStage {
-  padding: 14px 14px 16px !important;
-  gap: 12px;
+.pgShell.panel,
+.pgShell.swipeCardV,
+.pgShell.xrStage,
+.pgShell.dailyStage {
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
-.maHead {
-  display: grid;
-  gap: 4px;
+/* ── HUD strip (not a card dump) ── */
+.pgHud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 12px 6px;
+  border-bottom: 1px solid rgba(200, 255, 61, 0.08);
+  background: linear-gradient(180deg, rgba(12, 14, 12, 0.98), rgba(6, 8, 6, 0.92));
 }
 
-.maHead .ey { letter-spacing: 0.1em; }
+.pgHudTitle {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
 
-.maHead h1.impact,
-.maHead h2 {
-  font-size: clamp(22px, 6vw, 28px) !important;
-  line-height: 0.95 !important;
+.pgHudTitle h1,
+.pgHudTitle h2 {
+  font-size: clamp(18px, 5vw, 24px) !important;
+  line-height: 0.92 !important;
   margin: 0 !important;
 }
 
-.maHead .mut { margin: 0; font-size: 11px; line-height: 1.4; }
-
-/* ── Compact context card ── */
-.maCtx {
-  border-radius: 18px;
-  padding: 10px 12px 11px;
-  background: linear-gradient(168deg, rgba(28, 34, 28, 0.96), rgba(10, 12, 10, 0.98));
-  border: 1px solid rgba(200, 255, 61, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 22px rgba(0, 0, 0, 0.28);
+.pgHudTitle .ey {
+  font-size: 7px;
+  letter-spacing: 0.12em;
 }
 
-.maCtxTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 8px;
-}
-
-.maCtxTag {
-  font-size: 8px;
+.pgChip {
+  font-size: 7px;
   font-weight: 950;
   letter-spacing: 0.08em;
   padding: 4px 7px;
   border-radius: 999px;
-  border: 1px solid rgba(200, 255, 61, 0.18);
-  background: rgba(200, 255, 61, 0.06);
-  color: #e2ff87;
+  border: 1px solid rgba(200, 255, 61, 0.14);
+  background: rgba(200, 255, 61, 0.04);
+  color: #d4f06a;
+  white-space: nowrap;
 }
 
-.maCtxGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 10px;
+.pgChip.accent {
+  border-color: rgba(200, 255, 61, 0.32);
+  background: rgba(200, 255, 61, 0.1);
+  color: #eaff8a;
 }
 
-.maCtxGrid > div {
-  display: grid;
+.pgStat {
+  display: flex;
+  flex-direction: column;
   gap: 1px;
-  min-width: 0;
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.28);
+  min-width: 52px;
 }
 
-.maCtxGrid span {
-  font-size: 7px;
+.pgStat span {
+  font-size: 6px;
   font-weight: 900;
   letter-spacing: 0.1em;
-  color: rgba(154, 163, 154, 0.9);
+  color: rgba(154, 163, 154, 0.85);
 }
 
-.maCtxGrid b {
-  font-size: 11px;
+.pgStat b {
+  font-size: 10px;
   font-weight: 950;
-  line-height: 1.25;
-  word-break: break-word;
+  color: #f2f7ea;
+  line-height: 1.1;
 }
 
-.maCtxFullBtn {
-  width: 100%;
-  margin-top: 9px;
-  min-height: 38px;
-  font-size: 10px !important;
-  padding: 10px 12px !important;
+.pgHudMore {
+  margin-left: auto;
+  font-size: 8px !important;
+  padding: 5px 10px !important;
+  min-height: 28px !important;
 }
 
-/* ── Cards visual center ── */
-.maCards {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 12px;
-  border-radius: 20px;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200, 255, 61, 0.06), transparent 55%),
-    linear-gradient(168deg, rgba(16, 20, 16, 0.98), rgba(6, 8, 6, 0.99));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.maCards .ey {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 7px;
-}
-
-.maCards .dailyBoard,
-.maCards .cards {
-  justify-content: flex-start;
-}
-
-.maCards .holeCards {
-  justify-content: center;
-}
-
-.maCardsHero {
-  min-width: 92px;
-}
-
-/* ── Poker table visual (sizing / decision) ── */
-.maTable {
+/* ── Central game arena ── */
+.pgArena {
   position: relative;
-  border-radius: 999px;
-  aspect-ratio: 1.55 / 1;
-  max-height: 168px;
-  margin: 0 auto;
-  width: min(100%, 320px);
-  background:
-    radial-gradient(ellipse 90% 70% at 50% 42%, rgba(34, 88, 48, 0.95), rgba(16, 44, 24, 0.98) 62%, rgba(8, 18, 10, 1) 100%);
-  border: 5px solid rgba(18, 18, 20, 0.95);
-  box-shadow: inset 0 8px 24px rgba(0, 0, 0, 0.35), 0 12px 28px rgba(0, 0, 0, 0.35);
+  flex: 1 1 auto;
+  min-height: 240px;
+  max-height: min(52vh, 420px);
+  margin: 8px 10px 6px;
   display: grid;
   place-items: center;
-  padding: 16px;
 }
 
-.maTablePot {
+.pgFelt {
+  position: relative;
+  width: min(100%, 360px);
+  height: 100%;
+  min-height: 220px;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse 88% 72% at 50% 44%, rgba(38, 98, 52, 0.98), rgba(18, 52, 30, 0.99) 58%, rgba(8, 16, 10, 1) 100%);
+  border: 6px solid rgba(14, 14, 16, 0.98);
+  box-shadow:
+    inset 0 10px 32px rgba(0, 0, 0, 0.42),
+    0 0 40px rgba(200, 255, 61, 0.04),
+    0 16px 40px rgba(0, 0, 0, 0.45);
+  overflow: visible;
+}
+
+.pgFelt::before {
+  content: "";
   position: absolute;
-  top: 10%;
+  inset: 8% 10%;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.07);
+  pointer-events: none;
+}
+
+.pgStreetBadge {
+  position: absolute;
+  top: 6%;
   left: 50%;
   transform: translateX(-50%);
-  text-align: center;
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+  color: #c8ff3d;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.2);
+  z-index: 3;
+}
+
+.pgPot {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 3;
+}
+
+.pgPotChips {
+  display: flex;
+  gap: -4px;
+}
+
+.pgPotChips i {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  margin-left: -4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.pgPotChips i:nth-child(1) { background: #1a1a1a; margin-left: 0; }
+.pgPotChips i:nth-child(2) { background: #c8ff3d; }
+.pgPotChips i:nth-child(3) { background: #ff6b8a; }
+
+.pgPotLabel {
   font-size: 9px;
   font-weight: 950;
-  letter-spacing: 0.08em;
-  color: #e2ff87;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 4px 8px;
-  border-radius: 999px;
+  letter-spacing: 0.06em;
+  color: #eaff8a;
+  text-shadow: 0 0 12px rgba(200, 255, 61, 0.35);
 }
 
-.maTableBoard .pc {
-  width: 38px !important;
-  height: 52px !important;
-  font-size: 15px !important;
-}
-
-.maTableHero {
-  margin-top: 8px;
-}
-
-.maTableHero .pc {
-  width: 44px !important;
-  height: 60px !important;
-  font-size: 17px !important;
-}
-
-/* ── Compact timeline ── */
-.maTimeline {
-  display: grid;
+.pgBoardZone {
+  position: absolute;
+  top: 32%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
   gap: 5px;
+  z-index: 2;
 }
 
-.maTimelineRow {
+.pgHeroZone {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.pgSeat {
+  position: absolute;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #c8c8c8;
+  z-index: 3;
+}
+
+.pgSeat.hero {
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-color: rgba(200, 255, 61, 0.35);
+  color: #eaff8a;
+}
+
+.pgSeat.villain {
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pgArena .pc {
+  width: 46px !important;
+  height: 64px !important;
+  font-size: 18px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.pgHeroZone .pc {
+  width: 50px !important;
+  height: 68px !important;
+  font-size: 19px !important;
+}
+
+/* ── Game path timeline (review) ── */
+.pgPath {
+  padding: 6px 12px 8px;
+  max-height: 34vh;
+  overflow-y: auto;
+}
+
+.pgPathLabel {
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  color: rgba(200, 255, 61, 0.7);
+  margin-bottom: 8px;
+}
+
+.pgPathTrack {
+  position: relative;
+  display: grid;
+  gap: 0;
+  padding-left: 18px;
+}
+
+.pgPathTrack::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(200, 255, 61, 0.5), rgba(200, 255, 61, 0.08));
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(200, 255, 61, 0.25);
+}
+
+.pgPathNode {
+  position: relative;
   display: grid;
   grid-template-columns: 52px 1fr;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
-  padding: 8px 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
+  padding: 9px 10px 9px 0;
+  margin-left: 0;
+  border: none;
+  background: transparent;
   text-align: left;
-  width: 100%;
   color: inherit;
   font: inherit;
+  cursor: default;
+  width: 100%;
 }
 
-button.maTimelineRow.node {
+button.pgPathNode {
   cursor: pointer;
 }
 
-.maTimelineRow.selected,
-.maTimelineRow.node.selected {
-  border-color: rgba(200, 255, 61, 0.42);
-  background: rgba(200, 255, 61, 0.08);
+.pgPathNode::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(200, 255, 61, 0.25);
+  border: 2px solid rgba(200, 255, 61, 0.45);
+  box-shadow: 0 0 6px rgba(200, 255, 61, 0.2);
 }
 
-.maTimelineRow.bad { border-color: rgba(255, 98, 118, 0.28); }
-.maTimelineRow.warn { border-color: rgba(255, 210, 106, 0.24); }
+.pgPathNode.selected::before,
+.pgPathNode.selected {
+  background: rgba(200, 255, 61, 0.06);
+  border-radius: 12px;
+}
 
-.maStreet {
+.pgPathNode.selected::before {
+  background: #c8ff3d;
+  box-shadow: 0 0 12px rgba(200, 255, 61, 0.55);
+}
+
+.pgPathNode.warn::before {
+  border-color: rgba(255, 180, 60, 0.8);
+  background: rgba(255, 140, 40, 0.35);
+  box-shadow: 0 0 10px rgba(255, 140, 40, 0.4);
+}
+
+.pgPathStreet {
   font-size: 8px;
   font-weight: 1000;
   letter-spacing: 0.1em;
   color: #c8ff3d;
 }
 
-.maAction {
+.pgPathAction {
   font-size: 10px;
   font-weight: 800;
-  line-height: 1.3;
-  color: #f5f8f2;
+  color: #f0f4ea;
+  line-height: 1.25;
 }
 
-/* ── Question / action zones ── */
-.maQuestion {
-  font-size: 15px;
+/* ── Game control deck (sizing / decisions) ── */
+.pgControls {
+  padding: 10px 12px 14px;
+  background: linear-gradient(0deg, rgba(8, 10, 8, 0.98), rgba(8, 10, 8, 0.88));
+  border-top: 1px solid rgba(200, 255, 61, 0.1);
+  display: grid;
+  gap: 10px;
+}
+
+.pgControlsHead {
+  font-size: 8px;
   font-weight: 950;
-  letter-spacing: 0.04em;
-  margin: 2px 0 0;
+  letter-spacing: 0.12em;
+  color: rgba(200, 255, 61, 0.75);
 }
 
-.maDecision {
+.pgDecisionReadout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pgDecisionReadout b {
+  font-size: 28px;
+  font-weight: 950;
+  color: #eaff8a;
+  line-height: 1;
+}
+
+.pgDecisionReadout strong {
+  font-size: 16px;
+  font-weight: 950;
+  color: #fff;
+}
+
+.pgActionRow {
   display: grid;
-  gap: 10px;
-  padding-top: 4px;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 8px;
 }
 
-.maSizingControls {
-  display: grid;
-  gap: 10px;
+.pgActionRow .action,
+.pgActionRow .choice {
+  min-height: 48px !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.06em;
 }
 
-.maSizePills {
+.pgActionRow .action.raise,
+.pgActionRow .choice.on {
+  border-color: rgba(200, 255, 61, 0.5) !important;
+}
+
+.pgSizeRow {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.maSizePill {
-  min-width: 44px;
+.pgSizeBtn {
+  min-width: 42px;
   padding: 8px 10px !important;
   font-size: 10px !important;
 }
 
-/* ── Split layout: context + line preview ── */
-.maSplitTop {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.maLinePreview {
-  border-radius: 16px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.maLinePreview .ey { display: block; margin-bottom: 6px; }
-
-.maLinePreview p {
-  margin: 0;
-  font-size: 10px;
-  line-height: 1.45;
-  color: rgba(245, 248, 242, 0.82);
-}
-
-/* ── X-Ray: matrix-first ── */
-.maXrayPlay {
-  display: grid;
-  gap: 10px;
-}
-
-.maXrayPlay .xrGrid {
-  max-height: min(52vh, 360px);
-  overflow: auto;
-}
-
-/* ── Full conditions modal ── */
-.maCtxModal .spot30Rule,
-.maCtxModal .ctxHistList {
-  margin-top: 8px;
-}
-
-.maCtxModal .ctxCloseBtn {
+.pgCta {
   width: 100%;
-  margin-top: 12px;
+  min-height: 52px !important;
+  font-size: 13px !important;
 }
 
-/* ── Hide verbose legacy blocks when compact is active ── */
+/* ── Swipe shell ── */
+.pgSwipeWrap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 180px);
+}
+
+.pgSwipeWrap .swipeTop,
+.pgSwipeWrap .swipeProgress {
+  flex-shrink: 0;
+}
+
+.pgSwipeWrap .swipeCardV {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.pgSwipeWrap #swipeActions,
+.actions {
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+
+/* ── X-Ray range arena ── */
+.pgXrayArena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 8px 8px;
+}
+
+.pgXrayBoard {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 0 8px;
+}
+
+.pgXrayBoard .pc {
+  width: 36px !important;
+  height: 50px !important;
+  font-size: 14px !important;
+}
+
+.pgXrayMatrix {
+  flex: 1;
+  min-height: 200px;
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 255, 61, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px;
+}
+
+.pgXrayMatrix .xrGrid,
+.pgXrayMatrix .rangesMatrixWrap {
+  max-height: none;
+}
+
+.pgXrayCombo {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 6px;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.pgXrayCombo b {
+  color: #eaff8a;
+  font-size: 18px;
+}
+
+/* ── Ranges game layout ── */
+.pgRangesPlay {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 118px);
+  padding: 0 !important;
+}
+
+.pgRangesPlay .rangesMatrixWrap {
+  flex: 1;
+  min-height: 280px;
+  max-height: min(58vh, 480px);
+  overflow: auto;
+  margin: 0 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 255, 61, 0.12);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.pgRangesPlay .rangesQuestion {
+  font-size: 13px;
+  padding: 0 12px;
+  margin: 6px 0 4px;
+}
+
+.pgRangesPlay .rangesActionChip {
+  margin: 0 12px 6px;
+  font-size: 9px;
+}
+
+.pgRangesPlay .rangesLegendBar {
+  padding: 0 12px 6px;
+}
+
+.pgRangesPlay .rangesCta {
+  margin: 8px 12px 12px;
+}
+
+/* ── Daily game ── */
+.pgDailyArena .pgFelt {
+  min-height: 180px;
+}
+
+.pgStreetDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px 0;
+}
+
+.pgStreetDots span {
+  font-size: 7px;
+  font-weight: 950;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #666;
+}
+
+.pgStreetDots span.done { color: #888; border-color: rgba(255, 255, 255, 0.12); }
+.pgStreetDots span.on { color: #c8ff3d; border-color: rgba(200, 255, 61, 0.4); background: rgba(200, 255, 61, 0.08); }
+
+/* ── Hide legacy dashboard blocks ── */
+.pgShell > .spot30:not(.pgHud),
+.pgShell .swipeContext,
+.pgShell .swipeHint,
+.pgShell .goalPills,
+.pgShell > p.mut:not(.pgKeep),
 .maShell > .spot30:not(.maCtx) {
   display: none !important;
 }
 
-.maShell .swipeContext {
-  display: none !important;
-}
-
-.maShell > p.mut:not(.maKeep) {
-  display: none;
-}
-
-.maShell .swipeHint,
-.maShell .goalPills {
-  display: none !important;
+@media (max-width: 390px) {
+  .pgArena { min-height: 210px; max-height: 46vh; }
+  .pgFelt { min-height: 200px; }
+  .pgArena .pc { width: 42px !important; height: 58px !important; font-size: 16px !important; }
+  .pgHeroZone .pc { width: 46px !important; height: 62px !important; font-size: 17px !important; }
+  .pgDecisionReadout b { font-size: 24px; }
 }
 
 @media (min-width: 520px) {
-  .maSplitTop {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .maCards {
-    grid-template-columns: 1fr auto;
-  }
-}
-
-@media (max-width: 390px) {
-  .maCtxGrid b { font-size: 10px; }
-  .maTable { max-height: 150px; }
+  .pgArena { max-height: 480px; }
+  .pgHudTitle { flex: 1 1 auto; margin-bottom: 0; }
 }

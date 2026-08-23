@@ -1,4 +1,4 @@
-// DOM renderer for range narrowing trainer.
+// DOM renderer for range narrowing trainer — game interface: HUD + matrix arena.
 
 import { MATRIX_RANKS_EXPORT as RANKS, policySegments } from './matrix.js';
 
@@ -62,39 +62,32 @@ function reviewLegendHtml() {
   </div>`;
 }
 
-function situationCard(vm) {
-  const tags = [vm.formatLabel, vm.stageLabel, vm.tableLabel].filter(Boolean)
-    .map((t) => `<span class="maCtxTag">${esc(t)}</span>`).join('');
-  const rows = [
-    vm.heroLabel ? `<div><span>ТЫ</span><b>${esc(vm.heroLabel)}</b></div>` : '',
-    vm.villainLabel ? `<div><span>СОПЕРНИК</span><b>${esc(vm.villainLabel)}</b></div>` : '',
-    vm.potLabel ? `<div><span>БАНК</span><b>${esc(vm.potLabel)}</b></div>` : '',
-    vm.stackLabel ? `<div><span>ЭФФ. СТЕК</span><b>${esc(vm.stackLabel)}</b></div>` : ''
+/** Compact HUD strip — no timeline, no paragraphs */
+function hudStrip(vm) {
+  const chips = [vm.formatLabel, vm.stageLabel, vm.tableLabel].filter(Boolean)
+    .map((t) => `<span class="pgChip">${esc(t)}</span>`).join('');
+  const stats = [
+    vm.heroLabel ? `<div class="pgStat"><span>ТЫ</span><b>${esc(vm.heroLabel)}</b></div>` : '',
+    vm.villainLabel ? `<div class="pgStat"><span>VILL</span><b>${esc(vm.villainLabel)}</b></div>` : '',
+    vm.potLabel ? `<div class="pgStat"><span>БАНК</span><b>${esc(vm.potLabel)}</b></div>` : '',
+    vm.stackLabel ? `<div class="pgStat"><span>ЭФФ.</span><b>${esc(vm.stackLabel)}</b></div>` : ''
   ].filter(Boolean).join('');
-
-  const timeline = (vm.steps || []).slice(0, 2).map((s) =>
-    `<div class="maTimelineRow"><span class="maStreet">${esc(s.actionLabel)}</span><span class="maAction">${esc(s.actionLine)}</span></div>`
-  ).join('');
-
-  return `<div class="rangesSitCard maCtx">
-    ${tags ? `<div class="maCtxTags">${tags}</div>` : ''}
-    <div class="maCtxGrid">${rows}</div>
-    ${timeline ? `<div class="maTimeline">${timeline}</div>` : ''}
-  </div>`;
+  return `<div class="pgHud">${chips}${stats}</div>`;
 }
 
 export function renderIntro(root, vm, handlers = {}) {
   if (!root) return;
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">ТРЕНАЖЁР</span>
-    <h1 class="impact">${esc(vm.title)}</h1>
-    <p class="rangesLead">${esc(vm.headline)}</p>
-    <p class="mut">${esc(vm.subtitle)}</p>
-    ${hintsHtml(vm.hints)}
-    ${situationCard(vm)}
-    <p class="rangesStepMeta">${vm.stepCount} шаг${vm.stepCount > 1 ? 'а' : ''} · hand reading</p>
-    <button type="button" class="primary rangesCta" id="rangesStart">${esc(vm.cta)}</button>
-    <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
+  root.innerHTML = `<div class="panel pgShell pgRanges">
+    <div class="pgHud"><div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">ТРЕНАЖЁР</span></div></div>
+    ${hudStrip(vm)}
+    <div class="pgXrayArena" style="flex:1;padding:12px">
+      <p class="rangesLead" style="font-size:11px;margin:0 0 8px">${esc(vm.headline)}</p>
+      ${hintsHtml(vm.hints)}
+    </div>
+    <div class="pgControls">
+      <button type="button" class="primary pgCta" id="rangesStart">${esc(vm.cta)}</button>
+      <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
+    </div>
   </div>`;
 
   root.querySelector('#rangesStart').onclick = () => handlers.begin?.();
@@ -104,18 +97,16 @@ export function renderIntro(root, vm, handlers = {}) {
 
 export function renderPlay(root, vm, handlers = {}) {
   if (!root) return;
-  root.innerHTML = `<div class="panel rangesStage dailyStage maShell">
-    <div class="rangesPlayTop">
-      <span class="ey">${esc(vm.stepLabel)}</span>
-      <span class="rangesCounter">${vm.keptCount}/${vm.candidateCount}</span>
+  root.innerHTML = `<div class="panel pgRangesPlay pgShell">
+    <div class="pgHud">
+      <div class="pgHudTitle"><h2>${esc(vm.question)}</h2><span class="ey">${esc(vm.stepLabel)} · ${vm.keptCount}/${vm.candidateCount}</span></div>
     </div>
-    ${situationCard(vm)}
-    <h2 class="rangesQuestion maQuestion">${esc(vm.question)}</h2>
+    ${hudStrip(vm)}
     <div class="rangesActionChip">${esc(vm.actionLine)}</div>
-    ${hintsHtml(vm.hints)}
     ${legendHtml()}
     ${matrixGrid(vm.matrix, { interactive: true })}
-    <button type="button" class="primary rangesCta" id="rangesConfirm">${esc(vm.cta)}</button>
+    ${hintsHtml(vm.hints)}
+    <button type="button" class="primary rangesCta pgCta" id="rangesConfirm">${esc(vm.cta)}</button>
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
   </div>`;
 
@@ -137,7 +128,6 @@ export function renderSummary(root, vm, handlers = {}) {
     ].filter(Boolean).join('');
     return `<section class="rangesReviewStep">
       <div class="rangesReviewHead"><b>Шаг ${step.index}: ${esc(step.actionLabel)}</b><span>${step.accuracy}%</span></div>
-      <p class="mut">${esc(step.question)}</p>
       ${reviewLegendHtml()}
       ${matrixGrid(step.matrix, { interactive: false })}
       ${wrong}
@@ -147,14 +137,13 @@ export function renderSummary(root, vm, handlers = {}) {
 
   const summaryLines = (vm.summaryLines || []).map((line) => `<p class="rangesSummaryLine">${esc(line)}</p>`).join('');
 
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">РАЗБОР</span>
-    <h1 class="impact">${esc(vm.title)}</h1>
+  root.innerHTML = `<div class="panel rangesStage pgShell">
+    <div class="pgHud"><div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">РАЗБОР</span></div></div>
     <div class="rangesScoreBadge">${vm.avgAccuracy}%</div>
     <p class="rangesLead">${esc(vm.headline)}</p>
     ${summaryLines}
     ${stepsHtml}
-    <button type="button" class="primary rangesCta" id="rangesNext">${esc(vm.cta)}</button>
+    <div class="pgControls"><button type="button" class="primary pgCta" id="rangesNext">${esc(vm.cta)}</button></div>
   </div>`;
 
   root.querySelector('#rangesNext').onclick = () => handlers.next?.();
@@ -177,7 +166,6 @@ export function renderHelpOverlay(root, vm, handlers = {}) {
   root.appendChild(host);
 }
 
-// Legacy no-op exports for older test imports.
 export function renderSelector(root, vm, handlers) {
   renderIntro(root, vm, { begin: handlers.show, help: handlers.help });
 }

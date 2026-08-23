@@ -1,5 +1,5 @@
 /**
- * Compact mini-app UX verification — real browser @ 390x844 + desktop
+ * Game interface UX verification — 390×844 + desktop
  */
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
@@ -8,21 +8,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PORT = 8765;
+const PORT = 8777;
 const BASE = `http://127.0.0.1:${PORT}/tests/bubble_ui_bootstrap.html`;
 
 function startServer() {
-  return spawn('python3', ['-m', 'http.server', String(PORT)], {
-    cwd: root,
-    stdio: ['ignore', 'pipe', 'pipe']
-  });
+  return spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
 }
 
 async function waitForServer(ms = 8000) {
   const start = Date.now();
   while (Date.now() - start < ms) {
     try {
-      const r = await fetch(BASE.replace('/tests/bubble_ui_bootstrap.html', '/'));
+      const r = await fetch(`http://127.0.0.1:${PORT}/`);
       if (r.ok) return;
     } catch (_) { /* retry */ }
     await new Promise((r) => setTimeout(r, 200));
@@ -32,55 +29,50 @@ async function waitForServer(ms = 8000) {
 
 async function checkMiniApp(page, name, checks) {
   await page.evaluate((n) => window.show(n), name);
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(450);
   return page.evaluate((c) => {
     const area = document.querySelector(c.areaSel);
-    if (!area) return { ok: false, err: 'area missing: ' + c.areaSel };
+    if (!area) return { ok: false, err: 'area missing' };
     const html = area.innerHTML;
-    const hasCtx = !!area.querySelector('.maCtx');
-    const hasCards = !!area.querySelector('.pc, .cards .pc, .maTableBoard .pc');
-    const hasTimeline = !!area.querySelector('.maTimeline');
-    const hasQuestion = c.questionRe ? c.questionRe.test(html) : true;
-    const hasOldSpot30 = !!area.querySelector(':scope > .spot30, .swipeCardV > .spot30');
+    const hasHud = !!area.querySelector('.pgHud');
+    const hasArena = !!area.querySelector('.pgArena, .pgXrayArena, .pgXrayMatrix, .rangesMatrixWrap');
+    const hasTable = !!area.querySelector('.pgFelt');
+    const hasCards = !!area.querySelector('.pgBoardZone .pc, .pgHeroZone .pc, .pgXrayBoard .pc');
+    const hasPath = c.requirePath ? !!area.querySelector('.pgPathTrack') : true;
+    const hasControls = c.requireControls ? !!area.querySelector('.pgControls') : true;
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
-    const viewportH = window.innerHeight;
-    const mainQ = area.querySelector('.maQuestion, .impact, h2.maQuestion');
-    const qVisible = mainQ ? mainQ.getBoundingClientRect().top < viewportH : true;
+    const arenaRect = area.querySelector('.pgFelt, .pgXrayMatrix, .rangesMatrixWrap')?.getBoundingClientRect();
+    const arenaDominant = arenaRect ? arenaRect.height >= 160 : false;
+    const qEl = area.querySelector('.pgHudTitle h1, .pgHudTitle h2, .pgControlsHead');
+    const qVisible = qEl ? qEl.getBoundingClientRect().top < window.innerHeight : true;
     return {
-      ok: hasCtx && (c.requireCards ? hasCards : true) && (c.requireTimeline ? hasTimeline : true) && hasQuestion && !hasOldSpot30 && !overflow && (c.requireFirstViewport ? qVisible : true),
-      hasCtx, hasCards, hasTimeline, hasQuestion, hasOldSpot30, overflow, qVisible,
-      compact: !!window.__maCompactLayout,
-      sample: html.slice(0, 200)
+      ok: hasHud && hasArena && (c.requireTable ? hasTable : true) && (c.requireCards ? hasCards : true) && hasPath && hasControls && !overflow && arenaDominant && (c.requireFirstViewport ? qVisible : true),
+      hasHud, hasArena, hasTable, hasCards, hasPath, hasControls, overflow, arenaDominant, qVisible,
+      gameLayout: !!window.__maGameLayout
     };
   }, checks);
 }
 
 const APPS = [
-  { name: 'review', areaSel: '#reviewArea', requireCards: true, requireTimeline: true, requireFirstViewport: true, questionRe: /СЛОМАЛАСЬ/i },
-  { name: 'sizing', areaSel: '#sizingArea', requireCards: true, requireTimeline: false, requireFirstViewport: true, questionRe: /Какой сайз/i },
-  { name: 'swipe', areaSel: '#swipeCard', requireCards: true, requireTimeline: false, requireFirstViewport: true, questionRe: /Твоё решение/i },
-  { name: 'xray', areaSel: '#xrayArea', requireCards: false, requireTimeline: false, requireFirstViewport: true, questionRe: /диапазон|Сузь/i },
+  { name: 'review', areaSel: '#reviewArea', requireTable: true, requireCards: true, requirePath: true, requireControls: true, requireFirstViewport: true },
+  { name: 'sizing', areaSel: '#sizingArea', requireTable: true, requireCards: true, requirePath: false, requireControls: true, requireFirstViewport: true },
+  { name: 'swipe', areaSel: '#swipeCard', requireTable: true, requireCards: true, requirePath: false, requireControls: false, requireFirstViewport: true },
+  { name: 'xray', areaSel: '#xrayArea', requireTable: false, requireCards: false, requirePath: false, requireControls: true, requireFirstViewport: true },
 ];
 
 async function main() {
   const server = startServer();
   await waitForServer();
-
   const browser = await chromium.launch({ headless: true });
-  const results = { mobile: {}, desktop: {}, errors: [] };
+  const results = { mobile: {}, desktop: {} };
 
   try {
     for (const vp of [{ w: 390, h: 844, key: 'mobile' }, { w: 1280, h: 800, key: 'desktop' }]) {
       const page = await browser.newPage({ viewport: { width: vp.w, height: vp.h } });
       await page.goto(BASE, { waitUntil: 'networkidle', timeout: 60000 });
-      await page.waitForFunction(() => window.__maCompactLayout === true, { timeout: 30000 });
-
+      await page.waitForFunction(() => window.__maGameLayout === true, { timeout: 30000 });
       for (const app of APPS) {
-        try {
-          results[vp.key][app.name] = await checkMiniApp(page, app.name, app);
-        } catch (e) {
-          results[vp.key][app.name] = { ok: false, err: String(e) };
-        }
+        results[vp.key][app.name] = await checkMiniApp(page, app.name, app);
       }
       await page.close();
     }
@@ -90,17 +82,12 @@ async function main() {
   }
 
   console.log(JSON.stringify(results, null, 2));
-
   for (const vp of ['mobile', 'desktop']) {
     for (const app of APPS) {
-      const r = results[vp][app.name];
-      assert.ok(r.ok, `${vp}/${app.name}: ${JSON.stringify(r)}`);
+      assert.ok(results[vp][app.name].ok, `${vp}/${app.name}: ${JSON.stringify(results[vp][app.name])}`);
     }
   }
-  console.log('COMPACT UX VERIFY: PASS');
+  console.log('GAME UX VERIFY: PASS');
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+main().catch((e) => { console.error(e); process.exit(1); });
