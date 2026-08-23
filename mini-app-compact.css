@@ -7,7 +7,7 @@
 .pgShell {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 118px);
+  min-height: calc(var(--ps-viewport-h, 100dvh) - var(--ps-nav-offset, 118px));
   gap: 0;
   padding: 0 !important;
   overflow: hidden;

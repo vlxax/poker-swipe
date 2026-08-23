@@ -207,7 +207,6 @@
       document.getElementById('rvSure').onclick = window.reviewReveal;
     };
     wireContextButtons(area);
-    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   });
 
   /* ── SIZING: table-dominant game interface ── */
@@ -276,7 +275,6 @@
       document.getElementById('sizeNext').onclick = () => { window.quick?.active ? window.quickAdvance() : (window.sz++, window.renderSizing()); };
     };
     wireContextButtons(area);
-    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   });
 
   /* ── SWIPE: table-centric decision ── */
@@ -331,7 +329,6 @@
       };
     });
     wireContextButtons(document.getElementById('swipeCard'));
-    window.PsMotion?.afterShell(document.getElementById('swipeCard')?.querySelector('.pgSwipeWrap, .pgShell'), { mode: 'enter' });
   });
 
   /* ── DAILY: personalised training uses training-ui/gameShell.js ── */

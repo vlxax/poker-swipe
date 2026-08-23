@@ -1,17 +1,11 @@
 /**
- * PokerSwipe — Game Motion System (JS)
- * Screen transitions, bubble physics, card deal, decision feedback, analysis reveal.
- * Does not modify poker logic — presentation layer only.
+ * PokerSwipe — Game Motion System (layout-stable)
+ * Single source of truth. No page-level transform, no scroll jumps.
  */
 (function () {
   'use strict';
 
-  const DEPTH = {
-    home: 0, swipe: 1, sizing: 1, review: 1, daily: 1, xray: 1, heal: 1,
-    myhands: 1, profile: 1, polyana: 1, tournaments: 1
-  };
-
-  const BUBBLE_SEL = '.primary, .choice, .action, .pgCta, .tile, [data-nav], .pgPathNode.node, .rangesCell[data-rhand], .metric, .pgSizeBtn';
+  const BUBBLE_SEL = '.primary, .choice, .action, .pgCta, .tile, .pgPathNode.node, .rangesCell[data-rhand], .metric, .pgSizeBtn, .v36Mini, .v36Quick';
 
   function reduced() {
     try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) { return false; }
@@ -39,7 +33,7 @@
     const el = root?.querySelector(selector || '.pgVerdictCompact, .verdict, #swipeVerdict .swipeFlash');
     if (!el) return;
     const kind = gradePulse(grade);
-    el.classList.remove('ps-pulse-good', 'ps-pulse-bad', 'ps-pulse-warn', 'ps-feedback-good', 'ps-feedback-bad', 'ps-feedback-warn');
+    el.classList.remove('ps-pulse-good', 'ps-pulse-bad', 'ps-pulse-warn');
     void el.offsetWidth;
     el.classList.add('ps-pulse-' + kind);
     setTimeout(() => el.classList.remove('ps-pulse-' + kind), 560);
@@ -49,7 +43,7 @@
     pulseTarget(root, grade, '.pgVerdictCompact, .verdict');
   }
 
-  /* ── Bubble press (delegated) ── */
+  /* ── Bubble press (buttons only — NOT nav) ── */
   function bindBubblePress() {
     if (document.documentElement.dataset.psBubbleBound) return;
     document.documentElement.dataset.psBubbleBound = '1';
@@ -64,7 +58,7 @@
       el.setPointerCapture?.(e.pointerId);
     }, { passive: true });
 
-    document.addEventListener('pointerup', (e) => {
+    document.addEventListener('pointerup', () => {
       if (!active) return;
       active.classList.remove('ps-pressed');
       active = null;
@@ -76,7 +70,7 @@
     }, { passive: true });
   }
 
-  /* ── Bottom nav indicator ── */
+  /* ── Bottom nav indicator (no transform on nav buttons) ── */
   function bindNavIndicator() {
     const nav = document.querySelector('.bottomNav, .nav');
     if (!nav || nav.querySelector('.ps-nav-indicator')) return;
@@ -100,7 +94,47 @@
     ind.style.left = (br.left - nr.left + (br.width - parseFloat(ind.style.width)) / 2) + 'px';
   }
 
-  /* ── Screen transition wrap ── */
+  /* ── show() wrap: instant swap, block document scroll reset ── */
+  function scrollRoot() {
+    return document.getElementById('mainApp') || document.documentElement;
+  }
+
+  function callShow(orig, id) {
+    const root = scrollRoot();
+    const prevId = document.querySelector('.screen.active')?.id;
+    const preserve = prevId === id;
+    const scrollY = preserve ? (root.scrollTop || 0) : 0;
+    const origScrollTo = window.scrollTo.bind(window);
+    window.scrollTo = function (x, y) {
+      if (arguments.length >= 2 && x === 0 && y === 0) return;
+      if (arguments.length === 1 && typeof x === 'object') {
+        if (x && typeof x.top === 'number' && x.top === 0 && (x.left == null || x.left === 0)) return;
+        return origScrollTo(x);
+      }
+      return origScrollTo(x, y);
+    };
+    try {
+      orig(id);
+    } finally {
+      window.scrollTo = origScrollTo;
+      root.scrollTop = scrollY;
+      origScrollTo(0, 0);
+    }
+  }
+
+  /* Block legacy scrollIntoView on feedback slots (causes viewport jump) */
+  function blockFeedbackScrollIntoView() {
+    if (Element.prototype.scrollIntoView._psBlocked) return;
+    const blocked = new Set(['sizeResult', 'swipeVerdict']);
+    const orig = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (...args) {
+      if (this.id && blocked.has(this.id)) return;
+      if (this.closest?.('#sizeResult, #swipeVerdict')) return;
+      return orig.apply(this, args);
+    };
+    Element.prototype.scrollIntoView._psBlocked = true;
+  }
+
   function wrapShow() {
     if (!window.show) return false;
     const orig = window.show;
@@ -108,35 +142,9 @@
 
     function psShow(id) {
       if (!document.getElementById(id)) id = 'home';
-      const prev = document.querySelector('.screen.active');
-      if (!prev || prev.id === id || reduced()) {
-        orig(id);
-        syncNavIndicator();
-        queueMicrotask(() => afterScreen(id));
-        return;
-      }
-
-      const back = (DEPTH[id] ?? 1) < (DEPTH[prev.id] ?? 1);
-      document.body.classList.add('ps-transitioning');
-
-      prev.classList.add(back ? 'ps-screen-back-out' : 'ps-screen-out');
-
-      const delay = ms('--motion-tap', 120);
-      setTimeout(() => {
-        orig(id);
-        const next = document.querySelector('.screen.active');
-        if (next) next.classList.add(back ? 'ps-screen-back-in' : 'ps-screen-in');
-        syncNavIndicator();
-
-        const screenDur = ms('--motion-screen', 280);
-        setTimeout(() => {
-          prev.classList.remove('ps-screen-out', 'ps-screen-back-out');
-          next?.classList.remove('ps-screen-in', 'ps-screen-back-in');
-          document.body.classList.remove('ps-transitioning');
-        }, screenDur);
-
-        afterScreen(id);
-      }, delay);
+      callShow(orig, id);
+      syncNavIndicator();
+      queueMicrotask(() => afterScreen(id));
     }
 
     psShow._psMotionWrap = true;
@@ -153,20 +161,18 @@
     const root = document.getElementById(id);
     if (!root) return;
     const shell = root.querySelector('.pgShell, .swipeShell');
-    if (shell) afterShell(shell, { mode: 'enter' });
+    if (shell) afterShell(shell, {});
   }
 
-  /* ── Home tile — bubble press handles feedback ── */
-  function bindHomeTiles() {}
-
-  /* ── After shell render ── */
   function afterShell(shell, opts = {}) {
     if (!shell) return;
     shell.classList.remove('ps-hand-starting', 'ps-dim-surround', 'pgEnter');
     bindBubblePress();
 
-    const dealWrap = shell.querySelector('.pgArenaWrap, .pgDealIn');
-    if (dealWrap && opts.deal !== false) runCardDeal(dealWrap, opts);
+    if (opts.deal === true) {
+      const dealWrap = shell.querySelector('.pgArenaWrap, .pgDealIn');
+      if (dealWrap) runCardDeal(dealWrap, opts);
+    }
 
     if (opts.mode === 'hand-start') {
       shell.classList.add('ps-hand-starting');
@@ -175,6 +181,8 @@
     }
 
     shell.querySelectorAll('input.range').forEach((r) => {
+      if (r.dataset.psSliderBound) return;
+      r.dataset.psSliderBound = '1';
       r.addEventListener('input', () => {
         r.classList.add('ps-slider-active');
         const readout = shell.querySelector('.pgDecisionReadout');
@@ -187,7 +195,7 @@
     });
   }
 
-  function runCardDeal(wrap, opts = {}) {
+  function runCardDeal(wrap) {
     if (reduced()) return;
     wrap.classList.remove('ps-deal-run', 'ps-deal-flop', 'ps-deal-turn', 'ps-deal-river');
     void wrap.offsetWidth;
@@ -196,23 +204,15 @@
     if (boardCount >= 3) wrap.classList.add('ps-deal-flop');
     if (boardCount >= 4) wrap.classList.add('ps-deal-turn');
     if (boardCount >= 5) wrap.classList.add('ps-deal-river');
-    if (opts.street === 'turn') wrap.classList.add('ps-deal-turn');
-    if (opts.street === 'river') wrap.classList.add('ps-deal-river');
   }
 
-  /* ── Decision lock ── */
-  function decisionLock(btn, opts = {}) {
+  function decisionLock(btn) {
     if (!btn) return;
     btn.classList.add('ps-decision-locked');
     const grid = btn.closest('.pgDecisionGrid, .grid2, .pgActionRow, #swipeActions, .actions');
     grid?.querySelectorAll('button').forEach((b) => { if (b !== btn) b.disabled = true; });
-    if (opts.grade != null) {
-      const area = btn.closest('.pgShell, .swipeShell, #swipeCard, #swipeVerdict');
-      setTimeout(() => pulseTarget(area, opts.grade), ms('--motion-tap', 160) + 80);
-    }
   }
 
-  /* ── Start hand sequence (Daily START etc.) ── */
   function startHand(root, runFn) {
     if (!root) { runFn?.(); return; }
     const shell = root.querySelector('.pgShell') || root;
@@ -227,16 +227,13 @@
     }
   }
 
-  /* ── Sizing confirm ── */
   function sizingConfirm(area, grade) {
-    const verdict = area?.querySelector('#sizeResult .verdict, .pgVerdictCompact');
-    if (verdict) pulseTarget(area, grade, '#sizeResult .verdict, .pgVerdictCompact');
+    pulseTarget(area, grade, '#sizeResult .verdict, .pgVerdictCompact');
     area?.querySelector('.pgPot, .pgPotLabel')?.classList.add('ps-bet-to-pot');
     setTimeout(() => area?.querySelector('.pgPot, .pgPotLabel')?.classList.remove('ps-bet-to-pot'), 400);
     progressiveReveal(area?.querySelector('#sizeResult .verdict'), { delay: 100 });
   }
 
-  /* ── Progressive reveal ── */
   function progressiveReveal(container, opts = {}) {
     if (!container) return;
     const blocks = container.querySelectorAll('.dualGrade, .gradeBox, .verdict, .brainPanel, p, .regReport, button.primary, .pgCta, .freakCoachReaction');
@@ -248,7 +245,6 @@
     });
   }
 
-  /* ── Review timeline reveal ── */
   function reviewTimelineReveal(area, culpritIndex, clean) {
     const path = area?.querySelector('.pgPath');
     if (!path || reduced()) return;
@@ -260,11 +256,10 @@
         if (clean) n.classList.add('ps-step-good');
         else if (i === culpritIndex) n.classList.add('ps-step-critical');
         else n.classList.add('ps-step-good');
-      }, 80 + i * 120);
+      }, 80 + i * 100);
     });
   }
 
-  /* ── Wrap reviewReveal for analysis sequence ── */
   function wrapReviewReveal() {
     const tryWrap = () => {
       if (!window.reviewReveal || window.__psReviewWrapped) return !!window.__psReviewWrapped;
@@ -301,14 +296,12 @@
     }
   }
 
-  /* ── Ranges cell flash ── */
   function rangesCellFlash(cell) {
     if (!cell) return;
     cell.classList.add('ps-cell-press');
     setTimeout(() => cell.classList.remove('ps-cell-press'), ms('--motion-tap', 160));
   }
 
-  /* ── Swipe verdict pulse + reveal ── */
   function wrapFinalizeSwipe() {
     const tryWrap = () => {
       if (!window.finalizeSwipe || window.__psSwipeWrapped) return !!window.__psSwipeWrapped;
@@ -329,7 +322,7 @@
     }
   }
 
-  /* ── Observe DOM for new shells (training-ui paint, mini-apps, etc.) ── */
+  /* Observe shells — NO auto card-deal on every DOM swap (prevents re-trigger jitter) */
   function observeShellAreas() {
     const ids = ['dailyArea', 'reviewArea', 'sizingArea', 'swipeCard', 'xrayArea', 'rangesArea'];
     ids.forEach((id) => {
@@ -338,24 +331,18 @@
       area.dataset.psObserved = '1';
       const obs = new MutationObserver(() => {
         const shell = area.querySelector('.pgShell, .swipeShell');
-        if (shell && !shell.dataset.psMotionDone) {
-          shell.dataset.psMotionDone = '1';
-          const mode = shell.classList.contains('pgDailyDrill') ? 'enter' : 'enter';
-          afterShell(shell, { mode, deal: shell.classList.contains('pgDailyDrill') });
-          setTimeout(() => delete shell.dataset.psMotionDone, 600);
+        if (shell && !shell.dataset.psMotionBound) {
+          shell.dataset.psMotionBound = '1';
+          afterShell(shell, {});
         }
       });
       obs.observe(area, { childList: true, subtree: true });
     });
   }
 
-  function observeDaily() {
-    observeShellAreas();
-  }
-
   function init() {
+    blockFeedbackScrollIntoView();
     bindBubblePress();
-    bindHomeTiles();
     bindNavIndicator();
     wrapShow();
     scheduleRewrap();
@@ -363,13 +350,14 @@
     wrapFinalizeSwipe();
     observeShellAreas();
 
-    document.addEventListener('click', (e) => {
+    /* Nav: opacity feedback only — no transform (prevents nav jump) */
+    document.addEventListener('pointerdown', (e) => {
       const nav = e.target.closest('[data-nav]');
-      if (nav) {
-        nav.classList.add('ps-nav-tap');
-        setTimeout(() => nav.classList.remove('ps-nav-tap'), ms('--motion-tap', 120));
-      }
-    }, true);
+      if (nav) nav.classList.add('ps-pressed');
+    }, { passive: true });
+    document.addEventListener('pointerup', () => {
+      document.querySelectorAll('[data-nav].ps-pressed').forEach((n) => n.classList.remove('ps-pressed'));
+    }, { passive: true });
 
     window.addEventListener('resize', syncNavIndicator);
   }
