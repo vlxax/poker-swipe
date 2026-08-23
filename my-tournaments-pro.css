@@ -1024,9 +1024,10 @@
 }
 
 .mt-pro-seg.active {
-  background: var(--mt-lime);
-  color: #0a0b08;
-  box-shadow: 0 4px 12px rgba(200, 255, 61, 0.2);
+  background: rgba(200, 255, 61, 0.1);
+  color: var(--mt-lime);
+  border: 1px solid rgba(200, 255, 61, 0.32);
+  box-shadow: 0 0 14px rgba(200, 255, 61, 0.12);
 }
 
 .mt-pro-tab-panel { min-height: 0; }
@@ -1105,7 +1106,51 @@
 .mt-pro-buckets-compact {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+.mt-pro-bucket-card {
+  padding: 14px;
+  background: var(--mt-surf-1);
+  border: 1px solid var(--mt-border-soft);
+  border-radius: var(--mt-radius-md);
+  color: var(--mt-text);
+  cursor: pointer;
+}
+
+.mt-pro-bucket-card.dim { opacity: 0.85; }
+
+.mt-pro-bucket-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mt-pro-bucket-range {
+  font-size: 12px;
+  color: var(--mt-muted);
+  margin-bottom: 3px;
+}
+
+.mt-pro-bucket-count {
+  font-size: 12px;
+  color: var(--mt-muted);
+  margin-bottom: 8px;
+}
+
+.mt-pro-bucket-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mt-pro-bucket-low-data {
+  font-size: 12px;
+  color: var(--mt-muted);
+  font-style: italic;
 }
 
 .mt-pro-bucket-row {
@@ -1171,6 +1216,15 @@
   color: var(--mt-muted-2);
   font-style: italic;
   white-space: nowrap;
+}
+
+#mtTabOverview .mt-pro-conclusions {
+  margin-top: 4px;
+}
+
+#mtTabOverview .mt-pro-dash {
+  padding-top: 0;
+  padding-bottom: 4px;
 }
 
 .mt-pro-detail-title {

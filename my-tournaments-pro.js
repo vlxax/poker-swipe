@@ -469,7 +469,6 @@
       bucketRow.style.display = 'none';
     }
     $('mtProSwitch')?.classList.toggle('on', proMode);
-    $('mtRollingSection').style.display = proMode && analyticsTab === 'overview' ? '' : 'none';
   }
 
   const ANALYTICS_TABS = [
@@ -494,6 +493,7 @@
       const el = $(id);
       if (el) el.style.display = analyticsTab === k ? 'block' : 'none';
     });
+    document.getElementById('mtProAnalyticsBody')?.scrollTo(0, 0);
   }
 
   function groupRoi(items) {
@@ -794,19 +794,35 @@
     tip.style.top = '8px';
   }
 
+  function bucketRangeLabel(b, idx) {
+    const prev = idx > 0 ? BUCKETS[idx - 1].max : 0;
+    const fmt = (n) => (proMode ? '$' + Math.round(n / RATE) : n.toLocaleString('ru-RU') + ' ₽');
+    if (b.max === Infinity) return `от ${fmt(prev)}`;
+    if (prev === 0) return `до ${fmt(b.max)}`;
+    return `${fmt(prev)}–${fmt(b.max)}`;
+  }
+
+  function tournamentCountLabel(n) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 14) return `${n} турниров`;
+    if (mod10 === 1) return `${n} турнир`;
+    if (mod10 >= 2 && mod10 <= 4) return `${n} турнира`;
+    return `${n} турниров`;
+  }
+
   function renderBuckets(arr) {
     const m = moneyList(arr);
     const grid = $('mtBucketsGrid');
-    const hint = $('mtBuyinHint');
     if (!grid) return;
     const countEl = $('mtBucketsCount');
     if (countEl) countEl.textContent = `(${m.length} тур.)`;
-    if (!proMode) {
-      grid.innerHTML = '';
-      if (hint) hint.style.display = 'block';
+    const hint = $('mtBuyinHint');
+    if (hint) hint.style.display = 'none';
+    if (m.length === 0) {
+      grid.innerHTML = '<div class="mt-pro-tab-hint">Нет турниров для расчёта ROI по бай-инам.</div>';
       return;
     }
-    if (hint) hint.style.display = 'none';
     grid.innerHTML = BUCKETS.map((b, idx) => {
       const prev = idx > 0 ? BUCKETS[idx - 1].max : 0;
       const filtered = m.filter((t) => buyinRub(t) > prev && buyinRub(t) <= b.max);
@@ -816,18 +832,20 @@
       const roi = inv ? Math.round((net / inv) * 1000) / 10 : null;
       const ids = filtered.map((t) => String(t.id)).join('|');
       const lowData = filtered.length < 2 || !inv;
-      const roiHtml = lowData
-        ? '<span class="mt-pro-bucket-low">мало данных</span>'
-        : `<span class="mt-pro-bucket-roi ${roi >= 0 ? 'pos' : 'neg'}">${roi >= 0 ? '+' : ''}${roi}%</span>`;
-      const profitHtml = lowData
-        ? ''
-        : `<span class="mt-pro-bucket-profit ${net >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span>`;
-      return `<div class="mt-pro-bucket-row ${lowData ? 'dim' : ''}" data-mt="bar-detail" data-title="${esc(b.label)}" data-ids="${esc(ids)}">
-        <span class="mt-pro-bucket-dot ${b.tier}"></span>
-        <span class="mt-pro-bucket-name">${b.label}</span>
-        <span class="mt-pro-bucket-count">${filtered.length} тур.</span>
-        ${roiHtml}
-        ${profitHtml}
+      const statsHtml = lowData
+        ? '<div class="mt-pro-bucket-low-data">Мало данных</div>'
+        : `<div class="mt-pro-bucket-stats">
+            <span class="mt-pro-bucket-roi ${roi >= 0 ? 'pos' : 'neg'}">ROI ${roi >= 0 ? '+' : ''}${roi}%</span>
+            <span class="mt-pro-bucket-profit ${net >= 0 ? 'pos' : 'neg'}">Профит ${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span>
+          </div>`;
+      return `<div class="mt-pro-bucket-card ${lowData ? 'dim' : ''}" data-mt="bar-detail" data-title="${esc(b.label)}" data-ids="${esc(ids)}">
+        <div class="mt-pro-bucket-card-head">
+          <span class="mt-pro-bucket-dot ${b.tier}"></span>
+          <span class="mt-pro-bucket-name">${b.label}</span>
+        </div>
+        <div class="mt-pro-bucket-range">${bucketRangeLabel(b, idx)}</div>
+        <div class="mt-pro-bucket-count">${tournamentCountLabel(filtered.length)}</div>
+        ${statsHtml}
       </div>`;
     }).join('');
   }
@@ -892,18 +910,19 @@
       if (last5 && prev5) {
         const better = last5.roi > prev5.roi;
         trendHtml = `<div class="mt-pro-conclusion span2">
-          <div class="mt-pro-conclusion-lbl">ТРЕНД</div>
-          <div class="mt-pro-conclusion-name">${better ? 'Последние 5 турниров лучше предыдущих 5' : 'Последние 5 турниров слабее предыдущих 5'}</div>
+          <div class="mt-pro-conclusion-lbl">ПОСЛЕДНИЕ 5</div>
+          <div class="mt-pro-conclusion-name">${better ? '↑ Лучше предыдущих 5' : '↓ Слабее предыдущих 5'}</div>
           <div class="mt-pro-conclusion-val ${better ? 'pos' : 'neg'}">${last5.roi >= 0 ? '+' : ''}${last5.roi}% vs ${prev5.roi >= 0 ? '+' : ''}${prev5.roi}%</div>
         </div>`;
       }
     }
 
-    grid.innerHTML =
+    const html =
       conclusionCard('ЛУЧШИЙ ФОРМАТ', bestFmt?.fmt, bestFmt?.roi ?? null, 'highlight') +
       conclusionCard('СЛАБОЕ МЕСТО', worstFmt && worstFmt.fmt !== bestFmt?.fmt ? worstFmt.fmt : null, worstFmt?.roi ?? null, 'weak') +
       conclusionCard('ЛУЧШАЯ ПЛОЩАДКА', bestVenue?.name, bestVenue?.roi ?? null) +
       trendHtml;
+    grid.innerHTML = html.trim() ? html : '<div class="mt-pro-tab-hint">Мало данных</div>';
 
     const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
     const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
@@ -1053,6 +1072,25 @@
     renderRecentHistory(arr);
   }
 
+  function setOverviewCompact(compact) {
+    const vis = (id, visible) => {
+      const el = $(id);
+      if (el) el.style.display = visible ? '' : 'none';
+    };
+    vis('mtStatGrid', !compact);
+    vis('mtSampleNote', !compact);
+    vis('mtAddStats', !compact);
+    vis('mtRollingSection', !compact);
+    vis('mtSplitSection', !compact);
+    const insightTitle = document.querySelector('#mtInsightsSection .mt-pro-section-title');
+    if (insightTitle) insightTitle.style.display = compact ? 'none' : '';
+    const histHead = document.querySelector('#mtTabOverview .mt-pro-list-head');
+    const exportWrap = document.querySelector('#mtTabOverview .mt-pro-analytics-export');
+    if (histHead) histHead.style.display = compact ? 'none' : '';
+    vis('mtFullList', !compact);
+    if (exportWrap) exportWrap.style.display = compact ? '' : 'none';
+  }
+
   function renderAnalytics() {
     ensureAnalyticsDom();
     renderFilters();
@@ -1061,16 +1099,11 @@
     const arr = filtered();
     const isSportOnly = typeFilter === 'sport';
     $('mtInsightsSection').style.display = isSportOnly ? 'none' : '';
-    $('mtSplitSection').style.display = isSportOnly ? 'none' : '';
+    setOverviewCompact(analyticsTab === 'overview');
 
     if (analyticsTab === 'overview') {
-      renderStats(arr, isSportOnly);
-      if (!isSportOnly) {
-        renderInsights(arr);
-        renderSplit(arr);
-        if (proMode) renderRollingROI(arr);
-      }
-      renderFullHistory(arr);
+      if (!isSportOnly) renderInsights(arr);
+      else $('mtInsightsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — выводы по ROI недоступны.</div>';
     } else if (analyticsTab === 'buyin') {
       if (!isSportOnly) renderBuckets(arr);
       else $('mtBucketsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — ROI по бай-инам недоступен.</div>';
