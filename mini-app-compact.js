@@ -269,12 +269,14 @@
         why: br?.explanation || s.why, brainSource: br?.source, brainConfidence: br?.confidence, policyScore: br?.score
       });
       document.getElementById('sizeResult').innerHTML = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
-      window.FreakLady?.react(document.getElementById('sizeResult')?.querySelector('.verdict'), g, 'sizing');
+      const verdict = document.getElementById('sizeResult')?.querySelector('.verdict');
+      window.PsCharacter?.reactVerdict(verdict, g, 'sizing', { actionGrade: br?.actionGrade, sizeGrade: br?.sizeGrade });
       window.PsMotion?.sizingConfirm(area.querySelector('.pgShell'), g);
-      window.PsMotion?.progressiveReveal(document.getElementById('sizeResult')?.querySelector('.verdict'));
+      window.PsMotion?.progressiveReveal(verdict);
       document.getElementById('sizeNext').onclick = () => { window.quick?.active ? window.quickAdvance() : (window.sz++, window.renderSizing()); };
     };
     wireContextButtons(area);
+    window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'thinking', screen: 'sizing' });
   });
 
   /* ── SWIPE: table-centric decision ── */
