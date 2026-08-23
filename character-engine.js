@@ -317,6 +317,30 @@
     return cls;
   }
 
+  function injectDailyResultArena(shell) {
+    if (!shell || shell.querySelector('.psResultArena')) return;
+    const D = typeof window.dailyToday === 'function' ? window.dailyToday() : null;
+    const Ma = window.MaCompact;
+    if (!D || typeof Ma?.gameArena !== 'function') return;
+
+    const ctx = typeof Ma.getCtx30 === 'function' ? Ma.getCtx30('daily', D) : {};
+    const wrap = document.createElement('div');
+    wrap.className = 'pgArenaWrap psResultArena';
+    wrap.innerHTML = Ma.gameArena({
+      board: D.board,
+      hero: D.hero,
+      pot: D.pot,
+      street: 'РИВЕР',
+      heroPos: ctx.heroPos,
+      villainPos: ctx.villainPos,
+      villainType: ctx.villainType
+    });
+
+    const anchor = shell.querySelector('.dualGrade, .verdict, .pgControls, h1');
+    if (anchor) anchor.insertAdjacentElement('beforebegin', wrap);
+    else shell.prepend(wrap);
+  }
+
   function wrapDailyReveal() {
     const base = typeof window.dailyReveal === 'function' ? window.dailyReveal : null;
     if (!base || base.__psCharWrapped) return;
@@ -324,6 +348,7 @@
       const result = base.apply(this, arguments);
       setTimeout(() => {
         const shell = document.querySelector('#dailyArea');
+        injectDailyResultArena(shell);
         const anchor = findDailyReactionAnchor(shell);
         if (!anchor) return;
         reactVerdict(anchor, readGradeFromShell(shell), 'daily', { insertAfter: true });
@@ -358,12 +383,18 @@
     area.dataset.psCharWatch = '1';
     const observer = new MutationObserver(() => {
       if (!document.getElementById('daily')?.classList.contains('active')) return;
-      const anchor = findDailyReactionAnchor(area);
-      if (!anchor || anchor.dataset.psCharReacted) return;
-      anchor.dataset.psCharReacted = '1';
-      reactVerdict(anchor, readGradeFromShell(area), 'daily', { insertAfter: true });
+      decorateDailyFeedback(area);
     });
     observer.observe(area, { childList: true, subtree: true });
+  }
+
+  function decorateDailyFeedback(area) {
+    if (!area) return;
+    const anchor = findDailyReactionAnchor(area);
+    if (!anchor || anchor.dataset.psCharReacted) return;
+    injectDailyResultArena(area.querySelector('.dailyStage, .pgShell, .panel'));
+    anchor.dataset.psCharReacted = '1';
+    reactVerdict(anchor, readGradeFromShell(area), 'daily', { insertAfter: true });
   }
 
   wrapDailyReveal();

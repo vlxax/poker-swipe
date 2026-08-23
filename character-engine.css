@@ -132,6 +132,61 @@
   }
 }
 
+/* Keep poker table visible when sizing feedback appears */
+.pgShell.pgSizing:has(#sizeResult .verdict) {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgSizeRow,
+.pgShell.pgSizing:has(#sizeResult .verdict) .scale,
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgActionRow,
+.pgShell.pgSizing:has(#sizeResult .verdict) .range,
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeLock,
+.pgShell.pgSizing:has(#sizeResult .verdict) .v33DirectInput,
+.pgShell.pgSizing:has(#sizeResult .verdict) .brainPanel,
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeNext {
+  display: none !important;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .ps-reveal-stage {
+  opacity: 1;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgArena {
+  max-height: 28vh;
+  min-height: 132px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgDecisionReadout {
+  margin-bottom: 6px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeResult .verdict {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .dualGrade {
+  margin-bottom: 6px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .psCharReaction {
+  margin-top: 6px;
+  margin-bottom: 2px;
+  min-height: 78px;
+}
+
+.psResultArena {
+  flex: 0 0 auto;
+  margin: 0 0 8px;
+}
+
+.psResultArena .pgArena {
+  max-height: 30vh;
+  min-height: 138px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .psCharVideo {
     display: none;
