@@ -63,19 +63,23 @@ function reviewLegendHtml() {
 }
 
 function situationCard(vm) {
+  const tags = [vm.formatLabel, vm.stageLabel, vm.tableLabel].filter(Boolean)
+    .map((t) => `<span class="maCtxTag">${esc(t)}</span>`).join('');
   const rows = [
-    vm.formatLabel ? `<div class="rangesSitRow"><span>Формат</span><b>${esc(vm.formatLabel)}</b></div>` : '',
-    vm.heroLabel ? `<div class="rangesSitRow"><span>Ты</span><b>${esc(vm.heroLabel)}</b></div>` : '',
-    vm.villainLabel ? `<div class="rangesSitRow"><span>Оппонент</span><b>${esc(vm.villainLabel)}</b></div>` : '',
-    vm.potLabel ? `<div class="rangesSitRow"><span>Банк</span><b>${esc(vm.potLabel)}</b></div>` : ''
+    vm.heroLabel ? `<div><span>ТЫ</span><b>${esc(vm.heroLabel)}</b></div>` : '',
+    vm.villainLabel ? `<div><span>СОПЕРНИК</span><b>${esc(vm.villainLabel)}</b></div>` : '',
+    vm.potLabel ? `<div><span>БАНК</span><b>${esc(vm.potLabel)}</b></div>` : '',
+    vm.stackLabel ? `<div><span>ЭФФ. СТЕК</span><b>${esc(vm.stackLabel)}</b></div>` : ''
   ].filter(Boolean).join('');
 
-  const timeline = (vm.steps || []).map((s) =>
-    `<li><b>${esc(s.actionLabel)}</b><span>${esc(s.actionLine)}</span></li>`
+  const timeline = (vm.steps || []).slice(0, 2).map((s) =>
+    `<div class="maTimelineRow"><span class="maStreet">${esc(s.actionLabel)}</span><span class="maAction">${esc(s.actionLine)}</span></div>`
   ).join('');
 
-  return `<div class="rangesSitCard">${rows}
-    ${timeline ? `<ol class="rangesTimeline">${timeline}</ol>` : ''}
+  return `<div class="rangesSitCard maCtx">
+    ${tags ? `<div class="maCtxTags">${tags}</div>` : ''}
+    <div class="maCtxGrid">${rows}</div>
+    ${timeline ? `<div class="maTimeline">${timeline}</div>` : ''}
   </div>`;
 }
 
@@ -100,14 +104,14 @@ export function renderIntro(root, vm, handlers = {}) {
 
 export function renderPlay(root, vm, handlers = {}) {
   if (!root) return;
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
+  root.innerHTML = `<div class="panel rangesStage dailyStage maShell">
     <div class="rangesPlayTop">
       <span class="ey">${esc(vm.stepLabel)}</span>
       <span class="rangesCounter">${vm.keptCount}/${vm.candidateCount}</span>
     </div>
-    <h2 class="rangesQuestion">${esc(vm.question)}</h2>
+    ${situationCard(vm)}
+    <h2 class="rangesQuestion maQuestion">${esc(vm.question)}</h2>
     <div class="rangesActionChip">${esc(vm.actionLine)}</div>
-    <p class="mut rangesNarrative">${esc(vm.narrative)}</p>
     ${hintsHtml(vm.hints)}
     ${legendHtml()}
     ${matrixGrid(vm.matrix, { interactive: true })}
