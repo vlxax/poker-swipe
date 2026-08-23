@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-23T17:55:39+03:00",
+  "updated_at": "2026-08-23T18:50:44+03:00",
   "date": "2026-08-23",
   "city": "Москва",
   "source_card_count": 54,
@@ -32,12 +32,12 @@
       "type": "Баунти / Нокаут",
       "source_url": "https://pokernomoney.ru/tournaments/10682",
       "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-      "late_reg_until": "20:21",
-      "late_reg_minutes": 261,
+      "late_reg_until": "20:22",
+      "late_reg_minutes": 262,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Баунти / Нокаут JOKER BOUNTY TOURNAMENT 16:00 1 000 ₽ вход до 20:21 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
+      "source_card_text": "★ PREMIUM Баунти / Нокаут JOKER BOUNTY TOURNAMENT 16:00 1 000 ₽ вход до 20:22 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
     },
     {
       "date": "2026-08-23",
@@ -525,7 +525,7 @@
       "club": "ХАРТС",
       "tournament": "MYSTERY HEARTS TOURNEY",
       "fee_rub": 1000,
-      "type": "Mystery Bounty",
+      "type": "Баунти / Нокаут",
       "source_url": "https://pokernomoney.ru/tournaments/10305",
       "address": "Боровая, 19А",
       "late_reg_until": "22:25",
@@ -533,7 +533,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Mystery Bounty MYSTERY HEARTS TOURNEY 18:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+      "source_card_text": "Баунти / Нокаут MYSTERY HEARTS TOURNEY 18:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
     },
     {
       "date": "2026-08-23",
