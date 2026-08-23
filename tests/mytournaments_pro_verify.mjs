@@ -73,7 +73,7 @@ async function audit(page) {
       chartSvg: document.getElementById('mtChartSvg')?.innerHTML?.length || 0,
       recentCards: document.querySelectorAll('#mtList .mt-pro-card').length,
       listCount: document.getElementById('mtListCount')?.innerText || '',
-      analyticsReady: !!document.getElementById('mtProAnalyticsBody')?.dataset.ready,
+      analyticsReady: !!document.getElementById('mtAnalyticsTabs'),
       tournamentsLen: window.S?.tournaments?.length || 0
     };
   });

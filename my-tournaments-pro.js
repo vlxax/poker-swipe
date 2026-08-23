@@ -7,10 +7,10 @@
 
   const RATE = 90;
   const BUCKETS = [
-    { label: 'Micro', max: 1000, icon: '🟢' },
-    { label: 'Low', max: 5000, icon: '🔵' },
-    { label: 'Mid', max: 25000, icon: '🟡' },
-    { label: 'High', max: Infinity, icon: '🔴' }
+    { label: 'Micro', max: 1000, tier: 'micro' },
+    { label: 'Low', max: 5000, tier: 'low' },
+    { label: 'Mid', max: 25000, tier: 'mid' },
+    { label: 'High', max: Infinity, tier: 'high' }
   ];
   const WINDOWS = [50, 100, 200];
   const PERIODS = [['7', '7Д'], ['30', '30Д'], ['90', '3М'], ['365', 'ГОД'], ['all', 'ВСЁ']];
@@ -28,6 +28,7 @@
   let chartData = [];
   let typeData = [];
   let analyticsOpen = false;
+  let analyticsTab = 'overview';
 
   const num = (v) => {
     const n = Number(String(v ?? 0).replace(/\s/g, '').replace(',', '.'));
@@ -55,6 +56,14 @@
   const title = (t) => t.tournamentName || t.name || 'Без названия';
   const venue = (t) =>
     (t.clubOrRoom || t.club || t.room || (cat(t) === 'online' ? 'Online room' : 'Poker club')).toUpperCase();
+  const displayVenue = (t) => {
+    const raw = (t.clubOrRoom || t.club || t.room || '').trim();
+    if (!raw) return cat(t) === 'online' ? 'Online' : 'Club';
+    return raw
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
+  };
   const currency = (t) => t.currency || 'RUB';
   const entries = (t) => Math.max(1, Math.round(num(t.entries) || 1));
   const reentryCount = (t) => Math.max(0, entries(t) - 1);
@@ -269,6 +278,7 @@
           </div>
         </div>
         <button type="button" class="mt-pro-analytics-btn" data-mt="analytics-open">ПОДРОБНАЯ АНАЛИТИКА →</button>
+        <div class="mt-pro-bottom-spacer" aria-hidden="true"></div>
       </div>`;
       ensureAnalyticsDom();
       bindStaticEvents();
@@ -277,8 +287,8 @@
 
   function ensureAnalyticsDom() {
     const body = document.getElementById('mtProAnalyticsBody');
-    if (!body || body.dataset.ready) return;
-    body.dataset.ready = '1';
+    if (!body) return;
+    if (body.querySelector('#mtAnalyticsTabs')) return;
     body.innerHTML = `
       <div class="mt-pro-sheet-handle"></div>
       <div class="mt-pro-analytics-head">
@@ -289,51 +299,68 @@
         <div class="mt-pro-filter-row" id="mtTypeRow"></div>
         <div class="mt-pro-filter-row" id="mtBucketRow" style="display:none"></div>
       </div>
-      <div class="mt-pro-dash">
-        <div class="mt-pro-dash-title">
-          <span>МОЯ ИГРА</span>
-          <div class="mt-pro-pro-toggle" data-mt="pro-toggle">
-            <span>🔬 Профи-режим</span>
-            <div class="mt-pro-switch" id="mtProSwitch"><i></i></div>
+      <div class="mt-pro-analytics-tabs" id="mtAnalyticsTabs"></div>
+      <div id="mtTabOverview" class="mt-pro-tab-panel">
+        <div class="mt-pro-dash">
+          <div class="mt-pro-dash-title">
+            <span>МОЯ ИГРА</span>
+            <div class="mt-pro-pro-toggle" data-mt="pro-toggle">
+              <span>Профи-режим</span>
+              <div class="mt-pro-switch" id="mtProSwitch"><i></i></div>
+            </div>
           </div>
+          <div class="mt-pro-stat-grid" id="mtStatGrid"></div>
+          <div id="mtSampleNote"></div>
+          <div class="mt-pro-add-stats" id="mtAddStats"></div>
         </div>
-        <div class="mt-pro-stat-grid" id="mtStatGrid"></div>
-        <div id="mtSampleNote"></div>
-        <div class="mt-pro-add-stats" id="mtAddStats"></div>
+        <div class="mt-pro-section" id="mtInsightsSection">
+          <div class="mt-pro-section-title">КЛЮЧЕВЫЕ ВЫВОДЫ</div>
+          <div class="mt-pro-conclusions" id="mtInsightsGrid"></div>
+          <div class="mt-pro-warning" id="mtInsightWarning" style="display:none"><span class="mt-pro-warn-icon"></span><p id="mtWarningText"></p></div>
+        </div>
+        <div class="mt-pro-section" id="mtRollingSection" style="display:none">
+          <div class="mt-pro-section-title">ROI СКОЛЬЗЯЩИМ ОКНОМ</div>
+          <div class="mt-pro-rolling" id="mtRollingGrid"></div>
+        </div>
+        <div class="mt-pro-section" id="mtSplitSection">
+          <div class="mt-pro-section-title">ОФЛАЙН VS ОНЛАЙН</div>
+          <div class="mt-pro-split" id="mtSplitCard"></div>
+        </div>
+        <div class="mt-pro-analytics-export">
+          <button type="button" class="mt-pro-export" data-mt="export">Экспорт CSV</button>
+        </div>
+        <div class="mt-pro-list-head">
+          <div class="mt-pro-list-title">ИСТОРИЯ <span class="count" id="mtListCount">(0)</span></div>
+        </div>
+        <div class="mt-pro-list" id="mtFullList"></div>
+        <div class="mt-pro-bottom-spacer" aria-hidden="true"></div>
       </div>
-      <div class="mt-pro-section" id="mtBucketsSection" style="display:none">
-        <div class="mt-pro-section-title">💰 ROI ПО БАЙ-ИН ДИАПАЗОНАМ <span class="mt-pro-badge-count" id="mtBucketsCount"></span></div>
-        <div class="mt-pro-buckets" id="mtBucketsGrid"></div>
+      <div id="mtTabBuyin" class="mt-pro-tab-panel" style="display:none">
+        <div class="mt-pro-section" id="mtBucketsSection">
+          <div class="mt-pro-section-title">ROI ПО БАЙ-ИНАМ <span class="mt-pro-badge-count" id="mtBucketsCount"></span></div>
+          <div class="mt-pro-buckets-compact" id="mtBucketsGrid"></div>
+          <div class="mt-pro-tab-hint" id="mtBuyinHint" style="display:none">Включи профи-режим во вкладке «Обзор» для детализации по бай-инам.</div>
+        </div>
+        <div class="mt-pro-bottom-spacer" aria-hidden="true"></div>
       </div>
-      <div class="mt-pro-section" id="mtRollingSection" style="display:none">
-        <div class="mt-pro-section-title">📈 ROI СКОЛЬЗЯЩИМ ОКНОМ</div>
-        <div class="mt-pro-rolling" id="mtRollingGrid"></div>
+      <div id="mtTabFormats" class="mt-pro-tab-panel" style="display:none">
+        <div class="mt-pro-section" id="mtFormatSection">
+          <div class="mt-pro-section-title">ПО ФОРМАТАМ <span class="n" id="mtFormatN"></span></div>
+          <div class="mt-pro-bar-list" id="mtFormatList"></div>
+        </div>
+        <div class="mt-pro-bottom-spacer" aria-hidden="true"></div>
       </div>
-      <div class="mt-pro-section" id="mtInsightsSection">
-        <div class="mt-pro-section-title">📊 КЛЮЧЕВЫЕ ИНСАЙТЫ</div>
-        <div class="mt-pro-insight-grid" id="mtInsightsGrid"></div>
-        <div class="mt-pro-warning" id="mtInsightWarning" style="display:none"><span>⚠️</span><p id="mtWarningText"></p></div>
-      </div>
-      <div class="mt-pro-section" id="mtSplitSection">
-        <div class="mt-pro-section-title">🌍 ОФЛАЙН VS ОНЛАЙН</div>
-        <div class="mt-pro-split" id="mtSplitCard"></div>
-      </div>
-      <div class="mt-pro-section" id="mtFormatSection">
-        <div class="mt-pro-section-title">🏷️ ПО ТИПАМ ТУРНИРОВ <span class="n" id="mtFormatN"></span></div>
-        <div class="mt-pro-bar-list" id="mtFormatList"></div>
-      </div>
-      <div class="mt-pro-section" id="mtVenueSection">
-        <div class="mt-pro-section-title" id="mtVenueTitle">🏢 ПО РУМАМ / КЛУБАМ</div>
-        <div class="mt-pro-bar-list" id="mtVenueList"></div>
-      </div>
-      <div class="mt-pro-analytics-export">
-        <button type="button" class="mt-pro-export" data-mt="export">📥 Экспорт CSV</button>
-      </div>
-      <div class="mt-pro-list-head">
-        <div class="mt-pro-list-title">📋 ИСТОРИЯ <span class="count" id="mtListCount">(0)</span></div>
-      </div>
-      <div class="mt-pro-list" id="mtFullList"></div>`;
-    body.addEventListener('click', onAnalyticsClick);
+      <div id="mtTabVenues" class="mt-pro-tab-panel" style="display:none">
+        <div class="mt-pro-section" id="mtVenueSection">
+          <div class="mt-pro-section-title" id="mtVenueTitle">ПО ПЛОЩАДКАМ</div>
+          <div class="mt-pro-bar-list" id="mtVenueList"></div>
+        </div>
+        <div class="mt-pro-bottom-spacer" aria-hidden="true"></div>
+      </div>`;
+    if (!body.dataset.bound) {
+      body.addEventListener('click', onAnalyticsClick);
+      body.dataset.bound = '1';
+    }
   }
 
   function $(id) {
@@ -372,6 +399,10 @@
     else if (action === 'delete') deleteTournament(t.dataset.id);
     else if (action === 'bar-detail') showDetailList((t.dataset.ids || '').split('|').filter(Boolean), t.dataset.title || '');
     else if (action === 'type-insight') showTypeList();
+    else if (action === 'analytics-tab') {
+      analyticsTab = t.dataset.val || 'overview';
+      renderAnalytics();
+    }
   }
 
   function showToast(msg, isErr) {
@@ -432,14 +463,49 @@
         `<button type="button" class="mt-pro-chip ${bucketFilter === 'all' ? 'active' : ''}" data-mt="bucket" data-val="all">ВСЕ</button>` +
         BUCKETS.map(
           (b) =>
-            `<button type="button" class="mt-pro-chip ${bucketFilter === b.label ? 'active' : ''}" data-mt="bucket" data-val="${esc(b.label)}">${b.icon} ${b.label}</button>`
+            `<button type="button" class="mt-pro-chip ${bucketFilter === b.label ? 'active' : ''}" data-mt="bucket" data-val="${esc(b.label)}">${b.label}</button>`
         ).join('');
     } else {
       bucketRow.style.display = 'none';
     }
     $('mtProSwitch')?.classList.toggle('on', proMode);
-    $('mtBucketsSection').style.display = proMode ? '' : 'none';
-    $('mtRollingSection').style.display = proMode ? '' : 'none';
+    $('mtRollingSection').style.display = proMode && analyticsTab === 'overview' ? '' : 'none';
+  }
+
+  const ANALYTICS_TABS = [
+    ['overview', 'ОБЗОР'],
+    ['buyin', 'ПО БАЙ-ИНАМ'],
+    ['formats', 'ФОРМАТЫ'],
+    ['venues', 'ПЛОЩАДКИ']
+  ];
+
+  function renderAnalyticsTabBar() {
+    const el = $('mtAnalyticsTabs');
+    if (!el) return;
+    el.innerHTML = ANALYTICS_TABS.map(
+      ([k, l]) =>
+        `<button type="button" class="mt-pro-seg ${analyticsTab === k ? 'active' : ''}" data-mt="analytics-tab" data-val="${k}">${l}</button>`
+    ).join('');
+  }
+
+  function showAnalyticsPanel() {
+    const map = { overview: 'mtTabOverview', buyin: 'mtTabBuyin', formats: 'mtTabFormats', venues: 'mtTabVenues' };
+    Object.entries(map).forEach(([k, id]) => {
+      const el = $(id);
+      if (el) el.style.display = analyticsTab === k ? 'block' : 'none';
+    });
+  }
+
+  function groupRoi(items) {
+    if (!items.length) return null;
+    const inv = items.reduce((s, t) => s + investedRub(t), 0);
+    const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
+    if (!inv) return null;
+    return {
+      roi: Math.round(((ret - inv) / inv) * 1000) / 10,
+      profit: ret - inv,
+      n: items.length
+    };
   }
 
   function periodLabel() {
@@ -520,7 +586,7 @@
     const periodTxt = periodFilter === 'all' ? 'ЗА ВСЁ ВРЕМЯ' : `ЗА ${periodLabel()}`;
     el.style.display = 'block';
     el.innerHTML = `
-      <div class="mt-pro-hero-tag">⚡ ${periodTxt}</div>
+      <div class="mt-pro-hero-tag">${periodTxt}</div>
       <div class="mt-pro-hero-text">Лучший результат у тебя в <strong>${label}</strong></div>
       <div class="mt-pro-hero-val ${roi >= 0 ? 'pos' : 'neg'}">ROI ${roi >= 0 ? '+' : ''}${roi}%</div>`;
   }
@@ -596,10 +662,10 @@
       <div class="mt-pro-stat"><div class="lbl">Просадка</div><div class="val ${curDD > 0 ? 'neg' : 'pos'}">${isAtHigh ? '0' : proMode ? fmtMoneyUSD(-curDD / RATE) : fmtMoney(-curDD)}</div><div class="sub">${isAtHigh ? 'Новый максимум' : curDDLen > 0 ? curDDLen + ' тур.' : ''}</div></div>`;
 
     let noteHtml = '';
-    if (n < 15) noteHtml = `⚠ ${n} тур. — ОЧЕНЬ МАЛО ДАННЫХ`;
-    else if (n < 100) noteHtml = `📊 ${n} тур. — РАННЯЯ ВЫБОРКА`;
-    else if (n < 300) noteHtml = `📈 ${n} тур. — ТЕНДЕНЦИЯ ВИДНА`;
-    else noteHtml = `📈 ${n} тур. — ИНФОРМАТИВНАЯ ДИСТАНЦИЯ`;
+    if (n < 15) noteHtml = `${n} тур. — очень мало данных`;
+    else if (n < 100) noteHtml = `${n} тур. — ранняя выборка`;
+    else if (n < 300) noteHtml = `${n} тур. — тенденция видна`;
+    else noteHtml = `${n} тур. — информативная дистанция`;
     note.innerHTML = noteHtml;
     note.className = noteHtml ? 'mt-pro-sample' : '';
   }
@@ -730,8 +796,18 @@
 
   function renderBuckets(arr) {
     const m = moneyList(arr);
-    $('mtBucketsCount').textContent = `(${m.length} тур.)`;
-    $('mtBucketsGrid').innerHTML = BUCKETS.map((b, idx) => {
+    const grid = $('mtBucketsGrid');
+    const hint = $('mtBuyinHint');
+    if (!grid) return;
+    const countEl = $('mtBucketsCount');
+    if (countEl) countEl.textContent = `(${m.length} тур.)`;
+    if (!proMode) {
+      grid.innerHTML = '';
+      if (hint) hint.style.display = 'block';
+      return;
+    }
+    if (hint) hint.style.display = 'none';
+    grid.innerHTML = BUCKETS.map((b, idx) => {
       const prev = idx > 0 ? BUCKETS[idx - 1].max : 0;
       const filtered = m.filter((t) => buyinRub(t) > prev && buyinRub(t) <= b.max);
       const inv = filtered.reduce((s, t) => s + investedRub(t), 0);
@@ -739,10 +815,19 @@
       const net = ret - inv;
       const roi = inv ? Math.round((net / inv) * 1000) / 10 : null;
       const ids = filtered.map((t) => String(t.id)).join('|');
-      return `<div class="mt-pro-bucket" data-mt="bar-detail" data-title="${esc(b.icon + ' ' + b.label)}" data-ids="${esc(ids)}">
-        <div class="lbl">${b.icon} ${b.label}</div>
-        <div class="val ${roi === null ? 'neutral' : roi >= 0 ? 'pos' : 'neg'}">${roi === null ? '—' : (roi >= 0 ? '+' : '') + roi + '%'}</div>
-        <div class="lbl">${filtered.length} тур. · ${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</div>
+      const lowData = filtered.length < 2 || !inv;
+      const roiHtml = lowData
+        ? '<span class="mt-pro-bucket-low">мало данных</span>'
+        : `<span class="mt-pro-bucket-roi ${roi >= 0 ? 'pos' : 'neg'}">${roi >= 0 ? '+' : ''}${roi}%</span>`;
+      const profitHtml = lowData
+        ? ''
+        : `<span class="mt-pro-bucket-profit ${net >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span>`;
+      return `<div class="mt-pro-bucket-row ${lowData ? 'dim' : ''}" data-mt="bar-detail" data-title="${esc(b.label)}" data-ids="${esc(ids)}">
+        <span class="mt-pro-bucket-dot ${b.tier}"></span>
+        <span class="mt-pro-bucket-name">${b.label}</span>
+        <span class="mt-pro-bucket-count">${filtered.length} тур.</span>
+        ${roiHtml}
+        ${profitHtml}
       </div>`;
     }).join('');
   }
@@ -763,104 +848,71 @@
     }).join('');
   }
 
+  function conclusionCard(label, name, roi, extraCls) {
+    if (!name) return '';
+    const cls = roi === null ? 'neutral' : roi >= 0 ? 'pos' : 'neg';
+    const val = roi === null ? '—' : `${roi >= 0 ? '+' : ''}${roi}%`;
+    return `<div class="mt-pro-conclusion ${extraCls || ''}">
+      <div class="mt-pro-conclusion-lbl">${label}</div>
+      <div class="mt-pro-conclusion-name">${esc(name)}</div>
+      <div class="mt-pro-conclusion-val ${cls}">ROI ${val}</div>
+    </div>`;
+  }
+
   function renderInsights(arr) {
     const grid = $('mtInsightsGrid');
     const warning = $('mtInsightWarning');
     const m = moneyList(arr);
     const n = m.length;
+    if (!grid) return;
     if (n === 0) {
       grid.innerHTML = '';
-      warning.style.display = 'none';
+      if (warning) warning.style.display = 'none';
       return;
     }
 
     const groups = groupBy(m, (t) => fmtDisplay(t));
-    const typeEntries = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
-    typeData = typeEntries;
+    typeData = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
+    const formatStats = typeData
+      .map(([fmt, items]) => ({ fmt, ...groupRoi(items) }))
+      .filter((x) => x && x.n >= 2 && x.roi !== null);
+    const bestFmt = formatStats.length ? formatStats.reduce((a, b) => (a.roi > b.roi ? a : b)) : null;
+    const worstFmt = formatStats.length ? formatStats.reduce((a, b) => (a.roi < b.roi ? a : b)) : null;
 
-    let typeHtml = '';
-    typeEntries.forEach(([fmt, items]) => {
-      const inv = items.reduce((s, t) => s + investedRub(t), 0);
-      const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
-      const roi = inv ? Math.round(((ret - inv) / inv) * 1000) / 10 : null;
-      if (roi !== null) {
-        typeHtml += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-          <span>${esc(fmt)}</span>
-          <span style="color:${roi >= 0 ? '#c8ff3d' : '#ff6b5b'};font-weight:700">${roi >= 0 ? '+' : ''}${roi}%</span>
-          <span style="color:#888;font-size:8px">${items.length} тур.</span></div>`;
-      }
-    });
+    const venueGroups = Object.entries(groupBy(m, (t) => displayVenue(t)))
+      .map(([name, items]) => ({ name, ...groupRoi(items) }))
+      .filter((x) => x && x.n >= 2 && x.roi !== null);
+    const bestVenue = venueGroups.length ? venueGroups.reduce((a, b) => (a.roi > b.roi ? a : b)) : null;
 
     const sorted = m.slice().sort((a, b) => dateSortKey(b) - dateSortKey(a));
-    const lastN = sorted.slice(0, Math.min(100, sorted.length));
-    const invN = lastN.reduce((s, t) => s + investedRub(t), 0);
-    const retN = lastN.reduce((s, t) => s + totalReturnedRub(t), 0);
-    const roiN = invN ? Math.round(((retN - invN) / invN) * 1000) / 10 : null;
+    let trendHtml = '';
+    if (sorted.length >= 6) {
+      const last5 = groupRoi(sorted.slice(0, 5));
+      const prev5 = groupRoi(sorted.slice(5, 10));
+      if (last5 && prev5) {
+        const better = last5.roi > prev5.roi;
+        trendHtml = `<div class="mt-pro-conclusion span2">
+          <div class="mt-pro-conclusion-lbl">ТРЕНД</div>
+          <div class="mt-pro-conclusion-name">${better ? 'Последние 5 турниров лучше предыдущих 5' : 'Последние 5 турниров слабее предыдущих 5'}</div>
+          <div class="mt-pro-conclusion-val ${better ? 'pos' : 'neg'}">${last5.roi >= 0 ? '+' : ''}${last5.roi}% vs ${prev5.roi >= 0 ? '+' : ''}${prev5.roi}%</div>
+        </div>`;
+      }
+    }
+
+    grid.innerHTML =
+      conclusionCard('ЛУЧШИЙ ФОРМАТ', bestFmt?.fmt, bestFmt?.roi ?? null, 'highlight') +
+      conclusionCard('СЛАБОЕ МЕСТО', worstFmt && worstFmt.fmt !== bestFmt?.fmt ? worstFmt.fmt : null, worstFmt?.roi ?? null, 'weak') +
+      conclusionCard('ЛУЧШАЯ ПЛОЩАДКА', bestVenue?.name, bestVenue?.roi ?? null) +
+      trendHtml;
+
     const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
     const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
     const totalRoi = totalInv ? Math.round(((totalRet - totalInv) / totalInv) * 1000) / 10 : null;
-
-    const totalCash = m.reduce((s, t) => s + toRub(t, num(t.prize)), 0);
-    const totalBounty = m.reduce((s, t) => s + toRub(t, num(t.bountyWon)), 0);
-    const withRe = m.filter((t) => reentryCount(t) > 0);
-    const reentryRate = Math.round((withRe.length / n) * 100);
-    const profitPerRe = withRe.length
-      ? Math.round(withRe.reduce((s, t) => s + profitRub(t), 0) / withRe.length)
-      : 0;
-
-    const byMonth = {};
-    m.forEach((t) => {
-      const mth = String(t.date || '').slice(0, 7);
-      if (mth) (byMonth[mth] = byMonth[mth] || []).push(t);
-    });
-    const monthStats = Object.entries(byMonth).map(([mth, items]) => {
-      const inv = items.reduce((s, t) => s + investedRub(t), 0);
-      const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
-      return { mth, profit: ret - inv, n: items.length };
-    });
-    const bestMonth = monthStats.length ? monthStats.reduce((a, b) => (a.profit > b.profit ? a : b)) : null;
-    const worstMonth = monthStats.length ? monthStats.reduce((a, b) => (a.profit < b.profit ? a : b)) : null;
-
-    let monthHtml = '';
-    if (bestMonth && worstMonth && bestMonth.mth !== worstMonth.mth) {
-      monthHtml = `<div style="display:flex;justify-content:space-between;font-size:10px;gap:8px;flex-wrap:wrap">
-        <div><span style="color:#c8ff3d;font-weight:700">${esc(bestMonth.mth)}</span> ${proMode ? fmtMoneyUSD(bestMonth.profit / RATE) : fmtMoney(bestMonth.profit)}</div>
-        <div><span style="color:#ff6b5b;font-weight:700">${esc(worstMonth.mth)}</span> ${proMode ? fmtMoneyUSD(worstMonth.profit / RATE) : fmtMoney(worstMonth.profit)}</div></div>`;
-    } else if (bestMonth) {
-      monthHtml = `<div style="font-size:10px"><span style="color:#c8ff3d;font-weight:700">${esc(bestMonth.mth)}</span> ${proMode ? fmtMoneyUSD(bestMonth.profit / RATE) : fmtMoney(bestMonth.profit)}</div>`;
-    }
-
-    grid.innerHTML = `
-      <div class="mt-pro-insight clickable span2" data-mt="type-insight">
-        <div class="lbl">📊 По типам</div>
-        <div style="font-size:10px">${typeHtml || 'Нет данных'}</div>
-        <div class="sub">Кликни → список</div>
-      </div>
-      <div class="mt-pro-insight">
-        <div class="lbl">📈 ROI за последние ${lastN.length} тур.</div>
-        <div class="val ${roiN === null ? 'neutral' : roiN >= 0 ? 'pos' : 'neg'}">${roiN === null ? '—' : (roiN >= 0 ? '+' : '') + roiN + '%'}</div>
-        <div class="sub">Всего: ${totalRoi === null ? '—' : (totalRoi >= 0 ? '+' : '') + totalRoi + '%'}</div>
-      </div>
-      <div class="mt-pro-insight">
-        <div class="lbl">💰 Призы vs Баунти</div>
-        <div class="val pos">${proMode ? fmtMoneyUSD(totalCash / RATE) : fmtMoney(totalCash)}</div>
-        <div class="sub">Баунти: ${proMode ? fmtMoneyUSD(totalBounty / RATE) : fmtMoney(totalBounty)}</div>
-      </div>
-      <div class="mt-pro-insight">
-        <div class="lbl">🔄 Ре-энтри</div>
-        <div class="val ${reentryRate > 30 ? 'pos' : 'neutral'}">${reentryRate}%</div>
-        <div class="sub">${withRe.length} тур. · ${proMode ? fmtMoneyUSD(profitPerRe / RATE) : fmtMoney(profitPerRe)} / тур.</div>
-      </div>
-      <div class="mt-pro-insight span2">
-        <div class="lbl">📅 Лучший / Худший месяц</div>
-        ${monthHtml || '<div class="sub">Нет данных</div>'}
-      </div>`;
-
-    if (totalRoi !== null && totalRoi > 10 && n < 200 && n > 0) {
+    if (warning && totalRoi !== null && totalRoi > 10 && n < 200 && n > 0) {
       const needed = Math.max(0, Math.round(350 * (1 - n / 350)));
       $('mtWarningText').textContent = `ROI ${totalRoi > 0 ? '+' : ''}${totalRoi}% — сыграно ${n} тур. Для достоверности нужно ~${needed} тур.`;
       warning.style.display = 'flex';
-    } else {
+    } else if (warning) {
       warning.style.display = 'none';
     }
   }
@@ -945,14 +997,17 @@
       </div>
       <div class="mt-pro-card-row2">
         <span class="mt-pro-card-meta">${fmtDateShort(t.date)} · ${esc(fmtDisplay(t))}</span>
-        <span class="mt-pro-card-meta">${placeTxt}</span>
       </div>
       <div class="mt-pro-card-row3">
-        <span class="mt-pro-card-venue"><span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span> ${esc(venue(t))}</span>
+        <span class="mt-pro-card-meta"><span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span> · ${esc(venue(t))}</span>
+      </div>
+      <div class="mt-pro-card-row4">
+        <span class="mt-pro-card-meta">${placeTxt}</span>
         <span class="mt-pro-card-buyin">BI ${buyinTxt}</span>
       </div>
       <div class="mt-pro-card-actions">
         <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
+        <span class="mt-pro-card-actions-sep">/</span>
         <button type="button" class="danger" data-mt="delete" data-id="${esc(t.id)}">Удалить</button>
       </div>
     </div>`;
@@ -1001,21 +1056,30 @@
   function renderAnalytics() {
     ensureAnalyticsDom();
     renderFilters();
+    renderAnalyticsTabBar();
+    showAnalyticsPanel();
     const arr = filtered();
     const isSportOnly = typeFilter === 'sport';
-    $('mtSplitSection').style.display = isSportOnly ? 'none' : '';
     $('mtInsightsSection').style.display = isSportOnly ? 'none' : '';
-    $('mtVenueTitle').textContent = isSportOnly ? '🏢 ПО КЛУБАМ' : '🏢 ПО РУМАМ / КЛУБАМ';
-    renderStats(arr, isSportOnly);
-    if (proMode && !isSportOnly) {
-      renderBuckets(arr);
-      renderRollingROI(arr);
+    $('mtSplitSection').style.display = isSportOnly ? 'none' : '';
+
+    if (analyticsTab === 'overview') {
+      renderStats(arr, isSportOnly);
+      if (!isSportOnly) {
+        renderInsights(arr);
+        renderSplit(arr);
+        if (proMode) renderRollingROI(arr);
+      }
+      renderFullHistory(arr);
+    } else if (analyticsTab === 'buyin') {
+      if (!isSportOnly) renderBuckets(arr);
+      else $('mtBucketsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — ROI по бай-инам недоступен.</div>';
+    } else if (analyticsTab === 'formats') {
+      renderFormatBreakdown(arr, isSportOnly);
+    } else if (analyticsTab === 'venues') {
+      $('mtVenueTitle').textContent = isSportOnly ? 'ПО КЛУБАМ' : 'ПО ПЛОЩАДКАМ';
+      renderVenueBreakdown(arr, isSportOnly);
     }
-    if (!isSportOnly) renderInsights(arr);
-    if (!isSportOnly) renderSplit(arr);
-    renderFormatBreakdown(arr, isSportOnly);
-    renderVenueBreakdown(arr, isSportOnly);
-    renderFullHistory(arr);
   }
 
   function render() {
@@ -1029,7 +1093,7 @@
     const keySet = new Set(idKeys.map(String));
     const items = list().filter((t) => keySet.has(String(t.id)));
     if (!items.length) return;
-    let html = `<div style="font-weight:700;margin-bottom:10px;font-size:13px">📋 ${esc(detailTitle)} · ${items.length} тур.</div>`;
+    let html = `<div class="mt-pro-detail-title">${esc(detailTitle)} · ${items.length} тур.</div>`;
     items.slice(0, 20).forEach((t) => {
       const p = profitRub(t);
       html += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:8px">
@@ -1049,7 +1113,7 @@
 
   function showTypeList() {
     if (!typeData.length) return;
-    let html = '<div style="font-weight:700;margin-bottom:10px">📊 Все турниры по типам</div>';
+    let html = '<div class="mt-pro-detail-title">Все турниры по типам</div>';
     typeData.forEach(([fmt, items]) => {
       html += `<div style="margin-bottom:10px"><div style="font-weight:700;font-size:12px">${esc(fmt)} <span style="color:#888;font-weight:400;font-size:10px">${items.length} тур.</span></div>`;
       items.slice(0, 8).forEach((t) => {
@@ -1309,7 +1373,7 @@
     link.download = 'poker_export_' + new Date().toISOString().slice(0, 10) + '.csv';
     link.click();
     URL.revokeObjectURL(link.href);
-    showToast('📥 CSV выгружен');
+    showToast('CSV выгружен');
   }
 
   function openScreen() {
