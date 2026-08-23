@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-23T02:47:20+03:00",
+  "updated_at": "2026-08-23T06:30:58+03:00",
   "club_count": 63,
   "event_count": 48,
   "source_card_count": 48,
@@ -1459,7 +1459,7 @@
           "time": "19:00",
           "club": "МАКСИМУМ",
           "tournament": "День Рождения Kirix",
-          "fee_rub": 0,
+          "fee_rub": 1200,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11015",
           "address": "Большая Никитская 43",
@@ -1468,7 +1468,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "День Рождения Kirix 19:00 уточняйте МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "День Рождения Kirix 19:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
         }
       ]
     },
@@ -2295,7 +2295,7 @@
       "time": "19:00",
       "club": "МАКСИМУМ",
       "tournament": "День Рождения Kirix",
-      "fee_rub": 0,
+      "fee_rub": 1200,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/11015",
       "address": "Большая Никитская 43",
@@ -2304,7 +2304,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "День Рождения Kirix 19:00 уточняйте МАКСИМУМ Большая Никитская 43"
+      "source_card_text": "День Рождения Kirix 19:00 1 200 ₽ МАКСИМУМ Большая Никитская 43"
     },
     {
       "date": "2026-08-23",
