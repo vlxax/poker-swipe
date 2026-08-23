@@ -181,8 +181,12 @@ export function renderGameLobby(root, vm, handlers = {}) {
   const b = root.querySelector('#trStart');
   if (b && typeof handlers.start === 'function') {
     b.onclick = () => {
-      b.classList.add('pgPressed');
-      setTimeout(() => handlers.start(), 120);
+      if (window.PsMotion?.startHand) {
+        window.PsMotion.startHand(root, () => handlers.start());
+      } else {
+        b.classList.add('pgPressed');
+        setTimeout(() => handlers.start(), 120);
+      }
     };
   }
   wireContextButtons(root, ctx, id);
@@ -214,8 +218,7 @@ export function renderGameDrill(root, vm, handlers = {}) {
   root.querySelectorAll('[data-option]').forEach((b) => {
     b.onclick = () => {
       if (typeof handlers.answer !== 'function') return;
-      b.classList.add('pgPressed');
-      root.querySelectorAll('[data-option]').forEach((x) => x.disabled = true);
+      window.PsMotion?.decisionLock(b);
       handlers.answer(b.dataset.option);
     };
   });
@@ -248,6 +251,8 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   if (window.FreakLady && verdict) {
     window.FreakLady.react(verdict, cls, 'daily', { wide: true });
   }
+  window.PsMotion?.pulseArena(root, cls);
+  window.PsMotion?.progressiveReveal(verdict);
 
   const b = root.querySelector('#trNext');
   if (b && typeof handlers.next === 'function') {

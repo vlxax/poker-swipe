@@ -182,7 +182,7 @@
     const area = document.getElementById('reviewArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgReview">
       ${hudStrip(ctx, id, { title: '<h1 class="impact">ГДЕ ЛИНИЯ <span class="pink">СЛОМАЛАСЬ?</span></h1>', subtitle: 'LOSS MAP' })}
-      ${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgArenaWrap pgDealIn">${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       ${gamePath(R.nodes, { pickable: true })}
       <div class="pgControls">
         <button type="button" class="choice reviewNone" id="rvNone">НИГДЕ. ЛИНИЯ НОРМАЛЬНАЯ.</button>
@@ -207,6 +207,7 @@
       document.getElementById('rvSure').onclick = window.reviewReveal;
     };
     wireContextButtons(area);
+    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   });
 
   /* ── SIZING: table-dominant game interface ── */
@@ -223,7 +224,7 @@
     const area = document.getElementById('sizingArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgSizing">
       ${hudStrip(ctx, id, { title: '<h2>Какой сайз?</h2>', subtitle: esc(s.street) + ' · САЙЗИНГ' })}
-      ${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+      <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       <div class="pgControls">
         <div class="pgControlsHead">ТВОЁ РЕШЕНИЕ</div>
         <div class="pgDecisionReadout"><b id="sizePct">50%</b><strong id="sizeBB">${(s.pot * 0.5).toFixed(1)} ББ</strong></div>
@@ -257,10 +258,12 @@
     upd();
 
     document.getElementById('sizeLock').onclick = () => {
+      const lockBtn = document.getElementById('sizeLock');
       const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
       const action = v === 0 ? 'CHECK' : 'BET';
       const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
       const g = br?.grade || 'y';
+      window.PsMotion?.decisionLock(lockBtn, { grade: g });
       window.recordEvent({
         spotId: s.id, mode: 'sizing', concept: s.concept, conceptId: br?.concept, street: s.street,
         action, sizePct: v || null, grade: g, gradeAction: br?.actionGrade, gradeSize: br?.sizeGrade,
@@ -268,9 +271,12 @@
       });
       document.getElementById('sizeResult').innerHTML = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
       window.FreakLady?.react(document.getElementById('sizeResult')?.querySelector('.verdict'), g, 'sizing');
+      window.PsMotion?.sizingConfirm(area.querySelector('.pgShell'), g);
+      window.PsMotion?.progressiveReveal(document.getElementById('sizeResult')?.querySelector('.verdict'));
       document.getElementById('sizeNext').onclick = () => { window.quick?.active ? window.quickAdvance() : (window.sz++, window.renderSizing()); };
     };
     wireContextButtons(area);
+    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   });
 
   /* ── SWIPE: table-centric decision ── */
@@ -303,15 +309,29 @@
       <div class="swipeProgress"><span style="width:${window.swIndex / 10 * 100}%"></span></div>
       <div class="swipeCardV in" id="swipeVisual">
         ${hudStrip(ctx, id, { title: '<h2>Твоё решение?</h2>' })}
-        ${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
+        <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       </div>
     </div>`;
 
     document.getElementById('swipeActions').innerHTML = s.actions.map((a) =>
       `<button class="action ${/ФОЛД/.test(a) ? 'fold' : /КОЛЛ|ЧЕК/.test(a) ? 'call' : 'raise'}" data-sa="${a}">${a}</button>`
     ).join('');
-    document.querySelectorAll('[data-sa]').forEach((b) => { b.onclick = () => window.swipeTap(s, b.dataset.sa, b); });
+    document.querySelectorAll('[data-sa]').forEach((b) => {
+      b.onclick = () => {
+        window.PsMotion?.decisionLock(b);
+        if (window.swLocked) return;
+        document.querySelectorAll('[data-sa]').forEach((x) => x.classList.remove('selected'));
+        b.classList.add('selected');
+        const a = b.dataset.sa;
+        if ((a === 'СТАВКА' || (a === 'РЕЙЗ' && s.street !== 'ПРЕФЛОП')) && s.sizeZone && typeof window.renderSwipeSize === 'function') {
+          window.renderSwipeSize(s, a);
+          return;
+        }
+        if (typeof window.finalizeSwipe === 'function') window.finalizeSwipe(s, a, null);
+      };
+    });
     wireContextButtons(document.getElementById('swipeCard'));
+    window.PsMotion?.afterShell(document.getElementById('swipeCard')?.querySelector('.pgSwipeWrap, .pgShell'), { mode: 'enter' });
   });
 
   /* ── DAILY: personalised training uses training-ui/gameShell.js ── */

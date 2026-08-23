@@ -54,9 +54,12 @@
       window.dChoice = null;
       window.dSize = null;
       window.dStart = window.now();
-      window.dailyStreet();
+      const run = () => window.dailyStreet();
+      if (window.PsMotion?.startHand) window.PsMotion.startHand(area, run);
+      else run();
     };
     wireCtx(area, ctx, id);
+    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   }
 
   function dailyStreetGame() {
@@ -86,6 +89,7 @@
     } else {
       area.querySelectorAll('[data-dchoice]').forEach((b) => {
         b.onclick = () => {
+          window.PsMotion?.decisionLock(b);
           window.dChoice = b.dataset.dchoice;
           area.querySelectorAll('[data-dchoice]').forEach((x) => x.classList.toggle('selected', x === b));
           if (window.dChoice === 'СТАВКА' && D.zone) window.dailySize();
@@ -94,6 +98,8 @@
       });
     }
     wireCtx(area, ctx, id);
+    const streetKey = window.dStreet === 1 ? 'flop' : window.dStreet === 2 ? 'turn' : window.dStreet === 3 ? 'river' : null;
+    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: window.dStreet === 0 ? 'hand-start' : 'enter', street: streetKey });
   }
 
   window.__legacyDailyIntro = renderLegacyDailyIntro;

@@ -111,7 +111,10 @@ export function renderPlay(root, vm, handlers = {}) {
   </div>`;
 
   root.querySelectorAll('[data-rhand]').forEach((b) => {
-    b.onclick = () => handlers.toggle?.(b.dataset.rhand);
+    b.onclick = () => {
+      window.PsMotion?.rangesCellFlash(b);
+      handlers.toggle?.(b.dataset.rhand);
+    };
   });
   root.querySelector('#rangesConfirm').onclick = () => handlers.confirm?.();
   const help = root.querySelector('#rangesHelp');
