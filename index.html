@@ -2742,6 +2742,11 @@ function exposeV32(name,get,set){
   ['swLocked',()=>swLocked,v=>{swLocked=v}],['swSessionGrades',()=>swSessionGrades,v=>{swSessionGrades=v}],
   ['SIZING',()=>SIZING,null],['REVIEWS',()=>REVIEWS,null],
   ['DAILY_TEMPLATES',()=>DAILY_TEMPLATES,null],['dailyToday',()=>dailyToday,null],['CTX30',()=>CTX30,null],
+  ['dailyStreet',()=>dailyStreet,v=>{dailyStreet=v}],['dailySize',()=>dailySize,v=>{dailySize=v}],
+  ['dailyConfidence',()=>dailyConfidence,v=>{dailyConfidence=v}],['dailyReveal',()=>dailyReveal,v=>{dailyReveal=v}],
+  ['renderDailyArguments',()=>renderDailyArguments,v=>{renderDailyArguments=v}],
+  ['dStreet',()=>dStreet,v=>{dStreet=v}],['dChoice',()=>dChoice,v=>{dChoice=v}],['dSize',()=>dSize,v=>{dSize=v}],
+  ['dConf',()=>dConf,v=>{dConf=v}],['dArgs',()=>dArgs,v=>{dArgs=v}],['dStart',()=>dStart,v=>{dStart=v}],
   ['HR22',()=>HR22,v=>{HR22=v}],['hr22Fresh',()=>hr22Fresh,null],
   ['hr22BindBoard',()=>hr22BindBoard,v=>{hr22BindBoard=v}],['hr22BoardAt',()=>hr22BoardAt,v=>{hr22BoardAt=v}],
   ['hr22StreetEval',()=>hr22StreetEval,v=>{hr22StreetEval=v}],['hr22OpponentEval',()=>hr22OpponentEval,v=>{hr22OpponentEval=v}],
@@ -4850,6 +4855,7 @@ window.openMyTournamentsV71=openScreen;window.openMyTournamentsV72=openScreen;wi
 <script src="mini-app-compact.js" data-mini-app-compact="1"></script>
 <script src="freak-lady-reactive.js"></script>
 <script type="module" src="training-ui/main.js"></script>
+<script src="daily-game-patch.js"></script>
 <script type="module" src="ranges-ui/main.js"></script>
 </body>
 </html>

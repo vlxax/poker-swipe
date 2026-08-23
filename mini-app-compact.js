@@ -314,58 +314,8 @@
     wireContextButtons(document.getElementById('swipeCard'));
   });
 
-  /* ── DAILY intro ── */
-  replaceRender('renderDaily', function renderDailyGame() {
-    const D = window.dailyToday();
-    const done = window.S.dailyArchive.find((x) => x.date === window.today());
-    const ctx = getCtx30('daily', D);
-    ctx.pot = `${D.pot} ББ`;
-    ctx.eff = `${D.stack} ББ`;
-    ctx.history = D.line;
-    const id = 'daily_' + D.id;
-    registerCtx(id, ctx);
-
-    document.getElementById('dailyArea').innerHTML = `<div class="panel pgShell pgDaily">
-      ${hudStrip(ctx, id, { title: '<h1 class="impact">РАЗБОР <span class="pink">РЕШЕНИЯ</span></h1>', subtitle: '#' + D.number + ' · ' + esc(D.theme) })}
-      ${gameArena({ board: D.board.slice(0, 3), hero: D.hero, pot: D.pot, street: 'ФЛОП', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
-      <div class="pgControls"><button class="primary pgCta" id="dStart">${done ? 'ПЕРЕСМОТРЕТЬ' : 'СЕСТЬ ЗА СТОЛ'} →</button></div>
-    </div>`;
-    document.getElementById('dStart').onclick = () => { window.dStreet = 0; window.dArgs = {}; window.dChoice = null; window.dSize = null; window.dStart = window.now(); window.dailyStreet(); };
-    wireContextButtons(document.getElementById('dailyArea'));
-  });
-
-  /* ── DAILY street: progressive table ── */
-  replaceRender('dailyStreet', function dailyStreetGame() {
-    const D = window.dailyToday();
-    const ctx = getCtx30('daily', D);
-    const id = 'daily_st_' + D.id;
-    registerCtx(id, ctx);
-    const n = window.dStreet === 0 ? 0 : window.dStreet === 1 ? 3 : window.dStreet === 2 ? 4 : 5;
-    const streets = ['PRE', 'FLOP', 'TURN', 'RIVER'];
-    const streetLabels = ['ПРЕФЛОП', 'ФЛОП', 'ТЁРН', 'РИВЕР'];
-    const potNow = window.dStreet === 3 ? D.pot : (D.pot * [.12, .28, .55, 1][window.dStreet]).toFixed(1);
-    ctx.pot = potNow + ' ББ';
-
-    const area = document.getElementById('dailyArea');
-    area.innerHTML = `<div class="panel pgShell pgDaily">
-      ${hudStrip(ctx, id, { title: '<h2>Разбор решения</h2>', subtitle: streetLabels[window.dStreet] })}
-      <div class="pgStreetDots">${streets.map((x, i) => `<span class="${i < window.dStreet ? 'done' : i === window.dStreet ? 'on' : ''}">${x}</span>`).join('')}</div>
-      ${gameArena({ board: n ? D.board.slice(0, n) : [], hero: D.hero, pot: potNow, street: streetLabels[window.dStreet], heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}
-      <div class="pgControls">
-        ${window.dStreet < 3 ? '<button class="primary pgCta" id="dNext">ПРОДОЛЖИТЬ →</button>' : `<div class="pgControlsHead">ТВОЙ ХОД</div><div class="grid2">${D.decision.map((x) => `<button class="choice" data-dchoice="${x}">${x}</button>`).join('')}</div><div id="dDecision"></div>`}
-      </div>
-    </div>`;
-
-    if (window.dStreet < 3) document.getElementById('dNext').onclick = () => { window.dStreet++; window.dailyStreet(); };
-    else area.querySelectorAll('[data-dchoice]').forEach((b) => {
-      b.onclick = () => {
-        window.dChoice = b.dataset.dchoice;
-        area.querySelectorAll('[data-dchoice]').forEach((x) => x.classList.toggle('selected', x === b));
-        window.dChoice === 'СТАВКА' && D.zone ? window.dailySize() : window.dailyConfidence();
-      };
-    });
-    wireContextButtons(area);
-  });
+  /* ── DAILY: personalised training uses training-ui/gameShell.js ── */
+  /* Legacy calendar daily patched in daily-game-patch.js after exposeV32. */
 
   /* ── X-RAY intro ── */
   replaceRender('renderXray', function renderXrayGame() {

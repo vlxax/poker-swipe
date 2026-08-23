@@ -574,6 +574,124 @@ button.pgPathNode {
 .pgStreetDots span.done { color: #888; border-color: rgba(255, 255, 255, 0.12); }
 .pgStreetDots span.on { color: #c8ff3d; border-color: rgba(200, 255, 61, 0.4); background: rgba(200, 255, 61, 0.08); }
 
+/* ── Daily game lobby + motion ── */
+.pgDailyLobby .pgArena,
+.pgDailyDrill .pgArena {
+  min-height: 200px;
+  max-height: 42vh;
+}
+
+.pgDailyChallenge {
+  text-align: center;
+  padding: 6px 14px 2px;
+}
+
+.pgChallengeLine {
+  font-size: clamp(16px, 4.5vw, 20px);
+  line-height: 1.05;
+  margin: 4px 0 6px;
+  font-weight: 950;
+}
+
+.pgFocusHint {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.pgPrompt {
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.pgDecisionGrid .choice {
+  min-height: 46px;
+}
+
+.pgBubblePress {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.pgBubblePress.pgPressed,
+.pgBubblePress:active {
+  transform: scale(0.97) translateY(1px);
+  filter: brightness(0.95);
+}
+
+.pgEnter {
+  animation: pgEnterArena 0.32s ease-out;
+}
+
+@keyframes pgEnterArena {
+  from { opacity: 0.4; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pgDealIn .pgBoardZone .pc,
+.pgDealIn .pgHeroZone .pc {
+  animation: pgDealCard 0.36s ease-out backwards;
+}
+
+.pgDealIn .pgBoardZone .pc:nth-child(1) { animation-delay: 0.04s; }
+.pgDealIn .pgBoardZone .pc:nth-child(2) { animation-delay: 0.1s; }
+.pgDealIn .pgBoardZone .pc:nth-child(3) { animation-delay: 0.16s; }
+.pgDealIn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.22s; }
+.pgDealIn .pgBoardZone .pc:nth-child(5) { animation-delay: 0.28s; }
+.pgDealIn .pgHeroZone .pc:nth-child(1) { animation-delay: 0.12s; }
+.pgDealIn .pgHeroZone .pc:nth-child(2) { animation-delay: 0.18s; }
+
+@keyframes pgDealCard {
+  from { opacity: 0; transform: translateY(-12px) scale(0.88); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pgPulseGood .pgVerdictCompact {
+  animation: pgPulseLime 0.55s ease-out;
+}
+
+.pgPulseBad .pgVerdictCompact {
+  animation: pgPulseBad 0.55s ease-out;
+}
+
+.pgPulseWarn .pgVerdictCompact {
+  animation: pgPulseWarn 0.55s ease-out;
+}
+
+@keyframes pgPulseLime {
+  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(200, 255, 61, 0); }
+}
+
+@keyframes pgPulseBad {
+  0% { box-shadow: 0 0 0 0 rgba(255, 120, 80, 0.45); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 120, 80, 0); }
+}
+
+@keyframes pgPulseWarn {
+  0% { box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.4); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 180, 60, 0); }
+}
+
+.pgFeltLoading {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  opacity: 0.7;
+}
+
+.pgDailyFeedback .pgControls {
+  padding-top: 8px;
+}
+
+.pgVerdictCompact {
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 10px;
+}
+
 /* ── Hide legacy dashboard blocks ── */
 .pgShell > .spot30:not(.pgHud),
 .pgShell .swipeContext,
