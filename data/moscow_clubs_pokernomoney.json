@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T18:50:44+03:00",
+  "retrieved_at": "2026-08-23T19:57:48+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -159,7 +159,7 @@
       "schedule": [
         {
           "date": "2026-08-23",
-          "time": "20:00",
+          "time": "19:30",
           "club": "BlackWood",
           "tournament": "Golden Card",
           "fee_rub": 500,
@@ -171,7 +171,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Golden Card 20:00 500 ₽ BlackWood Олимпийский проспект, 12"
+          "source_card_text": "Golden Card 19:30 500 ₽ BlackWood Олимпийский проспект, 12"
         }
       ]
     },
