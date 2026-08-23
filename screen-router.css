@@ -1,0 +1,48 @@
+/**
+ * Screen isolation — My Tournaments vs Polyana
+ * ps72 lives inside #mytournaments screen, not as a body-level overlay.
+ */
+
+#mytournaments {
+  padding-bottom: calc(var(--bottom-nav-height, 82px) + var(--tg-bottom-safe, 0px) + 24px);
+}
+
+#mytournaments #ps72TournamentScreen {
+  position: static !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  display: none !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  min-height: calc(var(--ps-viewport-h, 100dvh) - var(--ps-nav-offset, 118px));
+  background: radial-gradient(circle at 15% 0, rgba(200, 255, 61, 0.05), transparent 26%), linear-gradient(180deg, #080b10, #07090d);
+}
+
+#mytournaments.active #ps72TournamentScreen.on {
+  display: block !important;
+}
+
+#mytournaments:not(.active) #ps72TournamentScreen {
+  display: none !important;
+}
+
+/* Polyana must never show legacy journal/tournament blocks from shared buckets */
+#polyana #tournamentsArea,
+#polyana .v59Journal,
+#polyana .t23,
+#polyana .v58JournalHero,
+#polyana #ps72TournamentScreen {
+  display: none !important;
+}
+
+/* Legacy tournaments screen is deprecated — polyana uses #polyana, my tour uses #mytournaments */
+#tournaments:not(.active) #tournamentsArea {
+  visibility: hidden;
+  pointer-events: none;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
