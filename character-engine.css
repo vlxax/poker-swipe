@@ -1,76 +1,50 @@
 /**
- * PokerSwipe Character Engine V1 — Green Monster
- * Layout-stable slots; no page-level motion.
+ * PokerSwipe Character Engine V1 — static transparent PNG only.
+ * No WEBM, no mix-blend-mode, no arena overlays.
  */
 
-.pgArenaWrap,
-.pgArena {
-  position: relative;
-  overflow: visible;
-}
-
-.pgArenaWrap {
-  flex: 0 0 auto;
-}
-
-.pgShell:has(.psCharSlot) {
-  overflow: visible;
-}
-
 .psCharSlot {
-  position: absolute;
   pointer-events: none;
-  z-index: 5;
+  flex-shrink: 0;
   overflow: hidden;
   contain: layout style paint;
-  flex-shrink: 0;
 }
 
-.psCharSlot[data-placement="table-peek"] {
-  right: 0;
-  bottom: -10px;
-  width: 118px;
-  height: 88px;
+.psCharSlot[data-placement="controls-hero"] {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 6px;
 }
 
-.psCharSlot[data-placement="table-right"] {
-  right: -6px;
-  bottom: -4px;
-  width: 128px;
-  height: 172px;
+.psCharSlot[data-placement="controls-corner"] {
+  width: 64px;
+  height: 64px;
+  margin: 0 0 6px auto;
 }
 
 .psCharSlot[data-placement="result-side"] {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  width: 92px;
-  height: 92px;
+  width: 72px;
+  height: 72px;
 }
 
 .psCharSlot[data-placement="result-compact"] {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  width: 78px;
-  height: 78px;
+  width: 64px;
+  height: 64px;
 }
 
-.psCharVideo {
+.psCharImage {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: bottom center;
-  background: transparent;
-  mix-blend-mode: screen;
 }
 
-.psCharSlot.isLoading .psCharVideo {
+.psCharSlot.isLoading .psCharImage {
   opacity: 0;
 }
 
-.psCharSlot.isReady .psCharVideo {
+.psCharSlot.isReady .psCharImage {
   opacity: 1;
   transition: opacity 0.18s ease;
 }
@@ -80,7 +54,7 @@
   align-items: flex-end;
   gap: 8px;
   margin: 10px 0 4px;
-  min-height: 92px;
+  min-height: 72px;
   contain: layout style;
 }
 
@@ -120,82 +94,33 @@
 }
 
 @media (max-width: 390px) {
-  .psCharSlot[data-placement="table-right"] {
-    width: 112px;
-    height: 150px;
-    right: -2px;
+  .psCharSlot[data-placement="controls-hero"] {
+    width: 64px;
+    height: 64px;
   }
 
-  .psCharSlot[data-placement="table-peek"] {
-    width: 104px;
-    height: 78px;
+  .psCharSlot[data-placement="controls-corner"] {
+    width: 56px;
+    height: 56px;
   }
-}
 
-/* Keep poker table visible when sizing feedback appears */
-.pgShell.pgSizing:has(#sizeResult .verdict) {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .pgSizeRow,
-.pgShell.pgSizing:has(#sizeResult .verdict) .scale,
-.pgShell.pgSizing:has(#sizeResult .verdict) .pgActionRow,
-.pgShell.pgSizing:has(#sizeResult .verdict) .range,
-.pgShell.pgSizing:has(#sizeResult .verdict) #sizeLock,
-.pgShell.pgSizing:has(#sizeResult .verdict) .v33DirectInput,
-.pgShell.pgSizing:has(#sizeResult .verdict) .brainPanel,
-.pgShell.pgSizing:has(#sizeResult .verdict) #sizeNext {
-  display: none !important;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .ps-reveal-stage {
-  opacity: 1;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .pgArena {
-  max-height: 28vh;
-  min-height: 132px;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .pgDecisionReadout {
-  margin-bottom: 6px;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) #sizeResult .verdict {
-  margin-top: 0;
-  padding-top: 0;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .dualGrade {
-  margin-bottom: 6px;
-}
-
-.pgShell.pgSizing:has(#sizeResult .verdict) .psCharReaction {
-  margin-top: 6px;
-  margin-bottom: 2px;
-  min-height: 78px;
-}
-
-.psResultArena {
-  flex: 0 0 auto;
-  margin: 0 0 8px;
-}
-
-.psResultArena .pgArena {
-  max-height: 30vh;
-  min-height: 138px;
+  .psCharSlot[data-placement="result-side"] {
+    width: 64px;
+    height: 64px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .psCharVideo {
+  .psCharImage {
     display: none;
   }
 
   .psCharSlot::after {
     content: "👾";
-    position: absolute;
-    inset: auto 8px 8px auto;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
     font-size: 28px;
     opacity: 0.85;
   }
