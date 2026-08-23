@@ -1,0 +1,716 @@
+/**
+ * PokerSwipe — Game Interface Layout
+ * The poker hand IS the screen. HUD + arena + controls.
+ */
+
+/* ── Shell per mini-app ── */
+.pgShell {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 118px);
+  gap: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  background: #060806;
+}
+
+.pgShell.panel,
+.pgShell.swipeCardV,
+.pgShell.xrStage,
+.pgShell.dailyStage {
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* ── HUD strip (not a card dump) ── */
+.pgHud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 6px;
+  padding: 8px 12px 6px;
+  border-bottom: 1px solid rgba(200, 255, 61, 0.08);
+  background: linear-gradient(180deg, rgba(12, 14, 12, 0.98), rgba(6, 8, 6, 0.92));
+}
+
+.pgHudTitle {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.pgHudTitle h1,
+.pgHudTitle h2 {
+  font-size: clamp(18px, 5vw, 24px) !important;
+  line-height: 0.92 !important;
+  margin: 0 !important;
+}
+
+.pgHudTitle .ey {
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+
+.pgChip {
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  padding: 4px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.14);
+  background: rgba(200, 255, 61, 0.04);
+  color: #d4f06a;
+  white-space: nowrap;
+}
+
+.pgChip.accent {
+  border-color: rgba(200, 255, 61, 0.32);
+  background: rgba(200, 255, 61, 0.1);
+  color: #eaff8a;
+}
+
+.pgStat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.28);
+  min-width: 52px;
+}
+
+.pgStat span {
+  font-size: 6px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: rgba(154, 163, 154, 0.85);
+}
+
+.pgStat b {
+  font-size: 10px;
+  font-weight: 950;
+  color: #f2f7ea;
+  line-height: 1.1;
+}
+
+.pgHudMore {
+  margin-left: auto;
+  font-size: 8px !important;
+  padding: 5px 10px !important;
+  min-height: 28px !important;
+}
+
+/* ── Central game arena ── */
+.pgArena {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 240px;
+  max-height: min(52vh, 420px);
+  margin: 8px 10px 6px;
+  display: grid;
+  place-items: center;
+}
+
+.pgFelt {
+  position: relative;
+  width: min(100%, 360px);
+  height: 100%;
+  min-height: 220px;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse 88% 72% at 50% 44%, rgba(38, 98, 52, 0.98), rgba(18, 52, 30, 0.99) 58%, rgba(8, 16, 10, 1) 100%);
+  border: 6px solid rgba(14, 14, 16, 0.98);
+  box-shadow:
+    inset 0 10px 32px rgba(0, 0, 0, 0.42),
+    0 0 40px rgba(200, 255, 61, 0.04),
+    0 16px 40px rgba(0, 0, 0, 0.45);
+  overflow: visible;
+}
+
+.pgFelt::before {
+  content: "";
+  position: absolute;
+  inset: 8% 10%;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.07);
+  pointer-events: none;
+}
+
+.pgStreetBadge {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+  color: #c8ff3d;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.2);
+  z-index: 3;
+}
+
+.pgPot {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 3;
+}
+
+.pgPotChips {
+  display: flex;
+  gap: -4px;
+}
+
+.pgPotChips i {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  margin-left: -4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.pgPotChips i:nth-child(1) { background: #1a1a1a; margin-left: 0; }
+.pgPotChips i:nth-child(2) { background: #c8ff3d; }
+.pgPotChips i:nth-child(3) { background: #ff6b8a; }
+
+.pgPotLabel {
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  color: #eaff8a;
+  text-shadow: 0 0 12px rgba(200, 255, 61, 0.35);
+}
+
+.pgBoardZone {
+  position: absolute;
+  top: 32%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+
+.pgHeroZone {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.pgSeat {
+  position: absolute;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #c8c8c8;
+  z-index: 3;
+}
+
+.pgSeat.hero {
+  bottom: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-color: rgba(200, 255, 61, 0.35);
+  color: #eaff8a;
+}
+
+.pgSeat.villain {
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pgArena .pc {
+  width: 46px !important;
+  height: 64px !important;
+  font-size: 18px !important;
+  border-radius: 9px !important;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.pgHeroZone .pc {
+  width: 50px !important;
+  height: 68px !important;
+  font-size: 19px !important;
+}
+
+/* ── Game path timeline (review) ── */
+.pgPath {
+  padding: 6px 12px 8px;
+  max-height: 34vh;
+  overflow-y: auto;
+}
+
+.pgPathLabel {
+  font-size: 7px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  color: rgba(200, 255, 61, 0.7);
+  margin-bottom: 8px;
+}
+
+.pgPathTrack {
+  position: relative;
+  display: grid;
+  gap: 0;
+  padding-left: 18px;
+}
+
+.pgPathTrack::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(200, 255, 61, 0.5), rgba(200, 255, 61, 0.08));
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(200, 255, 61, 0.25);
+}
+
+.pgPathNode {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 10px 9px 0;
+  margin-left: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+  width: 100%;
+}
+
+button.pgPathNode {
+  cursor: pointer;
+}
+
+.pgPathNode::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(200, 255, 61, 0.25);
+  border: 2px solid rgba(200, 255, 61, 0.45);
+  box-shadow: 0 0 6px rgba(200, 255, 61, 0.2);
+}
+
+.pgPathNode.selected::before,
+.pgPathNode.selected {
+  background: rgba(200, 255, 61, 0.06);
+  border-radius: 12px;
+}
+
+.pgPathNode.selected::before {
+  background: #c8ff3d;
+  box-shadow: 0 0 12px rgba(200, 255, 61, 0.55);
+}
+
+.pgPathNode.warn::before {
+  border-color: rgba(255, 180, 60, 0.8);
+  background: rgba(255, 140, 40, 0.35);
+  box-shadow: 0 0 10px rgba(255, 140, 40, 0.4);
+}
+
+.pgPathStreet {
+  font-size: 8px;
+  font-weight: 1000;
+  letter-spacing: 0.1em;
+  color: #c8ff3d;
+}
+
+.pgPathAction {
+  font-size: 10px;
+  font-weight: 800;
+  color: #f0f4ea;
+  line-height: 1.25;
+}
+
+/* ── Game control deck (sizing / decisions) ── */
+.pgControls {
+  padding: 10px 12px 14px;
+  background: linear-gradient(0deg, rgba(8, 10, 8, 0.98), rgba(8, 10, 8, 0.88));
+  border-top: 1px solid rgba(200, 255, 61, 0.1);
+  display: grid;
+  gap: 10px;
+}
+
+.pgControlsHead {
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  color: rgba(200, 255, 61, 0.75);
+}
+
+.pgDecisionReadout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pgDecisionReadout b {
+  font-size: 28px;
+  font-weight: 950;
+  color: #eaff8a;
+  line-height: 1;
+}
+
+.pgDecisionReadout strong {
+  font-size: 16px;
+  font-weight: 950;
+  color: #fff;
+}
+
+.pgActionRow {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 8px;
+}
+
+.pgActionRow .action,
+.pgActionRow .choice {
+  min-height: 48px !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.06em;
+}
+
+.pgActionRow .action.raise,
+.pgActionRow .choice.on {
+  border-color: rgba(200, 255, 61, 0.5) !important;
+}
+
+.pgSizeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pgSizeBtn {
+  min-width: 42px;
+  padding: 8px 10px !important;
+  font-size: 10px !important;
+}
+
+.pgCta {
+  width: 100%;
+  min-height: 52px !important;
+  font-size: 13px !important;
+}
+
+/* ── Swipe shell ── */
+.pgSwipeWrap {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 180px);
+}
+
+.pgSwipeWrap .swipeTop,
+.pgSwipeWrap .swipeProgress {
+  flex-shrink: 0;
+}
+
+.pgSwipeWrap .swipeCardV {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.pgSwipeWrap #swipeActions,
+.actions {
+  flex-shrink: 0;
+  padding-bottom: 4px;
+}
+
+/* ── X-Ray range arena ── */
+.pgXrayArena {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 8px 8px;
+}
+
+.pgXrayBoard {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 0 8px;
+}
+
+.pgXrayBoard .pc {
+  width: 36px !important;
+  height: 50px !important;
+  font-size: 14px !important;
+}
+
+.pgXrayMatrix {
+  flex: 1;
+  min-height: 200px;
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 255, 61, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 6px;
+}
+
+.pgXrayMatrix .xrGrid,
+.pgXrayMatrix .rangesMatrixWrap {
+  max-height: none;
+}
+
+.pgXrayCombo {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 6px;
+  font-size: 10px;
+  font-weight: 950;
+}
+
+.pgXrayCombo b {
+  color: #eaff8a;
+  font-size: 18px;
+}
+
+/* ── Ranges game layout ── */
+.pgRangesPlay {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 118px);
+  padding: 0 !important;
+}
+
+.pgRangesPlay .rangesMatrixWrap {
+  flex: 1;
+  min-height: 280px;
+  max-height: min(58vh, 480px);
+  overflow: auto;
+  margin: 0 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 255, 61, 0.12);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.pgRangesPlay .rangesQuestion {
+  font-size: 13px;
+  padding: 0 12px;
+  margin: 6px 0 4px;
+}
+
+.pgRangesPlay .rangesActionChip {
+  margin: 0 12px 6px;
+  font-size: 9px;
+}
+
+.pgRangesPlay .rangesLegendBar {
+  padding: 0 12px 6px;
+}
+
+.pgRangesPlay .rangesCta {
+  margin: 8px 12px 12px;
+}
+
+/* ── Daily game ── */
+.pgDailyArena .pgFelt {
+  min-height: 180px;
+}
+
+.pgStreetDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px 0;
+}
+
+.pgStreetDots span {
+  font-size: 7px;
+  font-weight: 950;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #666;
+}
+
+.pgStreetDots span.done { color: #888; border-color: rgba(255, 255, 255, 0.12); }
+.pgStreetDots span.on { color: #c8ff3d; border-color: rgba(200, 255, 61, 0.4); background: rgba(200, 255, 61, 0.08); }
+
+/* ── Daily game lobby + motion ── */
+.pgDailyLobby .pgArena,
+.pgDailyDrill .pgArena {
+  min-height: 200px;
+  max-height: 42vh;
+}
+
+.pgDailyChallenge {
+  text-align: center;
+  padding: 6px 14px 2px;
+}
+
+.pgChallengeLine {
+  font-size: clamp(16px, 4.5vw, 20px);
+  line-height: 1.05;
+  margin: 4px 0 6px;
+  font-weight: 950;
+}
+
+.pgFocusHint {
+  margin: 0;
+  opacity: 0.75;
+}
+
+.pgPrompt {
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.pgDecisionGrid .choice {
+  min-height: 46px;
+}
+
+.pgBubblePress {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.pgBubblePress.pgPressed,
+.pgBubblePress:active {
+  transform: scale(0.97) translateY(1px);
+  filter: brightness(0.95);
+}
+
+.pgEnter {
+  animation: pgEnterArena 0.32s ease-out;
+}
+
+@keyframes pgEnterArena {
+  from { opacity: 0.4; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pgDealIn .pgBoardZone .pc,
+.pgDealIn .pgHeroZone .pc {
+  animation: pgDealCard 0.36s ease-out backwards;
+}
+
+.pgDealIn .pgBoardZone .pc:nth-child(1) { animation-delay: 0.04s; }
+.pgDealIn .pgBoardZone .pc:nth-child(2) { animation-delay: 0.1s; }
+.pgDealIn .pgBoardZone .pc:nth-child(3) { animation-delay: 0.16s; }
+.pgDealIn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.22s; }
+.pgDealIn .pgBoardZone .pc:nth-child(5) { animation-delay: 0.28s; }
+.pgDealIn .pgHeroZone .pc:nth-child(1) { animation-delay: 0.12s; }
+.pgDealIn .pgHeroZone .pc:nth-child(2) { animation-delay: 0.18s; }
+
+@keyframes pgDealCard {
+  from { opacity: 0; transform: translateY(-12px) scale(0.88); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pgPulseGood .pgVerdictCompact {
+  animation: pgPulseLime 0.55s ease-out;
+}
+
+.pgPulseBad .pgVerdictCompact {
+  animation: pgPulseBad 0.55s ease-out;
+}
+
+.pgPulseWarn .pgVerdictCompact {
+  animation: pgPulseWarn 0.55s ease-out;
+}
+
+@keyframes pgPulseLime {
+  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.55); }
+  100% { box-shadow: 0 0 0 14px rgba(200, 255, 61, 0); }
+}
+
+@keyframes pgPulseBad {
+  0% { box-shadow: 0 0 0 0 rgba(255, 120, 80, 0.45); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 120, 80, 0); }
+}
+
+@keyframes pgPulseWarn {
+  0% { box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.4); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 180, 60, 0); }
+}
+
+.pgFeltLoading {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  opacity: 0.7;
+}
+
+.pgDailyFeedback .pgControls {
+  padding-top: 8px;
+}
+
+.pgVerdictCompact {
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 10px;
+}
+
+/* ── Hide legacy dashboard blocks ── */
+.pgShell > .spot30:not(.pgHud),
+.pgShell .swipeContext,
+.pgShell .swipeHint,
+.pgShell .goalPills,
+.pgShell > p.mut:not(.pgKeep),
+.maShell > .spot30:not(.maCtx) {
+  display: none !important;
+}
+
+@media (max-width: 390px) {
+  .pgArena { min-height: 210px; max-height: 46vh; }
+  .pgFelt { min-height: 200px; }
+  .pgArena .pc { width: 42px !important; height: 58px !important; font-size: 16px !important; }
+  .pgHeroZone .pc { width: 46px !important; height: 62px !important; font-size: 17px !important; }
+  .pgDecisionReadout b { font-size: 24px; }
+}
+
+@media (min-width: 520px) {
+  .pgArena { max-height: 480px; }
+  .pgHudTitle { flex: 1 1 auto; margin-bottom: 0; }
+}

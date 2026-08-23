@@ -21,6 +21,7 @@ window.esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[c]));
 window.card = (c) => `<span class="pc">${c}</span>`;
+window.__maGameLayout = true;
 
 const R = await import('../../training-ui/renderer.js');
 const VM = await import('../../training-ui/viewModel.js');
@@ -82,7 +83,7 @@ test('renderAssessmentSummary reports level + weakest/strongest and wires back',
   assert.equal(went, true);
 });
 
-test('renderHome renders personal training CTA with start handler', () => {
+test('renderHome renders personal training CTA with start handler', async () => {
   const root = freshRoot();
   const vm = {
     type: 'training',
@@ -115,16 +116,14 @@ test('renderHome renders personal training CTA with start handler', () => {
   };
   let started = 0;
   R.renderHome(root, vm, { start: () => started++ });
-  assert.ok(root.innerHTML.includes('ТВОЯ ТРЕНИРОВКА'));
-  assert.ok(root.innerHTML.includes('7 раздач'));
-  assert.ok(root.innerHTML.includes('ТВОЙ ПРОФИЛЬ'));
-  assert.ok(root.innerHTML.includes('Сильный навык'));
-  assert.ok(root.innerHTML.includes('Слабый навык'));
-  assert.ok(root.innerHTML.includes('ICM'));
-  assert.ok(root.innerHTML.includes('38%'));
-  assert.ok(root.innerHTML.includes('Сегодня тренируем'));
-  assert.ok(root.innerHTML.includes('баббле'));
-  root.querySelector('#trStart').onclick();
+  assert.ok(root.innerHTML.includes('pgDailyLobby'));
+  assert.ok(root.querySelector('.pgFelt'));
+  assert.ok(root.innerHTML.includes('РАЗДАЧА'));
+  assert.ok(!root.querySelector('.rangesField'));
+  await new Promise((r) => {
+    root.querySelector('#trStart').onclick();
+    setTimeout(r, 150);
+  });
   assert.equal(started, 1);
 });
 

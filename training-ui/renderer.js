@@ -1,9 +1,13 @@
 // DOM renderer for the personalised training UI. Renders view models into the
-// existing #dailyArea container, reusing the product's daily CSS classes and
-// visual identity (dark, `.panel.dailyStage`, `.streetDots`, `.dailyPot`,
-// `.dualGrade`, `.gradeBox`, `.verdict`). No logic — pure markup + handler wiring.
+// existing #dailyArea container. When game layout is active, uses HUD + felt
+// shell (same philosophy as Review/Sizing).
 
 import { gradeClass, STREET_RU } from './viewModel.js';
+import {
+  renderGameLobby, renderGameDrill, renderGameFeedback, renderGameLoading
+} from './gameShell.js';
+
+const useGameDaily = () => window.__maGameLayout === true;
 
 function el(sel) { return typeof window.$ === 'function' ? window.$(sel) : document.querySelector(sel); }
 function esc(s) { return typeof window.esc === 'function' ? window.esc(s) : String(s == null ? '' : s); }
@@ -20,6 +24,10 @@ function streetDots(street) {
 
 export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily() && vm.type === 'training') {
+    renderGameLobby(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   if (vm.type === 'training') {
     const pp = vm.playerProfile;
@@ -65,6 +73,10 @@ export const renderHome = (root, vm, handlers = {}) => {
 
 export const renderLoading = (root, vm = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameLoading(root, vm);
+    return;
+  }
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">ТРЕНИРОВКА · ПОДГОТОВКА</span>
     <h1 class="impact">ПОДБИРАЕМ<br><span class="pink">РАЗДАЧИ.</span></h1>
@@ -77,6 +89,10 @@ export const renderLoading = (root, vm = {}) => {
 
 export const renderDrill = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameDrill(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   const sc = vm.scenario || {};
   const board = (sc.board || []).map(cardHtml).join('');
@@ -106,6 +122,10 @@ export const renderDrill = (root, vm, handlers = {}) => {
 
 export const renderFeedback = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameFeedback(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   const cls = gradeClass(vm.grade);
 

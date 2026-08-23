@@ -11,11 +11,13 @@
 import {
   createTrainingStore, recordCandidate, normalizeCandidate, handContentKey
 } from '../solver/src/index.js';
+import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';
 import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
 import { installOnboardingHooks } from './onboardingHooks.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
+import { drillViewModel } from './viewModel.js';
 import * as R from './renderer.js';
 
 const storage = (() => {
@@ -79,7 +81,29 @@ const goHome = () => {
   else if (legacyRenderDaily) legacyRenderDaily();
 };
 
-function legacyFallback() { if (legacyRenderDaily) legacyRenderDaily(); }
+function legacyFallback() {
+  if (typeof window.__legacyDailyIntro === 'function') window.__legacyDailyIntro();
+  else if (legacyRenderDaily) legacyRenderDaily();
+}
+
+function previewScenarioFromPlan(preparedDaily) {
+  const ref = preparedDaily?.plan?.spots?.[0] || preparedDaily?.plan?.drills?.[0];
+  if (!ref) return null;
+  const spot = ref.hero ? ref : getTaskById(ref.id || ref.spotId);
+  if (!spot) return null;
+  return {
+    heroCards: spot.hero,
+    board: spot.board || [],
+    heroPosition: spot.position,
+    villainPosition: spot.villain,
+    potBb: spot.pot,
+    effectiveStackBb: spot.heroStack != null ? spot.heroStack : spot.effStack,
+    street: spot.street,
+    format: spot.format,
+    stage: spot.stage,
+    table: spot.table
+  };
+}
 
 const handlers = {
   start() {
@@ -158,6 +182,7 @@ function paint() {
     // idle / fallback → show home; if not personalised, use legacy validated daily.
     const vm = ctl.home();
     if (vm.type === 'training') {
+      vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);
       R.renderHome(el, vm, { start: handlers.start });
     } else {
       // No leak or skill profile yet → offer the primary diagnostic as the entry

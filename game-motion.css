@@ -1,0 +1,364 @@
+/**
+ * PokerSwipe — Game Motion System
+ * Shared tokens, screen depth, bubble physics, card deal, feedback pulses.
+ */
+
+:root {
+  --motion-tap: 120ms;
+  --motion-fast: 180ms;
+  --motion-screen: 280ms;
+  --motion-reveal: 380ms;
+  --motion-hand: 520ms;
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-in: cubic-bezier(0.55, 0, 0.9, 0.38);
+  --motion-spring: cubic-bezier(0.34, 1.28, 0.64, 1);
+  --motion-depth-1: translateZ(0) scale(0.985);
+  --motion-depth-2: translateZ(0) scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-tap: 0ms;
+    --motion-fast: 0ms;
+    --motion-screen: 0ms;
+    --motion-reveal: 0ms;
+    --motion-hand: 0ms;
+  }
+}
+
+/* ── Screen transitions ── */
+body.ps-transitioning {
+  overflow: hidden;
+}
+
+body.ps-bg-recede #mainApp,
+body.ps-bg-recede .app {
+  filter: brightness(0.82);
+  transform: scale(0.992);
+  transition: filter var(--motion-fast) var(--motion-ease-out),
+    transform var(--motion-fast) var(--motion-ease-out);
+}
+
+.screen.ps-screen-out {
+  animation: psScreenOut var(--motion-screen) var(--motion-ease-in) forwards;
+  pointer-events: none;
+}
+
+.screen.ps-screen-in {
+  animation: psScreenIn var(--motion-screen) var(--motion-ease-out) forwards;
+}
+
+.screen.ps-screen-back-out {
+  animation: psScreenBackOut var(--motion-screen) var(--motion-ease-in) forwards;
+  pointer-events: none;
+}
+
+.screen.ps-screen-back-in {
+  animation: psScreenBackIn var(--motion-screen) var(--motion-ease-out) forwards;
+}
+
+@keyframes psScreenOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-10px) scale(0.97); }
+}
+
+@keyframes psScreenIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes psScreenBackOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(10px) scale(1.01); }
+}
+
+@keyframes psScreenBackIn {
+  from { opacity: 0; transform: translateY(-12px) scale(1.01); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Bottom nav sliding indicator ── */
+.bottomNav,
+.nav {
+  position: relative;
+}
+
+.ps-nav-indicator {
+  position: absolute;
+  bottom: 6px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--ps-lime, #c8ff3d), transparent);
+  box-shadow: 0 0 12px rgba(200, 255, 61, 0.45);
+  pointer-events: none;
+  transition: left var(--motion-screen) var(--motion-ease-out),
+    width var(--motion-screen) var(--motion-ease-out),
+    opacity var(--motion-fast) ease;
+  opacity: 0;
+  z-index: 2;
+}
+
+.bottomNav.ps-nav-ready .ps-nav-indicator,
+.nav.ps-nav-ready .ps-nav-indicator {
+  opacity: 1;
+}
+
+[data-nav].ps-nav-tap {
+  transform: scale(0.94);
+  transition: transform var(--motion-tap) var(--motion-ease-out);
+}
+
+/* ── Home tile entry ── */
+.tile.ps-tile-armed {
+  transform: scale(0.97);
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 2px rgba(200, 255, 61, 0.35), 0 0 24px rgba(200, 255, 61, 0.12);
+  transition: transform var(--motion-tap) var(--motion-ease-out),
+    filter var(--motion-tap) ease,
+    box-shadow var(--motion-tap) ease;
+}
+
+/* ── Glossy bubble press (material deform) ── */
+.ps-bubble,
+.primary,
+.choice,
+.action,
+.pgCta,
+.tile,
+[data-nav],
+.rangesCell[data-rhand],
+.pgPathNode.node {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.ps-bubble.is-pressed,
+.primary.ps-pressed,
+.choice.ps-pressed,
+.action.ps-pressed,
+.pgCta.ps-pressed {
+  transform: scale(0.97) translateY(2px) !important;
+  transition: transform var(--motion-tap) var(--motion-ease-out),
+    box-shadow var(--motion-tap) ease,
+    filter var(--motion-tap) ease !important;
+}
+
+.primary.ps-pressed,
+.pgCta.ps-pressed {
+  box-shadow: var(--ps-bubble-shadow-lime-pressed, inset 0 6px 14px rgba(0,0,0,.28), 0 2px 0 rgba(58,78,16,.45)) !important;
+  filter: brightness(0.94);
+}
+
+.choice.ps-pressed,
+.action.ps-pressed {
+  box-shadow: var(--ps-bubble-shadow-dark-pressed, inset 0 8px 16px rgba(0,0,0,.52), 0 2px 0 rgba(0,0,0,.35)) !important;
+}
+
+.ps-bubble.is-selected,
+.choice.ps-decision-locked,
+.action.ps-decision-locked {
+  box-shadow: 0 0 0 2px rgba(200, 255, 61, 0.45), 0 0 18px rgba(200, 255, 61, 0.15) !important;
+  pointer-events: none;
+}
+
+/* ── Game shell enter / hand start ── */
+.pgShell.ps-hand-starting .pgHud {
+  animation: psHudSettle var(--motion-hand) var(--motion-ease-out) both;
+}
+
+.pgShell.ps-hand-starting .pgArenaWrap,
+.pgShell.ps-hand-starting .pgArena {
+  animation: psArenaRise var(--motion-hand) var(--motion-ease-out) both;
+}
+
+.pgShell.ps-hand-starting .pgControls {
+  animation: psControlsRise var(--motion-hand) var(--motion-ease-out) both;
+  animation-delay: 180ms;
+}
+
+.pgShell.ps-dim-surround .pgDailyChallenge,
+.pgShell.ps-dim-surround .pgHudTitle .ey {
+  opacity: 0.55;
+  transition: opacity var(--motion-fast) ease;
+}
+
+@keyframes psHudSettle {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes psArenaRise {
+  from { opacity: 0.3; transform: translateY(18px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes psControlsRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card deal (enhanced) ── */
+.pgDealIn.ps-deal-run .pgBoardZone .pc,
+.pgDealIn.ps-deal-run .pgHeroZone .pc {
+  animation: psDealCard var(--motion-fast) var(--motion-ease-out) backwards;
+}
+
+.pgDealIn.ps-deal-run .pgHeroZone .pc {
+  animation-name: psDealHero;
+}
+
+.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(1) { animation-delay: 0.05s; }
+.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(2) { animation-delay: 0.11s; }
+.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(3) { animation-delay: 0.17s; }
+.pgDealIn.ps-deal-turn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.08s; }
+.pgDealIn.ps-deal-river .pgBoardZone .pc:nth-child(5) { animation-delay: 0.08s; }
+.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(1) { animation-delay: 0.14s; }
+.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(2) { animation-delay: 0.2s; }
+
+@keyframes psDealCard {
+  0% { opacity: 0; transform: translateY(-16px) scale(0.86); filter: drop-shadow(0 0 0 transparent); }
+  70% { opacity: 1; transform: translateY(2px) scale(1.03); filter: drop-shadow(0 4px 8px rgba(0,0,0,.35)); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+}
+
+@keyframes psDealHero {
+  0% { opacity: 0; transform: translateY(12px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Arena feedback pulses ── */
+.pgArena.ps-pulse-good,
+.pgFelt.ps-pulse-good {
+  animation: psArenaPulseGood 0.48s var(--motion-ease-out);
+}
+
+.pgArena.ps-pulse-bad,
+.pgFelt.ps-pulse-bad {
+  animation: psArenaPulseBad 0.48s var(--motion-ease-out);
+}
+
+.pgArena.ps-pulse-warn,
+.pgFelt.ps-pulse-warn {
+  animation: psArenaPulseWarn 0.48s var(--motion-ease-out);
+}
+
+@keyframes psArenaPulseGood {
+  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.45); }
+  100% { box-shadow: 0 0 0 16px rgba(200, 255, 61, 0); }
+}
+
+@keyframes psArenaPulseBad {
+  0% { box-shadow: 0 0 0 0 rgba(255, 130, 70, 0.4); }
+  100% { box-shadow: 0 0 0 16px rgba(255, 130, 70, 0); }
+}
+
+@keyframes psArenaPulseWarn {
+  0% { box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.35); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 180, 60, 0); }
+}
+
+/* ── Sizing chip motion ── */
+.pgDecisionReadout.ps-size-tick b,
+.pgDecisionReadout.ps-size-tick strong {
+  animation: psSizeTick 0.2s var(--motion-ease-out);
+}
+
+@keyframes psSizeTick {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); color: #eaff8a; }
+  100% { transform: scale(1); }
+}
+
+.pgPot.ps-bet-to-pot {
+  animation: psBetToPot 0.42s var(--motion-ease-out);
+}
+
+@keyframes psBetToPot {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.08); filter: brightness(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* ── Review timeline reveal ── */
+.pgPath.ps-timeline-run .pgPathNode {
+  opacity: 0.35;
+  transform: translateX(-4px);
+  transition: opacity var(--motion-fast) ease, transform var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
+}
+
+.pgPath.ps-timeline-run .pgPathNode.ps-step-lit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pgPathNode.ps-step-good {
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.25);
+}
+
+.pgPathNode.ps-step-critical {
+  animation: psStepCritical 0.55s var(--motion-ease-out);
+  box-shadow: 0 0 0 2px rgba(255, 150, 60, 0.55), 0 0 16px rgba(255, 130, 60, 0.2);
+}
+
+@keyframes psStepCritical {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.03); }
+}
+
+/* ── Progressive analysis reveal ── */
+.ps-reveal-stage {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--motion-reveal) var(--motion-ease-out),
+    transform var(--motion-reveal) var(--motion-ease-out);
+}
+
+.ps-reveal-stage.ps-reveal-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Ranges cell press ── */
+.rangesCell[data-rhand].ps-cell-press {
+  transform: scale(0.92);
+  transition: transform var(--motion-tap) var(--motion-ease-out);
+}
+
+.rangesCell[data-rhand].ps-cell-flash {
+  animation: psCellFlash 0.32s var(--motion-ease-out);
+}
+
+@keyframes psCellFlash {
+  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.4); }
+  100% { box-shadow: 0 0 0 8px rgba(200, 255, 61, 0); }
+}
+
+/* ── Slider thumb feedback ── */
+input.range.ps-slider-active::-webkit-slider-thumb {
+  transform: scale(1.12);
+  transition: transform var(--motion-tap) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.ps-screen-out,
+  .screen.ps-screen-in,
+  .screen.ps-screen-back-out,
+  .screen.ps-screen-back-in,
+  .pgShell.ps-hand-starting .pgHud,
+  .pgShell.ps-hand-starting .pgArena,
+  .pgShell.ps-hand-starting .pgControls,
+  .pgDealIn.ps-deal-run .pc,
+  .pgArena.ps-pulse-good,
+  .pgArena.ps-pulse-bad,
+  .rangesCell.ps-cell-flash {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body.ps-bg-recede #mainApp,
+  body.ps-bg-recede .app {
+    filter: none;
+    transform: none;
+  }
+}
