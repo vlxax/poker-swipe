@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T10:52:29+03:00",
+  "retrieved_at": "2026-08-23T12:02:31+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -298,7 +298,7 @@
       "schedule": [
         {
           "date": "2026-08-23",
-          "time": "18:00",
+          "time": "19:15",
           "club": "DUCKS POKER CLUB",
           "tournament": "SPY",
           "fee_rub": 1000,
@@ -310,7 +310,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SPY 18:00 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
+          "source_card_text": "SPY 19:15 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
         },
         {
           "date": "2026-08-23",
@@ -649,19 +649,19 @@
       "schedule": [
         {
           "date": "2026-08-23",
-          "time": "19:00",
+          "time": "20:00",
           "club": "MIDNIGHT POKER CLUB",
           "tournament": "Win the Button",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10944",
           "address": "Новослободская дом 39",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:40",
+          "late_reg_minutes": 160,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Win the Button 19:00 Бесплатно MIDNIGHT POKER CLUB Новослободская дом 39"
+          "source_card_text": "Win the Button 20:00 1 000 ₽ вход до 22:40 MIDNIGHT POKER CLUB Новослободская дом 39"
         }
       ],
       "upcoming": 1
@@ -752,19 +752,19 @@
         },
         {
           "date": "2026-08-23",
-          "time": "18:00",
+          "time": "18:30",
           "club": "Ocean's Poker Club",
           "tournament": "RULE OF THREE",
           "fee_rub": 1000,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10560",
           "address": "Нижняя Красносельская улица, 35 с. 59",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:30",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "RULE OF THREE 18:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+          "source_card_text": "RULE OF THREE 18:30 1 000 ₽ вход до 21:30 Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
         }
       ],
       "upcoming": 2
@@ -1416,9 +1416,9 @@
           "date": "2026-08-23",
           "time": "18:00",
           "club": "Комьюнити Компас",
-          "tournament": "PHOENIX DOUBLE STACK TOURNAMENT",
+          "tournament": "Дип-стек PHOENIX DOUBLE STACK TOURNAMENT",
           "fee_rub": 1000,
-          "type": "Феникс",
+          "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10536",
           "address": "Дмитровское ш., 81",
           "late_reg_until": "20:30",
@@ -1426,7 +1426,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Феникс PHOENIX DOUBLE STACK TOURNAMENT 18:00 1 000 ₽ вход до 20:30 Комьюнити Компас Дмитровское ш., 81"
+          "source_card_text": "Дип-стек PHOENIX DOUBLE STACK TOURNAMENT 18:00 1 000 ₽ вход до 20:30 Комьюнити Компас Дмитровское ш., 81"
         }
       ],
       "upcoming": 1
