@@ -429,6 +429,11 @@
     if (ui.phase === 'result' && ui.resultHtml) {
       document.getElementById('sizeResult').innerHTML = ui.resultHtml;
       document.getElementById('sizeLock').style.display = 'none';
+      const backBtn = shell.querySelector('.pgBackBtn');
+      if (backBtn) {
+        backBtn.disabled = false;
+        backBtn.classList.remove('is-disabled');
+      }
       const nextBtn = document.getElementById('sizeNext');
       if (nextBtn) {
         nextBtn.onclick = () => {
@@ -455,6 +460,11 @@
         const resultHtml = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
         document.getElementById('sizeResult').innerHTML = resultHtml;
         lockBtn.style.display = 'none';
+        const backBtn = shell.querySelector('.pgBackBtn');
+        if (backBtn) {
+          backBtn.disabled = false;
+          backBtn.classList.remove('is-disabled');
+        }
         window.__szUI = { phase: 'result', mode, rangeVal: v, resultHtml };
         saveSizingState();
         window.MiniAppNav?.push('sizing', { sz: window.sz, phase: 'result' });

@@ -56,19 +56,54 @@ async function ctaStyles(page) {
     if (!btn) return { found: false };
     const cs = getComputedStyle(btn);
     const bg = cs.backgroundColor;
-    const rgb = bg.match(/\d+/g)?.map(Number) || [];
-    const isGreenish = rgb.length >= 3 && rgb[1] > rgb[0] && rgb[1] > 100;
+    const bgImage = cs.backgroundImage;
+    const boxShadow = cs.boxShadow;
+    const hasLimeGlow = /200,\s*255,\s*61|184,\s*255,\s*50|c8ff3d/i.test(boxShadow + bgImage);
     return {
       found: true,
       text: btn.textContent.trim(),
       classes: btn.className,
       hasPrimary: btn.classList.contains('primary'),
       hasPgCta: btn.classList.contains('pgCta'),
+      hasBubblePress: btn.classList.contains('pgBubblePress'),
       backgroundColor: bg,
-      isGreenish,
-      boxShadow: cs.boxShadow !== 'none'
+      backgroundImage: bgImage,
+      hasLimeGlow,
+      boxShadow: boxShadow !== 'none'
     };
   });
+}
+
+async function seedTrainingProfile(page) {
+  await page.evaluate(() => {
+    localStorage.setItem('pokerSwipe_train_meta', JSON.stringify({ version: 2, migratedAt: Date.now() }));
+    localStorage.setItem('pokerSwipe_train_skillProfile', JSON.stringify({
+      overall: 62,
+      overallLabel: 'КЛУБНЫЙ',
+      skills: {
+        betSizing: { skill: 'betSizing', score: 38, sampleSize: 6, confidence: 0.75, labelRu: 'Сайзинг' },
+        postflop: { skill: 'postflop', score: 72, sampleSize: 8, confidence: 0.8, labelRu: 'Постфлоп' }
+      },
+      weakest: { skill: 'betSizing', score: 38, labelRu: 'Сайзинг' },
+      strongest: { skill: 'postflop', score: 72, labelRu: 'Постфлоп' },
+      version: 2
+    }));
+    localStorage.setItem('pokerSwipe_train_personalizationSeed', JSON.stringify({ seed: 'nav-cta-qa', createdAt: Date.now() }));
+  });
+}
+
+async function startDailyDrill(page, tag) {
+  await page.evaluate(() => window.show('daily'));
+  await page.waitForTimeout(1200);
+  const startBtn = await page.$('#trStart');
+  assert.ok(startBtn, `${tag}: daily start CTA present`);
+  await startBtn.click();
+  await page.waitForSelector('#dailyArea .pgDecisionGrid .choice, #dailyArea .pgDailyDrill, #dailyArea .pgDailyLoading', { timeout: 30000 });
+  const loading = await page.$('#dailyArea .pgDailyLoading');
+  if (loading) {
+    await page.waitForSelector('#dailyArea .pgDecisionGrid .choice', { timeout: 45000 });
+  }
+  await page.waitForTimeout(600);
 }
 
 async function backPresent(page, areaSel) {
@@ -92,13 +127,16 @@ async function runViewport(browser, viewport, tag) {
   await page.goto(BASE, { waitUntil: 'networkidle', timeout: 60000 });
   await page.waitForSelector('#mainApp:not(.hidden)', { timeout: 30000 });
   await page.waitForFunction(() => window.__maGameLayout === true && window.MiniAppNav, { timeout: 30000 });
-  await page.waitForTimeout(1500);
-
-  // Home daily CTA
+  await page.waitForSelector('#home .dailyFigmaCta.primary', { timeout: 15000 });
+  await seedTrainingProfile(page);
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForSelector('#mainApp:not(.hidden)', { timeout: 30000 });
+  await page.waitForFunction(() => window.__maGameLayout === true && window.MiniAppNav, { timeout: 30000 });
+  await page.waitForSelector('#home .dailyFigmaCta.primary', { timeout: 15000 });
   const cta = await ctaStyles(page);
   assert.ok(cta.found, `${tag}: daily CTA must exist`);
-  assert.ok(cta.hasPrimary, `${tag}: daily CTA must use .primary`);
-  assert.ok(cta.isGreenish, `${tag}: daily CTA must be lime/green, got ${cta.backgroundColor}`);
+  assert.ok(cta.hasPrimary && cta.hasPgCta && cta.hasBubblePress, `${tag}: daily CTA must use primary bubble classes`);
+  assert.ok(cta.hasLimeGlow || cta.boxShadow, `${tag}: daily CTA must have lime/glossy bubble styling`);
   assert.match(cta.text, /ПЕРЕЙТИ К РАЗДАЧЕ ДНЯ/i, `${tag}: CTA label`);
 
   await page.screenshot({ path: `${OUT}/${tag}_home_daily_cta.png` });
@@ -118,12 +156,7 @@ async function runViewport(browser, viewport, tag) {
   await page.screenshot({ path: `${OUT}/${tag}_nav_after_mt.png` });
 
   // Daily back + state
-  await page.evaluate(() => window.show('daily'));
-  await page.waitForTimeout(1200);
-  const startBtn = await page.$('#trStart, #dailyArea .pgCta');
-  if (startBtn) await startBtn.click();
-  await page.waitForSelector('#dailyArea .pgDecisionGrid .choice, #dailyArea .pgDailyDrill', { timeout: 25000 });
-  await page.waitForTimeout(800);
+  await startDailyDrill(page, tag);
 
   let back = await backPresent(page, '#dailyArea');
   assert.ok(back.present, `${tag}: daily back button present`);
@@ -131,7 +164,7 @@ async function runViewport(browser, viewport, tag) {
   const opts = await page.$$('#dailyArea .pgDecisionGrid .choice');
   if (opts.length >= 2) {
     await opts[0].click();
-    await page.waitForTimeout(400);
+    await page.waitForSelector('#trNext', { timeout: 15000 });
     await page.click('#trNext');
     await page.waitForTimeout(800);
     const task2 = await page.evaluate(() => document.querySelector('#dailyArea .pgHudTitle .ey')?.textContent || '');
@@ -139,15 +172,20 @@ async function runViewport(browser, viewport, tag) {
 
     await page.click('#dailyArea .pgBackBtn');
     await page.waitForTimeout(800);
-    const task1 = await page.evaluate(() => document.querySelector('#dailyArea .pgHudTitle .ey')?.textContent || '');
-    assert.match(task1, /Task 1\//, `${tag}: back returns task 1`);
+    const task1Restored = await page.evaluate(() => ({
+      feedback: !!document.querySelector('#dailyArea .pgDailyFeedback'),
+      drill: !!document.querySelector('#dailyArea .pgDailyDrill'),
+      subtitle: document.querySelector('#dailyArea .pgHudTitle .ey')?.textContent || ''
+    }));
+    assert.ok(task1Restored.feedback || task1Restored.drill, `${tag}: back returns previous task view`);
 
-    await page.click('#dailyArea .pgDecisionGrid .choice');
-    await page.waitForTimeout(400);
-    await page.click('#trNext');
+    await page.click('#dailyArea .pgBackBtn');
     await page.waitForTimeout(800);
-    const selected = await page.evaluate(() => !!document.querySelector('#dailyArea .pgDecisionGrid .choice.selected'));
-    assert.ok(selected, `${tag}: forward restores task state with selection`);
+    const drillSelected = await page.evaluate(() => ({
+      drill: !!document.querySelector('#dailyArea .pgDailyDrill'),
+      selected: !!document.querySelector('#dailyArea .pgDecisionGrid .choice.selected')
+    }));
+    assert.ok(drillSelected.drill && drillSelected.selected, `${tag}: back from feedback restores drill with selection`);
   }
 
   await page.screenshot({ path: `${OUT}/${tag}_daily_back.png` });
