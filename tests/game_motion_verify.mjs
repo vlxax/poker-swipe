@@ -195,7 +195,7 @@ async function main() {
       await rangeCell.click();
       await page.waitForTimeout(250);
       report.rangesFeedback = await page.evaluate(() => {
-        const c = document.querySelector('.rangesCell[data-rhand].ps-cell-flash, .rangesCell[data-rhand].selected, .rangesCell[data-rhand].kept');
+        const c = document.querySelector('.rangesCell[data-rhand].selected, .rangesCell[data-rhand].kept');
         return !!c;
       });
     }
@@ -215,7 +215,18 @@ async function main() {
     if (loading) await page.waitForSelector('#dailyArea .pgDecisionGrid .choice', { timeout: 30000 });
     await page.waitForTimeout(500);
     report.streetTransition = await page.evaluate(() => !!document.querySelector('#dailyArea .pgStreetDots, #dailyArea .pgDailyDrill'));
-    await shot(page, 'motion_03b_daily_deal_390x844');
+    report.dailyWhiteFrame = await page.evaluate(() => {
+      const shell = document.querySelector('#dailyArea .pgShell.pgDaily');
+      if (!shell) return false;
+      const cs = getComputedStyle(shell);
+      const after = getComputedStyle(shell, '::after');
+      const border = cs.borderWidth;
+      const borderColor = cs.borderColor;
+      const hasWhiteBorder = /white|rgba\(255,\s*255,\s*255|rgb\(255,\s*255,\s*255\)/i.test(borderColor) && border !== '0px';
+      const afterVisible = after.content !== 'none' && after.display !== 'none' && parseFloat(after.opacity || '1') > 0.05;
+      return !hasWhiteBorder && !afterVisible && cs.backgroundColor !== 'rgba(0, 0, 0, 0)';
+    });
+    await shot(page, 'motion_daily_no_white_frame_390x844');
     const dailyChoice = await page.$('#dailyArea .pgDecisionGrid .choice');
     if (dailyChoice) {
       await dailyChoice.click();
@@ -248,6 +259,7 @@ async function main() {
     assert.ok(report.bottomNav);
     assert.ok(report.bubblePress || report.decisionFeedback || report.sizingFeedback);
     assert.ok(report.dailyFlow);
+    assert.ok(report.dailyWhiteFrame !== false, 'daily white frame should be removed');
     assert.ok(report.reducedMotion);
     assert.equal(report.runtimeErrors.length, 0, 'runtime errors: ' + report.runtimeErrors.join('; '));
   } catch (e) {

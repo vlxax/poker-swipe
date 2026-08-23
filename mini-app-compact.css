@@ -17,11 +17,33 @@
 .pgShell.panel,
 .pgShell.swipeCardV,
 .pgShell.xrStage,
-.pgShell.dailyStage {
+.pgShell.dailyStage,
+.panel.pgShell {
   padding: 0 !important;
   border: none !important;
   box-shadow: none !important;
+  background: #060806 !important;
+  border-radius: 0 !important;
+}
+
+.panel.pgShell::after,
+.pgShell.panel::after,
+.pgShell.pgDaily::after {
+  display: none !important;
+  content: none !important;
+}
+
+#dailyArea,
+#daily {
   background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
+#dailyArea .pgShell:focus,
+#dailyArea .pgShell *:focus,
+#dailyArea .pgShell *:focus-visible {
+  outline: none !important;
 }
 
 /* ── HUD strip (not a card dump) ── */
@@ -611,67 +633,24 @@ button.pgPathNode {
 }
 
 .pgBubblePress {
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  transition: transform var(--motion-tap, 160ms) cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow var(--motion-tap, 160ms) ease,
+    filter var(--motion-tap, 160ms) ease;
 }
 
 .pgBubblePress.pgPressed,
 .pgBubblePress:active {
-  transform: scale(0.97) translateY(1px);
-  filter: brightness(0.95);
+  transform: scale(0.988) translateY(1px);
+  filter: brightness(0.98);
 }
 
 .pgEnter {
-  animation: pgEnterArena 0.32s ease-out;
-}
-
-@keyframes pgEnterArena {
-  from { opacity: 0.4; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  animation: none;
 }
 
 .pgDealIn .pgBoardZone .pc,
 .pgDealIn .pgHeroZone .pc {
-  animation: pgDealCard 0.36s ease-out backwards;
-}
-
-.pgDealIn .pgBoardZone .pc:nth-child(1) { animation-delay: 0.04s; }
-.pgDealIn .pgBoardZone .pc:nth-child(2) { animation-delay: 0.1s; }
-.pgDealIn .pgBoardZone .pc:nth-child(3) { animation-delay: 0.16s; }
-.pgDealIn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.22s; }
-.pgDealIn .pgBoardZone .pc:nth-child(5) { animation-delay: 0.28s; }
-.pgDealIn .pgHeroZone .pc:nth-child(1) { animation-delay: 0.12s; }
-.pgDealIn .pgHeroZone .pc:nth-child(2) { animation-delay: 0.18s; }
-
-@keyframes pgDealCard {
-  from { opacity: 0; transform: translateY(-12px) scale(0.88); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.pgPulseGood .pgVerdictCompact {
-  animation: pgPulseLime 0.55s ease-out;
-}
-
-.pgPulseBad .pgVerdictCompact {
-  animation: pgPulseBad 0.55s ease-out;
-}
-
-.pgPulseWarn .pgVerdictCompact {
-  animation: pgPulseWarn 0.55s ease-out;
-}
-
-@keyframes pgPulseLime {
-  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.55); }
-  100% { box-shadow: 0 0 0 14px rgba(200, 255, 61, 0); }
-}
-
-@keyframes pgPulseBad {
-  0% { box-shadow: 0 0 0 0 rgba(255, 120, 80, 0.45); }
-  100% { box-shadow: 0 0 0 14px rgba(255, 120, 80, 0); }
-}
-
-@keyframes pgPulseWarn {
-  0% { box-shadow: 0 0 0 0 rgba(255, 180, 60, 0.4); }
-  100% { box-shadow: 0 0 0 14px rgba(255, 180, 60, 0); }
+  animation: none;
 }
 
 .pgFeltLoading {

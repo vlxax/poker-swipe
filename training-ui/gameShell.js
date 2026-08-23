@@ -162,7 +162,7 @@ export function renderGameLobby(root, vm, handlers = {}) {
   const id = 'daily_lobby_' + (vm.planSessionId || 'session');
   const focus = (vm.focusItems && vm.focusItems[0]) ? esc(vm.focusItems[0]) : 'разные игровые ситуации';
 
-  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby pgEnter">
+  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
     ${hudStrip(ctx, id, {
       title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>',
       subtitle: vm.subtitle || ''
@@ -201,7 +201,7 @@ export function renderGameDrill(root, vm, handlers = {}) {
   });
   const id = 'daily_drill_' + (vm.drillId || vm.progress.index);
 
-  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill pgEnter">
+  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill">
     ${hudStrip(ctx, id, {
       title: '<h2>Разбор решения</h2>',
       subtitle: `${vm.streetRu || disp.street} · ${vm.progress.index}/${vm.progress.total}`
@@ -229,9 +229,8 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   if (!root) return;
   const cls = vm.grade === 'EXCELLENT' || vm.grade === 'GOOD' ? 'g'
     : vm.grade === 'INACCURACY' ? 'y' : 'r';
-  const pulse = cls === 'g' ? 'pgPulseGood' : cls === 'r' ? 'pgPulseBad' : 'pgPulseWarn';
 
-  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyFeedback pgEnter ${pulse}">
+  root.innerHTML = `<div class="panel pgShell pgDaily pgDailyFeedback">
     <div class="pgHud"><div class="pgHudTitle"><h2>Вскрытие</h2><span class="ey">${esc(vm.gradeTitle || vm.verdict || 'Результат')}</span></div></div>
     <div class="pgControls">
       <div class="verdict pgVerdictCompact">
@@ -251,7 +250,7 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   if (window.FreakLady && verdict) {
     window.FreakLady.react(verdict, cls, 'daily', { wide: true });
   }
-  window.PsMotion?.pulseArena(root, cls);
+  window.PsMotion?.pulseTarget(root, cls, '.pgVerdictCompact');
   window.PsMotion?.progressiveReveal(verdict);
 
   const b = root.querySelector('#trNext');
