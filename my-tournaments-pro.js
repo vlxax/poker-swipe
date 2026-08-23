@@ -25,6 +25,10 @@
   let addType = null;
   let editingId = null;
   let selCurr = 'RUB';
+  let formAddOn = false;
+  let formBounty = false;
+  let polyanaClubs = [];
+  let polyanaClubsLoading = false;
   let chartData = [];
   let typeData = [];
   let analyticsOpen = false;
@@ -73,11 +77,20 @@
 
   const toRub = (t, amount) => (currency(t) === 'USD' ? Math.round(amount * RATE) : amount);
 
+  const addOnInvestedRub = (t) => {
+    if (t.addOnEnabled || num(t.addOnCount) > 0) {
+      return num(t.addOnCount) * num(t.addOnCost || 0);
+    }
+    return num(t.addOn);
+  };
+
   const investedRub = (t) => {
     if (cat(t) === 'sport') {
-      return toRub(t, baseBuy(t) + reentryCostVal(t) * reentryCount(t));
+      let inv = baseBuy(t) + reentryCostVal(t) * reentryCount(t) + addOnInvestedRub(t);
+      if (t.bountyEnabled) inv += num(t.bountyValue) * Math.max(1, num(t.bountyCount) || 1);
+      return toRub(t, inv);
     }
-    return toRub(t, unitCost(t) * entries(t) + num(t.addOn));
+    return toRub(t, unitCost(t) * entries(t) + addOnInvestedRub(t));
   };
 
   const totalReturnedRub = (t) => {
@@ -86,9 +99,11 @@
   };
 
   const profitRub = (t) => {
-    if (cat(t) === 'sport') return num(t.points);
+    if (cat(t) === 'sport') return 0;
     return totalReturnedRub(t) - investedRub(t);
   };
+
+  const sportPoints = (t) => (cat(t) === 'sport' ? num(t.points) : 0);
 
   const buyinRub = (t) => toRub(t, baseBuy(t));
 
@@ -157,6 +172,36 @@
 
   const moneyList = (arr) => arr.filter((t) => cat(t) !== 'sport');
   const sportOnlyList = (arr) => arr.filter((t) => cat(t) === 'sport');
+
+  const sportStats = (sp) => {
+    const withPlace = sp.filter((t) => num(t.place) > 0);
+    const withField = sp.filter((t) => num(t.field) > 0);
+    const places = withPlace.map((t) => num(t.place));
+    const fields = withField.map((t) => num(t.field));
+    const avgPlace = places.length
+      ? Math.round((places.reduce((a, b) => a + b, 0) / places.length) * 10) / 10
+      : null;
+    const bestPlace = places.length ? Math.min(...places) : null;
+    const avgField = fields.length ? Math.round(fields.reduce((a, b) => a + b, 0) / fields.length) : null;
+    const top3 = places.filter((p) => p <= 3).length;
+    const top10 = places.filter((p) => p <= 10).length;
+    const withPts = sp.filter((t) => num(t.points) !== 0);
+    const totalPts = withPts.reduce((s, t) => s + num(t.points), 0);
+    return { n: sp.length, avgPlace, bestPlace, avgField, top3, top10, totalPts, hasPoints: withPts.length > 0 };
+  };
+
+  const moneyAgg = (m) => {
+    if (!m.length) return { n: 0, net: 0, roi: null, itmPct: 0 };
+    const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
+    const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
+    const net = totalRet - totalInv;
+    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
+    const itmPct = Math.round((m.filter(isITM).length / m.length) * 100);
+    return { n: m.length, net, roi, itmPct };
+  };
+
+  const summaryItem = (k, v, cls = '') =>
+    `<div class="mt-pro-summary-item"><span class="k">${k}</span><span class="v ${cls}">${v}</span></div>`;
 
   const filtered = () => {
     let arr = list().filter((t) => inPeriod(t) && (typeFilter === 'all' || cat(t) === typeFilter));
@@ -252,6 +297,7 @@
         </div>
         <div class="mt-pro-filters">
           <div class="mt-pro-filter-row" id="mtPeriodRow"></div>
+          <div class="mt-pro-filter-row" id="mtMainTypeRow"></div>
         </div>
         <div class="mt-pro-summary" id="mtSummaryBlock"></div>
         <div class="mt-pro-hero-insight" id="mtHeroInsight" style="display:none"></div>
@@ -262,6 +308,7 @@
               <div class="mt-pro-chart-end" id="mtChartEnd"></div>
             </div>
             <svg class="mt-pro-chart" id="mtChartSvg" viewBox="0 0 340 140" preserveAspectRatio="none"></svg>
+            <div class="mt-pro-sport-history" id="mtSportHistory" style="display:none"></div>
             <div class="mt-pro-chart-tip" id="mtChartTip"></div>
           </div>
         </div>
@@ -282,6 +329,26 @@
       </div>`;
       ensureAnalyticsDom();
       bindStaticEvents();
+    }
+    if (!SCREEN.querySelector('#mtMainTypeRow')) {
+      const filters = SCREEN.querySelector('.mt-pro-filters');
+      if (filters) {
+        const row = document.createElement('div');
+        row.className = 'mt-pro-filter-row';
+        row.id = 'mtMainTypeRow';
+        filters.appendChild(row);
+      }
+    }
+    if (!SCREEN.querySelector('#mtSportHistory')) {
+      const chartCard = SCREEN.querySelector('.mt-pro-chart-card');
+      if (chartCard && !chartCard.querySelector('#mtSportHistory')) {
+        const hist = document.createElement('div');
+        hist.className = 'mt-pro-sport-history';
+        hist.id = 'mtSportHistory';
+        hist.style.display = 'none';
+        const tip = chartCard.querySelector('#mtChartTip');
+        chartCard.insertBefore(hist, tip);
+      }
     }
   }
 
@@ -429,6 +496,9 @@
     else if (action === 'period') {
       periodFilter = t.dataset.val;
       render();
+    } else if (action === 'type') {
+      typeFilter = t.dataset.val;
+      render();
     } else if (action === 'edit') editTournament(t.dataset.id);
     else if (action === 'delete') deleteTournament(t.dataset.id);
     else if (action === 'show-all') openAnalytics();
@@ -441,13 +511,8 @@
     render();
   }
 
-  function renderFilters() {
-    $('mtPeriodRow').innerHTML = PERIODS.map(
-      ([k, l]) =>
-        `<button type="button" class="mt-pro-chip ${periodFilter === k ? 'active' : ''}" data-mt="period" data-val="${k}">${l}</button>`
-    ).join('');
-    if (!document.getElementById('mtTypeRow')) return;
-    $('mtTypeRow').innerHTML = TYPES.map(([k, l]) => {
+  function renderTypeChips() {
+    return TYPES.map(([k, l]) => {
       let cls = 'mt-pro-chip';
       if (typeFilter === k) {
         cls += ' active';
@@ -456,6 +521,17 @@
       }
       return `<button type="button" class="${cls}" data-mt="type" data-val="${k}">${l}</button>`;
     }).join('');
+  }
+
+  function renderFilters() {
+    $('mtPeriodRow').innerHTML = PERIODS.map(
+      ([k, l]) =>
+        `<button type="button" class="mt-pro-chip ${periodFilter === k ? 'active' : ''}" data-mt="period" data-val="${k}">${l}</button>`
+    ).join('');
+    const mainTypeRow = document.getElementById('mtMainTypeRow');
+    if (mainTypeRow) mainTypeRow.innerHTML = renderTypeChips();
+    const analyticsTypeRow = document.getElementById('mtTypeRow');
+    if (analyticsTypeRow) analyticsTypeRow.innerHTML = renderTypeChips();
     const bucketRow = $('mtBucketRow');
     if (proMode) {
       bucketRow.style.display = 'flex';
@@ -513,35 +589,75 @@
     return p ? p[1] : 'ВСЁ';
   }
 
-  function renderCompactSummary(arr, isSportOnly) {
+  function renderCompactSummary(arr, mode) {
     const el = $('mtSummaryBlock');
+    const isSportOnly = mode === 'sport';
+    const isAll = mode === 'all';
+
     if (isSportOnly) {
-      const sp = sportOnlyList(arr);
-      const totalPts = sp.reduce((s, t) => s + num(t.points), 0);
-      const avg = sp.length ? Math.round(totalPts / sp.length) : 0;
-      el.innerHTML = `
-        <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${sp.length}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Points</span><span class="v pos">${totalPts}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Среднее</span><span class="v">${avg}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Период</span><span class="v muted">${periodLabel()}</span></div>`;
+      const st = sportStats(sportOnlyList(arr));
+      if (!st.n) {
+        el.className = 'mt-pro-summary';
+        el.innerHTML = `<div class="mt-pro-summary-empty">Нет спортивных турниров за выбранный период</div>`;
+        return;
+      }
+      const items = [
+        summaryItem('Сыграно', st.n),
+        summaryItem('Среднее место', st.avgPlace ?? '—'),
+        summaryItem('Лучшее место', st.bestPlace ?? '—'),
+        summaryItem('Среднее поле', st.avgField ?? '—')
+      ];
+      if (st.top3 > 0) items.push(summaryItem('Top-3', st.top3));
+      if (st.hasPoints) items.push(summaryItem('Points', (st.totalPts > 0 ? '+' : '') + st.totalPts, st.totalPts >= 0 ? 'pos' : 'neg'));
+      el.className = 'mt-pro-summary cols-' + Math.min(items.length, 6);
+      el.innerHTML = items.join('');
       return;
     }
+
     const m = moneyList(arr);
-    const n = m.length;
-    if (n === 0) {
+    if (!m.length && !isAll) {
+      el.className = 'mt-pro-summary';
       el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
       return;
     }
-    const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
-    const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
-    const net = totalRet - totalInv;
-    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
-    const itmPct = Math.round((m.filter(isITM).length / n) * 100);
+
+    const agg = moneyAgg(m);
+
+    if (isAll) {
+      const sp = sportOnlyList(arr);
+      const total = m.length + sp.length;
+      if (!total) {
+        el.className = 'mt-pro-summary';
+        el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
+        return;
+      }
+      const items = [
+        summaryItem('Сыграно', total),
+        summaryItem('Денежные', m.length),
+        summaryItem('Спорт', sp.length)
+      ];
+      if (m.length) {
+        items.push(
+          summaryItem('Профит', proMode ? fmtMoneyUSD(agg.net / RATE) : fmtMoney(agg.net), agg.net >= 0 ? 'pos' : 'neg'),
+          summaryItem('ROI', agg.roi === null ? '—' : (agg.roi >= 0 ? '+' : '') + agg.roi + '%', agg.roi === null ? 'neutral' : agg.roi >= 0 ? 'pos' : 'neg')
+        );
+      }
+      el.className = 'mt-pro-summary cols-' + items.length;
+      el.innerHTML = items.join('');
+      return;
+    }
+
+    if (!m.length) {
+      el.className = 'mt-pro-summary';
+      el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
+      return;
+    }
+    el.className = 'mt-pro-summary';
     el.innerHTML = `
-      <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${n}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">Профит</span><span class="v ${net >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">ROI</span><span class="v ${roi === null ? 'neutral' : roi >= 0 ? 'pos' : 'neg'}">${roi === null ? '—' : (roi >= 0 ? '+' : '') + roi + '%'}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">ITM</span><span class="v">${itmPct}%</span></div>`;
+      ${summaryItem('Сыграно', agg.n)}
+      ${summaryItem('Профит', proMode ? fmtMoneyUSD(agg.net / RATE) : fmtMoney(agg.net), agg.net >= 0 ? 'pos' : 'neg')}
+      ${summaryItem('ROI', agg.roi === null ? '—' : (agg.roi >= 0 ? '+' : '') + agg.roi + '%', agg.roi === null ? 'neutral' : agg.roi >= 0 ? 'pos' : 'neg')}
+      ${summaryItem('ITM', agg.itmPct + '%')}`;
   }
 
   function renderHeroInsight(arr) {
@@ -597,23 +713,36 @@
     const addStats = $('mtAddStats');
 
     if (isSportOnly) {
-      const sp = sportOnlyList(arr);
-      const totalPts = sp.reduce((s, t) => s + num(t.points), 0);
-      const avg = sp.length ? Math.round(totalPts / sp.length) : 0;
-      const best = sp.length ? Math.max(...sp.map((t) => num(t.points))) : 0;
+      const st = sportStats(sportOnlyList(arr));
+      if (!st.n) {
+        grid.innerHTML =
+          '<div class="mt-pro-stat" style="grid-column:span 2;text-align:center;color:var(--mt-muted)"><div class="val neutral">Нет спортивных турниров</div></div>';
+        note.innerHTML = '';
+        note.className = '';
+        addStats.textContent = '';
+        return;
+      }
+      let extra = '';
+      if (st.top3 > 0) extra += `<div class="mt-pro-stat"><div class="lbl">Top-3</div><div class="val">${st.top3}</div></div>`;
+      if (st.top10 > 0) extra += `<div class="mt-pro-stat"><div class="lbl">Top-10</div><div class="val">${st.top10}</div></div>`;
+      if (st.hasPoints) {
+        extra += `<div class="mt-pro-stat"><div class="lbl">Points</div><div class="val pos">${(st.totalPts > 0 ? '+' : '') + st.totalPts}</div><div class="sub">суммарно</div></div>`;
+      }
       grid.innerHTML = `
-        <div class="mt-pro-stat"><div class="lbl">Турниров</div><div class="val">${sp.length}</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Всего points</div><div class="val pos">${totalPts}</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Средние points</div><div class="val">${avg}</div><div class="sub">за турнир</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Лучший результат</div><div class="val pos">${best}</div><div class="sub">pts за турнир</div></div>`;
-      note.innerHTML = '';
-      note.className = '';
+        <div class="mt-pro-stat"><div class="lbl">Сыграно</div><div class="val">${st.n}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Среднее место</div><div class="val">${st.avgPlace ?? '—'}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Лучшее место</div><div class="val pos">${st.bestPlace ?? '—'}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Среднее поле</div><div class="val">${st.avgField ?? '—'}</div></div>
+        ${extra}`;
+      note.innerHTML = `${st.n} спорт. турнир${st.n === 1 ? '' : st.n < 5 ? 'а' : 'ов'} — без денежной аналитики`;
+      note.className = 'mt-pro-sample';
       addStats.textContent = '';
       return;
     }
 
     const m = moneyList(arr);
-    const n = m.length;
+    const agg = moneyAgg(m);
+    const n = agg.n;
     if (n === 0) {
       grid.innerHTML =
         '<div class="mt-pro-stat" style="grid-column:span 2;text-align:center;color:var(--mt-muted)"><div class="val neutral">Нет турниров</div></div>';
@@ -624,9 +753,9 @@
 
     const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
     const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
-    const net = totalRet - totalInv;
-    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
-    const itmPct = Math.round((m.filter(isITM).length / n) * 100);
+    const net = agg.net;
+    const roi = agg.roi;
+    const itmPct = agg.itmPct;
     const abi = Math.round(m.reduce((s, t) => s + buyinRub(t), 0) / n);
     const ftPct = Math.round((m.filter(isFT).length / n) * 100);
     const top3Pct = Math.round((m.filter(isTop3).length / n) * 100);
@@ -672,12 +801,57 @@
 
   function renderChart(arr, isSportOnly) {
     const svg = $('mtChartSvg');
+    const histEl = $('mtSportHistory');
     const titleEl = $('mtChartTitle');
     const endEl = $('mtChartEnd');
     const tip = $('mtChartTip');
-    titleEl.textContent = isSportOnly ? 'ДИНАМИКА POINTS' : 'ГРАФИК РЕЗУЛЬТАТОВ';
 
-    const src = (isSportOnly ? sportOnlyList(arr) : moneyList(arr))
+    if (isSportOnly) {
+      titleEl.textContent = 'ИСТОРИЯ РЕЗУЛЬТАТОВ';
+      svg.style.display = 'none';
+      svg.innerHTML = '';
+      if (histEl) histEl.style.display = '';
+      tip.style.opacity = 0;
+      chartData = [];
+
+      const sp = sportOnlyList(arr).slice().sort((a, b) => dateSortKey(b) - dateSortKey(a));
+      if (!sp.length) {
+        if (histEl) histEl.innerHTML = '<div class="mt-pro-sport-history-empty">Нет спортивных турниров</div>';
+        endEl.textContent = '';
+        endEl.className = 'mt-pro-chart-end';
+        return;
+      }
+
+      if (histEl) {
+        histEl.innerHTML = sp
+          .slice(0, 12)
+          .map((t) => {
+            const place = num(t.place);
+            const field = num(t.field);
+            const line = place ? `${place}${field ? '/' + field : ''}` : '—';
+            return `<div class="mt-pro-sport-history-row">
+              <span class="mt-pro-sport-history-date">${esc(fmtDateShort(t.date))}</span>
+              <span class="mt-pro-sport-history-place">${line}</span>
+              <span class="mt-pro-sport-history-name">${esc(title(t))}</span>
+            </div>`;
+          })
+          .join('');
+      }
+
+      const st = sportStats(sp);
+      endEl.textContent = st.bestPlace ? `лучшее: ${st.bestPlace}${st.avgField ? '/' + st.avgField : ''}` : `${st.n} турниров`;
+      endEl.className = 'mt-pro-chart-end pos';
+      return;
+    }
+
+    svg.style.display = '';
+    if (histEl) {
+      histEl.style.display = 'none';
+      histEl.innerHTML = '';
+    }
+    titleEl.textContent = 'ГРАФИК РЕЗУЛЬТАТОВ';
+
+    const src = moneyList(arr)
       .slice()
       .sort((a, b) => dateSortKey(a) - dateSortKey(b));
     if (src.length === 0) {
@@ -690,7 +864,7 @@
 
     let cum = 0;
     const data = src.map((t) => {
-      const val = isSportOnly ? num(t.points) : profitRub(t);
+      const val = profitRub(t);
       cum += val;
       return { t, cum, val };
     });
@@ -702,7 +876,7 @@
       field: num(d.t.field),
       cum: d.cum,
       val: d.val,
-      isSport: isSportOnly
+      isSport: false
     }));
 
     const pts = data.map((d) => d.cum);
@@ -763,11 +937,7 @@
       <circle cx="${curX.toFixed(1)}" cy="${curY.toFixed(1)}" r="4.5" fill="${color}" stroke="#07080a" stroke-width="2"/>
       ${axisLabels}`;
 
-    endEl.textContent = isSportOnly
-      ? `${endVal > 0 ? '+' : ''}${endVal} pts`
-      : proMode
-        ? fmtMoneyUSD(endVal / RATE)
-        : fmtMoney(endVal);
+    endEl.textContent = proMode ? fmtMoneyUSD(endVal / RATE) : fmtMoney(endVal);
     endEl.className = 'mt-pro-chart-end ' + (endVal >= 0 ? 'pos' : 'neg');
     tip.style.opacity = 0;
   }
@@ -877,6 +1047,48 @@
     </div>`;
   }
 
+  function renderSportInsights(arr) {
+    const grid = $('mtInsightsGrid');
+    const warning = $('mtInsightWarning');
+    if (!grid) return;
+    if (warning) warning.style.display = 'none';
+
+    const sp = sportOnlyList(arr);
+    const st = sportStats(sp);
+    if (!st.n) {
+      grid.innerHTML = '<div class="mt-pro-tab-hint">Нет спортивных турниров для выводов.</div>';
+      return;
+    }
+
+    const cards = [];
+    if (st.avgPlace !== null) {
+      cards.push(`<div class="mt-pro-conclusion highlight">
+        <div class="mt-pro-conclusion-lbl">СРЕДНЕЕ МЕСТО</div>
+        <div class="mt-pro-conclusion-name">${st.avgPlace}</div>
+        <div class="mt-pro-conclusion-val neutral">из ${st.n} турниров</div>
+      </div>`);
+    }
+    if (st.bestPlace !== null) {
+      const bestT = sp.find((t) => num(t.place) === st.bestPlace);
+      const bestTxt = bestT && num(bestT.field) ? `${st.bestPlace}/${num(bestT.field)}` : String(st.bestPlace);
+      cards.push(`<div class="mt-pro-conclusion">
+        <div class="mt-pro-conclusion-lbl">ЛУЧШИЙ РЕЗУЛЬТАТ</div>
+        <div class="mt-pro-conclusion-name">${esc(bestTxt)}</div>
+        <div class="mt-pro-conclusion-val pos">${esc(title(bestT || sp[0]))}</div>
+      </div>`);
+    }
+    const clubGroups = Object.entries(groupBy(sp, (t) => venue(t))).sort((a, b) => b[1].length - a[1].length);
+    const topClub = clubGroups[0];
+    if (topClub && topClub[1].length >= 2) {
+      cards.push(`<div class="mt-pro-conclusion span2">
+        <div class="mt-pro-conclusion-lbl">ЧАЩЕ ВСЕГО ИГРАЕШЬ</div>
+        <div class="mt-pro-conclusion-name">${esc(topClub[0])}</div>
+        <div class="mt-pro-conclusion-val neutral">${topClub[1].length} турниров</div>
+      </div>`);
+    }
+    grid.innerHTML = cards.length ? cards.join('') : '<div class="mt-pro-tab-hint">Мало данных для спортивных выводов.</div>';
+  }
+
   function renderInsights(arr) {
     const grid = $('mtInsightsGrid');
     const warning = $('mtInsightWarning');
@@ -961,9 +1173,12 @@
     el.innerHTML = entries
       .map(([name, items]) => {
         if (isSportOnly) {
-          const total = items.reduce((s, t) => s + num(t.points), 0);
-          const avg = items.length ? Math.round(total / items.length) : 0;
-          return `<div class="mt-pro-bar"><div class="mt-pro-bar-top"><div class="mt-pro-bar-name">${esc(name)}</div><div class="mt-pro-bar-roi pos">${total} pts</div></div><div class="mt-pro-bar-foot"><span>${items.length} тур.</span><span>ср. ${avg} pts</span></div></div>`;
+          const st = sportStats(items);
+          const avgPlace = st.avgPlace ?? '—';
+          return `<div class="mt-pro-bar">
+            <div class="mt-pro-bar-top"><div class="mt-pro-bar-name">${esc(name)}</div><div class="mt-pro-bar-roi pos">ср. ${avgPlace}</div></div>
+            <div class="mt-pro-bar-foot"><span>${items.length} тур.</span><span>лучшее: ${st.bestPlace ?? '—'}</span></div>
+          </div>`;
         }
         const inv = items.reduce((s, t) => s + investedRub(t), 0);
         const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
@@ -998,11 +1213,34 @@
   function cardHtml(t) {
     const isSport = cat(t) === 'sport';
     const p = profitRub(t);
-    const win = isSport ? num(t.points) > 0 : p > 0;
+    const win = isSport ? num(t.place) > 0 && num(t.place) <= 3 : p > 0;
     const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
-    const resHtml = isSport
-      ? `<div class="mt-pro-card-result pts">${fmtPts(num(t.points))}</div>`
-      : `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
+    if (isSport) {
+      const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? ' / ' + num(t.field) : ''}` : '—';
+      const reCnt = reentryCount(t);
+      const reTxt = reCnt > 0 ? `${reCnt} RE-ENTRY` : '';
+      const ptsVal = num(t.points);
+      const ptsBlock =
+        ptsVal !== 0
+          ? `<span class="mt-pro-card-result pts">${ptsVal > 0 ? '+' : ''}${Math.round(ptsVal)} PTS</span>`
+          : '';
+      return `<div class="mt-pro-card mt-pro-card-sport ${win ? 'win' : ''}">
+      <div class="mt-pro-card-row3"><span class="mt-pro-badge sport">${badgeLabel}</span></div>
+      <div class="mt-pro-card-title">${esc(title(t))}</div>
+      <div class="mt-pro-card-venue">${esc(venue(t))}</div>
+      <div class="mt-pro-card-sport-meta">
+        <span class="mt-pro-card-place-line">${placeTxt}</span>
+        ${reTxt ? `<span class="mt-pro-card-reentry">${reTxt}</span>` : ''}
+        ${ptsBlock}
+      </div>
+      <div class="mt-pro-card-actions">
+        <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
+        <span class="mt-pro-card-actions-sep">/</span>
+        <button type="button" class="danger" data-mt="delete" data-id="${esc(t.id)}">Удалить</button>
+      </div>
+    </div>`;
+    }
+    const resHtml = `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
     const buyinTxt = isSport
       ? `${baseBuy(t).toLocaleString('ru-RU')} ${currency(t)}`
       : proMode
@@ -1063,27 +1301,31 @@
 
   function renderMain() {
     renderFilters();
-    const arr = filteredForMain();
-    const hasSportOnly = arr.length > 0 && arr.every((t) => cat(t) === 'sport');
-    renderCompactSummary(arr, hasSportOnly);
-    if (!hasSportOnly) renderHeroInsight(arr);
-    else $('mtHeroInsight').style.display = 'none';
-    renderChart(arr, hasSportOnly);
+    const arr = filtered();
+    const mode = typeFilter === 'sport' ? 'sport' : typeFilter === 'all' ? 'all' : 'money';
+    renderCompactSummary(arr, mode);
+    if (typeFilter === 'sport') {
+      $('mtHeroInsight').style.display = 'none';
+    } else {
+      renderHeroInsight(arr);
+    }
+    renderChart(arr, typeFilter === 'sport');
     renderRecentHistory(arr);
   }
 
   function setOverviewCompact(compact) {
+    const isSportOnly = typeFilter === 'sport';
     const vis = (id, visible) => {
       const el = $(id);
       if (el) el.style.display = visible ? '' : 'none';
     };
-    vis('mtStatGrid', !compact);
-    vis('mtSampleNote', !compact);
-    vis('mtAddStats', !compact);
-    vis('mtRollingSection', !compact);
-    vis('mtSplitSection', !compact);
+    vis('mtStatGrid', !compact || isSportOnly);
+    vis('mtSampleNote', !compact || isSportOnly);
+    vis('mtAddStats', !compact && !isSportOnly);
+    vis('mtRollingSection', !compact && !isSportOnly);
+    vis('mtSplitSection', !compact && !isSportOnly);
     const insightTitle = document.querySelector('#mtInsightsSection .mt-pro-section-title');
-    if (insightTitle) insightTitle.style.display = compact ? 'none' : '';
+    if (insightTitle) insightTitle.style.display = compact && !isSportOnly ? 'none' : '';
     const histHead = document.querySelector('#mtTabOverview .mt-pro-list-head');
     const exportWrap = document.querySelector('#mtTabOverview .mt-pro-analytics-export');
     if (histHead) histHead.style.display = compact ? 'none' : '';
@@ -1098,12 +1340,24 @@
     showAnalyticsPanel();
     const arr = filtered();
     const isSportOnly = typeFilter === 'sport';
-    $('mtInsightsSection').style.display = isSportOnly ? 'none' : '';
+    $('mtInsightsSection').style.display = '';
     setOverviewCompact(analyticsTab === 'overview');
 
     if (analyticsTab === 'overview') {
-      if (!isSportOnly) renderInsights(arr);
-      else $('mtInsightsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — выводы по ROI недоступны.</div>';
+      renderStats(arr, isSportOnly);
+      renderFullHistory(arr);
+      if (isSportOnly) {
+        renderSportInsights(arr);
+        $('mtSplitSection').style.display = 'none';
+        $('mtRollingSection').style.display = 'none';
+      } else {
+        renderInsights(arr);
+        renderSplit(arr);
+        if (proMode) {
+          $('mtRollingSection').style.display = analyticsTab === 'overview' ? '' : 'none';
+          renderRollingROI(arr);
+        }
+      }
     } else if (analyticsTab === 'buyin') {
       if (!isSportOnly) renderBuckets(arr);
       else $('mtBucketsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — ROI по бай-инам недоступен.</div>';
@@ -1129,9 +1383,13 @@
     let html = `<div class="mt-pro-detail-title">${esc(detailTitle)} · ${items.length} тур.</div>`;
     items.slice(0, 20).forEach((t) => {
       const p = profitRub(t);
+      const isSport = cat(t) === 'sport';
+      const sportPlace = num(t.place) ? `${num(t.place)}${t.field ? '/' + num(t.field) : ''}` : '—';
+      const pts = num(t.points);
+      const sportVal = pts !== 0 ? fmtPts(pts) : sportPlace;
       html += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:8px">
         <span style="color:#888;min-width:0">${esc(String(t.date || '').slice(5))} · ${esc(title(t))}</span>
-        <span style="color:${cat(t) === 'sport' ? '#f5c84c' : p >= 0 ? '#c8ff3d' : '#ff6b5b'};font-weight:700;flex-shrink:0">${cat(t) === 'sport' ? fmtPts(num(t.points)) : proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</span></div>`;
+        <span style="color:${isSport ? '#f5c84c' : p >= 0 ? '#c8ff3d' : '#ff6b5b'};font-weight:700;flex-shrink:0">${isSport ? sportVal : proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</span></div>`;
     });
     if (items.length > 20) html += `<div style="color:#888;font-size:8px;padding:4px 0">+ ещё ${items.length - 20} турниров</div>`;
     document.getElementById('mtProDetailBody').innerHTML = html;
@@ -1165,34 +1423,100 @@
 
   /* ── Form / CRUD ── */
   const SHEET = () => document.getElementById('mtProSheet');
+  const DEFAULT_ROOMS = ['PokerOK', 'PokerStars', 'PokerDom', '888Poker', 'GG Poker', 'Winamax'];
+
+  function todayIso() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  async function ensurePolyanaClubs() {
+    if (polyanaClubs.length) return polyanaClubs;
+    if (polyanaClubsLoading) return polyanaClubs;
+    polyanaClubsLoading = true;
+    try {
+      if (typeof window.PolyanaClubsAdapter?.loadPolyanaClubs === 'function') {
+        polyanaClubs = await window.PolyanaClubsAdapter.loadPolyanaClubs();
+      }
+    } catch (_) {
+      polyanaClubs = [];
+    }
+    polyanaClubsLoading = false;
+    return polyanaClubs;
+  }
+
+  function knownRooms() {
+    const set = new Set(DEFAULT_ROOMS);
+    list()
+      .filter((t) => cat(t) === 'online')
+      .forEach((t) => {
+        const r = (t.room || t.clubOrRoom || '').trim();
+        if (r) set.add(r);
+      });
+    return [...set].sort((a, b) => a.localeCompare(b, 'ru'));
+  }
+
+  function recordAddOnEnabled(t) {
+    if (!t) return false;
+    if (t.addOnEnabled) return true;
+    return num(t.addOnCount) > 0 || num(t.addOn) > 0;
+  }
+
+  function recordBountyEnabled(t) {
+    if (!t) return false;
+    if (t.bountyEnabled) return true;
+    return num(t.bountyCount) > 0 || num(t.bountyValue) > 0;
+  }
 
   function openSheet() {
     editingId = null;
-    addType = null;
+    addType = 'offline';
     selCurr = 'RUB';
+    formAddOn = false;
+    formBounty = false;
     MODAL.classList.add('on');
     renderSheetShell();
+    ensurePolyanaClubs().then(() => renderAddForm('offline'));
   }
 
   function closeSheet() {
     MODAL.classList.remove('on');
     addType = null;
     editingId = null;
+    formAddOn = false;
+    formBounty = false;
   }
 
   function renderSheetShell() {
     SHEET().innerHTML = `
       <div class="mt-pro-sheet-handle"></div>
       <div class="mt-pro-sheet-title"><span id="mtSheetTitle">Добавить турнир</span><button type="button" class="mt-pro-sheet-close" data-mt="sheet-close">✕</button></div>
-      <div class="mt-pro-choice">
-        <button type="button" id="mtChoiceOffline" data-mt="pick-type" data-val="offline">Офлайн</button>
-        <button type="button" id="mtChoiceOnline" data-mt="pick-type" data-val="online">Онлайн</button>
-        <button type="button" id="mtChoiceSport" data-mt="pick-type" data-val="sport">Спорт</button>
+      <div class="mt-pro-type-seg" id="mtTypeSeg">
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="offline">ОФЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="online">ОНЛАЙН</button>
+        <button type="button" class="mt-pro-type-btn mt-pro-pressable" data-mt="pick-type" data-val="sport">СПОРТ</button>
       </div>
-      <div class="mt-pro-fields" id="mtSheetFields"></div>`;
+      <div class="mt-pro-form-body" id="mtFormBody">
+        <div class="mt-pro-fields" id="mtSheetFields"></div>
+        <div class="mt-pro-form-footer" id="mtFormFooter"></div>
+      </div>`;
     SHEET().querySelector('[data-mt="sheet-close"]').addEventListener('click', closeSheet);
     SHEET().querySelectorAll('[data-mt="pick-type"]').forEach((b) => {
-      b.addEventListener('click', () => selectAddType(b.dataset.val));
+      b.addEventListener('click', () => {
+        if (addType === b.dataset.val) return;
+        formAddOn = false;
+        formBounty = false;
+        renderAddForm(b.dataset.val);
+      });
+    });
+  }
+
+  function updateTypePickerUI() {
+    SHEET()?.querySelectorAll('[data-mt="pick-type"]').forEach((b) => {
+      const on = b.dataset.val === addType;
+      b.classList.toggle('active', on);
+      b.classList.toggle('offline', on && b.dataset.val === 'offline');
+      b.classList.toggle('online', on && b.dataset.val === 'online');
+      b.classList.toggle('sport', on && b.dataset.val === 'sport');
     });
   }
 
@@ -1211,130 +1535,613 @@
     return 'MTT';
   }
 
-  function selectAddType(type, old) {
-    addType = type;
-    ['Offline', 'Online', 'Sport'].forEach((s) => {
-      const el = document.getElementById('mtChoice' + s);
-      if (!el) return;
-      const val = s.toLowerCase();
-      el.className = addType === val ? 'sel ' + val : '';
-    });
-    const fields = document.getElementById('mtSheetFields');
-    const vLabel = type === 'offline' ? 'Клуб' : type === 'online' ? 'Рум' : 'Клуб';
-    const vPh = type === 'offline' ? 'Название клуба' : type === 'online' ? 'PokerOK, PokerDom...' : 'Название клуба';
-    const rec = old || {};
-    const fmtVal = old ? mapFormatFromRecord(old) : 'MTT';
-    const cur = old ? currency(old) : selCurr;
-    selCurr = cur === 'EUR' ? 'RUB' : cur;
+  function ynSegHtml(field, yes) {
+    return `<div class="mt-pro-yn-seg mt-pro-bubble-seg" data-yn="${field}">
+      <button type="button" class="mt-pro-yn-btn mt-pro-pressable ${yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="1">ДА</button>
+      <button type="button" class="mt-pro-yn-btn mt-pro-pressable ${!yes ? 'active' : ''}" data-mt="yn" data-field="${field}" data-val="0">НЕТ</button>
+    </div>`;
+  }
 
-    fields.innerHTML = `
-      <div class="mt-pro-field"><label>Дата</label><input type="date" id="mtFDate" value="${esc(rec.date || new Date().toISOString().slice(0, 10))}"></div>
-      <div class="mt-pro-field"><label>Валюта</label><div class="mt-pro-curr-row">
-        <button type="button" class="mt-pro-curr-btn ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
-        <button type="button" class="mt-pro-curr-btn ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
-      </div></div>
-      <div class="mt-pro-field"><label>${vLabel}</label><input type="text" id="mtFVenue" value="${esc(rec.clubOrRoom || rec.club || rec.room || '')}" placeholder="${esc(vPh)}"></div>
-      <div class="mt-pro-field"><label>Название турнира</label><input type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
-      <div class="mt-pro-field"><label>Тип турнира</label><select id="mtFFmt">
-        <option value="MTT" ${fmtVal === 'MTT' ? 'selected' : ''}>Regular (MTT)</option>
-        <option value="PKO" ${fmtVal === 'PKO' ? 'selected' : ''}>PKO / Bounty</option>
-        <option value="Mystery Bounty" ${fmtVal === 'Mystery Bounty' ? 'selected' : ''}>Mystery Bounty</option>
-        <option value="SNG" ${fmtVal === 'SNG' ? 'selected' : ''}>SNG</option>
-        <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>
-      </select></div>
-      <div class="mt-pro-field-row">
-        <div class="mt-pro-field"><label>Buy-in</label><input type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
-        <div class="mt-pro-field"><label>Re-entry, шт</label><input type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
-      </div>
-      <div class="mt-pro-field"><label>Стоимость re-entry</label><input type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in + fee"></div>
-      <div class="mt-pro-field-row">
-        <div class="mt-pro-field"><label>Место</label><input type="number" id="mtFPlace" min="1" value="${old ? num(old.place) || '' : ''}" placeholder="3"></div>
-        <div class="mt-pro-field"><label>Участников</label><input type="number" id="mtFField" min="0" value="${old && old.field ? num(old.field) : ''}" placeholder="необязательно"></div>
-      </div>
-      ${type !== 'sport' ? `<div class="mt-pro-field"><label>Призовые / Cash</label><input type="number" id="mtFCash" min="0" value="${old ? num(old.prize) : 0}"></div>
-      <div class="mt-pro-field"><label>Получено bounty</label><input type="number" id="mtFBounty" min="0" value="${old ? num(old.bountyWon) : 0}"></div>` : `<div class="mt-pro-field"><label>Получено points</label><input type="number" id="mtFPoints" min="0" value="${old ? num(old.points) : ''}" placeholder="180"></div>`}
-      <details class="mt-pro-advanced"><summary>Детали (fee, add-on, bounty contribution)</summary><div class="mt-pro-advanced-body">
-        <div class="mt-pro-field-row">
-          <div class="mt-pro-field"><label>Bounty contribution</label><input type="number" id="mtFBC" min="0" value="${old ? num(old.bountyContribution) : 0}"></div>
-          <div class="mt-pro-field"><label>Fee / комиссия</label><input type="number" id="mtFFee" min="0" value="${old ? num(old.fee) : 0}"></div>
+  function formSection(label, inner) {
+    return `<div class="mt-pro-form-section"><div class="mt-pro-form-section-label">${label}</div>${inner}</div>`;
+  }
+
+  function customSelectWrap(selectId, optionsHtml, searchable) {
+    return `<div class="mt-pro-picker-wrap" data-picker="${selectId}" data-searchable="${searchable ? '1' : '0'}">
+      <button type="button" class="mt-pro-glass-trigger mt-pro-pressable" data-mt="picker-open" data-target="${selectId}">
+        <span class="mt-pro-glass-trigger-val" id="${selectId}Label">—</span>
+        <span class="mt-pro-glass-trigger-icon" aria-hidden="true">▾</span>
+      </button>
+      <select id="${selectId}" class="mt-pro-native-select" tabindex="-1" aria-hidden="true">${optionsHtml}</select>
+    </div>`;
+  }
+
+  function formatSelectHtml(fmtVal) {
+    const opts = `
+      <option value="MTT" ${fmtVal === 'MTT' ? 'selected' : ''}>MTT</option>
+      <option value="PKO" ${fmtVal === 'PKO' ? 'selected' : ''}>PKO / Bounty</option>
+      <option value="Mystery Bounty" ${fmtVal === 'Mystery Bounty' ? 'selected' : ''}>Mystery Bounty</option>
+      <option value="SNG" ${fmtVal === 'SNG' ? 'selected' : ''}>SNG</option>
+      <option value="PLO" ${fmtVal === 'PLO' ? 'selected' : ''}>PLO</option>`;
+    return customSelectWrap('mtFFmt', opts, false);
+  }
+
+  function ensurePickerOverlay() {
+    if (document.getElementById('mtProPickerOverlay')) return;
+    const el = document.createElement('div');
+    el.id = 'mtProPickerOverlay';
+    el.className = 'mt-pro-picker-overlay';
+    el.innerHTML = `
+      <div class="mt-pro-picker-panel" role="dialog" aria-modal="true">
+        <div class="mt-pro-picker-head">
+          <span id="mtPickerTitle">Выбор</span>
+          <button type="button" class="mt-pro-picker-close mt-pro-pressable" data-mt="picker-close">✕</button>
         </div>
-        <div class="mt-pro-field"><label>Add-on</label><input type="number" id="mtFAddOn" min="0" value="${old ? num(old.addOn) : 0}"></div>
-      </div></details>
-      <div class="mt-pro-field"><label>Заметка</label><input type="text" id="mtFNote" maxlength="100" value="${esc(rec.note || '')}" placeholder="Баббл-колл, ошибка..."></div>
-      <div class="mt-pro-form-errors" id="mtFormErrors"></div>
-      <button type="button" class="mt-pro-save" data-mt="save">${editingId ? '✎ Сохранить изменения' : '+ Добавить турнир'}</button>`;
+        <input type="search" id="mtPickerSearch" class="mt-pro-glass-input mt-pro-picker-search" placeholder="Поиск..." autocomplete="off">
+        <div id="mtPickerList" class="mt-pro-picker-list"></div>
+      </div>`;
+    MODAL.appendChild(el);
+    el.addEventListener('click', (e) => {
+      if (e.target === el) closePicker();
+    });
+  }
 
-    fields.querySelectorAll('[data-mt="curr"]').forEach((b) => {
+  let activePickerId = null;
+
+  function pickerLabelFromSelect(sel) {
+    if (!sel) return '—';
+    const opt = sel.options[sel.selectedIndex];
+    if (!sel.value) return opt?.textContent?.trim() || '— выберите —';
+    return opt?.textContent?.trim() || sel.value;
+  }
+
+  function syncPickerLabel(selectId) {
+    const sel = document.getElementById(selectId);
+    const label = document.getElementById(selectId + 'Label');
+    if (label && sel) label.textContent = pickerLabelFromSelect(sel);
+  }
+
+  function syncAllPickerLabels() {
+    document.querySelectorAll('.mt-pro-picker-wrap').forEach((wrap) => {
+      syncPickerLabel(wrap.dataset.picker);
+    });
+  }
+
+  function closePicker() {
+    const overlay = document.getElementById('mtProPickerOverlay');
+    if (overlay) overlay.classList.remove('on');
+    activePickerId = null;
+  }
+
+  function openPicker(selectId) {
+    ensurePickerOverlay();
+    const sel = document.getElementById(selectId);
+    const wrap = document.querySelector(`.mt-pro-picker-wrap[data-picker="${selectId}"]`);
+    if (!sel || !wrap) return;
+    activePickerId = selectId;
+    const overlay = document.getElementById('mtProPickerOverlay');
+    const list = document.getElementById('mtPickerList');
+    const search = document.getElementById('mtPickerSearch');
+    const title = document.getElementById('mtPickerTitle');
+    const searchable = wrap.dataset.searchable === '1' || sel.options.length > 8;
+    title.textContent =
+      selectId === 'mtFClubSelect' ? 'КЛУБ' : selectId === 'mtFRoomSelect' ? 'РУМ' : selectId === 'mtFFmt' ? 'ФОРМАТ' : 'ВЫБОР';
+    search.style.display = searchable ? 'block' : 'none';
+    search.value = '';
+    const renderList = (filter) => {
+      const q = (filter || '').trim().toLowerCase();
+      list.innerHTML = [...sel.options]
+        .filter((o) => !q || o.textContent.toLowerCase().includes(q))
+        .map((o) => {
+          const active = o.value === sel.value;
+          return `<button type="button" class="mt-pro-picker-item mt-pro-pressable ${active ? 'active' : ''}" data-mt="picker-pick" data-target="${selectId}" data-value="${esc(o.value)}" data-name="${esc(o.dataset.name || '')}">${esc(o.textContent.trim())}</button>`;
+        })
+        .join('');
+    };
+    renderList('');
+    search.oninput = () => renderList(search.value);
+    overlay.classList.add('on');
+    bindPressable(list);
+    if (searchable) setTimeout(() => search.focus(), 120);
+  }
+
+  function bindPressable(root) {
+    (root || document).querySelectorAll('.mt-pro-pressable').forEach((el) => {
+      if (el.dataset.pressBound) return;
+      el.dataset.pressBound = '1';
+      el.addEventListener('pointerdown', () => el.classList.add('is-pressed'));
+      const up = () => el.classList.remove('is-pressed');
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointerleave', up);
+      el.addEventListener('pointercancel', up);
+    });
+  }
+
+  function clubOptionsHtml(rec, allowCustom) {
+    const selId = rec.venueId || rec.clubId || '';
+    const name = rec.venueName || rec.clubOrRoom || rec.club || '';
+    let html = `<option value="">— выберите клуб —</option>`;
+    if (allowCustom) html += `<option value="__custom__" ${!selId && name ? 'selected' : ''}>Другой клуб…</option>`;
+    polyanaClubs.forEach((c) => {
+      const selected = (selId && selId === c.id) || (!selId && name && name.toLowerCase() === c.name.toLowerCase());
+      html += `<option value="${esc(c.id || c.name)}" data-name="${esc(c.name)}" ${selected ? 'selected' : ''}>${esc(c.name)}</option>`;
+    });
+    return html;
+  }
+
+  function roomOptionsHtml(rec) {
+    const room = (rec.room || rec.clubOrRoom || rec.club || '').trim();
+    const rooms = knownRooms();
+    let html = `<option value="">— выберите рум —</option><option value="__custom__" ${room && !rooms.includes(room) ? 'selected' : ''}>Другой рум…</option>`;
+    rooms.forEach((r) => {
+      html += `<option value="${esc(r)}" ${room === r ? 'selected' : ''}>${esc(r)}</option>`;
+    });
+    return html;
+  }
+
+  function formFooterHtml() {
+    const label = editingId ? 'СОХРАНИТЬ ИЗМЕНЕНИЯ →' : 'ДОБАВИТЬ ТУРНИР →';
+    return `<div class="mt-pro-form-errors" id="mtFormErrors"></div>
+      <button type="button" class="mt-pro-save-primary mt-pro-pressable" data-mt="save">${label}</button>
+      <div class="mt-pro-form-safe-spacer" aria-hidden="true"></div>`;
+  }
+
+  function subcardBlock(label, inner, id) {
+    return `<div class="mt-pro-subcard mt-pro-subcard-reveal" ${id ? `id="${id}"` : ''}>
+      <div class="mt-pro-subcard-label">${label}</div>${inner}
+    </div>`;
+  }
+
+  function renderAddForm(type, old) {
+    addType = type;
+    const rec = old || {};
+    if (old) {
+      formAddOn = recordAddOnEnabled(old);
+      formBounty = recordBountyEnabled(old) || isBountyFmt(old);
+      selCurr = currency(old) === 'EUR' ? 'RUB' : currency(old);
+    }
+    updateTypePickerUI();
+    const fields = document.getElementById('mtSheetFields');
+    const footer = document.getElementById('mtFormFooter');
+    if (!fields || !footer) return;
+
+    const dateVal = rec.date || todayIso();
+    const fmtVal = old ? mapFormatFromRecord(old) : 'MTT';
+    const showPko = fmtVal === 'PKO' || fmtVal === 'Mystery Bounty';
+    const addOnBlock = formAddOn
+      ? subcardBlock(
+          'ADD-ON',
+          `<div class="mt-pro-field-row">
+            <div class="mt-pro-field"><label>Количество</label><input class="mt-pro-glass-input" type="number" id="mtFAddOnCount" min="0" value="${old ? num(rec.addOnCount) || (num(rec.addOn) ? 1 : 0) : 0}"></div>
+            <div class="mt-pro-field"><label>Стоимость</label><input class="mt-pro-glass-input" type="number" id="mtFAddOnCost" min="0" value="${old ? num(rec.addOnCost) || num(rec.addOn) : ''}" placeholder="500"></div>
+          </div>`,
+          'mtAddOnBlock'
+        )
+      : '';
+
+    const sportBountyBlock =
+      formBounty && type === 'sport'
+        ? subcardBlock(
+            'BOUNTY',
+            `<div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>Нокауты, шт</label><input class="mt-pro-glass-input" type="number" id="mtFBountyCount" min="0" value="${old ? num(rec.bountyCount) : 0}"></div>
+              <div class="mt-pro-field"><label>Стоимость</label><input class="mt-pro-glass-input" type="number" id="mtFBountyValue" min="0" value="${old ? num(rec.bountyValue) : ''}" placeholder="500"></div>
+            </div>`,
+            'mtBountyBlock'
+          )
+        : '';
+
+    const moneyBountyBlock =
+      showPko && type !== 'sport'
+        ? subcardBlock(
+            'BOUNTY',
+            `<div class="mt-pro-field-row">
+              <div class="mt-pro-field"><label>В buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBC" min="0" value="${old ? num(rec.bountyContribution) : 0}"></div>
+              <div class="mt-pro-field"><label>Получено</label><input class="mt-pro-glass-input" type="number" id="mtFBountyWon" min="0" value="${old ? num(rec.bountyWon) : 0}"></div>
+            </div>`,
+            'mtPkoBlock'
+          )
+        : '';
+
+    if (type === 'offline') {
+      const customClub = !rec.venueId && !rec.clubId && (rec.clubOrRoom || rec.club);
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldClub"><label>Клуб / площадка</label>
+          ${customSelectWrap('mtFClubSelect', clubOptionsHtml(rec, true), true)}
+          <input type="text" id="mtFClubCustom" class="mt-pro-glass-input mt-pro-custom-input" style="display:${customClub ? 'block' : 'none'}" value="${esc(customClub ? rec.clubOrRoom || rec.club || '' : '')}" placeholder="Название клуба">
+        </div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>
+        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        ${moneyBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        </div>
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input class="mt-pro-glass-input" type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input class="mt-pro-glass-input" type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
+    } else if (type === 'online') {
+      const customRoom = rec.room || rec.clubOrRoom;
+      const rooms = knownRooms();
+      const isCustomRoom = customRoom && !rooms.includes(customRoom);
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldRoom"><label>Рум</label>
+          ${customSelectWrap('mtFRoomSelect', roomOptionsHtml(rec), true)}
+          <input type="text" id="mtFRoomCustom" class="mt-pro-glass-input mt-pro-custom-input" style="display:${isCustomRoom ? 'block' : 'none'}" value="${esc(isCustomRoom ? customRoom : '')}" placeholder="Название рума">
+        </div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Daily Main Event"></div>
+        <div class="mt-pro-field"><label>Формат</label>${formatSelectHtml(fmtVal)}</div>
+        <div class="mt-pro-field"><label>Валюта</label><div class="mt-pro-curr-row">
+          <button type="button" class="mt-pro-curr-btn mt-pro-pressable ${selCurr === 'RUB' ? 'sel' : ''}" data-mt="curr" data-val="RUB">₽ RUB</button>
+          <button type="button" class="mt-pro-curr-btn mt-pro-pressable ${selCurr === 'USD' ? 'sel' : ''}" data-mt="curr" data-val="USD">$ USD</button>
+        </div></div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="800"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        ${moneyBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="4"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="156"></div>
+        </div>
+        <div class="mt-pro-field"><label>Fee / комиссия</label><input class="mt-pro-glass-input" type="number" id="mtFFee" min="0" value="${old ? num(rec.fee) : 0}"></div>
+        <div class="mt-pro-field" id="mtFieldCash"><label>Призовые / Cash</label><input class="mt-pro-glass-input" type="number" id="mtFCash" min="0" value="${old ? num(rec.prize) : 0}"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
+    } else {
+      fields.innerHTML =
+        formSection(
+          'ОСНОВНОЕ',
+          `<div class="mt-pro-field" id="mtFieldDate"><label>Дата</label><input class="mt-pro-glass-input" type="date" id="mtFDate" value="${esc(dateVal)}"></div>
+        <div class="mt-pro-field" id="mtFieldClub"><label>Клуб</label>
+          ${customSelectWrap('mtFClubSelect', clubOptionsHtml(rec, false), true)}
+        </div>
+        <div class="mt-pro-field" id="mtFieldName"><label>Название турнира</label><input class="mt-pro-glass-input" type="text" id="mtFName" value="${esc(rec.tournamentName || rec.name || '')}" placeholder="Sunday Main"></div>`
+        ) +
+        formSection(
+          'ВХОД',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field" id="mtFieldBuyin"><label>Вход / Buy-in</label><input class="mt-pro-glass-input" type="number" id="mtFBuyin" min="0" value="${old ? baseBuy(old) : ''}" placeholder="1500"></div>
+          <div class="mt-pro-field"><label>Re-entry, шт</label><input class="mt-pro-glass-input" type="number" id="mtFReentry" min="0" value="${old ? reentryCount(old) : 0}"></div>
+        </div>
+        <div class="mt-pro-field"><label>Стоимость re-entry</label><input class="mt-pro-glass-input" type="number" id="mtFReentryCost" min="0" value="${old ? reentryCostVal(old) : ''}" placeholder="= buy-in"></div>
+        <div class="mt-pro-field"><label>Add-on</label>${ynSegHtml('addon', formAddOn)}</div>
+        ${addOnBlock}
+        <div class="mt-pro-field"><label>Bounty</label>${ynSegHtml('bounty', formBounty)}</div>
+        ${sportBountyBlock}`
+        ) +
+        formSection(
+          'РЕЗУЛЬТАТ',
+          `<div class="mt-pro-field-row">
+          <div class="mt-pro-field"><label>Место</label><input class="mt-pro-glass-input" type="number" id="mtFPlace" min="1" value="${old ? num(rec.place) || '' : ''}" placeholder="3"></div>
+          <div class="mt-pro-field"><label>Участников</label><input class="mt-pro-glass-input" type="number" id="mtFField" min="0" value="${old && rec.field ? num(rec.field) : ''}" placeholder="48"></div>
+        </div>
+        <div class="mt-pro-field mt-pro-field-points" id="mtFieldPoints"><label><span class="mt-pro-points-indicator" aria-hidden="true"></span>Рейтинг / Points</label><input class="mt-pro-glass-input mt-pro-points-input" type="number" id="mtFPoints" value="${old ? num(rec.points) : ''}" placeholder="125"></div>`
+        ) +
+        formSection(
+          'ДОПОЛНИТЕЛЬНО',
+          `<div class="mt-pro-field"><label>Заметка</label><input class="mt-pro-glass-input" type="text" id="mtFNote" maxlength="120" value="${esc(rec.note || '')}" placeholder="Необязательно"></div>`
+        );
+    }
+
+    footer.innerHTML = formFooterHtml();
+    bindFormEvents(type);
+    ensurePickerOverlay();
+    syncAllPickerLabels();
+    bindPressable(document.getElementById('mtFormBody'));
+    bindPressable(document.getElementById('mtTypeSeg'));
+    if (editingId) document.getElementById('mtSheetTitle').textContent = 'Редактировать турнир';
+  }
+
+  function snapshotFormFields() {
+    const snap = {};
+    document.querySelectorAll('#mtSheetFields input, #mtSheetFields select').forEach((el) => {
+      if (el.id) snap[el.id] = el.value;
+    });
+    return snap;
+  }
+
+  function restoreFormFields(snap) {
+    Object.entries(snap || {}).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.value = val;
+    });
+    syncAllPickerLabels();
+  }
+
+  function bindFormEvents(type) {
+    const root = document.getElementById('mtFormBody');
+    if (!root) return;
+
+    if (!MODAL.dataset.pickerBound) {
+      MODAL.addEventListener('click', (e) => {
+        const openBtn = e.target.closest('[data-mt="picker-open"]');
+        if (openBtn) {
+          openPicker(openBtn.dataset.target);
+          return;
+        }
+        const pickBtn = e.target.closest('[data-mt="picker-pick"]');
+        if (pickBtn) {
+          const sel = document.getElementById(pickBtn.dataset.target);
+          if (sel) {
+            sel.value = pickBtn.dataset.value;
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+            syncPickerLabel(pickBtn.dataset.target);
+          }
+          closePicker();
+          return;
+        }
+        if (e.target.closest('[data-mt="picker-close"]')) closePicker();
+      });
+      MODAL.dataset.pickerBound = '1';
+    }
+
+    root.querySelectorAll('[data-mt="curr"]').forEach((b) => {
       b.addEventListener('click', () => {
         selCurr = b.dataset.val;
-        fields.querySelectorAll('[data-mt="curr"]').forEach((x) => x.classList.toggle('sel', x === b));
+        root.querySelectorAll('[data-mt="curr"]').forEach((x) => x.classList.toggle('sel', x === b));
       });
     });
-    fields.querySelector('[data-mt="save"]').addEventListener('click', saveTournament);
-    if (editingId) document.getElementById('mtSheetTitle').textContent = '✎ Редактировать турнир';
+
+    root.querySelectorAll('[data-mt="yn"]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const field = b.dataset.field;
+        const yes = b.dataset.val === '1';
+        const snap = snapshotFormFields();
+        const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+        if (field === 'addon') formAddOn = yes;
+        if (field === 'bounty') formBounty = yes;
+        renderAddForm(addType, old || undefined);
+        restoreFormFields(snap);
+      });
+    });
+
+    const clubSel = document.getElementById('mtFClubSelect');
+    const clubCustom = document.getElementById('mtFClubCustom');
+    if (clubSel && clubCustom) {
+      clubSel.addEventListener('change', () => {
+        clubCustom.style.display = clubSel.value === '__custom__' ? 'block' : 'none';
+        if (clubSel.value !== '__custom__') clubCustom.value = '';
+      });
+    }
+
+    const roomSel = document.getElementById('mtFRoomSelect');
+    const roomCustom = document.getElementById('mtFRoomCustom');
+    if (roomSel && roomCustom) {
+      roomSel.addEventListener('change', () => {
+        roomCustom.style.display = roomSel.value === '__custom__' ? 'block' : 'none';
+        if (roomSel.value !== '__custom__') roomCustom.value = '';
+      });
+    }
+
+    const fmtSel = document.getElementById('mtFFmt');
+    if (fmtSel && type !== 'sport') {
+      fmtSel.addEventListener('change', () => {
+        const snap = snapshotFormFields();
+        const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+        renderAddForm(addType, old || undefined);
+        restoreFormFields(snap);
+      });
+    }
+
+    root.querySelector('[data-mt="save"]')?.addEventListener('click', () => {
+      const btn = root.querySelector('[data-mt="save"]');
+      btn?.classList.add('is-saving');
+      saveTournament();
+      btn?.classList.remove('is-saving');
+    });
+  }
+
+  function setFieldInvalid(wrapId, message) {
+    const wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    wrap.classList.add('invalid');
+    let hint = wrap.querySelector('.mt-pro-field-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'mt-pro-field-hint';
+      wrap.appendChild(hint);
+    }
+    hint.textContent = message;
+  }
+
+  function clearFieldInvalids() {
+    document.querySelectorAll('.mt-pro-field.invalid').forEach((el) => {
+      el.classList.remove('invalid');
+      el.querySelector('.mt-pro-field-hint')?.remove();
+    });
+    const err = document.getElementById('mtFormErrors');
+    if (err) err.textContent = '';
+  }
+
+  function readVenueFromForm(type) {
+    if (type === 'online') {
+      const sel = document.getElementById('mtFRoomSelect');
+      const custom = document.getElementById('mtFRoomCustom');
+      if (!sel) return { room: '', venueName: '' };
+      if (sel.value === '__custom__') {
+        const room = custom?.value.trim() || '';
+        return { room, venueName: room, clubOrRoom: room };
+      }
+      const room = sel.value.trim();
+      return { room, venueName: room, clubOrRoom: room };
+    }
+    const sel = document.getElementById('mtFClubSelect');
+    const custom = document.getElementById('mtFClubCustom');
+    if (!sel) return { venueId: null, venueName: '', clubOrRoom: '' };
+    if (sel.value === '__custom__') {
+      const name = custom?.value.trim() || '';
+      return { venueId: null, venueName: name, clubOrRoom: name };
+    }
+    if (!sel.value) return { venueId: null, venueName: '', clubOrRoom: '' };
+    const opt = sel.options[sel.selectedIndex];
+    const name = opt?.dataset?.name || opt?.textContent?.trim() || sel.value;
+    const venueId = sel.value !== name ? sel.value : null;
+    return { venueId, venueName: name, clubOrRoom: name };
   }
 
   function validateForm() {
+    clearFieldInvalids();
     const errs = [];
-    const place = num(document.getElementById('mtFPlace')?.value);
-    const field = num(document.getElementById('mtFField')?.value);
-    const reentry = num(document.getElementById('mtFReentry')?.value);
-    if (place < 1) errs.push('Место >= 1');
-    if (field > 0 && place > field) errs.push('Место ≤ поле');
+    const g = (id) => document.getElementById(id);
+    const date = g('mtFDate')?.value?.trim();
+    const name = g('mtFName')?.value?.trim();
+    const buyin = num(g('mtFBuyin')?.value);
+    const place = num(g('mtFPlace')?.value);
+    const field = num(g('mtFField')?.value);
+    const reentry = num(g('mtFReentry')?.value);
+
+    if (!date) {
+      errs.push('Укажите дату');
+      setFieldInvalid('mtFieldDate', 'Обязательное поле');
+    }
+    if (!name) {
+      errs.push('Укажите название');
+      setFieldInvalid('mtFieldName', 'Обязательное поле');
+    }
+
+    const venue = readVenueFromForm(addType);
+    if (addType === 'online') {
+      if (!venue.room) {
+        errs.push('Выберите рум');
+        setFieldInvalid('mtFieldRoom', 'Обязательное поле');
+      }
+      const buyinRaw = g('mtFBuyin')?.value;
+      if (buyinRaw === '' || buyinRaw === null) {
+        errs.push('Укажите buy-in');
+        setFieldInvalid('mtFieldBuyin', 'Обязательное поле');
+      }
+    } else if (addType === 'offline') {
+      if (!venue.clubOrRoom) {
+        errs.push('Выберите клуб');
+        setFieldInvalid('mtFieldClub', 'Обязательное поле');
+      }
+      const buyinRaw = g('mtFBuyin')?.value;
+      if (buyinRaw === '' || buyinRaw === null) {
+        errs.push('Укажите buy-in');
+        setFieldInvalid('mtFieldBuyin', 'Обязательное поле');
+      }
+    } else if (addType === 'sport') {
+      if (!venue.clubOrRoom) {
+        errs.push('Выберите клуб из Поляны');
+        setFieldInvalid('mtFieldClub', 'Обязательное поле');
+      }
+    }
+
+    if (place > 0 && field > 0 && place > field) errs.push('Место не может быть больше поля');
     if (reentry < 0) errs.push('Re-entry ≥ 0');
-    document.getElementById('mtFormErrors').textContent = errs.join(' · ');
+
+    const errEl = g('mtFormErrors');
+    if (errEl) errEl.textContent = errs.join(' · ');
     return errs.length === 0;
   }
 
   function saveTournament() {
     if (!addType) {
-      selectAddType('offline');
+      renderAddForm('offline');
       return;
     }
     if (!validateForm()) return;
+
     const g = (id) => document.getElementById(id);
     const name = g('mtFName').value.trim();
-    if (!name) {
-      g('mtFName').focus();
-      return;
-    }
-    const buyin = Math.max(0, num(g('mtFBuyin').value));
-    const reentry = Math.max(0, Math.round(num(g('mtFReentry').value)));
-    const reentryCost = Math.max(0, num(g('mtFReentryCost').value) || buyin + num(g('mtFFee')?.value));
-    const fmtVal = g('mtFFmt').value;
+    const buyin = Math.max(0, num(g('mtFBuyin')?.value));
+    const reentry = Math.max(0, Math.round(num(g('mtFReentry')?.value)));
+    const reentryCost = Math.max(0, num(g('mtFReentryCost')?.value) || buyin + num(g('mtFFee')?.value));
+    const fmtVal = g('mtFFmt')?.value || 'MTT';
     const old = editingId ? list().find((t) => String(t.id) === String(editingId)) : null;
+    const venue = readVenueFromForm(addType);
+
+    const addOnCount = formAddOn ? Math.max(0, Math.round(num(g('mtFAddOnCount')?.value))) : 0;
+    const addOnCost = formAddOn ? Math.max(0, num(g('mtFAddOnCost')?.value)) : 0;
 
     const rec = {
       ...(old || {}),
       id: old?.id || 'mt_' + Date.now(),
       type: addType,
-      format: mapFormatToSave(fmtVal),
+      format: addType === 'sport' ? 'NLH' : mapFormatToSave(fmtVal),
       tournamentName: name,
       name,
-      clubOrRoom: g('mtFVenue').value.trim(),
       date: g('mtFDate').value,
-      currency: selCurr,
+      currency: addType === 'online' ? selCurr : 'RUB',
       baseBuyin: buyin,
       buyin,
-      bountyContribution: Math.max(0, num(g('mtFBC')?.value)),
       fee: Math.max(0, num(g('mtFFee')?.value)),
       entries: reentry + 1,
       reentryCost,
-      addOn: Math.max(0, num(g('mtFAddOn')?.value)),
-      place: Math.max(0, Math.round(num(g('mtFPlace').value))),
-      field: Math.max(0, Math.round(num(g('mtFField').value))) || undefined,
-      note: g('mtFNote').value.trim(),
+      addOnEnabled: formAddOn,
+      addOnCount,
+      addOnCost,
+      addOn: formAddOn ? addOnCount * addOnCost : 0,
+      place: Math.max(0, Math.round(num(g('mtFPlace')?.value))) || undefined,
+      field: Math.max(0, Math.round(num(g('mtFField')?.value))) || undefined,
+      note: g('mtFNote')?.value.trim() || '',
+      venueId: venue.venueId || undefined,
+      venueName: venue.venueName || venue.clubOrRoom || undefined,
+      clubOrRoom: venue.clubOrRoom || venue.room || '',
       updatedAt: Date.now(),
       createdAt: old?.createdAt || Date.now()
     };
 
+    if (addType === 'online') {
+      rec.room = venue.room;
+      rec.clubId = undefined;
+    } else {
+      rec.clubId = venue.venueId || undefined;
+      rec.room = undefined;
+    }
+
     if (addType === 'sport') {
-      rec.points = Math.max(0, num(g('mtFPoints')?.value));
+      rec.points = num(g('mtFPoints')?.value);
       rec.prize = 0;
       rec.bountyWon = 0;
+      rec.bountyEnabled = formBounty;
+      rec.bountyCount = formBounty ? Math.max(0, Math.round(num(g('mtFBountyCount')?.value))) : 0;
+      rec.bountyValue = formBounty ? Math.max(0, num(g('mtFBountyValue')?.value)) : 0;
+      rec.bountyContribution = 0;
     } else {
+      const pko = fmtVal === 'PKO' || fmtVal === 'Mystery Bounty';
+      rec.bountyContribution = pko ? Math.max(0, num(g('mtFBC')?.value)) : 0;
+      rec.bountyWon = pko ? Math.max(0, num(g('mtFBountyWon')?.value)) : 0;
+      rec.bountyEnabled = pko;
+      rec.bountyCount = 0;
+      rec.bountyValue = 0;
       rec.prize = Math.max(0, num(g('mtFCash')?.value));
-      rec.bountyWon = Math.max(0, num(g('mtFBounty')?.value));
       rec.points = undefined;
     }
 
@@ -1352,10 +2159,12 @@
     editingId = t.id;
     addType = cat(t);
     selCurr = currency(t);
+    formAddOn = recordAddOnEnabled(t);
+    formBounty = recordBountyEnabled(t) || isBountyFmt(t);
     MODAL.classList.add('on');
     renderSheetShell();
-    selectAddType(addType, t);
-    document.getElementById('mtSheetTitle').textContent = '✎ Редактировать турнир';
+    ensurePolyanaClubs().then(() => renderAddForm(addType, t));
+    document.getElementById('mtSheetTitle').textContent = 'Редактировать турнир';
   }
 
   function deleteTournament(id) {
