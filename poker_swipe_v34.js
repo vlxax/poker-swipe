@@ -110,7 +110,7 @@
     if(document.getElementById(SCRIPT_ID))return;
     const script=document.createElement('script');
     script.id=SCRIPT_ID;
-    script.src='polyana-promo-animated.js';
+    script.src='polyana-promo-animated.js?v=20260823-2';
     script.defer=true;
     document.body.appendChild(script);
   }

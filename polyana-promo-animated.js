@@ -2,143 +2,197 @@
 'use strict';
 
 /*
-  PokerSwipe · Polyana animated Heads Up promo
-  Adapted from the user's Figma Make animation.
-  It ONLY decorates the existing .pspAd image in Polyana.
-  No tournament/filter/navigation logic is changed.
+  PokerSwipe · targeted production hotfix · 2026-08-23
+  This file is already loaded by poker_swipe_v34.js, so no index.html rewrite is needed.
+
+  ONLY these changes are owned here:
+  1) Polyana Heads Up static image -> permanent looping video.
+  2) Restore "МОИ ТУРНИРЫ" in bottom navigation.
+  3) SKILL / FORM / БАЗА on Home are informational and do not navigate.
+  4) Top "Привет / by Фриковая Дама" header is transparent.
+  5) Polyana map uses the full mobile app width.
 */
 
-const BUILD = 'polyana-headsup-promo-figma-v1';
-const IMG_MATCH = 'headsup_promo_frikovaya_dama';
+const BUILD='polyana-headsup-video-and-ui-hotfix-v2';
+const VIDEO_SRC='assets/headsup_promo_frikovaya_dama_v2.mp4';
+const STYLE_ID='ps-targeted-hotfix-20260823';
 
-const EMBERS = Array.from({length:38}, (_,i) => ({
-  left: 52 + Math.sin(i * 1.9) * 26,
-  bottom: 12 + (i % 5) * 6,
-  delay: (i * 0.31) % 4.5,
-  duration: 2.2 + (i % 6) * 0.4,
-  size: 1.5 + (i % 4),
-  ex: ((i % 9) - 4) * 12,
-  color: i % 4 === 0 ? '#fff7a0' : i % 4 === 1 ? '#ffa020' : i % 4 === 2 ? '#ff6600' : '#b4ff00'
-}));
+function injectStyles(){
+  if(document.getElementById(STYLE_ID))return;
+  const style=document.createElement('style');
+  style.id=STYLE_ID;
+  style.textContent=`
+    /* Transparent top header: keep content and layout, remove the black plate only. */
+    #mainApp > header.top.creatorTop,
+    #mainApp > .top.creatorTop{
+      background:transparent!important;
+      background-image:none!important;
+      box-shadow:none!important;
+      border-bottom-color:transparent!important;
+      backdrop-filter:none!important;
+      -webkit-backdrop-filter:none!important;
+    }
 
-const SPARKS = Array.from({length:12}, (_,i) => ({
-  left: 50 + Math.cos(i * 1.5) * 24,
-  top: 18 + Math.sin(i * 2.3) * 28,
-  delay: (i * 0.55) % 5,
-  duration: 1.3 + (i % 4) * 0.35,
-  size: 5 + (i % 5) * 2.5
-}));
+    /* Bottom navigation must contain five equal destinations. */
+    .nav{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 
-function el(tag, cls){
-  const n=document.createElement(tag);
-  if(cls)n.className=cls;
-  return n;
+    /* Home metrics are read-only status cards. */
+    #home .v36Stat,
+    #home #v36Player,
+    #home #v36Form,
+    #home #v36Sample{
+      cursor:default!important;
+      -webkit-tap-highlight-color:transparent!important;
+    }
+
+    /* Permanent Heads Up video ad. */
+    #polyana .pspAd video.psHeadsUpPromoVideo{
+      display:block!important;
+      width:100%!important;
+      height:auto!important;
+      aspect-ratio:auto!important;
+      object-fit:cover!important;
+      background:#080a08!important;
+      border:0!important;
+    }
+
+    /* The old Figma promo decoration must not sit over the new video. */
+    #polyana .pspAd .psPromoFxShimmer,
+    #polyana .pspAd .psPromoFxBorder,
+    #polyana .pspAd .psPromoFxScan,
+    #polyana .pspAd .psPromoFxEmbers,
+    #polyana .pspAd .psPromoFxSparks,
+    #polyana .pspAd .psPromoFxGlow{display:none!important}
+
+    /* Map: edge-to-edge inside the mobile application, while title/note stay aligned. */
+    @media(max-width:430px){
+      #polyana .pspMapPanel{
+        margin-left:-10px!important;
+        margin-right:-10px!important;
+        width:auto!important;
+      }
+      #polyana .pspMapPanel .pspMapTop,
+      #polyana .pspMapPanel .pspMapNote{
+        margin-left:10px!important;
+        margin-right:10px!important;
+      }
+      #polyana .pspMapPanel .pspMapBox{
+        width:100%!important;
+        max-width:none!important;
+        box-sizing:border-box!important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
-function addEffects(stage){
-  stage.appendChild(el('div','psPromoFxShimmer'));
-  stage.appendChild(el('div','psPromoFxBorder'));
-  stage.appendChild(el('div','psPromoFxScan'));
+function ensureTournamentNav(){
+  const nav=document.querySelector('.nav');
+  if(!nav)return false;
 
-  const embers=el('div','psPromoFxEmbers');
-  EMBERS.forEach(e=>{
-    const p=el('i','psPromoFxEmber');
-    p.style.left=e.left+'%';
-    p.style.bottom=e.bottom+'%';
-    p.style.width=e.size+'px';
-    p.style.height=e.size+'px';
-    p.style.background=e.color;
-    p.style.boxShadow=`0 0 ${e.size*2.5}px ${e.color}`;
-    p.style.setProperty('--ps-ex',e.ex+'px');
-    p.style.animationDuration=e.duration+'s';
-    p.style.animationDelay=e.delay+'s';
-    embers.appendChild(p);
-  });
-  stage.appendChild(embers);
-
-  const sparks=el('div','psPromoFxSparks');
-  SPARKS.forEach(s=>{
-    const p=el('i','psPromoFxSpark');
-    p.style.left=s.left+'%';
-    p.style.top=s.top+'%';
-    p.style.width=s.size+'px';
-    p.style.height=s.size+'px';
-    p.style.animationDuration=s.duration+'s';
-    p.style.animationDelay=s.delay+'s';
-    p.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L13.2 10.8 L22 12 L13.2 13.2 L12 22 L10.8 13.2 L2 12 L10.8 10.8 Z" fill="#ffe566"/></svg>';
-    sparks.appendChild(p);
-  });
-  stage.appendChild(sparks);
-
-  [
-    ['tl','rgba(180,255,0,.15)'],
-    ['tr','rgba(255,130,0,.12)'],
-    ['bl','rgba(180,255,0,.08)'],
-    ['br','rgba(255,130,0,.08)']
-  ].forEach(([pos,bg],i)=>{
-    const g=el('div',`psPromoFxGlow ${pos}`);
-    g.style.background=bg;
-    g.style.animationDuration=(2.5+i*.4)+'s';
-    g.style.animationDelay=(i*.5)+'s';
-    stage.appendChild(g);
-  });
-}
-
-function decorate(){
-  const candidates=[...document.querySelectorAll('.pspAd img')];
-  const img=candidates.find(x =>
-    String(x.getAttribute('src')||'').includes(IMG_MATCH) ||
-    /HEADS\s*UP|ФРИКОВАЯ\s*ДАМА/i.test(String(x.getAttribute('alt')||''))
-  );
-  if(!img)return false;
-
-  const ad=img.closest('.pspAd');
-  if(!ad)return false;
-  if(ad.dataset.psPromoBuild===BUILD)return true;
-
-  let stage=img.closest('.psPromoFxStage');
-  if(!stage){
-    stage=el('div','psPromoFxStage');
-    img.parentNode.insertBefore(stage,img);
-    stage.appendChild(img);
+  let btn=nav.querySelector('[data-nav="mytournaments"]');
+  if(!btn){
+    btn=document.createElement('button');
+    btn.type='button';
+    btn.dataset.nav='mytournaments';
+    btn.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
   }
 
-  stage.querySelectorAll('.psPromoFxShimmer,.psPromoFxBorder,.psPromoFxScan,.psPromoFxEmbers,.psPromoFxSparks,.psPromoFxGlow').forEach(n=>n.remove());
-  addEffects(stage);
+  /* Stable order: ГЛАВНАЯ · РАЗДАЧИ · ПОЛЯНА · МОИ ТУРНИРЫ · ТЫ */
+  const profile=nav.querySelector('[data-nav="profile"]');
+  if(profile && btn.nextElementSibling!==profile) nav.insertBefore(btn,profile);
+  else if(!btn.isConnected) nav.appendChild(btn);
 
-  img.classList.add('psPromoFxImage');
-  ad.classList.add('pspAdAnimated');
-  ad.dataset.psPromoBuild=BUILD;
-  stage.dataset.psPromoBuild=BUILD;
+  if(btn.dataset.psTournamentHotfix!==BUILD){
+    btn.dataset.psTournamentHotfix=BUILD;
+    btn.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on','active'));
+      btn.classList.add('on');
+      if(typeof window.openMyTournamentsV72==='function') return window.openMyTournamentsV72();
+      if(typeof window.openMyTournamentsV71==='function') return window.openMyTournamentsV71();
+      if(typeof window.openMyTournamentsV59==='function') return window.openMyTournamentsV59();
+      if(typeof window.show==='function') return window.show('tournaments');
+    },true);
+  }
+
+  window.PokerSwipe3DNav?.refresh?.();
   return true;
 }
 
-let scheduled=false;
+function replacePromoWithVideo(){
+  const ad=document.querySelector('#polyana .pspAd');
+  if(!ad)return false;
+
+  let video=ad.querySelector('video.psHeadsUpPromoVideo');
+  if(!video){
+    const old=ad.querySelector('img');
+    video=document.createElement('video');
+    video.className='psHeadsUpPromoVideo';
+    video.src=VIDEO_SRC;
+    video.poster='assets/headsup_promo_frikovaya_dama.jpeg';
+    video.autoplay=true;
+    video.loop=true;
+    video.muted=true;
+    video.defaultMuted=true;
+    video.playsInline=true;
+    video.preload='auto';
+    video.setAttribute('autoplay','');
+    video.setAttribute('loop','');
+    video.setAttribute('muted','');
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.setAttribute('aria-label','HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry');
+    if(old) old.replaceWith(video);
+    else ad.appendChild(video);
+  }
+
+  video.muted=true;
+  video.defaultMuted=true;
+  const p=video.play();
+  if(p?.catch)p.catch(()=>{});
+  ad.dataset.psPromoBuild=BUILD;
+  return true;
+}
+
+function apply(){
+  injectStyles();
+  ensureTournamentNav();
+  replacePromoWithVideo();
+}
+
+/* SKILL / FORM / БАЗА must never open another screen, even if legacy code rebinds onclick. */
+document.addEventListener('click',e=>{
+  const metric=e.target.closest?.('#home .v36Stat, #home #v36Player, #home #v36Form, #home #v36Sample');
+  if(!metric)return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+},true);
+
+let queued=false;
 function schedule(){
-  if(scheduled)return;
-  scheduled=true;
-  requestAnimationFrame(()=>{
-    scheduled=false;
-    decorate();
-  });
+  if(queued)return;
+  queued=true;
+  requestAnimationFrame(()=>{queued=false;apply()});
 }
 
 const observer=new MutationObserver(schedule);
-
 function start(){
-  decorate();
-  const host=document.querySelector('#polyana')||document.body;
-  observer.observe(host,{subtree:true,childList:true});
+  apply();
+  observer.observe(document.body,{subtree:true,childList:true});
   window.addEventListener('pageshow',schedule);
   document.addEventListener('click',e=>{
-    if(e.target.closest?.('[data-nav],[data-psp-tab],[data-psp-filters]')) setTimeout(schedule,0);
+    if(e.target.closest?.('.nav,[data-psp-tab],#polyana')) setTimeout(schedule,0);
   },true);
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
 else start();
 
-window.PokerSwipePolyanaPromo={refresh:decorate,build:BUILD};
+window.PokerSwipePolyanaPromo={refresh:apply,build:BUILD};
 })();
 
 /* ============================================================
