@@ -232,6 +232,8 @@
     area?.querySelector('.pgPot, .pgPotLabel')?.classList.add('ps-bet-to-pot');
     setTimeout(() => area?.querySelector('.pgPot, .pgPotLabel')?.classList.remove('ps-bet-to-pot'), 400);
     progressiveReveal(area?.querySelector('#sizeResult .verdict'), { delay: 100 });
+    const root = scrollRoot();
+    if (root) root.scrollTop = 0;
   }
 
   function progressiveReveal(container, opts = {}) {

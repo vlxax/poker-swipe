@@ -1,0 +1,202 @@
+/**
+ * PokerSwipe Character Engine V1 — Green Monster
+ * Layout-stable slots; no page-level motion.
+ */
+
+.pgArenaWrap,
+.pgArena {
+  position: relative;
+  overflow: visible;
+}
+
+.pgArenaWrap {
+  flex: 0 0 auto;
+}
+
+.pgShell:has(.psCharSlot) {
+  overflow: visible;
+}
+
+.psCharSlot {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  contain: layout style paint;
+  flex-shrink: 0;
+}
+
+.psCharSlot[data-placement="table-peek"] {
+  right: 0;
+  bottom: -10px;
+  width: 118px;
+  height: 88px;
+}
+
+.psCharSlot[data-placement="table-right"] {
+  right: -6px;
+  bottom: -4px;
+  width: 128px;
+  height: 172px;
+}
+
+.psCharSlot[data-placement="result-side"] {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  width: 92px;
+  height: 92px;
+}
+
+.psCharSlot[data-placement="result-compact"] {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  width: 78px;
+  height: 78px;
+}
+
+.psCharVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  background: transparent;
+  mix-blend-mode: screen;
+}
+
+.psCharSlot.isLoading .psCharVideo {
+  opacity: 0;
+}
+
+.psCharSlot.isReady .psCharVideo {
+  opacity: 1;
+  transition: opacity 0.18s ease;
+}
+
+.psCharReaction {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin: 10px 0 4px;
+  min-height: 92px;
+  contain: layout style;
+}
+
+.psCharReaction .psCharBubble {
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: center;
+}
+
+.psCharBubble {
+  padding: 8px 11px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(24, 24, 30, 0.96), rgba(10, 10, 14, 0.98));
+  border: 1px solid rgba(200, 255, 61, 0.24);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+  line-height: 1.35;
+  color: #eceae8;
+}
+
+.psCharBubble strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #f4f7ef;
+  margin-top: 2px;
+}
+
+.psCharBubble .ey {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  color: #c8ff3d;
+  margin-bottom: 3px;
+}
+
+@media (max-width: 390px) {
+  .psCharSlot[data-placement="table-right"] {
+    width: 112px;
+    height: 150px;
+    right: -2px;
+  }
+
+  .psCharSlot[data-placement="table-peek"] {
+    width: 104px;
+    height: 78px;
+  }
+}
+
+/* Keep poker table visible when sizing feedback appears */
+.pgShell.pgSizing:has(#sizeResult .verdict) {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgSizeRow,
+.pgShell.pgSizing:has(#sizeResult .verdict) .scale,
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgActionRow,
+.pgShell.pgSizing:has(#sizeResult .verdict) .range,
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeLock,
+.pgShell.pgSizing:has(#sizeResult .verdict) .v33DirectInput,
+.pgShell.pgSizing:has(#sizeResult .verdict) .brainPanel,
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeNext {
+  display: none !important;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .ps-reveal-stage {
+  opacity: 1;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgArena {
+  max-height: 28vh;
+  min-height: 132px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .pgDecisionReadout {
+  margin-bottom: 6px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) #sizeResult .verdict {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .dualGrade {
+  margin-bottom: 6px;
+}
+
+.pgShell.pgSizing:has(#sizeResult .verdict) .psCharReaction {
+  margin-top: 6px;
+  margin-bottom: 2px;
+  min-height: 78px;
+}
+
+.psResultArena {
+  flex: 0 0 auto;
+  margin: 0 0 8px;
+}
+
+.psResultArena .pgArena {
+  max-height: 30vh;
+  min-height: 138px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psCharVideo {
+    display: none;
+  }
+
+  .psCharSlot::after {
+    content: "👾";
+    position: absolute;
+    inset: auto 8px 8px auto;
+    font-size: 28px;
+    opacity: 0.85;
+  }
+}

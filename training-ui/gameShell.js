@@ -190,6 +190,7 @@ export function renderGameLobby(root, vm, handlers = {}) {
     };
   }
   wireContextButtons(root, ctx, id);
+  window.PsCharacter?.mountArenaCharacter(root.querySelector('.pgArenaWrap'), { state: 'challenge', screen: 'daily' });
 }
 
 export function renderGameDrill(root, vm, handlers = {}) {
@@ -223,6 +224,7 @@ export function renderGameDrill(root, vm, handlers = {}) {
     };
   });
   wireContextButtons(root, ctx, id);
+  window.PsCharacter?.mountArenaCharacter(root.querySelector('.pgArenaWrap'), { state: 'thinking', screen: 'daily' });
 }
 
 export function renderGameFeedback(root, vm, handlers = {}) {
@@ -247,7 +249,9 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   </div>`;
 
   const verdict = root.querySelector('.verdict');
-  if (window.FreakLady && verdict) {
+  if (window.PsCharacter && verdict) {
+    window.PsCharacter.reactVerdict(verdict, cls, 'daily');
+  } else if (window.FreakLady && verdict) {
     window.FreakLady.react(verdict, cls, 'daily', { wide: true });
   }
   window.PsMotion?.pulseTarget(root, cls, '.pgVerdictCompact');

@@ -59,6 +59,7 @@
       else run();
     };
     wireCtx(area, ctx, id);
+    window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'challenge', screen: 'daily' });
   }
 
   function dailyStreetGame() {
@@ -97,6 +98,11 @@
       });
     }
     wireCtx(area, ctx, id);
+    if (window.dStreet >= 3) {
+      window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'thinking', screen: 'daily' });
+    } else {
+      window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'challenge', screen: 'daily' });
+    }
   }
 
   window.__legacyDailyIntro = renderLegacyDailyIntro;
