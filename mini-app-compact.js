@@ -114,7 +114,7 @@
   }
 
   /** Compact HUD strip — chips + stat counters, not a text card */
-  function hudStrip(ctx, id, { title, subtitle } = {}) {
+  function hudBody(ctx, id, { title, subtitle } = {}) {
     const tags = (ctx.tags || []).map((t) => `<span class="pgChip">${esc(t)}</span>`).join('');
     const stats = [
       ctx.blinds ? `<div class="pgStat"><span>БЛАЙНДЫ</span><b>${esc(ctx.blinds)}</b></div>` : '',
@@ -123,13 +123,143 @@
       `<div class="pgStat"><span>ТЫ</span><b>${esc(ctx.heroPos)}</b></div>`,
       `<div class="pgStat"><span>VILL</span><b>${esc(ctx.villainPos)} · ${esc(ctx.villainType)}</b></div>`
     ].filter(Boolean).join('');
-
-    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">
-      ${title ? `<div class="pgHudTitle">${title}${subtitle ? `<span class="ey">${esc(subtitle)}</span>` : ''}</div>` : ''}
-      ${tags}${stats}
-      <button type="button" class="secondary pgHudMore" data-ma-ctx-full="${esc(id || 'ctx')}">ВСЕ УСЛОВИЯ →</button>
-    </div>`;
+    const titleHtml = title ? `<div class="pgHudTitle">${title}${subtitle ? `<span class="ey">${esc(subtitle)}</span>` : ''}</div>` : '';
+    return `${titleHtml}${tags}${stats}<button type="button" class="secondary pgHudMore" data-ma-ctx-full="${esc(id || 'ctx')}">ВСЕ УСЛОВИЯ →</button>`;
   }
+
+  function hudStrip(ctx, id, opts = {}) {
+    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">${hudBody(ctx, id, opts)}</div>`;
+  }
+
+  function hudWithBack(ctx, id, opts, app, canBack) {
+    const nav = window.MiniAppNav;
+    if (!nav) return hudStrip(ctx, id, opts);
+    const disabled = canBack === false ? true : !nav.canBack(app);
+    const body = hudBody(ctx, id, opts);
+    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">${nav.headRow(app, body, { disabled })}</div>`;
+  }
+
+  function navGoHome() {
+    if (typeof window.show === 'function') window.show('home');
+  }
+
+  function initMiniAppNavOnShow() {
+    if (window.show && window.show._maNavHook) return;
+    const orig = window.show;
+    window.show = function maNavShow(id) {
+      const nav = window.MiniAppNav;
+      if (nav) {
+        if (id === 'sizing') {
+          nav.reset('sizing');
+          window.__szTaskStates = Object.create(null);
+          window.__szUI = { phase: 'question', mode: 'bet', rangeVal: 50 };
+          nav.push('sizing', { sz: window.sz || 0, phase: 'question' });
+        }
+        if (id === 'review') {
+          nav.reset('review');
+          window.__rvTaskStates = Object.create(null);
+          window.__rvUI = { phase: 'pick', rvPick: null };
+          nav.push('review', { rv: window.rv || 0, phase: 'pick' });
+        }
+      }
+      return typeof orig === 'function' ? orig.apply(this, arguments) : undefined;
+    };
+    window.show._maNavHook = true;
+  }
+
+  function saveSizingState() {
+    const ui = window.__szUI || { phase: 'question', mode: 'bet', rangeVal: 50 };
+    window.__szTaskStates[window.sz] = { ...ui };
+    return ui;
+  }
+
+  function sizingBack() {
+    const nav = window.MiniAppNav;
+    const ui = window.__szUI || { phase: 'question' };
+    if (ui.phase === 'result') {
+      ui.phase = 'question';
+      window.__szUI = ui;
+      saveSizingState();
+      window.renderSizing();
+      return;
+    }
+    if (window.sz > 0) {
+      window.sz--;
+      window.__szUI = { ...(window.__szTaskStates[window.sz] || { phase: 'question', mode: 'bet', rangeVal: 50 }) };
+      nav?.pop('sizing');
+      window.renderSizing();
+      return;
+    }
+    navGoHome();
+  }
+
+  function saveReviewState() {
+    const ui = window.__rvUI || { phase: 'pick', rvPick: null };
+    window.__rvTaskStates[window.rv] = { ...ui };
+    return ui;
+  }
+
+  function reviewBack() {
+    const nav = window.MiniAppNav;
+    const ui = window.__rvUI || { phase: 'pick', rvPick: null };
+    if (ui.phase !== 'pick') {
+      ui.phase = 'pick';
+      window.__rvUI = ui;
+      saveReviewState();
+      window.MiniAppNav?.pop('review');
+      window.renderReview();
+      return;
+    }
+    if (window.rv > 0) {
+      window.rv--;
+      window.__rvUI = { ...(window.__rvTaskStates[window.rv] || { phase: 'pick', rvPick: null }) };
+      nav?.pop('review');
+      window.renderReview();
+      return;
+    }
+    navGoHome();
+  }
+
+  function wireMiniAppBack(root, app, handler) {
+    window.MiniAppNav?.wire(root, app, handler);
+  }
+
+  function wrapReviewNavFns() {
+    ['reviewReveal', 'reviewRepair'].forEach((name) => {
+      const orig = window[name];
+      if (typeof orig !== 'function' || orig._maNavWrapped) return;
+      window[name] = function maNavReviewStep() {
+        window.__rvUI = window.__rvUI || { phase: 'pick', rvPick: window.rvPick };
+        window.__rvUI.phase = name === 'reviewRepair' ? 'repair' : 'reveal';
+        saveReviewState();
+        if (window.MiniAppNav && !window.MiniAppNav.isRestoring()) {
+          window.MiniAppNav.push('review', { rv: window.rv, phase: window.__rvUI.phase });
+        }
+        const out = orig.apply(this, arguments);
+        setTimeout(() => {
+          const area = document.getElementById('reviewArea');
+          if (!area) return;
+          const shell = area.querySelector('.pgShell, .panel');
+          if (!shell || shell.querySelector('.pgBackBtn')) return;
+          const nav = window.MiniAppNav;
+          if (!nav) return;
+          const hud = shell.querySelector('.pgHud');
+          const backHtml = nav.backButtonHtml();
+          if (hud) {
+            hud.insertAdjacentHTML('afterbegin', `<div class="pgHeadRow">${backHtml}<div class="pgHeadMain"></div></div>`);
+          } else {
+            shell.insertAdjacentHTML('afterbegin', `<div class="pgHud">${nav.headRow('review', '<div class="pgHudTitle"><span class="ey">ВСКРЫТИЕ</span></div>', {})}</div>`);
+          }
+          wireMiniAppBack(shell, 'review', reviewBack);
+        }, 0);
+        return out;
+      };
+      window[name]._maNavWrapped = true;
+    });
+  }
+
+  initMiniAppNavOnShow();
+  wrapReviewNavFns();
 
   /** Central poker table arena */
   function gameArena({ board = [], hero = [], pot, street, heroPos, villainPos, villainType } = {}) {
@@ -170,18 +300,21 @@
 
   /* ── REVIEW: Loss Map game interface ── */
   replaceRender('renderReview', function renderReviewGame() {
-    const R = window.REVIEWS[window.rv % window.REVIEWS.length];
-    window.rvPick = null;
+    const total = window.REVIEWS?.length || 1;
+    const R = window.REVIEWS[window.rv % total];
+    window.__rvUI = window.__rvUI || { phase: 'pick', rvPick: null };
+    window.rvPick = window.__rvUI.rvPick != null ? window.__rvUI.rvPick : null;
     const ctx = getCtx30('review', R);
     ctx.history = R.nodes;
     ctx.pot = ctx.pot || '—';
     const id = 'review_' + R.id;
     registerCtx(id, ctx);
+    const taskNum = (window.rv % total) + 1;
 
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('review') : '';
     const area = document.getElementById('reviewArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgReview">
-      ${hudStrip(ctx, id, { title: '<h1 class="impact">ГДЕ ЛИНИЯ <span class="pink">СЛОМАЛАСЬ?</span></h1>', subtitle: 'LOSS MAP' })}
+      ${hudWithBack(ctx, id, { title: '<h1 class="impact">ГДЕ ЛИНИЯ <span class="pink">СЛОМАЛАСЬ?</span></h1>', subtitle: `Task ${taskNum}/${total} · LOSS MAP` }, 'review')}
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       ${gamePath(R.nodes, { pickable: true })}
       <div class="pgControls">
@@ -190,11 +323,28 @@
       </div>
     </div>`;
 
+    const shell = area.querySelector('.pgShell');
+    wireMiniAppBack(shell, 'review', reviewBack);
+
+    const restorePick = (pick) => {
+      if (pick == null) return;
+      if (pick === 'none') {
+        document.getElementById('rvNone')?.classList.add('selected');
+      } else {
+        const node = area.querySelector(`[data-rn="${pick}"]`);
+        node?.classList.add('selected');
+      }
+      document.getElementById('rvGo').innerHTML = '<button class="primary pgCta" id="rvSure">Я УВЕРЕН →</button>';
+      document.getElementById('rvSure').onclick = window.reviewReveal;
+    };
+
     area.querySelectorAll('[data-rn]').forEach((b) => {
       b.onclick = () => {
         area.querySelectorAll('[data-rn],#rvNone').forEach((x) => x.classList.remove('selected'));
         b.classList.add('selected');
         window.rvPick = +b.dataset.rn;
+        window.__rvUI = { phase: 'pick', rvPick: window.rvPick };
+        saveReviewState();
         document.getElementById('rvGo').innerHTML = '<button class="primary pgCta" id="rvSure">Я УВЕРЕН →</button>';
         document.getElementById('rvSure').onclick = window.reviewReveal;
       };
@@ -203,26 +353,38 @@
       area.querySelectorAll('[data-rn],#rvNone').forEach((x) => x.classList.remove('selected'));
       document.getElementById('rvNone').classList.add('selected');
       window.rvPick = 'none';
+      window.__rvUI = { phase: 'pick', rvPick: 'none' };
+      saveReviewState();
       document.getElementById('rvGo').innerHTML = '<button class="primary pgCta" id="rvSure">Я УВЕРЕН →</button>';
       document.getElementById('rvSure').onclick = window.reviewReveal;
     };
+    restorePick(window.rvPick);
     wireContextButtons(area);
+    const nav = window.MiniAppNav;
+    if (nav && window.__rvLastRendered != null && window.rv > window.__rvLastRendered) {
+      nav.push('review', { rv: window.rv, phase: 'pick' });
+    }
+    window.__rvLastRendered = window.rv;
   });
 
   /* ── SIZING: table-dominant game interface ── */
   replaceRender('renderSizing', function renderSizingGame() {
-    const s = window.SIZING[window.sz % window.SIZING.length];
+    const total = window.SIZING?.length || 1;
+    const s = window.SIZING[window.sz % total];
+    window.__szUI = window.__szUI || { phase: 'question', mode: 'bet', rangeVal: 50 };
+    const ui = window.__szUI;
     const ctx = getCtx30('sizing', s);
     ctx.pot = `${s.pot} ББ`;
     ctx.extra = s.ctx;
     ctx.concept = s.concept;
     const id = 'sizing_' + s.id;
     registerCtx(id, ctx);
+    const taskNum = (window.sz % total) + 1;
 
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('sizing') : '';
     const area = document.getElementById('sizingArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgSizing">
-      ${hudStrip(ctx, id, { title: '<h2>Какой сайз?</h2>', subtitle: esc(s.street) + ' · САЙЗИНГ' })}
+      ${hudWithBack(ctx, id, { title: '<h2>Какой сайз?</h2>', subtitle: `Task ${taskNum}/${total} · ${esc(s.street)} · САЙЗИНГ` }, 'sizing')}
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       <div class="pgControls">
         <div class="pgControlsHead">ТВОЁ РЕШЕНИЕ</div>
@@ -240,43 +402,93 @@
       </div>
     </div>`;
 
+    const shell = area.querySelector('.pgShell');
+    wireMiniAppBack(shell, 'sizing', sizingBack);
+
     const r = document.getElementById('sizeRange');
-    let mode = 'bet';
+    let mode = ui.mode || 'bet';
+    const syncUi = () => {
+      const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
+      window.__szUI = { phase: ui.phase, mode, rangeVal: v, resultHtml: ui.resultHtml || null };
+      saveSizingState();
+    };
     const upd = () => {
       const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
       if (mode !== 'bet') r.value = v;
       document.getElementById('sizePct').textContent = v ? v + '%' : 'CHECK';
       document.getElementById('sizeBB').textContent = v ? (s.pot * v / 100).toFixed(1) + ' ББ' : '0 ББ';
       document.getElementById('sizeLock').textContent = v ? `ПОСТАВИТЬ ${v}% →` : 'CHECK →';
+      syncUi();
     };
     r.oninput = () => { mode = 'bet'; upd(); };
     document.getElementById('sizeCheck').onclick = () => { mode = 'check'; r.value = 0; upd(); };
     document.getElementById('sizeBet').onclick = () => { mode = 'bet'; if (+r.value === 0) r.value = 50; upd(); };
     document.getElementById('sizeAllin').onclick = () => { mode = 'allin'; r.value = 150; upd(); };
     area.querySelectorAll('[data-size-pill]').forEach((b) => { b.onclick = () => { mode = 'bet'; r.value = b.dataset.sizePill; upd(); }; });
-    upd();
 
-    document.getElementById('sizeLock').onclick = () => {
-      const lockBtn = document.getElementById('sizeLock');
-      const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
-      const action = v === 0 ? 'CHECK' : 'BET';
-      const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
-      const g = br?.grade || 'y';
-      window.PsMotion?.decisionLock(lockBtn);
-      window.recordEvent({
-        spotId: s.id, mode: 'sizing', concept: s.concept, conceptId: br?.concept, street: s.street,
-        action, sizePct: v || null, grade: g, gradeAction: br?.actionGrade, gradeSize: br?.sizeGrade,
-        why: br?.explanation || s.why, brainSource: br?.source, brainConfidence: br?.confidence, policyScore: br?.score
-      });
-      document.getElementById('sizeResult').innerHTML = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
-      const verdict = document.getElementById('sizeResult')?.querySelector('.verdict');
-      window.PsCharacter?.reactVerdict(verdict, g, 'sizing', { actionGrade: br?.actionGrade, sizeGrade: br?.sizeGrade });
-      window.PsMotion?.sizingConfirm(area.querySelector('.pgShell'), g);
-      window.PsMotion?.progressiveReveal(verdict);
-      document.getElementById('sizeNext').onclick = () => { window.quick?.active ? window.quickAdvance() : (window.sz++, window.renderSizing()); };
-    };
+    if (ui.phase === 'result' && ui.resultHtml) {
+      document.getElementById('sizeResult').innerHTML = ui.resultHtml;
+      document.getElementById('sizeLock').style.display = 'none';
+      const backBtn = shell.querySelector('.pgBackBtn');
+      if (backBtn) {
+        backBtn.disabled = false;
+        backBtn.classList.remove('is-disabled');
+      }
+      const nextBtn = document.getElementById('sizeNext');
+      if (nextBtn) {
+        nextBtn.onclick = () => {
+          window.sz++;
+          window.__szUI = { phase: 'question', mode: 'bet', rangeVal: 50 };
+          window.renderSizing();
+        };
+      }
+    } else {
+      r.value = ui.rangeVal != null ? ui.rangeVal : 50;
+      upd();
+      document.getElementById('sizeLock').onclick = () => {
+        const lockBtn = document.getElementById('sizeLock');
+        const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
+        const action = v === 0 ? 'CHECK' : 'BET';
+        const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
+        const g = br?.grade || 'y';
+        window.PsMotion?.decisionLock(lockBtn);
+        window.recordEvent({
+          spotId: s.id, mode: 'sizing', concept: s.concept, conceptId: br?.concept, street: s.street,
+          action, sizePct: v || null, grade: g, gradeAction: br?.actionGrade, gradeSize: br?.sizeGrade,
+          why: br?.explanation || s.why, brainSource: br?.source, brainConfidence: br?.confidence, policyScore: br?.score
+        });
+        const resultHtml = `<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br?.actionGrade || 'y'}"><span class="ey">ДЕЙСТВИЕ</span><b>${action}</b></div><div class="gradeBox ${br?.sizeGrade || br?.actionGrade || 'y'}"><span class="ey">РАЗМЕР</span><b>${v ? v + '%' : '—'}</b></div></div>${typeof window.brainPanel === 'function' && br ? window.brainPanel(br) : `<p>${esc(s.why)}</p>`}<button class="primary pgCta" id="sizeNext">${window.quick?.active ? 'ДАЛЬШЕ ПО СЕССИИ' : 'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;
+        document.getElementById('sizeResult').innerHTML = resultHtml;
+        lockBtn.style.display = 'none';
+        const backBtn = shell.querySelector('.pgBackBtn');
+        if (backBtn) {
+          backBtn.disabled = false;
+          backBtn.classList.remove('is-disabled');
+        }
+        window.__szUI = { phase: 'result', mode, rangeVal: v, resultHtml };
+        saveSizingState();
+        window.MiniAppNav?.push('sizing', { sz: window.sz, phase: 'result' });
+        const verdict = document.getElementById('sizeResult')?.querySelector('.verdict');
+        window.PsCharacter?.reactVerdict(verdict, g, 'sizing', { actionGrade: br?.actionGrade, sizeGrade: br?.sizeGrade });
+        window.PsMotion?.sizingConfirm(area.querySelector('.pgShell'), g);
+        window.PsMotion?.progressiveReveal(verdict);
+        document.getElementById('sizeNext').onclick = () => {
+          if (window.quick?.active) window.quickAdvance();
+          else {
+            window.sz++;
+            window.__szUI = { phase: 'question', mode: 'bet', rangeVal: 50 };
+            window.renderSizing();
+          }
+        };
+      };
+    }
     wireContextButtons(area);
     window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'thinking', screen: 'sizing' });
+    const nav = window.MiniAppNav;
+    if (nav && window.__szLastRendered != null && window.sz > window.__szLastRendered) {
+      nav.push('sizing', { sz: window.sz, phase: window.__szUI?.phase || 'question' });
+    }
+    window.__szLastRendered = window.sz;
   });
 
   /* ── SWIPE: table-centric decision ── */
@@ -416,5 +628,5 @@
     };
   }
 
-  window.MaCompact = { hudStrip, gameArena, gamePath, getCtx30 };
+  window.MaCompact = { hudStrip, hudWithBack, gameArena, gamePath, getCtx30 };
 })();

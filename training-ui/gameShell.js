@@ -154,6 +154,14 @@ export function scenarioForDisplay(sc = {}) {
   };
 }
 
+function hudWithBack(ctx, id, opts, app, canBack) {
+  const nav = window.MiniAppNav;
+  const inner = hudStrip(ctx, id, opts);
+  if (!nav) return inner;
+  const disabled = canBack === false ? true : !nav.canBack(app);
+  return nav.headRow(app, inner, { disabled });
+}
+
 export function renderGameLobby(root, vm, handlers = {}) {
   if (!root) return;
   const preview = vm.previewScenario || {};
@@ -163,10 +171,10 @@ export function renderGameLobby(root, vm, handlers = {}) {
   const focus = (vm.focusItems && vm.focusItems[0]) ? esc(vm.focusItems[0]) : 'разные игровые ситуации';
 
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
-    ${hudStrip(ctx, id, {
+    ${hudWithBack(ctx, id, {
       title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>',
       subtitle: vm.subtitle || ''
-    })}
+    }, 'daily', true)}
     <div class="pgArenaWrap pgDealIn">${gameArena({ ...disp })}</div>
     <div class="pgDailyChallenge">
       <span class="ey">${esc(vm.focusHeading || 'СЕГОДНЯ В ФОКУСЕ')}</span>
@@ -190,6 +198,10 @@ export function renderGameLobby(root, vm, handlers = {}) {
     };
   }
   wireContextButtons(root, ctx, id);
+  window.MiniAppNav?.wire(root, 'daily', () => {
+    if (typeof handlers.back === 'function') handlers.back();
+    else if (typeof window.show === 'function') window.show('home');
+  });
   window.PsCharacter?.mountArenaCharacter(root.querySelector('.pgArenaWrap'), { state: 'challenge', screen: 'daily' });
 }
 
@@ -201,18 +213,19 @@ export function renderGameDrill(root, vm, handlers = {}) {
     note: [vm.contextLine, vm.historyLine].filter(Boolean).join(' · ')
   });
   const id = 'daily_drill_' + (vm.drillId || vm.progress.index);
+  const selectedId = vm.selectedOptionId || null;
 
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill">
-    ${hudStrip(ctx, id, {
+    ${hudWithBack(ctx, id, {
       title: '<h2>Разбор решения</h2>',
-      subtitle: `${vm.streetRu || disp.street} · ${vm.progress.index}/${vm.progress.total}`
-    })}
+      subtitle: `Task ${vm.progress.index}/${vm.progress.total}`
+    }, 'daily')}
     ${streetDots(vm.street)}
     <div class="pgArenaWrap pgDealIn">${gameArena({ ...disp })}</div>
     <div class="pgControls">
       <p class="pgPrompt">${esc(vm.prompt)}</p>
       <div class="grid2 pgDecisionGrid">${vm.options.map((o) =>
-        `<button type="button" class="choice pgBubblePress" data-option="${esc(o.id)}">${esc(o.labelRu)}</button>`).join('')}</div>
+        `<button type="button" class="choice pgBubblePress${selectedId === o.id ? ' selected' : ''}" data-option="${esc(o.id)}">${esc(o.labelRu)}</button>`).join('')}</div>
     </div>
   </div>`;
 
@@ -223,6 +236,7 @@ export function renderGameDrill(root, vm, handlers = {}) {
       handlers.answer(b.dataset.option);
     };
   });
+  window.MiniAppNav?.wire(root, 'daily', () => handlers.back?.());
   wireContextButtons(root, ctx, id);
   window.PsCharacter?.mountArenaCharacter(root.querySelector('.pgArenaWrap'), { state: 'thinking', screen: 'daily' });
 }
@@ -233,7 +247,7 @@ export function renderGameFeedback(root, vm, handlers = {}) {
     : vm.grade === 'INACCURACY' ? 'y' : 'r';
 
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyFeedback">
-    <div class="pgHud"><div class="pgHudTitle"><h2>Вскрытие</h2><span class="ey">${esc(vm.gradeTitle || vm.verdict || 'Результат')}</span></div></div>
+    <div class="pgHud">${window.MiniAppNav?.headRow('daily', `<div class="pgHudTitle"><h2>Вскрытие</h2><span class="ey">${esc(vm.gradeTitle || vm.verdict || 'Результат')}</span></div>`, {}) || ''}</div>
     <div class="pgControls">
       <div class="verdict pgVerdictCompact">
         <div class="dualGrade">
@@ -261,6 +275,7 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   if (b && typeof handlers.next === 'function') {
     b.onclick = () => handlers.next();
   }
+  window.MiniAppNav?.wire(root, 'daily', () => handlers.back?.());
 }
 
 export function renderGameLoading(root, vm = {}) {

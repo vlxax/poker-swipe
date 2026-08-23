@@ -109,15 +109,43 @@ const handlers = {
   start() {
     const r = ctl.start();
     if (r.reason === 'no_profile') { legacyFallback(); return; }
-    if (r.started) paint();
+    if (r.started) {
+      window.MiniAppNav?.reset('daily');
+      pushDailyNav({ phase: 'lobby' });
+      if (ctl.state === 'ready' || ctl.state === 'limited') {
+        pushDailyNav({ phase: 'drill', index: 0 });
+      }
+    }
+    paint();
   },
   answer(optionId) {
     const res = ctl.answer(optionId);
-    if (res) paint();
+    if (res) {
+      pushDailyNav({ phase: 'feedback', index: ctl.index });
+      paint();
+    }
   },
-  next() { ctl.next(); paint(); },
-  more() { moreSpots(); },
-  back() { goHome(); }
+  next() {
+    const prevIndex = ctl.index;
+    ctl.next();
+    if (!ctl.showingFeedback && ctl.state !== 'done' && ctl.index !== prevIndex) {
+      pushDailyNav({ phase: 'drill', index: ctl.index });
+    }
+    paint();
+  },
+  back() {
+    if (ctl.state === 'idle') {
+      goHome();
+      return;
+    }
+    const result = ctl.back();
+    const nav = window.MiniAppNav;
+    if (nav && result && result.action !== 'noop') {
+      nav.pop('daily');
+    }
+    paint();
+  },
+  more() { moreSpots(); }
 };
 
 const assessmentHandlers = {
@@ -138,7 +166,24 @@ function moreSpots() {
 function drillVM() {
   const drill = ctl.current();
   const prog = ctl.progress();
-  return drillViewModel({ drill, index: prog.index, total: prog.total });
+  const snap = ctl.taskStates[ctl.index];
+  const vm = drillViewModel({ drill, index: prog.index, total: prog.total });
+  if (snap && snap.optionId) vm.selectedOptionId = snap.optionId;
+  return vm;
+}
+
+function syncDailyNav() {
+  const nav = window.MiniAppNav;
+  if (!nav || assessment.state === 'answering') return;
+  const st = ctl.state;
+  if (st === 'idle' && nav.depth('daily') === 0) {
+    nav.reset('daily');
+    nav.push('daily', { phase: 'lobby' });
+  }
+}
+
+function pushDailyNav(snap) {
+  window.MiniAppNav?.push('daily', snap);
 }
 
 function paint() {
@@ -180,6 +225,7 @@ function paint() {
     R.renderCancelled(el, { back: goHome });
   } else {
     // idle / fallback → show home; if not personalised, use legacy validated daily.
+    syncDailyNav();
     const vm = ctl.home();
     if (vm.type === 'training') {
       vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);

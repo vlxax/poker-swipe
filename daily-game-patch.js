@@ -6,12 +6,11 @@
   'use strict';
   if (!window.MaCompact || !window.__maGameLayout) return;
 
-  const { hudStrip, gameArena, getCtx30 } = window.MaCompact;
+  const { hudStrip, hudWithBack, gameArena, getCtx30 } = window.MaCompact;
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   function wireCtx(root, ctx, id) {
-    if (typeof window.MaCompact !== 'object') return;
     const store = window.__maCtxStore || (window.__maCtxStore = new Map());
     store.set(id, ctx);
     root.querySelectorAll('[data-ma-ctx-full]').forEach((btn) => {
@@ -27,6 +26,29 @@
     });
   }
 
+  function legacyDailyBack() {
+    const nav = window.MiniAppNav;
+    if (window.dChoice != null || window.dSize != null) {
+      window.dChoice = null;
+      window.dSize = null;
+      window.dailyStreet();
+      return;
+    }
+    if (window.dStreet > 0) {
+      window.dStreet--;
+      nav?.pop('dailyLegacy');
+      window.dailyStreet();
+      return;
+    }
+    if (typeof window.__legacyDailyIntro === 'function') window.__legacyDailyIntro();
+    else if (typeof window.show === 'function') window.show('home');
+  }
+
+  function hudForLegacy(ctx, id, opts) {
+    if (typeof hudWithBack === 'function') return hudWithBack(ctx, id, opts, 'dailyLegacy');
+    return hudStrip(ctx, id, opts);
+  }
+
   function renderLegacyDailyIntro() {
     const D = window.dailyToday();
     const done = window.S.dailyArchive.find((x) => x.date === window.today());
@@ -36,9 +58,12 @@
     ctx.history = D.line;
     const id = 'daily_' + D.id;
 
+    window.MiniAppNav?.reset('dailyLegacy');
+    window.MiniAppNav?.push('dailyLegacy', { phase: 'lobby' });
+
     const area = document.getElementById('dailyArea');
     area.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
-      ${hudStrip(ctx, id, { title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>', subtitle: '#' + D.number + ' · ' + esc(D.theme) })}
+      ${hudForLegacy(ctx, id, { title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>', subtitle: '#' + D.number + ' · ' + esc(D.theme) })}
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: D.board.slice(0, 3), hero: D.hero, pot: D.pot, street: 'ФЛОП', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       <div class="pgDailyChallenge">
         <p class="pgChallengeLine">ОДНА РУКА.<br><span class="pink">ОДНО РЕШЕНИЕ.</span></p>
@@ -54,10 +79,14 @@
       window.dChoice = null;
       window.dSize = null;
       window.dStart = window.now();
+      window.MiniAppNav?.push('dailyLegacy', { phase: 'street', dStreet: 0 });
       const run = () => window.dailyStreet();
       if (window.PsMotion?.startHand) window.PsMotion.startHand(area, run);
       else run();
     };
+    window.MiniAppNav?.wire(area, 'dailyLegacy', () => {
+      if (typeof window.show === 'function') window.show('home');
+    });
     wireCtx(area, ctx, id);
     window.PsCharacter?.mountArenaCharacter(area.querySelector('.pgArenaWrap'), { state: 'challenge', screen: 'daily' });
   }
@@ -74,18 +103,24 @@
 
     const area = document.getElementById('dailyArea');
     area.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill">
-      ${hudStrip(ctx, id, { title: '<h2>Разбор решения</h2>', subtitle: streetLabels[window.dStreet] })}
+      ${hudForLegacy(ctx, id, { title: '<h2>Разбор решения</h2>', subtitle: `Task ${window.dStreet + 1}/4 · ${streetLabels[window.dStreet]}` })}
       <div class="pgStreetDots">${streets.map((x, i) => `<span class="${i < window.dStreet ? 'done' : i === window.dStreet ? 'on' : ''}">${x}</span>`).join('')}</div>
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: n ? D.board.slice(0, n) : [], hero: D.hero, pot: potNow, street: streetLabels[window.dStreet], heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       <div class="pgControls">
         ${window.dStreet < 3
           ? `<p class="pgPrompt mut small">${esc(D.line[window.dStreet] || '')}</p><button type="button" class="primary pgCta pgBubblePress" id="dNext">ПРОДОЛЖИТЬ →</button>`
-          : `<p class="pgPrompt">${esc(D.line[window.dStreet] || 'ТВОЙ ХОД.')}</p><div class="grid2 pgDecisionGrid">${D.decision.map((x) => `<button type="button" class="choice pgBubblePress" data-dchoice="${esc(x)}">${esc(x)}</button>`).join('')}</div><div id="dDecision"></div>`}
+          : `<p class="pgPrompt">${esc(D.line[window.dStreet] || 'ТВОЙ ХОД.')}</p><div class="grid2 pgDecisionGrid">${D.decision.map((x) => `<button type="button" class="choice pgBubblePress${window.dChoice === x ? ' selected' : ''}" data-dchoice="${esc(x)}">${esc(x)}</button>`).join('')}</div><div id="dDecision"></div>`}
       </div>
     </div>`;
 
+    window.MiniAppNav?.wire(area, 'dailyLegacy', legacyDailyBack);
+
     if (window.dStreet < 3) {
-      document.getElementById('dNext').onclick = () => { window.dStreet++; window.dailyStreet(); };
+      document.getElementById('dNext').onclick = () => {
+        window.dStreet++;
+        window.MiniAppNav?.push('dailyLegacy', { phase: 'street', dStreet: window.dStreet });
+        window.dailyStreet();
+      };
     } else {
       area.querySelectorAll('[data-dchoice]').forEach((b) => {
         b.onclick = () => {
