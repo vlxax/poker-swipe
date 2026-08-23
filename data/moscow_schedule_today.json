@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-23T13:56:03+03:00",
+  "updated_at": "2026-08-23T14:49:02+03:00",
   "date": "2026-08-23",
   "city": "Москва",
   "source_card_count": 50,
@@ -134,6 +134,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Классика Классический покерный турнир 17:00 1 000 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "17:00",
+      "club": "GARAGE Game Club",
+      "tournament": "ONE DOG FREEZEOUT",
+      "fee_rub": 1500,
+      "type": "Freezeout",
+      "source_url": "https://pokernomoney.ru/tournaments/10597",
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Freezeout ONE DOG FREEZEOUT 17:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7"
     },
     {
       "date": "2026-08-23",
@@ -442,22 +458,6 @@
     {
       "date": "2026-08-23",
       "time": "18:00",
-      "club": "TROYA покер",
-      "tournament": "THREE CARD DROP",
-      "fee_rub": 1000,
-      "type": "",
-      "source_url": "https://pokernomoney.ru/tournaments/10585",
-      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "duration_minutes": null,
-      "source_card_text": "THREE CARD DROP 18:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж"
-    },
-    {
-      "date": "2026-08-23",
-      "time": "18:00",
       "club": "БЛЕФ?",
       "tournament": "Классика CLASSIC ONE TOURNAMENT",
       "fee_rub": 1000,
@@ -586,22 +586,6 @@
     {
       "date": "2026-08-23",
       "time": "19:00",
-      "club": "GARAGE Game Club",
-      "tournament": "ONE DOG FREEZEOUT",
-      "fee_rub": 1500,
-      "type": "Freezeout",
-      "source_url": "https://pokernomoney.ru/tournaments/10597",
-      "address": "пр. Аэропорта, 8, стр. 7",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "duration_minutes": null,
-      "source_card_text": "Freezeout ONE DOG FREEZEOUT 19:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7"
-    },
-    {
-      "date": "2026-08-23",
-      "time": "19:00",
       "club": "HEADS UP",
       "tournament": "Double Life DOUBLE CHANCE",
       "fee_rub": 1000,
@@ -646,6 +630,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Mystery Bounty MYSTERY GOLD 19:00 1 300 ₽ PLAYWAY Москва, Винницкая, 8, корпус 2."
+    },
+    {
+      "date": "2026-08-23",
+      "time": "19:00",
+      "club": "TROYA покер",
+      "tournament": "THREE CARD DROP",
+      "fee_rub": 1000,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/10585",
+      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "THREE CARD DROP 19:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж"
     },
     {
       "date": "2026-08-23",

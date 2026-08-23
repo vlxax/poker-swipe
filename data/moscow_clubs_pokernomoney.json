@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T13:56:03+03:00",
+  "retrieved_at": "2026-08-23T14:49:02+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -442,7 +442,7 @@
       "schedule": [
         {
           "date": "2026-08-23",
-          "time": "19:00",
+          "time": "17:00",
           "club": "GARAGE Game Club",
           "tournament": "ONE DOG FREEZEOUT",
           "fee_rub": 1500,
@@ -454,7 +454,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Freezeout ONE DOG FREEZEOUT 19:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7"
+          "source_card_text": "Freezeout ONE DOG FREEZEOUT 17:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7"
         }
       ]
     },
@@ -1217,7 +1217,7 @@
       "schedule": [
         {
           "date": "2026-08-23",
-          "time": "18:00",
+          "time": "19:00",
           "club": "TROYA покер",
           "tournament": "THREE CARD DROP",
           "fee_rub": 1000,
@@ -1229,7 +1229,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "THREE CARD DROP 18:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж"
+          "source_card_text": "THREE CARD DROP 19:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж"
         }
       ],
       "upcoming": 1
