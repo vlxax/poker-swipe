@@ -1,55 +1,62 @@
 /**
  * PokerSwipe Character Engine V1
- * Central asset map + reusable showCharacter API for the Green Monster.
+ * Reusable character API. UI renders static transparent PNGs only.
+ * WEBM clips remain mapped for future alpha exports but are never mounted in UI.
  */
 (function () {
   'use strict';
 
-  const BUILD = 'ps-character-v1';
+  const BUILD = 'ps-character-v1-static';
 
-  /** @type {Record<string, {src:string, loop:boolean, aspect:number, pose:string, states:string[]}>} */
+  /** Legacy WEBM map — not used in live UI (yuv420p black matte). */
   const GREEN_MONSTER_CLIPS = {
+    idle: { src: 'assets/green-monster/demon-idle.webm', loop: true },
+    thinking: { src: 'assets/green-monster/demon-thinking.webm', loop: true },
+    success: { src: 'assets/green-monster/demon-correct.webm', loop: false },
+    mistake: { src: 'assets/green-monster/demon-wrong.webm', loop: false }
+  };
+
+  /** Transparent PNG sprites suitable for in-UI placement. */
+  const GREEN_MONSTER_IMAGES = {
     idle: {
-      src: 'assets/green-monster/demon-idle.webm',
-      loop: true,
-      aspect: 720 / 534,
-      pose: 'Peeking over table edge, arms crossed, smug grin',
-      states: ['idle', 'neutral', 'challenge']
+      src: 'assets/daily-hand/demon-cards-v2.png',
+      pose: 'Gesturing with cards, challenge / thinking'
     },
     thinking: {
-      src: 'assets/green-monster/demon-thinking.webm',
-      loop: true,
-      aspect: 720 / 970,
-      pose: 'Full body, hand on chin, analytical',
-      states: ['thinking', 'waiting']
+      src: 'assets/daily-hand/demon-cards-v2.png',
+      pose: 'Gesturing with cards, analytical'
+    },
+    challenge: {
+      src: 'assets/daily-hand/demon-cards-v2.png',
+      pose: 'Gesturing with cards, daily hero'
     },
     success: {
-      src: 'assets/green-monster/demon-correct.webm',
-      loop: false,
-      aspect: 720 / 970,
-      pose: 'Thumbs up, wide celebratory grin',
-      states: ['success', 'happy', 'celebration', 'correct']
+      src: 'assets/my-tournaments/winner-demon-v3.png',
+      pose: 'Celebratory winner with trophy'
     },
     mistake: {
-      src: 'assets/green-monster/demon-wrong.webm',
-      loop: false,
-      aspect: 1,
-      pose: 'Arms crossed, disappointed smirk',
-      states: ['mistake', 'wrong', 'confused', 'suboptimal']
+      src: 'assets/daily-hand/dino-poster.png',
+      pose: 'Compact smug grin, suboptimal / wrong'
+    },
+    suboptimal: {
+      src: 'assets/daily-hand/dino-poster.png',
+      pose: 'Compact smug grin, borderline'
     }
   };
 
+  const UI_ENABLED = Object.values(GREEN_MONSTER_IMAGES).some((x) => x?.src);
+
   const PLACEMENTS = {
-    'table-peek': { clip: 'idle', width: 118, height: 88 },
-    'table-right': { clip: 'thinking', width: 128, height: 172 },
-    'result-side': { clip: 'success', width: 92, height: 92 },
-    'result-compact': { clip: 'mistake', width: 78, height: 78 }
+    'controls-hero': { width: 72, height: 72 },
+    'controls-corner': { width: 64, height: 64 },
+    'result-side': { width: 72, height: 72 },
+    'result-compact': { width: 64, height: 64 }
   };
 
   const STATE_TO_CLIP = {
     idle: 'idle',
     neutral: 'idle',
-    challenge: 'idle',
+    challenge: 'challenge',
     thinking: 'thinking',
     waiting: 'thinking',
     success: 'success',
@@ -59,7 +66,7 @@
     mistake: 'mistake',
     wrong: 'mistake',
     confused: 'mistake',
-    suboptimal: 'mistake'
+    suboptimal: 'suboptimal'
   };
 
   const DIALOGUE = {
@@ -80,23 +87,23 @@
     }
   };
 
-  const preloadCache = new Map();
-  const activeVideos = new WeakMap();
-
   function normalizeState(state) {
     return STATE_TO_CLIP[state] ? state : 'thinking';
   }
 
-  function clipKey(state) {
+  function imageKey(state) {
     return STATE_TO_CLIP[normalizeState(state)] || 'thinking';
+  }
+
+  function imageFor(state) {
+    return GREEN_MONSTER_IMAGES[imageKey(state)] || GREEN_MONSTER_IMAGES.thinking;
   }
 
   function dialogueFor(screen, state, custom) {
     if (custom) return Array.isArray(custom) ? custom : [custom, ''];
     const ctx = DIALOGUE[screen] || DIALOGUE.sizing;
     const key = normalizeState(state);
-    const mapped = ctx[key] || ctx.thinking || ctx.challenge || ['ЗЕЛЁНЫЙ КОМПАНЬОН', ''];
-    return mapped;
+    return ctx[key] || ctx.thinking || ctx.challenge || ['ЗЕЛЁНЫЙ КОМПАНЬОН', ''];
   }
 
   function gradeToState(grade, opts = {}) {
@@ -107,80 +114,41 @@
     return 'suboptimal';
   }
 
-  function preloadClip(key) {
-    const clip = GREEN_MONSTER_CLIPS[key];
-    if (!clip || preloadCache.has(key)) return preloadCache.get(key);
-    const video = document.createElement('video');
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = 'auto';
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.src = clip.src;
-    const task = new Promise((resolve) => {
-      const done = () => resolve(video);
-      video.addEventListener('loadeddata', done, { once: true });
-      video.addEventListener('error', done, { once: true });
-    });
-    preloadCache.set(key, task);
-    return task;
-  }
-
-  function preloadStates(states) {
-    const keys = new Set((states || ['thinking', 'success', 'mistake']).map(clipKey));
-    keys.forEach((k) => preloadClip(k));
-  }
-
   function clearSlot(slot) {
     if (!slot) return;
-    const video = activeVideos.get(slot);
-    if (video) {
-      try { video.pause(); } catch (_) {}
-      activeVideos.delete(slot);
-    }
     slot.innerHTML = '';
     slot.classList.remove('isReady');
     slot.classList.add('isLoading');
   }
 
-  function mountVideo(slot, state, loopOverride) {
-    const key = clipKey(state);
-    const clip = GREEN_MONSTER_CLIPS[key];
-    if (!clip) return null;
-
+  function mountImage(slot, state) {
+    const asset = imageFor(state);
+    if (!asset?.src) return null;
     clearSlot(slot);
-
-    const video = document.createElement('video');
-    video.className = 'psCharVideo';
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.autoplay = true;
-    video.loop = loopOverride != null ? loopOverride : clip.loop;
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.setAttribute('disablepictureinpicture', '');
-    video.setAttribute('aria-hidden', 'true');
-    video.src = clip.src;
-
-    video.addEventListener('loadeddata', () => {
+    const img = document.createElement('img');
+    img.className = 'psCharImage';
+    img.alt = '';
+    img.decoding = 'async';
+    img.loading = 'lazy';
+    img.src = asset.src;
+    img.addEventListener('load', () => {
       slot.classList.remove('isLoading');
       slot.classList.add('isReady');
-      const play = video.play();
-      if (play && typeof play.catch === 'function') play.catch(() => {});
     }, { once: true });
+    img.addEventListener('error', () => {
+      slot.classList.remove('isReady');
+      slot.classList.add('isLoading');
+    }, { once: true });
+    slot.appendChild(img);
+    if (img.complete && img.naturalWidth) slot.classList.replace('isLoading', 'isReady');
+    return img;
+  }
 
-    video.addEventListener('ended', () => {
-      if (!video.loop && clip.loop) {
-        video.loop = true;
-        video.play()?.catch?.(() => {});
-      }
-    });
-
-    slot.appendChild(video);
-    activeVideos.set(slot, video);
-    preloadClip(key);
-    return video;
+  function controlsHost(shellOrWrap) {
+    if (!shellOrWrap) return null;
+    return shellOrWrap.querySelector?.('.pgControls')
+      || shellOrWrap.closest?.('.pgShell')?.querySelector('.pgControls')
+      || (shellOrWrap.classList?.contains('pgControls') ? shellOrWrap : null);
   }
 
   function ensureSlot(host, placement) {
@@ -191,7 +159,7 @@
       slot.className = 'psCharSlot isLoading';
       slot.dataset.placement = placement;
       slot.dataset.psCharBuild = BUILD;
-      host.appendChild(slot);
+      host.prepend(slot);
     } else {
       slot.dataset.placement = placement;
     }
@@ -199,36 +167,31 @@
   }
 
   function showCharacter(opts = {}) {
+    if (!UI_ENABLED) return null;
     const {
-      character = 'green-monster',
       state = 'thinking',
-      placement = 'table-right',
+      placement = 'controls-corner',
       host,
-      loop,
       screen = 'sizing',
       dialogue,
       showBubble = false,
       bubbleHost
     } = opts;
-
-    if (character !== 'green-monster' || !host) return null;
+    if (!host) return null;
 
     const slot = ensureSlot(host, placement);
-    mountVideo(slot, state, loop);
+    mountImage(slot, state);
 
     if (!showBubble) return slot;
 
-    const bubbleRoot = bubbleHost || host.parentElement || host;
-    let reaction = bubbleRoot.querySelector(':scope > .psCharReaction, .psCharReaction');
+    const bubbleRoot = bubbleHost || host;
+    let reaction = bubbleRoot.querySelector(':scope > .psCharReaction');
     if (!reaction) {
       reaction = document.createElement('div');
       reaction.className = 'psCharReaction';
       reaction.dataset.psCharBuild = BUILD;
-      const anchor = bubbleRoot.querySelector('.pgControls, .verdict, .pgVerdictCompact');
-      if (anchor) anchor.insertAdjacentElement('beforebegin', reaction);
-      else bubbleRoot.appendChild(reaction);
+      host.appendChild(reaction);
     }
-
     let sideSlot = reaction.querySelector('.psCharSlot');
     if (!sideSlot) {
       sideSlot = document.createElement('div');
@@ -236,8 +199,7 @@
       sideSlot.dataset.placement = 'result-side';
       reaction.prepend(sideSlot);
     }
-    mountVideo(sideSlot, state, loop);
-
+    mountImage(sideSlot, state);
     const [ey, body] = dialogueFor(screen, state, dialogue);
     let bubble = reaction.querySelector('.psCharBubble');
     if (!bubble) {
@@ -252,28 +214,30 @@
   function hideCharacter(host) {
     if (!host) return;
     host.querySelectorAll('.psCharSlot').forEach(clearSlot);
-    host.parentElement?.querySelectorAll?.('.psCharReaction')?.forEach((n) => n.remove());
+    host.querySelectorAll('.psCharReaction').forEach((n) => n.remove());
   }
 
   function mountArenaCharacter(arenaWrap, opts = {}) {
-    if (!arenaWrap) return null;
+    if (!UI_ENABLED) return null;
+    const controls = controlsHost(arenaWrap);
+    if (!controls) return null;
     const state = opts.state || 'thinking';
-    const placement = opts.placement || (state === 'idle' || state === 'challenge' ? 'table-peek' : 'table-right');
-    preloadStates([state, 'success', 'mistake']);
+    const placement = opts.placement
+      || (state === 'idle' || state === 'challenge' ? 'controls-hero' : 'controls-corner');
     return showCharacter({
       ...opts,
-      host: arenaWrap,
+      host: controls,
       placement,
       showBubble: false
     });
   }
 
   function reactVerdict(verdictEl, grade, screen = 'sizing', opts = {}) {
-    if (!verdictEl) return null;
+    if (!UI_ENABLED || !verdictEl) return null;
     const state = gradeToState(grade, opts);
     const shell = verdictEl.closest('.pgShell, .panel, #dailyArea, #sizingArea') || verdictEl.parentElement;
     shell?.querySelectorAll('.psCharReaction, .freakCoachReaction')?.forEach((n) => n.remove());
-    shell?.querySelectorAll('.pgArenaWrap > .psCharSlot')?.forEach(clearSlot);
+    shell?.querySelectorAll('.psCharSlot').forEach(clearSlot);
 
     const [ey, body] = dialogueFor(screen, state, opts.dialogue);
     const reaction = document.createElement('div');
@@ -297,8 +261,7 @@
       verdictEl.insertAdjacentElement('beforebegin', reaction);
     }
 
-    mountVideo(slot, state, false);
-    preloadClip(clipKey(state === 'success' ? 'thinking' : 'idle'));
+    mountImage(slot, state);
     return reaction;
   }
 
@@ -317,67 +280,27 @@
     return cls;
   }
 
-  function injectDailyResultArena(shell) {
-    if (!shell || shell.querySelector('.psResultArena')) return;
-    const D = typeof window.dailyToday === 'function' ? window.dailyToday() : null;
-    const Ma = window.MaCompact;
-    if (!D || typeof Ma?.gameArena !== 'function') return;
-
-    const ctx = typeof Ma.getCtx30 === 'function' ? Ma.getCtx30('daily', D) : {};
-    const wrap = document.createElement('div');
-    wrap.className = 'pgArenaWrap psResultArena';
-    wrap.innerHTML = Ma.gameArena({
-      board: D.board,
-      hero: D.hero,
-      pot: D.pot,
-      street: 'РИВЕР',
-      heroPos: ctx.heroPos,
-      villainPos: ctx.villainPos,
-      villainType: ctx.villainType
-    });
-
-    const anchor = shell.querySelector('.dualGrade, .verdict, .pgControls, h1');
-    if (anchor) anchor.insertAdjacentElement('beforebegin', wrap);
-    else shell.prepend(wrap);
+  function decorateDailyFeedback(area) {
+    if (!UI_ENABLED || !area) return;
+    const anchor = findDailyReactionAnchor(area);
+    if (!anchor || anchor.dataset.psCharReacted) return;
+    anchor.dataset.psCharReacted = '1';
+    reactVerdict(anchor, readGradeFromShell(area), 'daily', { insertAfter: true });
   }
 
   function wrapDailyReveal() {
     const base = typeof window.dailyReveal === 'function' ? window.dailyReveal : null;
-    if (!base || base.__psCharWrapped) return;
+    if (!base || base.__psCharWrapped || !UI_ENABLED) return;
     window.dailyReveal = function dailyRevealWithCharacter() {
       const result = base.apply(this, arguments);
-      setTimeout(() => {
-        const shell = document.querySelector('#dailyArea');
-        injectDailyResultArena(shell);
-        const anchor = findDailyReactionAnchor(shell);
-        if (!anchor) return;
-        reactVerdict(anchor, readGradeFromShell(shell), 'daily', { insertAfter: true });
-      }, 0);
+      setTimeout(() => decorateDailyFeedback(document.querySelector('#dailyArea')), 0);
       return result;
     };
     window.dailyReveal.__psCharWrapped = true;
   }
 
-  window.PsCharacter = {
-    BUILD,
-    ASSETS: {
-      directory: 'assets/green-monster/',
-      character: 'green-monster',
-      clips: GREEN_MONSTER_CLIPS,
-      placements: PLACEMENTS,
-      stateToClip: STATE_TO_CLIP
-    },
-    showCharacter,
-    hideCharacter,
-    mountArenaCharacter,
-    reactVerdict,
-    gradeToState,
-    preload: preloadStates,
-    dialogueFor,
-    wrapDailyReveal
-  };
-
   function watchDailyResults() {
+    if (!UI_ENABLED) return;
     const area = document.getElementById('dailyArea');
     if (!area || area.dataset.psCharWatch) return;
     area.dataset.psCharWatch = '1';
@@ -388,14 +311,27 @@
     observer.observe(area, { childList: true, subtree: true });
   }
 
-  function decorateDailyFeedback(area) {
-    if (!area) return;
-    const anchor = findDailyReactionAnchor(area);
-    if (!anchor || anchor.dataset.psCharReacted) return;
-    injectDailyResultArena(area.querySelector('.dailyStage, .pgShell, .panel'));
-    anchor.dataset.psCharReacted = '1';
-    reactVerdict(anchor, readGradeFromShell(area), 'daily', { insertAfter: true });
-  }
+  window.PsCharacter = {
+    BUILD,
+    UI_ENABLED,
+    ASSETS: {
+      directory: 'assets/daily-hand/',
+      character: 'green-monster',
+      clips: GREEN_MONSTER_CLIPS,
+      images: GREEN_MONSTER_IMAGES,
+      placements: PLACEMENTS,
+      stateToClip: STATE_TO_CLIP,
+      uiMedia: 'static-png'
+    },
+    showCharacter,
+    hideCharacter,
+    mountArenaCharacter,
+    reactVerdict,
+    gradeToState,
+    preload() {},
+    dialogueFor,
+    wrapDailyReveal
+  };
 
   wrapDailyReveal();
   window.addEventListener('load', () => {
