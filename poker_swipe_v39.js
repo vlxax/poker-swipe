@@ -64,7 +64,6 @@ window.renderHome=function(){
     </div>
 
     <button class="v36Quick" id="v36Quick"><div><span>⚡ 5 МИНУТ</span><h3>БЫСТРАЯ ТРЕНИРОВКА</h3><p>Смешанная сессия без выбора режима.</p></div><b>05:00</b></button>
-    <button class="v36Hand" id="v36Hands"><div class="v36HandCard">A♠</div><div><span>СВОЯ РАЗДАЧА</span><b>Добавить руку</b><small>Найдём первую ошибку в линии.</small></div><strong>→</strong></button>
   </div>`;
 
   const goSwipe=()=>{try{swSession=[]}catch(e){};show('swipe')};
@@ -74,7 +73,6 @@ window.renderHome=function(){
   document.getElementById('v36Swipe').onclick=goSwipe;
   document.getElementById('v36Xray').onclick=()=>show('xray');
   document.getElementById('v36Quick').onclick=goSwipe;
-  document.getElementById('v36Hands').onclick=()=>show('myhands');
   document.getElementById('v36Personal').onclick=()=>{if(leak&&typeof renderHeal==='function')show('heal');else goSwipe()};
   document.getElementById('v36Player').onclick=()=>show('profile');
   document.getElementById('v36Form').onclick=goSwipe;
@@ -83,13 +81,6 @@ window.renderHome=function(){
   document.body.classList.add('home-context');
 };
 function v35Chrome(){
-  const labels={home:'ГЛАВНАЯ',myhands:'РАЗДАЧИ',tournaments:'ТУРНИРЫ',profile:'ТЫ'};
-  document.querySelectorAll('.nav button').forEach(b=>{
-    const key=b.dataset.nav;
-    if(!labels[key])return;
-    const nodes=[...b.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE);
-    if(nodes.length)nodes[nodes.length-1].textContent=' '+labels[key];
-  });
   const level=document.getElementById('levelChip');
   if(level)level.textContent=`НАВЫК ${S.skill}`;
 }
