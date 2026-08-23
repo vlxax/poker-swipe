@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-23T09:03:23+03:00",
+  "updated_at": "2026-08-23T10:52:29+03:00",
   "club_count": 63,
-  "event_count": 48,
-  "source_card_count": 48,
+  "event_count": 49,
+  "source_card_count": 49,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -140,8 +140,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-23",
+          "time": "20:00",
+          "club": "BlackWood",
+          "tournament": "Golden Card",
+          "fee_rub": 500,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11486",
+          "address": "Олимпийский проспект, 12",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Golden Card 20:00 500 ₽ BlackWood Олимпийский проспект, 12"
+        }
+      ]
     },
     {
       "name": "BLEF BET",
@@ -1142,17 +1159,17 @@
           "date": "2026-08-23",
           "time": "18:00",
           "club": "SRP EQUITY",
-          "tournament": "Классика DEEP CLASSIC TOURNAMENT POKER",
+          "tournament": "Дип-стек DEEP CLASSIC TOURNAMENT POKER",
           "fee_rub": 0,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/10443",
           "address": "Новолесная улица, д. 8/12",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "21:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Классика DEEP CLASSIC TOURNAMENT POKER 18:00 Бесплатно SRP EQUITY Новолесная улица, д. 8/12"
+          "source_card_text": "Дип-стек DEEP CLASSIC TOURNAMENT POKER 18:00 Бесплатно вход до 21:30 SRP EQUITY Новолесная улица, д. 8/12"
         }
       ],
       "upcoming": 2
@@ -2054,17 +2071,17 @@
       "date": "2026-08-23",
       "time": "18:00",
       "club": "SRP EQUITY",
-      "tournament": "Классика DEEP CLASSIC TOURNAMENT POKER",
+      "tournament": "Дип-стек DEEP CLASSIC TOURNAMENT POKER",
       "fee_rub": 0,
       "type": "",
       "source_url": "https://pokernomoney.ru/tournaments/10443",
       "address": "Новолесная улица, д. 8/12",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
+      "late_reg_until": "21:30",
+      "late_reg_minutes": 210,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Классика DEEP CLASSIC TOURNAMENT POKER 18:00 Бесплатно SRP EQUITY Новолесная улица, д. 8/12"
+      "source_card_text": "Дип-стек DEEP CLASSIC TOURNAMENT POKER 18:00 Бесплатно вход до 21:30 SRP EQUITY Новолесная улица, д. 8/12"
     },
     {
       "date": "2026-08-23",
@@ -2337,6 +2354,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "SPY 007: МИССИЯ НАЧИНАЕТСЯ ЗАВТРА 19:15 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "20:00",
+      "club": "BlackWood",
+      "tournament": "Golden Card",
+      "fee_rub": 500,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/11486",
+      "address": "Олимпийский проспект, 12",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Golden Card 20:00 500 ₽ BlackWood Олимпийский проспект, 12"
     },
     {
       "date": "2026-08-23",
