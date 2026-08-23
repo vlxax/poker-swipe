@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-23T12:02:31+03:00",
+  "retrieved_at": "2026-08-23T12:59:26+03:00",
   "city": "Москва",
   "count": 63,
   "clubs": [
@@ -976,6 +976,22 @@
           "tournament": "Турбо TURBO HIGHROLLER TOURNAMENT",
           "fee_rub": 0,
           "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/10329",
+          "address": "Нагатинская улица, 16",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16"
+        },
+        {
+          "date": "2026-08-23",
+          "time": "18:00",
+          "club": "QQ POKER CLUB",
+          "tournament": "Турбо TURBO HIGHROLLER TOURNAMENT",
+          "fee_rub": 0,
+          "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11452",
           "address": "Нагатинская улица, 16",
           "late_reg_until": null,
@@ -986,7 +1002,7 @@
           "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "Quantum",
