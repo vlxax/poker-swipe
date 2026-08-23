@@ -173,6 +173,36 @@
   const moneyList = (arr) => arr.filter((t) => cat(t) !== 'sport');
   const sportOnlyList = (arr) => arr.filter((t) => cat(t) === 'sport');
 
+  const sportStats = (sp) => {
+    const withPlace = sp.filter((t) => num(t.place) > 0);
+    const withField = sp.filter((t) => num(t.field) > 0);
+    const places = withPlace.map((t) => num(t.place));
+    const fields = withField.map((t) => num(t.field));
+    const avgPlace = places.length
+      ? Math.round((places.reduce((a, b) => a + b, 0) / places.length) * 10) / 10
+      : null;
+    const bestPlace = places.length ? Math.min(...places) : null;
+    const avgField = fields.length ? Math.round(fields.reduce((a, b) => a + b, 0) / fields.length) : null;
+    const top3 = places.filter((p) => p <= 3).length;
+    const top10 = places.filter((p) => p <= 10).length;
+    const withPts = sp.filter((t) => num(t.points) !== 0);
+    const totalPts = withPts.reduce((s, t) => s + num(t.points), 0);
+    return { n: sp.length, avgPlace, bestPlace, avgField, top3, top10, totalPts, hasPoints: withPts.length > 0 };
+  };
+
+  const moneyAgg = (m) => {
+    if (!m.length) return { n: 0, net: 0, roi: null, itmPct: 0 };
+    const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
+    const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
+    const net = totalRet - totalInv;
+    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
+    const itmPct = Math.round((m.filter(isITM).length / m.length) * 100);
+    return { n: m.length, net, roi, itmPct };
+  };
+
+  const summaryItem = (k, v, cls = '') =>
+    `<div class="mt-pro-summary-item"><span class="k">${k}</span><span class="v ${cls}">${v}</span></div>`;
+
   const filtered = () => {
     let arr = list().filter((t) => inPeriod(t) && (typeFilter === 'all' || cat(t) === typeFilter));
     if (bucketFilter !== 'all' && proMode) {
@@ -267,6 +297,7 @@
         </div>
         <div class="mt-pro-filters">
           <div class="mt-pro-filter-row" id="mtPeriodRow"></div>
+          <div class="mt-pro-filter-row" id="mtMainTypeRow"></div>
         </div>
         <div class="mt-pro-summary" id="mtSummaryBlock"></div>
         <div class="mt-pro-hero-insight" id="mtHeroInsight" style="display:none"></div>
@@ -277,6 +308,7 @@
               <div class="mt-pro-chart-end" id="mtChartEnd"></div>
             </div>
             <svg class="mt-pro-chart" id="mtChartSvg" viewBox="0 0 340 140" preserveAspectRatio="none"></svg>
+            <div class="mt-pro-sport-history" id="mtSportHistory" style="display:none"></div>
             <div class="mt-pro-chart-tip" id="mtChartTip"></div>
           </div>
         </div>
@@ -297,6 +329,26 @@
       </div>`;
       ensureAnalyticsDom();
       bindStaticEvents();
+    }
+    if (!SCREEN.querySelector('#mtMainTypeRow')) {
+      const filters = SCREEN.querySelector('.mt-pro-filters');
+      if (filters) {
+        const row = document.createElement('div');
+        row.className = 'mt-pro-filter-row';
+        row.id = 'mtMainTypeRow';
+        filters.appendChild(row);
+      }
+    }
+    if (!SCREEN.querySelector('#mtSportHistory')) {
+      const chartCard = SCREEN.querySelector('.mt-pro-chart-card');
+      if (chartCard && !chartCard.querySelector('#mtSportHistory')) {
+        const hist = document.createElement('div');
+        hist.className = 'mt-pro-sport-history';
+        hist.id = 'mtSportHistory';
+        hist.style.display = 'none';
+        const tip = chartCard.querySelector('#mtChartTip');
+        chartCard.insertBefore(hist, tip);
+      }
     }
   }
 
@@ -444,6 +496,9 @@
     else if (action === 'period') {
       periodFilter = t.dataset.val;
       render();
+    } else if (action === 'type') {
+      typeFilter = t.dataset.val;
+      render();
     } else if (action === 'edit') editTournament(t.dataset.id);
     else if (action === 'delete') deleteTournament(t.dataset.id);
     else if (action === 'show-all') openAnalytics();
@@ -456,13 +511,8 @@
     render();
   }
 
-  function renderFilters() {
-    $('mtPeriodRow').innerHTML = PERIODS.map(
-      ([k, l]) =>
-        `<button type="button" class="mt-pro-chip ${periodFilter === k ? 'active' : ''}" data-mt="period" data-val="${k}">${l}</button>`
-    ).join('');
-    if (!document.getElementById('mtTypeRow')) return;
-    $('mtTypeRow').innerHTML = TYPES.map(([k, l]) => {
+  function renderTypeChips() {
+    return TYPES.map(([k, l]) => {
       let cls = 'mt-pro-chip';
       if (typeFilter === k) {
         cls += ' active';
@@ -471,6 +521,17 @@
       }
       return `<button type="button" class="${cls}" data-mt="type" data-val="${k}">${l}</button>`;
     }).join('');
+  }
+
+  function renderFilters() {
+    $('mtPeriodRow').innerHTML = PERIODS.map(
+      ([k, l]) =>
+        `<button type="button" class="mt-pro-chip ${periodFilter === k ? 'active' : ''}" data-mt="period" data-val="${k}">${l}</button>`
+    ).join('');
+    const mainTypeRow = document.getElementById('mtMainTypeRow');
+    if (mainTypeRow) mainTypeRow.innerHTML = renderTypeChips();
+    const analyticsTypeRow = document.getElementById('mtTypeRow');
+    if (analyticsTypeRow) analyticsTypeRow.innerHTML = renderTypeChips();
     const bucketRow = $('mtBucketRow');
     if (proMode) {
       bucketRow.style.display = 'flex';
@@ -528,35 +589,75 @@
     return p ? p[1] : 'ВСЁ';
   }
 
-  function renderCompactSummary(arr, isSportOnly) {
+  function renderCompactSummary(arr, mode) {
     const el = $('mtSummaryBlock');
+    const isSportOnly = mode === 'sport';
+    const isAll = mode === 'all';
+
     if (isSportOnly) {
-      const sp = sportOnlyList(arr);
-      const totalPts = sp.reduce((s, t) => s + num(t.points), 0);
-      const avg = sp.length ? Math.round(totalPts / sp.length) : 0;
-      el.innerHTML = `
-        <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${sp.length}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Points</span><span class="v pos">${totalPts}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Среднее</span><span class="v">${avg}</span></div>
-        <div class="mt-pro-summary-item"><span class="k">Период</span><span class="v muted">${periodLabel()}</span></div>`;
+      const st = sportStats(sportOnlyList(arr));
+      if (!st.n) {
+        el.className = 'mt-pro-summary';
+        el.innerHTML = `<div class="mt-pro-summary-empty">Нет спортивных турниров за выбранный период</div>`;
+        return;
+      }
+      const items = [
+        summaryItem('Сыграно', st.n),
+        summaryItem('Среднее место', st.avgPlace ?? '—'),
+        summaryItem('Лучшее место', st.bestPlace ?? '—'),
+        summaryItem('Среднее поле', st.avgField ?? '—')
+      ];
+      if (st.top3 > 0) items.push(summaryItem('Top-3', st.top3));
+      if (st.hasPoints) items.push(summaryItem('Points', (st.totalPts > 0 ? '+' : '') + st.totalPts, st.totalPts >= 0 ? 'pos' : 'neg'));
+      el.className = 'mt-pro-summary cols-' + Math.min(items.length, 6);
+      el.innerHTML = items.join('');
       return;
     }
+
     const m = moneyList(arr);
-    const n = m.length;
-    if (n === 0) {
+    if (!m.length && !isAll) {
+      el.className = 'mt-pro-summary';
       el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
       return;
     }
-    const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
-    const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
-    const net = totalRet - totalInv;
-    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
-    const itmPct = Math.round((m.filter(isITM).length / n) * 100);
+
+    const agg = moneyAgg(m);
+
+    if (isAll) {
+      const sp = sportOnlyList(arr);
+      const total = m.length + sp.length;
+      if (!total) {
+        el.className = 'mt-pro-summary';
+        el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
+        return;
+      }
+      const items = [
+        summaryItem('Сыграно', total),
+        summaryItem('Денежные', m.length),
+        summaryItem('Спорт', sp.length)
+      ];
+      if (m.length) {
+        items.push(
+          summaryItem('Профит', proMode ? fmtMoneyUSD(agg.net / RATE) : fmtMoney(agg.net), agg.net >= 0 ? 'pos' : 'neg'),
+          summaryItem('ROI', agg.roi === null ? '—' : (agg.roi >= 0 ? '+' : '') + agg.roi + '%', agg.roi === null ? 'neutral' : agg.roi >= 0 ? 'pos' : 'neg')
+        );
+      }
+      el.className = 'mt-pro-summary cols-' + items.length;
+      el.innerHTML = items.join('');
+      return;
+    }
+
+    if (!m.length) {
+      el.className = 'mt-pro-summary';
+      el.innerHTML = `<div class="mt-pro-summary-empty">Нет турниров за выбранный период</div>`;
+      return;
+    }
+    el.className = 'mt-pro-summary';
     el.innerHTML = `
-      <div class="mt-pro-summary-item"><span class="k">Сыграно</span><span class="v">${n}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">Профит</span><span class="v ${net >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(net / RATE) : fmtMoney(net)}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">ROI</span><span class="v ${roi === null ? 'neutral' : roi >= 0 ? 'pos' : 'neg'}">${roi === null ? '—' : (roi >= 0 ? '+' : '') + roi + '%'}</span></div>
-      <div class="mt-pro-summary-item"><span class="k">ITM</span><span class="v">${itmPct}%</span></div>`;
+      ${summaryItem('Сыграно', agg.n)}
+      ${summaryItem('Профит', proMode ? fmtMoneyUSD(agg.net / RATE) : fmtMoney(agg.net), agg.net >= 0 ? 'pos' : 'neg')}
+      ${summaryItem('ROI', agg.roi === null ? '—' : (agg.roi >= 0 ? '+' : '') + agg.roi + '%', agg.roi === null ? 'neutral' : agg.roi >= 0 ? 'pos' : 'neg')}
+      ${summaryItem('ITM', agg.itmPct + '%')}`;
   }
 
   function renderHeroInsight(arr) {
@@ -612,23 +713,36 @@
     const addStats = $('mtAddStats');
 
     if (isSportOnly) {
-      const sp = sportOnlyList(arr);
-      const totalPts = sp.reduce((s, t) => s + num(t.points), 0);
-      const avg = sp.length ? Math.round(totalPts / sp.length) : 0;
-      const best = sp.length ? Math.max(...sp.map((t) => num(t.points))) : 0;
+      const st = sportStats(sportOnlyList(arr));
+      if (!st.n) {
+        grid.innerHTML =
+          '<div class="mt-pro-stat" style="grid-column:span 2;text-align:center;color:var(--mt-muted)"><div class="val neutral">Нет спортивных турниров</div></div>';
+        note.innerHTML = '';
+        note.className = '';
+        addStats.textContent = '';
+        return;
+      }
+      let extra = '';
+      if (st.top3 > 0) extra += `<div class="mt-pro-stat"><div class="lbl">Top-3</div><div class="val">${st.top3}</div></div>`;
+      if (st.top10 > 0) extra += `<div class="mt-pro-stat"><div class="lbl">Top-10</div><div class="val">${st.top10}</div></div>`;
+      if (st.hasPoints) {
+        extra += `<div class="mt-pro-stat"><div class="lbl">Points</div><div class="val pos">${(st.totalPts > 0 ? '+' : '') + st.totalPts}</div><div class="sub">суммарно</div></div>`;
+      }
       grid.innerHTML = `
-        <div class="mt-pro-stat"><div class="lbl">Турниров</div><div class="val">${sp.length}</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Всего points</div><div class="val pos">${totalPts}</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Средние points</div><div class="val">${avg}</div><div class="sub">за турнир</div></div>
-        <div class="mt-pro-stat"><div class="lbl">Лучший результат</div><div class="val pos">${best}</div><div class="sub">pts за турнир</div></div>`;
-      note.innerHTML = '';
-      note.className = '';
+        <div class="mt-pro-stat"><div class="lbl">Сыграно</div><div class="val">${st.n}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Среднее место</div><div class="val">${st.avgPlace ?? '—'}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Лучшее место</div><div class="val pos">${st.bestPlace ?? '—'}</div></div>
+        <div class="mt-pro-stat"><div class="lbl">Среднее поле</div><div class="val">${st.avgField ?? '—'}</div></div>
+        ${extra}`;
+      note.innerHTML = `${st.n} спорт. турнир${st.n === 1 ? '' : st.n < 5 ? 'а' : 'ов'} — без денежной аналитики`;
+      note.className = 'mt-pro-sample';
       addStats.textContent = '';
       return;
     }
 
     const m = moneyList(arr);
-    const n = m.length;
+    const agg = moneyAgg(m);
+    const n = agg.n;
     if (n === 0) {
       grid.innerHTML =
         '<div class="mt-pro-stat" style="grid-column:span 2;text-align:center;color:var(--mt-muted)"><div class="val neutral">Нет турниров</div></div>';
@@ -639,9 +753,9 @@
 
     const totalInv = m.reduce((s, t) => s + investedRub(t), 0);
     const totalRet = m.reduce((s, t) => s + totalReturnedRub(t), 0);
-    const net = totalRet - totalInv;
-    const roi = totalInv ? Math.round((net / totalInv) * 1000) / 10 : null;
-    const itmPct = Math.round((m.filter(isITM).length / n) * 100);
+    const net = agg.net;
+    const roi = agg.roi;
+    const itmPct = agg.itmPct;
     const abi = Math.round(m.reduce((s, t) => s + buyinRub(t), 0) / n);
     const ftPct = Math.round((m.filter(isFT).length / n) * 100);
     const top3Pct = Math.round((m.filter(isTop3).length / n) * 100);
@@ -687,12 +801,57 @@
 
   function renderChart(arr, isSportOnly) {
     const svg = $('mtChartSvg');
+    const histEl = $('mtSportHistory');
     const titleEl = $('mtChartTitle');
     const endEl = $('mtChartEnd');
     const tip = $('mtChartTip');
-    titleEl.textContent = isSportOnly ? 'ДИНАМИКА POINTS' : 'ГРАФИК РЕЗУЛЬТАТОВ';
 
-    const src = (isSportOnly ? sportOnlyList(arr) : moneyList(arr))
+    if (isSportOnly) {
+      titleEl.textContent = 'ИСТОРИЯ РЕЗУЛЬТАТОВ';
+      svg.style.display = 'none';
+      svg.innerHTML = '';
+      if (histEl) histEl.style.display = '';
+      tip.style.opacity = 0;
+      chartData = [];
+
+      const sp = sportOnlyList(arr).slice().sort((a, b) => dateSortKey(b) - dateSortKey(a));
+      if (!sp.length) {
+        if (histEl) histEl.innerHTML = '<div class="mt-pro-sport-history-empty">Нет спортивных турниров</div>';
+        endEl.textContent = '';
+        endEl.className = 'mt-pro-chart-end';
+        return;
+      }
+
+      if (histEl) {
+        histEl.innerHTML = sp
+          .slice(0, 12)
+          .map((t) => {
+            const place = num(t.place);
+            const field = num(t.field);
+            const line = place ? `${place}${field ? '/' + field : ''}` : '—';
+            return `<div class="mt-pro-sport-history-row">
+              <span class="mt-pro-sport-history-date">${esc(fmtDateShort(t.date))}</span>
+              <span class="mt-pro-sport-history-place">${line}</span>
+              <span class="mt-pro-sport-history-name">${esc(title(t))}</span>
+            </div>`;
+          })
+          .join('');
+      }
+
+      const st = sportStats(sp);
+      endEl.textContent = st.bestPlace ? `лучшее: ${st.bestPlace}${st.avgField ? '/' + st.avgField : ''}` : `${st.n} турниров`;
+      endEl.className = 'mt-pro-chart-end pos';
+      return;
+    }
+
+    svg.style.display = '';
+    if (histEl) {
+      histEl.style.display = 'none';
+      histEl.innerHTML = '';
+    }
+    titleEl.textContent = 'ГРАФИК РЕЗУЛЬТАТОВ';
+
+    const src = moneyList(arr)
       .slice()
       .sort((a, b) => dateSortKey(a) - dateSortKey(b));
     if (src.length === 0) {
@@ -705,7 +864,7 @@
 
     let cum = 0;
     const data = src.map((t) => {
-      const val = isSportOnly ? num(t.points) : profitRub(t);
+      const val = profitRub(t);
       cum += val;
       return { t, cum, val };
     });
@@ -717,7 +876,7 @@
       field: num(d.t.field),
       cum: d.cum,
       val: d.val,
-      isSport: isSportOnly
+      isSport: false
     }));
 
     const pts = data.map((d) => d.cum);
@@ -778,11 +937,7 @@
       <circle cx="${curX.toFixed(1)}" cy="${curY.toFixed(1)}" r="4.5" fill="${color}" stroke="#07080a" stroke-width="2"/>
       ${axisLabels}`;
 
-    endEl.textContent = isSportOnly
-      ? `${endVal > 0 ? '+' : ''}${endVal} pts`
-      : proMode
-        ? fmtMoneyUSD(endVal / RATE)
-        : fmtMoney(endVal);
+    endEl.textContent = proMode ? fmtMoneyUSD(endVal / RATE) : fmtMoney(endVal);
     endEl.className = 'mt-pro-chart-end ' + (endVal >= 0 ? 'pos' : 'neg');
     tip.style.opacity = 0;
   }
@@ -892,6 +1047,48 @@
     </div>`;
   }
 
+  function renderSportInsights(arr) {
+    const grid = $('mtInsightsGrid');
+    const warning = $('mtInsightWarning');
+    if (!grid) return;
+    if (warning) warning.style.display = 'none';
+
+    const sp = sportOnlyList(arr);
+    const st = sportStats(sp);
+    if (!st.n) {
+      grid.innerHTML = '<div class="mt-pro-tab-hint">Нет спортивных турниров для выводов.</div>';
+      return;
+    }
+
+    const cards = [];
+    if (st.avgPlace !== null) {
+      cards.push(`<div class="mt-pro-conclusion highlight">
+        <div class="mt-pro-conclusion-lbl">СРЕДНЕЕ МЕСТО</div>
+        <div class="mt-pro-conclusion-name">${st.avgPlace}</div>
+        <div class="mt-pro-conclusion-val neutral">из ${st.n} турниров</div>
+      </div>`);
+    }
+    if (st.bestPlace !== null) {
+      const bestT = sp.find((t) => num(t.place) === st.bestPlace);
+      const bestTxt = bestT && num(bestT.field) ? `${st.bestPlace}/${num(bestT.field)}` : String(st.bestPlace);
+      cards.push(`<div class="mt-pro-conclusion">
+        <div class="mt-pro-conclusion-lbl">ЛУЧШИЙ РЕЗУЛЬТАТ</div>
+        <div class="mt-pro-conclusion-name">${esc(bestTxt)}</div>
+        <div class="mt-pro-conclusion-val pos">${esc(title(bestT || sp[0]))}</div>
+      </div>`);
+    }
+    const clubGroups = Object.entries(groupBy(sp, (t) => venue(t))).sort((a, b) => b[1].length - a[1].length);
+    const topClub = clubGroups[0];
+    if (topClub && topClub[1].length >= 2) {
+      cards.push(`<div class="mt-pro-conclusion span2">
+        <div class="mt-pro-conclusion-lbl">ЧАЩЕ ВСЕГО ИГРАЕШЬ</div>
+        <div class="mt-pro-conclusion-name">${esc(topClub[0])}</div>
+        <div class="mt-pro-conclusion-val neutral">${topClub[1].length} турниров</div>
+      </div>`);
+    }
+    grid.innerHTML = cards.length ? cards.join('') : '<div class="mt-pro-tab-hint">Мало данных для спортивных выводов.</div>';
+  }
+
   function renderInsights(arr) {
     const grid = $('mtInsightsGrid');
     const warning = $('mtInsightWarning');
@@ -976,9 +1173,12 @@
     el.innerHTML = entries
       .map(([name, items]) => {
         if (isSportOnly) {
-          const total = items.reduce((s, t) => s + num(t.points), 0);
-          const avg = items.length ? Math.round(total / items.length) : 0;
-          return `<div class="mt-pro-bar"><div class="mt-pro-bar-top"><div class="mt-pro-bar-name">${esc(name)}</div><div class="mt-pro-bar-roi pos">${total} pts</div></div><div class="mt-pro-bar-foot"><span>${items.length} тур.</span><span>ср. ${avg} pts</span></div></div>`;
+          const st = sportStats(items);
+          const avgPlace = st.avgPlace ?? '—';
+          return `<div class="mt-pro-bar">
+            <div class="mt-pro-bar-top"><div class="mt-pro-bar-name">${esc(name)}</div><div class="mt-pro-bar-roi pos">ср. ${avgPlace}</div></div>
+            <div class="mt-pro-bar-foot"><span>${items.length} тур.</span><span>лучшее: ${st.bestPlace ?? '—'}</span></div>
+          </div>`;
         }
         const inv = items.reduce((s, t) => s + investedRub(t), 0);
         const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
@@ -1013,17 +1213,25 @@
   function cardHtml(t) {
     const isSport = cat(t) === 'sport';
     const p = profitRub(t);
-    const win = isSport ? num(t.points) > 0 : p > 0;
+    const win = isSport ? num(t.place) > 0 && num(t.place) <= 3 : p > 0;
     const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
     if (isSport) {
       const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? ' / ' + num(t.field) : ''}` : '—';
-      const ptsTxt = (num(t.points) > 0 ? '+' : '') + Math.round(num(t.points)) + ' POINTS';
+      const reCnt = reentryCount(t);
+      const reTxt = reCnt > 0 ? `${reCnt} RE-ENTRY` : '';
+      const ptsVal = num(t.points);
+      const ptsBlock =
+        ptsVal !== 0
+          ? `<span class="mt-pro-card-result pts">${ptsVal > 0 ? '+' : ''}${Math.round(ptsVal)} PTS</span>`
+          : '';
       return `<div class="mt-pro-card mt-pro-card-sport ${win ? 'win' : ''}">
-      <div class="mt-pro-card-venue">${esc(venue(t))}</div>
+      <div class="mt-pro-card-row3"><span class="mt-pro-badge sport">${badgeLabel}</span></div>
       <div class="mt-pro-card-title">${esc(title(t))}</div>
+      <div class="mt-pro-card-venue">${esc(venue(t))}</div>
       <div class="mt-pro-card-sport-meta">
         <span class="mt-pro-card-place-line">${placeTxt}</span>
-        <span class="mt-pro-card-result pts">${ptsTxt}</span>
+        ${reTxt ? `<span class="mt-pro-card-reentry">${reTxt}</span>` : ''}
+        ${ptsBlock}
       </div>
       <div class="mt-pro-card-actions">
         <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
@@ -1093,27 +1301,31 @@
 
   function renderMain() {
     renderFilters();
-    const arr = filteredForMain();
-    const hasSportOnly = arr.length > 0 && arr.every((t) => cat(t) === 'sport');
-    renderCompactSummary(arr, hasSportOnly);
-    if (!hasSportOnly) renderHeroInsight(arr);
-    else $('mtHeroInsight').style.display = 'none';
-    renderChart(arr, hasSportOnly);
+    const arr = filtered();
+    const mode = typeFilter === 'sport' ? 'sport' : typeFilter === 'all' ? 'all' : 'money';
+    renderCompactSummary(arr, mode);
+    if (typeFilter === 'sport') {
+      $('mtHeroInsight').style.display = 'none';
+    } else {
+      renderHeroInsight(arr);
+    }
+    renderChart(arr, typeFilter === 'sport');
     renderRecentHistory(arr);
   }
 
   function setOverviewCompact(compact) {
+    const isSportOnly = typeFilter === 'sport';
     const vis = (id, visible) => {
       const el = $(id);
       if (el) el.style.display = visible ? '' : 'none';
     };
-    vis('mtStatGrid', !compact);
-    vis('mtSampleNote', !compact);
-    vis('mtAddStats', !compact);
-    vis('mtRollingSection', !compact);
-    vis('mtSplitSection', !compact);
+    vis('mtStatGrid', !compact || isSportOnly);
+    vis('mtSampleNote', !compact || isSportOnly);
+    vis('mtAddStats', !compact && !isSportOnly);
+    vis('mtRollingSection', !compact && !isSportOnly);
+    vis('mtSplitSection', !compact && !isSportOnly);
     const insightTitle = document.querySelector('#mtInsightsSection .mt-pro-section-title');
-    if (insightTitle) insightTitle.style.display = compact ? 'none' : '';
+    if (insightTitle) insightTitle.style.display = compact && !isSportOnly ? 'none' : '';
     const histHead = document.querySelector('#mtTabOverview .mt-pro-list-head');
     const exportWrap = document.querySelector('#mtTabOverview .mt-pro-analytics-export');
     if (histHead) histHead.style.display = compact ? 'none' : '';
@@ -1128,12 +1340,24 @@
     showAnalyticsPanel();
     const arr = filtered();
     const isSportOnly = typeFilter === 'sport';
-    $('mtInsightsSection').style.display = isSportOnly ? 'none' : '';
+    $('mtInsightsSection').style.display = '';
     setOverviewCompact(analyticsTab === 'overview');
 
     if (analyticsTab === 'overview') {
-      if (!isSportOnly) renderInsights(arr);
-      else $('mtInsightsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — выводы по ROI недоступны.</div>';
+      renderStats(arr, isSportOnly);
+      renderFullHistory(arr);
+      if (isSportOnly) {
+        renderSportInsights(arr);
+        $('mtSplitSection').style.display = 'none';
+        $('mtRollingSection').style.display = 'none';
+      } else {
+        renderInsights(arr);
+        renderSplit(arr);
+        if (proMode) {
+          $('mtRollingSection').style.display = analyticsTab === 'overview' ? '' : 'none';
+          renderRollingROI(arr);
+        }
+      }
     } else if (analyticsTab === 'buyin') {
       if (!isSportOnly) renderBuckets(arr);
       else $('mtBucketsGrid').innerHTML = '<div class="mt-pro-tab-hint">Спортивный режим — ROI по бай-инам недоступен.</div>';
@@ -1159,9 +1383,13 @@
     let html = `<div class="mt-pro-detail-title">${esc(detailTitle)} · ${items.length} тур.</div>`;
     items.slice(0, 20).forEach((t) => {
       const p = profitRub(t);
+      const isSport = cat(t) === 'sport';
+      const sportPlace = num(t.place) ? `${num(t.place)}${t.field ? '/' + num(t.field) : ''}` : '—';
+      const pts = num(t.points);
+      const sportVal = pts !== 0 ? fmtPts(pts) : sportPlace;
       html += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);gap:8px">
         <span style="color:#888;min-width:0">${esc(String(t.date || '').slice(5))} · ${esc(title(t))}</span>
-        <span style="color:${cat(t) === 'sport' ? '#f5c84c' : p >= 0 ? '#c8ff3d' : '#ff6b5b'};font-weight:700;flex-shrink:0">${cat(t) === 'sport' ? fmtPts(num(t.points)) : proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</span></div>`;
+        <span style="color:${isSport ? '#f5c84c' : p >= 0 ? '#c8ff3d' : '#ff6b5b'};font-weight:700;flex-shrink:0">${isSport ? sportVal : proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</span></div>`;
     });
     if (items.length > 20) html += `<div style="color:#888;font-size:8px;padding:4px 0">+ ещё ${items.length - 20} турниров</div>`;
     document.getElementById('mtProDetailBody').innerHTML = html;
