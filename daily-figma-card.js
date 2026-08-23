@@ -35,18 +35,29 @@ function mountGlobalBackground(){
   }
 }
 
-/* Preserve current Daily Hand Demon from previous patch. */
+/* Primary lime CTA — uses canonical PokerSwipe bubble classes (not unstyled dailyFigmaCta). */
 function addDailyCta(card){
   const copy=card?.querySelector('.v36DailyCopy');
-  if(copy && !copy.querySelector('.dailyFigmaCta')){
-    const btn=document.createElement('button');
+  if(!copy) return;
+  let btn=copy.querySelector('.dailyFigmaCta');
+  if(!btn){
+    btn=document.createElement('button');
     btn.type='button';
-    btn.className='dailyFigmaCta';
-    btn.setAttribute('aria-label','Разобрать раздачу дня');
-    btn.innerHTML='<span>Разобрать</span><b>→</b>';
     copy.appendChild(btn);
   }
+  btn.className='primary pgCta pgBubblePress dailyFigmaCta';
+  btn.setAttribute('aria-label','Перейти к раздаче дня');
+  btn.textContent='ПЕРЕЙТИ К РАЗДАЧЕ ДНЯ';
+  if(!btn.dataset.wired){
+    btn.dataset.wired='1';
+    btn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      if(typeof window.show==='function') window.show('daily');
+    });
+  }
 }
+
 function mountDailyDemon(){
   const card=document.querySelector('#home #v36Daily, #home .v36Daily');
   if(!card)return;
@@ -68,7 +79,6 @@ function mountDailyDemon(){
   art.appendChild(demon);
 }
 
-/* HOME → «Сколько ставим?» : replace the current old chips with the new single prepared asset. */
 function mountSizingChips(){
   const candidates=[
     document.querySelector('#home #v36Sizing'),
@@ -89,7 +99,6 @@ function mountSizingChips(){
   holder.appendChild(makeImg('psSizingChipsAsset',ASSETS.chips));
 }
 
-/* «Мои турниры» : winner demon in the hero/right side. Supports several current screen versions. */
 function mountMyTournaments(){
   const roots=[
     document.querySelector('#ps72TournamentScreen'),
@@ -108,7 +117,6 @@ function mountMyTournaments(){
   }
 }
 
-/* «Мои раздачи» : lounge demon in the header on the right. */
 function mountMyHands(){
   const root=document.querySelector('#myhands,#myArea,#my');
   if(!root)return;

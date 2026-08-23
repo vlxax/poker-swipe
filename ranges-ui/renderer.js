@@ -62,6 +62,17 @@ function reviewLegendHtml() {
   </div>`;
 }
 
+function headWithBack(titleHtml, app) {
+  const nav = window.MiniAppNav;
+  if (!nav) return titleHtml;
+  const disabled = !nav.canBack(app);
+  return nav.headRow(app, titleHtml, { disabled });
+}
+
+function wireRangesBack(root, handlers) {
+  window.MiniAppNav?.wire(root, 'ranges', () => handlers.back?.());
+}
+
 /** Compact HUD strip — no timeline, no paragraphs */
 function hudStrip(vm) {
   const chips = [vm.formatLabel, vm.stageLabel, vm.tableLabel].filter(Boolean)
@@ -78,18 +89,19 @@ function hudStrip(vm) {
 export function renderIntro(root, vm, handlers = {}) {
   if (!root) return;
   root.innerHTML = `<div class="panel pgShell pgRanges">
-    <div class="pgHud"><div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">ТРЕНАЖЁР</span></div></div>
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">ТРЕНАЖЁР</span></div>`, 'ranges')}</div>
     ${hudStrip(vm)}
     <div class="pgXrayArena" style="flex:1;padding:12px">
       <p class="rangesLead" style="font-size:11px;margin:0 0 8px">${esc(vm.headline)}</p>
       ${hintsHtml(vm.hints)}
     </div>
     <div class="pgControls">
-      <button type="button" class="primary pgCta" id="rangesStart">${esc(vm.cta)}</button>
+      <button type="button" class="primary pgCta pgBubblePress" id="rangesStart">${esc(vm.cta)}</button>
       <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
     </div>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelector('#rangesStart').onclick = () => handlers.begin?.();
   const help = root.querySelector('#rangesHelp');
   if (help) help.onclick = () => handlers.help?.();
@@ -99,17 +111,18 @@ export function renderPlay(root, vm, handlers = {}) {
   if (!root) return;
   root.innerHTML = `<div class="panel pgRangesPlay pgShell">
     <div class="pgHud">
-      <div class="pgHudTitle"><h2>${esc(vm.question)}</h2><span class="ey">${esc(vm.stepLabel)} · ${vm.keptCount}/${vm.candidateCount}</span></div>
+      ${headWithBack(`<div class="pgHudTitle"><h2>${esc(vm.question)}</h2><span class="ey">${esc(vm.stepLabel)} · ${vm.keptCount}/${vm.candidateCount}</span></div>`, 'ranges')}
     </div>
     ${hudStrip(vm)}
     <div class="rangesActionChip">${esc(vm.actionLine)}</div>
     ${legendHtml()}
     ${matrixGrid(vm.matrix, { interactive: true })}
     ${hintsHtml(vm.hints)}
-    <button type="button" class="primary rangesCta pgCta" id="rangesConfirm">${esc(vm.cta)}</button>
+    <button type="button" class="primary rangesCta pgCta pgBubblePress" id="rangesConfirm">${esc(vm.cta)}</button>
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelectorAll('[data-rhand]').forEach((b) => {
     b.onclick = () => {
       window.PsMotion?.rangesCellFlash(b);
@@ -141,14 +154,15 @@ export function renderSummary(root, vm, handlers = {}) {
   const summaryLines = (vm.summaryLines || []).map((line) => `<p class="rangesSummaryLine">${esc(line)}</p>`).join('');
 
   root.innerHTML = `<div class="panel rangesStage pgShell">
-    <div class="pgHud"><div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">РАЗБОР</span></div></div>
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">РАЗБОР</span></div>`, 'ranges')}</div>
     <div class="rangesScoreBadge">${vm.avgAccuracy}%</div>
     <p class="rangesLead">${esc(vm.headline)}</p>
     ${summaryLines}
     ${stepsHtml}
-    <div class="pgControls"><button type="button" class="primary pgCta" id="rangesNext">${esc(vm.cta)}</button></div>
+    <div class="pgControls"><button type="button" class="primary pgCta pgBubblePress" id="rangesNext">${esc(vm.cta)}</button></div>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelector('#rangesNext').onclick = () => handlers.next?.();
 }
 

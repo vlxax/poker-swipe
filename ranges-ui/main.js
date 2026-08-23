@@ -38,6 +38,7 @@ const ctl = new RangeController({ pack: getPack(), storage });
 const handlers = {
   begin() {
     ctl.beginPlay();
+    window.MiniAppNav?.push('ranges', { phase: 'play', stepIndex: 0 });
     paint();
   },
   toggle(hand) {
@@ -45,11 +46,31 @@ const handlers = {
     paint();
   },
   confirm() {
+    const beforeStep = ctl.stepIndex;
+    const beforePhase = ctl.phase;
     ctl.confirmStep();
+    const nav = window.MiniAppNav;
+    if (nav) {
+      if (ctl.phase === 'summary') nav.push('ranges', { phase: 'summary' });
+      else if (ctl.phase === 'play' && ctl.stepIndex > beforeStep) {
+        nav.push('ranges', { phase: 'play', stepIndex: ctl.stepIndex });
+      }
+    }
     paint();
   },
   next() {
     ctl.nextScenario();
+    window.MiniAppNav?.reset('ranges');
+    window.MiniAppNav?.push('ranges', { phase: 'intro' });
+    paint();
+  },
+  back() {
+    const result = ctl.back();
+    if (result.navExit) {
+      if (typeof window.show === 'function') window.show('home');
+      return;
+    }
+    if (result.popped) window.MiniAppNav?.pop('ranges');
     paint();
   },
   help() {
@@ -94,6 +115,8 @@ if (typeof origShow === 'function') {
     if (id === 'ranges') {
       try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
       ctl.startScenario();
+      window.MiniAppNav?.reset('ranges');
+      window.MiniAppNav?.push('ranges', { phase: 'intro' });
       paint();
     }
     return r;

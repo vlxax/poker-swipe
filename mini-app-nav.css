@@ -1,0 +1,75 @@
+/* PokerSwipe — mini-app back control (glass bubble, lime edge) */
+
+.pgHeadRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  flex: 1 1 100%;
+  min-height: 36px;
+}
+
+.pgHeadMain {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pgHud .pgHeadRow {
+  flex: 1 1 100%;
+  margin-bottom: 2px;
+}
+
+.pgBackBtn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin-top: 2px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 255, 61, 0.28) !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  box-shadow:
+    0 0 0 1px rgba(200, 255, 61, 0.1),
+    0 4px 14px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  color: #c8ff3d !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pgBackIcon {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  transform: translateX(-1px);
+}
+
+.pgBackBtn:active:not(:disabled):not(.is-disabled) {
+  transform: scale(0.94);
+  box-shadow:
+    0 0 0 1px rgba(200, 255, 61, 0.22),
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 2px 6px rgba(0, 0, 0, 0.18) !important;
+}
+
+.pgBackBtn.is-disabled,
+.pgBackBtn:disabled {
+  opacity: 0.38;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(200, 255, 61, 0.45) !important;
+}
+
+.pgHudTitle .pgHeadRow {
+  align-items: center;
+}
+
+.pgHudTitle .pgBackBtn {
+  margin-top: 0;
+}

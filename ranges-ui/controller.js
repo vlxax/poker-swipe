@@ -219,4 +219,32 @@ export class RangeController {
     this.progress = completeOnboarding(this.storage);
     return this.viewModel();
   }
+
+  /** Internal task history — preserves answers/selection without rescoring. */
+  back() {
+    if (this.showHelp) {
+      this.showHelp = false;
+      return { vm: this.viewModel(), popped: false };
+    }
+    if (this.phase === 'summary') {
+      this.phase = 'play';
+      this.stepIndex = Math.max(0, (this.scenario?.steps?.length || 1) - 1);
+      const prev = this.answers[this.stepIndex];
+      if (prev) this.userSelection = new Set(prev);
+      else this._initStepSelection();
+      return { vm: this.viewModel(), popped: true };
+    }
+    if (this.phase === 'play') {
+      if (this.stepIndex > 0) {
+        this.stepIndex -= 1;
+        const prev = this.answers[this.stepIndex];
+        if (prev) this.userSelection = new Set(prev);
+        else this._initStepSelection();
+        return { vm: this.viewModel(), popped: true };
+      }
+      this.phase = 'intro';
+      return { vm: this.viewModel(), popped: true };
+    }
+    return { vm: this.viewModel(), navExit: true, popped: true };
+  }
 }

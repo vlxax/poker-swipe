@@ -31,6 +31,7 @@ export class SessionController {
     this.preparedDaily = null;
     this.lastAnswer = null;
     this.showingFeedback = false;
+    this.taskStates = {};
   }
 
   // ---- Home -----------------------------------------------------------------
@@ -143,6 +144,7 @@ export class SessionController {
     this.baselineLossByConcept = {};
     this.showingFeedback = false;
     this.lastAnswer = null;
+    this.taskStates = {};
     this.state = 'idle';
   }
 
@@ -186,6 +188,11 @@ export class SessionController {
       this.results.push({ ...result, concept: drill.concept });
       this.lastAnswer = result;
       this.showingFeedback = true;
+      this.taskStates[this.index] = {
+        optionId,
+        lastAnswer: { ...result },
+        showingFeedback: true
+      };
       this._notify();
     } finally {
       this.answering = false;
@@ -195,16 +202,54 @@ export class SessionController {
 
   next() {
     if (!this.showingFeedback) return { done: false };
-    this.showingFeedback = false;
-    this.lastAnswer = null;
     if (this.index < this.drills.length - 1) {
       this.index++;
+      this._restoreIndex(this.index);
       this._notify();
       return { done: false };
     }
     this.state = 'done';
+    this.showingFeedback = false;
+    this.lastAnswer = null;
     this._notify();
     return { done: true };
+  }
+
+  _restoreIndex(idx) {
+    const snap = this.taskStates[idx];
+    if (snap && snap.showingFeedback) {
+      this.showingFeedback = true;
+      this.lastAnswer = snap.lastAnswer;
+    } else if (snap && snap.optionId) {
+      this.showingFeedback = false;
+      this.lastAnswer = snap.lastAnswer || null;
+    } else {
+      this.showingFeedback = false;
+      this.lastAnswer = null;
+    }
+  }
+
+  /** Internal task history — does not reset session or alter stored scores. */
+  back() {
+    if (this.state !== 'ready' && this.state !== 'limited') {
+      return { action: 'noop' };
+    }
+    if (this.showingFeedback) {
+      this.showingFeedback = false;
+      this._notify();
+      return { action: 'feedback_to_drill' };
+    }
+    if (this.index > 0) {
+      this.index--;
+      this._restoreIndex(this.index);
+      this._notify();
+      return { action: 'prev_task' };
+    }
+    this.state = 'idle';
+    this.showingFeedback = false;
+    this.lastAnswer = null;
+    this._notify();
+    return { action: 'lobby' };
   }
 
   summary() {
