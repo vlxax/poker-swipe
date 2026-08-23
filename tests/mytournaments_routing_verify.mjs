@@ -35,7 +35,7 @@ async function audit(page) {
     const polyRoot = document.getElementById('psPolyanaArea');
     const myTour = document.getElementById('mytournaments');
     const ps72 = document.getElementById('ps72TournamentScreen');
-    const markers = ['.v59Journal', '.t23', '.v58JournalHero', '.ps72hero', 'h1'];
+    const markers = ['.v59Journal', '.t23', '.v58JournalHero', '.mt-pro-hero', '.ps72hero', 'h1'];
     const polyText = (polyRoot?.innerText || '').toLowerCase();
     const hasMyTourInPolyana =
       !!polyRoot?.querySelector('.v59Journal, .t23, .v58JournalHero, #ps72TournamentScreen') ||
