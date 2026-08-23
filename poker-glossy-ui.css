@@ -36,26 +36,104 @@
   --ps-r-lg: 24px;
   --ps-r-xl: 28px;
   --ps-r-2xl: 32px;
+  --ps-r-pill: 999px;
 
-  /* ── Depth ── */
+  /* ── Bubble material tokens (body-first, glow secondary) ── */
+  --ps-bubble-lime-body:
+    radial-gradient(ellipse 115% 90% at 50% -18%, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.18) 32%, transparent 58%),
+    radial-gradient(ellipse 95% 70% at 50% 118%, rgba(0, 0, 0, 0.38) 0%, transparent 52%),
+    linear-gradient(180deg, #f2ffb8 0%, #e4ff78 18%, #d0ff52 42%, var(--ps-lime) 62%, #9ecc28 88%, #7a9e18 100%);
+  --ps-bubble-lime-body-hover:
+    radial-gradient(ellipse 115% 92% at 50% -20%, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.22) 34%, transparent 58%),
+    radial-gradient(ellipse 95% 70% at 50% 118%, rgba(0, 0, 0, 0.34) 0%, transparent 52%),
+    linear-gradient(180deg, #f6ffc4 0%, #e8ff82 18%, #d8ff58 42%, #ceff42 62%, #a8d830 88%, #82a820 100%);
+  --ps-bubble-lime-body-pressed:
+    radial-gradient(ellipse 100% 55% at 50% 8%, rgba(255, 255, 255, 0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(0, 0, 0, 0.45) 0%, transparent 50%),
+    linear-gradient(180deg, #b8e038 0%, #a8d030 35%, #98be28 70%, #7a9618 100%);
+  --ps-bubble-dark-body:
+    radial-gradient(ellipse 110% 85% at 50% -16%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 30%, transparent 56%),
+    radial-gradient(ellipse 90% 65% at 50% 115%, rgba(0, 0, 0, 0.55) 0%, transparent 52%),
+    linear-gradient(180deg, #222822 0%, #181c18 38%, #101410 68%, #0a0c0a 100%);
+  --ps-bubble-dark-body-hover:
+    radial-gradient(ellipse 110% 88% at 50% -18%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.07) 32%, transparent 56%),
+    radial-gradient(ellipse 90% 65% at 50% 115%, rgba(0, 0, 0, 0.5) 0%, transparent 52%),
+    linear-gradient(180deg, #282e28 0%, #1c201c 38%, #121612 68%, #0c0e0c 100%);
+  --ps-bubble-dark-body-pressed:
+    radial-gradient(ellipse 95% 50% at 50% 10%, rgba(255, 255, 255, 0.08) 0%, transparent 52%),
+    radial-gradient(ellipse 85% 60% at 50% 100%, rgba(0, 0, 0, 0.6) 0%, transparent 48%),
+    linear-gradient(180deg, #141814 0%, #0e100e 45%, #080a08 100%);
+  --ps-bubble-lime-selected:
+    radial-gradient(ellipse 105% 80% at 50% -12%, rgba(255, 255, 255, 0.35) 0%, rgba(200, 255, 61, 0.12) 35%, transparent 58%),
+    radial-gradient(ellipse 90% 60% at 50% 110%, rgba(0, 0, 0, 0.42) 0%, transparent 50%),
+    linear-gradient(180deg, #3a4428 0%, #283020 42%, #1a2014 100%);
+
+  /* Outer shadow = physical drop; glow = subtle accent only */
+  --ps-bubble-shadow-lime:
+    inset 0 2px 5px rgba(255, 255, 255, 0.42),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 0 rgba(58, 78, 16, 0.55),
+    0 14px 28px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(200, 255, 61, 0.07);
+  --ps-bubble-shadow-lime-hover:
+    inset 0 2px 6px rgba(255, 255, 255, 0.48),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.22),
+    0 9px 0 rgba(58, 78, 16, 0.5),
+    0 18px 34px rgba(0, 0, 0, 0.42),
+    0 0 22px rgba(200, 255, 61, 0.1);
+  --ps-bubble-shadow-lime-pressed:
+    inset 0 6px 14px rgba(0, 0, 0, 0.28),
+    inset 0 2px 4px rgba(255, 255, 255, 0.22),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.15),
+    0 2px 0 rgba(58, 78, 16, 0.45),
+    0 6px 14px rgba(0, 0, 0, 0.32),
+    0 0 10px rgba(200, 255, 61, 0.06);
+  --ps-bubble-shadow-dark:
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    inset 0 -12px 22px rgba(0, 0, 0, 0.48),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 6px 0 rgba(0, 0, 0, 0.32),
+    0 12px 26px rgba(0, 0, 0, 0.36),
+    0 0 10px rgba(200, 255, 61, 0.04);
+  --ps-bubble-shadow-dark-hover:
+    inset 0 2px 5px rgba(255, 255, 255, 0.13),
+    inset 0 -12px 22px rgba(0, 0, 0, 0.42),
+    0 7px 0 rgba(0, 0, 0, 0.28),
+    0 16px 30px rgba(0, 0, 0, 0.38),
+    0 0 14px rgba(200, 255, 61, 0.06);
+  --ps-bubble-shadow-dark-pressed:
+    inset 0 8px 16px rgba(0, 0, 0, 0.52),
+    inset 0 1px 3px rgba(255, 255, 255, 0.06),
+    0 2px 0 rgba(0, 0, 0, 0.35),
+    0 6px 14px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(200, 255, 61, 0.04);
+
+  /* Cards — panel depth (less outline, more body) */
   --ps-shadow-card:
-    inset 0 1px 0 rgba(255, 255, 255, 0.09),
-    inset 0 -10px 28px rgba(0, 0, 0, 0.38),
-    0 0 0 1px rgba(200, 255, 61, 0.06),
-    0 0 32px var(--ps-lime-glow-soft),
-    0 18px 44px rgba(0, 0, 0, 0.42);
-  --ps-shadow-btn:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -2px 6px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(200, 255, 61, 0.22),
-    0 0 22px var(--ps-lime-glow-soft),
-    0 7px 0 var(--ps-lime-deep),
-    0 14px 32px rgba(0, 0, 0, 0.38);
-  --ps-shadow-btn-pressed:
-    inset 0 2px 6px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(200, 255, 61, 0.18),
-    0 2px 0 var(--ps-lime-deep),
-    0 6px 16px rgba(0, 0, 0, 0.28);
+    inset 0 2px 4px rgba(255, 255, 255, 0.07),
+    inset 0 -16px 36px rgba(0, 0, 0, 0.44),
+    0 6px 0 rgba(0, 0, 0, 0.28),
+    0 20px 44px rgba(0, 0, 0, 0.42),
+    0 0 12px rgba(200, 255, 61, 0.04);
+  --ps-shadow-card-hover:
+    inset 0 2px 5px rgba(255, 255, 255, 0.09),
+    inset 0 -16px 36px rgba(0, 0, 0, 0.38),
+    0 8px 0 rgba(0, 0, 0, 0.24),
+    0 24px 50px rgba(0, 0, 0, 0.46),
+    0 0 16px rgba(200, 255, 61, 0.06);
+  --ps-shadow-card-pressed:
+    inset 0 6px 18px rgba(0, 0, 0, 0.48),
+    inset 0 1px 2px rgba(255, 255, 255, 0.05),
+    0 2px 0 rgba(0, 0, 0, 0.3),
+    0 10px 24px rgba(0, 0, 0, 0.36),
+    0 0 10px rgba(200, 255, 61, 0.04);
+
+  --ps-ease-bubble: cubic-bezier(0.25, 0.95, 0.35, 1);
+  --ps-ease-tactile: var(--ps-ease-bubble);
+  --ps-shadow-btn: var(--ps-bubble-shadow-lime);
 
   /* Bridge legacy tokens */
   --pink: var(--ps-lime);
@@ -114,130 +192,28 @@ html, body {
   );
 }
 
-.ps-glossy-btn {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(226, 255, 135, 0.5);
-  border-radius: var(--ps-r-md);
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  );
-  color: #0a0d07 !important;
-  font-weight: 950;
-  box-shadow: var(--ps-shadow-btn);
-  transform: translateY(-1px);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
-}
+/* ══════════════════════════════════════════════════════════
+   GLOSSY BUBBLE BUTTON SYSTEM
+   Body-first inflated gel/capsule — NOT outline + glow
+   Layers: radial dome + linear body + wide gloss + inner bevel
+   ══════════════════════════════════════════════════════════ */
 
-.ps-glossy-btn::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 2px;
-  height: 42%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent);
-  opacity: 0.85;
-}
-
-.ps-glossy-btn:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: var(--ps-shadow-btn-pressed);
-}
-
-.ps-glossy-btn-secondary {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(168deg, rgba(26, 31, 26, 0.98), rgba(10, 12, 10, 0.99));
-  border: 1px solid var(--ps-lime-border);
-  border-radius: var(--ps-r-md);
-  color: var(--ps-text) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -6px 18px rgba(0, 0, 0, 0.32),
-    0 0 18px var(--ps-lime-glow-soft),
-    0 10px 28px rgba(0, 0, 0, 0.32);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
-}
-
-.ps-glossy-btn-secondary:active:not(:disabled) {
-  transform: translateY(2px) scale(0.985);
-  box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.35),
-    0 0 12px var(--ps-lime-glow-soft),
-    0 4px 14px rgba(0, 0, 0, 0.28);
-}
-
-/* ── Primary CTA ── */
+/* Shared bubble chrome */
+.ps-bubble,
+.ps-glossy-btn,
+.ps-glossy-btn-secondary,
+.ps-glossy-btn-neon,
+.ps-glossy-btn-glow,
 .primary,
 .p40Primary,
 .v35Start,
+.v58Primary,
 .v36Personal button,
-button.primary {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-  transform: translateY(-1px);
-  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
-  filter: none !important;
-}
-
-.primary::before,
-.p40Primary::before,
-.v35Start::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  left: 7%;
-  right: 7%;
-  top: 3px;
-  height: 40%;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52), transparent);
-}
-
-.primary:active:not(:disabled),
-.p40Primary:active,
-.v35Start:active,
-.v36Personal button:active {
-  transform: translateY(4px) !important;
-  box-shadow: var(--ps-shadow-btn-pressed) !important;
-}
-
-.primary:focus-visible,
-.secondary:focus-visible,
-.choice:focus-visible,
-.tile:focus-visible,
-.action:focus-visible {
-  outline: 2px solid var(--ps-lime-hi);
-  outline-offset: 2px;
-}
-
-.primary:disabled,
-.secondary:disabled,
-.choice:disabled {
-  opacity: 0.38 !important;
-  transform: none !important;
-  box-shadow: none !important;
-  filter: grayscale(0.35);
-  pointer-events: none;
-}
-
-/* ── Secondary / choice buttons ── */
+.ps72save,
+.t23Add,
+.t23Form .primary,
+.t23DetailActions24 .primary,
+button.primary,
 .secondary,
 .choice,
 .diagChoice,
@@ -251,27 +227,307 @@ button.primary {
 .p40Choice,
 .p40Ghost,
 .t23Filters button,
-.cardRankGrid18 button {
+.cardRankGrid18 button,
+.ps72cancel,
+.ps72delete,
+.d25Choices button,
+.d25ResultActions button,
+.action,
+.node,
+.reviewNone,
+.build,
+.t23AddMini,
+.ps72tabs button,
+.ps72formatMenu button,
+.ps72seg button,
+.t23Filter,
+.t23Chip,
+.t23Type button,
+.nav button,
+.cardPick18,
+.rankPick,
+.suitPick {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-md) !important;
-  color: var(--ps-text) !important;
+  isolation: isolate;
+  border-radius: var(--ps-r-pill) !important;
+  border: none !important;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.16s var(--ps-ease-bubble),
+    box-shadow 0.16s var(--ps-ease-bubble),
+    background 0.16s ease,
+    filter 0.16s ease !important;
+}
+
+/* ── LIME BUBBLE (primary CTA) ── */
+.ps-bubble-lime,
+.ps-glossy-btn,
+.ps-glossy-btn-neon,
+.ps-glossy-btn-glow,
+.primary,
+.p40Primary,
+.v35Start,
+.v58Primary,
+.v36Personal button,
+.ps72save,
+.t23Add,
+.t23Form .primary,
+.t23DetailActions24 .primary,
+button.primary,
+.build,
+.t23AddMini,
+.ps72tabs button.on,
+.ps72formatMenu button.on,
+.ps72seg button.on {
+  background: var(--ps-bubble-lime-body) !important;
+  color: #0a0d07 !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.04em !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+  box-shadow: var(--ps-bubble-shadow-lime) !important;
+  transform: translateY(-1px);
+  filter: none !important;
+}
+
+/* Wide dome gloss — entire top surface, not a thin strip */
+.ps-bubble-lime::before,
+.ps-glossy-btn::before,
+.ps-glossy-btn-neon::before,
+.ps-glossy-btn-glow::before,
+.primary::before,
+.p40Primary::before,
+.v35Start::before,
+.v58Primary::before,
+.ps72save::before,
+.t23Add::before,
+.build::before,
+.t23AddMini::before,
+.ps72tabs button.on::before,
+.ps72formatMenu button.on::before,
+.ps72seg button.on::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  left: 4%;
+  right: 4%;
+  top: 5%;
+  height: 54%;
+  border-radius: 50% 50% 48% 48% / 62% 62% 38% 38%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.38) 38%,
+    rgba(255, 255, 255, 0.08) 68%,
+    transparent 100%
+  );
+  opacity: 0.92;
+}
+
+/* Inner bevel lip + material depth */
+.ps-bubble-lime::after,
+.ps-glossy-btn::after,
+.primary::after,
+.p40Primary::after,
+.v35Start::after,
+.v58Primary::after,
+.ps72save::after,
+.t23Add::after,
+.build::after,
+.t23AddMini::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -5px 16px rgba(0, 0, 0, 0.28),
-    0 0 14px var(--ps-lime-glow-soft),
-    0 8px 22px rgba(0, 0, 0, 0.28) !important;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease !important;
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    inset 0 -5px 12px rgba(0, 0, 0, 0.14);
 }
 
-.secondary:active,
-.choice:active,
-.builderActions button:active {
-  transform: translateY(2px) scale(0.985) !important;
+@media (hover: hover) {
+  .ps-bubble-lime:hover:not(:disabled),
+  .ps-glossy-btn:hover:not(:disabled),
+  .primary:hover:not(:disabled),
+  .p40Primary:hover:not(:disabled),
+  .v35Start:hover:not(:disabled),
+  .v58Primary:hover:not(:disabled),
+  .ps72save:hover:not(:disabled),
+  .t23Add:hover:not(:disabled),
+  button.primary:hover:not(:disabled),
+  .build:hover:not(:disabled),
+  .t23AddMini:hover:not(:disabled) {
+    background: var(--ps-bubble-lime-body-hover) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--ps-bubble-shadow-lime-hover) !important;
+  }
+  .ps-bubble-lime:hover:not(:disabled)::before,
+  .primary:hover:not(:disabled)::before,
+  button.primary:hover:not(:disabled)::before {
+    opacity: 1;
+  }
 }
 
+.ps-bubble-lime:active:not(:disabled),
+.ps-glossy-btn:active:not(:disabled),
+.primary:active:not(:disabled),
+.p40Primary:active:not(:disabled),
+.v35Start:active:not(:disabled),
+.v58Primary:active:not(:disabled),
+.v36Personal button:active:not(:disabled),
+.ps72save:active:not(:disabled),
+.t23Add:active:not(:disabled),
+button.primary:active:not(:disabled),
+.build:active:not(:disabled),
+.t23AddMini:active:not(:disabled),
+.ps-glossy-btn-pressed,
+.ps-glossy-btn.is-pressed {
+  background: var(--ps-bubble-lime-body-pressed) !important;
+  transform: translateY(4px) scale(0.975) !important;
+  box-shadow: var(--ps-bubble-shadow-lime-pressed) !important;
+}
+
+.ps-bubble-lime:active:not(:disabled)::before,
+.primary:active:not(:disabled)::before,
+button.primary:active:not(:disabled)::before {
+  top: 8%;
+  height: 42%;
+  opacity: 0.55;
+}
+
+/* ── DARK BUBBLE (secondary / choice / tabs / actions) ── */
+.ps-bubble-dark,
+.ps-glossy-btn-secondary,
+.secondary,
+.choice,
+.diagChoice,
+.builderActions button,
+.resultOptions button,
+.reasonGrid button,
+.segs18 button,
+.stages18 button,
+.pos18 button,
+.p40Secondary,
+.p40Choice,
+.p40Ghost,
+.t23Filters button,
+.cardRankGrid18 button,
+.ps72cancel,
+.ps72delete,
+.d25Choices button,
+.d25ResultActions button,
+.node,
+.reviewNone,
+.ps72tabs button,
+.ps72formatMenu button,
+.ps72seg button:not(.on),
+.t23Filter,
+.t23Chip,
+.t23Type button,
+.nav button:not(.on),
+.cardPick18,
+.rankPick,
+.suitPick {
+  background: var(--ps-bubble-dark-body) !important;
+  color: var(--ps-text) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.03em;
+  box-shadow: var(--ps-bubble-shadow-dark) !important;
+  transform: translateY(-1px);
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.ps-bubble-dark::before,
+.ps-glossy-btn-secondary::before,
+.secondary::before,
+.choice::before,
+.diagChoice::before,
+.action::before,
+.node::before,
+.ps72tabs button:not(.on)::before,
+.d25Choices button::before,
+.nav button:not(.on)::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  left: 5%;
+  right: 5%;
+  top: 6%;
+  height: 50%;
+  border-radius: 50% 50% 48% 48% / 60% 60% 40% 40%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 42%,
+    transparent 72%
+  );
+  opacity: 0.85;
+}
+
+.ps-bubble-dark::after,
+.ps-glossy-btn-secondary::after,
+.secondary::after,
+.choice::after,
+.diagChoice::after,
+.action::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.35);
+}
+
+@media (hover: hover) {
+  .ps-bubble-dark:hover:not(:disabled):not(.selected):not(.on),
+  .ps-glossy-btn-secondary:hover:not(:disabled),
+  .secondary:hover:not(:disabled),
+  .choice:hover:not(:disabled),
+  .diagChoice:hover:not(:disabled),
+  .builderActions button:hover:not(:disabled),
+  .d25Choices button:hover:not(:disabled),
+  .node:hover:not(.selected),
+  .ps72tabs button:not(.on):hover,
+  .nav button:not(.on):hover,
+  .action:hover:not(:disabled):not(.selected) {
+    background: var(--ps-bubble-dark-body-hover) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--ps-bubble-shadow-dark-hover) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+}
+
+.ps-bubble-dark:active:not(:disabled),
+.ps-glossy-btn-secondary:active:not(:disabled),
+.secondary:active:not(:disabled),
+.choice:active:not(:disabled),
+.diagChoice:active:not(:disabled),
+.builderActions button:active:not(:disabled),
+.d25Choices button:active:not(:disabled),
+.node:active:not(.selected),
+.ps72tabs button:active:not(.on),
+.action:active:not(:disabled) {
+  background: var(--ps-bubble-dark-body-pressed) !important;
+  transform: translateY(3px) scale(0.975) !important;
+  box-shadow: var(--ps-bubble-shadow-dark-pressed) !important;
+}
+
+.ps-bubble-dark:active:not(:disabled)::before,
+.secondary:active:not(:disabled)::before,
+.choice:active:not(:disabled)::before,
+.action:active:not(:disabled)::before {
+  top: 10%;
+  height: 38%;
+  opacity: 0.45;
+}
+
+/* ── SELECTED / ON — inflated lime-tinted bubble, not flat outline ── */
 .choice.selected,
 .choice.on,
 .node.selected,
@@ -282,15 +538,106 @@ button.primary {
 .pos18 button.on,
 .p40Choice.on,
 .t23Filters button.on,
-.cardRankGrid18 button.on {
-  border-color: var(--ps-lime-border-strong) !important;
-  background: linear-gradient(168deg, rgba(32, 42, 24, 0.98), rgba(14, 18, 12, 0.99)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 1px rgba(200, 255, 61, 0.14),
-    0 0 24px var(--ps-lime-glow-soft),
-    0 10px 26px rgba(0, 0, 0, 0.3) !important;
+.cardRankGrid18 button.on,
+.t23Filter.on,
+.t23Chip.on,
+.t23Type button.on,
+.t23Status.on,
+.nav button.on,
+.action.selected:not(.grade-g):not(.grade-y):not(.grade-r) {
+  background: var(--ps-bubble-lime-selected) !important;
   color: #fff !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.14),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.35),
+    0 6px 0 rgba(0, 0, 0, 0.28),
+    0 12px 26px rgba(0, 0, 0, 0.34),
+    0 0 14px rgba(200, 255, 61, 0.08) !important;
+  border: 1px solid rgba(200, 255, 61, 0.18) !important;
+}
+
+/* ── Disabled — deflated bubble ── */
+.primary:disabled,
+.secondary:disabled,
+.choice:disabled,
+button.primary:disabled,
+.ps-glossy-btn:disabled,
+.ps-glossy-btn-secondary:disabled,
+.action:disabled {
+  opacity: 0.42 !important;
+  transform: none !important;
+  filter: grayscale(0.4) saturate(0.55) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.06),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.22) !important;
+  pointer-events: none;
+}
+
+.primary:disabled::before,
+.secondary:disabled::before,
+.choice:disabled::before {
+  opacity: 0.25 !important;
+}
+
+/* ── Focus ── */
+.primary:focus-visible,
+.secondary:focus-visible,
+.choice:focus-visible,
+.tile:focus-visible,
+.action:focus-visible {
+  outline: 2px solid rgba(226, 255, 135, 0.65);
+  outline-offset: 3px;
+}
+
+/* ── Action chips — semantic tint on bubble body ── */
+.action {
+  border-radius: var(--ps-r-pill) !important;
+}
+
+.action.fold {
+  background:
+    radial-gradient(ellipse 110% 85% at 50% -16%, rgba(255, 255, 255, 0.12) 0%, transparent 56%),
+    radial-gradient(ellipse 90% 65% at 50% 115%, rgba(80, 0, 0, 0.35) 0%, transparent 52%),
+    linear-gradient(180deg, #2a181c 0%, #1a1014 50%, #120a0c 100%) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.08),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.4),
+    0 6px 0 rgba(0, 0, 0, 0.3),
+    0 12px 26px rgba(0, 0, 0, 0.36),
+    0 0 10px rgba(255, 98, 118, 0.06) !important;
+  border: 1px solid rgba(255, 98, 118, 0.15) !important;
+}
+
+.action.call {
+  background:
+    radial-gradient(ellipse 110% 85% at 50% -16%, rgba(255, 255, 255, 0.12) 0%, transparent 56%),
+    radial-gradient(ellipse 90% 65% at 50% 115%, rgba(60, 40, 0, 0.35) 0%, transparent 52%),
+    linear-gradient(180deg, #2a2418 0%, #1a1610 50%, #12100a 100%) !important;
+  border: 1px solid rgba(255, 210, 106, 0.14) !important;
+}
+
+.action.raise {
+  background:
+    radial-gradient(ellipse 110% 85% at 50% -16%, rgba(255, 255, 255, 0.12) 0%, transparent 56%),
+    radial-gradient(ellipse 90% 65% at 50% 115%, rgba(0, 50, 30, 0.35) 0%, transparent 52%),
+    linear-gradient(180deg, #182820 0%, #101a14 50%, #0a120c 100%) !important;
+  border: 1px solid rgba(99, 230, 166, 0.14) !important;
+}
+
+.action.selected.grade-g { border-color: rgba(99, 230, 166, 0.25) !important; }
+.action.selected.grade-y { border-color: rgba(255, 210, 106, 0.25) !important; }
+.action.selected.grade-r { border-color: rgba(255, 98, 118, 0.25) !important; }
+
+/* Neon variant — same bubble body, slightly stronger material saturation */
+.ps-glossy-btn-neon {
+  filter: saturate(1.08) !important;
+}
+
+.ps-glossy-btn-glow {
+  box-shadow:
+    var(--ps-bubble-shadow-lime),
+    0 0 28px rgba(200, 255, 61, 0.1) !important;
 }
 
 /* Onboarding / story shell */
@@ -336,7 +683,7 @@ button.primary {
   color: var(--ps-text-muted) !important;
 }
 
-/* ── Glossy cards (sections, panels, tiles) ── */
+/* ── Glossy cards — elevated game panels ── */
 .hero,
 .panel,
 .lab,
@@ -373,14 +720,24 @@ button.primary {
 .p40Summary,
 .creatorVerdict,
 .healHero,
-.shareCard {
+.shareCard,
+.d25Card,
+.v31DiagCard,
+.rank28Card {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(168deg, var(--ps-surface-3) 0%, var(--ps-surface) 50%, var(--ps-bg-elevated) 100%) !important;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at calc(100% - 15px) 15px, rgba(200, 255, 61, 0.35) 0, rgba(200, 255, 61, 0.08) 4px, transparent 5px),
+    linear-gradient(168deg, rgba(28, 34, 28, 0.96) 0%, var(--ps-surface) 48%, rgba(8, 10, 8, 0.98) 100%) !important;
   border: 1px solid var(--ps-lime-border) !important;
   border-radius: var(--ps-r-lg) !important;
   box-shadow: var(--ps-shadow-card) !important;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease !important;
+  transform: translateY(0);
+  transition:
+    transform 0.16s var(--ps-ease-tactile),
+    box-shadow 0.16s var(--ps-ease-tactile),
+    border-color 0.16s ease !important;
 }
 
 .hero::after,
@@ -393,16 +750,42 @@ button.primary {
   content: "" !important;
   pointer-events: none !important;
   position: absolute !important;
+  z-index: 1 !important;
   inset: 0 !important;
   border-radius: inherit !important;
   background: linear-gradient(
-    140deg,
-    rgba(255, 255, 255, 0.09) 0%,
-    transparent 30%,
-    transparent 65%,
-    rgba(200, 255, 61, 0.05) 100%
+    145deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.02) 24%,
+    transparent 52%,
+    transparent 68%,
+    rgba(200, 255, 61, 0.06) 100%
   ) !important;
-  opacity: 0.75 !important;
+  opacity: 0.82 !important;
+}
+
+/* Kill legacy sheen sweep on glossy cards */
+.tile::before,
+.my18Tool::before,
+.v36Tile::before {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+@media (hover: hover) {
+  .tile:hover,
+  .quick5:hover,
+  .metric:hover,
+  .myEntry:hover,
+  .my18Tool:hover,
+  .v36Tile:hover,
+  .v36Daily:hover,
+  .v36Quick:hover,
+  .v36Hand:hover {
+    transform: translateY(-3px) !important;
+    border-color: var(--ps-lime-border-strong) !important;
+    box-shadow: var(--ps-shadow-card-hover) !important;
+  }
 }
 
 .tile:active,
@@ -416,12 +799,9 @@ button.primary {
 .v36Hand:active,
 .v35Hand:active,
 .homeHandLab:active {
-  transform: scale(0.985) translateY(1px) !important;
+  transform: translateY(2px) scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
-  box-shadow:
-    inset 0 2px 10px rgba(0, 0, 0, 0.35),
-    0 0 28px var(--ps-lime-glow-soft),
-    0 10px 28px rgba(0, 0, 0, 0.38) !important;
+  box-shadow: var(--ps-shadow-card-pressed) !important;
 }
 
 .tile .go,
@@ -430,7 +810,9 @@ button.primary {
 .my18Tool .go,
 .homeHandLab > strong {
   color: var(--ps-lime) !important;
-  text-shadow: 0 0 16px var(--ps-lime-glow-soft);
+  font-weight: 950 !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 0 14px rgba(200, 255, 61, 0.45), 0 1px 0 rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Home mode accents — keep identity, unify material */
@@ -454,26 +836,6 @@ button.primary {
     linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
 }
 
-/* ── Action bar (fold / call / raise) — semantic + glossy ── */
-.action {
-  background: linear-gradient(168deg, rgba(20, 24, 20, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-line-soft) !important;
-  border-radius: var(--ps-r-md) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 8px 20px rgba(0, 0, 0, 0.28) !important;
-}
-
-.action.fold { border-color: rgba(255, 98, 118, 0.45) !important; box-shadow: 0 0 16px rgba(255, 98, 118, 0.08), inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.28) !important; }
-.action.call { border-color: rgba(255, 210, 106, 0.4) !important; }
-.action.raise { border-color: rgba(99, 230, 166, 0.42) !important; box-shadow: 0 0 16px rgba(99, 230, 166, 0.08), inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 20px rgba(0,0,0,0.28) !important; }
-
-.action.selected:not(.grade-g):not(.grade-y):not(.grade-r) {
-  border-color: var(--ps-lime-border-strong) !important;
-  background: linear-gradient(168deg, rgba(32, 42, 24, 0.98), rgba(12, 16, 10, 0.99)) !important;
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.16), 0 0 22px var(--ps-lime-glow-soft) !important;
-}
-
 /* ── Nav ── */
 .nav {
   background: rgba(5, 6, 8, 0.94) !important;
@@ -482,15 +844,14 @@ button.primary {
   backdrop-filter: blur(16px);
 }
 
-.nav button.on {
-  background: rgba(200, 255, 61, 0.06) !important;
-  color: var(--ps-text) !important;
-  box-shadow: inset 0 0 0 1px rgba(200, 255, 61, 0.1), 0 0 18px var(--ps-lime-glow-soft) !important;
+.nav button {
+  padding: 8px 10px !important;
+  min-height: 44px;
 }
 
 .nav button.on i {
   color: var(--ps-lime) !important;
-  filter: drop-shadow(0 0 8px var(--ps-lime-glow)) !important;
+  filter: drop-shadow(0 0 6px rgba(200, 255, 61, 0.35)) !important;
 }
 
 /* ── Modals / sheets ── */
@@ -519,28 +880,6 @@ button.primary {
 .nickEdit i {
   border-color: var(--ps-lime-border) !important;
   background: rgba(200, 255, 61, 0.08) !important;
-}
-
-.t23AddMini {
-  border-color: var(--ps-lime-border) !important;
-  background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
-  color: var(--ps-lime) !important;
-  box-shadow: 0 0 22px var(--ps-lime-glow-soft), 0 8px 0 var(--ps-lime-deep) !important;
-}
-
-/* ── Icon / compact action buttons ── */
-.p40Add,
-.v35Start,
-.close,
-.build {
-  border-radius: var(--ps-r-sm) !important;
-}
-
-.build {
-  background: var(--ps-lime) !important;
-  color: #0a0d07 !important;
-  border: 1px solid rgba(226, 255, 135, 0.5) !important;
-  box-shadow: var(--ps-shadow-btn) !important;
 }
 
 /* ── Progress / accents ── */
@@ -577,67 +916,24 @@ h2 .pink {
 }
 
 .cardPick18 {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-sm) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 12px var(--ps-lime-glow-soft),
-    0 6px 16px rgba(0, 0, 0, 0.24) !important;
-}
-
-.cardPick18:active {
-  transform: scale(0.98) !important;
-}
-
-/* ── Diagnostic card ── */
-.d25Card,
-.v31DiagCard {
-  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-xl) !important;
-  box-shadow: var(--ps-shadow-card) !important;
-}
-
-.d25Choices button,
-.d25ResultActions button {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
   border-radius: var(--ps-r-md) !important;
-  color: var(--ps-text) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 14px var(--ps-lime-glow-soft),
-    0 8px 20px rgba(0, 0, 0, 0.26) !important;
 }
+
+/* ── Diagnostic card — inherits elevated panel from card block above ── */
 
 .d25Choices button:active {
-  transform: translateY(2px) scale(0.985) !important;
+  transform: translateY(3px) scale(0.985) !important;
 }
 
 /* ── Rank ladder cards ── */
-.rank28Card {
-  background: linear-gradient(168deg, var(--ps-surface-3), var(--ps-bg-elevated)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-md) !important;
-  box-shadow: var(--ps-shadow-card) !important;
-}
-
 .rank28Card:active:not(.locked) {
   transform: scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
 }
 
-/* ── Timeline / review nodes ── */
 .node,
 .reviewNone {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
   border-radius: var(--ps-r-md) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 12px var(--ps-lime-glow-soft),
-    0 6px 18px rgba(0, 0, 0, 0.24) !important;
 }
 
 /* ── Clubs / trips / planner ── */
@@ -656,57 +952,17 @@ h2 .pink {
 .v48ClubCard:active,
 .v56ClubCard:active,
 .v59Card:active {
-  transform: scale(0.985) !important;
+  transform: translateY(2px) scale(0.985) !important;
   border-color: var(--ps-lime-border-strong) !important;
 }
 
-.v58Primary {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
 /* ── Tournaments (override stitch layer harmoniously) ── */
-.t23Add,
-.t23Form .primary,
-.t23DetailActions24 .primary {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
 .t23Card,
 .t23Row,
 .t23Tournament,
 .t23Item {
   border-color: var(--ps-lime-border) !important;
   box-shadow: var(--ps-shadow-card) !important;
-}
-
-.t23Filter.on,
-.t23Chip.on,
-.t23Type button.on,
-.t23Status.on {
-  border-color: var(--ps-lime-border-strong) !important;
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.12), 0 0 20px var(--ps-lime-glow-soft) !important;
 }
 
 /* ── V72 tournament journal (ps72) ── */
@@ -735,31 +991,11 @@ h2 .pink {
     var(--ps-shadow-card) !important;
 }
 
-.ps72tabs button,
-.ps72formatMenu button,
-.ps72seg button {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-lime-border) !important;
-  border-radius: var(--ps-r-sm) !important;
+.ps72tabs button:not(.on),
+.ps72formatMenu button:not(.on),
+.ps72seg button:not(.on) {
+  border-radius: var(--ps-r-pill) !important;
   color: var(--ps-text-soft) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 12px var(--ps-lime-glow-soft),
-    0 6px 16px rgba(0, 0, 0, 0.22) !important;
-}
-
-.ps72tabs button.on,
-.ps72formatMenu button.on,
-.ps72seg button.on {
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  border-color: rgba(226, 255, 135, 0.52) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
 }
 
 .ps72icon {
@@ -774,28 +1010,7 @@ h2 .pink {
   background: linear-gradient(168deg, rgba(24, 32, 16, 0.98), rgba(12, 16, 10, 0.99)) !important;
 }
 
-.ps72save {
-  position: relative !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(226, 255, 135, 0.52) !important;
-  border-radius: var(--ps-r-md) !important;
-  background: linear-gradient(
-    180deg,
-    rgba(232, 255, 160, 0.98) 0%,
-    rgba(200, 255, 61, 0.96) 48%,
-    rgba(143, 184, 42, 0.98) 100%
-  ) !important;
-  color: #0a0d07 !important;
-  box-shadow: var(--ps-shadow-btn) !important;
-}
-
-.ps72cancel,
-.ps72delete {
-  background: linear-gradient(168deg, rgba(22, 27, 22, 0.98), rgba(10, 12, 10, 0.99)) !important;
-  border: 1px solid var(--ps-line-soft) !important;
-  border-radius: var(--ps-r-md) !important;
-  color: var(--ps-text-soft) !important;
-}
+/* ps72save / ps72cancel covered by .primary / .secondary blocks */
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
@@ -818,12 +1033,13 @@ h2 .pink {
   .primary,
   .secondary,
   .choice {
-    border-radius: var(--ps-r-sm) !important;
-    padding-top: 13px !important;
-    padding-bottom: 13px !important;
+    border-radius: var(--ps-r-pill) !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    min-height: 48px;
   }
   .tile,
   .v36Tile {
-    border-radius: var(--ps-r-md) !important;
+    border-radius: var(--ps-r-lg) !important;
   }
 }
