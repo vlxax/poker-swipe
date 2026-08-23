@@ -3182,16 +3182,8 @@ window.renderHome = function(){
  document.body.classList.add('home-context');
 };
 
-/* Russian-first chrome. Keep only poker-native abbreviations untranslated. */
+/* Russian-first chrome. Nav labels are owned by poker3d-nav + v73 hotfix. */
 function v31RussianChrome(){
- const nav=[...document.querySelectorAll('.nav button')];
- nav.forEach(b=>{
-   const key=b.dataset.nav;
-   if(key==='home') b.childNodes[b.childNodes.length-1].textContent=' ИГРАТЬ';
-   if(key==='myhands') b.childNodes[b.childNodes.length-1].textContent=' МОИ';
-   if(key==='tournaments') b.childNodes[b.childNodes.length-1].textContent=' ТУРНИРЫ';
-   if(key==='profile') b.childNodes[b.childNodes.length-1].textContent=' ПРОФИЛЬ';
- });
  const chip=document.getElementById('levelChip');if(chip)chip.textContent=`НАВЫК ${S.skill}`;
 }
 const v31UiBase=window.ui;
@@ -3564,10 +3556,6 @@ function buildFiveNav(){
   const home=nav.querySelector('[data-nav="home"]');
   const hands=nav.querySelector('[data-nav="myhands"]');
   const profile=nav.querySelector('[data-nav="profile"]');
-  if(home)home.childNodes[home.childNodes.length-1].textContent=' ГЛАВНАЯ';
-  if(hands)hands.childNodes[hands.childNodes.length-1].textContent=' РАЗДАЧИ';
-  if(field)field.childNodes[field.childNodes.length-1].textContent=' ПОЛЯНА';
-  if(profile)profile.childNodes[profile.childNodes.length-1].textContent=' ТЫ';
 
   my.onclick=function(e){e.preventDefault();e.stopPropagation();openJournal()};
   if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};

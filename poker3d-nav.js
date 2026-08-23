@@ -11,11 +11,11 @@
 const BUILD = 'poker3d-nav-figma-v1';
 
 const labels = {
-  home: 'ГЛАВНАЯ',
-  cards: 'РАЗДАЧИ',
+  home: 'ИГРАТЬ',
+  cards: 'МОИ',
   meadow: 'ПОЛЯНА',
   tour: 'МОИ ТУРНИРЫ',
-  me: 'ТЫ'
+  me: 'ПРОФИЛЬ'
 };
 
 const order = ['home','cards','meadow','tour','me'];

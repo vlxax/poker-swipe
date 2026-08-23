@@ -10,17 +10,36 @@
     mytournaments:'МОИ ТУРНИРЫ'
   };
 
+  function isNavIcon(el){
+    if(!el || el.nodeType !== Node.ELEMENT_NODE) return false;
+    if(el.classList?.contains('ps3d-icon')) return true;
+    if(el.tagName === 'I' && !el.classList?.contains('ps73NavLabel') && !el.classList?.contains('ps3d-label')) return true;
+    return !!el.querySelector?.('svg');
+  }
+
   function setButtonLabel(btn, label){
     if(!btn) return;
-    const span = btn.querySelector(':scope > span.ps73NavLabel');
-    if(span){ span.textContent = label; return; }
-    [...btn.childNodes].forEach(node=>{
-      if(node.nodeType===Node.TEXT_NODE) node.remove();
+
+    [...btn.childNodes].forEach((node)=>{
+      if(node.nodeType === Node.TEXT_NODE) node.remove();
     });
-    const labelEl=document.createElement('span');
-    labelEl.className='ps73NavLabel';
-    labelEl.textContent=label;
-    btn.appendChild(labelEl);
+
+    [...btn.children].forEach((child)=>{
+      if(isNavIcon(child)) return;
+      if(child.classList?.contains('ps73NavLabel') || child.classList?.contains('ps3d-label')) return;
+      child.remove();
+    });
+
+    const staleLabels = btn.querySelectorAll('.ps73NavLabel, .ps3d-label');
+    staleLabels.forEach((node, index)=>{ if(index > 0) node.remove(); });
+
+    let span = btn.querySelector(':scope > span.ps73NavLabel, :scope > span.ps3d-label');
+    if(!span){
+      span = document.createElement('span');
+      btn.appendChild(span);
+    }
+    span.className = 'ps73NavLabel ps3d-label';
+    span.textContent = label;
   }
 
   function ensureFiveNav(){
@@ -43,7 +62,6 @@
       mytournaments:my
     };
 
-    // If an older build left the Polyana button under `tournaments`, normalize it.
     if(nodes.polyana && nodes.polyana.dataset.nav==='tournaments') nodes.polyana.dataset.nav='polyana';
 
     const order=['home','myhands','polyana','profile','mytournaments'];
@@ -56,12 +74,10 @@
     const sameOrder=desired.length===current.length && desired.every((el,i)=>current[i]===el);
     if(!sameOrder) desired.forEach(btn=>nav.appendChild(btn));
 
-    // Remove obsolete duplicate tournament nav buttons after canonical nav is rebuilt.
     nav.querySelectorAll('[data-nav="tournaments"]').forEach(btn=>{
       if(btn!==nodes.polyana) btn.remove();
     });
 
-    // Route My Tournaments to the current V72 screen. Capture-phase handler wins over old layers.
     nodes.mytournaments.onclick=null;
   }
 
@@ -72,7 +88,6 @@
       el.dataset.ps73Passive='1';
       el.setAttribute('aria-disabled','true');
       el.setAttribute('tabindex','-1');
-      // Clone removes all legacy onclick/addEventListener handlers attached by the current render.
       const clone=el.cloneNode(true);
       clone.dataset.ps73Passive='1';
       clone.setAttribute('aria-disabled','true');
@@ -98,7 +113,6 @@
     makeStatsPassive();
   }
 
-  // Last capture listener: the dedicated My Tournaments destination always wins.
   document.addEventListener('click',openMyTournaments,true);
   document.addEventListener('pointerup',openMyTournaments,true);
 
