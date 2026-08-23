@@ -59,7 +59,6 @@
       else run();
     };
     wireCtx(area, ctx, id);
-    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: 'enter' });
   }
 
   function dailyStreetGame() {
@@ -98,8 +97,6 @@
       });
     }
     wireCtx(area, ctx, id);
-    const streetKey = window.dStreet === 1 ? 'flop' : window.dStreet === 2 ? 'turn' : window.dStreet === 3 ? 'river' : null;
-    window.PsMotion?.afterShell(area.querySelector('.pgShell'), { mode: window.dStreet === 0 ? 'hand-start' : 'enter', street: streetKey });
   }
 
   window.__legacyDailyIntro = renderLegacyDailyIntro;
