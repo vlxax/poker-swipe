@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "frozenAt": "2026-08-24",
+  "note": "Central semantic legend — update ONLY this file when trainer confirms meanings. Do not infer.",
+  "policy": {
+    "onlyVerifiedEnablesGrading": true,
+    "mixedRequiresAllComponentsVerified": true,
+    "visualApproxFrequencyType": "VISUAL_APPROX",
+    "neverInferFromPokerTheory": true
+  },
+  "entries": [
+    {
+      "id": "AI",
+      "match": { "rawAction": "AI" },
+      "rawLabel": "Ai",
+      "normalizedAction": "AI",
+      "status": "VERIFIED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA"
+    },
+    {
+      "id": "RAISE",
+      "match": { "rawAction": "RAISE" },
+      "rawLabel": "Рейз",
+      "normalizedAction": "RAISE",
+      "status": "VERIFIED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA"
+    },
+    {
+      "id": "nAI",
+      "match": { "rawAction": "nAI" },
+      "rawLabel": "nAI",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "UNSELECTED",
+      "match": { "rawAction": "UNSELECTED" },
+      "rawLabel": "UNSELECTED",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "LOW_PLAYABILITY",
+      "match": { "rawAction": "LOW_PLAYABILITY" },
+      "rawLabel": "кол с низкой плюсовостью…",
+      "normalizedAction": "LOW_PLAYABILITY",
+      "status": "PARTIAL",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION"
+    },
+    {
+      "id": "ORANGE_UO",
+      "match": { "rawAction": "ORANGE_208_160_32", "legendScheme": "UO_STYLE" },
+      "rawLabel": "кол",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "ORANGE_MARGIN",
+      "match": { "rawAction": "ORANGE_208_160_32", "legendScheme": "MARGIN_STYLE" },
+      "rawLabel": "20% запас и выше",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "ORANGE_OTHER",
+      "match": { "rawAction": "ORANGE_208_160_32" },
+      "rawLabel": "ORANGE_208_160_32",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "YELLOW_MARGIN",
+      "match": { "rawAction": "YELLOW_240_240_48", "legendScheme": "MARGIN_STYLE" },
+      "rawLabel": "15% запас и выше",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "YELLOW_OTHER",
+      "match": { "rawAction": "YELLOW_240_240_48" },
+      "rawLabel": "YELLOW_240_240_48",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "UNKNOWN_COLOR",
+      "match": { "rawActionPrefix": "COLOR_" },
+      "rawLabel": "COLOR_*",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION"
+    }
+  ]
+}

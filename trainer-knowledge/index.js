@@ -33,4 +33,11 @@ export {
   getTermsToClarify
 } from './lookup.js';
 
+export {
+  loadTrainerSemanticLegend,
+  resolveSemanticEntry,
+  applySemanticsToCell,
+  getLegendSchemeForChart
+} from './semanticLegend.js';
+
 export { detectTrainerBrainConflicts, loadPokerBrainPackFromStrategyFile } from './conflictDetector.js';
