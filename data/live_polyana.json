@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-25T02:03:00+03:00",
+  "updated_at": "2026-08-25T02:56:26+03:00",
   "club_count": 65,
-  "event_count": 34,
-  "source_card_count": 34,
+  "event_count": 35,
+  "source_card_count": 35,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -269,8 +269,25 @@
       "name": "EMPIRE POKER CLUB",
       "address": "Шелепихинская набережная, 34к3зд6",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-25",
+          "time": "19:00",
+          "club": "EMPIRE POKER CLUB",
+          "tournament": "CLASSIC FREEROLL FIX 3RE + AD",
+          "fee_rub": 0,
+          "type": "Фрирол",
+          "source_url": "https://pokernomoney.ru/tournaments/12286",
+          "address": "Шелепихинская набережная, 34к3зд6",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Фрирол CLASSIC FREEROLL FIX 3RE + AD 19:00 Бесплатно EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "Free Poker Moscow",
@@ -1493,6 +1510,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Классика FREEROLL Tournament 19:00 Бесплатно Check-Check Club Нижний Сусальный пер., д. 5с1"
+    },
+    {
+      "date": "2026-08-25",
+      "time": "19:00",
+      "club": "EMPIRE POKER CLUB",
+      "tournament": "CLASSIC FREEROLL FIX 3RE + AD",
+      "fee_rub": 0,
+      "type": "Фрирол",
+      "source_url": "https://pokernomoney.ru/tournaments/12286",
+      "address": "Шелепихинская набережная, 34к3зд6",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Фрирол CLASSIC FREEROLL FIX 3RE + AD 19:00 Бесплатно EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6"
     },
     {
       "date": "2026-08-25",
