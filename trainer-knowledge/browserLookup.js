@@ -34,9 +34,62 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   }
 
   const batch2HandsCache = new Map();
+  let shardIndex = null;
+
+  async function loadShardIndex() {
+    if (shardIndex) return shardIndex;
+    try {
+      shardIndex = await fetchJson(`${base}/batch2-shard-index.json`);
+      return shardIndex;
+    } catch {
+      return null;
+    }
+  }
+
+  function expandCompactHand(compact) {
+    if (!compact) return null;
+    if (compact.actionRaw !== undefined) return compact;
+    const out = {
+      actionRaw: compact.a ?? null,
+      dataStatus: compact.d || TRAINER_STATUS.NEEDS_CLARIFICATION,
+      gradingAllowed: compact.g === 1,
+      parsingStatus: compact.p || 'PARSED',
+      isMixed: compact.m === 1
+    };
+    if (Array.isArray(compact.s)) {
+      out.strategies = compact.s.map((st) => ({
+        rawAction: st.a,
+        frequency: st.f,
+        frequencyType: st.t === 'E' ? 'EXACT' : 'VISUAL_APPROX',
+        gradingAllowed: st.g === 1
+      }));
+    }
+    return out;
+  }
 
   async function loadBatch2Chart(chartId) {
     if (batch2HandsCache.has(chartId)) return batch2HandsCache.get(chartId);
+
+    const idx = await loadShardIndex();
+    if (idx?.chartToShard?.[chartId]) {
+      const shardId = idx.chartToShard[chartId];
+      try {
+        const shard = await fetchJson(`${base}/batch2-shards/${shardId}.json`);
+        const compact = shard.charts?.[chartId];
+        if (compact?.h) {
+          const hands = {};
+          for (const [hand, cell] of Object.entries(compact.h)) {
+            hands[hand] = expandCompactHand(cell);
+          }
+          const chart = { chartId, hands, parseStatus: compact.ps };
+          batch2HandsCache.set(chartId, chart);
+          return chart;
+        }
+      } catch {
+        /* fall through */
+      }
+    }
+
     try {
       const data = await fetchJson(`${base}/batch2-parsed-hands.json`);
       const chart = data.charts?.[chartId] || null;
@@ -134,13 +187,16 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     const b2 = await loadBatch2Chart(chartId);
     const rec = b2?.hands?.[h];
     if (!rec) return null;
+    const gradingAllowed = rec.isMixed ? false : Boolean(rec.gradingAllowed ?? canGradeWithTrainerAction(rec.actionRaw));
     return {
       chartId,
       hand: h,
       actionRaw: rec.actionRaw,
       dataStatus: rec.dataStatus,
-      gradingAllowed: canGradeWithTrainerAction(rec.actionRaw),
-      parserStatus: rec.parserStatus,
+      gradingAllowed,
+      strategies: rec.strategies || null,
+      isMixed: Boolean(rec.isMixed),
+      parserStatus: rec.parsingStatus || rec.parserStatus,
       rawColor: rec.rawColor || null
     };
   }
@@ -167,6 +223,8 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
       actionStatus: handRec.dataStatus,
       dataStatus: handRec.dataStatus,
       gradingAllowed: handRec.gradingAllowed,
+      strategies: handRec.strategies || null,
+      isMixed: handRec.isMixed || false,
       provenance: handRec.provenance || spot.chart.provenance,
       rawColor: handRec.rawColor || null
     };

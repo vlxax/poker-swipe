@@ -131,12 +131,15 @@ function buildBatch2Charts(manifestRows, batch2Parsed) {
     const spot = mapTrainerSpot({ sourceMode: row.source_mode, rawSpot: row.spot });
 
     const parsed = parsedCharts[row.chart_id];
-    const hasParsedHands = parsed && Object.keys(parsed.hands || {}).length > 0;
+    const hasParsedHands = parsed && Object.keys(parsed.hands || {}).length === 169;
     const parseStats = parsed?.parseStats;
+    const parseStatus = parsed?.parseStatus || null;
 
     let dataStatus = TRAINER_STATUS.PARTIAL_TRAINER_DATA;
-    if (hasParsedHands && parseStats?.exact > 0) {
+    if (parseStatus === 'SUCCESS' && hasParsedHands) {
       dataStatus = TRAINER_STATUS.PARTIAL_TRAINER_DATA;
+    } else if (parseStatus === 'FAILED') {
+      dataStatus = TRAINER_STATUS.MISSING_TRAINER_DATA;
     }
 
     charts.push({
@@ -163,6 +166,7 @@ function buildBatch2Charts(manifestRows, batch2Parsed) {
       handRecordCount: hasParsedHands ? 169 : 0,
       dataStatus,
       parseStats: parseStats || null,
+      parseStatus,
       hasParsedHands: Boolean(hasParsedHands),
       provenance: trainerProvenance({
         dataset: 'batch_2',
@@ -170,7 +174,7 @@ function buildBatch2Charts(manifestRows, batch2Parsed) {
         sourceHash: row.source_hash,
         chartId: row.chart_id,
         originalSha256: row.original_sha256,
-        parserStatus: hasParsedHands ? 'WEBP_COLOR_EXTRACT' : 'MANIFEST_ONLY'
+        parserStatus: hasParsedHands ? 'WEBP_MATRIX_PARSED' : (parseStatus === 'FAILED' ? 'WEBP_PARSE_FAILED' : 'MANIFEST_ONLY')
       })
     });
   }
@@ -370,14 +374,24 @@ function main() {
   mkdirSync(BUILT, { recursive: true });
   mkdirSync(INDEX_DIR, { recursive: true });
 
-  // Parse batch2 WEBP (conservative)
+  // Parse batch2 WEBP (full 13×13 matrix)
   const parseScript = join(__dirname, 'parseBatch2Webp.py');
   if (existsSync(parseScript)) {
-    console.log('Parsing Batch 2 WEBP charts (conservative)...');
+    console.log('Parsing Batch 2 WEBP charts (13×13 hand matrices)...');
     try {
       execSync(`python3 "${parseScript}"`, { stdio: 'inherit', cwd: ROOT });
     } catch (e) {
       console.warn('WEBP parse warning:', e.message);
+    }
+  }
+
+  const compactScript = join(__dirname, 'compactBatch2Shards.mjs');
+  if (existsSync(compactScript)) {
+    console.log('Building compact Batch 2 shards...');
+    try {
+      execSync(`node "${compactScript}"`, { stdio: 'inherit', cwd: ROOT });
+    } catch (e) {
+      console.warn('Shard compact warning:', e.message);
     }
   }
 
@@ -409,23 +423,37 @@ function main() {
     console.warn('Conflict detection skipped:', e.message);
   }
 
+  let batch2ParseReport = null;
+  const batch2ReportPath = join(BUILT, 'batch2-parse-report.json');
+  if (existsSync(batch2ReportPath)) {
+    batch2ParseReport = readJson(batch2ReportPath);
+  }
+
   const stats = {
     totalCharts: allCharts.length,
     uoCharts: uoCharts.length,
     batch2Charts: batch2Charts.length,
     uoHandRecords: uoHands.length,
+    batch2HandRecords: batch2ParseReport?.handCellsTotal || batch2Charts.filter((c) => c.hasParsedHands).length * 169,
+    batch2ChartsParsed: batch2ParseReport?.chartsSuccessfullyParsed || batch2Charts.filter((c) => c.hasParsedHands).length,
+    batch2ChartsFailed: batch2ParseReport?.chartsFailed || 0,
+    batch2MixedCells: batch2ParseReport?.mixedCells || 0,
+    batch2GradingAllowedCells: batch2ParseReport?.gradingAllowedCells || 0,
+    batch2NeedsClarificationCells: batch2ParseReport?.needsClarificationCells || 0,
     exactlyParsed: uoHands.filter((h) => h.dataStatus === TRAINER_STATUS.EXACT_TRAINER_DATA).length,
     needsClarification: uoHands.filter((h) => h.dataStatus === TRAINER_STATUS.NEEDS_CLARIFICATION).length,
     partialCharts: allCharts.filter((c) => c.dataStatus === TRAINER_STATUS.PARTIAL_TRAINER_DATA).length,
     unmappedSpotCount: unmappedSpots.length,
     positionGroupCount: positionGroups.length,
-    conflictCount: conflicts.length
+    conflictCount: conflicts.length,
+    batch2DatasetSizeMB: batch2ParseReport?.datasetSizeMB || null
   };
 
   const meta = {
     builtAt: new Date().toISOString(),
     datasetSummary,
     stats,
+    batch2ParseReport,
     unmappedSpots,
     termsToClarify,
     positionGroups,

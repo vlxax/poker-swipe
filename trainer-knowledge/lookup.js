@@ -14,18 +14,64 @@ const ROOT = join(__dirname, '..');
 const BUILT_DIR = join(ROOT, 'data/trainer/built');
 
 let _cache = null;
-let _batch2Hands = null;
+let _batch2ShardIndex = null;
+let _batch2ShardCache = new Map();
 
-function loadBatch2Hands() {
-  if (_batch2Hands) return _batch2Hands;
-  const path = join(BUILT_DIR, 'batch2-parsed-hands.json');
-  if (!existsSync(path)) {
-    _batch2Hands = {};
-    return _batch2Hands;
+function expandCompactHand(compact) {
+  if (!compact) return null;
+  if (compact.actionRaw !== undefined) return compact; // already expanded
+  const out = {
+    actionRaw: compact.a ?? null,
+    dataStatus: compact.d || 'NEEDS_CLARIFICATION',
+    gradingAllowed: compact.g === 1,
+    parsingStatus: compact.p || 'PARSED',
+    isMixed: compact.m === 1
+  };
+  if (Array.isArray(compact.s)) {
+    out.strategies = compact.s.map((st) => ({
+      rawAction: st.a,
+      frequency: st.f,
+      frequencyType: st.t === 'E' ? 'EXACT' : 'VISUAL_APPROX',
+      gradingAllowed: st.g === 1,
+      dataStatus: st.g === 1 ? TRAINER_STATUS.EXACT_TRAINER_DATA : TRAINER_STATUS.NEEDS_CLARIFICATION
+    }));
   }
+  return out;
+}
+
+function loadShardIndex() {
+  if (_batch2ShardIndex) return _batch2ShardIndex;
+  const path = join(BUILT_DIR, 'batch2-shard-index.json');
+  if (!existsSync(path)) return null;
+  _batch2ShardIndex = JSON.parse(readFileSync(path, 'utf8'));
+  return _batch2ShardIndex;
+}
+
+function loadBatch2ChartFromShard(chartId) {
+  const index = loadShardIndex();
+  if (!index?.chartToShard) return null;
+  const shardId = index.chartToShard[chartId];
+  if (!shardId) return null;
+  if (!_batch2ShardCache.has(shardId)) {
+    const shardPath = join(BUILT_DIR, 'batch2-shards', `${shardId}.json`);
+    if (!existsSync(shardPath)) return null;
+    const shard = JSON.parse(readFileSync(shardPath, 'utf8'));
+    _batch2ShardCache.set(shardId, shard.charts || {});
+  }
+  const compact = _batch2ShardCache.get(shardId)[chartId];
+  if (!compact?.h) return null;
+  const hands = {};
+  for (const [hand, cell] of Object.entries(compact.h)) {
+    hands[hand] = expandCompactHand(cell);
+  }
+  return { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
+}
+
+function loadBatch2HandsFile() {
+  const path = join(BUILT_DIR, 'batch2-parsed-hands.json');
+  if (!existsSync(path)) return {};
   const data = JSON.parse(readFileSync(path, 'utf8'));
-  _batch2Hands = data.charts || {};
-  return _batch2Hands;
+  return data.charts || {};
 }
 
 function loadBuilt() {
@@ -49,7 +95,8 @@ function loadBuilt() {
 
 export function resetTrainerCache() {
   _cache = null;
-  _batch2Hands = null;
+  _batch2ShardIndex = null;
+  _batch2ShardCache = new Map();
 }
 
 export function getTrainerMeta() {
@@ -169,20 +216,26 @@ export function lookupTrainerHand({ chartId, hand }) {
 }
 
 function lookupBatch2Hand(chartId, hand) {
-  const charts = loadBatch2Hands();
-  const chart = charts[chartId];
-  if (!chart?.hands) return null;
   const h = String(hand || '').trim();
+  let chart = loadBatch2ChartFromShard(chartId);
+  if (!chart) {
+    const charts = loadBatch2HandsFile();
+    chart = charts[chartId];
+  }
+  if (!chart?.hands) return null;
   const rec = chart.hands[h];
   if (!rec) return null;
+  const expanded = expandCompactHand(rec);
   return {
     chartId,
     hand: h,
-    actionRaw: rec.actionRaw,
-    dataStatus: rec.dataStatus,
-    gradingAllowed: canGradeWithTrainerAction(rec.actionRaw),
-    sourceColor: rec.colorBucket ? rec.colorBucket.join(',') : null,
-    parserStatus: rec.parserStatus
+    actionRaw: expanded.actionRaw,
+    dataStatus: expanded.dataStatus,
+    gradingAllowed: expanded.isMixed ? false : Boolean(expanded.gradingAllowed),
+    strategies: expanded.strategies || null,
+    isMixed: Boolean(expanded.isMixed),
+    parsingStatus: expanded.parsingStatus,
+    parserStatus: expanded.parsingStatus
   };
 }
 
@@ -237,7 +290,9 @@ export function lookupTrainerHandAction(query = {}) {
     };
   }
 
-  const gradingAllowed = canGradeWithTrainerAction(handRec.actionRaw);
+  const gradingAllowed = handRec.isMixed
+    ? false
+    : Boolean(handRec.gradingAllowed ?? canGradeWithTrainerAction(handRec.actionRaw));
   return {
     ...spot,
     hand: query.hand,
@@ -245,6 +300,8 @@ export function lookupTrainerHandAction(query = {}) {
     actionStatus: handRec.dataStatus,
     dataStatus: handRec.dataStatus,
     gradingAllowed,
+    strategies: handRec.strategies || null,
+    isMixed: handRec.isMixed || false,
     provenance: handRec.provenance || spot.provenance,
     sourceColor: handRec.sourceColor || null
   };

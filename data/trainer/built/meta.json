@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-08-24T16:44:56.099Z",
+  "builtAt": "2026-08-24T17:35:48.705Z",
   "datasetSummary": {
     "dataset": "PokerSwipe trainer ranges — Batch 2 compact source",
     "original_archive": "iLoveZIP_jpg.zip",
@@ -28,12 +28,116 @@
     "uoCharts": 60,
     "batch2Charts": 1578,
     "uoHandRecords": 10140,
+    "batch2HandRecords": 266682,
+    "batch2ChartsParsed": 1578,
+    "batch2ChartsFailed": 0,
+    "batch2MixedCells": 30677,
+    "batch2GradingAllowedCells": 13207,
+    "batch2NeedsClarificationCells": 247275,
     "exactlyParsed": 3351,
     "needsClarification": 6789,
     "partialCharts": 1578,
     "unmappedSpotCount": 15,
     "positionGroupCount": 12,
-    "conflictCount": 49
+    "conflictCount": 49,
+    "batch2DatasetSizeMB": null
+  },
+  "batch2ParseReport": {
+    "batch2ChartsTotal": 1578,
+    "chartsSuccessfullyParsed": 1578,
+    "chartsPartiallyParsed": 0,
+    "chartsFailed": 0,
+    "chartsMissingImage": 0,
+    "handCellsTotal": 266682,
+    "handCellsParsed": 266682,
+    "mixedCells": 30677,
+    "gradingAllowedCells": 13207,
+    "needsClarificationCells": 247275,
+    "unselectedCells": 203978,
+    "exactTrainerCells": 13207,
+    "unknownActionLabels": 32812,
+    "validationErrorCharts": 0,
+    "byScenario": {
+      "callpush": {
+        "charts_total": 615,
+        "charts_parsed": 615,
+        "hand_records": 103935,
+        "grading_enabled": 1714,
+        "clarification": 100936
+      },
+      "huante": {
+        "charts_total": 172,
+        "charts_parsed": 172,
+        "hand_records": 29068,
+        "grading_enabled": 7713,
+        "clarification": 19593
+      },
+      "sbvsbb": {
+        "charts_total": 34,
+        "charts_parsed": 34,
+        "hand_records": 5746,
+        "grading_enabled": 1008,
+        "clarification": 4506
+      },
+      "vs1r": {
+        "charts_total": 323,
+        "charts_parsed": 323,
+        "hand_records": 54587,
+        "grading_enabled": 1519,
+        "clarification": 51620
+      },
+      "vs1r1c": {
+        "charts_total": 68,
+        "charts_parsed": 68,
+        "hand_records": 11492,
+        "grading_enabled": 564,
+        "clarification": 10525
+      },
+      "vs1rshort": {
+        "charts_total": 33,
+        "charts_parsed": 33,
+        "hand_records": 5577,
+        "grading_enabled": 136,
+        "clarification": 5297
+      },
+      "vs2r": {
+        "charts_total": 53,
+        "charts_parsed": 53,
+        "hand_records": 8957,
+        "grading_enabled": 155,
+        "clarification": 8552
+      },
+      "vs3bet": {
+        "charts_total": 56,
+        "charts_parsed": 56,
+        "hand_records": 9464,
+        "grading_enabled": 77,
+        "clarification": 9281
+      },
+      "vs4bet": {
+        "charts_total": 11,
+        "charts_parsed": 11,
+        "hand_records": 1859,
+        "grading_enabled": 2,
+        "clarification": 1856
+      },
+      "vslimp": {
+        "charts_total": 11,
+        "charts_parsed": 11,
+        "hand_records": 1859,
+        "grading_enabled": 0,
+        "clarification": 1859
+      },
+      "vssqueeze": {
+        "charts_total": 202,
+        "charts_parsed": 202,
+        "hand_records": 34138,
+        "grading_enabled": 319,
+        "clarification": 33250
+      }
+    },
+    "sourceTraceability": "manifest+compressed_sha256+source_hash",
+    "duplicates": 0
   },
   "unmappedSpots": [
     {
@@ -186,7 +290,7 @@
       "term": "WEBP_UNMAPPED_COLORS",
       "rawValue": null,
       "status": "NEEDS_CLARIFICATION",
-      "occurrences": 255230,
+      "occurrences": 0,
       "note": "Batch 2 cells where color could not be mapped to trainer action with confidence"
     }
   ],
