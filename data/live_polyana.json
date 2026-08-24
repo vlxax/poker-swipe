@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-24T14:49:39+03:00",
+  "updated_at": "2026-08-24T17:26:31+03:00",
   "club_count": 64,
-  "event_count": 24,
-  "source_card_count": 24,
+  "event_count": 25,
+  "source_card_count": 25,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -191,7 +191,7 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 1,
+      "upcoming": 2,
       "schedule": [
         {
           "date": "2026-08-24",
@@ -208,6 +208,22 @@
           "reentry_cost_rub": null,
           "duration_minutes": null,
           "source_card_text": "Бесплатный понедельник 19:00 Бесплатно Check-Check Club Нижний Сусальный пер., д. 5с1"
+        },
+        {
+          "date": "2026-08-24",
+          "time": "19:10",
+          "club": "Check-Check Club",
+          "tournament": "GRAND FREEZEOUT",
+          "fee_rub": 1200,
+          "type": "Freezeout",
+          "source_url": "https://pokernomoney.ru/tournaments/12007",
+          "address": "Нижний Сусальный пер., д. 5с1",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Freezeout GRAND FREEZEOUT 19:10 1 200 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1"
         }
       ]
     },
@@ -1509,6 +1525,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "HEART HUNTER TOURNEY 19:00 1 000 ₽ вход до 22:25 ХАРТС Боровая, 19А"
+    },
+    {
+      "date": "2026-08-24",
+      "time": "19:10",
+      "club": "Check-Check Club",
+      "tournament": "GRAND FREEZEOUT",
+      "fee_rub": 1200,
+      "type": "Freezeout",
+      "source_url": "https://pokernomoney.ru/tournaments/12007",
+      "address": "Нижний Сусальный пер., д. 5с1",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Freezeout GRAND FREEZEOUT 19:10 1 200 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1"
     },
     {
       "date": "2026-08-24",
