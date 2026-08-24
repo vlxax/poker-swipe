@@ -1,7 +1,197 @@
 {
-  "generatedAt": "2026-08-24T17:45:23.953489+00:00",
-  "stage": "4.5",
+  "generatedAt": "2026-08-24T18:42:33.567645+00:00",
+  "stage": "4.6",
   "safeToMerge": false,
+  "stackParserFixed": true,
+  "stackFixAudit": {
+    "stage": "4.6",
+    "stackParserFixed": true,
+    "before": {
+      "nAI": 4649,
+      "RAISE": 1924,
+      "AI": 17483,
+      "UNSELECTED": 203978,
+      "verified": 13207,
+      "grading": 13207,
+      "mixed": 30677,
+      "unresolved": 242626
+    },
+    "after": {
+      "nAI": 3015,
+      "RAISE": 3558,
+      "AI": 17483,
+      "UNSELECTED": 203978,
+      "verified": 14358,
+      "grading": 14358,
+      "mixed": 30677,
+      "unresolved": 242626
+    },
+    "comparison": {
+      "affectedCharts": 276,
+      "affectedCells": 1634,
+      "cellChangeBreakdown": {
+        "nAI->RAISE": 1634
+      },
+      "affectedChartSample": [
+        {
+          "chartId": "B2_0320",
+          "stack": "50BBplus",
+          "sourceMode": "vs3bet",
+          "cellsChanged": 3
+        },
+        {
+          "chartId": "B2_0346",
+          "stack": "30-50BB",
+          "sourceMode": "vs3bet",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0361",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r",
+          "cellsChanged": 6
+        },
+        {
+          "chartId": "B2_0205",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r1c",
+          "cellsChanged": 3
+        },
+        {
+          "chartId": "B2_0262",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r1c",
+          "cellsChanged": 6
+        },
+        {
+          "chartId": "B2_0953",
+          "stack": "22-30BB",
+          "sourceMode": "sbvsbb",
+          "cellsChanged": 6
+        },
+        {
+          "chartId": "B2_0483",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 5
+        },
+        {
+          "chartId": "B2_0587",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r",
+          "cellsChanged": 3
+        },
+        {
+          "chartId": "B2_0309",
+          "stack": "50BBplus",
+          "sourceMode": "vs3bet",
+          "cellsChanged": 2
+        },
+        {
+          "chartId": "B2_0304",
+          "stack": "30-50BB",
+          "sourceMode": "vs3bet",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0404",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r",
+          "cellsChanged": 17
+        },
+        {
+          "chartId": "B2_0645",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0537",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 3
+        },
+        {
+          "chartId": "B2_1155",
+          "stack": "50-75BB",
+          "sourceMode": "callpush",
+          "cellsChanged": 1
+        },
+        {
+          "chartId": "B2_0406",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0381",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0247",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r1c",
+          "cellsChanged": 8
+        },
+        {
+          "chartId": "B2_0225",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r1c",
+          "cellsChanged": 7
+        },
+        {
+          "chartId": "B2_1561",
+          "stack": "40-50BB",
+          "sourceMode": "callpush",
+          "cellsChanged": 1
+        },
+        {
+          "chartId": "B2_0382",
+          "stack": "22-30BB",
+          "sourceMode": "vs1r",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0433",
+          "stack": "40BBplus",
+          "sourceMode": "vs1r",
+          "cellsChanged": 7
+        },
+        {
+          "chartId": "B2_1396",
+          "stack": "22-30BB",
+          "sourceMode": "callpush",
+          "cellsChanged": 1
+        },
+        {
+          "chartId": "B2_1499",
+          "stack": "30-40BB",
+          "sourceMode": "callpush",
+          "cellsChanged": 1
+        },
+        {
+          "chartId": "B2_0391",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r",
+          "cellsChanged": 4
+        },
+        {
+          "chartId": "B2_0208",
+          "stack": "30-40BB",
+          "sourceMode": "vs1r1c",
+          "cellsChanged": 3
+        }
+      ]
+    },
+    "delta": {
+      "nAI": -1634,
+      "RAISE": 1634,
+      "verified": 1151,
+      "grading": 1151
+    }
+  },
   "parserStructureVerified": "YES — 1,578/1,578 charts, 266,682/266,682 cells structurally parsed",
   "matrixOrientationVerified": "YES — 55/55 QA samples: AA@(0,0), 22@(12,12), AKs upper, AKo lower",
   "colorClassificationVerified": "PARTIAL — AI/RAISE/gray/cyan mapped; orange/yellow/margin bands need scheme context",
@@ -241,39 +431,39 @@
   ],
   "coverage": {
     "totalCells": 266682,
-    "verifiedActionCells": 13207,
+    "verifiedActionCells": 14358,
     "partialCells": 0,
-    "needsClarificationCells": 253475,
+    "needsClarificationCells": 252324,
     "unselected": 203978,
-    "nAI": 4649,
+    "nAI": 3015,
     "orange": 29232,
     "yellow": 1508,
     "mixed": 30677,
     "otherUnknownColors": 2072,
     "ai": 17483,
-    "raise": 1924,
+    "raise": 3558,
     "lowPlayability": 5836,
-    "gradingAllowedBefore": 13207,
-    "gradingAllowedAfter": 13207,
+    "gradingAllowedBefore": 14358,
+    "gradingAllowedAfter": 14358,
     "byScenario": {
       "callpush": {
         "total": 103935,
-        "grading": 1714,
+        "grading": 1753,
         "unselected": 90893,
         "ai": 2759,
-        "raise": 240,
-        "nAI": 1744,
+        "raise": 323,
+        "nAI": 1661,
         "orange": 6893,
         "yellow": 1405,
         "mixed": 0
       },
       "vs1r": {
         "total": 54587,
-        "grading": 1519,
+        "grading": 2021,
         "unselected": 41538,
         "ai": 2967,
-        "raise": 0,
-        "nAI": 735,
+        "raise": 727,
+        "nAI": 8,
         "orange": 6650,
         "yellow": 0,
         "mixed": 0
@@ -291,33 +481,33 @@
       },
       "huante": {
         "total": 29068,
-        "grading": 7713,
+        "grading": 7718,
         "unselected": 8375,
         "ai": 7970,
-        "raise": 1505,
-        "nAI": 915,
+        "raise": 1513,
+        "nAI": 907,
         "orange": 9724,
         "yellow": 6,
         "mixed": 0
       },
       "vs1r1c": {
         "total": 11492,
-        "grading": 564,
+        "grading": 667,
         "unselected": 7902,
         "ai": 967,
-        "raise": 0,
-        "nAI": 149,
+        "raise": 149,
+        "nAI": 0,
         "orange": 1478,
         "yellow": 0,
         "mixed": 0
       },
       "vs3bet": {
         "total": 9464,
-        "grading": 77,
+        "grading": 151,
         "unselected": 8447,
         "ai": 183,
-        "raise": 0,
-        "nAI": 167,
+        "raise": 167,
+        "nAI": 0,
         "orange": 411,
         "yellow": 0,
         "mixed": 0
@@ -335,11 +525,11 @@
       },
       "sbvsbb": {
         "total": 5746,
-        "grading": 1008,
+        "grading": 1436,
         "unselected": 1221,
         "ai": 1122,
-        "raise": 118,
-        "nAI": 673,
+        "raise": 618,
+        "nAI": 173,
         "orange": 1490,
         "yellow": 97,
         "mixed": 0
@@ -383,8 +573,8 @@
       "ORANGE_208_160_32": 29232,
       "AI": 17483,
       "LOW_PLAYABILITY": 5836,
-      "nAI": 4649,
-      "RAISE": 1924,
+      "RAISE": 3558,
+      "nAI": 3015,
       "YELLOW_240_240_48": 1508,
       "COLOR_128_32_48": 475,
       "COLOR_128_112_64": 352,
@@ -403,8 +593,8 @@
   },
   "mixedAudit": {
     "totalMixedCells": 30677,
-    "allComponentsVerified": 62,
-    "hasUnverifiedComponent": 30615,
+    "allComponentsVerified": 90,
+    "hasUnverifiedComponent": 30587,
     "visualApproxFrequencies": 30677,
     "gradingEnabledMixed": 0,
     "policy": "Mixed cells grading-enabled only if every component VERIFIED; proportions are VISUAL_APPROX",
@@ -1049,8 +1239,8 @@
         "handChecks": [
           {
             "hand": "AA",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": false,
             "match": true
           },
@@ -1063,15 +1253,15 @@
           },
           {
             "hand": "AKs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": false,
             "match": true
           },
           {
             "hand": "AKo",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": false,
             "match": true
           },
@@ -1091,16 +1281,16 @@
           },
           {
             "hand": "A7s",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": true,
             "storedStrategies": [
               {
-                "rawAction": "nAI",
+                "rawAction": "RAISE",
                 "frequency": 69.2,
                 "frequencyType": "VISUAL_APPROX",
-                "gradingAllowed": false,
-                "dataStatus": "NEEDS_CLARIFICATION"
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
               },
               {
                 "rawAction": "UNSELECTED",
@@ -1375,8 +1565,8 @@
           },
           {
             "hand": "AKs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": true,
             "match": true
           },
@@ -2981,8 +3171,8 @@
           },
           {
             "hand": "AKs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": true,
             "match": true
           },
@@ -3062,8 +3252,8 @@
           },
           {
             "hand": "AKs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": true,
             "match": true
           },
@@ -3305,8 +3495,8 @@
           },
           {
             "hand": "AKs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": false,
             "match": true
           },
@@ -3333,16 +3523,16 @@
           },
           {
             "hand": "AQs",
-            "stored": "nAI",
-            "liveReparsed": "nAI",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
             "storedMixed": true,
             "storedStrategies": [
               {
-                "rawAction": "nAI",
+                "rawAction": "RAISE",
                 "frequency": 68.9,
                 "frequencyType": "VISUAL_APPROX",
-                "gradingAllowed": false,
-                "dataStatus": "NEEDS_CLARIFICATION"
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
               },
               {
                 "rawAction": "ORANGE_208_160_32",

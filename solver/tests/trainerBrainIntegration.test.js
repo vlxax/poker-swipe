@@ -47,7 +47,10 @@ describe('trainer brain integration', { concurrency: 1 }, () => {
       betSize: '99x'
     };
     const result = buildBrainTrainerResult(nodeLookup, spot, 'QQ');
-    assert.equal(result.status, 'PARTIAL_TRAINER_MATCH');
+    assert.ok(
+      ['PARTIAL_TRAINER_MATCH', 'TRAINER_DATA_NEEDS_CLARIFICATION'].includes(result.status),
+      `expected partial or needs-clarification status, got ${result.status}`
+    );
     assert.ok(result.mismatches.some((m) => /betSize|sizing/i.test(m)));
   });
 

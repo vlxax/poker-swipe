@@ -7,10 +7,10 @@
   "handCellsTotal": 266682,
   "handCellsParsed": 266682,
   "mixedCells": 30677,
-  "gradingAllowedCells": 13207,
-  "needsClarificationCells": 247275,
+  "gradingAllowedCells": 14358,
+  "needsClarificationCells": 245641,
   "unselectedCells": 203978,
-  "exactTrainerCells": 13207,
+  "exactTrainerCells": 14358,
   "unknownActionLabels": 32812,
   "validationErrorCharts": 0,
   "byScenario": {
@@ -18,36 +18,36 @@
       "charts_total": 615,
       "charts_parsed": 615,
       "hand_records": 103935,
-      "grading_enabled": 1714,
-      "clarification": 100936
+      "grading_enabled": 1753,
+      "clarification": 100853
     },
     "huante": {
       "charts_total": 172,
       "charts_parsed": 172,
       "hand_records": 29068,
-      "grading_enabled": 7713,
-      "clarification": 19593
+      "grading_enabled": 7718,
+      "clarification": 19585
     },
     "sbvsbb": {
       "charts_total": 34,
       "charts_parsed": 34,
       "hand_records": 5746,
-      "grading_enabled": 1008,
-      "clarification": 4506
+      "grading_enabled": 1436,
+      "clarification": 4006
     },
     "vs1r": {
       "charts_total": 323,
       "charts_parsed": 323,
       "hand_records": 54587,
-      "grading_enabled": 1519,
-      "clarification": 51620
+      "grading_enabled": 2021,
+      "clarification": 50893
     },
     "vs1r1c": {
       "charts_total": 68,
       "charts_parsed": 68,
       "hand_records": 11492,
-      "grading_enabled": 564,
-      "clarification": 10525
+      "grading_enabled": 667,
+      "clarification": 10376
     },
     "vs1rshort": {
       "charts_total": 33,
@@ -67,8 +67,8 @@
       "charts_total": 56,
       "charts_parsed": 56,
       "hand_records": 9464,
-      "grading_enabled": 77,
-      "clarification": 9281
+      "grading_enabled": 151,
+      "clarification": 9114
     },
     "vs4bet": {
       "charts_total": 11,

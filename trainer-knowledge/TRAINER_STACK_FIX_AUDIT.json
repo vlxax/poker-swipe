@@ -1,0 +1,189 @@
+{
+  "stage": "4.6",
+  "stackParserFixed": true,
+  "before": {
+    "nAI": 4649,
+    "RAISE": 1924,
+    "AI": 17483,
+    "UNSELECTED": 203978,
+    "verified": 13207,
+    "grading": 13207,
+    "mixed": 30677,
+    "unresolved": 242626
+  },
+  "after": {
+    "nAI": 3015,
+    "RAISE": 3558,
+    "AI": 17483,
+    "UNSELECTED": 203978,
+    "verified": 14358,
+    "grading": 14358,
+    "mixed": 30677,
+    "unresolved": 242626
+  },
+  "comparison": {
+    "affectedCharts": 276,
+    "affectedCells": 1634,
+    "cellChangeBreakdown": {
+      "nAI->RAISE": 1634
+    },
+    "affectedChartSample": [
+      {
+        "chartId": "B2_0320",
+        "stack": "50BBplus",
+        "sourceMode": "vs3bet",
+        "cellsChanged": 3
+      },
+      {
+        "chartId": "B2_0346",
+        "stack": "30-50BB",
+        "sourceMode": "vs3bet",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0361",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r",
+        "cellsChanged": 6
+      },
+      {
+        "chartId": "B2_0205",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r1c",
+        "cellsChanged": 3
+      },
+      {
+        "chartId": "B2_0262",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r1c",
+        "cellsChanged": 6
+      },
+      {
+        "chartId": "B2_0953",
+        "stack": "22-30BB",
+        "sourceMode": "sbvsbb",
+        "cellsChanged": 6
+      },
+      {
+        "chartId": "B2_0483",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 5
+      },
+      {
+        "chartId": "B2_0587",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r",
+        "cellsChanged": 3
+      },
+      {
+        "chartId": "B2_0309",
+        "stack": "50BBplus",
+        "sourceMode": "vs3bet",
+        "cellsChanged": 2
+      },
+      {
+        "chartId": "B2_0304",
+        "stack": "30-50BB",
+        "sourceMode": "vs3bet",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0404",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r",
+        "cellsChanged": 17
+      },
+      {
+        "chartId": "B2_0645",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0537",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 3
+      },
+      {
+        "chartId": "B2_1155",
+        "stack": "50-75BB",
+        "sourceMode": "callpush",
+        "cellsChanged": 1
+      },
+      {
+        "chartId": "B2_0406",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0381",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0247",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r1c",
+        "cellsChanged": 8
+      },
+      {
+        "chartId": "B2_0225",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r1c",
+        "cellsChanged": 7
+      },
+      {
+        "chartId": "B2_1561",
+        "stack": "40-50BB",
+        "sourceMode": "callpush",
+        "cellsChanged": 1
+      },
+      {
+        "chartId": "B2_0382",
+        "stack": "22-30BB",
+        "sourceMode": "vs1r",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0433",
+        "stack": "40BBplus",
+        "sourceMode": "vs1r",
+        "cellsChanged": 7
+      },
+      {
+        "chartId": "B2_1396",
+        "stack": "22-30BB",
+        "sourceMode": "callpush",
+        "cellsChanged": 1
+      },
+      {
+        "chartId": "B2_1499",
+        "stack": "30-40BB",
+        "sourceMode": "callpush",
+        "cellsChanged": 1
+      },
+      {
+        "chartId": "B2_0391",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r",
+        "cellsChanged": 4
+      },
+      {
+        "chartId": "B2_0208",
+        "stack": "30-40BB",
+        "sourceMode": "vs1r1c",
+        "cellsChanged": 3
+      }
+    ]
+  },
+  "delta": {
+    "nAI": -1634,
+    "RAISE": 1634,
+    "verified": 1151,
+    "grading": 1151
+  }
+}

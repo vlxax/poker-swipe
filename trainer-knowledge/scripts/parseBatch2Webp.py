@@ -36,8 +36,8 @@ from batch2ColorLegend import (
     LEGEND_ENTRIES,
     UNKNOWN_COLOR_FAMILIES,
     match_legend,
-    parse_stack_bb,
 )
+from stackParser import parse_trainer_stack
 
 ROOT = Path(__file__).resolve().parents[2]
 CHARTS_ZIP_DIR = ROOT / "data/trainer/charts"
@@ -75,14 +75,14 @@ def sample_cell_pixels(im: Image.Image, r: int, c: int) -> List[Tuple[int, int, 
 
 
 def aggregate_cell_strategies(
-    pixels: List[Tuple[int, int, int]], stack_bb: Optional[float]
+    pixels: List[Tuple[int, int, int]], stack_raw: Optional[str]
 ) -> Dict[str, Any]:
     action_counts: Counter = Counter()
     unmapped = 0
     raw_colors: List[List[int]] = []
 
     for rgb in pixels:
-        m = match_legend(rgb, stack_bb)
+        m = match_legend(rgb, stack_raw)
         if not m:
             unmapped += 1
             continue
@@ -209,7 +209,7 @@ def validate_chart(chart_id: str, hands: Dict[str, Any]) -> List[str]:
     return errors
 
 
-def parse_chart_image(path: Path, stack_bb: Optional[float]) -> Dict[str, Any]:
+def parse_chart_image(path: Path, stack_raw: Optional[str]) -> Dict[str, Any]:
     im = Image.open(path).convert("RGB")
     hands: Dict[str, Any] = {}
     mixed_count = 0
@@ -220,7 +220,7 @@ def parse_chart_image(path: Path, stack_bb: Optional[float]) -> Dict[str, Any]:
     for idx, hand in enumerate(HAND_ORDER):
         r, c = idx // 13, idx % 13
         pixels = sample_cell_pixels(im, r, c)
-        cell = aggregate_cell_strategies(pixels, stack_bb)
+        cell = aggregate_cell_strategies(pixels, stack_raw)
         cell["hand"] = hand
         hands[hand] = cell
         if cell.get("isMixed"):
@@ -303,7 +303,8 @@ def main() -> None:
         chart_id = row["chart_id"]
         chart_num = row["compressed_file"].split("/")[-1].replace(".webp", "")
         img_path = EXTRACT_DIR / f"{chart_num}.webp"
-        stack_bb = parse_stack_bb(row.get("stack"))
+        stack_raw = row.get("stack")
+        stack_semantics = parse_trainer_stack(stack_raw)
 
         if not img_path.exists():
             global_stats["charts_failed"] += 1
@@ -319,7 +320,7 @@ def main() -> None:
             continue
 
         try:
-            result = parse_chart_image(img_path, stack_bb)
+            result = parse_chart_image(img_path, stack_raw)
             hands = result["hands"]
             errors = validate_chart(chart_id, hands)
             status = chart_parse_status(errors, hands)
@@ -336,6 +337,7 @@ def main() -> None:
                 "sourceFilename": row.get("source_file"),
                 "compressedSha256": row.get("compressed_sha256"),
                 "sourceMode": row.get("source_mode"),
+                "stackSemantics": stack_semantics,
             }
 
             flat_records.extend(build_flat_records(chart_id, row, hands))

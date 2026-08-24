@@ -8,6 +8,7 @@ import { MATCH_STATUS, TRAINER_STATUS, canGradeWithTrainerAction } from './statu
 import { parseTrainerPosition, positionMatchKind } from './positionParser.js';
 import { mapTrainerSpot } from './spotMapper.js';
 import { trainerProvenance } from './provenance.js';
+import { matchQueryToRecord, parseTrainerStack } from './stackParser.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -125,19 +126,19 @@ function matchesChartFilter(chart, filter) {
 function stackMatch(queryStack, recordStack) {
   if (!queryStack || !recordStack) return 'unknown';
   const q = String(queryStack).trim();
-  const r = recordStack.raw || String(recordStack).trim();
-  if (q === r) return 'exact';
-  // band overlap for UO style 18-25
-  if (r.includes('-') || r.includes('+')) {
-    const num = parseFloat(q.replace(/BB/i, ''));
-    if (!Number.isFinite(num)) return 'none';
-    if (r.endsWith('+')) {
-      const min = parseFloat(r.replace('+', ''));
-      return num >= min ? 'band' : 'none';
-    }
-    const [lo, hi] = r.split('-').map(Number);
-    if (num >= lo && num <= hi) return 'band';
+  const rRaw = recordStack.raw || String(recordStack).trim();
+  if (q === rRaw) return 'exact';
+
+  const qSem = parseTrainerStack(q);
+  const rSem = recordStack.semantics || parseTrainerStack(rRaw);
+
+  if (qSem.type === 'EXACT') {
+    const kind = matchQueryToRecord(qSem.bb, rSem);
+    return kind === 'none' ? 'none' : kind;
   }
+
+  // Non-exact query against record — raw equality only unless semantics match
+  if (qSem.raw === rSem.raw) return 'exact';
   return 'none';
 }
 

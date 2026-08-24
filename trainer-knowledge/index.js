@@ -9,6 +9,15 @@ export {
 } from './status.js';
 
 export { parseTrainerPosition, positionMatchKind } from './positionParser.js';
+export {
+  parseTrainerStack,
+  parseStackBb,
+  matchQueryToRecord,
+  matchQueryToRecords,
+  greenActionForStack,
+  stackContainsBb,
+  UO_RAISE_THRESHOLD_BB
+} from './stackParser.js';
 export { mapTrainerSpot, trainerCanonicalId } from './spotMapper.js';
 export { trainerProvenance, pokerBrainProvenance, formatProvenanceDebug } from './provenance.js';
 export {

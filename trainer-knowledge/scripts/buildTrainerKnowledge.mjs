@@ -12,6 +12,7 @@ import { actionGradingStatus, TRAINER_STATUS } from '../status.js';
 import { parseTrainerPosition } from '../positionParser.js';
 import { mapTrainerSpot } from '../spotMapper.js';
 import { trainerProvenance } from '../provenance.js';
+import { parseTrainerStack } from '../stackParser.js';
 import {
   detectTrainerBrainConflicts,
   loadPokerBrainPackFromStrategyFile
@@ -153,7 +154,10 @@ function buildBatch2Charts(manifestRows, batch2Parsed) {
       opponentPosition: opponentPosition.raw
         ? opponentPosition
         : { type: 'UNKNOWN', values: [], raw: row.opponent || null },
-      stack: { type: 'VALUE', raw: row.stack || null },
+      stack: (() => {
+        const semantics = parseTrainerStack(row.stack || '');
+        return { type: semantics.type, raw: row.stack || null, semantics };
+      })(),
       betSize: { raw: row.bet || null },
       openSize: { raw: row.open || null },
       image: {

@@ -26,7 +26,6 @@ from batch2ColorLegend import (
     GRID_Y0,
     HAND_ORDER,
     match_legend,
-    parse_stack_bb,
 )
 from parseBatch2Webp import aggregate_cell_strategies, parse_chart_image, sample_cell_pixels
 
@@ -37,6 +36,7 @@ PARSED = ROOT / "data/trainer/built/batch2-parsed-hands.json"
 MANIFEST = SOURCE_DIR / "RANGE_CHART_MANIFEST.csv"
 OUTPUT_JSON = ROOT / "trainer-knowledge/TRAINER_SEMANTIC_VALIDATION.json"
 OUTPUT_MD = ROOT / "trainer-knowledge/TRAINER_SEMANTIC_LEGEND.md"
+STACK_FIX_AUDIT = ROOT / "trainer-knowledge/TRAINER_STACK_FIX_AUDIT.json"
 
 SCENARIOS = [
     "callpush", "vs1r", "vssqueeze", "huante", "vs1r1c",
@@ -347,7 +347,7 @@ def audit_mixed_cells(parsed: dict, limit: int = 500) -> dict:
     }
 
 
-def matrix_orientation_check(chart_path: Path, stack_bb: Optional[float]) -> dict:
+def matrix_orientation_check(chart_path: Path, stack_raw: Optional[str]) -> dict:
     """Verify AA top-left, 22 bottom-right, AKs upper triangle, AKo lower."""
     im = Image.open(chart_path).convert("RGB")
     checks = {}
@@ -356,11 +356,11 @@ def matrix_orientation_check(chart_path: Path, stack_bb: Optional[float]) -> dic
         idx = HAND_ORDER.index(hand)
         r, c = idx // 13, idx % 13
         pixels = sample_cell_pixels(im, r, c)
-        cell = aggregate_cell_strategies(pixels, stack_bb)
+        cell = aggregate_cell_strategies(pixels, stack_raw)
         return cell.get("actionRaw")
 
     def is_purple(rgb: Tuple[int, int, int]) -> bool:
-        m = match_legend(rgb, stack_bb)
+        m = match_legend(rgb, stack_raw)
         return m and m.get("rawAction") == "AI"
 
     # Position checks
@@ -403,15 +403,15 @@ def visual_qa_sample(
         num = int(cid.split("_")[1])
         img_path = CHART_DIR / f"{num:04d}.webp"
         # Must match parseBatch2Webp.py exactly — band strings like "40BBplus" → None → nAI default
-        stack_bb = parse_stack_bb(row.get("stack"))
+        stack_raw = row.get("stack")
 
         if not img_path.exists():
             results.append({"chartId": cid, "error": "missing_image"})
             continue
 
-        live = parse_chart_image(img_path, stack_bb)
+        live = parse_chart_image(img_path, stack_raw)
         scheme = legend_scheme(img_path)
-        orientation = matrix_orientation_check(img_path, stack_bb)
+        orientation = matrix_orientation_check(img_path, stack_raw)
 
         hand_checks = []
         mismatches = 0
@@ -479,20 +479,57 @@ def render_markdown(report: dict) -> str:
     legend = report["legendTable"]
     qa = report["visualQA"]
     mixed = report["mixedAudit"]
+    stack_fix = report.get("stackFixAudit") or {}
+
+    verified_pct = round(100.0 * cov["gradingAllowedAfter"] / cov["totalCells"], 2)
 
     lines = [
-        "# Trainer Semantic Legend Validation — Stage 4.5",
+        "# Trainer Semantic Legend Validation — Stage 4.6",
         "",
         f"Generated: {report['generatedAt']}",
         "",
         "**SAFE TO MERGE: NO** — awaiting user approval.",
         "",
+        "## Stage 4.6 — Stack Band Fix",
+        "",
+        f"- **STACK PARSER FIXED:** YES",
+    ]
+    if stack_fix:
+        before = stack_fix.get("before", {})
+        after = stack_fix.get("after", {})
+        comp = stack_fix.get("comparison", {})
+        delta = stack_fix.get("delta", {})
+        lines += [
+            f"- **AFFECTED CHARTS:** {comp.get('affectedCharts', 0)}",
+            f"- **AFFECTED CELLS:** {comp.get('affectedCells', 0)} (all `nAI→RAISE`, no other action flips)",
+            "",
+            "### Before Stack Fix",
+            f"- nAI: {before.get('nAI', '?')}",
+            f"- RAISE: {before.get('RAISE', '?')}",
+            f"- VERIFIED/grading: {before.get('verified', '?')}",
+            "",
+            "### After Stack Fix",
+            f"- nAI: {after.get('nAI', '?')}",
+            f"- RAISE: {after.get('RAISE', '?')}",
+            f"- VERIFIED/grading: {after.get('verified', '?')}",
+            "",
+            "### Delta",
+            f"- nAI: {delta.get('nAI', 0):+d}",
+            f"- RAISE: {delta.get('RAISE', 0):+d}",
+            f"- VERIFIED/grading: {delta.get('verified', 0):+d}",
+            "",
+            "Ranges spanning the 18BB UO boundary (e.g. `16-22BB`) were **not** upgraded to RAISE.",
+            "",
+        ]
+
+    lines += [
         "## Final Report",
         "",
         f"- **PARSER STRUCTURE VERIFIED:** {report['parserStructureVerified']}",
         f"- **MATRIX ORIENTATION VERIFIED:** {report['matrixOrientationVerified']}",
         f"- **COLOR CLASSIFICATION VERIFIED:** {report['colorClassificationVerified']}",
-        f"- **GRADING-ALLOWED CELLS:** {cov['gradingAllowedAfter']} (unchanged — no guessing applied)",
+        f"- **GRADING-ALLOWED CELLS:** {cov['gradingAllowedAfter']}",
+        f"- **VERIFIED COVERAGE:** {verified_pct}%",
         f"- **NON-GRADABLE TRAINER CELLS:** {cov['totalCells'] - cov['gradingAllowedAfter']}",
         f"- **SOURCE TRACEABILITY:** manifest + SOURCE_NOTES + UO_RANGES_NORMALIZED + chart legend crops",
         f"- **TESTS:** see solver/tests/trainerBatch2Parsing.test.js",
@@ -511,8 +548,9 @@ def render_markdown(report: dict) -> str:
         f"| YELLOW | {cov['yellow']:,} |",
         f"| MIXED | {cov['mixed']:,} |",
         f"| OTHER UNKNOWN COLORS | {cov['otherUnknownColors']:,} |",
-        f"| GRADING-ALLOWED BEFORE | {cov['gradingAllowedBefore']:,} |",
-        f"| GRADING-ALLOWED AFTER | {cov['gradingAllowedAfter']:,} |",
+        f"| GRADING-ALLOWED BEFORE (stack fix) | {stack_fix.get('before', {}).get('grading', cov['gradingAllowedBefore'])} |",
+        f"| GRADING-ALLOWED AFTER (stack fix) | {cov['gradingAllowedAfter']:,} |",
+        f"| VERIFIED COVERAGE % | {verified_pct}% |",
         "",
         "### By Scenario",
         "",
@@ -623,7 +661,8 @@ def render_markdown(report: dict) -> str:
         "",
         "## Known Limitations",
         "",
-        "- Stack band strings (`40BBplus`, `16-22BB`, `30-40BB`) do not parse to numeric BB → green cells default to `nAI` rather than `RAISE`",
+        "- Stack band strings now parse as EXACT/RANGE/MINIMUM/CONTEXT — see `trainer-knowledge/stackParser.js`",
+        "- Ranges spanning 18BB boundary remain ambiguous for green nAI/RAISE resolution",
         "- Two legend schemes coexist: UO-style (AI/nAI/кол) vs margin-style (5%/10%/15%/20% запас)",
         "- Orange RGB cluster `(208,160,32)` maps to different trainer labels depending on scheme",
         "",
@@ -658,10 +697,16 @@ def main() -> None:
         if s.get("orientation", {}).get("orientationVerified")
     )
 
+    stack_fix = {}
+    if STACK_FIX_AUDIT.exists():
+        stack_fix = json.loads(STACK_FIX_AUDIT.read_text())
+
     report = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "stage": "4.5",
+        "stage": "4.6",
         "safeToMerge": False,
+        "stackParserFixed": True,
+        "stackFixAudit": stack_fix,
         "parserStructureVerified": "YES — 1,578/1,578 charts, 266,682/266,682 cells structurally parsed",
         "matrixOrientationVerified": f"YES — {orient_ok}/{qa_total} QA samples: AA@(0,0), 22@(12,12), AKs upper, AKo lower",
         "colorClassificationVerified": "PARTIAL — AI/RAISE/gray/cyan mapped; orange/yellow/margin bands need scheme context",
@@ -682,7 +727,13 @@ def main() -> None:
     OUTPUT_MD.write_text(render_markdown(report))
     print(f"Wrote {OUTPUT_JSON}")
     print(f"Wrote {OUTPUT_MD}")
-    print(f"GRADING-ALLOWED: {coverage['gradingAllowedAfter']} (unchanged)")
+    verified_pct = round(100.0 * coverage["gradingAllowedAfter"] / coverage["totalCells"], 2)
+    if stack_fix:
+        print(
+            f"STACK FIX: {stack_fix.get('comparison', {}).get('affectedCells', 0)} cells changed, "
+            f"grading {stack_fix.get('before', {}).get('grading')} -> {stack_fix.get('after', {}).get('grading')}"
+        )
+    print(f"GRADING-ALLOWED: {coverage['gradingAllowedAfter']} ({verified_pct:.2f}% verified)")
 
 
 if __name__ == "__main__":

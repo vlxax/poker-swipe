@@ -1,16 +1,40 @@
-# Trainer Semantic Legend Validation — Stage 4.5
+# Trainer Semantic Legend Validation — Stage 4.6
 
-Generated: 2026-08-24T17:45:23.953489+00:00
+Generated: 2026-08-24T18:42:33.567645+00:00
 
 **SAFE TO MERGE: NO** — awaiting user approval.
+
+## Stage 4.6 — Stack Band Fix
+
+- **STACK PARSER FIXED:** YES
+- **AFFECTED CHARTS:** 276
+- **AFFECTED CELLS:** 1634 (all `nAI→RAISE`, no other action flips)
+
+### Before Stack Fix
+- nAI: 4649
+- RAISE: 1924
+- VERIFIED/grading: 13207
+
+### After Stack Fix
+- nAI: 3015
+- RAISE: 3558
+- VERIFIED/grading: 14358
+
+### Delta
+- nAI: -1634
+- RAISE: +1634
+- VERIFIED/grading: +1151
+
+Ranges spanning the 18BB UO boundary (e.g. `16-22BB`) were **not** upgraded to RAISE.
 
 ## Final Report
 
 - **PARSER STRUCTURE VERIFIED:** YES — 1,578/1,578 charts, 266,682/266,682 cells structurally parsed
 - **MATRIX ORIENTATION VERIFIED:** YES — 55/55 QA samples: AA@(0,0), 22@(12,12), AKs upper, AKo lower
 - **COLOR CLASSIFICATION VERIFIED:** PARTIAL — AI/RAISE/gray/cyan mapped; orange/yellow/margin bands need scheme context
-- **GRADING-ALLOWED CELLS:** 13207 (unchanged — no guessing applied)
-- **NON-GRADABLE TRAINER CELLS:** 253475
+- **GRADING-ALLOWED CELLS:** 14358
+- **VERIFIED COVERAGE:** 5.38%
+- **NON-GRADABLE TRAINER CELLS:** 252324
 - **SOURCE TRACEABILITY:** manifest + SOURCE_NOTES + UO_RANGES_NORMALIZED + chart legend crops
 - **TESTS:** see solver/tests/trainerBatch2Parsing.test.js
 
@@ -19,30 +43,31 @@ Generated: 2026-08-24T17:45:23.953489+00:00
 | Metric | Count |
 |--------|------:|
 | TOTAL BATCH 2 CELLS | 266,682 |
-| VERIFIED ACTION CELLS | 13,207 |
+| VERIFIED ACTION CELLS | 14,358 |
 | PARTIAL CELLS | 0 |
-| NEEDS CLARIFICATION CELLS | 253,475 |
+| NEEDS CLARIFICATION CELLS | 252,324 |
 | UNSELECTED | 203,978 |
-| nAI | 4,649 |
+| nAI | 3,015 |
 | ORANGE | 29,232 |
 | YELLOW | 1,508 |
 | MIXED | 30,677 |
 | OTHER UNKNOWN COLORS | 2,072 |
-| GRADING-ALLOWED BEFORE | 13,207 |
-| GRADING-ALLOWED AFTER | 13,207 |
+| GRADING-ALLOWED BEFORE (stack fix) | 13207 |
+| GRADING-ALLOWED AFTER (stack fix) | 14,358 |
+| VERIFIED COVERAGE % | 5.38% |
 
 ### By Scenario
 
 | Mode | Total | Grading | UNSELECTED | AI | RAISE | nAI | ORANGE | YELLOW |
 |------|------:|--------:|-----------:|---:|------:|----:|-------:|-------:|
-| callpush | 103,935 | 1,714 | 90,893 | 2,759 | 240 | 1,744 | 6,893 | 1,405 |
-| vs1r | 54,587 | 1,519 | 41,538 | 2,967 | 0 | 735 | 6,650 | 0 |
+| callpush | 103,935 | 1,753 | 90,893 | 2,759 | 323 | 1,661 | 6,893 | 1,405 |
+| vs1r | 54,587 | 2,021 | 41,538 | 2,967 | 727 | 8 | 6,650 | 0 |
 | vssqueeze | 34,138 | 319 | 31,284 | 827 | 61 | 0 | 1,111 | 0 |
-| huante | 29,068 | 7,713 | 8,375 | 7,970 | 1,505 | 915 | 9,724 | 6 |
-| vs1r1c | 11,492 | 564 | 7,902 | 967 | 0 | 149 | 1,478 | 0 |
-| vs3bet | 9,464 | 77 | 8,447 | 183 | 0 | 167 | 411 | 0 |
+| huante | 29,068 | 7,718 | 8,375 | 7,970 | 1,513 | 907 | 9,724 | 6 |
+| vs1r1c | 11,492 | 667 | 7,902 | 967 | 149 | 0 | 1,478 | 0 |
+| vs3bet | 9,464 | 151 | 8,447 | 183 | 167 | 0 | 411 | 0 |
 | vs2r | 8,957 | 155 | 8,546 | 405 | 0 | 0 | 6 | 0 |
-| sbvsbb | 5,746 | 1,008 | 1,221 | 1,122 | 118 | 673 | 1,490 | 97 |
+| sbvsbb | 5,746 | 1,436 | 1,221 | 1,122 | 618 | 173 | 1,490 | 97 |
 | vs1rshort | 5,577 | 136 | 3,183 | 280 | 0 | 112 | 1,119 | 0 |
 | vs4bet | 1,859 | 2 | 1,658 | 3 | 0 | 0 | 198 | 0 |
 | vslimp | 1,859 | 0 | 931 | 0 | 0 | 154 | 152 | 0 |
@@ -184,8 +209,8 @@ These are NOT merged. RGB clusters reported separately in legend table.
 ## Mixed Cells Audit
 
 - Total mixed cells: 30,677
-- All components verified (AI/RAISE only): 62
-- Has unverified component: 30,615
+- All components verified (AI/RAISE only): 90
+- Has unverified component: 30,587
 - Visual-approx frequencies: 30,677
 - Grading-enabled mixed: 0 (policy: 0)
 
@@ -230,13 +255,13 @@ These are NOT merged. RGB clusters reported separately in legend table.
 
 ### vs1r
 - **B2_0360** scheme=UO_STYLE mismatches=0
-  - ✓ AA: stored=nAI live=nAI
+  - ✓ AA: stored=RAISE live=RAISE
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
-  - ✓ AKs: stored=nAI live=nAI
-  - ✓ AKo: stored=nAI live=nAI
+  - ✓ AKs: stored=RAISE live=RAISE
+  - ✓ AKo: stored=RAISE live=RAISE
   - ✓ 76s: stored=UNSELECTED live=UNSELECTED
   - ✓ 72o: stored=UNSELECTED live=UNSELECTED
-  - ✓ A7s: stored=nAI live=nAI
+  - ✓ A7s: stored=RAISE live=RAISE
 - **B2_0424** scheme=UO_STYLE mismatches=0
   - ✓ AA: stored=AI live=AI
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
@@ -256,7 +281,7 @@ These are NOT merged. RGB clusters reported separately in legend table.
 - **B2_0552** scheme=MARGIN_STYLE mismatches=0
   - ✓ AA: stored=UNSELECTED live=UNSELECTED
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
-  - ✓ AKs: stored=nAI live=nAI
+  - ✓ AKs: stored=RAISE live=RAISE
   - ✓ AKo: stored=UNSELECTED live=UNSELECTED
   - ✓ 76s: stored=UNSELECTED live=UNSELECTED
   - ✓ 72o: stored=UNSELECTED live=UNSELECTED
@@ -392,14 +417,14 @@ These are NOT merged. RGB clusters reported separately in legend table.
 - **B2_0304** scheme=UO_STYLE mismatches=0
   - ✓ AA: stored=UNSELECTED live=UNSELECTED
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
-  - ✓ AKs: stored=nAI live=nAI
+  - ✓ AKs: stored=RAISE live=RAISE
   - ✓ AKo: stored=UNSELECTED live=UNSELECTED
   - ✓ 76s: stored=UNSELECTED live=UNSELECTED
   - ✓ 72o: stored=UNSELECTED live=UNSELECTED
 - **B2_0315** scheme=UO_STYLE mismatches=0
   - ✓ AA: stored=UNSELECTED live=UNSELECTED
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
-  - ✓ AKs: stored=nAI live=nAI
+  - ✓ AKs: stored=RAISE live=RAISE
   - ✓ AKo: stored=UNSELECTED live=UNSELECTED
   - ✓ 76s: stored=UNSELECTED live=UNSELECTED
   - ✓ 72o: stored=UNSELECTED live=UNSELECTED
@@ -420,11 +445,11 @@ These are NOT merged. RGB clusters reported separately in legend table.
 - **B2_0348** scheme=UO_STYLE mismatches=0
   - ✓ AA: stored=LOW_PLAYABILITY live=LOW_PLAYABILITY
   - ✓ 22: stored=UNSELECTED live=UNSELECTED
-  - ✓ AKs: stored=nAI live=nAI
+  - ✓ AKs: stored=RAISE live=RAISE
   - ✓ AKo: stored=UNSELECTED live=UNSELECTED
   - ✓ 76s: stored=UNSELECTED live=UNSELECTED
   - ✓ 72o: stored=UNSELECTED live=UNSELECTED
-  - ✓ AQs: stored=nAI live=nAI
+  - ✓ AQs: stored=RAISE live=RAISE
 
 ### vs2r
 - **B2_0694** scheme=UO_STYLE mismatches=0
@@ -643,7 +668,8 @@ QA summary: 55 charts checked, 0 hand mismatches on re-parse, 55/55 orientation 
 
 ## Known Limitations
 
-- Stack band strings (`40BBplus`, `16-22BB`, `30-40BB`) do not parse to numeric BB → green cells default to `nAI` rather than `RAISE`
+- Stack band strings now parse as EXACT/RANGE/MINIMUM/CONTEXT — see `trainer-knowledge/stackParser.js`
+- Ranges spanning 18BB boundary remain ambiguous for green nAI/RAISE resolution
 - Two legend schemes coexist: UO-style (AI/nAI/кол) vs margin-style (5%/10%/15%/20% запас)
 - Orange RGB cluster `(208,160,32)` maps to different trainer labels depending on scheme
 

@@ -83,26 +83,15 @@ def color_dist(a: Tuple[int, int, int], b: Tuple[int, int, int]) -> float:
     return math.sqrt(sum((int(a[i]) - int(b[i])) ** 2 for i in range(3)))
 
 
-def parse_stack_bb(stack_raw: Optional[str]) -> Optional[float]:
-    if not stack_raw:
-        return None
-    s = str(stack_raw).upper().replace("BB", "").strip()
-    try:
-        return float(s)
-    except ValueError:
-        return None
+from stackParser import green_action_for_stack, parse_stack_bb, parse_trainer_stack
 
 
-def resolve_green_action(stack_bb: Optional[float]) -> Tuple[str, bool, str]:
-    """SOURCE_NOTES: green = nAI (<=18bb) or RAISE (>18bb) in UO family charts."""
-    if stack_bb is not None and stack_bb <= 18:
-        return "nAI", False, "NEEDS_CLARIFICATION"
-    if stack_bb is not None and stack_bb > 18:
-        return "RAISE", True, "EXACT_TRAINER_DATA"
-    return "nAI", False, "NEEDS_CLARIFICATION"
-
-
-def match_legend(rgb: Tuple[int, int, int], stack_bb: Optional[float] = None) -> Optional[dict]:
+def match_legend(
+    rgb: Tuple[int, int, int],
+    stack_raw: Optional[str] = None,
+    stack_bb: Optional[float] = None,
+) -> Optional[dict]:
+    _ = stack_bb  # legacy arg
     r, g, b = rgb
     best = None
     best_d = 1e9
@@ -117,7 +106,7 @@ def match_legend(rgb: Tuple[int, int, int], stack_bb: Optional[float] = None) ->
     if best:
         entry, d = best
         if entry.get("stackResolve"):
-            raw, gradable, status = resolve_green_action(stack_bb)
+            raw, gradable, status, _note = green_action_for_stack(stack_raw)
             return {
                 "legendId": entry["id"],
                 "rawAction": raw,
