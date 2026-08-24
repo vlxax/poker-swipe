@@ -1,0 +1,23 @@
+{
+  "dataset": "PokerSwipe trainer ranges — Batch 2 compact source",
+  "original_archive": "iLoveZIP_jpg.zip",
+  "original_archive_sha256": "854c3d262eb378aeea7aabbe0b3eb282ffd212347b1fa139032369df93454a99",
+  "original_chart_count": 1638,
+  "excluded_duplicate_uo_count": 60,
+  "included_chart_count": 1578,
+  "image_format": "WEBP quality 30, 434x600 retained",
+  "source_modes": {
+    "vssqueeze": 202,
+    "vs1r1c": 68,
+    "vs1rshort": 33,
+    "vs3bet": 56,
+    "vs1r": 323,
+    "vs4bet": 11,
+    "vs2r": 53,
+    "huante": 172,
+    "vslimp": 11,
+    "sbvsbb": 34,
+    "callpush": 615
+  },
+  "note": "UO omitted: Batch 1 already normalizes UO. UO(2).zip is byte-identical to prior UO(1).zip."
+}
