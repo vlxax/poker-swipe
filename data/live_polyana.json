@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-25T00:03:38+03:00",
+  "updated_at": "2026-08-25T01:02:23+03:00",
   "club_count": 65,
-  "event_count": 33,
-  "source_card_count": 33,
+  "event_count": 34,
+  "source_card_count": 34,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -971,8 +971,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-25",
+          "time": "20:00",
+          "club": "Showdown",
+          "tournament": "Deposit Showdown",
+          "fee_rub": 1000,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/12247",
+          "address": "Новый Арбат, 19",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Deposit Showdown 20:00 1 000 ₽ Showdown Новый Арбат, 19"
+        }
+      ]
     },
     {
       "name": "SNAP CALL CLUB",
@@ -1908,6 +1925,22 @@
       "reentry_cost_rub": null,
       "duration_minutes": null,
       "source_card_text": "Freezeout HUNTING 20:00 1 500 ₽ Poker Room GTO Даев пер., д. 2"
+    },
+    {
+      "date": "2026-08-25",
+      "time": "20:00",
+      "club": "Showdown",
+      "tournament": "Deposit Showdown",
+      "fee_rub": 1000,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/12247",
+      "address": "Новый Арбат, 19",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "Deposit Showdown 20:00 1 000 ₽ Showdown Новый Арбат, 19"
     }
   ]
 }

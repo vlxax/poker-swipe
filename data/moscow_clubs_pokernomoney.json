@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-25T00:03:38+03:00",
+  "retrieved_at": "2026-08-25T01:02:23+03:00",
   "city": "Москва",
   "count": 65,
   "clubs": [
@@ -969,8 +969,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-25",
+          "time": "20:00",
+          "club": "Showdown",
+          "tournament": "Deposit Showdown",
+          "fee_rub": 1000,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/12247",
+          "address": "Новый Арбат, 19",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Deposit Showdown 20:00 1 000 ₽ Showdown Новый Арбат, 19"
+        }
+      ]
     },
     {
       "name": "SNAP CALL CLUB",
