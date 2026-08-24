@@ -115,3 +115,33 @@ describe('batch 2 hand-level parsing', { concurrency: 1 }, () => {
     assert.ok(ms < 5000, `lookup too slow: ${ms}ms`);
   });
 });
+
+describe('batch 2 semantic legend validation (stage 4.5)', { concurrency: 1 }, () => {
+  test('semantic validation report exists with coverage breakdown', () => {
+    const reportPath = join(ROOT, 'trainer-knowledge/TRAINER_SEMANTIC_VALIDATION.json');
+    const mdPath = join(ROOT, 'trainer-knowledge/TRAINER_SEMANTIC_LEGEND.md');
+    assert.ok(existsSync(reportPath), 'run batch2SemanticValidation.py first');
+    assert.ok(existsSync(mdPath));
+    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+    assert.equal(report.safeToMerge, false);
+    assert.equal(report.coverage.totalCells, 266682);
+    assert.equal(report.coverage.gradingAllowedAfter, 13207);
+    assert.equal(report.coverage.gradingAllowedBefore, report.coverage.gradingAllowedAfter);
+    assert.ok(report.legendTable.length >= 8);
+    assert.equal(report.qaSummary.chartsChecked, 55);
+    assert.equal(report.qaSummary.handMismatchesOnReparse, 0);
+    assert.equal(report.qaSummary.orientationPassed, 55);
+  });
+
+  test('nAI and UNSELECTED remain non-gradable per validation policy', () => {
+    const reportPath = join(ROOT, 'trainer-knowledge/TRAINER_SEMANTIC_VALIDATION.json');
+    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
+    const nai = report.legendTable.find((e) => e.rawLabel?.includes('nAI'));
+    const unsel = report.legendTable.find((e) => e.rawLabel?.includes('UNSELECTED'));
+    assert.ok(nai);
+    assert.equal(nai.gradingAllowed, false);
+    assert.equal(nai.status, 'NEEDS_CLARIFICATION');
+    assert.ok(unsel);
+    assert.equal(unsel.gradingAllowed, false);
+  });
+});

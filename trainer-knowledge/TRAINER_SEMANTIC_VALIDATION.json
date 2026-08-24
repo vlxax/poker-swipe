@@ -1,0 +1,5760 @@
+{
+  "generatedAt": "2026-08-24T17:45:23.953489+00:00",
+  "stage": "4.5",
+  "safeToMerge": false,
+  "parserStructureVerified": "YES — 1,578/1,578 charts, 266,682/266,682 cells structurally parsed",
+  "matrixOrientationVerified": "YES — 55/55 QA samples: AA@(0,0), 22@(12,12), AKs upper, AKo lower",
+  "colorClassificationVerified": "PARTIAL — AI/RAISE/gray/cyan mapped; orange/yellow/margin bands need scheme context",
+  "sourceTextSearch": [
+    {
+      "file": "data/trainer/source/SOURCE_NOTES.md",
+      "pattern": "nAI"
+    },
+    {
+      "file": "data/trainer/source/SOURCE_NOTES.md",
+      "pattern": "UNSELECTED"
+    },
+    {
+      "file": "data/trainer/source/SOURCE_NOTES.md",
+      "pattern": "LOW_PLAYABILITY"
+    },
+    {
+      "file": "data/trainer/source/SOURCE_NOTES.md",
+      "pattern": "плюсовость"
+    },
+    {
+      "file": "data/trainer/source/SOURCE_NOTES.md",
+      "pattern": "AI"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_FLAT.csv",
+      "pattern": "nAI"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_FLAT.csv",
+      "pattern": "UNSELECTED"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_FLAT.csv",
+      "pattern": "LOW_PLAYABILITY"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_FLAT.csv",
+      "pattern": "AI"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "nAI"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "UNSELECTED"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "LOW_PLAYABILITY"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "Рейз"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "плюсовость"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "Ai"
+    },
+    {
+      "file": "data/trainer/source/UO_RANGES_NORMALIZED.json",
+      "pattern": "AI"
+    }
+  ],
+  "visualLegendEvidence": {
+    "UO_STYLE": {
+      "description": "Purple/Green/Cyan/Orange legend rows (vssqueeze, vs1r, huante, etc.)",
+      "entries": [
+        {
+          "color": "purple",
+          "rgb_family": "(48-72, 0-16, 96-152)",
+          "raw_label": "Ai",
+          "source": "chart legend crop B2_0500"
+        },
+        {
+          "color": "green",
+          "rgb_family": "(64-96, 144-240, 0-32)",
+          "raw_label": "nAI",
+          "source": "chart legend crop B2_0500"
+        },
+        {
+          "color": "cyan",
+          "rgb_family": "(48-64, 208-224, 224-240)",
+          "raw_label": "кол с низкой плюсовостью…",
+          "source": "chart legend crop B2_0500"
+        },
+        {
+          "color": "orange",
+          "rgb_family": "(208, 160, 32-48)",
+          "raw_label": "кол",
+          "source": "chart legend crop B2_0500"
+        }
+      ]
+    },
+    "MARGIN_STYLE": {
+      "description": "Purple/Green/Yellow/Orange margin bands (callpush)",
+      "entries": [
+        {
+          "color": "purple",
+          "rgb_family": "(48-72, 0-16, 96-152)",
+          "raw_label": "5% запас и выше",
+          "source": "chart legend crop B2_1200"
+        },
+        {
+          "color": "green",
+          "rgb_family": "(96, 240, 0-16)",
+          "raw_label": "10% запас и выше",
+          "source": "chart legend crop B2_1200"
+        },
+        {
+          "color": "yellow",
+          "rgb_family": "(240, 240, 32-48)",
+          "raw_label": "15% запас и выше",
+          "source": "chart legend crop B2_1200"
+        },
+        {
+          "color": "orange",
+          "rgb_family": "(208, 160, 32-48)",
+          "raw_label": "20% запас и выше",
+          "source": "chart legend crop B2_1200"
+        }
+      ]
+    }
+  },
+  "legendTable": [
+    {
+      "colorVisualSignature": "Purple RGB ~(48-72, 0-16, 96-152)",
+      "rawLabel": "Ai",
+      "proposedNormalizedAction": "AI",
+      "sourceEvidence": "SOURCE_NOTES.md §5; UO_RANGES_NORMALIZED action_semantics.AI; chart legend 'Ai' row",
+      "supportingCharts": "All modes with purple legend (~1578)",
+      "confidence": "HIGH",
+      "status": "VERIFIED",
+      "gradingAllowed": true
+    },
+    {
+      "colorVisualSignature": "Green RGB ~(64-96, 144-240, 0-32)",
+      "rawLabel": "nAI (UO-style) / 10% запас и выше (margin-style)",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "SOURCE_NOTES §6 labels green as nAI in <=18BB UO charts; chart legend shows 'nAI' or '10% запас и выше' depending on scheme. No trainer expansion of nAI semantics.",
+      "supportingCharts": "UO-style ~1200; margin-style ~456",
+      "confidence": "MEDIUM",
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false
+    },
+    {
+      "colorVisualSignature": "Green RGB (deeper stacks UO) → resolved as RAISE when stack>18BB",
+      "rawLabel": "Рейз",
+      "proposedNormalizedAction": "RAISE",
+      "sourceEvidence": "SOURCE_NOTES §6; UO_RANGES_NORMALIZED 'Рейз' in 18-25/25-40/40+ bands only",
+      "supportingCharts": "UO batch 18+ bands (18 charts); Batch2 when stack>18BB and green cell",
+      "confidence": "HIGH",
+      "status": "VERIFIED",
+      "gradingAllowed": true,
+      "note": "Only when stack context confirms UO-style RAISE band"
+    },
+    {
+      "colorVisualSignature": "Cyan RGB ~(48-64, 208-224, 224-240)",
+      "rawLabel": "кол с низкой плюсовостью… (truncated)",
+      "proposedNormalizedAction": "LOW_PLAYABILITY",
+      "sourceEvidence": "SOURCE_NOTES §7; UO_RANGES_NORMALIZED; chart legend crop shows truncated Russian text",
+      "supportingCharts": "~5836 cells + UO charts with cyan",
+      "confidence": "MEDIUM",
+      "status": "PARTIAL",
+      "gradingAllowed": false,
+      "note": "Visual category preserved; full trainer wording truncated; action semantics not fully confirmed"
+    },
+    {
+      "colorVisualSignature": "Gray RGB ~(38-72, 37-72, 44-96) low saturation",
+      "rawLabel": "UNSELECTED (no legend row — inferred from empty/unselected cells)",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "SOURCE_NOTES §8; UO_RANGES_NORMALIZED action_semantics.UNSELECTED — NOT fold",
+      "supportingCharts": 203978,
+      "confidence": "HIGH",
+      "status": "PARTIAL",
+      "gradingAllowed": false,
+      "note": "Category label preserved; fold/call/raise semantics NOT proven"
+    },
+    {
+      "colorVisualSignature": "Orange RGB ~(208, 160, 32-48) — UO-style charts",
+      "rawLabel": "кол",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "Chart legend crop B2_0500 (vssqueeze family): orange swatch labeled 'кол'",
+      "supportingCharts": "~1200 UO-style charts",
+      "confidence": "MEDIUM",
+      "status": "PARTIAL",
+      "gradingAllowed": false,
+      "note": "Trainer label 'кол' preserved; normalized CALL not enabled without user confirmation"
+    },
+    {
+      "colorVisualSignature": "Orange RGB ~(208, 160, 32-48) — margin-style (callpush)",
+      "rawLabel": "20% запас и выше",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "Chart legend crop B2_1200 (callpush): orange swatch labeled '20% запас и выше'",
+      "supportingCharts": "~456 callpush charts",
+      "confidence": "HIGH",
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "note": "Trainer margin band — not a standard poker action; do not merge with UO-style orange 'кол'"
+    },
+    {
+      "colorVisualSignature": "Yellow RGB ~(240, 240, 32-48) — margin-style only",
+      "rawLabel": "15% запас и выше",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "Chart legend crop B2_1200 (callpush): yellow swatch labeled '15% запас и выше'",
+      "supportingCharts": "~456 callpush + 10 vslimp",
+      "confidence": "HIGH",
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "note": "Separate from orange; trainer margin band semantics"
+    },
+    {
+      "colorVisualSignature": "Purple margin-style (callpush)",
+      "rawLabel": "5% запас и выше",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "Chart legend crop B2_1200",
+      "supportingCharts": "~456 callpush",
+      "confidence": "HIGH",
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false
+    },
+    {
+      "colorVisualSignature": "Green margin-style (callpush)",
+      "rawLabel": "10% запас и выше",
+      "proposedNormalizedAction": null,
+      "sourceEvidence": "Chart legend crop B2_1200",
+      "supportingCharts": "~456 callpush",
+      "confidence": "HIGH",
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false
+    }
+  ],
+  "coverage": {
+    "totalCells": 266682,
+    "verifiedActionCells": 13207,
+    "partialCells": 0,
+    "needsClarificationCells": 253475,
+    "unselected": 203978,
+    "nAI": 4649,
+    "orange": 29232,
+    "yellow": 1508,
+    "mixed": 30677,
+    "otherUnknownColors": 2072,
+    "ai": 17483,
+    "raise": 1924,
+    "lowPlayability": 5836,
+    "gradingAllowedBefore": 13207,
+    "gradingAllowedAfter": 13207,
+    "byScenario": {
+      "callpush": {
+        "total": 103935,
+        "grading": 1714,
+        "unselected": 90893,
+        "ai": 2759,
+        "raise": 240,
+        "nAI": 1744,
+        "orange": 6893,
+        "yellow": 1405,
+        "mixed": 0
+      },
+      "vs1r": {
+        "total": 54587,
+        "grading": 1519,
+        "unselected": 41538,
+        "ai": 2967,
+        "raise": 0,
+        "nAI": 735,
+        "orange": 6650,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "vssqueeze": {
+        "total": 34138,
+        "grading": 319,
+        "unselected": 31284,
+        "ai": 827,
+        "raise": 61,
+        "nAI": 0,
+        "orange": 1111,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "huante": {
+        "total": 29068,
+        "grading": 7713,
+        "unselected": 8375,
+        "ai": 7970,
+        "raise": 1505,
+        "nAI": 915,
+        "orange": 9724,
+        "yellow": 6,
+        "mixed": 0
+      },
+      "vs1r1c": {
+        "total": 11492,
+        "grading": 564,
+        "unselected": 7902,
+        "ai": 967,
+        "raise": 0,
+        "nAI": 149,
+        "orange": 1478,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "vs3bet": {
+        "total": 9464,
+        "grading": 77,
+        "unselected": 8447,
+        "ai": 183,
+        "raise": 0,
+        "nAI": 167,
+        "orange": 411,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "vs2r": {
+        "total": 8957,
+        "grading": 155,
+        "unselected": 8546,
+        "ai": 405,
+        "raise": 0,
+        "nAI": 0,
+        "orange": 6,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "sbvsbb": {
+        "total": 5746,
+        "grading": 1008,
+        "unselected": 1221,
+        "ai": 1122,
+        "raise": 118,
+        "nAI": 673,
+        "orange": 1490,
+        "yellow": 97,
+        "mixed": 0
+      },
+      "vs1rshort": {
+        "total": 5577,
+        "grading": 136,
+        "unselected": 3183,
+        "ai": 280,
+        "raise": 0,
+        "nAI": 112,
+        "orange": 1119,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "vs4bet": {
+        "total": 1859,
+        "grading": 2,
+        "unselected": 1658,
+        "ai": 3,
+        "raise": 0,
+        "nAI": 0,
+        "orange": 198,
+        "yellow": 0,
+        "mixed": 0
+      },
+      "vslimp": {
+        "total": 1859,
+        "grading": 0,
+        "unselected": 931,
+        "ai": 0,
+        "raise": 0,
+        "nAI": 154,
+        "orange": 152,
+        "yellow": 0,
+        "mixed": 0
+      }
+    },
+    "actionDistribution": {
+      "UNSELECTED": 203978,
+      "ORANGE_208_160_32": 29232,
+      "AI": 17483,
+      "LOW_PLAYABILITY": 5836,
+      "nAI": 4649,
+      "RAISE": 1924,
+      "YELLOW_240_240_48": 1508,
+      "COLOR_128_32_48": 475,
+      "COLOR_128_112_64": 352,
+      "COLOR_144_112_192": 201,
+      "COLOR_224_240_112": 147,
+      "COLOR_240_240_112": 128,
+      "COLOR_144_112_64": 102,
+      "COLOR_224_176_80": 91,
+      "COLOR_224_176_96": 52,
+      "COLOR_112_80_144": 48,
+      "COLOR_192_224_96": 48,
+      "COLOR_240_240_128": 45,
+      "COLOR_128_112_80": 44,
+      "COLOR_192_208_96": 40
+    }
+  },
+  "mixedAudit": {
+    "totalMixedCells": 30677,
+    "allComponentsVerified": 62,
+    "hasUnverifiedComponent": 30615,
+    "visualApproxFrequencies": 30677,
+    "gradingEnabledMixed": 0,
+    "policy": "Mixed cells grading-enabled only if every component VERIFIED; proportions are VISUAL_APPROX",
+    "samples": [
+      {
+        "chartId": "B2_0001",
+        "hand": "AKs",
+        "strategies": [
+          {
+            "rawAction": "AI",
+            "frequency": 86.4,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          },
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 13.6,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "AQs",
+        "strategies": [
+          {
+            "rawAction": "AI",
+            "frequency": 70.3,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          },
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 29.7,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "KQs",
+        "strategies": [
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 60.9,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          },
+          {
+            "rawAction": "AI",
+            "frequency": 39.1,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "JTs",
+        "strategies": [
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 62.5,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          },
+          {
+            "rawAction": "AI",
+            "frequency": 37.5,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "J9s",
+        "strategies": [
+          {
+            "rawAction": "AI",
+            "frequency": 75.0,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          },
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 25.0,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "J8s",
+        "strategies": [
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 76.2,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          },
+          {
+            "rawAction": "AI",
+            "frequency": 23.8,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "T9s",
+        "strategies": [
+          {
+            "rawAction": "AI",
+            "frequency": 82.8,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          },
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 17.2,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "T8s",
+        "strategies": [
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 57.8,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          },
+          {
+            "rawAction": "AI",
+            "frequency": 42.2,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "T7s",
+        "strategies": [
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 81.2,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          },
+          {
+            "rawAction": "AI",
+            "frequency": 18.8,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "98s",
+        "strategies": [
+          {
+            "rawAction": "AI",
+            "frequency": 75.4,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": true,
+            "dataStatus": "EXACT_TRAINER_DATA"
+          },
+          {
+            "rawAction": "UNSELECTED",
+            "frequency": 24.6,
+            "frequencyType": "VISUAL_APPROX",
+            "gradingAllowed": false,
+            "dataStatus": "NEEDS_CLARIFICATION"
+          }
+        ],
+        "gradingAllowed": false,
+        "allComponentsVerified": false
+      }
+    ]
+  },
+  "visualQA": {
+    "callpush": [
+      {
+        "chartId": "B2_0964",
+        "sourceMode": "callpush",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0964.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_1087",
+        "sourceMode": "callpush",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/1087.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_1210",
+        "sourceMode": "callpush",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/1210.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_1333",
+        "sourceMode": "callpush",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/1333.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_1456",
+        "sourceMode": "callpush",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/1456.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs1r": [
+      {
+        "chartId": "B2_0360",
+        "sourceMode": "vs1r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0360.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A7s",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "nAI",
+                "frequency": 69.2,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 30.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0424",
+        "sourceMode": "vs1r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0424.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 74.6,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 25.4,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0488",
+        "sourceMode": "vs1r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0488.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 72.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 27.2,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0552",
+        "sourceMode": "vs1r",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0552.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0616",
+        "sourceMode": "vs1r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0616.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 70.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 29.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vssqueeze": [
+      {
+        "chartId": "B2_0001",
+        "sourceMode": "vssqueeze",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0001.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0041",
+        "sourceMode": "vssqueeze",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0041.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0081",
+        "sourceMode": "vssqueeze",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0081.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0121",
+        "sourceMode": "vssqueeze",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0121.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0161",
+        "sourceMode": "vssqueeze",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0161.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "huante": [
+      {
+        "chartId": "B2_0747",
+        "sourceMode": "huante",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0747.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "RAISE",
+            "liveReparsed": "RAISE",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "RAISE",
+                "frequency": 70.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 14.6,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 14.6,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0781",
+        "sourceMode": "huante",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0781.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "nAI",
+                "frequency": 70.4,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 14.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 14.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0815",
+        "sourceMode": "huante",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0815.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0849",
+        "sourceMode": "huante",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0849.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A8s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 54.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 45.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0883",
+        "sourceMode": "huante",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0883.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 73.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 26.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs1r1c": [
+      {
+        "chartId": "B2_0203",
+        "sourceMode": "vs1r1c",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0203.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 50.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 50.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0216",
+        "sourceMode": "vs1r1c",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0216.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0229",
+        "sourceMode": "vs1r1c",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0229.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 87.5,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 12.5,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0242",
+        "sourceMode": "vs1r1c",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0242.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 58.2,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 41.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0255",
+        "sourceMode": "vs1r1c",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0255.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A7s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 83.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 16.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs3bet": [
+      {
+        "chartId": "B2_0304",
+        "sourceMode": "vs3bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0304.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0315",
+        "sourceMode": "vs3bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0315.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0326",
+        "sourceMode": "vs3bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0326.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0337",
+        "sourceMode": "vs3bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0337.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0348",
+        "sourceMode": "vs3bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0348.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "nAI",
+                "frequency": 68.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 31.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs2r": [
+      {
+        "chartId": "B2_0694",
+        "sourceMode": "vs2r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0694.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0704",
+        "sourceMode": "vs2r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0704.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0714",
+        "sourceMode": "vs2r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0714.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0724",
+        "sourceMode": "vs2r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0724.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0734",
+        "sourceMode": "vs2r",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0734.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "sbvsbb": [
+      {
+        "chartId": "B2_0930",
+        "sourceMode": "sbvsbb",
+        "legendScheme": "UNKNOWN",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0930.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0936",
+        "sourceMode": "sbvsbb",
+        "legendScheme": "UNKNOWN",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0936.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 82.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 17.2,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0942",
+        "sourceMode": "sbvsbb",
+        "legendScheme": "UNKNOWN",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0942.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "COLOR_128_112_64",
+            "liveReparsed": "COLOR_128_112_64",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "COLOR_240_240_128",
+            "liveReparsed": "COLOR_240_240_128",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "COLOR_128_112_64",
+            "liveReparsed": "COLOR_128_112_64",
+            "storedMixed": true,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0948",
+        "sourceMode": "sbvsbb",
+        "legendScheme": "UNKNOWN",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0948.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KK",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 77.8,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 22.2,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0954",
+        "sourceMode": "sbvsbb",
+        "legendScheme": "UNKNOWN",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0954.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A8s",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 65.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "AI",
+                "frequency": 34.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs1rshort": [
+      {
+        "chartId": "B2_0271",
+        "sourceMode": "vs1rshort",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0271.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 82.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "COLOR_144_112_176",
+                "frequency": 18.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0277",
+        "sourceMode": "vs1rshort",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0277.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 83.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "COLOR_144_112_192",
+                "frequency": 16.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0283",
+        "sourceMode": "vs1rshort",
+        "legendScheme": "MARGIN_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0283.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 74.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 25.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0289",
+        "sourceMode": "vs1rshort",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0289.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 82.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "COLOR_144_112_192",
+                "frequency": 18.0,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0295",
+        "sourceMode": "vs1rshort",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0295.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "AI",
+            "liveReparsed": "AI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "AI",
+                "frequency": 74.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": true,
+                "dataStatus": "EXACT_TRAINER_DATA"
+              },
+              {
+                "rawAction": "COLOR_144_112_192",
+                "frequency": 25.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vs4bet": [
+      {
+        "chartId": "B2_0683",
+        "sourceMode": "vs4bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0683.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 57.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 42.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0685",
+        "sourceMode": "vs4bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0685.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0687",
+        "sourceMode": "vs4bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0687.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0689",
+        "sourceMode": "vs4bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0689.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A8s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 85.7,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 14.3,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0691",
+        "sourceMode": "vs4bet",
+        "legendScheme": "UO_STYLE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0691.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "ORANGE_208_160_32",
+            "liveReparsed": "ORANGE_208_160_32",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AQs",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 57.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "ORANGE_208_160_32",
+                "frequency": 42.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ],
+    "vslimp": [
+      {
+        "chartId": "B2_0919",
+        "sourceMode": "vslimp",
+        "legendScheme": "MARGIN_STYLE_LITE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0919.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "COLOR_240_240_112",
+            "liveReparsed": "COLOR_240_240_112",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "COLOR_240_240_128",
+            "liveReparsed": "COLOR_240_240_128",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0921",
+        "sourceMode": "vslimp",
+        "legendScheme": "MARGIN_STYLE_LITE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0921.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "COLOR_192_208_96",
+            "liveReparsed": "COLOR_192_208_96",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "COLOR_192_224_96",
+            "liveReparsed": "COLOR_192_224_96",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A7s",
+            "stored": "COLOR_192_208_96",
+            "liveReparsed": "COLOR_192_208_96",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "COLOR_192_208_96",
+                "frequency": 48.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "COLOR_192_224_96",
+                "frequency": 25.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "COLOR_192_208_112",
+                "frequency": 25.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0923",
+        "sourceMode": "vslimp",
+        "legendScheme": "MARGIN_STYLE_LITE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0923.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "COLOR_128_144_96",
+            "liveReparsed": "COLOR_128_144_96",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "KQs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "nAI",
+                "frequency": 86.9,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "COLOR_0_64_0",
+                "frequency": 13.1,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0925",
+        "sourceMode": "vslimp",
+        "legendScheme": "MARGIN_STYLE_LITE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0925.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": true,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      },
+      {
+        "chartId": "B2_0927",
+        "sourceMode": "vslimp",
+        "legendScheme": "MARGIN_STYLE_LITE",
+        "imagePath": "/workspace/data/trainer/built/chart-images/0927.webp",
+        "mismatches": 0,
+        "handChecks": [
+          {
+            "hand": "AA",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "22",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKs",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "AKo",
+            "stored": "nAI",
+            "liveReparsed": "nAI",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "76s",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "72o",
+            "stored": "UNSELECTED",
+            "liveReparsed": "UNSELECTED",
+            "storedMixed": false,
+            "match": true
+          },
+          {
+            "hand": "A7s",
+            "stored": "LOW_PLAYABILITY",
+            "liveReparsed": "LOW_PLAYABILITY",
+            "storedMixed": true,
+            "storedStrategies": [
+              {
+                "rawAction": "LOW_PLAYABILITY",
+                "frequency": 68.6,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              },
+              {
+                "rawAction": "UNSELECTED",
+                "frequency": 31.4,
+                "frequencyType": "VISUAL_APPROX",
+                "gradingAllowed": false,
+                "dataStatus": "NEEDS_CLARIFICATION"
+              }
+            ],
+            "match": true
+          }
+        ],
+        "orientation": {
+          "AA_position": {
+            "row": 0,
+            "col": 0,
+            "expected": [
+              0,
+              0
+            ]
+          },
+          "22_position": {
+            "row": 12,
+            "col": 12,
+            "expected": [
+              12,
+              12
+            ]
+          },
+          "AKs_position": {
+            "row": 0,
+            "col": 1,
+            "expected_upper_triangle": true
+          },
+          "AKo_position": {
+            "row": 1,
+            "col": 0,
+            "expected_lower_triangle": true
+          },
+          "orientationVerified": true
+        },
+        "parseStatus": "SUCCESS"
+      }
+    ]
+  },
+  "qaSummary": {
+    "chartsChecked": 55,
+    "handMismatchesOnReparse": 0,
+    "orientationPassed": 55
+  }
+}
