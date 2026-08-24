@@ -36,7 +36,9 @@ export {
 export {
   loadTrainerSemanticLegend,
   resolveSemanticEntry,
+  resolveNaiContextualAction,
   applySemanticsToCell,
+  chartHasAiAction,
   getLegendSchemeForChart
 } from './semanticLegend.js';
 

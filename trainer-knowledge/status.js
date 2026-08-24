@@ -29,16 +29,18 @@ export const STRATEGY_SOURCE = {
 
 /** Actions that must not drive correct/incorrect grading until confirmed. */
 export const NON_GRADABLE_ACTIONS = new Set([
-  'UNSELECTED',
   'nAI',
   'LOW_PLAYABILITY',
   'UO'
 ]);
 
-export function actionGradingStatus(rawAction) {
+export function actionGradingStatus(rawAction, normalizedAction = null) {
   const raw = String(rawAction || '').trim();
+  const normalized = String(normalizedAction || '').trim();
   if (!raw) return TRAINER_STATUS.MISSING_TRAINER_DATA;
-  if (raw === 'UNSELECTED' || raw === 'nAI' || raw === 'LOW_PLAYABILITY' || raw === 'UO') {
+  if (normalized === 'FOLD') return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  if (raw === 'UNSELECTED') return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  if (raw === 'nAI' || raw === 'LOW_PLAYABILITY' || raw === 'UO') {
     return TRAINER_STATUS.NEEDS_CLARIFICATION;
   }
   if (raw === 'AI' || raw === 'RAISE') {
@@ -47,6 +49,6 @@ export function actionGradingStatus(rawAction) {
   return TRAINER_STATUS.NEEDS_CLARIFICATION;
 }
 
-export function canGradeWithTrainerAction(rawAction) {
-  return actionGradingStatus(rawAction) === TRAINER_STATUS.EXACT_TRAINER_DATA;
+export function canGradeWithTrainerAction(rawAction, normalizedAction = null) {
+  return actionGradingStatus(rawAction, normalizedAction) === TRAINER_STATUS.EXACT_TRAINER_DATA;
 }
