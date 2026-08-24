@@ -61,6 +61,7 @@ window.renderHome=function(){
       <button class="v36Tile" id="v36Review"><span>РАЗБОР ЛИНИИ</span><h3>ГДЕ<br>СЛОМАЛОСЬ?</h3><p>Найди первую реальную ошибку.</p><div class="v36Streets">PRE ●<br>FLOP ●<br>TURN △<br>RIVER ?</div><strong>→</strong></button>
       <button class="v36Tile" id="v36Swipe"><span>10 РУК</span><h3>POKER<br>SWIPE</h3><p>Решение + размер. Быстро, но не тупо.</p><div class="v36SwipeMark">← <i>J♠</i> →</div><strong>→</strong></button>
       <button class="v36Tile" id="v36Xray"><span>РЕНДЖИ</span><h3>◎ РЕНДЖИ</h3><p>Выбери позицию, стек и ситуацию — покажем с чем играть.</p><div class="v36Matrix">${'<i></i>'.repeat(28)}</div><strong>→</strong></button>
+      <button class="v36Tile" id="v36Exploit"><span>ЭКСПЛУАТАЦИЯ</span><h3>ВЫБЕРИ<br>САЙЗИНГ</h3><p>Тренируй эксплойт против разных типов соперников.</p><div class="v36ExploitMark">25% · 50% · 75%</div><strong>→</strong></button>
     </div>
 
     <button class="v36Quick" id="v36Quick"><div><span>⚡ 5 МИНУТ</span><h3>БЫСТРАЯ ТРЕНИРОВКА</h3><p>Смешанная сессия без выбора режима.</p></div><b>05:00</b></button>
@@ -72,6 +73,7 @@ window.renderHome=function(){
   document.getElementById('v36Review').onclick=()=>show('review');
   document.getElementById('v36Swipe').onclick=goSwipe;
   document.getElementById('v36Xray').onclick=()=>show('xray');
+  document.getElementById('v36Exploit')?.addEventListener('click',()=>show('exploit'));
   document.getElementById('v36Quick').onclick=goSwipe;
   document.getElementById('v36Personal').onclick=()=>{if(leak&&typeof renderHeal==='function')show('heal');else goSwipe()};
   document.getElementById('v36Player').onclick=()=>show('profile');
