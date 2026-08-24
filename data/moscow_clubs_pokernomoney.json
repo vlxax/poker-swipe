@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-24T13:24:03+03:00",
+  "retrieved_at": "2026-08-24T14:49:39+03:00",
   "city": "Москва",
   "count": 64,
   "clubs": [
@@ -720,12 +720,12 @@
           "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/11944",
           "address": "Шелепихинская наб., 34к2зд1",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:15",
+          "late_reg_minutes": 195,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Баунти / Нокаут SMOKE BOUNTY 19:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1"
+          "source_card_text": "Баунти / Нокаут SMOKE BOUNTY 19:00 1 000 ₽ вход до 22:15 Pocket Rockets Club Шелепихинская наб., 34к2зд1"
         }
       ]
     },
@@ -754,8 +754,25 @@
       "name": "Poker Room GTO",
       "address": "Даев пер., д. 2",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-24",
+          "time": "20:00",
+          "club": "Poker Room GTO",
+          "tournament": "STEP BY STEP",
+          "fee_rub": 500,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11960",
+          "address": "Даев пер., д. 2",
+          "late_reg_until": "23:00",
+          "late_reg_minutes": 180,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "STEP BY STEP 20:00 500 ₽ вход до 23:00 Poker Room GTO Даев пер., д. 2"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "PRESTIG POKER CLUB",
@@ -1071,8 +1088,25 @@
       "reentry_cost_rub": null,
       "late_reg_minutes": null,
       "duration_minutes": null,
-      "upcoming": 0,
-      "schedule": []
+      "upcoming": 1,
+      "schedule": [
+        {
+          "date": "2026-08-24",
+          "time": "19:00",
+          "club": "МАКСИМУМ",
+          "tournament": "Классика MAXIMUM CLASSIC TOURNAMENT",
+          "fee_rub": 0,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/11951",
+          "address": "Большая Никитская 43",
+          "late_reg_until": "22:10",
+          "late_reg_minutes": 190,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Классика MAXIMUM CLASSIC TOURNAMENT 19:00 Бесплатно вход до 22:10 МАКСИМУМ Большая Никитская 43"
+        }
+      ]
     },
     {
       "name": "Московский Покерный Зал",
