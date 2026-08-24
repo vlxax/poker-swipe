@@ -40,7 +40,7 @@ describe('trainer task integration', { concurrency: 1 }, () => {
     assert.equal(audit.reason, 'postflop_no_trainer_grading');
   });
 
-  test('UNSELECTED trainer action blocks grading', () => {
+  test('UNSELECTED trainer action maps to FOLD for grading', () => {
     resetTrainerCache();
     const task = {
       id: 'TEST_K2S',
@@ -54,8 +54,8 @@ describe('trainer task integration', { concurrency: 1 }, () => {
       concept: 'RFI EP'
     };
     const audit = auditTaskTrainerCoverage(task, nodeLookup);
-    assert.equal(audit.gradingAllowed, false);
-    assert.ok(/UNSELECTED|CLARIFICATION|PARTIAL|NO_TRAINER/i.test(String(audit.blockedReason)));
+    assert.equal(audit.gradingAllowed, true);
+    assert.equal(audit.mappedChoice, 'ФОЛД');
   });
 
   test('library audit produces trainer-graded and fallback counts', () => {
@@ -74,7 +74,7 @@ describe('trainer task integration', { concurrency: 1 }, () => {
     const task = { options: ['ФОЛД', 'РЕЙЗ', 'ОЛЛ-ИН'], correct: 'ОЛЛ-ИН', alsoOk: ['РЕЙЗ'] };
     assert.equal(trainerActionToLibraryChoice('AI', task), 'ОЛЛ-ИН');
     assert.equal(trainerActionToLibraryChoice('RAISE', { options: ['ФОЛД', 'РЕЙЗ'], correct: 'РЕЙЗ' }), 'РЕЙЗ');
-    assert.equal(trainerActionToLibraryChoice('UNSELECTED', task), null);
+    assert.equal(trainerActionToLibraryChoice('UNSELECTED', task), 'ФОЛД');
   });
 
   test('enrichBrainSpotWithTrainer keeps library correct as fallback', () => {

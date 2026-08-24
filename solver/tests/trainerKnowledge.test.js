@@ -75,10 +75,14 @@ test('source provenance present on charts', () => {
 test('unknown labels have NEEDS_CLARIFICATION status', () => {
   assert.equal(actionGradingStatus('UO'), TRAINER_STATUS.NEEDS_CLARIFICATION);
   assert.equal(actionGradingStatus('nAI'), TRAINER_STATUS.NEEDS_CLARIFICATION);
-  assert.equal(actionGradingStatus('UNSELECTED'), TRAINER_STATUS.NEEDS_CLARIFICATION);
   assert.equal(actionGradingStatus('LOW_PLAYABILITY'), TRAINER_STATUS.NEEDS_CLARIFICATION);
-  assert.equal(canGradeWithTrainerAction('UNSELECTED'), false);
   assert.equal(canGradeWithTrainerAction('nAI'), false);
+});
+
+test('UNSELECTED is FOLD per trainer confirmation', () => {
+  assert.equal(actionGradingStatus('UNSELECTED'), TRAINER_STATUS.EXACT_TRAINER_DATA);
+  assert.equal(canGradeWithTrainerAction('UNSELECTED'), true);
+  assert.equal(canGradeWithTrainerAction('UNSELECTED', 'FOLD'), true);
 });
 
 test('AI and RAISE are gradable exact trainer labels', () => {
@@ -161,7 +165,7 @@ test('exact UO hand lookup returns trainer action with provenance', () => {
   assert.equal(result.provenance.source, 'TRAINER');
 });
 
-test('UNSELECTED hand cannot grade', () => {
+test('UNSELECTED hand grades as FOLD per trainer confirmation', () => {
   const result = lookupTrainerHandAction({
     heroPosition: 'EP',
     stack: '3BB',
@@ -169,7 +173,7 @@ test('UNSELECTED hand cannot grade', () => {
     hand: 'K2s'
   });
   assert.equal(result.action, 'UNSELECTED');
-  assert.equal(result.gradingAllowed, false);
+  assert.equal(result.gradingAllowed, true);
 });
 
 test('partial match does not claim exact when dimensions mismatch', () => {

@@ -47,13 +47,16 @@ function scenarioFromTask(task) {
 
 const TRAINER_OPTION_MAP = {
   AI: ['ОЛЛ-ИН', 'РЕЙЗ'],
-  RAISE: ['РЕЙЗ', '3-БЕТ', '4-БЕТ']
+  RAISE: ['РЕЙЗ', '3-БЕТ', '4-БЕТ'],
+  UNSELECTED: ['ФОЛД', 'СФОЛДИТЬ']
 };
 
 export function trainerActionToLibraryChoice(trainerAction, task) {
-  if (!trainerAction || !canGradeWithTrainerAction(trainerAction)) return null;
+  if (!trainerAction) return null;
+  const normalized = trainerAction === 'UNSELECTED' ? 'FOLD' : trainerAction;
+  if (!canGradeWithTrainerAction(trainerAction, normalized)) return null;
   const opts = task.options || [];
-  const candidates = TRAINER_OPTION_MAP[trainerAction] || [];
+  const candidates = TRAINER_OPTION_MAP[trainerAction] || TRAINER_OPTION_MAP[normalized] || [];
   for (const c of candidates) {
     if (opts.includes(c)) return c;
   }

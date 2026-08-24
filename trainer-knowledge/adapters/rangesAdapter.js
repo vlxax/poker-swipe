@@ -19,7 +19,7 @@ function matrixClasses() {
 
 export const TRAINER_USER_LABEL = 'Тренерская база';
 export const TRAINER_DISCLAIMER =
-  'Данные из тренерской базы PokerSwipe. Неподтверждённые метки (UO, nAI, UNSELECTED) не интерпретируются автоматически.';
+  'Данные из тренерской базы PokerSwipe. Gray/UNSELECTED = FOLD (trainer-confirmed). nAI, orange, yellow, and mixed cells remain context-dependent.';
 
 const SOURCE_MODE_LABELS = {
   uo: 'UO open',
@@ -40,7 +40,7 @@ const ACTION_DISPLAY = {
   AI: { label: 'AI', bucket: 'always', color: 'trainer-ai' },
   RAISE: { label: 'Рейз', bucket: 'always', color: 'trainer-raise' },
   nAI: { label: 'nAI', bucket: 'unknown', color: 'trainer-unknown' },
-  UNSELECTED: { label: '—', bucket: 'unselected', color: 'trainer-unselected' },
+  UNSELECTED: { label: 'Фолд', bucket: 'never', color: 'trainer-fold', normalizedAction: 'FOLD' },
   LOW_PLAYABILITY: { label: 'LOW+', bucket: 'unknown', color: 'trainer-unknown' },
   UO: { label: 'UO', bucket: 'unknown', color: 'trainer-unknown' }
 };
@@ -63,20 +63,22 @@ function cellFromTrainerHand(handRec) {
   const raw = handRec.actionRaw;
   const status = handRec.dataStatus || TRAINER_STATUS.NEEDS_CLARIFICATION;
   const display = ACTION_DISPLAY[raw] || { label: raw || '?', bucket: 'unknown', color: 'trainer-unknown' };
+  const normalizedAction = display.normalizedAction || (raw === 'UNSELECTED' ? 'FOLD' : raw);
 
-  if (!raw || status === TRAINER_STATUS.NEEDS_CLARIFICATION || !canGradeWithTrainerAction(raw)) {
+  if (!raw || status === TRAINER_STATUS.NEEDS_CLARIFICATION || !canGradeWithTrainerAction(raw, normalizedAction)) {
     return {
       hand: handRec.hand,
       supported: true,
       bucket: display.bucket,
-      bucketLabel: raw === 'UNSELECTED' ? 'UNSELECTED' : (raw || 'NEEDS_CLARIFICATION'),
+      bucketLabel: raw === 'UNSELECTED' ? 'FOLD' : (raw || 'NEEDS_CLARIFICATION'),
       action: null,
       actionLabel: display.label,
       trainerActionRaw: raw,
+      normalizedAction: raw === 'UNSELECTED' ? 'FOLD' : null,
       dataStatus: status,
       gradingAllowed: false,
       isMixed: false,
-      unavailable: raw === 'UNSELECTED' || !raw
+      unavailable: !raw
     };
   }
 
@@ -85,13 +87,14 @@ function cellFromTrainerHand(handRec) {
     supported: true,
     bucket: display.bucket,
     bucketLabel: display.label,
-    action: raw,
+    action: normalizedAction,
     actionLabel: display.label,
     trainerActionRaw: raw,
+    normalizedAction,
     dataStatus: status,
     gradingAllowed: true,
     isMixed: false,
-    play: 1
+    play: normalizedAction === 'FOLD' ? 0 : 1
   };
 }
 

@@ -1,5 +1,5 @@
 {
-  "builtAt": "2026-08-24T18:41:29.498Z",
+  "builtAt": "2026-08-24T19:26:41.941Z",
   "datasetSummary": {
     "dataset": "PokerSwipe trainer ranges — Batch 2 compact source",
     "original_archive": "iLoveZIP_jpg.zip",
@@ -32,14 +32,14 @@
     "batch2ChartsParsed": 1578,
     "batch2ChartsFailed": 0,
     "batch2MixedCells": 30677,
-    "batch2GradingAllowedCells": 14358,
-    "batch2NeedsClarificationCells": 245641,
-    "exactlyParsed": 3351,
-    "needsClarification": 6789,
+    "batch2GradingAllowedCells": 210642,
+    "batch2NeedsClarificationCells": 56040,
+    "exactlyParsed": 9606,
+    "needsClarification": 534,
     "partialCharts": 1578,
     "unmappedSpotCount": 15,
     "positionGroupCount": 12,
-    "conflictCount": 49,
+    "conflictCount": 117,
     "batch2DatasetSizeMB": null
   },
   "batch2ParseReport": {

@@ -1,13 +1,21 @@
 {
-  "semanticLegendVersion": 1,
+  "semanticLegendVersion": 2,
   "reparseRequired": false,
+  "dryRun": false,
   "source": "batch2-parsed-hands.json",
+  "trainerConfirmation": "HUMAN_CONFIRMATION_1",
   "before": {
     "total": 266682,
     "verified": 14358,
     "grading": 14358,
     "mixed": 30677,
     "needsClarification": 252324,
+    "unselected": 203978,
+    "fold": 0,
+    "nai": 3015,
+    "naiGradable": 0,
+    "orange": 29232,
+    "yellow": 1508,
     "byAction": {
       "UNSELECTED": 203978,
       "AI": 17483,
@@ -78,14 +86,29 @@
       "COLOR_224_192_96": 2,
       "COLOR_240_208_144": 1,
       "COLOR_208_176_112": 1
+    },
+    "byNormalized": {
+      "FOLD": 194700,
+      "MIXED": 30677,
+      "AI": 12064,
+      "NONE": 21153,
+      "LOW_PLAYABILITY": 4047,
+      "RAISE": 2294,
+      "NON_ALL_IN": 1747
     }
   },
   "after": {
     "total": 266682,
-    "verified": 14358,
-    "grading": 14358,
+    "verified": 210642,
+    "grading": 210642,
     "mixed": 30677,
-    "needsClarification": 252324,
+    "needsClarification": 56040,
+    "unselected": 203978,
+    "fold": 194700,
+    "nai": 3015,
+    "naiGradable": 1584,
+    "orange": 29232,
+    "yellow": 1508,
     "byAction": {
       "UNSELECTED": 203978,
       "AI": 17483,
@@ -156,10 +179,47 @@
       "COLOR_224_192_96": 2,
       "COLOR_240_208_144": 1,
       "COLOR_208_176_112": 1
+    },
+    "byNormalized": {
+      "FOLD": 194700,
+      "MIXED": 30677,
+      "AI": 12064,
+      "NONE": 21153,
+      "LOW_PLAYABILITY": 4047,
+      "RAISE": 2294,
+      "NON_ALL_IN": 1747
     }
   },
   "delta": {
-    "verified": 0,
-    "grading": 0
-  }
+    "verified": 196284,
+    "grading": 196284,
+    "needsClarification": -196284,
+    "unselectedToFold": 194700,
+    "naiNewlyGradable": 1584
+  },
+  "humanConfirmation1": {
+    "naiSemanticRepresentation": "NON_ALL_IN + contextualAction metadata (chart-context only)",
+    "naiNewlyGradable": 1584,
+    "unselectedBefore": 203978,
+    "foldAfter": 194700,
+    "newlyGradingAllowed": 196284,
+    "mixedPolicy": "MIXED / frequencySemantics=UNKNOWN_OR_CONDITIONAL / gradingAllowed=false",
+    "orange": {
+      "before": 29232,
+      "after": 29232,
+      "modified": false
+    },
+    "yellow": {
+      "before": 1508,
+      "after": 1508,
+      "modified": false
+    },
+    "verifiedBefore": 14358,
+    "verifiedAfter": 210642,
+    "needsClarificationBefore": 252324,
+    "needsClarificationAfter": 56040,
+    "gradingBefore": 14358,
+    "gradingAfter": 210642
+  },
+  "safeToMerge": false
 }

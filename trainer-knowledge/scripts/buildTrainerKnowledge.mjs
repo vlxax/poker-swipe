@@ -378,14 +378,30 @@ function main() {
   mkdirSync(BUILT, { recursive: true });
   mkdirSync(INDEX_DIR, { recursive: true });
 
-  // Parse batch2 WEBP (full 13×13 matrix)
+  const batch2Path = join(BUILT, 'batch2-parsed-hands.json');
+  const forceReparse =
+    process.env.FORCE_BATCH2_REPARSE === '1' || process.argv.includes('--reparse-batch2');
+
+  // Parse batch2 WEBP (full 13×13 matrix) — skip unless forced; semantic updates use reapply only
   const parseScript = join(__dirname, 'parseBatch2Webp.py');
-  if (existsSync(parseScript)) {
+  if (forceReparse && existsSync(parseScript)) {
     console.log('Parsing Batch 2 WEBP charts (13×13 hand matrices)...');
     try {
       execSync(`python3 "${parseScript}"`, { stdio: 'inherit', cwd: ROOT });
     } catch (e) {
       console.warn('WEBP parse warning:', e.message);
+    }
+  } else if (existsSync(batch2Path)) {
+    console.log('Skipping Batch 2 WEBP reparse — using existing batch2-parsed-hands.json');
+  }
+
+  const reapplyScript = join(__dirname, 'reapplyTrainerSemantics.mjs');
+  if (existsSync(reapplyScript) && existsSync(batch2Path)) {
+    console.log('Reapplying trainer semantic legend...');
+    try {
+      execSync(`node "${reapplyScript}"`, { stdio: 'inherit', cwd: ROOT });
+    } catch (e) {
+      console.warn('Semantic reapply warning:', e.message);
     }
   }
 
@@ -405,7 +421,6 @@ function main() {
   const datasetSummary = readJson(join(SOURCE, 'DATASET_SUMMARY.json'));
 
   let batch2Parsed = { charts: {} };
-  const batch2Path = join(BUILT, 'batch2-parsed-hands.json');
   if (existsSync(batch2Path)) {
     batch2Parsed = readJson(batch2Path);
   }
@@ -432,6 +447,12 @@ function main() {
   if (existsSync(batch2ReportPath)) {
     batch2ParseReport = readJson(batch2ReportPath);
   }
+  const semanticReportPath = join(ROOT, 'trainer-knowledge/TRAINER_SEMANTIC_REAPPLY_REPORT.json');
+  const semanticReport = existsSync(semanticReportPath) ? readJson(semanticReportPath) : null;
+  const batch2GradingAllowed =
+    semanticReport?.after?.grading ?? batch2ParseReport?.gradingAllowedCells ?? 0;
+  const batch2NeedsClarification =
+    semanticReport?.after?.needsClarification ?? batch2ParseReport?.needsClarificationCells ?? 0;
 
   const stats = {
     totalCharts: allCharts.length,
@@ -442,8 +463,8 @@ function main() {
     batch2ChartsParsed: batch2ParseReport?.chartsSuccessfullyParsed || batch2Charts.filter((c) => c.hasParsedHands).length,
     batch2ChartsFailed: batch2ParseReport?.chartsFailed || 0,
     batch2MixedCells: batch2ParseReport?.mixedCells || 0,
-    batch2GradingAllowedCells: batch2ParseReport?.gradingAllowedCells || 0,
-    batch2NeedsClarificationCells: batch2ParseReport?.needsClarificationCells || 0,
+    batch2GradingAllowedCells: batch2GradingAllowed,
+    batch2NeedsClarificationCells: batch2NeedsClarification,
     exactlyParsed: uoHands.filter((h) => h.dataStatus === TRAINER_STATUS.EXACT_TRAINER_DATA).length,
     needsClarification: uoHands.filter((h) => h.dataStatus === TRAINER_STATUS.NEEDS_CLARIFICATION).length,
     partialCharts: allCharts.filter((c) => c.dataStatus === TRAINER_STATUS.PARTIAL_TRAINER_DATA).length,

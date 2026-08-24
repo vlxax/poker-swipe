@@ -63,16 +63,17 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
     assert.match(detail.provenanceDebug, /TRAINER/);
   });
 
-  test('UNSELECTED hand not gradable', async () => {
+  test('UNSELECTED hand grades as FOLD (trainer-confirmed)', async () => {
     resetTrainerCache();
     const lookup = nodeLookup();
     const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo' };
     const hand = lookup.lookupHandAction({ ...selectionToTrainerQuery(sel), hand: 'K2s' });
     assert.equal(hand.action, 'UNSELECTED');
-    assert.equal(hand.gradingAllowed, false);
+    assert.equal(hand.gradingAllowed, true);
     const detail = await handDetailFromTrainer(lookup, sel, 'K2s');
-    assert.equal(detail.unavailable, true);
-    assert.equal(detail.gradingAllowed, false);
+    assert.equal(detail.unavailable, false);
+    assert.equal(detail.gradingAllowed, true);
+    assert.equal(detail.actionCode, 'FOLD');
   });
 
   test('partial match: wrong stack not exact', () => {
@@ -99,7 +100,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
     }
   });
 
-  test('buildTrainerMatrix returns provenance without inventing fold for UNSELECTED', async () => {
+  test('buildTrainerMatrix maps UNSELECTED to FOLD with trainer provenance', async () => {
     resetTrainerCache();
     const lookup = nodeLookup();
     const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo' };
@@ -109,8 +110,8 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
     assert.ok(matrix.provenance?.source === 'TRAINER');
     const k2 = matrix.cells['K2s'];
     assert.equal(k2.trainerActionRaw, 'UNSELECTED');
-    assert.notEqual(k2.action, 'FOLD');
-    assert.equal(k2.gradingAllowed, false);
+    assert.equal(k2.action, 'FOLD');
+    assert.equal(k2.gradingAllowed, true);
   });
 
   test('selection complete for trainer UO', () => {

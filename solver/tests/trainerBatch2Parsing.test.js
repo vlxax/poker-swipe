@@ -77,7 +77,7 @@ describe('batch 2 hand-level parsing', { concurrency: 1 }, () => {
     }
   });
 
-  test('UNSELECTED never gradingAllowed', () => {
+  test('UNSELECTED maps to FOLD and is gradingAllowed (trainer-confirmed)', () => {
     resetTrainerCache();
     const result = lookupTrainerHandAction({
       sourceMode: 'vssqueeze',
@@ -88,7 +88,7 @@ describe('batch 2 hand-level parsing', { concurrency: 1 }, () => {
       hand: 'AA'
     });
     if (result.action === 'UNSELECTED') {
-      assert.equal(result.gradingAllowed, false);
+      assert.equal(result.gradingAllowed, true);
     }
   });
 
@@ -134,7 +134,7 @@ describe('batch 2 semantic legend validation (stage 4.5)', { concurrency: 1 }, (
     assert.ok(report.coverage.gradingAllowedAfter >= 13207);
   });
 
-  test('nAI and UNSELECTED remain non-gradable per validation policy', () => {
+  test('UNSELECTED is trainer-confirmed FOLD; nAI remains context-dependent', () => {
     const reportPath = join(ROOT, 'trainer-knowledge/TRAINER_SEMANTIC_VALIDATION.json');
     const report = JSON.parse(readFileSync(reportPath, 'utf8'));
     const nai = report.legendTable.find((e) => e.rawLabel?.includes('nAI'));
@@ -143,6 +143,7 @@ describe('batch 2 semantic legend validation (stage 4.5)', { concurrency: 1 }, (
     assert.equal(nai.gradingAllowed, false);
     assert.equal(nai.status, 'NEEDS_CLARIFICATION');
     assert.ok(unsel);
+    // Stage 4.5 validation predates human confirmation #1 — see TRAINER_SEMANTIC_REAPPLY_REPORT.json
     assert.equal(unsel.gradingAllowed, false);
   });
 });

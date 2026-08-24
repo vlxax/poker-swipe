@@ -63,12 +63,13 @@ describe('trainer brain integration', { concurrency: 1 }, () => {
     assert.equal(result.status, 'NO_TRAINER_DATA');
   });
 
-  test('BRAIN NEEDS CLARIFICATION: UNSELECTED hand', () => {
+  test('BRAIN EXACT MATCH: UNSELECTED hand grades as FOLD', () => {
     resetTrainerCache();
     const spot = { street: 'PREFLOP', pos: 'EP', hero: ['Ks', '2s'], stack: 3, ctx: 'unopened pot' };
     const result = buildBrainTrainerResult(nodeLookup, spot, 'K2s');
-    assert.equal(result.status, 'TRAINER_DATA_NEEDS_CLARIFICATION');
-    assert.equal(result.trainer.gradingAllowed, false);
+    assert.equal(result.status, 'EXACT_TRAINER_MATCH');
+    assert.equal(result.trainer.gradingAllowed, true);
+    assert.equal(result.trainer.actionRaw, 'UNSELECTED');
   });
 
   test('TRAINER VS BRAIN CONFLICT: merge keeps both', () => {
