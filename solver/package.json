@@ -11,7 +11,7 @@
   "scripts": {
     "test": "node --test tests/",
     "test:solver": "node --test tests/*.test.js",
-    "test:trainer": "node ../trainer-knowledge/scripts/buildTrainerKnowledge.mjs && node --test tests/trainerKnowledge.test.js",
+    "test:trainer": "node ../trainer-knowledge/scripts/buildTrainerKnowledge.mjs && node --test tests/trainerKnowledge.test.js tests/trainerRangesIntegration.test.js tests/trainerBrainIntegration.test.js tests/trainerTaskIntegration.test.js",
     "benchmark:cfr": "node scripts/benchmarkCfr.js"
   },
   "engines": {

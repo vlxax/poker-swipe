@@ -1,6 +1,6 @@
 // Trainer knowledge layer tests — Stage 2
 
-import { test } from 'node:test';
+import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
@@ -32,6 +32,7 @@ const SOURCE = join(ROOT, 'data/trainer/source');
 const BUILT = join(ROOT, 'data/trainer/built');
 const CHARTS_ZIP_DIR = join(ROOT, 'data/trainer/charts');
 
+describe('trainer knowledge layer', { concurrency: 1 }, () => {
 test('all trainer source archives present', () => {
   assert.ok(existsSync(join(SOURCE, 'UO_RANGES_NORMALIZED.json')));
   assert.ok(existsSync(join(SOURCE, 'RANGE_CHART_MANIFEST.csv')));
@@ -252,4 +253,5 @@ test('spot mapper keeps raw spot for unmapped', () => {
   const m = mapTrainerSpot({ sourceMode: 'vssqueeze', rawSpot: 'Raiser_IP' });
   assert.equal(m.rawSpot, 'Raiser_IP');
   assert.equal(m.mapStatus, SPOT_MAP_STATUS.UNMAPPED_TRAINER_SPOT);
+});
 });
