@@ -1,20 +1,31 @@
-# PokerSwipe — Trainer UO Range Bundle (Batch 1)
+# PokerSwipe Trainer Range Pack — Batch 2
 
-This bundle converts the trainer's 60 PNG range charts into structured data that Cursor can use without manually reading every image.
+Upload this ZIP to a separate GitHub branch as ONE file. It contains 1578 NEW trainer charts in compact readable WebP plus a parsed manifest.
 
-## Files
-- `UO_RANGES_NORMALIZED.json` — primary source for integration. 60 charts with stack, position, action buckets, hand lists, combo counts and full 13×13 matrices.
-- `UO_RANGES_FLAT.csv` — 10,140 rows: one row per chart × starting-hand cell. Useful for audit/import scripts.
-- `UO_MANIFEST.csv` — one row per original chart with source path, checksum and selected combo count.
-- `VALIDATION_REPORT.json` — structural parser checks.
-- `SOURCE_NOTES.md` — critical provenance/semantic rules.
-- `ORIGINAL_SOURCE_SHA256.txt` — checksum linking this normalized bundle to the original `UO(1).zip`.
+The original `iLoveZIP_jpg.zip` had 1638 charts. 60 UO charts were excluded because Batch 1 already contains UO as the normalized source of truth. The uploaded `UO(2).zip` is byte-for-byte identical to the previously processed `UO(1).zip`, so do not import UO again.
 
-## Integration rule
-Use `UO_RANGES_NORMALIZED.json` as a READ-ONLY trainer source layer first. Do not paste duplicated copies into each mini-app. Create adapters/selectors so Ranges, Exploit, training mini-apps, Daily Hand, My Hands and Poker Brain can query the same central dataset where semantically relevant.
+## Included scenario groups
+- `callpush`: 615
+- `vs1r`: 323
+- `vssqueeze`: 202
+- `huante`: 172
+- `vs1r1c`: 68
+- `vs3bet`: 56
+- `vs2r`: 53
+- `sbvsbb`: 34
+- `vs1rshort`: 33
+- `vs4bet`: 11
+- `vslimp`: 11
 
-## Important
-`UO` is kept as the raw source group name. Do not guess what the abbreviation means unless the trainer/user confirms it. `nAI` is also preserved exactly rather than expanded by inference. Gray cells are marked `UNSELECTED`, not automatically `FOLD`.
-
-## Parser validation
-Every 13×13 matrix covers all 169 starting-hand classes and weighted combo counts sum to 1326 per chart.
+## Cursor workflow
+1. Unzip this pack LOCALLY into a temporary folder; do not upload the extracted 1,578 images one-by-one through GitHub Web.
+2. Read `RANGE_CHART_MANIFEST.csv` first. It already preserves the source filename and parses the filename metadata.
+3. Treat these as trainer-provided strategy source material. Do not replace them with generic GTO/model/internet knowledge.
+4. Parse each 13×13 matrix into ONE central trainer knowledge layer. Preserve split/mixed action cells.
+5. Keep full provenance for every normalized chart and hand record.
+6. If a legend term is truncated/ambiguous/unreadable, use a neutral raw tag + `NEEDS_CLARIFICATION`; never guess.
+7. Compare against existing PokerSwipe strategy before replacing anything. Flag conflicts instead of silently resolving them.
+8. Reuse the central trainer data, where semantically appropriate, in Ranges, Exploit, relevant training mini-apps, Poker Brain, Daily Hand, My Hands/hand review, Academy/practice and personalization.
+9. Do not duplicate the same strategy into separate screen files and do not force it into unrelated sections.
+10. Once normalized, raw WebPs can remain temporary; commit normalized data + provenance unless source images are intentionally needed for audit.
+11. DO NOT MERGE until user review.
