@@ -116,38 +116,43 @@ radial-gradient(circle at 55% 18%,#c8ff3d21,transparent 34%),radial-gradient(cir
 .modal{position:fixed;z-index:100;inset:0;background:#000a;display:grid;align-items:end}.sheet{max-width:480px;width:100%;margin:auto;background:#111116;border:1px solid #34343e;border-radius:28px 28px 0 0;padding:18px 16px 30px}.close{float:right;border:0;background:#22222a;color:white;border-radius:50%;width:34px;height:34px}
 @media(max-width:380px){h1{font-size:33px}.xrCell{font-size:5px}.pc{width:44px;height:62px}}
 
-/* V21 VERDICT REPORT REDESIGN */
-.verdictReportV21{padding:0;display:flex;flex-direction:column;gap:0;background:transparent}
-.verdictHeader{padding:16px 16px 0;text-align:center;margin-bottom:8px}
-.verdictHeader h2{margin:0;font-size:20px;letter-spacing:-.03em}.verdictHeader .subhead{display:block;font-size:9px;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
-.verdictLabel{margin:0 14px 10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:#0f0f14;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
-.verdictLabel .ey{display:block;font-size:8px}.verdictLabel h3{margin:4px 0 0;font-size:16px}
-.actionSummary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 14px 10px;padding:0}
-.actionCard{border:1px solid var(--line);border-radius:14px;background:#0f0f14;padding:11px;text-align:center}
-.actionCard .ey{display:block;margin-bottom:4px}.actionCard b{display:block;font-size:16px;margin-top:2px;letter-spacing:-.02em}
-.brainCardCompact{margin:0 14px 12px;padding:12px;border:1px solid var(--line);border-radius:18px;background:#0f0f14}
+/* V21+ GAME VERDICT COMPOSITION */
+.verdictReportV21{padding:0;display:flex;flex-direction:column;gap:12px;background:radial-gradient(circle at 50% 0,#0a3d1a08,transparent 50%);position:relative;margin:0 14px 0}
+.verdictReportV21:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.03;background-image:radial-gradient(circle at 20% 30%,#B6FF28,transparent 25%);margin:0 -14px}
+.verdictHeroZone{padding:20px 16px;border:1px solid #B6FF2833;border-radius:20px;background:linear-gradient(135deg,#0a1a0a,#0d1810);box-shadow:inset 0 1px 0 #B6FF2820,0 8px 24px #00000040;text-align:center}
+.verdictHeroZone .ey{display:block;font-size:7px;color:#75D900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+.verdictHeroZone h2{margin:0;font-size:32px;font-weight:1000;line-height:1.1;letter-spacing:-.04em;color:#F3F6EF}
+.verdictHeroZone .verdict-grade-label{display:block;color:#B6FF28;font-weight:900}
+.verdictHeader{display:none}
+.verdictLabel{display:none}
+.actionSummary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0}
+.actionCard{border:1px solid #B6FF2844;border-radius:16px;background:linear-gradient(145deg,#0d1810,#0a150d);padding:12px;text-align:center;box-shadow:inset 0 1px 0 #B6FF2815,0 4px 12px #00000030}
+.actionCard .ey{display:block;margin-bottom:3px;font-size:7px;color:#75D900;letter-spacing:.12em;text-transform:uppercase}.actionCard b{display:block;font-size:14px;margin-top:4px;letter-spacing:-.02em;color:#F3F6EF}
+.brainCardCompact{border:1px solid #B6FF2844;border-radius:18px;background:linear-gradient(145deg,#0a1a0a,#0d1810);padding:14px;box-shadow:inset 0 1px 0 #B6FF2815,0 6px 16px #00000035}
 .brainCardCompact .brainPanel{margin:0;padding:0;background:transparent;border:0}
-.brainCardCompact .brainHead{margin-bottom:8px}
-.brainCardCompact .brainPolicy{margin:6px 0;gap:0}
-.brainCardCompact .brainAction{padding:6px 0;gap:6px}
-.semanticGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 14px 12px;padding:0}
-.semanticCard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 100% 0,#c8ff3d10,transparent 80%),#0f0f14;padding:11px;display:flex;flex-direction:column;gap:6px;min-height:90px}
-.semanticCard .cardIcon{font-size:20px;line-height:1}
-.semanticCard h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9f99a6;font-weight:900}
-.semanticCard p{margin:0;font-size:12px;line-height:1.35;color:var(--text)}
-.verdictCharacter{margin:0 14px 12px;border:1px solid var(--line);border-radius:18px;background:#0f0f14;min-height:160px;display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:14px;overflow:hidden;position:relative}
-.verdictCharacter.grade-g{border-color:#42e78633;background:radial-gradient(circle at 50% 50%,#42e78610,transparent)}
-.verdictCharacter.grade-y{border-color:#ffd25733;background:radial-gradient(circle at 50% 50%,#ffd25710,transparent)}
-.verdictCharacter.grade-r{border-color:#ff4b6833;background:radial-gradient(circle at 50% 50%,#ff4b6810,transparent)}
-.charAsset{width:100px;height:100px;display:grid;place-items:center;flex:0 0 100px}
-.charAsset canvas{width:100%;height:100%;display:block}
-.charReaction{display:flex;flex-direction:column;gap:6px;min-width:0}
-.charReaction .ey{display:block;font-size:8px;color:color-mix(in srgb,var(--freak-accent,#c8ff3d) 76%,#aaa)}
-.charReaction strong{display:block;font-size:13px;line-height:1.18;letter-spacing:-.015em;color:#f7f7f5}
-.verdictFeedback{margin:0 14px 12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#0f0f14}
-.verdictFeedback p{margin:0;font-size:13px;line-height:1.4}
-.verdictCTA{margin:0 14px calc(14px + var(--safe));padding:0}
-.verdictCTA .primary{margin:12px 0 0}
+.brainCardCompact .brainHead{margin-bottom:10px;border-bottom:1px solid #B6FF2820;padding-bottom:8px}
+.brainCardCompact .brainHead b{color:#B6FF28}
+.brainCardCompact .brainPolicy{margin:8px 0;gap:0}
+.brainCardCompact .brainAction{padding:6px 0}
+.brainCardCompact .brainAction i span{background:linear-gradient(90deg,#B6FF28,#75D900)!important}
+.semanticGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:0}
+.semanticCard{border:1px solid #B6FF2833;border-radius:16px;background:linear-gradient(145deg,#0d1810,#0a150d);padding:12px;display:flex;flex-direction:column;gap:6px;min-height:auto;box-shadow:inset 0 1px 0 #B6FF2810,0 4px 12px #00000025}
+.semanticCard .cardIcon{font-size:18px;line-height:1}
+.semanticCard h4{margin:0;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#75D900;font-weight:900}
+.semanticCard p{margin:0;font-size:12px;line-height:1.4;color:#D0D5CC}
+.verdictCharacterZone{position:relative;margin:0;padding:0;min-height:180px;display:flex;align-items:flex-end;justify-content:space-between;overflow:visible}
+.verdictCharacter{border:1px solid #B6FF2844;border-radius:20px;background:linear-gradient(135deg,#0a1a0a,#0d1810);padding:16px;display:flex;align-items:flex-end;gap:20px;position:relative;flex:1;box-shadow:inset 0 1px 0 #B6FF2815,0 8px 20px #00000040;overflow:visible}
+.verdictCharacter.grade-g{border-color:#75D90066;background:linear-gradient(135deg,#0d2010,#0a1810)}
+.verdictCharacter.grade-y{border-color:#B6FF2855}
+.verdictCharacter.grade-r{border-color:#8B3A4244;background:linear-gradient(135deg,#15080a,#0d0a0f)}
+.charAsset{width:140px;height:160px;display:grid;place-items:flex-end;flex:0 0 140px;position:relative}
+.charAsset canvas{width:auto;height:140px;max-width:140px;display:block;filter:drop-shadow(0 0 16px #B6FF2844)}
+.charReaction{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.charReaction .ey{display:block;font-size:7px;color:#75D900;letter-spacing:.16em;text-transform:uppercase}
+.charReaction strong{display:block;font-size:16px;line-height:1.25;letter-spacing:-.015em;color:#F3F6EF;font-weight:700}
+.verdictFeedback{display:none}
+.verdictCTA{margin:0;padding:0}
+.verdictCTA .primary{width:100%;padding:16px;font-size:14px;font-weight:1000;letter-spacing:-.02em;background:linear-gradient(180deg,#B6FF28,#88DD00);color:#0a1a0a;border:0;border-radius:16px;box-shadow:inset 0 1px 0 #FFFFFF33,0 8px 0 #4a5c00,0 12px 24px #B6FF2844;transform:translateY(0);transition:all .1s;margin:16px 0 0}
 
 /* ===== V14.4 SWIPE UX ===== */
 .swipeShell{margin:0 14px 12px;position:relative}
@@ -1470,7 +1475,7 @@ function buildSwipeSemanticCards(s,a,br,g){const cards=[
 ];return`<div class="semanticGrid">${cards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`}
 
 /* Poker Swipe: grading is now driven by PokerBrain, not preferred/live/sizeZone */
-finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const card=$('#swipeCard');const v=$('#swipeVerdict');card.classList.add('hidden');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictText=g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.';v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeader"><h2>POKER SWIPE</h2><span class="subhead">BY FRIKOVAYA DAMA</span></div><div class="verdictLabel"><span class="ey">${verdictLabel}</span><h3>${s.street}</h3></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}</b></div><div class="actionCard"><span class="ey">GTO ОЦЕНКА</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${buildSwipeSemanticCards(s,a,br,g)}<div class="verdictCharacter grade-${g}"><div class="charAsset"><canvas id="verdictCanvas"></canvas></div><div class="charReaction"><span class="ey">ФРИКОВАЯ ДАМА · ${g==='g'?'СОВЕТ':g==='y'?'ТОНКО':'ОСТОРОЖНОСТЬ'}</span><strong>${g==='g'?'Даже придраться неприятно.':g==='y'?'Решение живёт, но адвокат уже приехал.':'Карты новые. Привычка почему-то та же.'}</strong></div></div><div class="verdictFeedback"><p><b>${verdictText}</b></p></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const mainApp=$('#mainApp');if(mainApp){mainApp.scrollTop=0}const charCanvas=v.querySelector('#verdictCanvas');if(charCanvas&&window.FreakLady){window.FreakLady.play(charCanvas,g,false)}$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>{v.scrollIntoView({behavior:'smooth',block:'nearest'})});const delay=g==='g'?2800:g==='y'?3800:5200;setTimeout(()=>{$('#verdictNext').focus()},delay)}
+finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const card=$('#swipeCard');const v=$('#swipeVerdict');card.classList.add('hidden');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictHeadline=g==='g'?'РЕШЕНИЕ\nЖИВЕТ':g==='y'?'МИКС,\nА НЕ НОРМА':'МОДЕЛЬ\nНЕ СОГЛАСНА';const semanticCards=[{title:'ЧТО БЫЛО',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,80):'Контекст'},{title:'НА УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · ${s.board.length}-street`:'')},{title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`},{title:'ПОЧЕМУ',icon:'💡',content:s.concept||'Концепция'}];const semanticHtml=`<div class="semanticGrid">${semanticCards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`;v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeroZone"><span class="ey">ПОКЕРНЫЙ РАЗБОР · ${s.street}</span><h2><span class="verdict-grade-label">${verdictLabel}</span><br>${verdictHeadline}</h2></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}</b></div><div class="actionCard"><span class="ey">GTO</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${semanticHtml}<div class="verdictCharacterZone"><div class="verdictCharacter grade-${g}"><div class="charAsset"><canvas id="verdictCanvas"></canvas></div><div class="charReaction"><span class="ey">ФРИКОВАЯ ДАМА · ${g==='g'?'ОДОБРЕНИЕ':g==='y'?'СОМНЕНИЕ':'ОТКАЗ'}</span><strong>${g==='g'?'Даже придраться неприятно.':g==='y'?'Живёт, но тонко.':'Модель предпочитает другое.'}</strong></div></div></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const mainApp=$('#mainApp');if(mainApp){mainApp.scrollTop=0}const charCanvas=v.querySelector('#verdictCanvas');if(charCanvas&&window.FreakLady){window.FreakLady.play(charCanvas,g,false)}$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>{v.scrollIntoView({behavior:'smooth',block:'nearest'})});const delay=g==='g'?2800:g==='y'?3800:5200;setTimeout(()=>{$('#verdictNext').focus()},delay)}
 
 /* Sizing: action + sizing family from Brain */
 renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · ЛАБОРАТОРИЯ РАЗМЕРА</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerBrain.gradeDecision({...s,spotId:s.id},action,v||null),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">РАЗМЕР СТАВКИ</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;window.FreakLady?.react($('#sizeResult').querySelector('.verdict'),g,'sizing');$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
@@ -3178,16 +3183,15 @@ window.finalizeSwipe = finalizeSwipe = function(s,a,size){
  const v=$('#swipeVerdict');v.classList.remove('hidden');
  const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';
  const verdictText=g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.';
+ const verdictHeadline=g==='g'?'РЕШЕНИЕ\nЖИВЕТ':g==='y'?'МИКС,\nА НЕ НОРМА':'МОДЕЛЬ\nНЕ СОГЛАСНА';
  const semanticCards=[
-  {title:'ЧТО БЫЛО ПЕРЕД ЭТИМ',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,120):'(контекст в задаче)'},
-  {title:'НА ЭТОЙ УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · Борд: ${s.board.join(' ')}`:'')},
-  {title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`+(s.board.length>0?` на ${s.board.length}-street board`:'')},
-  {title:'ДИНАМИКА РЕЙНДЖЕЙ',icon:'≈',content:br.topActions&&br.topActions.length>0?`Top: ${br.topActions[0].action} (${Math.round(br.topActions[0].freq*100)}%)`:br.confidence?`GTO confidence: ${br.confidence}%`:'(данные модели)'},
-  {title:'ПОЧЕМУ ЭТОТ ВЫБОР',icon:'💡',content:s.concept||s.why.substring(0,100)||'Решение соответствует диапазону'},
-  {title:'СТЕК И БАНК',icon:'🏛',content:`Стек: ${s.stack} BB · Банк: ${s.pot} BB`}
+  {title:'ЧТО БЫЛО',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,60):'Контекст'},
+  {title:'НА УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · ${s.board.length}-street`:'')},
+  {title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`},
+  {title:'ПОЧЕМУ',icon:'💡',content:s.concept||'Концепция'}
  ];
  const semanticHtml=`<div class="semanticGrid">${semanticCards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`;
- v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeader"><h2>POKER SWIPE</h2><span class="subhead">BY FRIKOVAYA DAMA</span></div><div class="verdictLabel"><span class="ey">${verdictLabel}</span><h3>${s.street}</h3></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}${size!=null?' · '+size+'%':''}</b></div><div class="actionCard"><span class="ey">GTO ОЦЕНКА</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${semanticHtml}<div class="verdictCharacter grade-${g}"><div class="charAsset"><canvas id="verdictCanvas"></canvas></div><div class="charReaction"><span class="ey">ФРИКОВАЯ ДАМА · ${g==='g'?'СОВЕТ':g==='y'?'ТОНКО':'ОСТОРОЖНОСТЬ'}</span><strong>${g==='g'?'Даже придраться неприятно.':g==='y'?'Решение живёт, но адвокат уже приехал.':'Карты новые. Привычка почему-то та же.'}</strong></div></div><div class="verdictFeedback"><p><b>${verdictText}</b></p></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;
+ v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeroZone"><span class="ey">ПОКЕРНЫЙ РАЗБОР · ${s.street}</span><h2><span class="verdict-grade-label">${verdictLabel}</span><br>${verdictHeadline}</h2></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}${size!=null?' · '+size+'%':''}</b></div><div class="actionCard"><span class="ey">GTO</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${semanticHtml}<div class="verdictCharacterZone"><div class="verdictCharacter grade-${g}"><div class="charAsset"><canvas id="verdictCanvas"></canvas></div><div class="charReaction"><span class="ey">ФРИКОВАЯ ДАМА · ${g==='g'?'ОДОБРЕНИЕ':g==='y'?'СОМНЕНИЕ':'ОТКАЗ'}</span><strong>${g==='g'?'Даже придраться неприятно.':g==='y'?'Живёт, но тонко.':'Модель предпочитает другое.'}</strong></div></div></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;
  const charCanvas=v.querySelector('#verdictCanvas');
  if(charCanvas&&window.FreakLady){window.FreakLady.play(charCanvas,g,false)}
  $('#verdictNext').onclick=()=>{swipeNext()};
