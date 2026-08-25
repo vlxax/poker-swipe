@@ -30,7 +30,9 @@ function v35Focus(leak){
 window.renderHome=function(){
   const h=document.getElementById('home'); if(!h)return;
   const m=typeof m30==='function'?m30():{sample:(window.S?.events||[]).length};
-  const leak=typeof topLeak==='function'?topLeak():null;
+  const leak=typeof window.HomeRecommendation?.getActionableTopLeak==='function'
+    ?window.HomeRecommendation.getActionableTopLeak()
+    :(typeof topLeak==='function'?topLeak():null);
   const form=typeof formScore==='function'?formScore():50;
   const sample=Number(m?.sample||0);
   const leakName=v35LeakName(leak);
@@ -72,10 +74,14 @@ window.renderHome=function(){
   document.getElementById('v36Sizing').onclick=()=>show('sizing');
   document.getElementById('v36Review').onclick=()=>show('review');
   document.getElementById('v36Swipe').onclick=goSwipe;
-  document.getElementById('v36Xray').onclick=()=>show('xray');
+  document.getElementById('v36Xray').onclick=()=>show('ranges');
   document.getElementById('v36Exploit')?.addEventListener('click',()=>show('exploit'));
   document.getElementById('v36Quick').onclick=goSwipe;
-  document.getElementById('v36Personal').onclick=()=>{if(leak&&typeof renderHeal==='function')show('heal');else goSwipe()};
+  document.getElementById('v36Personal').onclick=()=>{
+    if(leak&&typeof window.HomeRecommendation?.launchHomeRecommendation==='function'){
+      window.HomeRecommendation.launchHomeRecommendation(leak);
+    }else goSwipe();
+  };
   document.getElementById('v36Player').onclick=()=>show('profile');
   document.getElementById('v36Form').onclick=goSwipe;
   document.getElementById('v36Sample').onclick=()=>show('profile');

@@ -16,6 +16,7 @@ import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
 import { installOnboardingHooks } from './onboardingHooks.js';
+import { installHomeRecommendation } from './homeRecommendation.js';
 import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
 import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
@@ -37,6 +38,11 @@ if (typeof window !== 'undefined') {
 }
 loadTrainerCandidateIndex().catch(() => {});
 const miniApps = installMiniAppHooks(store, { appWindow: typeof window !== 'undefined' ? window : undefined });
+installHomeRecommendation(typeof window !== 'undefined' ? window : undefined);
+
+if (typeof window !== 'undefined' && document.getElementById('home')?.classList.contains('active')) {
+  try { window.renderHome?.(); } catch (e) { /* ignore */ }
+}
 
 const SESSION_CONFIG = {
   count: 7,
