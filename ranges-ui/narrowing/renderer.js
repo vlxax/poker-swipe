@@ -1,7 +1,7 @@
 // Trainer narrowing renderer — analysis / transformation visual language.
 
 import { RANKS } from '../battleship/matrixUtils.js';
-import { formatStackLabel } from '../battleship/courses.js';
+import { formatStackLabel, displayPosition, trainerPosition, getCatalogPositions, getStacksForPosition, findCourseForPicker } from '../battleship/courses.js';
 import { isOpen, isGradable } from '../battleship/trainerRangeModel.js';
 
 function esc(s) {
@@ -61,21 +61,20 @@ function matrixHtml(model, { revealed = false, revealAnimating = false, flashHan
 
 export function renderNarrowingCatalog(root, vm, handlers) {
   const catalog = vm.catalog || [];
-  const positions = [...new Set(catalog.map((c) => c.position))];
-  const stacks = [...new Set(catalog.map((c) => c.stack))];
+  const displayPositions = getCatalogPositions(catalog);
   const last = vm.lastLessonId;
   const lastLesson = catalog.find((c) => c.courseId === last);
-  let selPos = vm.pickerPos || lastLesson?.position || positions[0] || 'UTG';
+  let selPos = vm.pickerPos || lastLesson?.position || trainerPosition(displayPositions[0]) || 'BTN';
   let selStack = vm.pickerStack || lastLesson?.stack
-    || stacks.find((s) => catalog.some((c) => c.position === selPos && c.stack === s))
-    || stacks[0];
-  const stacksForPos = stacks.filter((s) => catalog.some((c) => c.position === selPos && c.stack === s));
+    || getStacksForPosition(catalog, selPos)[0];
+  const stacksForPos = getStacksForPosition(catalog, selPos);
   if (!stacksForPos.includes(selStack)) selStack = stacksForPos[0];
-  const match = catalog.find((c) => c.position === selPos && c.stack === selStack);
+  const match = findCourseForPicker(catalog, selPos, selStack);
 
-  const posChips = positions.map((p) =>
-    `<button type="button" class="rnPickChip${p === selPos ? ' active' : ''}" data-pos="${esc(p)}">${esc(p)}</button>`
-  ).join('');
+  const posChips = displayPositions.map((displayPos) => {
+    const tp = trainerPosition(displayPos);
+    return `<button type="button" class="rnPickChip${tp === selPos ? ' active' : ''}" data-pos="${esc(tp)}">${esc(displayPos)}</button>`;
+  }).join('');
   const stackChips = stacksForPos.map((s) =>
     `<button type="button" class="rnPickChip${s === selStack ? ' active' : ''}" data-stack="${esc(s)}">${esc(formatStackLabel(s))}</button>`
   ).join('');
@@ -83,23 +82,27 @@ export function renderNarrowingCatalog(root, vm, handlers) {
   root.innerHTML = `<div class="panel pgShell rnShell">
     <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">СУЖЕНИЕ</h1><span class="ey">ДИАПАЗОНА</span></div>`)}</div>
     <p class="rnLead">Увидь, как диапазон сужается после действия соперника.</p>
-    <div class="rnPicker" data-pos="${esc(selPos)}" data-stack="${esc(selStack)}">
+    <div class="rnPicker">
       <div class="rnPickerBlock"><span class="rnPickerLabel">ПОЗИЦИЯ</span><div class="rnPickRow">${posChips}</div></div>
       <div class="rnPickerBlock"><span class="rnPickerLabel">СТЕК</span><div class="rnPickRow">${stackChips}</div></div>
-      <div class="rnPickerPreview"><strong>${esc(selPos)} · ${esc(formatStackLabel(selStack))}</strong>
-        <small>${match ? `open · ${match.openCount} рук` : 'Нет данных'}</small></div>
+      <div class="rnPickerPreview"><strong>${esc(displayPosition(selPos))} · ${esc(formatStackLabel(selStack))}</strong>
+        <small>${match ? `open · ${match.openCount} рук` : 'Нет подтверждённого ренджа'}</small></div>
       <button type="button" class="primary rnPickerGo" id="rnStartLesson" data-lesson="${esc(match?.courseId || '')}" ${match ? '' : 'disabled'}>НАЧАТЬ</button>
     </div>
   </div>`;
 
   wireBack(root, () => handlers.back?.());
-  root.querySelectorAll('[data-pos]').forEach((btn) => {
-    btn.onclick = () => { handlers.setNarrowPicker?.(btn.dataset.pos, null); handlers.openNarrowing?.(); };
+  root.querySelectorAll('.rnPickChip[data-pos]').forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      handlers.setNarrowPicker?.(btn.dataset.pos, null);
+      handlers.openNarrowing?.();
+    };
   });
-  root.querySelectorAll('[data-stack]').forEach((btn) => {
-    btn.onclick = () => {
-      const picker = root.querySelector('.rnPicker');
-      handlers.setNarrowPicker?.(picker?.dataset.pos, btn.dataset.stack);
+  root.querySelectorAll('.rnPickChip[data-stack]').forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      handlers.setNarrowPicker?.(selPos, btn.dataset.stack);
       handlers.openNarrowing?.();
     };
   });

@@ -87,6 +87,10 @@
 .rbOverlay.show,.rbFinal.show{display:flex}
 .rbCard,.rbFinalCard{text-align:center;max-width:280px;width:100%}
 .rbStamp{font-size:10px;letter-spacing:.12em;color:#b6ff28;font-weight:800;margin-bottom:4px}
+.rbStamp--fail{color:#ff6b3d}
+.rbCard--fail .rbActions{grid-template-columns:1fr}
+.rbReview{font-size:9px;color:#cbd3c7;margin:6px 0;line-height:1.35}
+.rbCell.review-missed{background:rgba(255,159,107,.35)!important;border-color:#ff9f6b!important;color:#fff}
 .rbScore{font-size:42px;font-weight:950;color:#b6ff28;line-height:1}
 .rbSub{font-size:9px;color:#929c8e;margin:4px 0}
 .rbWeak{font-size:10px;color:#ff9f6b;margin:6px 0}

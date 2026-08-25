@@ -2,7 +2,7 @@
 
 import { findCourse, getBattleshipCatalog } from './courses.js';
 import { loadRangeModel, isOpen, courseLabel } from './trainerRangeModel.js';
-import { buildMissions, COURSE_MISSION_IDS, GRENADES_PER_MISSION, missionRangeLabel } from './missions.js';
+import { buildMissions, grenadesForMission, DEFAULT_GRENADES, missionRangeLabel } from './missions.js';
 import { createProgressStore } from './progress.js';
 import { getHandCategory } from './matrixUtils.js';
 import { isGradable } from './trainerRangeModel.js';
@@ -10,7 +10,7 @@ import { isGradable } from './trainerRangeModel.js';
 function freshState() {
   return {
     missionIndex: 0,
-    grenades: GRENADES_PER_MISSION,
+    grenades: DEFAULT_GRENADES,
     hits: 0,
     misses: 0,
     combo: 0,
@@ -32,7 +32,11 @@ function freshState() {
     tutorialPhase: null,
     tutorialHand: null,
     missionScore: 0,
-    weakSector: null
+    weakSector: null,
+    showFailOverlay: false,
+    missionFailed: false,
+    missedTargets: [],
+    wrongHands: []
   };
 }
 
@@ -135,7 +139,7 @@ export class BattleshipController {
     const targets = mission.getTargetHands();
     Object.assign(this.state, {
       missionIndex: index,
-      grenades: GRENADES_PER_MISSION,
+      grenades: grenadesForMission(mission),
       hits: 0,
       misses: 0,
       combo: 0,
@@ -152,7 +156,11 @@ export class BattleshipController {
       feedback: null,
       flashHand: null,
       tutorialPhase: null,
-      tutorialHand: null
+      tutorialHand: null,
+      showFailOverlay: false,
+      missionFailed: false,
+      missedTargets: [],
+      wrongHands: []
     });
     this.state.phase = 'play';
     if (index === 0 && !this.progress.loadTutorialCompleted()) {
@@ -190,8 +198,8 @@ export class BattleshipController {
       this.progress.saveTutorialCompleted();
     }
 
-    if (this.state.found >= this.state.targetTotal) this._finishMission();
-    else if (this.state.grenades <= 0) this._finishMission();
+    if (this.state.found >= this.state.targetTotal) this._finishMission(true);
+    else if (this.state.grenades <= 0) this._finishMission(false);
     return this.viewModel();
   }
 
@@ -234,13 +242,22 @@ export class BattleshipController {
     });
   }
 
-  _finishMission() {
+  _finishMission(success) {
     this.state.status = 'finished';
     const mission = this.missions[this.state.missionIndex];
-    const total = this.state.hits + this.state.misses;
-    const score = total > 0 ? Math.round((this.state.hits / Math.max(this.state.targetTotal, 1)) * 100) : 0;
+    const score = Math.round((this.state.hits / Math.max(this.state.targetTotal, 1)) * 100);
     const capped = Math.min(100, score);
     this.state.missionScore = capped;
+
+    if (!success) {
+      const targets = new Set(mission.getTargetHands());
+      this.state.missionFailed = true;
+      this.state.missedTargets = [...targets].filter((h) => !this.state.hitHands.has(h));
+      this.state.wrongHands = [...this.state.missHands];
+      this.state.showFailOverlay = true;
+      this.state.showOverlay = false;
+      return this.viewModel();
+    }
 
     const catCounts = {};
     for (const m of this.state.mistakes) {
@@ -266,6 +283,7 @@ export class BattleshipController {
       this.missions.map((m) => m.id)
     );
     this.state.showOverlay = true;
+    this.state.showFailOverlay = false;
     return this.viewModel();
   }
 
@@ -280,6 +298,7 @@ export class BattleshipController {
 
   retryMission() {
     this.state.showOverlay = false;
+    this.state.showFailOverlay = false;
     this.state.showMissionIntro = false;
     return this._loadMission(this.state.missionIndex);
   }

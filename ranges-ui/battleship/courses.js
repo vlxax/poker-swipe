@@ -7,13 +7,62 @@ import { buildRangeModelFromMatrix } from './trainerRangeModel.js';
 const MIN_GRADABLE = 140;
 const MAX_BLOCKED = 10;
 
-const POSITION_ORDER = ['BTN', 'CO', 'HJ', 'LJ', 'MP', 'EP'];
+const POSITION_ORDER = ['UTG', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
+const TRAINER_POSITION_ORDER = ['EP', 'MP', 'LJ', 'HJ', 'CO', 'BTN', 'SB', 'BB'];
 const STACK_ORDER = ['2-4', '4-6', '6-8', '8-10', '10-12', '12-15', '15-18', '18-25', '25-40', '40+'];
+
+const DISPLAY_TO_TRAINER = { UTG: 'EP', 'UTG+1': 'EP' };
+
+/** Trainer EP → user-facing UTG label. */
+export function displayPosition(trainerPos) {
+  if (!trainerPos) return '—';
+  if (trainerPos === 'EP') return 'UTG';
+  return trainerPos;
+}
+
+/** UI label → trainer lookup position. */
+export function trainerPosition(displayPos) {
+  if (!displayPos) return null;
+  return DISPLAY_TO_TRAINER[displayPos] || displayPos;
+}
+
+/** Sorted display positions present in catalog. */
+export function getCatalogPositions(catalog) {
+  const trainerSet = new Set((catalog || []).map((c) => c.position));
+  const out = [];
+  for (const display of POSITION_ORDER) {
+    if (trainerSet.has(trainerPosition(display))) out.push(display);
+  }
+  for (const tp of TRAINER_POSITION_ORDER) {
+    const display = displayPosition(tp);
+    if (trainerSet.has(tp) && !out.includes(display)) out.push(display);
+  }
+  return out;
+}
+
+/** Sorted stack bands available for a trainer position. */
+export function getStacksForPosition(catalog, trainerPos) {
+  const stacks = [...new Set(
+    (catalog || []).filter((c) => c.position === trainerPos).map((c) => c.stack)
+  )];
+  stacks.sort((a, b) => STACK_ORDER.indexOf(a) - STACK_ORDER.indexOf(b));
+  return stacks;
+}
+
+/** Coverage table: position → stacks[] for reporting. */
+export function buildCoverageTable(catalog) {
+  const table = {};
+  for (const display of getCatalogPositions(catalog)) {
+    const tp = trainerPosition(display);
+    table[display] = getStacksForPosition(catalog, tp);
+  }
+  return table;
+}
 
 let _catalogPromise = null;
 
 function sortCourses(a, b) {
-  const pi = POSITION_ORDER.indexOf(a.position) - POSITION_ORDER.indexOf(b.position);
+  const pi = TRAINER_POSITION_ORDER.indexOf(a.position) - TRAINER_POSITION_ORDER.indexOf(b.position);
   if (pi !== 0) return pi;
   return STACK_ORDER.indexOf(a.stack) - STACK_ORDER.indexOf(b.stack);
 }
@@ -85,6 +134,11 @@ export function findCourse(catalog, courseId) {
 
 export function formatStackLabel(stack) {
   if (!stack) return '—';
-  if (stack.includes('-') || stack.includes('+')) return `${stack} ББ`;
-  return `${stack} ББ`;
+  const raw = String(stack).replace(/\s*бб\s*/gi, '').trim();
+  if (raw.includes('-') || raw.includes('+')) return `${raw} ББ`;
+  return `${raw} ББ`;
+}
+
+export function findCourseForPicker(catalog, trainerPos, stack) {
+  return (catalog || []).find((c) => c.position === trainerPos && c.stack === stack) || null;
 }
