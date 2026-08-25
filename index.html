@@ -1660,7 +1660,7 @@ renderHome=function(){
   h?.querySelectorAll('.miniGrid i').forEach((x,i)=>x.style.setProperty('--i',i));
   // ensure mainApp is visible (fixes onboarding hidden bug)
   const mainApp=document.getElementById('mainApp');
-  if(mainApp){mainApp.classList.remove('hidden');mainApp.style.display='block';}
+  if(mainApp){mainApp.classList.remove('hidden');mainApp.style.setProperty('display','block','important');}
 };
 function storyScene21(step){
  const cards=step===0?'A♠<|>Q♥':step===1?'Q♠<|>J♥':'7♠<|>2♥';
@@ -2625,7 +2625,7 @@ renderStory=function(){
  if(!S.onboarded){
    if(story<3){$('#story').onclick=()=>{story++;renderStory()};$('#story').innerHTML=storyScene21(story);return}
    $('#story').onclick=null;$('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center"><div class="storyStep21">${[0,1,2].map(()=>'<i class="on"></i>').join('')}</div><div class="storyIdentity21"><span class="line"></span><b>СТАРТОВЫЙ ПРОФИЛЬ</b><span class="line"></span></div><h1 class="impact">НАПИШИ СВОЙ<br><span class="pink">НИКНЕЙМ.</span></h1><p>Дальше — 12 реальных решений примерно на две минуты. Префлоп, постфлоп, размеры и ривер.</p><input id="nickInput" maxlength="18" placeholder="Твой никнейм"><button class="primary" id="nickGo" style="margin-top:10px">НАЧАТЬ ТЕСТ →</button></div>`;
-   $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;save();d25Start(false)};return;
+   $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;S.diagDone=true;save();$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');renderHome();};return;
  }
  d25Start(false);
 };
