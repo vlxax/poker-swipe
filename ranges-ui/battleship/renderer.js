@@ -1,7 +1,7 @@
 // Range Battleship DOM renderer — matrix-first mobile game UI.
 
 import { RANKS, handCode } from './matrixUtils.js';
-import { formatStackLabel } from './courses.js';
+import { formatStackLabel, displayPosition, trainerPosition, getCatalogPositions, getStacksForPosition, findCourseForPicker } from './courses.js';
 import { courseLabel } from './trainerRangeModel.js';
 
 function esc(s) {
@@ -59,49 +59,49 @@ export function renderBattleshipHub(root, vm, handlers) {
 
 export function renderBattleshipCatalog(root, vm, handlers) {
   const catalog = vm.catalog || [];
-  const positions = [...new Set(catalog.map((c) => c.position))];
-  const stacks = [...new Set(catalog.map((c) => c.stack))];
+  const displayPositions = getCatalogPositions(catalog);
   const last = vm.lastCourse?.courseId;
   const lastCourse = catalog.find((c) => c.courseId === last);
-  let selPos = vm.pickerPos || lastCourse?.position || positions[0] || 'BTN';
+  let selPos = vm.pickerPos || lastCourse?.position || trainerPosition(displayPositions[0]) || 'BTN';
   let selStack = vm.pickerStack || lastCourse?.stack
-    || stacks.find((s) => catalog.some((c) => c.position === selPos && c.stack === s))
-    || stacks[0];
-  const stacksForPos = stacks.filter((s) => catalog.some((c) => c.position === selPos && c.stack === s));
+    || getStacksForPosition(catalog, selPos)[0];
+  const stacksForPos = getStacksForPosition(catalog, selPos);
   if (!stacksForPos.includes(selStack)) selStack = stacksForPos[0];
-  const match = catalog.find((c) => c.position === selPos && c.stack === selStack);
+  const match = findCourseForPicker(catalog, selPos, selStack);
 
-  const posChips = positions.map((p) =>
-    `<button type="button" class="rbPickChip${p === selPos ? ' active' : ''}" data-pos="${esc(p)}">${esc(p)}</button>`
-  ).join('');
+  const posChips = displayPositions.map((displayPos) => {
+    const tp = trainerPosition(displayPos);
+    return `<button type="button" class="rbPickChip${tp === selPos ? ' active' : ''}" data-pos="${esc(tp)}">${esc(displayPos)}</button>`;
+  }).join('');
   const stackChips = stacksForPos.map((s) =>
     `<button type="button" class="rbPickChip${s === selStack ? ' active' : ''}" data-stack="${esc(s)}">${esc(formatStackLabel(s))}</button>`
   ).join('');
 
   root.innerHTML = `<div class="panel pgShell rbShell">
     <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">МОРСКОЙ БОЙ</h1><span class="ey">ВЫБЕРИ КУРС</span></div>`, 'ranges')}</div>
-    <div class="rbPicker" data-pos="${esc(selPos)}" data-stack="${esc(selStack)}">
+    <div class="rbPicker">
       <div class="rbPickerBlock"><span class="rbPickerLabel">ПОЗИЦИЯ</span><div class="rbPickRow">${posChips}</div></div>
       <div class="rbPickerBlock"><span class="rbPickerLabel">СТЕК</span><div class="rbPickRow" id="rbStackRow">${stackChips}</div></div>
       <div class="rbPickerPreview">
-        <strong>${esc(selPos)} · ${esc(formatStackLabel(selStack))}</strong>
-        <small>${match ? `${match.openCount} open · ${match.gradable} рук` : 'Нет данных'}</small>
+        <strong>${esc(displayPosition(selPos))} · ${esc(formatStackLabel(selStack))}</strong>
+        <small>${match ? `${match.openCount} open · ${match.gradable} рук` : 'Нет подтверждённого ренджа'}</small>
       </div>
       <button type="button" class="primary rbPickerGo pgCta pgBubblePress" id="rbStartCourse" data-course="${esc(match?.courseId || '')}" ${match ? '' : 'disabled'}>В БОЙ</button>
     </div>
   </div>`;
 
   wireBack(root, () => handlers.back?.());
-  root.querySelectorAll('[data-pos]').forEach((btn) => {
-    btn.onclick = () => {
+  root.querySelectorAll('.rbPickChip[data-pos]').forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
       handlers.setPicker?.(btn.dataset.pos, null);
       handlers.openBattleshipCatalog?.();
     };
   });
-  root.querySelectorAll('[data-stack]').forEach((btn) => {
-    btn.onclick = () => {
-      const picker = root.querySelector('.rbPicker');
-      handlers.setPicker?.(picker?.dataset.pos, btn.dataset.stack);
+  root.querySelectorAll('.rbPickChip[data-stack]').forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      handlers.setPicker?.(selPos, btn.dataset.stack);
       handlers.openBattleshipCatalog?.();
     };
   });
@@ -117,6 +117,7 @@ export function renderBattleshipCatalog(root, vm, handlers) {
 }
 
 function matrixHtml(mission, state) {
+  const missedSet = new Set(state.showFailOverlay ? (state.missedTargets || []) : []);
   const cells = [];
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
@@ -125,6 +126,7 @@ function matrixHtml(mission, state) {
       const tapped = state.hitHands?.has(hand) || state.missHands?.has(hand);
       if (state.hitHands?.has(hand)) cls = 'rbCell hit';
       else if (state.missHands?.has(hand)) cls = 'rbCell miss';
+      else if (missedSet.has(hand)) cls = 'rbCell review-missed';
       if (state.resolved?.has(hand)) cls += ' locked';
       if (state.flashHand === hand && state.feedback?.type === 'hit') cls += ' flash-hit';
       if (state.flashHand === hand && state.feedback?.type === 'miss') cls += ' flash-miss';
@@ -156,12 +158,11 @@ function missionIntroHtml(vm) {
 
 function hudHtml(vm) {
   const { mission, state, missions } = vm;
-  const grenades = '💣'.repeat(state.grenades) + (state.grenades < 3 ? '·'.repeat(3 - state.grenades) : '');
   return `<div class="rbHudBar">
     <div class="rbHudRow"><span class="rbHudLabel">МИССИЯ ${mission?.index || 1}/${missions?.length || 8}</span></div>
     <div class="rbHudRow rbHudGoal"><span>ЦЕЛЬ:</span> <b>${esc(mission?.title || '')}</b></div>
     <div class="rbHudStats">
-      <div class="rbHudStat"><span>${grenades}</span><small>${state.grenades}</small></div>
+      <div class="rbHudStat"><span>💣 ${state.grenades}</span><small>гранат</small></div>
       <div class="rbHudStat"><span>КОМБО</span><b class="rbCombo">×${state.combo}</b></div>
       <div class="rbHudStat"><span>НАЙДЕНО</span><b>${state.found}/${state.targetTotal}</b></div>
     </div>
@@ -188,6 +189,7 @@ export function renderBattleshipGame(root, vm, handlers) {
     : '';
 
   const overlay = state.showOverlay ? renderMissionOverlay(vm) : '';
+  const failOv = state.showFailOverlay ? renderFailOverlay(vm) : '';
   const finalOv = state.showFinal ? renderFinalOverlay(vm) : '';
 
   root.innerHTML = `<div class="panel rbGame pgShell">
@@ -201,6 +203,7 @@ export function renderBattleshipGame(root, vm, handlers) {
         ${feedbackPop}
         <div class="rbSpeechBar">${esc(state.speech || 'Жми на руки из диапазона.')}</div>` : ''}
       ${overlay}
+      ${failOv}
       ${finalOv}
     </div>
   </div>`;
@@ -213,6 +216,22 @@ export function renderBattleshipGame(root, vm, handlers) {
   });
   root.querySelector('#rbNextMission')?.addEventListener('click', () => handlers.nextMission?.());
   root.querySelector('#rbRetryMission')?.addEventListener('click', () => handlers.retryMission?.());
+}
+
+function renderFailOverlay(vm) {
+  const { state } = vm;
+  const missed = (state.missedTargets || []).slice(0, 8);
+  const wrong = (state.wrongHands || []).slice(0, 8);
+  return `<div class="rbOverlay show"><div class="rbCard rbCard--fail">
+    <div class="rbStamp rbStamp--fail">ГРАНАТЫ КОНЧИЛИСЬ</div>
+    <p class="rbSub">ТОЧНОСТЬ ${state.missionScore}%</p>
+    <p class="rbSub">ПОПАДАНИЙ ${state.hits} · ПРОМАХОВ ${state.misses}</p>
+    ${wrong.length ? `<p class="rbReview">Лишние: ${wrong.map(esc).join(', ')}</p>` : ''}
+    ${missed.length ? `<p class="rbReview">Пропущены: ${missed.map(esc).join(', ')}</p>` : ''}
+    <div class="rbActions">
+      <button type="button" class="primary" id="rbRetryMission">ПОВТОРИТЬ МИССИЮ</button>
+    </div>
+  </div></div>`;
 }
 
 function renderMissionOverlay(vm) {

@@ -14,8 +14,20 @@ import {
   allHands
 } from './matrixUtils.js';
 import { isOpen, isGradable } from './trainerRangeModel.js';
+import { displayPosition, formatStackLabel } from './courses.js';
 
-export const GRENADES_PER_MISSION = 3;
+export const DEFAULT_GRENADES = 7;
+export const MIN_GRENADES = 5;
+export const MAX_GRENADES = 10;
+export const GRENADES_PER_MISSION = DEFAULT_GRENADES;
+
+/** Adaptive grenades: enough wrong guesses to learn, clamped 5–10. */
+export function grenadesForMission(mission) {
+  const n = mission?.getTargetHands?.().length || 0;
+  if (mission?.type === 'RANGE_REBUILD') return MAX_GRENADES;
+  const adaptive = Math.round(5 + n * 0.3);
+  return Math.min(MAX_GRENADES, Math.max(MIN_GRENADES, adaptive));
+}
 export const MIN_TARGETS = 2;
 export const MIN_NON_TARGETS = 2;
 export const MAX_MISSIONS = 8;
@@ -131,7 +143,7 @@ function makeFinalRebuild(model, pos) {
     type: 'RANGE_REBUILD',
     title: 'ФИНАЛЬНЫЙ БОЙ',
     goal: `Восстанови рендж ${pos}.`,
-    instruction: 'Отметь все open-руки · 3 гранаты.',
+    instruction: 'Отметь все open-руки · гранаты по размеру миссии.',
     isFinal: true,
     getActiveHands() { return gradableHands(allHands(), model); },
     getTargetHands() { return targets; },
@@ -216,7 +228,6 @@ export function auditMission(mission, model) {
 }
 
 export function missionRangeLabel(model) {
-  const pos = model.position || '';
-  const stack = (model.stack || '').replace('-', '–');
-  return `${pos} · ${stack} ББ`;
+  const pos = displayPosition(model.position || '');
+  return `${pos} · ${formatStackLabel(model.stack)}`;
 }

@@ -2,6 +2,7 @@
 
 import { buildTrainerMatrixAsync } from '../trainerRanges.js';
 import { MATCH_STATUS } from '../../trainer-knowledge/status.js';
+import { displayPosition, formatStackLabel } from './courses.js';
 
 export function buildRangeModelFromMatrix(matrix) {
   if (!matrix?.supported || matrix.matchStatus !== MATCH_STATUS.EXACT_TRAINER_MATCH) {
@@ -64,7 +65,6 @@ export function isGradable(hand, model) {
 
 export function courseLabel(model) {
   if (!model?.supported) return '—';
-  const pos = model.position || '?';
-  const stack = String(model.stack || '').replace(/bb/i, ' ББ');
-  return `${pos} · ${stack}`;
+  const pos = displayPosition(model.position || '?');
+  return `${pos} · ${formatStackLabel(model.stack)}`;
 }
