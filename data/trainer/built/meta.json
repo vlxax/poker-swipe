@@ -1,0 +1,407 @@
+{
+  "builtAt": "2026-08-24T19:26:41.941Z",
+  "datasetSummary": {
+    "dataset": "PokerSwipe trainer ranges — Batch 2 compact source",
+    "original_archive": "iLoveZIP_jpg.zip",
+    "original_archive_sha256": "854c3d262eb378aeea7aabbe0b3eb282ffd212347b1fa139032369df93454a99",
+    "original_chart_count": 1638,
+    "excluded_duplicate_uo_count": 60,
+    "included_chart_count": 1578,
+    "image_format": "WEBP quality 30, 434x600 retained",
+    "source_modes": {
+      "vssqueeze": 202,
+      "vs1r1c": 68,
+      "vs1rshort": 33,
+      "vs3bet": 56,
+      "vs1r": 323,
+      "vs4bet": 11,
+      "vs2r": 53,
+      "huante": 172,
+      "vslimp": 11,
+      "sbvsbb": 34,
+      "callpush": 615
+    },
+    "note": "UO omitted: Batch 1 already normalizes UO. UO(2).zip is byte-identical to prior UO(1).zip."
+  },
+  "stats": {
+    "totalCharts": 1638,
+    "uoCharts": 60,
+    "batch2Charts": 1578,
+    "uoHandRecords": 10140,
+    "batch2HandRecords": 266682,
+    "batch2ChartsParsed": 1578,
+    "batch2ChartsFailed": 0,
+    "batch2MixedCells": 30677,
+    "batch2GradingAllowedCells": 210642,
+    "batch2NeedsClarificationCells": 56040,
+    "exactlyParsed": 9606,
+    "needsClarification": 534,
+    "partialCharts": 1578,
+    "unmappedSpotCount": 15,
+    "positionGroupCount": 12,
+    "conflictCount": 117,
+    "batch2DatasetSizeMB": null
+  },
+  "batch2ParseReport": {
+    "batch2ChartsTotal": 1578,
+    "chartsSuccessfullyParsed": 1578,
+    "chartsPartiallyParsed": 0,
+    "chartsFailed": 0,
+    "chartsMissingImage": 0,
+    "handCellsTotal": 266682,
+    "handCellsParsed": 266682,
+    "mixedCells": 30677,
+    "gradingAllowedCells": 14358,
+    "needsClarificationCells": 245641,
+    "unselectedCells": 203978,
+    "exactTrainerCells": 14358,
+    "unknownActionLabels": 32812,
+    "validationErrorCharts": 0,
+    "byScenario": {
+      "callpush": {
+        "charts_total": 615,
+        "charts_parsed": 615,
+        "hand_records": 103935,
+        "grading_enabled": 1753,
+        "clarification": 100853
+      },
+      "huante": {
+        "charts_total": 172,
+        "charts_parsed": 172,
+        "hand_records": 29068,
+        "grading_enabled": 7718,
+        "clarification": 19585
+      },
+      "sbvsbb": {
+        "charts_total": 34,
+        "charts_parsed": 34,
+        "hand_records": 5746,
+        "grading_enabled": 1436,
+        "clarification": 4006
+      },
+      "vs1r": {
+        "charts_total": 323,
+        "charts_parsed": 323,
+        "hand_records": 54587,
+        "grading_enabled": 2021,
+        "clarification": 50893
+      },
+      "vs1r1c": {
+        "charts_total": 68,
+        "charts_parsed": 68,
+        "hand_records": 11492,
+        "grading_enabled": 667,
+        "clarification": 10376
+      },
+      "vs1rshort": {
+        "charts_total": 33,
+        "charts_parsed": 33,
+        "hand_records": 5577,
+        "grading_enabled": 136,
+        "clarification": 5297
+      },
+      "vs2r": {
+        "charts_total": 53,
+        "charts_parsed": 53,
+        "hand_records": 8957,
+        "grading_enabled": 155,
+        "clarification": 8552
+      },
+      "vs3bet": {
+        "charts_total": 56,
+        "charts_parsed": 56,
+        "hand_records": 9464,
+        "grading_enabled": 151,
+        "clarification": 9114
+      },
+      "vs4bet": {
+        "charts_total": 11,
+        "charts_parsed": 11,
+        "hand_records": 1859,
+        "grading_enabled": 2,
+        "clarification": 1856
+      },
+      "vslimp": {
+        "charts_total": 11,
+        "charts_parsed": 11,
+        "hand_records": 1859,
+        "grading_enabled": 0,
+        "clarification": 1859
+      },
+      "vssqueeze": {
+        "charts_total": 202,
+        "charts_parsed": 202,
+        "hand_records": 34138,
+        "grading_enabled": 319,
+        "clarification": 33250
+      }
+    },
+    "sourceTraceability": "manifest+compressed_sha256+source_hash",
+    "duplicates": 0
+  },
+  "unmappedSpots": [
+    {
+      "trainerCanonicalId": "vssqueeze::Raiser_IP",
+      "rawSpot": "Raiser_IP",
+      "sourceMode": "vssqueeze",
+      "chartCount": 48,
+      "exampleChartId": "B2_0003"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::IP_plus_SB",
+      "rawSpot": "IP_plus_SB",
+      "sourceMode": "vssqueeze",
+      "chartCount": 46,
+      "exampleChartId": "B2_0002"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller_IP_R_Mid",
+      "rawSpot": "Caller_IP_R_Mid",
+      "sourceMode": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "B2_0001"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Raiser_OOP",
+      "rawSpot": "Raiser_OOP",
+      "sourceMode": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "B2_0006"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller_IP_R_EP",
+      "rawSpot": "Caller_IP_R_EP",
+      "sourceMode": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "B2_0007"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller_OOP_R_EP_MP",
+      "rawSpot": "Caller_OOP_R_EP_MP",
+      "sourceMode": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "B2_0008"
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero_OOP_HJ-CO_plus_SB",
+      "rawSpot": "Hero_OOP_HJ-CO_plus_SB",
+      "sourceMode": "vs3bet",
+      "chartCount": 18,
+      "exampleChartId": "B2_0304"
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero_OOP_EP-LJ",
+      "rawSpot": "Hero_OOP_EP-LJ",
+      "sourceMode": "vs3bet",
+      "chartCount": 17,
+      "exampleChartId": "B2_0308"
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller_OOP_R_LJ_HJ",
+      "rawSpot": "Caller_OOP_R_LJ_HJ",
+      "sourceMode": "vssqueeze",
+      "chartCount": 12,
+      "exampleChartId": "B2_0010"
+    },
+    {
+      "trainerCanonicalId": "vs1rshort::3",
+      "rawSpot": "3",
+      "sourceMode": "vs1rshort",
+      "chartCount": 9,
+      "exampleChartId": "B2_0272"
+    },
+    {
+      "trainerCanonicalId": "vs3bet::20BB_Game",
+      "rawSpot": "20BB_Game",
+      "sourceMode": "vs3bet",
+      "chartCount": 9,
+      "exampleChartId": "B2_0310"
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero_IP_EP-LJ",
+      "rawSpot": "Hero_IP_EP-LJ",
+      "sourceMode": "vs3bet",
+      "chartCount": 6,
+      "exampleChartId": "B2_0314"
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero_IP_HJ-BTN",
+      "rawSpot": "Hero_IP_HJ-BTN",
+      "sourceMode": "vs3bet",
+      "chartCount": 6,
+      "exampleChartId": "B2_0334"
+    },
+    {
+      "trainerCanonicalId": "vs4bet::Hero_IP",
+      "rawSpot": "Hero_IP",
+      "sourceMode": "vs4bet",
+      "chartCount": 6,
+      "exampleChartId": "B2_0683"
+    },
+    {
+      "trainerCanonicalId": "vs4bet::Hero_IP_vs_Cold_4Bet",
+      "rawSpot": "Hero_IP_vs_Cold_4Bet",
+      "sourceMode": "vs4bet",
+      "chartCount": 5,
+      "exampleChartId": "B2_0684"
+    }
+  ],
+  "termsToClarify": [
+    {
+      "term": "UO",
+      "rawValue": "UO",
+      "status": "NEEDS_CLARIFICATION",
+      "note": "Trainer dataset/spot label — meaning not expanded per SOURCE_NOTES.md"
+    },
+    {
+      "term": "nAI",
+      "rawValue": "nAI",
+      "status": "NEEDS_CLARIFICATION",
+      "note": "Legend label only — do not map to raise/non-all-in without trainer confirmation",
+      "occurrences": 172
+    },
+    {
+      "term": "UNSELECTED",
+      "rawValue": "UNSELECTED",
+      "status": "NEEDS_CLARIFICATION",
+      "note": "Gray cell — NOT automatically fold",
+      "occurrences": 6255
+    },
+    {
+      "term": "LOW_PLAYABILITY",
+      "rawValue": "LOW_PLAYABILITY",
+      "status": "NEEDS_CLARIFICATION",
+      "note": "Truncated cyan legend \"низкая плюсовость …\"",
+      "occurrences": 362
+    },
+    {
+      "term": "AI",
+      "rawValue": "AI",
+      "status": "EXACT_TRAINER_DATA",
+      "note": "Preserved all-in shorthand from trainer legend"
+    },
+    {
+      "term": "RAISE",
+      "rawValue": "RAISE",
+      "status": "EXACT_TRAINER_DATA",
+      "note": "Source legend \"Рейз\" in deeper UO stack bands"
+    },
+    {
+      "term": "WEBP_UNMAPPED_COLORS",
+      "rawValue": null,
+      "status": "NEEDS_CLARIFICATION",
+      "occurrences": 0,
+      "note": "Batch 2 cells where color could not be mapped to trainer action with confidence"
+    }
+  ],
+  "positionGroups": [
+    {
+      "type": "ANY",
+      "raw": "Any_position",
+      "values": [],
+      "chartCount": 131
+    },
+    {
+      "type": "GROUP",
+      "raw": "EP-MP",
+      "values": [
+        "EP",
+        "MP"
+      ],
+      "chartCount": 65
+    },
+    {
+      "type": "GROUP",
+      "raw": "HJ-CO",
+      "values": [
+        "HJ",
+        "CO"
+      ],
+      "chartCount": 24
+    },
+    {
+      "type": "GROUP",
+      "raw": "HJ-LJ",
+      "values": [
+        "HJ",
+        "LJ"
+      ],
+      "chartCount": 17
+    },
+    {
+      "type": "GROUP",
+      "raw": "HJ-BTN",
+      "values": [
+        "HJ",
+        "BTN"
+      ],
+      "chartCount": 12
+    },
+    {
+      "type": "GROUP",
+      "raw": "SB_R_HJ-BTN",
+      "values": [
+        "SB",
+        "HJ",
+        "BTN"
+      ],
+      "chartCount": 12
+    },
+    {
+      "type": "GROUP",
+      "raw": "SB_R_EP-MP",
+      "values": [
+        "SB",
+        "EP",
+        "MP"
+      ],
+      "chartCount": 10
+    },
+    {
+      "type": "GROUP",
+      "raw": "CO_HJ",
+      "values": [
+        "CO",
+        "HJ"
+      ],
+      "chartCount": 10
+    },
+    {
+      "type": "GROUP",
+      "raw": "BTN-CO",
+      "values": [
+        "BTN",
+        "CO"
+      ],
+      "chartCount": 10
+    },
+    {
+      "type": "CONTEXT",
+      "raw": "20BB_game",
+      "values": [],
+      "chartCount": 9
+    },
+    {
+      "type": "GROUP",
+      "raw": "MP-HJ",
+      "values": [
+        "MP",
+        "HJ"
+      ],
+      "chartCount": 3
+    },
+    {
+      "type": "GROUP",
+      "raw": "MP-LJ",
+      "values": [
+        "MP",
+        "LJ"
+      ],
+      "chartCount": 2
+    }
+  ],
+  "sourceTraceability": {
+    "uoArchiveSha256": "Original file: UO(1).zip\nSHA256: be90a8f67c362811b0416f0c096faca02e922f1ed9ab83f91555fe422d3b3aec\nOriginal PNGs are intentionally NOT embedded in the compact GitHub bundle to keep upload size small.",
+    "batch2ArchiveSha256": "854c3d262eb378aeea7aabbe0b3eb282ffd212347b1fa139032369df93454a99"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "version": 2,
+  "frozenAt": "2026-08-24",
+  "note": "Central semantic legend — update ONLY this file when trainer confirms meanings. Do not infer.",
+  "baselineBeforeConfirmation1": {
+    "verified": 14358,
+    "grading": 14358,
+    "needsClarification": 252324,
+    "unselected": 203978,
+    "fold": 0,
+    "naiGradable": 0,
+    "mixed": 30677,
+    "orange": 29232,
+    "yellow": 1508
+  },
+  "policy": {
+    "onlyVerifiedEnablesGrading": true,
+    "mixedRequiresAllComponentsVerified": false,
+    "mixedGradingAllowed": false,
+    "mixedFrequencySemantics": "UNKNOWN_OR_CONDITIONAL",
+    "visualApproxFrequencyType": "VISUAL_APPROX",
+    "neverInferFromPokerTheory": true,
+    "neverInferMixedFrequenciesFromPixelArea": true
+  },
+  "mixedPolicy": {
+    "normalizedAction": "MIXED",
+    "frequencySemantics": "UNKNOWN_OR_CONDITIONAL",
+    "status": "TRAINER_CONFIRMED",
+    "gradingAllowed": false,
+    "provenance": "TRAINER_CONFIRMED",
+    "trainerNote": "Микс — color proportion sometimes frequency, sometimes conditional branches; do not infer globally"
+  },
+  "contextualActions": {
+    "nAI": {
+      "baseNormalizedAction": "NON_ALL_IN",
+      "status": "TRAINER_CONFIRMED",
+      "provenance": "TRAINER_CONFIRMED",
+      "trainerNote": "nAI = не алином — non-all-in action; exact poker action from chart context only",
+      "requiresChartHasAI": true,
+      "bySourceMode": {
+        "vs3bet": {
+          "contextualAction": "NON_ALL_IN_3BET",
+          "gradingAllowed": true,
+          "dataStatus": "EXACT_TRAINER_DATA"
+        },
+        "callpush": {
+          "contextualAction": "NON_ALL_IN_CALL",
+          "gradingAllowed": true,
+          "dataStatus": "EXACT_TRAINER_DATA"
+        },
+        "huante": {
+          "contextualAction": "NON_ALL_IN_OPEN",
+          "gradingAllowed": true,
+          "dataStatus": "EXACT_TRAINER_DATA"
+        },
+        "sbvsbb": {
+          "contextualAction": "NON_ALL_IN",
+          "gradingAllowed": true,
+          "dataStatus": "EXACT_TRAINER_DATA"
+        },
+        "vs1r": {
+          "contextualAction": "NON_ALL_IN",
+          "gradingAllowed": true,
+          "dataStatus": "EXACT_TRAINER_DATA"
+        }
+      }
+    }
+  },
+  "entries": [
+    {
+      "id": "AI",
+      "match": { "rawAction": "AI" },
+      "rawLabel": "Ai",
+      "normalizedAction": "AI",
+      "status": "VERIFIED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA"
+    },
+    {
+      "id": "RAISE",
+      "match": { "rawAction": "RAISE" },
+      "rawLabel": "Рейз",
+      "normalizedAction": "RAISE",
+      "status": "VERIFIED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA"
+    },
+    {
+      "id": "nAI",
+      "match": { "rawAction": "nAI" },
+      "rawLabel": "nAI",
+      "normalizedAction": "NON_ALL_IN",
+      "status": "TRAINER_CONFIRMED",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "provenance": "TRAINER_CONFIRMED",
+      "awaitingTrainerConfirmation": false,
+      "trainerNote": "Non-all-in; grading only when chart context uniquely determines action (see contextualActions.nAI)"
+    },
+    {
+      "id": "UNSELECTED",
+      "match": { "rawAction": "UNSELECTED" },
+      "rawLabel": "UNSELECTED / gray",
+      "normalizedAction": "FOLD",
+      "status": "TRAINER_CONFIRMED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA",
+      "provenance": "TRAINER_CONFIRMED",
+      "awaitingTrainerConfirmation": false,
+      "trainerNote": "Фолд — trainer confirmed gray/unpainted cells = fold"
+    },
+    {
+      "id": "LOW_PLAYABILITY",
+      "match": { "rawAction": "LOW_PLAYABILITY" },
+      "rawLabel": "кол с низкой плюсовостью…",
+      "normalizedAction": "LOW_PLAYABILITY",
+      "status": "PARTIAL",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION"
+    },
+    {
+      "id": "ORANGE_UO",
+      "match": { "rawAction": "ORANGE_208_160_32", "legendScheme": "UO_STYLE" },
+      "rawLabel": "кол",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "ORANGE_MARGIN",
+      "match": { "rawAction": "ORANGE_208_160_32", "legendScheme": "MARGIN_STYLE" },
+      "rawLabel": "20% запас и выше",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "ORANGE_OTHER",
+      "match": { "rawAction": "ORANGE_208_160_32" },
+      "rawLabel": "ORANGE_208_160_32",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "YELLOW_MARGIN",
+      "match": { "rawAction": "YELLOW_240_240_48", "legendScheme": "MARGIN_STYLE" },
+      "rawLabel": "15% запас и выше",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "YELLOW_OTHER",
+      "match": { "rawAction": "YELLOW_240_240_48" },
+      "rawLabel": "YELLOW_240_240_48",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION",
+      "awaitingTrainerConfirmation": true
+    },
+    {
+      "id": "UNKNOWN_COLOR",
+      "match": { "rawActionPrefix": "COLOR_" },
+      "rawLabel": "COLOR_*",
+      "normalizedAction": null,
+      "status": "NEEDS_CLARIFICATION",
+      "gradingAllowed": false,
+      "dataStatus": "NEEDS_CLARIFICATION"
+    }
+  ]
+}

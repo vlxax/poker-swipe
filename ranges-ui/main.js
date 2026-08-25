@@ -1,6 +1,7 @@
-// Ranges section bridge — loads after index.html, adds #ranges screen and hooks entry points.
+// Ranges section bridge — trainer browser + narrowing trainer.
 
 import { RangeController } from './controller.js';
+import { TrainerBrowserController } from './trainerBrowserController.js';
 import * as R from './renderer.js';
 
 const storage = (() => {
@@ -33,52 +34,109 @@ function ensureScreen() {
 
 const root = () => ensureScreen() || document.querySelector('#rangesArea');
 
-const ctl = new RangeController({ pack: getPack(), storage });
+const narrowCtl = new RangeController({ pack: getPack(), storage });
+const trainerCtl = new TrainerBrowserController({ pack: getPack(), storage });
+
+let mode = 'hub'; // hub | trainer | narrowing
+
+function hubVm() {
+  return {
+    phase: 'hub',
+    title: 'РЕНДЖИ',
+    subtitle: 'Тренерская база + сужение диапазона'
+  };
+}
+
+function currentVm() {
+  if (mode === 'hub') return hubVm();
+  if (mode === 'trainer') return trainerCtl.viewModel();
+  return narrowCtl.viewModel();
+}
 
 const handlers = {
+  openTrainer() {
+    mode = 'trainer';
+    trainerCtl.init().then(() => paint());
+  },
+  openNarrowing() {
+    mode = 'narrowing';
+    narrowCtl.startScenario();
+    window.MiniAppNav?.reset('ranges');
+    window.MiniAppNav?.push('ranges', { phase: 'intro', mode: 'narrowing' });
+    paint();
+  },
+  setField(field, value) {
+    trainerCtl.setField(field, value);
+    paint();
+  },
+  async showRange() {
+    await trainerCtl.showRange();
+    paint();
+  },
+  async selectHand(hand) {
+    await trainerCtl.selectHand(hand);
+    const vm = trainerCtl.viewModel();
+    if (vm.phase === 'matrix') {
+      vm.handDetail = trainerCtl.handDetail;
+      vm.selectedHand = hand;
+    }
+    paint();
+  },
+  back() {
+    if (mode === 'trainer') {
+      const r = trainerCtl.back();
+      if (r.navExit) {
+        mode = 'hub';
+      }
+      paint();
+      return;
+    }
+    if (mode === 'narrowing') {
+      const result = narrowCtl.back();
+      if (result.navExit) {
+        mode = 'hub';
+        paint();
+        return;
+      }
+      if (result.popped) window.MiniAppNav?.pop('ranges');
+      paint();
+      return;
+    }
+    if (typeof window.show === 'function') window.show('home');
+  },
   begin() {
-    ctl.beginPlay();
-    window.MiniAppNav?.push('ranges', { phase: 'play', stepIndex: 0 });
+    narrowCtl.beginPlay();
+    window.MiniAppNav?.push('ranges', { phase: 'play', mode: 'narrowing' });
     paint();
   },
   toggle(hand) {
-    ctl.toggleHand(hand);
+    narrowCtl.toggleHand(hand);
     paint();
   },
   confirm() {
-    const beforeStep = ctl.stepIndex;
-    const beforePhase = ctl.phase;
-    ctl.confirmStep();
+    const beforeStep = narrowCtl.stepIndex;
+    narrowCtl.confirmStep();
     const nav = window.MiniAppNav;
     if (nav) {
-      if (ctl.phase === 'summary') nav.push('ranges', { phase: 'summary' });
-      else if (ctl.phase === 'play' && ctl.stepIndex > beforeStep) {
-        nav.push('ranges', { phase: 'play', stepIndex: ctl.stepIndex });
+      if (narrowCtl.phase === 'summary') nav.push('ranges', { phase: 'summary' });
+      else if (narrowCtl.phase === 'play' && narrowCtl.stepIndex > beforeStep) {
+        nav.push('ranges', { phase: 'play', stepIndex: narrowCtl.stepIndex });
       }
     }
     paint();
   },
   next() {
-    ctl.nextScenario();
+    narrowCtl.nextScenario();
     window.MiniAppNav?.reset('ranges');
-    window.MiniAppNav?.push('ranges', { phase: 'intro' });
-    paint();
-  },
-  back() {
-    const result = ctl.back();
-    if (result.navExit) {
-      if (typeof window.show === 'function') window.show('home');
-      return;
-    }
-    if (result.popped) window.MiniAppNav?.pop('ranges');
+    window.MiniAppNav?.push('ranges', { phase: 'intro', mode: 'narrowing' });
     paint();
   },
   help() {
-    ctl.openHelp();
+    narrowCtl.openHelp();
     paint();
   },
   close() {
-    ctl.closeHelp();
+    narrowCtl.closeHelp();
     paint();
   }
 };
@@ -86,8 +144,13 @@ const handlers = {
 function paint() {
   const el = root();
   if (!el) return;
-  ctl.pack = getPack();
-  R.paint(el, ctl.viewModel(), handlers);
+  narrowCtl.pack = getPack();
+  const vm = currentVm();
+  if (mode === 'trainer' && vm.phase === 'matrix' && trainerCtl.handDetail) {
+    vm.handDetail = trainerCtl.handDetail;
+    vm.selectedHand = trainerCtl.selectedHand;
+  }
+  R.paint(el, vm, handlers);
 }
 
 function bindEntryPoints() {
@@ -114,9 +177,9 @@ if (typeof origShow === 'function') {
     const r = origShow.apply(this, arguments);
     if (id === 'ranges') {
       try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
-      ctl.startScenario();
+      mode = 'hub';
       window.MiniAppNav?.reset('ranges');
-      window.MiniAppNav?.push('ranges', { phase: 'intro' });
+      window.MiniAppNav?.push('ranges', { phase: 'hub' });
       paint();
     }
     return r;
@@ -124,7 +187,7 @@ if (typeof origShow === 'function') {
 }
 
 window.renderRanges = paint;
-window.PokerSwipeRanges = { controller: ctl, paint, storage };
+window.PokerSwipeRanges = { narrowController: narrowCtl, trainerController: trainerCtl, paint, storage };
 
 function boot() {
   ensureScreen();
@@ -140,4 +203,4 @@ if (document.readyState === 'loading') {
   boot();
 }
 
-export { ctl, paint };
+export { narrowCtl, trainerCtl, paint };

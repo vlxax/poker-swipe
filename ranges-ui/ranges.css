@@ -41,7 +41,26 @@ button.rangesCell{cursor:pointer}
 .rangesCell.bad-kept{background:linear-gradient(180deg,#ff8aa8,#d12a55);color:#fff}
 .rangesCell.bad-out{background:linear-gradient(180deg,#ffd166,#c98712);color:#1a1408}
 .rangesCell.mixed,.rangesCell.kept.mixed,.rangesCell.bad-kept.mixed{background:#12161c;color:#eef2f7}
-.rangesCell.selected{outline:2px solid #ff2e84;outline-offset:1px;z-index:3}
+.rangesDisclaimer{font-size:10px;color:#8a93a0;margin:0 0 10px;line-height:1.35}
+.rangesField{margin:0 0 10px}
+.rangesFieldLabel{display:block;font-size:9px;color:#7a8490;margin:0 0 4px;text-transform:uppercase;letter-spacing:.06em}
+.rangesChips{display:flex;flex-wrap:wrap;gap:4px}
+.rangesChip{font-size:9px;padding:5px 8px;border-radius:8px;border:1px solid #2a3038;background:#12161c;color:#c5cdd8}
+.rangesChip.on{border-color:#b8ff3d;color:#e8ffb0;background:#1a2210}
+.rangesProv{font-size:9px;color:#6a7380;word-break:break-all}
+.rangesMismatch{font-size:9px;color:#c9a227;margin:4px 0;padding-left:16px}
+.rangesStats{font-size:9px;color:#7a8490}
+.rangesHandPanel{margin:8px 0;padding:8px;border:1px solid #2a3038;border-radius:8px;font-size:11px}
+.rangesWarn{color:#ff8aa8;font-size:9px;margin-left:6px}
+.rangesLegendSwatch.trainer-ai{background:linear-gradient(180deg,#a855f7,#6b21a8)}
+.rangesLegendSwatch.trainer-raise{background:linear-gradient(180deg,#8fd84a,#4ea828)}
+.rangesLegendSwatch.trainer-unselected{background:#3a4048}
+.rangesLegendSwatch.trainer-unknown{background:#2a3040;border:1px dashed #6a7380}
+.rangesCell.trainer-ai{background:linear-gradient(180deg,#a855f7,#6b21a8);color:#fff}
+.rangesCell.trainer-raise{background:linear-gradient(180deg,#8fd84a,#4ea828);color:#0e1218}
+.rangesCell.trainer-unselected{background:#2a3038;color:#6a7380;border-style:dashed}
+.rangesCell.trainer-unknown{background:#1a1f28;color:#9aa3af;border:1px dashed #4a5563}
+.rangesCell.trainer-partial{background:#1e2430;color:#b8c0cc}
 .rangesScoreBadge{display:inline-block;margin:8px 0 12px;padding:8px 14px;border-radius:14px;background:#1c2414;border:1px solid #3a4a28;color:#c8ff8a;font-size:24px;font-weight:900}
 .rangesReviewStep{margin:16px 0 0;padding-top:12px;border-top:1px solid #2f3848}
 .rangesReviewHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px}

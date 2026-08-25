@@ -30,6 +30,9 @@ export function letterGradeToEvLoss(letter) {
 function libraryTaskToSwipe(task) {
   const spot = libraryTaskToBrainSpot(task);
   if (!spot) return null;
+  if (String(task.street || '') === 'ПРЕФЛОП') {
+    spot._trainerGradePath = 'poker_brain_trainer_bridge';
+  }
   return spot;
 }
 
