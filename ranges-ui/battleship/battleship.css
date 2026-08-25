@@ -1,0 +1,80 @@
+/* Range Battleship — PokerSwipe dark/lime, 390×844 safe */
+
+.rbShell{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.rbHeroBtn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:left;padding:14px 16px;margin:10px 0;border-radius:16px;border:1px solid rgba(183,255,42,.35);background:linear-gradient(135deg,rgba(183,255,42,.12),rgba(7,16,8,.9));min-height:72px;touch-action:manipulation}
+.rbHeroEy{font-size:9px;letter-spacing:.1em;color:#b6ff28;font-weight:800}
+.rbHeroBtn strong{font-size:15px;color:#f4f7f1;line-height:1.2}
+.rbHeroBtn small{font-size:10px;color:#929c8e}
+.rbContinue{width:100%;margin-bottom:8px}
+.rbLead{font-size:12px!important}
+.rbCatalog{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.rbCourseGroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rbCoursePos{font-size:11px;font-weight:800;color:#b6ff28;min-width:36px}
+.rbCourseChips{display:flex;flex-wrap:wrap;gap:4px}
+.rbCourseChip{font-size:9px;padding:6px 10px;border-radius:8px;border:1px solid rgba(183,255,42,.2);background:#071008;color:#cbd3c7;touch-action:manipulation}
+.rbCourseChip:active{background:rgba(183,255,42,.1);color:#b6ff28}
+
+.rbGame{padding:8px 6px 12px!important;overflow:hidden}
+.rbGameInner{position:relative;background:linear-gradient(180deg,#071008,#050a05);border:1px solid rgba(183,255,42,.2);border-radius:16px;padding:8px 6px 10px}
+.rbMissionBar{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 6px;border-bottom:1px solid rgba(183,255,42,.06);font-size:9px;color:#929c8e}
+.rbMissionBar b{color:#b6ff28;font-size:11px}
+.rbDots{display:flex;gap:3px}
+.rbDot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.08)}
+.rbDot.active{background:#b6ff28;box-shadow:0 0 6px rgba(183,255,42,.35)}
+.rbDot.done{background:#75d900;opacity:.55}
+.rbHud{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:5px 0}
+.rbHud>div{background:rgba(0,0,0,.34);border:1px solid rgba(183,255,42,.08);border-radius:6px;padding:4px 5px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:800}
+.rbHud small{font-size:6px;color:#929c8e;text-transform:uppercase}
+.rbGreen{color:#b6ff28}
+.rbCombo{color:#b6ff28}
+.rbMissionHead{padding:5px 6px;margin-bottom:4px;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid #b6ff28}
+.rbMissionTitle{font-size:12px;font-weight:700;color:#b6ff28}
+.rbMissionDesc{font-size:8px;color:#929c8e;margin-top:2px;line-height:1.3}
+.rbSubmitArea{display:flex;justify-content:flex-end;margin-top:4px}
+.rbSubmitBtn{padding:4px 12px;border-radius:99px;border:1px solid #b6ff28;background:rgba(183,255,42,.08);color:#b6ff28;font-size:8px;font-weight:700}
+
+.rbAxisTop{display:grid;grid-template-columns:repeat(13,1fr);padding-left:12px;margin-bottom:1px}
+.rbAxisTop span,.rbAxisSide span{font-size:5px;color:#768071;text-align:center;font-weight:600}
+.rbMatrixWrap{display:grid;grid-template-columns:11px 1fr;gap:1px}
+.rbAxisSide{display:grid;grid-template-rows:repeat(13,1fr);align-items:center}
+.rbMatrix{display:grid;grid-template-columns:repeat(13,1fr);gap:1px;padding:2px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.04);border-radius:5px;width:100%;max-width:100%}
+.rbCell{aspect-ratio:1;border:1px solid rgba(255,255,255,.04);border-radius:2px;background:linear-gradient(180deg,#101a0e,#090e08);color:#a2aa9e;font-size:clamp(4px,2.8vw,6px);font-weight:700;padding:0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;user-select:none;font-family:monospace;min-width:0}
+.rbCell:active:not(.locked):not(:disabled){transform:scale(.92)}
+.rbCell.pair{color:#d7dfd2;background:#111b10}
+.rbCell.suited{color:#b7cdb0}
+.rbCell.offsuit{color:#9aa196}
+.rbCell.dimmed{opacity:.18;pointer-events:none}
+.rbCell.selected-open{border-color:#b6ff28;background:rgba(183,255,42,.12);color:#b6ff28}
+.rbCell.locked{pointer-events:none;opacity:.85}
+.rbFeedback{display:flex;gap:5px;align-items:center;border-top:1px solid rgba(183,255,42,.05);padding-top:5px;min-height:34px;margin-top:4px}
+.rbAvatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#10190d;border:1px solid rgba(183,255,42,.12);font-size:12px;flex:0 0 auto}
+.rbSpeech{flex:1;font-size:8px;line-height:1.35;color:#cbd3c7;padding:4px 6px;background:rgba(0,0,0,.28);border-radius:6px}
+.rbSpeech b{color:#b6ff28}
+.rbBottom{margin-top:4px;text-align:center}
+.rbChoiceGroup,.rbDecisionGroup{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:6px 0}
+.rbChoiceBtn,.rbDecisionBtn{padding:8px 10px;border-radius:8px;border:1px solid rgba(183,255,42,.15);background:rgba(0,0,0,.3);color:#f4f7f1;font-size:10px;font-weight:700;touch-action:manipulation}
+.rbPrompt{font-size:9px;text-align:center;margin:4px 0;color:#cbd3c7}
+.rbPrompt b{color:#b6ff28}
+
+.rbOnboarding,.rbOverlay,.rbFinal{position:absolute;inset:0;background:rgba(2,4,2,.93);backdrop-filter:blur(8px);z-index:30;display:none;align-items:center;justify-content:center;padding:14px;border-radius:16px;flex-direction:column}
+.rbOnboarding.show,.rbOverlay.show,.rbFinal.show{display:flex}
+.rbOnboardCard,.rbCard,.rbFinalCard{text-align:center;max-width:280px;width:100%}
+.rbOnboardCard h2{color:#b6ff28;font-size:16px;margin-bottom:6px}
+.rbOnboardCard p{font-size:10px;color:#929c8e;line-height:1.45;margin:4px 0}
+.rbMuted{font-size:9px!important;color:#768071!important}
+.rbStartBtn{margin-top:12px;width:100%}
+.rbScore{font-size:42px;font-weight:950;color:#b6ff28;line-height:1}
+.rbSub{font-size:9px;color:#929c8e;margin:6px 0}
+.rbActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.rbBigScore{font-size:48px}
+.rbFinalBtn{width:100%;margin:6px 0}
+.rbFinal .rangesHelpBtn{width:100%;margin-top:4px}
+
+@media (max-width:390px){
+  .rbCell{font-size:4.5px}
+  .rbMatrix{gap:.5px}
+  .rbGame{padding:6px 4px 10px!important}
+}
+@media (min-width:431px){
+  .rbCell{font-size:7px}
+}
