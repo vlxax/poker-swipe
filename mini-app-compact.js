@@ -20,9 +20,35 @@
     return { pos: parts[0] || '—', stack: parts[1] || '' };
   }
 
+  function trainerBackedSpot(spot) {
+    if (!spot) return false;
+    if (spot._canonical) return true;
+    if (spot._library || spot._trainerNative) return true;
+    return String(spot.id || '').startsWith('TRAINER_');
+  }
+
+  function applyCanonicalToCtx(ctx, spot) {
+    const out = ctx || {};
+    const c = spot?._canonical;
+    const heroPos = c?.position || spot?.position || spot?.heroPosition || out.heroPos || 'BTN';
+    const villainPos = c?.villain || spot?.villain || spot?.villainPosition || out.villainPos || 'BB';
+    const stackBb = c?.heroStack ?? c?.effStack ?? spot?.stack ?? spot?.heroStack ?? spot?.effStack;
+    out.heroPos = heroPos;
+    out.villainPos = villainPos;
+    if (stackBb != null) {
+      out.heroStack = `${stackBb} ББ`;
+      out.eff = `${stackBb} ББ`;
+    }
+    if (c?.history?.length) out.history = c.history;
+    if (c?.pot != null && out.pot == null) out.pot = `${c.pot} ББ`;
+    return out;
+  }
+
   function ctxFromCanonical(spot) {
     const c = spot._canonical || null;
-    if (!c || (!c.position && !spot.heroPosition && !spot.position)) return null;
+    const hasHero = c?.position || spot?.position || spot?.heroPosition;
+    const hasVill = c?.villain || spot?.villain || spot?.villainPosition;
+    if (!hasHero && !hasVill) return null;
     const heroPos = c.position || spot.position || spot.heroPosition || 'BTN';
     const villainPos = c.villain || spot.villain || spot.villainPosition || 'BB';
     const oppName = c.opp && typeof c.opp === 'object'
@@ -128,6 +154,7 @@
   };
 
   function ctx30For(name, spot) {
+    if (name === 'swipe' && trainerBackedSpot(spot)) return null;
     if (name === 'swipe') {
       const list = CTX30_SAFE.swipe;
       const idx = typeof window.swIndex === 'number' ? window.swIndex : 0;
@@ -139,8 +166,10 @@
   function getCtx30(name, spot) {
     const enriched = attachCanonical(spot);
     const fromCanon = ctxFromCanonical(enriched);
-    if (fromCanon) return fromCanon;
-    return ctxFromLegacy(ctx30For(name, enriched), enriched);
+    if (fromCanon) return applyCanonicalToCtx(fromCanon, enriched);
+    const legacyCtx = ctx30For(name, enriched);
+    if (legacyCtx) return applyCanonicalToCtx(ctxFromLegacy(legacyCtx, enriched), enriched);
+    return applyCanonicalToCtx(ctxFromLegacy(null, enriched), enriched);
   }
 
   const ctxStore = new Map();
@@ -580,12 +609,12 @@
     if (verdict) verdict.innerHTML = '';
 
     const enriched = attachCanonical(s);
-    const ctx = getCtx30('swipe', enriched);
-    const heroPos = enriched._canonical?.position || enriched.position || enriched.heroPosition || ctx.heroPos;
-    const villainPos = enriched._canonical?.villain || enriched.villain || enriched.villainPosition || ctx.villainPos;
-    const posLabel = [heroPos, villainPos ? `vs ${villainPos}` : ''].filter(Boolean).join(' ');
+    const ctx = applyCanonicalToCtx(getCtx30('swipe', enriched), enriched);
+    const posLabel = [ctx.heroPos, ctx.villainPos ? `vs ${ctx.villainPos}` : ''].filter(Boolean).join(' ');
     ctx.pot = `${enriched.pot ?? s.pot} ББ`;
-    ctx.eff = `${enriched._canonical?.heroStack ?? enriched.stack ?? s.stack} ББ`;
+    if (enriched._canonical?.heroStack != null || enriched.stack != null || s.stack != null) {
+      ctx.eff = `${enriched._canonical?.heroStack ?? enriched.stack ?? s.stack} ББ`;
+    }
     ctx.extra = enriched.ctx || enriched._canonical?.descriptionLine || s.ctx;
     ctx.concept = enriched.concept || s.concept;
     const id = 'swipe_' + s.id;

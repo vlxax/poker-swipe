@@ -126,6 +126,9 @@ export function installMiniAppHooks(store, { appWindow = null } = {}) {
       assignGlobal('swSession', session.items);
       assignGlobal('swIndex', 0);
       assignGlobal('swSessionGrades', []);
+      const swipeActive = root.document?.getElementById?.('swipe')?.classList.contains('active')
+        || (typeof document !== 'undefined' && document.getElementById('swipe')?.classList.contains('active'));
+      if (swipeActive && typeof root.renderSwipe === 'function') root.renderSwipe();
       return;
     }
     return orig();
