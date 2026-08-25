@@ -1,10 +1,11 @@
 // Ranges section bridge — trainer browser + narrowing trainer + Range Battleship.
 
-import { RangeController } from './controller.js';
 import { TrainerBrowserController } from './trainerBrowserController.js';
 import { BattleshipController } from './battleship/controller.js';
-import * as R from './renderer.js';
+import { NarrowingController } from './narrowing/controller.js';
+import * as TR from './renderer.js';
 import * as BR from './battleship/renderer.js';
+import * as NR from './narrowing/renderer.js';
 
 const storage = (() => {
   try {
@@ -38,32 +39,34 @@ function ensureScreen() {
     link.dataset.battleshipCss = '1';
     document.head.appendChild(link);
   }
+  if (!document.querySelector('link[data-narrowing-css]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'ranges-ui/narrowing/narrowing.css';
+    link.dataset.narrowingCss = '1';
+    document.head.appendChild(link);
+  }
   return document.querySelector('#rangesArea');
 }
 
 const root = () => ensureScreen() || document.querySelector('#rangesArea');
 
-const narrowCtl = new RangeController({ pack: getPack(), storage });
+const narrowCtl = new NarrowingController({ storage });
 const trainerCtl = new TrainerBrowserController({ pack: getPack(), storage });
 const battleCtl = new BattleshipController({ storage });
 
-let mode = 'hub'; // hub | battleship-catalog | battleship-play | trainer | narrowing
+let mode = 'hub'; // hub | battleship-catalog | battleship-play | narrowing | trainer
 let pickerPos = null;
 let pickerStack = null;
+let narrowPickerPos = null;
+let narrowPickerStack = null;
 
 function hubVm() {
   return {
     phase: 'hub',
     title: 'РЕНДЖИ',
-    subtitle: 'Морской бой + тренерская база'
+    subtitle: 'Морской бой + сужение диапазона'
   };
-}
-
-function currentVm() {
-  if (mode === 'hub') return hubVm();
-  if (mode === 'battleship-catalog' || mode === 'battleship-play') return battleCtl.viewModel();
-  if (mode === 'trainer') return trainerCtl.viewModel();
-  return narrowCtl.viewModel();
 }
 
 const handlers = {
@@ -76,6 +79,11 @@ const handlers = {
     if (pos) pickerPos = pos;
     if (stack) pickerStack = stack;
     else if (pos) pickerStack = null;
+  },
+  setNarrowPicker(pos, stack) {
+    if (pos) narrowPickerPos = pos;
+    if (stack) narrowPickerStack = stack;
+    else if (pos) narrowPickerStack = null;
   },
   async selectBattleshipCourse(courseId) {
     mode = 'battleship-play';
@@ -116,9 +124,42 @@ const handlers = {
   },
   openNarrowing() {
     mode = 'narrowing';
-    narrowCtl.startScenario();
+    narrowCtl.openCatalog();
+    narrowCtl.init().then(() => paint());
     window.MiniAppNav?.reset('ranges');
-    window.MiniAppNav?.push('ranges', { phase: 'intro', mode: 'narrowing' });
+    window.MiniAppNav?.push('ranges', { phase: 'catalog', mode: 'narrowing' });
+  },
+  async startNarrowingLesson(lessonId) {
+    mode = 'narrowing';
+    await narrowCtl.startLesson(lessonId);
+    paint();
+  },
+  dismissNarrowingOnboard() {
+    narrowCtl.dismissOnboarding();
+    paint();
+  },
+  revealNarrowing() {
+    narrowCtl.revealRange();
+    paint();
+    setTimeout(() => {
+      narrowCtl.state.revealAnimating = false;
+      paint();
+    }, 650);
+  },
+  continueNarrowing() {
+    narrowCtl.continueAfterReveal();
+    paint();
+  },
+  answerNarrowingMc(choice) {
+    narrowCtl.answerMc(choice);
+    paint();
+  },
+  answerNarrowingYn(answer) {
+    narrowCtl.answerYesNo(answer);
+    paint();
+  },
+  tapNarrowingHand(hand) {
+    narrowCtl.tapHand(hand);
     paint();
   },
   setField(field, value) {
@@ -165,58 +206,26 @@ const handlers = {
     }
     if (mode === 'narrowing') {
       const result = narrowCtl.back();
+      if (result.reopenCatalog) {
+        narrowCtl.openCatalog();
+        paint();
+        return;
+      }
       if (result.navExit) {
         mode = 'hub';
         paint();
         return;
       }
-      if (result.popped) window.MiniAppNav?.pop('ranges');
       paint();
       return;
     }
     if (typeof window.show === 'function') window.show('home');
-  },
-  begin() {
-    narrowCtl.beginPlay();
-    window.MiniAppNav?.push('ranges', { phase: 'play', mode: 'narrowing' });
-    paint();
-  },
-  toggle(hand) {
-    narrowCtl.toggleHand(hand);
-    paint();
-  },
-  confirm() {
-    const beforeStep = narrowCtl.stepIndex;
-    narrowCtl.confirmStep();
-    const nav = window.MiniAppNav;
-    if (nav) {
-      if (narrowCtl.phase === 'summary') nav.push('ranges', { phase: 'summary' });
-      else if (narrowCtl.phase === 'play' && narrowCtl.stepIndex > beforeStep) {
-        nav.push('ranges', { phase: 'play', stepIndex: narrowCtl.stepIndex });
-      }
-    }
-    paint();
-  },
-  next() {
-    narrowCtl.nextScenario();
-    window.MiniAppNav?.reset('ranges');
-    window.MiniAppNav?.push('ranges', { phase: 'intro', mode: 'narrowing' });
-    paint();
-  },
-  help() {
-    narrowCtl.openHelp();
-    paint();
-  },
-  close() {
-    narrowCtl.closeHelp();
-    paint();
   }
 };
 
 function paint() {
   const el = root();
   if (!el) return;
-  narrowCtl.pack = getPack();
 
   if (mode === 'battleship-catalog') {
     const vm = battleCtl.viewModel();
@@ -236,21 +245,42 @@ function paint() {
     BR.wireFinalOverlay(el, handlers);
     return;
   }
-
-  const vm = currentVm();
-  if (mode === 'trainer' && vm.phase === 'matrix' && trainerCtl.handDetail) {
-    vm.handDetail = trainerCtl.handDetail;
-    vm.selectedHand = trainerCtl.selectedHand;
-  }
-
-  if (mode === 'hub') {
-    battleCtl.init().then(() => {
-      BR.renderBattleshipHub(el, { ...vm, lastCourse: battleCtl.progress.getLastCourse(), courseProgressList: battleCtl.progress.getCourseProgressList(battleCtl.catalog) }, handlers);
-    });
+  if (mode === 'narrowing') {
+    const vm = narrowCtl.viewModel();
+    vm.pickerPos = narrowPickerPos;
+    vm.pickerStack = narrowPickerStack;
+    if (vm.phase === 'catalog') {
+      NR.renderNarrowingCatalog(el, vm, handlers);
+      return;
+    }
+    if (vm.phase === 'error') {
+      NR.renderNarrowingError(el, { errorMessage: narrowCtl.state.errorMessage }, handlers);
+      return;
+    }
+    NR.renderNarrowingLesson(el, vm, handlers);
     return;
   }
 
-  R.paint(el, vm, handlers);
+  if (mode === 'trainer') {
+    const vm = trainerCtl.viewModel();
+    if (vm.phase === 'matrix' && trainerCtl.handDetail) {
+      vm.handDetail = trainerCtl.handDetail;
+      vm.selectedHand = trainerCtl.selectedHand;
+    }
+    TR.paint(el, vm, handlers);
+    return;
+  }
+
+  if (mode === 'hub') {
+    const vm = hubVm();
+    battleCtl.init().then(() => {
+      BR.renderBattleshipHub(el, {
+        ...vm,
+        lastCourse: battleCtl.progress.getLastCourse(),
+        courseProgressList: battleCtl.progress.getCourseProgressList(battleCtl.catalog)
+      }, handlers);
+    });
+  }
 }
 
 function bindEntryPoints() {
@@ -296,7 +326,9 @@ window.PokerSwipeRanges = {
   openBattleship: () => handlers.openBattleshipCatalog(),
   selectBattleshipCourse: (courseId) => handlers.selectBattleshipCourse(courseId),
   beginMission: () => handlers.beginMission(),
-  handleCellTap: (hand) => handlers.handleCellTap(hand)
+  handleCellTap: (hand) => handlers.handleCellTap(hand),
+  openNarrowing: () => handlers.openNarrowing(),
+  startNarrowingLesson: (id) => handlers.startNarrowingLesson(id)
 };
 
 function boot() {
