@@ -2625,7 +2625,7 @@ renderStory=function(){
  if(!S.onboarded){
    if(story<3){$('#story').onclick=()=>{story++;renderStory()};$('#story').innerHTML=storyScene21(story);return}
    $('#story').onclick=null;$('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center"><div class="storyStep21">${[0,1,2].map(()=>'<i class="on"></i>').join('')}</div><div class="storyIdentity21"><span class="line"></span><b>СТАРТОВЫЙ ПРОФИЛЬ</b><span class="line"></span></div><h1 class="impact">НАПИШИ СВОЙ<br><span class="pink">НИКНЕЙМ.</span></h1><p>Дальше — 12 реальных решений примерно на две минуты. Префлоп, постфлоп, размеры и ривер.</p><input id="nickInput" maxlength="18" placeholder="Твой никнейм"><button class="primary" id="nickGo" style="margin-top:10px">НАЧАТЬ ТЕСТ →</button></div>`;
-   $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;S.diagDone=true;save();$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');renderHome();};return;
+   $('#nickGo').onclick=()=>{S.nick=$('#nickInput').value.trim()||'REG';S.onboarded=true;save();d25Start(false)};return;
  }
  d25Start(false);
 };
@@ -3139,6 +3139,7 @@ window.finalizeSwipe = finalizeSwipe = function(s,a,size){
    <p class="pink"><b>${cls.key==='main'?'Редкий случай: даже мне придраться сложно.':cls.key==='alt'?'Нормальная линия. Покер всё ещё не тест ПДД.':cls.key==='exploit'?'Живёт, но требует причины. «Мне показалось» причиной не считается.':'Вот здесь уже есть что лечить.'}</b></p>
    <div id="holdArea"></div>
  </div>`;
+ window.FreakLady?.react(v.querySelector('.swipeFlash'),g,'swipe');
  const delay=g==='g'?2700:g==='y'?3600:4700;
  swTimer=setTimeout(swipeNext,delay);
  $('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext};
@@ -4335,11 +4336,14 @@ function hh59Bind(){
 window.openHandHistoryV59=function(){HH59=hh59Fresh();hh59Render()};
 
 /* Replace only "Разобрать руку" action with the new reconstruction engine. */
-const oldMyGo59=window.myGo18;
-window.myGo18=myGo18=function(v){
- if(v==='recon'){window.myView18='recon59';HH59=hh59Fresh();hh59Render();return}
- return oldMyGo59?oldMyGo59(v):undefined;
-};
+try{
+ const oldMyGo59=window.myGo18;
+ const newGo=function(v){
+  if(v==='recon'){window.myView18='recon59';HH59=hh59Fresh();hh59Render();return}
+  return oldMyGo59?oldMyGo59(v):undefined;
+ };
+ if(typeof myGo18!=='undefined')myGo18=newGo;
+}catch(e){}
 
 /* Hard-wire the bottom nav to the clean V59 tournament journal. */
 function wire59(){
