@@ -1,6 +1,7 @@
 // Curriculum sampling — training frequency ≠ raw data frequency.
 
 import { trainerSkillsForTask } from './trainerSkillTaxonomy.js';
+import { variantFamilyId } from './sessionDiversity.js';
 
 const ACTION_FAMILY = {
   FOLD: 'fold',
@@ -35,11 +36,11 @@ const DEFAULT_MODE_WEIGHTS = {
 };
 
 const ACTION_WEIGHTS = {
-  fold: 0.35,
+  fold: 0.45,
   call: 1.0,
-  raise: 1.2,
+  raise: 1.15,
   allin: 1.1,
-  other: 0.8
+  other: 0.85
 };
 
 /**
@@ -78,31 +79,51 @@ export function sampleTrainerSession(candidates, {
   weaknessSkills = {},
   recentFingerprints = new Set(),
   recentActionFamilies = [],
+  recentFamilies = new Set(),
+  recentSourceModes = [],
   rng = Math.random
 } = {}) {
-  const pool = [...candidates];
+  const pool = (candidates || []).filter((t) => (t.options || []).length >= 2);
   const selected = [];
   const used = new Set(recentFingerprints);
+  const usedFamilies = new Set(recentFamilies);
   const actionLog = [...recentActionFamilies];
+  const modeLog = [...recentSourceModes];
 
   while (selected.length < count && pool.length) {
-    const scored = pool.map((task) => ({
-      task,
-      ...scoreTrainerCandidate(task, {
+    const scored = pool.map((task) => {
+      const base = scoreTrainerCandidate(task, {
         weaknessSkills,
         recentFingerprints: used,
         recentActionFamilies: actionLog,
         rng
-      })
-    })).sort((a, b) => b.score - a.score);
+      });
+      let score = base.score;
+      const fam = variantFamilyId(task.id);
+      if (usedFamilies.has(fam)) score *= 0.08;
+      const sm = task.trainerMeta?.sourceMode;
+      const recentSameMode = modeLog.slice(-3).filter((m) => m === sm).length;
+      const modeCountInSession = modeLog.filter((m) => m === sm).length;
+      if (recentSameMode >= 2) score *= 0.35;
+      if (modeCountInSession >= 2) score *= 0.25;
+      if (modeCountInSession >= 4) score *= 0.1;
+      return { task, ...base, score: Math.max(score, 0.001), family: fam, sourceMode: sm };
+    });
 
-    const top = scored.slice(0, Math.min(8, scored.length));
-    const pick = top[Math.floor(rng() * top.length)];
+    const totalWeight = scored.reduce((sum, row) => sum + row.score, 0);
+    let roll = rng() * totalWeight;
+    let pick = scored[scored.length - 1];
+    for (const row of scored) {
+      roll -= row.score;
+      if (roll <= 0) { pick = row; break; }
+    }
     if (!pick) break;
 
     selected.push(pick.task);
     used.add(pick.fingerprint);
+    usedFamilies.add(pick.family);
     actionLog.push(pick.actionFamily);
+    if (pick.sourceMode) modeLog.push(pick.sourceMode);
     const idx = pool.findIndex((t) => t.id === pick.task.id);
     if (idx >= 0) pool.splice(idx, 1);
   }

@@ -1,0 +1,257 @@
+{
+  "P0_ACTIVE": 0,
+  "HEURISTIC_ACTIVE": 0,
+  "TRAINER_ONE_OPTION_BEFORE": 501,
+  "TRAINER_ONE_OPTION_AFTER": 0,
+  "MEANINGFUL_DECISION_TASKS": "786 / 786 (100.0%)",
+  "ACTIVE_TRAINING_ROWS": 1245,
+  "DUPLICATE_SESSION_RATE_BEFORE": "not instrumented (pre-change)",
+  "DUPLICATE_SESSION_RATE_AFTER": "0 family hits / 1000 picks",
+  "SESSION_100x10": "PASS",
+  "SESSION_METRICS": {
+    "sessions": 100,
+    "tasksPerSession": 10,
+    "folds": 251,
+    "raises": 231,
+    "allins": 518,
+    "calls": 0,
+    "oneOptionTasks": 0,
+    "duplicateFamilyHits": 0,
+    "maxSourceModeStreak": 5,
+    "pass": true
+  },
+  "TRAINER_SEMANTICS_CHANGED": "NO",
+  "UNSUPPORTED_CALL_SEMANTICS_ADDED": "NO",
+  "RUNTIME_SWIPE_QA": [
+    {
+      "taskId": "TRAINER_B2_0630_44",
+      "visibleCondition": "ПРЕФЛОП · SB vs CO · 10 BB · SB vs CO · CO открыл 2-2.4BB",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ФОЛД",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=CO; opts=[ФОЛД, КОЛЛ, 3-БЕТ, ОЛЛ-ИН]",
+      "optionCount": 4,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0630_55",
+      "visibleCondition": "ПРЕФЛОП · SB vs CO · 10 BB · SB vs CO · CO открыл 2-2.4BB",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ФОЛД",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=CO; opts=[ФОЛД, КОЛЛ, 3-БЕТ, ОЛЛ-ИН]",
+      "optionCount": 4,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0946_AKo",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 18 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0946_KK",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 18 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_1006_A5s",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 9 BB · SB vs BB · BB запушил",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, КОЛЛ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_1006_A4s",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 9 BB · SB vs BB · BB запушил",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, КОЛЛ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_1145_Q5s",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 11 BB · SB vs BB · BB запушил",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, КОЛЛ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_1145_K6s",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 11 BB · SB vs BB · BB запушил",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, КОЛЛ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0463_AKs",
+      "visibleCondition": "ПРЕФЛОП · SB vs HJ · 10 BB · SB vs HJ · HJ открыл 2-2.4BB",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=HJ; opts=[ФОЛД, КОЛЛ, 3-БЕТ, ОЛЛ-ИН]",
+      "optionCount": 4,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0463_AA",
+      "visibleCondition": "ПРЕФЛОП · SB vs HJ · 10 BB · SB vs HJ · HJ открыл 2-2.4BB",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "3-БЕТ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=HJ; opts=[ФОЛД, КОЛЛ, 3-БЕТ, ОЛЛ-ИН]",
+      "optionCount": 4,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0856_T4o",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 7 BB · SB vs BB · BB открыл 2.2",
+      "legalOptions": [
+        "ФОЛД",
+        "КОЛЛ",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ФОЛД",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, КОЛЛ, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 4,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0957_ATs",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 15 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0957_A5s",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 15 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "ОЛЛ-ИН",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0938_AKs",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 26 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "РЕЙЗ",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    },
+    {
+      "taskId": "TRAINER_B2_0938_AA",
+      "visibleCondition": "ПРЕФЛОП · SB vs BB · 26 BB · SB vs BB · блайнды",
+      "legalOptions": [
+        "ФОЛД",
+        "РЕЙЗ",
+        "ОЛЛ-ИН"
+      ],
+      "correctTrainerAction": "РЕЙЗ",
+      "gradingSource": "TRAINER_EXACT",
+      "canonicalSpot": "hero=SB; vill=BB; opts=[ФОЛД, РЕЙЗ, ОЛЛ-ИН]",
+      "optionCount": 3,
+      "heuristic": false,
+      "integrityOk": true
+    }
+  ]
+}

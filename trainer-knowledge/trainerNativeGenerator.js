@@ -9,6 +9,7 @@ import { buildTrainerQueryFromCanonical } from './canonicalTrainerQuery.js';
 import { listCharts, lookupTrainerHandAction } from './lookup.js';
 import { canGradeWithTrainerAction } from './status.js';
 import { trainerActionToLibraryChoice } from './adapters/taskAdapter.js';
+import { legalPreflopUserOptions } from './legalPreflopUserOptions.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const BUILT_DIR = join(__dirname, '..', 'data/trainer/built');
@@ -70,13 +71,20 @@ const TRAINER_OPTIONS_BY_ACTION = {
   FOLD: ['ФОЛД']
 };
 
-function optionsForTrainerAction(actionRaw, normalizedAction) {
-  const key = actionRaw === 'UNSELECTED' ? 'UNSELECTED' : actionRaw;
-  const base = TRAINER_OPTIONS_BY_ACTION[key] || ['ФОЛД', 'КОЛЛ', 'РЕЙЗ'];
-  const opts = [...base];
-  if (normalizedAction === 'CALL' && !opts.includes('КОЛЛ')) opts.push('КОЛЛ');
-  if (normalizedAction === 'FOLD' && !opts.includes('ФОЛД')) opts.unshift('ФОЛД');
-  return [...new Set(opts)];
+function optionsForTrainerAction(actionRaw, normalizedAction, sourceMode, correctChoice) {
+  const pseudoOpts = ['ФОЛД', 'КОЛЛ', 'РЕЙЗ', '3-БЕТ', '4-БЕТ', 'ОЛЛ-ИН'];
+  const correct = correctChoice
+    || correctChoiceForTrainer(actionRaw, normalizedAction, pseudoOpts)
+    || (normalizedAction === 'FOLD' ? 'ФОЛД' : normalizedAction === 'CALL' ? 'КОЛЛ' : 'РЕЙЗ');
+  let legal = legalPreflopUserOptions(sourceMode, correct);
+  if (legal.includes('3-БЕТ') && legal.includes('РЕЙЗ') && correct !== 'РЕЙЗ') {
+    legal = legal.filter((o) => o !== 'РЕЙЗ');
+  }
+  if (legal.includes('4-БЕТ') && legal.includes('РЕЙЗ') && correct !== 'РЕЙЗ') {
+    legal = legal.filter((o) => o !== 'РЕЙЗ');
+  }
+  if (!legal.includes(correct)) legal.unshift(correct);
+  return [...new Set(legal)];
 }
 
 function correctChoiceForTrainer(actionRaw, normalizedAction, options) {
@@ -122,19 +130,19 @@ function buildHistoryForChart(chart) {
     return [{ street: 'ПРЕФЛОП', text: hero ? `${hero} · до тебя все сфолдили.` : 'До тебя все сфолдили.' }];
   }
   if (mode === 'vs1rshort' && hero === 'BB') {
-    return [{ street: 'ПРЕФЛОП', text: `${hero} vs ${villain || 'BTN'} · ${villain || 'BTN'} open ${open || '2.2'}` }];
+    return [{ street: 'ПРЕФЛОП', text: `${hero} vs ${villain || 'BTN'} · ${villain || 'BTN'} открыл ${open || '2.2'}` }];
   }
   if (mode === 'callpush') {
-    return [{ street: 'ПРЕФЛОП', text: `${hero || 'BB'} vs ${villain || 'CO'} · ${villain || 'CO'} push` }];
+    return [{ street: 'ПРЕФЛОП', text: `${hero || 'BB'} vs ${villain || 'CO'} · ${villain || 'CO'} запушил` }];
   }
   if (mode === 'sbvsbb') {
     return [{ street: 'ПРЕФЛОП', text: `${hero || 'SB'} vs ${villain || 'BB'} · блайнды` }];
   }
   if (hero && villain) {
-    return [{ street: 'ПРЕФЛОП', text: `${hero} vs ${villain} · ${villain} open ${open || '2.2'}` }];
+    return [{ street: 'ПРЕФЛОП', text: `${hero} vs ${villain} · ${villain} открыл ${open || '2.2'}` }];
   }
   if (villain) {
-    return [{ street: 'ПРЕФЛОП', text: `${hero ? `${hero} vs ${villain} · ` : ''}${villain} open ${open || '2.2'}` }];
+    return [{ street: 'ПРЕФЛОП', text: `${hero ? `${hero} vs ${villain} · ` : ''}${villain} открыл ${open || '2.2'}` }];
   }
   return [{ street: 'ПРЕФЛОП', text: hero ? `${hero} · префлоп-спот` : 'Префлоп-спот из тренерской базы.' }];
 }
@@ -168,9 +176,10 @@ export function buildTrainerNativeTask({ chart, hand, handRec, lookup }) {
   const villainPos = villainPositionFromChart(chart);
   const stackBb = stackBbFromChart(chart);
   const history = buildHistoryForChart(chart);
-  const options = optionsForTrainerAction(handRec.actionRaw, handRec.normalizedAction);
-  const correct = correctChoiceForTrainer(handRec.actionRaw, handRec.normalizedAction, options);
-  if (!correct) return null;
+  const pseudoOpts = ['ФОЛД', 'КОЛЛ', 'РЕЙЗ', '3-БЕТ', '4-БЕТ', 'ОЛЛ-ИН'];
+  const correct = correctChoiceForTrainer(handRec.actionRaw, handRec.normalizedAction, pseudoOpts);
+  const options = optionsForTrainerAction(handRec.actionRaw, handRec.normalizedAction, chart.sourceMode, correct);
+  if (!correct || options.length < 2) return null;
 
   const task = {
     id: `TRAINER_${chart.id}_${hand}`,

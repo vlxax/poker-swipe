@@ -63,7 +63,7 @@ function facingKind(spot) {
     if (/все до тебя сфолдил|первый в раздаче|до тебя все сфолдил|все до SB сфолдил|до тебя нет открытий/i.test(all)) {
       return 'unopened';
     }
-    if (/открыл|3-бет|4-бет|запушил|сквиз|трибет|залимповал|\bbet\b|\bbets\b/i.test(all)
+    if (/открыл|open\b|3-бет|4-бет|запушил|сквиз|трибет|залимповал|\bbet\b|\bbets\b/i.test(all)
       && /против|(?:^|[^0-9.])(?:UTG\+1|UTG|HJ|CO|BTN|SB|BB|MP|LJ)(?:\s|$|[^a-z])/i.test(all + (spot.question || ''))) {
       return 'facing_bet';
     }
