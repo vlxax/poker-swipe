@@ -61,18 +61,15 @@
 .rbMatrixWrap{display:grid;grid-template-columns:10px 1fr;gap:1px;flex:1;min-height:0;align-items:stretch}
 .rbAxisSide{display:grid;grid-template-rows:repeat(13,1fr);align-items:center}
 .rbMatrix{display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);gap:1px;padding:2px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.05);border-radius:6px;width:100%;aspect-ratio:1;max-height:min(58vh,420px);margin:0 auto}
-.rbCell{border:1px solid rgba(255,255,255,.05);border-radius:2px;background:linear-gradient(180deg,#101a0e,#090e08);color:#a8b0a4;font-size:clamp(4px,2.65vw,6.5px);font-weight:700;padding:0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;font-family:monospace;min-width:0;min-height:0;transition:background .12s,border-color .12s,transform .08s}
+.rbCell{border:1px solid rgba(255,255,255,.06);border-radius:2px;background:linear-gradient(180deg,#101a0e,#090e08);color:#a8b0a4;font-size:clamp(4px,2.65vw,6.5px);font-weight:700;padding:0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;font-family:monospace;min-width:0;min-height:0;transition:background .12s,border-color .12s,transform .08s,opacity .12s}
+.rbCell.neutral{background:linear-gradient(180deg,#101a0e,#090e08);color:#a8b0a4;border-color:rgba(255,255,255,.06)}
 .rbCell:active:not(:disabled):not(.locked){transform:scale(.9)}
-.rbCell.pair{color:#d7dfd2;background:#111b10}
-.rbCell.suited{color:#b7cdb0}
-.rbCell.offsuit{color:#9aa196}
-.rbCell.dimmed{opacity:.14;pointer-events:none}
 .rbCell.hit{background:linear-gradient(180deg,#3d6b12,#2a4a0c)!important;border-color:#b6ff28!important;color:#e8ffc0!important;box-shadow:inset 0 0 6px rgba(183,255,42,.25)}
-.rbCell.miss{background:linear-gradient(180deg,#4a1810,#2a0c08)!important;border-color:#ff6b3d!important;color:#ffc4b0!important;opacity:.75}
+.rbCell.miss{background:linear-gradient(180deg,#4a1810,#2a0c08)!important;border-color:#ff6b3d!important;color:#ffc4b0!important}
 .rbCell.locked{pointer-events:none}
 .rbCell.flash-hit{animation:rbHitFlash .35s ease}
 .rbCell.flash-miss{animation:rbMissBoom .45s ease}
-.rbCell.tutorial-pulse{animation:rbPulse 1s ease infinite;border-color:#b6ff28;box-shadow:0 0 10px rgba(183,255,42,.5)}
+.rbCell.tutorial-pulse{animation:rbPulse 1s ease infinite;border-color:#b6ff28;box-shadow:0 0 10px rgba(183,255,42,.5);background:linear-gradient(180deg,#101a0e,#090e08)!important;color:#a8b0a4!important}
 
 @keyframes rbHitFlash{0%{background:#c8ff3a;color:#0a1408;transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes rbMissBoom{0%{background:#ff4500;transform:scale(1.12)}50%{background:#4a1810}100%{transform:scale(1)}}

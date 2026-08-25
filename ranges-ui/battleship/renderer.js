@@ -117,22 +117,14 @@ export function renderBattleshipCatalog(root, vm, handlers) {
 }
 
 function matrixHtml(mission, state) {
-  const activeHands = mission?.getActiveHands ? mission.getActiveHands() : [];
-  const activeSet = new Set(activeHands);
-  const targetSet = new Set(mission?.getTargetHands?.() || []);
   const cells = [];
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
       const hand = handCode(r, c);
-      let cls = 'rbCell';
-      if (r === c) cls += ' pair';
-      else if (r < c) cls += ' suited';
-      else cls += ' offsuit';
-      if (mission?.type === 'MATRIX_HUNT' && activeSet.size > 0 && !activeSet.has(hand) && !mission.isFinal) {
-        cls += ' dimmed';
-      }
-      if (state.hitHands?.has(hand)) cls += ' hit';
-      if (state.missHands?.has(hand)) cls += ' miss';
+      let cls = 'rbCell neutral';
+      const tapped = state.hitHands?.has(hand) || state.missHands?.has(hand);
+      if (state.hitHands?.has(hand)) cls = 'rbCell hit';
+      else if (state.missHands?.has(hand)) cls = 'rbCell miss';
       if (state.resolved?.has(hand)) cls += ' locked';
       if (state.flashHand === hand && state.feedback?.type === 'hit') cls += ' flash-hit';
       if (state.flashHand === hand && state.feedback?.type === 'miss') cls += ' flash-miss';
@@ -187,11 +179,9 @@ export function renderBattleshipGame(root, vm, handlers) {
   const showMatrix = !state.showMissionIntro;
   const tutorialBanner = state.tutorialPhase === 'pulse'
     ? '<p class="rbTutorial">Найди руку из диапазона BTN.</p>'
-    : state.tutorialPhase === 'confirm'
+      : state.tutorialPhase === 'confirm'
       ? '<p class="rbTutorial">Да. Попал. <button type="button" class="rbTutorialOk" id="rbTutorialOk">Ок</button></p>'
-      : state.tutorialPhase === 'done'
-        ? '<p class="rbTutorial">Теперь попробуй сам.</p>'
-        : '';
+      : '';
 
   const feedbackPop = state.feedback
     ? `<div class="rbFeedbackPop rbFeedbackPop--${state.feedback.type}">${esc(state.feedback.text)}</div>`

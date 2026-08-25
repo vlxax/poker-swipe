@@ -1,4 +1,4 @@
-// Mission definitions — unified MATRIX_HUNT gameplay from trainer range model.
+// Mission definitions — quality-gated MATRIX_HUNT, no answer pre-reveal.
 
 import {
   getPocketSequence,
@@ -11,24 +11,15 @@ import {
   getSuitedGapperSequence,
   findContinuousBoundary,
   isSequenceContinuousOpen,
-  getHandCategory,
   allHands
 } from './matrixUtils.js';
 import { isOpen, isGradable } from './trainerRangeModel.js';
 
-export const COURSE_MISSION_IDS = [
-  'pocket-pairs',
-  'suited-ax',
-  'broadway',
-  'suited-kx',
-  'connectors-gappers',
-  'range-edge',
-  'hunt',
-  'hunt-2',
-  'final-battle'
-];
-
 export const GRENADES_PER_MISSION = 3;
+export const MIN_TARGETS = 2;
+export const MIN_NON_TARGETS = 2;
+export const MAX_MISSIONS = 8;
+export const MIN_MISSIONS = 5;
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -47,13 +38,18 @@ function openHands(hands, model) {
   return hands.filter((h) => isOpen(h, model) === true);
 }
 
-function boundaryForCategory(category, model) {
-  let seq = [];
-  if (category === 'pocketPairs') seq = getPocketSequence();
-  else if (category === 'suitedAx') seq = getSuitedAxSequence();
-  else if (category === 'offsuitAx') seq = getOffsuitAxSequence();
-  else if (category === 'suitedKx') seq = getSuitedKxSequence();
-  else return { lastOpen: null, firstFold: null, continuous: false, hands: [] };
+function categoryStats(hands, model) {
+  const gradable = gradableHands(hands, model);
+  const targets = openHands(gradable, model);
+  const nonTargets = gradable.filter((h) => !targets.includes(h));
+  return { gradable, targets, nonTargets };
+}
+
+export function isMeaningfulCategory(stats) {
+  return stats.targets.length >= MIN_TARGETS && stats.nonTargets.length >= MIN_NON_TARGETS;
+}
+
+function boundaryHandsForSeq(seq, model) {
   const gradableSeq = gradableHands(seq, model);
   const boundary = findContinuousBoundary(gradableSeq, model.openSet);
   boundary.continuous = isSequenceContinuousOpen(gradableSeq, model.openSet);
@@ -66,181 +62,157 @@ function boundaryForCategory(category, model) {
       if (!hands.includes(gradableSeq[i])) hands.push(gradableSeq[i]);
     }
   }
-  boundary.hands = gradableHands(hands.length ? hands : gradableSeq.slice(0, 6), model);
-  return boundary;
+  const active = gradableHands(hands.length ? hands : gradableSeq.slice(0, 8), model);
+  const targets = openHands(active, model);
+  const nonTargets = active.filter((h) => !targets.includes(h));
+  return { active, targets, nonTargets, boundary, meaningful: targets.length >= MIN_TARGETS && nonTargets.length >= MIN_NON_TARGETS };
 }
 
-function pickEdgeMission(model) {
-  const candidates = ['offsuitAx', 'suitedKx', 'suitedAx'];
-  for (const cat of candidates) {
-    const b = boundaryForCategory(cat, model);
-    if (b.hands.length >= 3 && openHands(b.hands, model).length >= 1) {
-      return { category: cat, boundary: b };
-    }
-  }
-  return null;
+const CATEGORY_DEFS = [
+  { id: 'pocket-pairs', title: 'КАРМАНКИ', hands: () => getPocketSequence() },
+  { id: 'suited-ax', title: 'SUITED AX', hands: () => getSuitedAxSequence() },
+  { id: 'suited-kx', title: 'SUITED KX', hands: () => getSuitedKxSequence() },
+  { id: 'offsuit-ax', title: 'OFFSUIT AX', hands: () => getOffsuitAxSequence() },
+  { id: 'broadway', title: 'BROADWAY', hands: () => [...getCanonicalBroadwayHands(), ...getNearBroadwayHands()] },
+  { id: 'connectors-gappers', title: 'КОННЕКТОРЫ', hands: () => [...getSuitedConnectorSequence(), ...getSuitedGapperSequence()] }
+];
+
+function makeCategoryHunt(def, model, pos) {
+  const stats = categoryStats(def.hands(), model);
+  if (!isMeaningfulCategory(stats)) return null;
+  return {
+    id: def.id,
+    type: 'MATRIX_HUNT',
+    title: def.title,
+    goal: `Какие ${def.title.toLowerCase()} входят в open ${pos}?`,
+    instruction: 'Жми только на руки из диапазона.',
+    getActiveHands() { return stats.gradable; },
+    getTargetHands() { return stats.targets; },
+    _audit: { category: def.id, targetCount: stats.targets.length, nonTargetCount: stats.nonTargets.length, meaningful: true }
+  };
 }
 
-function generateFinalTargets(model) {
-  const categories = ['pocketPairs', 'suitedAx', 'offsuitAx', 'suitedKx', 'broadway', 'suitedConnectors', 'suitedGappers'];
-  const picked = [];
-  const byCat = {};
-  for (const cat of categories) byCat[cat] = [];
-  for (const hand of allHands()) {
-    if (!isGradable(hand, model) || !isOpen(hand, model)) continue;
-    const cat = getHandCategory(hand);
-    if (byCat[cat]) byCat[cat].push(hand);
-  }
-  for (const cat of categories) {
-    const pool = byCat[cat];
-    if (pool.length) picked.push(shuffle(pool)[0]);
-  }
-  const rest = shuffle(allHands().filter((h) => isGradable(h, model) && isOpen(h, model) && !picked.includes(h)));
-  while (picked.length < 12 && rest.length) picked.push(rest.pop());
-  return picked;
+function makeBoundaryHunt(def, model) {
+  const b = boundaryHandsForSeq(def.hands(), model);
+  if (!b.meaningful) return null;
+  return {
+    id: `edge-${def.id}`,
+    type: 'MATRIX_HUNT',
+    title: `ГРАНИЦА · ${def.title}`,
+    goal: `Где заканчивается ${def.title.toLowerCase()}?`,
+    instruction: 'Ищи open-руки у границы диапазона.',
+    getActiveHands() { return b.active; },
+    getTargetHands() { return b.targets; },
+    _audit: { category: def.id, targetCount: b.targets.length, nonTargetCount: b.nonTargets.length, meaningful: true, edge: true }
+  };
 }
 
-function remainingOpenHands(model, excludeCategories = []) {
-  const used = new Set();
-  for (const cat of excludeCategories) {
-    const seq = {
-      pocketPairs: getPocketSequence(),
-      suitedAx: getSuitedAxSequence(),
-      broadway: [...getCanonicalBroadwayHands(), ...getNearBroadwayHands()],
-      suitedKx: getSuitedKxSequence(),
-      connectors: [...getSuitedConnectorSequence(), ...getSuitedGapperSequence()]
-    }[cat];
-    if (seq) openHands(gradableHands(seq, model), model).forEach((h) => used.add(h));
-  }
-  return shuffle(allHands().filter((h) => isGradable(h, model) && isOpen(h, model) && !used.has(h)));
+function makeMixedHunt(model, count, usedTargets = new Set()) {
+  const pool = shuffle(openHands(gradableHands(allHands(), model), model).filter((h) => !usedTargets.has(h)));
+  const targets = pool.slice(0, Math.min(count, pool.length));
+  if (targets.length < MIN_TARGETS) return null;
+  return {
+    id: `mixed-hunt-${count}`,
+    type: 'MATRIX_HUNT',
+    title: 'ОХОТА',
+    goal: `Найди ${targets.length} open-рук из диапазона.`,
+    instruction: 'Без подсказок — только память.',
+    _targets: targets,
+    getActiveHands() { return gradableHands(allHands(), model); },
+    getTargetHands() { return this._targets; },
+    _audit: { category: 'mixed', targetCount: targets.length, nonTargetCount: gradableHands(allHands(), model).length - targets.length, meaningful: true }
+  };
+}
+
+function makeFinalRebuild(model, pos) {
+  const targets = openHands(gradableHands(allHands(), model), model);
+  return {
+    id: 'final-battle',
+    type: 'RANGE_REBUILD',
+    title: 'ФИНАЛЬНЫЙ БОЙ',
+    goal: `Восстанови рендж ${pos}.`,
+    instruction: 'Отметь все open-руки · 3 гранаты.',
+    isFinal: true,
+    getActiveHands() { return gradableHands(allHands(), model); },
+    getTargetHands() { return targets; },
+    _audit: { category: 'final', targetCount: targets.length, nonTargetCount: gradableHands(allHands(), model).length - targets.length, meaningful: true, rebuild: true }
+  };
 }
 
 export function buildMissions(model) {
   const pos = model.position || '';
-  const stack = model.stack || '';
-  const rangeLabel = `${pos} · ${stack.replace('-', '–')} ББ`;
-  const edge = pickEdgeMission(model);
+  const missions = [];
+  const usedIds = new Set();
 
-  const missions = [
-    {
-      id: 'pocket-pairs',
-      type: 'MATRIX_HUNT',
-      index: 1,
-      title: 'КАРМАНКИ',
-      goal: 'Найди все пары в диапазоне.',
-      instruction: 'Жми на руки, которыми ' + pos + ' играет.',
-      getActiveHands() { return gradableHands(getPocketSequence(), model); },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    },
-    {
-      id: 'suited-ax',
-      type: 'MATRIX_HUNT',
-      index: 2,
-      title: 'SUITED AX',
-      goal: 'Найди одномастные тузы.',
-      instruction: 'Только suited Ax из open-диапазона.',
-      getActiveHands() { return gradableHands(getSuitedAxSequence(), model); },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    },
-    {
-      id: 'broadway',
-      type: 'MATRIX_HUNT',
-      index: 3,
-      title: 'BROADWAY',
-      goal: 'Найди бродвейные руки.',
-      instruction: 'AK–QT и соседние бродвейные комбо.',
-      getActiveHands() {
-        return gradableHands([...getCanonicalBroadwayHands(), ...getNearBroadwayHands()], model);
-      },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    },
-    {
-      id: 'suited-kx',
-      type: 'MATRIX_HUNT',
-      index: 4,
-      title: 'SUITED KX',
-      goal: 'Найди одномастные короли.',
-      instruction: 'Suited Kx из open-диапазона.',
-      getActiveHands() { return gradableHands(getSuitedKxSequence(), model); },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    },
-    {
-      id: 'connectors-gappers',
-      type: 'MATRIX_HUNT',
-      index: 5,
-      title: 'КОННЕКТОРЫ',
-      goal: 'Найди suited коннекторы и гапперы.',
-      instruction: 'Одномастные связки и разрывы.',
-      getActiveHands() {
-        return gradableHands([...getSuitedConnectorSequence(), ...getSuitedGapperSequence()], model);
-      },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    }
-  ];
-
-  const priorCats = ['pocketPairs', 'suitedAx', 'broadway', 'suitedKx', 'connectors'];
-
-  if (edge) {
-    const catLabel = edge.category === 'offsuitAx' ? 'OFFSUIT AX' : edge.category === 'suitedKx' ? 'SUITED KX' : 'SUITED AX';
-    missions.push({
-      id: 'range-edge',
-      type: 'MATRIX_HUNT',
-      index: 6,
-      title: 'ГРАНИЦА РЕНДЖА',
-      goal: `Найди open-руки у границы ${catLabel}.`,
-      instruction: edge.boundary.continuous
-        ? 'Где заканчивается open?'
-        : 'Граница неровная — ищи только open.',
-      getActiveHands() { return edge.boundary.hands; },
-      getTargetHands() { return openHands(this.getActiveHands(), model); }
-    });
-  } else {
-    const huntPool = remainingOpenHands(model, priorCats);
-    missions.push({
-      id: 'hunt',
-      type: 'MATRIX_HUNT',
-      index: 6,
-      title: 'ОХОТА',
-      goal: 'Найди оставшиеся open-руки.',
-      instruction: 'Случайные цели из диапазона.',
-      _targets: huntPool.slice(0, Math.min(8, huntPool.length)),
-      getActiveHands() { return gradableHands(allHands(), model); },
-      getTargetHands() {
-        return this._targets.length ? this._targets : openHands(this.getActiveHands(), model).slice(0, 6);
+  for (const def of CATEGORY_DEFS) {
+    const hunt = makeCategoryHunt(def, model, pos);
+    if (hunt && !usedIds.has(hunt.id)) {
+      missions.push(hunt);
+      usedIds.add(hunt.id);
+    } else {
+      const edge = makeBoundaryHunt(def, model);
+      if (edge && !usedIds.has(edge.id)) {
+        missions.push(edge);
+        usedIds.add(edge.id);
       }
-    });
+    }
   }
 
-  const huntPool2 = remainingOpenHands(model, priorCats);
-  missions.push({
-    id: edge ? 'hunt' : 'hunt-2',
-    type: 'MATRIX_HUNT',
-    index: 7,
-    title: 'ОХОТА',
-    goal: 'Найди оставшиеся open-руки.',
-    instruction: 'Случайные цели из диапазона.',
-    _targets: huntPool2.slice(edge ? 0 : 8, edge ? Math.min(10, huntPool2.length) : Math.min(16, huntPool2.length)),
-    getActiveHands() { return gradableHands(allHands(), model); },
-    getTargetHands() {
-      if (this._targets.length) return this._targets;
-      return openHands(this.getActiveHands(), model).slice(0, 8);
+  const usedTargets = new Set();
+  for (const m of missions) {
+    for (const h of m.getTargetHands()) usedTargets.add(h);
+  }
+
+  while (missions.length < MAX_MISSIONS - 1) {
+    const count = missions.length < 4 ? 6 : missions.length < 6 ? 8 : 10;
+    const hunt = makeMixedHunt(model, count, usedTargets);
+    if (!hunt) break;
+    hunt.id = `hunt-${missions.length}`;
+    missions.push(hunt);
+    usedIds.add(hunt.id);
+    for (const h of hunt.getTargetHands()) usedTargets.add(h);
+    if (missions.length >= MAX_MISSIONS - 1) break;
+  }
+
+  missions.push(makeFinalRebuild(model, pos));
+
+  const trimmed = missions.slice(0, MAX_MISSIONS);
+  if (trimmed.length < MIN_MISSIONS) {
+    while (trimmed.length < MIN_MISSIONS && trimmed.length < MAX_MISSIONS) {
+      const hunt = makeMixedHunt(model, 5, usedTargets);
+      if (!hunt) break;
+      hunt.id = `fill-${trimmed.length}`;
+      trimmed.splice(trimmed.length - 1, 0, hunt);
+      for (const h of hunt.getTargetHands()) usedTargets.add(h);
     }
-  });
+  }
 
-  missions.push({
-    id: 'final-battle',
-    type: 'MATRIX_HUNT',
-    index: 8,
-    title: 'ФИНАЛЬНЫЙ БОЙ',
-    goal: 'Найди ключевые руки всего диапазона.',
-    instruction: '12 целей · 3 гранаты.',
-    _finalTargets: generateFinalTargets(model),
-    getActiveHands() { return gradableHands(allHands(), model); },
-    getTargetHands() { return this._finalTargets; },
-    isFinal: true
-  });
+  return trimmed.map((m, i) => ({ ...m, index: i + 1 }));
+}
 
-  return missions.map((m, i) => ({ ...m, index: i + 1 }));
+export const COURSE_MISSION_IDS = [
+  'pocket-pairs', 'suited-ax', 'suited-kx', 'offsuit-ax', 'broadway', 'connectors-gappers',
+  'edge-pocket-pairs', 'edge-suited-ax', 'edge-suited-kx', 'edge-offsuit-ax', 'edge-broadway', 'edge-connectors-gappers',
+  'mixed-hunt-6', 'mixed-hunt-8', 'mixed-hunt-10', 'hunt-0', 'hunt-1', 'hunt-2', 'hunt-3', 'hunt-4', 'hunt-5', 'hunt-6',
+  'fill-0', 'fill-1', 'fill-2', 'final-battle'
+];
+
+export function auditMission(mission, model) {
+  const active = mission.getActiveHands();
+  const targets = mission.getTargetHands();
+  const activeSet = new Set(active);
+  const nonTargets = active.filter((h) => !targets.includes(h));
+  const preRevealed = 0;
+  const meaningful = targets.length >= MIN_TARGETS && (mission.type === 'RANGE_REBUILD' || nonTargets.length >= MIN_NON_TARGETS);
+  return {
+    id: mission.id,
+    category: mission._audit?.category || mission.id,
+    targetCount: targets.length,
+    nonTargetCount: nonTargets.length,
+    answerPreRevealed: preRevealed,
+    meaningfulDecision: meaningful,
+    type: mission.type
+  };
 }
 
 export function missionRangeLabel(model) {

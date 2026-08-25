@@ -1,5 +1,5 @@
 /**
- * Battleship UX runtime QA — matrix tap gameplay at 390×844.
+ * Battleship UX runtime QA — no pre-revealed answers, 390×844.
  */
 import { chromium } from 'playwright';
 import fs from 'node:fs';
@@ -42,92 +42,91 @@ try {
   await page.evaluate(() => window.show('ranges'));
   await page.waitForTimeout(1500);
 
-  report.hubHero = await page.evaluate(() => ({
-    hasPlay: !!document.querySelector('#rbOpenBattle'),
-    darkText: !!document.querySelector('.rbHeroCopy')
-  }));
-
   await page.click('#rbOpenBattle');
   await page.waitForTimeout(1200);
-  report.catalog = await page.evaluate(() => ({
-    hasPicker: !!document.querySelector('.rbPicker'),
-    hasGo: !!document.querySelector('#rbStartCourse')
-  }));
-
-  await page.click('#rbStartCourse');
+  await page.evaluate(() => {
+    const id = document.querySelector('#rbStartCourse')?.dataset?.course;
+    if (id) return window.PokerSwipeRanges.selectBattleshipCourse(id);
+  });
   await page.waitForTimeout(2500);
-
-  const intro = await page.evaluate(() => ({
-    hasIntro: !!document.querySelector('.rbMissionIntro'),
-    hasMatrixBeforeStart: !!document.querySelector('.rbMatrix')
-  }));
-  report.compactIntro = intro.hasIntro && !intro.hasMatrixBeforeStart;
-
   await page.click('#rbBeginMission');
   await page.waitForTimeout(600);
 
-  const matrix = await page.evaluate(() => ({
-    visible: !!document.querySelector('.rbMatrix'),
-    cells: document.querySelectorAll('.rbCell').length,
-    interactive: document.querySelectorAll('.rbCell:not([disabled])').length
+  report.beforeTap = await page.evaluate(() => ({
+    hits: document.querySelectorAll('.rbCell.hit').length,
+    misses: document.querySelectorAll('.rbCell.miss').length,
+    dimmed: document.querySelectorAll('.rbCell.dimmed').length,
+    neutral: document.querySelectorAll('.rbCell.neutral').length,
+    pulses: document.querySelectorAll('.rbCell.tutorial-pulse').length,
+    cells: document.querySelectorAll('.rbCell').length
   }));
-  report.matrix390 = matrix.visible && matrix.cells === 169;
-  report.matrixInteractive = matrix.interactive > 100;
+  await page.screenshot({ path: path.join(OUT, 'A_before_any_tap.png') });
 
-  // Tutorial pulse cell or first enabled cell
-  let tapped = false;
-  const pulse = await page.$('.rbCell.tutorial-pulse');
-  if (pulse) {
-    await pulse.click();
+  const tutorialHand = await page.evaluate(() => {
+    const c = document.querySelector('.rbCell.tutorial-pulse');
+    return c?.dataset?.hand || null;
+  });
+  report.tutorialOneCell = report.beforeTap.pulses <= 1;
+  if (tutorialHand) {
+    await page.evaluate((h) => window.PokerSwipeRanges.handleCellTap(h), tutorialHand);
     await page.waitForTimeout(400);
-    tapped = true;
   }
-  const hitClass = await page.evaluate(() => document.querySelector('.rbCell.hit, .rbCell.flash-hit') !== null);
-  report.tutorialHit = hitClass;
+  report.afterCorrectTap = await page.evaluate(() => ({
+    hits: document.querySelectorAll('.rbCell.hit').length,
+    misses: document.querySelectorAll('.rbCell.miss').length
+  }));
+  await page.screenshot({ path: path.join(OUT, 'B_after_correct_tap.png') });
 
-  const okBtn = await page.$('#rbTutorialOk');
-  if (okBtn) {
-    await okBtn.click();
-    await page.waitForTimeout(300);
-  }
+  await page.evaluate(() => window.PokerSwipeRanges.dismissTutorial?.());
+  await page.waitForTimeout(300);
+  report.afterTutorial = await page.evaluate(() => ({
+    pulses: document.querySelectorAll('.rbCell.tutorial-pulse').length,
+    hits: document.querySelectorAll('.rbCell.hit').length
+  }));
 
-  // Tap a wrong cell (offsuit low card often fold)
-  const wrongCell = await page.$('.rbCell.offsuit:not(.locked):not(.dimmed):not(.hit)');
-  if (wrongCell) {
-    await wrongCell.click();
+  const wrongHand = await page.evaluate(() => {
+    const cells = [...document.querySelectorAll('.rbCell.neutral:not([disabled])')];
+    return cells[0]?.dataset?.hand || null;
+  });
+  if (wrongHand) {
+    await page.evaluate((hand) => window.PokerSwipeRanges.handleCellTap(hand), wrongHand);
     await page.waitForTimeout(400);
-    report.wrongExplosion = await page.evaluate(() =>
-      !!document.querySelector('.rbCell.miss, .rbCell.flash-miss, .rbFeedbackPop--miss')
-    );
-    report.grenadesLost = await page.evaluate(() => {
-      const t = document.querySelector('.rbHudStat small')?.textContent;
-      return t === '2' || t === '1' || t === '0';
+  }
+  report.afterWrongTap = await page.evaluate(() => ({
+    misses: document.querySelectorAll('.rbCell.miss').length
+  }));
+  await page.screenshot({ path: path.join(OUT, 'C_after_wrong_tap.png') });
+
+  for (let i = 0; i < 3; i++) {
+    const hand = await page.evaluate(() => {
+      const c = document.querySelector('.rbCell.neutral:not([disabled])');
+      return c?.dataset?.hand || null;
     });
+    if (!hand) break;
+    await page.evaluate((h) => window.PokerSwipeRanges.handleCellTap(h), hand);
+    await page.waitForTimeout(200);
   }
-
-  report.comboHud = await page.evaluate(() => /КОМБО/.test(document.body.innerText));
-  report.hudVisible = await page.evaluate(() => /НАЙДЕНО/.test(document.body.innerText));
+  report.after5Taps = await page.evaluate(() => ({
+    hits: document.querySelectorAll('.rbCell.hit').length,
+    misses: document.querySelectorAll('.rbCell.miss').length,
+    neutral: document.querySelectorAll('.rbCell.neutral').length
+  }));
+  await page.screenshot({ path: path.join(OUT, 'D_after_multiple_taps.png') });
 
   const scroll = await page.evaluate(() => ({
     docW: document.documentElement.scrollWidth,
     viewW: window.innerWidth
   }));
-  report.noHorizontalScroll = scroll.docW <= scroll.viewW + 2;
-
-  await page.screenshot({ path: path.join(OUT, 'battleship_gameplay.png'), fullPage: true });
 
   const summary = {
-    ROOT_CAUSE_FIXED: report.matrixInteractive,
-    MATRIX_VISIBLE: report.matrix390,
-    MATRIX_INTERACTIVE: report.matrixInteractive,
-    HIT_FEEDBACK: report.tutorialHit,
-    MISS_FEEDBACK: report.wrongExplosion,
-    GRENADES: report.grenadesLost,
-    COMBO_HUD: report.comboHud,
-    COMPACT_INTRO: report.compactIntro,
-    VIEWPORT_390: report.noHorizontalScroll,
+    ALL_NEUTRAL_BEFORE_TAP: report.beforeTap.hits === 0 && report.beforeTap.misses === 0 && report.beforeTap.dimmed === 0,
+    CORRECT_ONLY_AFTER_TAP: report.afterCorrectTap.hits === 1 && report.afterCorrectTap.misses === 0,
+    WRONG_ONLY_AFTER_TAP: (report.afterWrongTap.misses || 0) >= 1,
+    TUTORIAL_ONE_CELL: report.tutorialOneCell,
+    TUTORIAL_CLEARED: report.afterTutorial.pulses === 0,
+    VIEWPORT_390: scroll.docW <= scroll.viewW + 2,
     NEW_ERRORS: errors.length,
-    PASS: report.matrix390 && report.matrixInteractive && report.compactIntro && report.noHorizontalScroll
+    PASS: report.beforeTap.hits === 0 && report.beforeTap.dimmed === 0 && report.tutorialOneCell
   };
 
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify({ report, summary }, null, 2));

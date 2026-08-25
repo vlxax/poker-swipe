@@ -67,7 +67,7 @@ export class BattleshipController {
       rangeLabel: this.model ? missionRangeLabel(this.model) : '',
       progress: this.progress,
       lastCourse: this.progress.getLastCourse(),
-      missionIds: COURSE_MISSION_IDS,
+      missionIds: this.missions.map((m) => m.id),
       courseProgressList: this.progress.getCourseProgressList(this.catalog)
     };
   }
@@ -197,7 +197,8 @@ export class BattleshipController {
 
   dismissTutorial() {
     if (this.state.tutorialPhase === 'confirm') {
-      this.state.tutorialPhase = 'done';
+      this.state.tutorialPhase = null;
+      this.state.tutorialHand = null;
       this.state.speech = 'Теперь попробуй сам.';
       this.progress.saveTutorialCompleted();
     }
@@ -262,7 +263,7 @@ export class BattleshipController {
         mistakes: this.state.mistakes,
         missedOpens: []
       },
-      COURSE_MISSION_IDS
+      this.missions.map((m) => m.id)
     );
     this.state.showOverlay = true;
     return this.viewModel();
@@ -291,7 +292,8 @@ export class BattleshipController {
   }
 
   repeatWeakMission() {
-    const worst = this.progress.getWeakestMission(this.course.courseId, COURSE_MISSION_IDS);
+    const missionIds = this.missions.map((m) => m.id);
+    const worst = this.progress.getWeakestMission(this.course.courseId, missionIds);
     if (!worst) return this.viewModel();
     const index = this.missions.findIndex((m) => m.id === worst.missionId);
     if (index === -1) return this.viewModel();
@@ -301,7 +303,7 @@ export class BattleshipController {
   }
 
   restartCourse() {
-    this.progress.clearCourseProgress(this.course.courseId, COURSE_MISSION_IDS);
+    this.progress.clearCourseProgress(this.course.courseId, this.missions.map((m) => m.id));
     this.state.showFinal = false;
     this.state.missionIndex = 0;
     this.state.showMissionIntro = true;
@@ -309,7 +311,7 @@ export class BattleshipController {
   }
 
   resetMissionProgress() {
-    if (this.course) this.progress.clearCourseProgress(this.course.courseId, COURSE_MISSION_IDS);
+    if (this.course) this.progress.clearCourseProgress(this.course.courseId, this.missions.map((m) => m.id));
     return this.viewModel();
   }
 }

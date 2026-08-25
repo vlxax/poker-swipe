@@ -327,6 +327,7 @@ window.PokerSwipeRanges = {
   selectBattleshipCourse: (courseId) => handlers.selectBattleshipCourse(courseId),
   beginMission: () => handlers.beginMission(),
   handleCellTap: (hand) => handlers.handleCellTap(hand),
+  dismissTutorial: () => handlers.dismissTutorial(),
   openNarrowing: () => handlers.openNarrowing(),
   startNarrowingLesson: (id) => handlers.startNarrowingLesson(id)
 };
