@@ -1017,6 +1017,91 @@ button{letter-spacing:-.01em}
 .v31DecisionBadge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:1000}.v31DecisionBadge.main{background:#153322;color:#75e6a3}.v31DecisionBadge.alt{background:#342c16;color:#ffd873}.v31DecisionBadge.exploit{background:#261a37;color:#c5a4ff}.v31DecisionBadge.error{background:#3a1720;color:#ff8ba0}
 .v31Why{font-size:11px;line-height:1.5;color:#d1cad2}.v31Why b{color:white}
 @media(max-width:370px){.v31Modes{grid-template-columns:1fr}.v31Identity{grid-template-columns:76px 1fr}.v31Avatar{width:76px;height:76px}.v31Hero h1{font-size:27px}}
+
+/* ===== VERDICT V31 GAME REDESIGN ===== */
+.v31Verdict{padding:14px 12px 24px;background:#07070a}
+.v31Verdict.reveal{animation:v31VerdictEnter .4s cubic-bezier(.34,.5,.6,1) both}
+@keyframes v31VerdictEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.v31Result{width:100%;max-width:100%;margin:0;padding:14px;border-radius:22px;background:linear-gradient(180deg,rgba(24,18,22,.6) 0%,rgba(13,13,18,.8) 100%);border:1px solid rgba(200,255,61,.12);text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.v31Result:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0,rgba(200,255,61,.08),transparent 60%);pointer-events:none}
+
+.v31ResultHero{position:relative;z-index:1;padding:0}
+.v31ResultHero.anim-g{animation:v31GradeReveal .5s cubic-bezier(.25,.6,.5,1) .1s both}
+.v31ResultHero.anim-y{animation:v31GradeWarning .6s cubic-bezier(.32,.5,.6,.8) .15s both}
+.v31ResultHero.anim-r{animation:v31GradeImpact .5s cubic-bezier(.34,.35,.64,.85) .12s both}
+
+@keyframes v31GradeReveal{0%{opacity:0;transform:scale(.92)}50%{transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+@keyframes v31GradeWarning{0%{opacity:0;transform:translateY(-6px)}50%{transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+@keyframes v31GradeImpact{0%{opacity:0;transform:scale(.85) translateY(-4px)}40%{transform:scale(1.08)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.v31ResultGrade{font-size:28px;font-weight:1000;letter-spacing:.15em;margin-bottom:2px}
+.v31ResultGrade{color:#c8ff3d}
+.v31ResultHero.anim-y .v31ResultGrade{color:#ffd257}
+.v31ResultHero.anim-r .v31ResultGrade{color:#ff6b8a}
+
+.v31ResultVerdict{font-size:16px;font-weight:800;line-height:1.2;color:#fff;letter-spacing:-.02em}
+.v31Result .ey{display:block;margin-top:8px;font-size:8px;letter-spacing:.12em;color:#aaa4ae}
+
+.v31VerdictContent{display:grid;grid-template-columns:1fr 140px;gap:12px;margin-bottom:12px;align-items:flex-start}
+
+.v31BrainHUD{background:rgba(17,17,22,.6);border:1px solid rgba(200,255,61,.08);border-radius:18px;padding:12px;position:relative;overflow:hidden}
+.v31BrainHUD:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 0,rgba(200,255,61,.06),transparent 70%);pointer-events:none}
+
+.v31BrainHUD>.ey{display:block;margin-bottom:9px;position:relative;z-index:1}
+.v31Brain__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;position:relative;z-index:1}
+.v31Brain__header b{font-size:11px;letter-spacing:.08em;font-weight:900}
+.v31Brain__conf{font-size:10px;color:#c8ff3d;font-weight:1000}
+
+.v31Brain__body{position:relative;z-index:1}
+.v31Brain__row{display:grid;grid-template-columns:44px 1fr 36px;gap:8px;align-items:center;margin:7px 0}
+.v31Brain__act{font-size:10px;font-weight:1000;color:#fff}
+.v31Brain__bar{height:5px;background:rgba(200,255,61,.15);border-radius:999px;overflow:hidden}
+.v31Brain__bar i{display:block;height:100%;background:linear-gradient(90deg,#c8ff3d,#ffd257);border-radius:999px;animation:v31BarFill .5s ease-out both}
+.v31Brain__row:nth-child(1) .v31Brain__bar i{animation-delay:.15s}
+.v31Brain__row:nth-child(2) .v31Brain__bar i{animation-delay:.22s}
+.v31Brain__row:nth-child(3) .v31Brain__bar i{animation-delay:.29s}
+@keyframes v31BarFill{from{width:0!important}to{width:100%}}
+
+.v31Brain__pct{font-size:9px;font-weight:900;text-align:right;color:#aaa4ae}
+
+.v31Brain__why{font-size:9px;line-height:1.4;color:#aaa4ae;margin:9px 0 0;position:relative;z-index:1}
+
+.v31CharacterZone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px;position:relative}
+.v31Character{height:134px;display:flex;align-items:center;justify-content:center;position:relative}
+.v31Character img{height:100%;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,.4))}
+.v31Character.anim-g img{animation:v31CharGood .5s cubic-bezier(.25,.6,.5,1) .2s both}
+.v31Character.anim-y img{animation:v31CharThink .6s ease .25s both}
+.v31Character.anim-r img{animation:v31CharBad .5s cubic-bezier(.34,.35,.64,.85) .2s both}
+
+@keyframes v31CharGood{0%{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes v31CharThink{0%{opacity:0;transform:translateY(6px)}50%{transform:translateY(-2px)}to{opacity:1;transform:translateY(0)}}
+@keyframes v31CharBad{0%{opacity:0;transform:translateY(4px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.v31Reaction{text-align:center;font-size:8px}
+.v31Reaction .ey{display:block;margin-bottom:2px}
+.v31Reaction strong{display:block;font-size:10px;line-height:1.3;color:#fff;margin-top:1px}
+
+.v31VerdictCTA{display:flex;justify-content:center;gap:8px;align-items:center}
+.v31VerdictCTA .primary{flex:1;max-width:none;min-height:50px;border-radius:16px;background:linear-gradient(180deg,#c8ff3d 0,#b8ed2f 100%);color:#071007;border:0;font-weight:1000;font-size:13px;box-shadow:0 8px 16px rgba(200,255,61,.25),0 0 0 1px rgba(200,255,61,.4);transition:.15s cubic-bezier(.34,.5,.6,1)}
+.v31VerdictCTA .primary:active{transform:translateY(2px);box-shadow:0 4px 8px rgba(200,255,61,.2)}
+.v31VerdictCTA .primary:focus{outline:none}
+
+@media(prefers-reduced-motion:reduce){
+  .v31Verdict.reveal{animation:none}
+  .v31ResultHero.anim-g,.v31ResultHero.anim-y,.v31ResultHero.anim-r{animation:none!important;opacity:1;transform:none!important}
+  .v31Character img{animation:none!important;opacity:1;transform:none!important}
+  .v31Brain__bar i{animation:none!important;width:100%!important}
+}
+
+@media(max-width:370px){
+  .v31VerdictContent{grid-template-columns:1fr;gap:10px}
+  .v31Character{height:120px}
+  .v31ResultVerdict{font-size:14px}
+  .v31BrainHUD{padding:10px}
+  .v31Brain__act{font-size:9px}
+  .v31Brain__pct{font-size:8px}
+}
 </style>
 
 
@@ -1513,7 +1598,7 @@ function buildSwipeSemanticCards(s,a,br,g){const cards=[
 ];return`<div class="semanticGrid">${cards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`}
 
 /* Poker Swipe: grading is now driven by PokerBrain, not preferred/live/sizeZone */
-finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const card=$('#swipeCard');const v=$('#swipeVerdict');card.classList.add('hidden');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictHeadline=g==='g'?'РЕШЕНИЕ\nЖИВЕТ':g==='y'?'МИКС,\nА НЕ НОРМА':'МОДЕЛЬ\nНЕ СОГЛАСНА';const charImg='assets/freak-lady/freak-lady-good-v2.png';const charReactionText=g==='g'?'ОДОБРЕНИЕ':g==='y'?'СОМНЕНИЕ':'ОТКАЗ';const charReactionMsg=g==='g'?'Даже придраться неприятно.':g==='y'?'Живёт, но тонко.':'Модель предпочитает другое.';const semanticCards=[{title:'ЧТО БЫЛО',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,80):'Контекст'},{title:'НА УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · ${s.board.length}-street`:'')},{title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`},{title:'ПОЧЕМУ',icon:'💡',content:s.concept||'Концепция'}];const semanticHtml=`<div class="semanticGrid">${semanticCards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`;const actionSummaryHtml=`<div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}</b></div><div class="actionCard"><span class="ey">GTO</span><b class="grade-${g}">${verdictLabel}</b></div></div>`;const sceneBgClass=g==='g'?'':'';v.innerHTML=`<div class="verdictReportV21 reveal"><div class="verdictHeroZone anim-${g}"><span class="ey">ПОКЕРНЫЙ РАЗБОР · ${s.street}</span><h2><span class="verdict-grade-label">${verdictLabel}</span><br>${verdictHeadline}</h2></div><div class="verdictScene"><div class="sceneBg"></div><div class="sceneContent"><div><div class="brainCardCompact">${brainPanel(br)}</div><div style="grid-column:1/-1">${semanticHtml}</div></div><div>${actionSummaryHtml}</div></div></div><div class="verdictCharacterZone"><div class="charArtwork anim-${g}"><img src="${charImg}" alt="Фриковая Дама"/></div><div class="charReactionCompact"><span class="ey">ФРИКОВАЯ ДАМА · ${charReactionText}</span><strong>${charReactionMsg}</strong></div></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const app=document.querySelector('.app');if(app){app.scrollTop=0}$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>{v.scrollIntoView({behavior:'smooth',block:'nearest'})});const delay=g==='g'?2800:g==='y'?3800:5200;setTimeout(()=>{$('#verdictNext').focus()},delay)}
+finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const card=$('#swipeCard');const v=$('#swipeVerdict');card.classList.add('hidden');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictHeadline=g==='g'?'РЕШЕНИЕ ЖИВЕТ':g==='y'?'МИКС А НЕ НОРМА':'МОДЕЛЬ НЕ СОГЛАСНА';const charImg=g==='g'?'assets/freak-lady/correct/sprite.png':g==='y'?'assets/freak-lady/thinking/sprite.png':'assets/freak-lady/wrong/sprite.png';const charReactionText=g==='g'?'ОДОБРЕНИЕ':g==='y'?'СОМНЕНИЕ':'ОТКАЗ';const charReactionMsg=g==='g'?'Даже придраться неприятно.':g==='y'?'Живёт, но тонко.':'Модель предпочитает другое.';const actionFreqs=br.frequencies||{};const topActions=Object.entries(actionFreqs).filter(e=>!['check','call','raise','fold','bet'].includes(e[0]) || actionFreqs[e[0]]>0).sort((a,b)=>b[1]-a[1]).slice(0,3);const freqHtml=topActions.map(([act,pct])=>`<div class="v31Brain__row"><span class="v31Brain__act">${act}</span><div class="v31Brain__bar"><i style="width:${Math.min(100,pct)}%"></i></div><span class="v31Brain__pct">${Math.round(pct)}%</span></div>`).join('');v.innerHTML=`<div class="v31Verdict reveal"><div class="v31Result"><div class="v31ResultHero anim-${g}"><div class="v31ResultGrade">${verdictLabel}</div><div class="v31ResultVerdict">${verdictHeadline}</div><span class="ey">ПОКЕРНЫЙ РАЗБОР · ${s.street}</span></div></div><div class="v31VerdictContent"><div class="v31BrainHUD"><span class="ey">GTO АНАЛИЗ</span><div class="v31Brain__header"><div><b>ДЕЙСТВИЕ</b><span class="v31Brain__conf">${br.confidence||0}%</span></div></div><div class="v31Brain__body">${freqHtml||'<p class="mut">Анализ в процессе</p>'}</div><p class="v31Brain__why">${esc(br.explanation||'')}</p></div><div class="v31CharacterZone"><div class="v31Character anim-${g}"><img src="${charImg}" alt="Фриковая Дама" loading="lazy"/></div><div class="v31Reaction"><span class="ey">${charReactionText}</span><strong>${charReactionMsg}</strong></div></div></div><div class="v31VerdictCTA"><button class="primary" id="verdictNext" style="width:100%">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const app=document.querySelector('.app');if(app){app.scrollTop=0}$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>{v.scrollIntoView({behavior:'smooth',block:'nearest'})});const delay=g==='g'?2800:g==='y'?3800:5200;setTimeout(()=>{$('#verdictNext').focus()},delay)}
 
 /* Sizing: action + sizing family from Brain */
 renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · ЛАБОРАТОРИЯ РАЗМЕРА</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerBrain.gradeDecision({...s,spotId:s.id},action,v||null),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">РАЗМЕР СТАВКИ</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;window.FreakLady?.react($('#sizeResult').querySelector('.verdict'),g,'sizing');$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
