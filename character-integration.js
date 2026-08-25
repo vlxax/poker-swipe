@@ -32,9 +32,18 @@
       setTimeout(() => {
         const swipeFlash = document.querySelector('#swipeFlash');
         if (swipeFlash) {
-          // Get the grade from the verdict UI
-          const grade = swipeFlash.classList.contains('grade-g') ? 'g' :
-                       swipeFlash.classList.contains('grade-y') ? 'y' : 'r';
+          // Get the grade from the selected action button (where grade classes are actually set)
+          const selectedBtn = document.querySelector('[data-sa].selected');
+          let grade = 'g'; // default
+          if (selectedBtn) {
+            if (selectedBtn.classList.contains('grade-g')) {
+              grade = 'g';
+            } else if (selectedBtn.classList.contains('grade-y')) {
+              grade = 'y';
+            } else if (selectedBtn.classList.contains('grade-r')) {
+              grade = 'r';
+            }
+          }
 
           // Add sequenced character reaction
           CharacterSystem.sequencedReaction(
