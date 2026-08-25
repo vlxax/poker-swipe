@@ -153,6 +153,19 @@
 
   const fmtPts = (n) => (n > 0 ? '+' : '') + Math.round(n) + ' pts';
 
+  const fmtCompactMoney = (n, useUsd) => {
+    if (n === null || n === undefined || !isFinite(n)) return '—';
+    const sign = n > 0 ? '+' : n < 0 ? '−' : '';
+    const abs = Math.abs(n);
+    if (useUsd) {
+      if (abs >= 1000) return sign + (abs / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+      return sign + '$' + Math.round(abs).toLocaleString('en-US');
+    }
+    if (abs >= 1_000_000) return sign + (abs / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (abs >= 10_000) return sign + (abs / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return sign + Math.round(abs).toLocaleString('ru-RU');
+  };
+
   const fmtDateShort = (d) => {
     const p = String(d || '').split('-');
     if (p.length === 3) return `${parseInt(p[2], 10)} ${MONTHS[parseInt(p[1], 10) - 1] || ''}`;
@@ -285,26 +298,48 @@
         if (e.target === ANALYTICS) closeAnalytics();
       });
     }
-    if (!SCREEN.querySelector('.mt-pro') || !SCREEN.querySelector('#mtSummaryBlock')) {
-      if (SCREEN.querySelector('.mt-pro')) SCREEN.innerHTML = '';
-      SCREEN.innerHTML = `<div class="mt-pro">
+    const layoutVer = 'v-final';
+    const shell = SCREEN.querySelector('.mt-pro');
+    if (!shell || shell.dataset.mtLayout !== layoutVer) {
+      if (shell) SCREEN.innerHTML = '';
+      SCREEN.innerHTML = `<div class="mt-pro" data-mt-layout="${layoutVer}">
         <div class="mt-pro-glow"></div>
+        <div class="mt-pro-brand" id="mtProBrand">
+          <span class="mt-pro-brand-logo">POKER SWIPE</span>
+          <span class="mt-pro-brand-by">ФРИКОВАЯ ДАМА</span>
+        </div>
         <div class="mt-pro-head mt-pro-hero">
-          <h2>МОИ <em>ТУРНИРЫ</em></h2>
+          <div class="mt-pro-head-copy">
+            <h2>МОИ <em>ТУРНИРЫ</em></h2>
+            <p class="mt-pro-sub">Трекер офлайна, онлайна и спорта</p>
+          </div>
           <div class="mt-pro-actions">
-            <button type="button" class="mt-pro-add" data-mt="add">+ Добавить</button>
+            <button type="button" class="mt-pro-add" data-mt="add" aria-label="Добавить турнир">
+              <span class="mt-pro-add-icon" aria-hidden="true">+</span>
+              <span class="mt-pro-add-label">Добавить</span>
+            </button>
           </div>
         </div>
         <div class="mt-pro-filters">
-          <div class="mt-pro-filter-row" id="mtPeriodRow"></div>
-          <div class="mt-pro-filter-row" id="mtMainTypeRow"></div>
+          <div class="mt-pro-filter-block">
+            <div class="mt-pro-filter-label">ТИП</div>
+            <div class="mt-pro-filter-row" id="mtMainTypeRow"></div>
+          </div>
+          <div class="mt-pro-filter-block">
+            <div class="mt-pro-filter-label">ПЕРИОД</div>
+            <div class="mt-pro-filter-row" id="mtPeriodRow"></div>
+          </div>
         </div>
         <div class="mt-pro-summary" id="mtSummaryBlock"></div>
-        <div class="mt-pro-hero-insight" id="mtHeroInsight" style="display:none"></div>
+        <div class="mt-pro-hero-insight" id="mtHeroInsight" style="display:none">
+          <div class="mt-pro-signal-label">ГЛАВНЫЙ СИГНАЛ</div>
+          <div class="mt-pro-signal-body" id="mtHeroInsightText"></div>
+          <div class="mt-pro-signal-val" id="mtHeroInsightVal"></div>
+        </div>
         <div class="mt-pro-chart-wrap">
           <div class="mt-pro-chart-card">
             <div class="mt-pro-chart-head">
-              <div class="mt-pro-chart-title" id="mtChartTitle">ГРАФИК РЕЗУЛЬТАТОВ</div>
+              <div class="mt-pro-chart-title" id="mtChartTitle">ДИНАМИКА ПРОФИТА</div>
               <div class="mt-pro-chart-end" id="mtChartEnd"></div>
             </div>
             <svg class="mt-pro-chart" id="mtChartSvg" viewBox="0 0 340 140" preserveAspectRatio="none"></svg>
@@ -315,6 +350,7 @@
         <div class="mt-pro-recent" id="mtRecentSection">
           <div class="mt-pro-list-head">
             <div class="mt-pro-list-title">ПОСЛЕДНИЕ ТУРНИРЫ</div>
+            <span class="mt-pro-list-count" id="mtRecentCount"></span>
           </div>
           <div class="mt-pro-list" id="mtList"></div>
           <button type="button" class="mt-pro-show-all" id="mtShowAllBtn" data-mt="show-all" style="display:none">ПОКАЗАТЬ ВСЕ →</button>
@@ -653,58 +689,81 @@
       return;
     }
     el.className = 'mt-pro-summary';
+    const abi = Math.round(m.reduce((s, t) => s + buyinRub(t), 0) / m.length);
     el.innerHTML = `
-      ${summaryItem('Сыграно', agg.n)}
       ${summaryItem('Профит', proMode ? fmtMoneyUSD(agg.net / RATE) : fmtMoney(agg.net), agg.net >= 0 ? 'pos' : 'neg')}
       ${summaryItem('ROI', agg.roi === null ? '—' : (agg.roi >= 0 ? '+' : '') + agg.roi + '%', agg.roi === null ? 'neutral' : agg.roi >= 0 ? 'pos' : 'neg')}
-      ${summaryItem('ITM', agg.itmPct + '%')}`;
+      ${summaryItem('ABI', proMode ? '$' + (abi / RATE).toFixed(0) : fmtCompactMoney(abi), 'neutral')}
+      ${summaryItem('MTT', agg.n)}`;
   }
 
   function renderHeroInsight(arr) {
-    const el = $('mtHeroInsight');
+    const wrap = $('mtHeroInsight');
+    const textEl = $('mtHeroInsightText');
+    const valEl = $('mtHeroInsightVal');
     const m = moneyList(arr);
-    if (m.length < 2 || typeFilter === 'sport') {
-      el.style.display = 'none';
+    if (m.length < 2 || typeFilter === 'sport' || !wrap || !textEl || !valEl) {
+      if (wrap) wrap.style.display = 'none';
       return;
     }
-    const calc = (items) => {
-      const inv = items.reduce((s, t) => s + investedRub(t), 0);
-      const ret = items.reduce((s, t) => s + totalReturnedRub(t), 0);
-      const roi = inv ? Math.round(((ret - inv) / inv) * 1000) / 10 : null;
-      return { roi, n: items.length };
-    };
-    const off = calc(m.filter((t) => cat(t) === 'offline'));
-    const on = calc(m.filter((t) => cat(t) === 'online'));
-    let label = '';
-    let roi = null;
-    if (off.n >= 1 && on.n >= 1) {
-      if ((off.roi ?? -Infinity) >= (on.roi ?? -Infinity)) {
-        label = 'офлайне';
-        roi = off.roi;
+
+    const channelProfit = (items) => items.reduce((s, t) => s + profitRub(t), 0);
+    const offItems = m.filter((t) => cat(t) === 'offline');
+    const onItems = m.filter((t) => cat(t) === 'online');
+    const offProfit = channelProfit(offItems);
+    const onProfit = channelProfit(onItems);
+    const totalProfit = offProfit + onProfit;
+
+    if (!totalProfit && offItems.length + onItems.length < 2) {
+      wrap.style.display = 'none';
+      return;
+    }
+
+    let headline = '';
+    let detail = '';
+    let signalVal = totalProfit;
+    const absOff = Math.abs(offProfit);
+    const absOn = Math.abs(onProfit);
+
+    if (offItems.length >= 1 && onItems.length >= 1) {
+      if (offProfit > 0 && onProfit <= 0) {
+        headline = 'Оффлайн вытягивает период.';
+        detail = 'Большая часть профита пришла из живых турниров.';
+        signalVal = offProfit;
+      } else if (onProfit > 0 && offProfit <= 0) {
+        headline = 'Онлайн тянет результат.';
+        detail = 'Виртуальные столы дают основной профит за выбранный период.';
+        signalVal = onProfit;
+      } else if (absOff >= absOn * 1.15) {
+        headline = 'Оффлайн сильнее в деньгах.';
+        detail = `Основной вклад — живые турниры (${offItems.length} MTT).`;
+        signalVal = offProfit;
+      } else if (absOn >= absOff * 1.15) {
+        headline = 'Онлайн доминирует по профиту.';
+        detail = `Больше всего заработано в румах (${onItems.length} MTT).`;
+        signalVal = onProfit;
       } else {
-        label = 'онлайне';
-        roi = on.roi;
+        headline = 'Офлайн и онлайн близки по результату.';
+        detail = 'Диверсификация работает — оба канала в плюсе.';
+        signalVal = totalProfit;
       }
-    } else if (off.n >= 1) {
-      label = 'офлайне';
-      roi = off.roi;
-    } else if (on.n >= 1) {
-      label = 'онлайне';
-      roi = on.roi;
+    } else if (offItems.length >= 2) {
+      headline = totalProfit >= 0 ? 'Оффлайн в плюсе.' : 'Оффлайн в минусе.';
+      detail = `${offItems.length} живых турниров за ${periodFilter === 'all' ? 'всё время' : periodLabel().toLowerCase()}.`;
+      signalVal = offProfit;
+    } else if (onItems.length >= 2) {
+      headline = totalProfit >= 0 ? 'Онлайн в плюсе.' : 'Онлайн в минусе.';
+      detail = `${onItems.length} онлайн-турниров за ${periodFilter === 'all' ? 'всё время' : periodLabel().toLowerCase()}.`;
+      signalVal = onProfit;
     } else {
-      el.style.display = 'none';
+      wrap.style.display = 'none';
       return;
     }
-    if (roi === null) {
-      el.style.display = 'none';
-      return;
-    }
-    const periodTxt = periodFilter === 'all' ? 'ЗА ВСЁ ВРЕМЯ' : `ЗА ${periodLabel()}`;
-    el.style.display = 'block';
-    el.innerHTML = `
-      <div class="mt-pro-hero-tag">${periodTxt}</div>
-      <div class="mt-pro-hero-text">Лучший результат у тебя в <strong>${label}</strong></div>
-      <div class="mt-pro-hero-val ${roi >= 0 ? 'pos' : 'neg'}">ROI ${roi >= 0 ? '+' : ''}${roi}%</div>`;
+
+    wrap.style.display = 'block';
+    textEl.innerHTML = `<strong>${headline}</strong> ${detail}`;
+    valEl.className = 'mt-pro-signal-val ' + (signalVal >= 0 ? 'pos' : 'neg');
+    valEl.textContent = proMode ? fmtMoneyUSD(signalVal / RATE) : fmtMoney(signalVal);
   }
 
   function renderStats(arr, isSportOnly) {
@@ -849,7 +908,7 @@
       histEl.style.display = 'none';
       histEl.innerHTML = '';
     }
-    titleEl.textContent = 'ГРАФИК РЕЗУЛЬТАТОВ';
+    titleEl.textContent = 'ДИНАМИКА ПРОФИТА';
 
     const src = moneyList(arr)
       .slice()
@@ -1214,7 +1273,7 @@
     const isSport = cat(t) === 'sport';
     const p = profitRub(t);
     const win = isSport ? num(t.place) > 0 && num(t.place) <= 3 : p > 0;
-    const badgeLabel = cat(t) === 'offline' ? 'ОФЛ' : cat(t) === 'online' ? 'ОНЛ' : 'СПОРТ';
+    const badgeLabel = cat(t) === 'offline' ? 'ОФЛАЙН' : cat(t) === 'online' ? 'ОНЛАЙН' : 'СПОРТ';
     if (isSport) {
       const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? ' / ' + num(t.field) : ''}` : '—';
       const reCnt = reentryCount(t);
@@ -1225,9 +1284,11 @@
           ? `<span class="mt-pro-card-result pts">${ptsVal > 0 ? '+' : ''}${Math.round(ptsVal)} PTS</span>`
           : '';
       return `<div class="mt-pro-card mt-pro-card-sport ${win ? 'win' : ''}">
-      <div class="mt-pro-card-row3"><span class="mt-pro-badge sport">${badgeLabel}</span></div>
-      <div class="mt-pro-card-title">${esc(title(t))}</div>
-      <div class="mt-pro-card-venue">${esc(venue(t))}</div>
+      <div class="mt-pro-card-top">
+        <span class="mt-pro-badge sport">${badgeLabel}</span>
+        <span class="mt-pro-card-venue">${esc(venue(t))}</span>
+      </div>
+      <div class="mt-pro-card-name">${esc(title(t))}</div>
       <div class="mt-pro-card-sport-meta">
         <span class="mt-pro-card-place-line">${placeTxt}</span>
         ${reTxt ? `<span class="mt-pro-card-reentry">${reTxt}</span>` : ''}
@@ -1241,27 +1302,22 @@
     </div>`;
     }
     const resHtml = `<div class="mt-pro-card-result ${p >= 0 ? 'pos' : 'neg'}">${proMode ? fmtMoneyUSD(p / RATE) : fmtMoney(p)}</div>`;
-    const buyinTxt = isSport
-      ? `${baseBuy(t).toLocaleString('ru-RU')} ${currency(t)}`
-      : proMode
-        ? '$' + (buyinRub(t) / RATE).toFixed(0)
-        : buyinRub(t).toLocaleString('ru-RU') + ' ₽';
-    const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? '/' + num(t.field) : ''}` : '—';
+    const buyinTxt = proMode
+      ? '$' + (buyinRub(t) / RATE).toFixed(0)
+      : buyinRub(t).toLocaleString('ru-RU') + ' ₽';
+    const placeTxt = num(t.place) ? `${num(t.place)}${t.field ? ' / ' + num(t.field) : ''}` : '—';
+    const fmtLabel = fmtDisplay(t) === 'MTT' ? 'NLH' : fmtDisplay(t);
     return `<div class="mt-pro-card ${win ? 'win' : ''}">
-      <div class="mt-pro-card-row1">
-        <div class="mt-pro-card-title">${esc(title(t))}</div>
-        ${resHtml}
+      <div class="mt-pro-card-top">
+        <span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span>
+        <span class="mt-pro-card-venue">${esc(venue(t))}</span>
       </div>
-      <div class="mt-pro-card-row2">
-        <span class="mt-pro-card-meta">${fmtDateShort(t.date)} · ${esc(fmtDisplay(t))}</span>
-      </div>
-      <div class="mt-pro-card-row3">
-        <span class="mt-pro-card-meta"><span class="mt-pro-badge ${cat(t)}">${badgeLabel}</span> · ${esc(venue(t))}</span>
-      </div>
-      <div class="mt-pro-card-row4">
-        <span class="mt-pro-card-meta">${placeTxt}</span>
+      <div class="mt-pro-card-name">${esc(title(t))} · ${esc(fmtLabel)}</div>
+      <div class="mt-pro-card-mid">
+        <span class="mt-pro-card-place">${placeTxt}</span>
         <span class="mt-pro-card-buyin">BI ${buyinTxt}</span>
       </div>
+      <div class="mt-pro-card-profit-row">${resHtml}</div>
       <div class="mt-pro-card-actions">
         <button type="button" data-mt="edit" data-id="${esc(t.id)}">Изменить</button>
         <span class="mt-pro-card-actions-sep">/</span>
@@ -1274,6 +1330,15 @@
     const el = $('mtList');
     const empty = $('mtEmpty');
     const showAllBtn = $('mtShowAllBtn');
+    const countEl = $('mtRecentCount');
+    const recordsLabel = (n) => {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'запись';
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'записи';
+      return 'записей';
+    };
+    if (countEl) countEl.textContent = arr.length ? `${arr.length} ${recordsLabel(arr.length)}` : '';
     if (arr.length === 0) {
       el.innerHTML = '';
       el.style.display = 'none';
