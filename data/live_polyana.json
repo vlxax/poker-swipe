@@ -1,9 +1,9 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-25T19:20:17+03:00",
+  "updated_at": "2026-08-25T20:57:54+03:00",
   "club_count": 65,
-  "event_count": 37,
-  "source_card_count": 37,
+  "event_count": 38,
+  "source_card_count": 38,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -38,8 +38,25 @@
       "name": "Aria Royale",
       "address": "ул. Братиславская, д. 28 (2 этаж)",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-25",
+          "time": "19:00",
+          "club": "Aria Royale",
+          "tournament": "CHAMPIONS LEAGUE",
+          "fee_rub": 0,
+          "type": "",
+          "source_url": "https://pokernomoney.ru/tournaments/12405",
+          "address": "ул. Братиславская, д. 28 (2 этаж)",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "CHAMPIONS LEAGUE 19:00 уточняйте Aria Royale ул. Братиславская, д. 28 (2 этаж)"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "Aura Poker Club",
@@ -499,12 +516,12 @@
           "type": "Феникс",
           "source_url": "https://pokernomoney.ru/tournaments/11689",
           "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-          "late_reg_until": "21:30",
-          "late_reg_minutes": 150,
+          "late_reg_until": "21:31",
+          "late_reg_minutes": 151,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Феникс JOKER PHOENIX TOURNAMENT 19:00 1 500 ₽ вход до 21:30 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
+          "source_card_text": "★ PREMIUM Феникс JOKER PHOENIX TOURNAMENT 19:00 1 500 ₽ вход до 21:31 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
         }
       ],
       "upcoming": 1
@@ -1498,6 +1515,22 @@
     {
       "date": "2026-08-25",
       "time": "19:00",
+      "club": "Aria Royale",
+      "tournament": "CHAMPIONS LEAGUE",
+      "fee_rub": 0,
+      "type": "",
+      "source_url": "https://pokernomoney.ru/tournaments/12405",
+      "address": "ул. Братиславская, д. 28 (2 этаж)",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "duration_minutes": null,
+      "source_card_text": "CHAMPIONS LEAGUE 19:00 уточняйте Aria Royale ул. Братиславская, д. 28 (2 этаж)"
+    },
+    {
+      "date": "2026-08-25",
+      "time": "19:00",
       "club": "Aura Poker Club",
       "tournament": "Aura Cash Simulation",
       "fee_rub": 1000,
@@ -1632,12 +1665,12 @@
       "type": "Феникс",
       "source_url": "https://pokernomoney.ru/tournaments/11689",
       "address": "Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-      "late_reg_until": "21:30",
-      "late_reg_minutes": 150,
+      "late_reg_until": "21:31",
+      "late_reg_minutes": 151,
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Феникс JOKER PHOENIX TOURNAMENT 19:00 1 500 ₽ вход до 21:30 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
+      "source_card_text": "★ PREMIUM Феникс JOKER PHOENIX TOURNAMENT 19:00 1 500 ₽ вход до 21:31 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик"
     },
     {
       "date": "2026-08-25",
