@@ -216,6 +216,13 @@ export function createTrainingStore({
     saveJSON('skillMastery', mastery || {});
   }
 
+  function loadSpacedReviews() {
+    return loadJSON('spacedReviews', []);
+  }
+  function saveSpacedReviews(list) {
+    saveJSON('spacedReviews', list || []);
+  }
+
   // ---- analytics events (append-only, capped) ------------------------------
   function addAnalyticsEvent(event) {
     const events = loadJSON('analytics', []);
@@ -256,6 +263,8 @@ export function createTrainingStore({
     saveSkillEvidence,
     loadSkillMastery,
     saveSkillMastery,
+    loadSpacedReviews,
+    saveSpacedReviews,
     addAnalyticsEvent,
     loadAnalyticsEvents,
     reset

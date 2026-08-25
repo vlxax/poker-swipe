@@ -2,6 +2,8 @@
 
 import { canGradeWithTrainerAction } from '../status.js';
 import { buildBrainTrainerResult } from './brainAdapter.js';
+import { buildCanonicalSpot } from '../../task-context/canonicalSpot.js';
+import { buildTrainerQueryFromCanonical } from '../canonicalTrainerQuery.js';
 
 const RANKS = 'AKQJT98765432';
 
@@ -18,31 +20,28 @@ function classOf(cards = []) {
   return ia < ib ? `${a}${b}${suited ? 's' : 'o'}` : `${b}${a}${suited ? 's' : 'o'}`;
 }
 
-const CONCEPT_SCENARIO = [
-  { re: /rfi|uo|unopened|push-fold|push fold|стил/i, sourceMode: 'uo', group: 'uo_open' },
-  { re: /resteal|callpush|call vs push/i, sourceMode: 'callpush', group: 'callpush_resteal' },
-  { re: /squeeze|сквиз/i, sourceMode: 'vssqueeze', group: 'vs_squeeze' },
-  { re: /vs 3-bet|vs 3bet|flat vs 3/i, sourceMode: 'vs3bet', group: 'vs_3bet' },
-  { re: /vs 4-bet|vs 4bet/i, sourceMode: 'vs4bet', group: 'vs_4bet' },
-  { re: /bb defence|защита bb|bb defend/i, sourceMode: 'vs1rshort', group: 'bb_defence' },
-  { re: /3-bet|3bet|полярн/i, sourceMode: 'vs3bet', group: 'vs_3bet' }
-];
-
-function scenarioFromTask(task) {
-  const blob = `${task.concept || ''} ${(task.tags || []).join(' ')} ${task.question || ''}`.toLowerCase();
-  for (const row of CONCEPT_SCENARIO) {
-    if (row.re.test(blob)) return row;
-  }
-  if (String(task.street || '').toUpperCase() === 'ПРЕФЛОП') {
-    const hist = (task.history || []).map((h) => h.text).join(' ');
-    if (/сфолдил|первый в раздаче|unopened/i.test(hist)) {
-      return { sourceMode: 'uo', group: 'uo_open' };
-    }
-    if (/открыл|3-бет|сквиз|пуш/i.test(hist)) {
-      return { sourceMode: 'vs1rshort', group: 'preflop_facing' };
-    }
-  }
-  return null;
+function scenarioFromCanonical(task) {
+  const canonical = buildCanonicalSpot({ ...task, _legacy: !task._library });
+  const built = buildTrainerQueryFromCanonical(canonical, classOf(task.hero));
+  if (!built.preflop?.sourceMode) return null;
+  const groupMap = {
+    uo: 'uo_open',
+    vs1rshort: 'bb_defence',
+    vs1r: 'preflop_facing',
+    vs3bet: 'vs_3bet',
+    vs4bet: 'vs_4bet',
+    vssqueeze: 'vs_squeeze',
+    callpush: 'callpush_resteal',
+    sbvsbb: 'sb_vs_bb',
+    huante: 'hu_ante',
+    vslimp: 'vs_limp',
+    vs1r1c: 'preflop_facing',
+    vs2r: 'preflop_facing'
+  };
+  return {
+    sourceMode: built.preflop.sourceMode,
+    group: groupMap[built.preflop.sourceMode] || built.preflop.sourceMode
+  };
 }
 
 const TRAINER_OPTION_MAP = {
@@ -103,9 +102,21 @@ export function auditTaskTrainerCoverage(task, lookup) {
     };
   }
 
-  const scenario = scenarioFromTask(task);
+  const scenario = scenarioFromCanonical(task);
   const handClass = classOf(task.hero);
-  const spot = taskToTrainerSpot(task);
+  const canonical = buildCanonicalSpot({ ...task, _legacy: !task._library });
+  const built = buildTrainerQueryFromCanonical(canonical, handClass);
+  const spot = {
+    ...taskToTrainerSpot(task),
+    _canonical: canonical,
+    position: canonical.position,
+    villain: canonical.villain,
+    history: canonical.history,
+    preflopLine: canonical.preflopLine,
+    openSizeBB: canonical.openSizeBB,
+    sourceMode: built.preflop?.sourceMode || scenario?.sourceMode || null,
+    trainerCanonicalId: built.preflop?.trainerCanonicalId || null
+  };
   const result = buildBrainTrainerResult(lookup, spot, handClass);
   const gradingAllowed = result.status === 'EXACT_TRAINER_MATCH'
     && result.trainer?.gradingAllowed === true;

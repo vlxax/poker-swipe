@@ -20,7 +20,77 @@
     return { pos: parts[0] || '—', stack: parts[1] || '' };
   }
 
+  function ctxFromCanonical(spot) {
+    const c = spot._canonical || null;
+    if (!c || (!c.position && !spot.heroPosition && !spot.position)) return null;
+    const heroPos = c.position || spot.position || spot.heroPosition || 'BTN';
+    const villainPos = c.villain || spot.villain || spot.villainPosition || 'BB';
+    const oppName = c.opp && typeof c.opp === 'object'
+      ? (c.opp.name || 'РЕГ')
+      : (typeof c.opp === 'string' ? c.opp : (spot.opp || 'рег'));
+    const blindsLabel = Array.isArray(c.blinds) && c.blinds.length === 2
+      ? `${c.blinds[0]}/${c.blinds[1]}${c.ante ? ` (${c.ante})` : ''}`
+      : null;
+    const stackBb = c.effStack ?? c.heroStack ?? spot.stack ?? spot.effStack;
+    return {
+      tags: [c.format || spot.format || 'MTT', c.stage || spot.stage, c.table || spot.table, c.left || spot.left].filter(Boolean),
+      blinds: blindsLabel,
+      pot: c.pot != null ? `${c.pot} ББ` : (spot.pot != null ? `${spot.pot} ББ` : null),
+      eff: stackBb != null ? `${stackBb} ББ` : null,
+      heroPos,
+      heroStack: c.heroStack != null ? `${c.heroStack} ББ` : (stackBb != null ? `${stackBb} ББ` : ''),
+      villainPos,
+      villainStack: c.villainStack != null ? `${c.villainStack} ББ` : '',
+      villainType: oppName || 'рег',
+      note: (c.opp && c.opp.note) || '',
+      field: c.id || spot.id || 'SPOT',
+      history: c.history || spot.history || spot.actionHistory || null,
+      concept: c.concept || spot.concept || null,
+      extra: c.descriptionLine || spot.ctx || spot.extra || null,
+      street: c.street || spot.street || null
+    };
+  }
+
+  function attachCanonical(spot) {
+    if (!spot) return spot;
+    if (spot._canonical) return spot;
+    const canon = window.TaskContextCanonical;
+    if (canon && typeof canon.buildCanonicalSpot === 'function') {
+      const built = canon.buildCanonicalSpot({ ...spot, _legacy: !spot._library });
+      if (built) return { ...spot, _canonical: built };
+    }
+    const position = spot.position || spot.heroPosition;
+    const villain = spot.villain || spot.villainPosition;
+    if (!position && !villain) return spot;
+    const history = spot.history || (Array.isArray(spot.actionHistory)
+      ? spot.actionHistory.map((line) => {
+          const m = String(line).match(/^([^:]+):\s*(.*)$/);
+          return m ? { street: m[1].trim(), text: m[2].trim() } : { street: spot.street || 'ПРЕФЛОП', text: String(line) };
+        })
+      : []);
+    return {
+      ...spot,
+      _canonical: {
+        id: spot.id || '',
+        position,
+        villain,
+        heroStack: spot.stack ?? spot.effStack ?? spot.heroStack,
+        effStack: spot.effStack ?? spot.stack ?? spot.heroStack,
+        pot: spot.pot,
+        history,
+        street: spot.street || 'ПРЕФЛОП',
+        format: spot.format || 'MTT',
+        stage: spot.stage || '',
+        table: spot.table || '6-MAX',
+        concept: spot.concept || '',
+        descriptionLine: spot.ctx || spot.preflopLine || ''
+      }
+    };
+  }
+
   function ctxFromLegacy(c, spot) {
+    const fromCanon = ctxFromCanonical(spot);
+    if (fromCanon) return fromCanon;
     if (!c) c = {};
     const hero = parsePosStack(c.hero || spot?.pos || '');
     const vill = parsePosStack(c.villain || '');
@@ -67,7 +137,10 @@
   }
 
   function getCtx30(name, spot) {
-    return ctxFromLegacy(ctx30For(name, spot), spot);
+    const enriched = attachCanonical(spot);
+    const fromCanon = ctxFromCanonical(enriched);
+    if (fromCanon) return fromCanon;
+    return ctxFromLegacy(ctx30For(name, enriched), enriched);
   }
 
   const ctxStore = new Map();
@@ -506,18 +579,22 @@
     const verdict = document.getElementById('swipeVerdict');
     if (verdict) verdict.innerHTML = '';
 
-    const ctx = getCtx30('swipe', s);
-    ctx.pot = `${s.pot} ББ`;
-    ctx.eff = `${s.stack} ББ`;
-    ctx.extra = s.ctx;
-    ctx.concept = s.concept;
+    const enriched = attachCanonical(s);
+    const ctx = getCtx30('swipe', enriched);
+    const heroPos = enriched._canonical?.position || enriched.position || enriched.heroPosition || ctx.heroPos;
+    const villainPos = enriched._canonical?.villain || enriched.villain || enriched.villainPosition || ctx.villainPos;
+    const posLabel = [heroPos, villainPos ? `vs ${villainPos}` : ''].filter(Boolean).join(' ');
+    ctx.pot = `${enriched.pot ?? s.pot} ББ`;
+    ctx.eff = `${enriched._canonical?.heroStack ?? enriched.stack ?? s.stack} ББ`;
+    ctx.extra = enriched.ctx || enriched._canonical?.descriptionLine || s.ctx;
+    ctx.concept = enriched.concept || s.concept;
     const id = 'swipe_' + s.id;
     registerCtx(id, ctx);
 
     const mem = window.quick?.active && window.quick.flow[window.quick.index] === 'memory';
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('swipe') : '';
     document.getElementById('swipeCard').innerHTML = `${qb}<div class="swipeShell pgSwipeWrap">
-      <div class="swipeTop"><span class="ey">${mem ? 'ПАМЯТЬ · ' : ''}${esc(s.street)} · ${esc(s.pos)}</span><span class="ey">${mem ? 'CONCEPT' : 'РУКА ' + (window.swIndex + 1) + '/10'}</span></div>
+      <div class="swipeTop"><span class="ey">${mem ? 'ПАМЯТЬ · ' : ''}${esc(s.street)} · ${esc(posLabel)}</span><span class="ey">${mem ? 'CONCEPT' : 'РУКА ' + (window.swIndex + 1) + '/10'}</span></div>
       <div class="swipeProgress"><span style="width:${window.swIndex / 10 * 100}%"></span></div>
       <div class="swipeCardV in" id="swipeVisual">
         ${hudStrip(ctx, id, { title: '<h2>Твоё решение?</h2>' })}

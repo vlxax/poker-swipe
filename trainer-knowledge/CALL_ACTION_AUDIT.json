@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-08-25T14:32:29.249Z",
+  "RAW_CALL_LIKE_CELLS": 30893,
+  "GRADING_ALLOWED_CALL_CELLS": 0,
+  "BLOCKED_CALL_LIKE_CELLS": 29946,
+  "BLOCKED_BY": {
+    "MIXED": 14902,
+    "ORANGE": 29232,
+    "YELLOW": 0,
+    "UNKNOWN": 0,
+    "OTHER": 0,
+    "nAI_BLOCKED": 714,
+    "LOW_PLAYABILITY": 0,
+    "NOT_GRADABLE": 0
+  },
+  "GENERATOR_ELIGIBLE_CALL": 0,
+  "GENERATED_CALL": 0,
+  "FILTERED_CALL": 0,
+  "INDEX_GENERATED_CALL": 0,
+  "HC1_GRADING_BY_SEMANTIC": {
+    "UNSELECTED": 194700,
+    "AI": 12064,
+    "RAISE": 2294,
+    "nAI": 1584
+  },
+  "HC1_ORANGE_GRADING": 0,
+  "ROOT_CAUSE": {
+    "code": "A",
+    "label": "Trainer dataset genuinely has no grading-allowed pure CALL cells; call-like semantics in orange/nAI are blocked"
+  },
+  "CALL_0_EXPECTED": "YES",
+  "examples": {
+    "gradingAllowed": [],
+    "blocked": [],
+    "naiCallContext": []
+  },
+  "semanticNote": "HC1 has no confirmed gradable normalizedAction=CALL. Orange rawLabel \"кол\" is NEEDS_CLARIFICATION. nAI in callpush resolves to NON_ALL_IN_CALL contextually but normalizedAction is NON_ALL_IN, not CALL."
+}

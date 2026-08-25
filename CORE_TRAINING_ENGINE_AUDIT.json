@@ -1,0 +1,410 @@
+{
+  "generatedAt": "2026-08-25T14:46:47.945Z",
+  "trainerCharts": {
+    "totalCharts": 1638,
+    "batch2Charts": 1578,
+    "uoCharts": 60
+  },
+  "trainerCells": {
+    "totalHandCells": 266682,
+    "gradingAllowedCells": 210642,
+    "blockedCells": 56040,
+    "mixedCells": 30677
+  },
+  "libraryPreflopBefore": {
+    "preflopUserFacingTasks": 91,
+    "counts": {
+      "TRAINER_GRADED": 0,
+      "STATIC_FALLBACK": 91,
+      "POKER_BRAIN_GRADED": 0,
+      "HEURISTIC": 0,
+      "UNKNOWN": 0,
+      "BLOCKED": 0
+    },
+    "paths": [
+      {
+        "taskId": "PRE_RFI_BTN_A8S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_CO_KTS",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_HJ_77",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_UTG_AJO",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_SB_22",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_BTN_22_SHORT",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_RFI_BTN_A5S_15",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_BB_K8S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_BB_76S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_BB_T6O",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_BB_A2S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_BB_55_3X",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_3B_SB_A5S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1r",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_3B_BB_KK",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_3B_BTN_AQO",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs3bet",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_SQZ_AQS",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1r1c",
+        "queryComplete": false
+      },
+      {
+        "taskId": "PRE_VS3B_66",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs4bet",
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_BUBBLE_A7O",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_BUBBLE_77_CALL",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": null,
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_ITM_AQS",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": null,
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_PKO_BOUNTY",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": null,
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_FT_QQ",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": null,
+        "queryComplete": false
+      },
+      {
+        "taskId": "TOUR_ANTE_3X",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "OPP_AGRO_3B",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs3bet",
+        "queryComplete": false
+      },
+      {
+        "taskId": "SHORT_BTN_A9O",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "SHORT_BB_87S",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": null,
+        "queryComplete": false
+      },
+      {
+        "taskId": "SHORT_SB_55",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "uo",
+        "queryComplete": false
+      },
+      {
+        "taskId": "SHORT_BB_A5O",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      },
+      {
+        "taskId": "CASH_100BB_AA",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs3bet",
+        "queryComplete": false
+      },
+      {
+        "taskId": "CASH_100BB_SETMINING",
+        "classification": "UNKNOWN",
+        "taskSource": "library",
+        "spotSource": "canonicalSpot.buildCanonicalSpot",
+        "gradingSource": "STATIC_CURATED",
+        "trainerLookupPath": "buildTrainerQueryFromCanonical → lookupTrainerHandAction",
+        "personalizationWriteback": "recordTrainingResult → skillProfile + trainerPersonalization",
+        "sourceMode": "vs1rshort",
+        "queryComplete": false
+      }
+    ]
+  },
+  "trainerNative": {
+    "candidatesAvailable": 786,
+    "actionDistribution": {
+      "FOLD": 501,
+      "CALL": 0,
+      "RAISE": 70,
+      "ALL-IN": 215,
+      "OTHER": 0
+    },
+    "sourceModeCoverage": {
+      "sbvsbb": 96,
+      "huante": 12,
+      "vs1r": 624,
+      "callpush": 54
+    }
+  },
+  "activeTrainerBackedTasks": 786,
+  "trainerBackedShareAfterPct": 90,
+  "textHeuristicMatchingRemoved": true,
+  "canonicalTrainerQueryImplemented": true,
+  "trainerNativeGenerator": true,
+  "fakeEvAudit": [
+    {
+      "path": "training-ui/miniAppBridge.js",
+      "field": "EV_MAP",
+      "kind": "synthetic_letter_grade",
+      "note": "g/y/r → fixed BB loss abstraction"
+    },
+    {
+      "path": "solver/src/training/libraryDrill.js",
+      "field": "BEST_EV/NEAR_EV/WRONG_EV",
+      "kind": "synthetic_drill_score",
+      "note": "internal drill scoring only"
+    },
+    {
+      "path": "training-ui/gameShell.js",
+      "field": "evLossBb display",
+      "kind": "synthetic_letter_grade",
+      "note": "UI label says EV but maps from letter grade"
+    },
+    {
+      "path": "training-ui/renderer.js",
+      "field": "ПОТЕРЯ EV",
+      "kind": "synthetic_letter_grade",
+      "note": "display abstraction"
+    }
+  ],
+  "userFacingModes": {
+    "SWIPE": "trainer-native preflop pool when profile + index available",
+    "DAILY": "library plan (postflop-heavy); preflop slots use library canonical",
+    "REVIEW": "postflop line review — not trainer preflop",
+    "XRAY": "INTERNAL_LEGACY — not user-facing"
+  }
+}

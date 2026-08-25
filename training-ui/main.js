@@ -16,6 +16,7 @@ import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
 import { installOnboardingHooks } from './onboardingHooks.js';
+import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import { drillViewModel } from './viewModel.js';
 import * as R from './renderer.js';
@@ -30,6 +31,7 @@ const storage = (() => {
 })();
 
 const store = createTrainingStore({ storage });
+loadTrainerCandidateIndex().catch(() => {});
 const miniApps = installMiniAppHooks(store, { appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const SESSION_CONFIG = {

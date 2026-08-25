@@ -214,3 +214,19 @@ export function parseStackBb(stackRaw) {
   const sem = parseTrainerStack(stackRaw);
   return sem.type === 'EXACT' ? sem.bb : null;
 }
+
+/** Map numeric BB stack to UO trainer band label. */
+export function uoStackBandFromBb(stackBb) {
+  const n = parseFloat(String(stackBb).replace(/bb/i, ''));
+  if (!Number.isFinite(n)) return null;
+  if (n <= 4) return '2-4';
+  if (n <= 6) return '4-6';
+  if (n <= 8) return '6-8';
+  if (n <= 10) return '8-10';
+  if (n <= 12) return '10-12';
+  if (n <= 15) return '12-15';
+  if (n <= 18) return '15-18';
+  if (n <= 25) return '18-25';
+  if (n <= 40) return '25-40';
+  return '40+';
+}
