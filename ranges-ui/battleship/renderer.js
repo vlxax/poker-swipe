@@ -1,9 +1,8 @@
-// Range Battleship DOM renderer — mobile-first, PokerSwipe dark/lime shell.
+// Range Battleship DOM renderer — matrix-first mobile game UI.
 
 import { RANKS, handCode } from './matrixUtils.js';
 import { formatStackLabel } from './courses.js';
 import { courseLabel } from './trainerRangeModel.js';
-import { isOpen } from './trainerRangeModel.js';
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
@@ -21,58 +20,106 @@ function wireBack(root, handler) {
   window.MiniAppNav?.wire(root, 'ranges', handler);
 }
 
+function sectorLabel(key) {
+  const map = {
+    pocketPairs: 'Карманки', suitedAx: 'Suited Ax', offsuitAx: 'Offsuit Ax',
+    suitedKx: 'Suited Kx', broadway: 'Broadway', suitedConnectors: 'Коннекторы',
+    suitedGappers: 'Гапперы', other: 'Другое'
+  };
+  return map[key] || key;
+}
+
 export function renderBattleshipHub(root, vm, handlers) {
-  const last = vm.lastCourse;
-  const continueHtml = last?.course
-    ? `<button type="button" class="rbContinue pgCta pgBubblePress" id="rbContinue">Продолжить · ${esc(last.courseId)}</button>`
-    : '';
+  const progressRows = (vm.courseProgressList || []).map((r) =>
+    `<div class="rbProgressRow"><span>${esc(r.label)}</span><b>${r.pct}%</b></div>`
+  ).join('') || '<p class="rbProgressEmpty">Пройди первый курс — прогресс появится здесь.</p>';
+
   root.innerHTML = `<div class="panel pgShell rbShell">
     <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">РЕНДЖИ</h1><span class="ey">ТРЕНЕР</span></div>`, 'ranges')}</div>
-    <button type="button" class="rbHeroBtn primary pgCta pgBubblePress" id="rbOpenBattle">
-      <span class="rbHeroEy">МОРСКОЙ БОЙ</span>
-      <strong>Выучи диапазон через 8 миссий</strong>
-      <small>13×13 матрица · гранаты · комбо</small>
-    </button>
-    ${continueHtml}
-    <button type="button" class="rangesHelpBtn" id="rbOpenTrainer">Тренерские ренджи →</button>
-    <button type="button" class="rangesHelpBtn" id="rbOpenNarrow">Сужение диапазона →</button>
+    <div class="rbHeroCard">
+      <span class="rbHeroTag">МОРСКОЙ БОЙ</span>
+      <p class="rbHeroCopy">Запомни диапазон руками, а не скриншотом.</p>
+      <button type="button" class="rbHeroPlay pgCta pgBubblePress" id="rbOpenBattle">ИГРАТЬ</button>
+    </div>
+    <section class="rbHubSection">
+      <h3 class="rbHubHeading">ТВОЙ ПРОГРЕСС</h3>
+      <div class="rbProgressList">${progressRows}</div>
+    </section>
+    <section class="rbHubSection">
+      <h3 class="rbHubHeading">ДРУГИЕ РЕЖИМЫ</h3>
+      <button type="button" class="rbModeBtn" id="rbOpenNarrow">Сужение диапазона →</button>
+      <button type="button" class="rbModeBtn rbModeBtnMuted" id="rbOpenTrainer">Тренерские ренджи →</button>
+    </section>
   </div>`;
   wireBack(root, () => handlers.back?.());
   root.querySelector('#rbOpenBattle').onclick = () => handlers.openBattleshipCatalog?.();
   root.querySelector('#rbOpenTrainer')?.addEventListener('click', () => handlers.openTrainer?.());
   root.querySelector('#rbOpenNarrow')?.addEventListener('click', () => handlers.openNarrowing?.());
-  const cont = root.querySelector('#rbContinue');
-  if (cont) cont.onclick = () => handlers.selectBattleshipCourse?.(last.courseId);
 }
 
 export function renderBattleshipCatalog(root, vm, handlers) {
-  const groups = {};
-  for (const c of vm.catalog || []) {
-    const key = c.position || '?';
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(c);
-  }
-  const list = Object.entries(groups).map(([pos, courses]) => {
-    const chips = courses.map((c) =>
-      `<button type="button" class="rbCourseChip" data-course="${esc(c.courseId)}">${esc(formatStackLabel(c.stack))}</button>`
-    ).join('');
-    return `<div class="rbCourseGroup"><span class="rbCoursePos">${esc(pos)}</span><div class="rbCourseChips">${chips}</div></div>`;
-  }).join('');
+  const catalog = vm.catalog || [];
+  const positions = [...new Set(catalog.map((c) => c.position))];
+  const stacks = [...new Set(catalog.map((c) => c.stack))];
+  const last = vm.lastCourse?.courseId;
+  const lastCourse = catalog.find((c) => c.courseId === last);
+  let selPos = vm.pickerPos || lastCourse?.position || positions[0] || 'BTN';
+  let selStack = vm.pickerStack || lastCourse?.stack
+    || stacks.find((s) => catalog.some((c) => c.position === selPos && c.stack === s))
+    || stacks[0];
+  const stacksForPos = stacks.filter((s) => catalog.some((c) => c.position === selPos && c.stack === s));
+  if (!stacksForPos.includes(selStack)) selStack = stacksForPos[0];
+  const match = catalog.find((c) => c.position === selPos && c.stack === selStack);
+
+  const posChips = positions.map((p) =>
+    `<button type="button" class="rbPickChip${p === selPos ? ' active' : ''}" data-pos="${esc(p)}">${esc(p)}</button>`
+  ).join('');
+  const stackChips = stacksForPos.map((s) =>
+    `<button type="button" class="rbPickChip${s === selStack ? ' active' : ''}" data-stack="${esc(s)}">${esc(formatStackLabel(s))}</button>`
+  ).join('');
 
   root.innerHTML = `<div class="panel pgShell rbShell">
-    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">МОРСКОЙ БОЙ</h1><span class="ey">ВЫБЕРИ ДИАПАЗОН</span></div>`, 'ranges')}</div>
-    <p class="rangesLead rbLead">Только диапазоны с точными тренерскими данными UO open.</p>
-    <div class="rbCatalog">${list || '<p class="rangesEmpty">Нет доступных курсов.</p>'}</div>
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">МОРСКОЙ БОЙ</h1><span class="ey">ВЫБЕРИ КУРС</span></div>`, 'ranges')}</div>
+    <div class="rbPicker" data-pos="${esc(selPos)}" data-stack="${esc(selStack)}">
+      <div class="rbPickerBlock"><span class="rbPickerLabel">ПОЗИЦИЯ</span><div class="rbPickRow">${posChips}</div></div>
+      <div class="rbPickerBlock"><span class="rbPickerLabel">СТЕК</span><div class="rbPickRow" id="rbStackRow">${stackChips}</div></div>
+      <div class="rbPickerPreview">
+        <strong>${esc(selPos)} · ${esc(formatStackLabel(selStack))}</strong>
+        <small>${match ? `${match.openCount} open · ${match.gradable} рук` : 'Нет данных'}</small>
+      </div>
+      <button type="button" class="primary rbPickerGo pgCta pgBubblePress" id="rbStartCourse" data-course="${esc(match?.courseId || '')}" ${match ? '' : 'disabled'}>В БОЙ</button>
+    </div>
   </div>`;
+
   wireBack(root, () => handlers.back?.());
-  root.querySelectorAll('[data-course]').forEach((btn) => {
-    btn.onclick = () => handlers.selectBattleshipCourse?.(btn.dataset.course);
+  root.querySelectorAll('[data-pos]').forEach((btn) => {
+    btn.onclick = () => {
+      handlers.setPicker?.(btn.dataset.pos, null);
+      handlers.openBattleshipCatalog?.();
+    };
   });
+  root.querySelectorAll('[data-stack]').forEach((btn) => {
+    btn.onclick = () => {
+      const picker = root.querySelector('.rbPicker');
+      handlers.setPicker?.(picker?.dataset.pos, btn.dataset.stack);
+      handlers.openBattleshipCatalog?.();
+    };
+  });
+  const startBtn = root.querySelector('#rbStartCourse');
+  if (startBtn) {
+    startBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const courseId = startBtn.dataset.course;
+      if (courseId) handlers.selectBattleshipCourse?.(courseId);
+    };
+  }
 }
 
-function matrixHtml(mission, state, model, handlers) {
+function matrixHtml(mission, state) {
   const activeHands = mission?.getActiveHands ? mission.getActiveHands() : [];
   const activeSet = new Set(activeHands);
+  const targetSet = new Set(mission?.getTargetHands?.() || []);
   const cells = [];
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
@@ -81,141 +128,139 @@ function matrixHtml(mission, state, model, handlers) {
       if (r === c) cls += ' pair';
       else if (r < c) cls += ' suited';
       else cls += ' offsuit';
-      if (mission?.type !== 'FINAL_BATTLE' && activeSet.size > 0 && !activeSet.has(hand)) cls += ' dimmed';
-      if (state.used?.has(hand)) cls += ' selected-open';
-      const locked = state.status === 'finished' || state.submitted;
-      if (locked) cls += ' locked';
-      cells.push(`<button type="button" class="${cls}" data-hand="${esc(hand)}" ${locked ? 'disabled' : ''}>${esc(hand)}</button>`);
+      if (mission?.type === 'MATRIX_HUNT' && activeSet.size > 0 && !activeSet.has(hand) && !mission.isFinal) {
+        cls += ' dimmed';
+      }
+      if (state.hitHands?.has(hand)) cls += ' hit';
+      if (state.missHands?.has(hand)) cls += ' miss';
+      if (state.resolved?.has(hand)) cls += ' locked';
+      if (state.flashHand === hand && state.feedback?.type === 'hit') cls += ' flash-hit';
+      if (state.flashHand === hand && state.feedback?.type === 'miss') cls += ' flash-miss';
+      if (state.tutorialPhase === 'pulse' && state.tutorialHand === hand) cls += ' tutorial-pulse';
+      const disabled = state.status === 'finished' || state.resolved?.has(hand);
+      cells.push(`<button type="button" class="${cls}" data-hand="${esc(hand)}" ${disabled ? 'disabled' : ''} aria-label="${esc(hand)}">${esc(hand)}</button>`);
     }
   }
   const axis = RANKS.map((r) => `<span>${r}</span>`).join('');
-  return `<div class="rbAxisTop">${axis}</div>
-    <div class="rbMatrixWrap"><div class="rbAxisSide">${axis}</div><div class="rbMatrix">${cells.join('')}</div></div>`;
+  return `<div class="rbMatrixArena">
+    <div class="rbAxisTop">${axis}</div>
+    <div class="rbMatrixWrap"><div class="rbAxisSide">${axis}</div><div class="rbMatrix">${cells.join('')}</div></div>
+  </div>`;
+}
+
+function missionIntroHtml(vm) {
+  const { mission, state, rangeLabel, missions } = vm;
+  if (!state.showMissionIntro || !mission) return '';
+  return `<div class="rbMissionIntro">
+    <div class="rbIntroTitle">${esc(rangeLabel)}</div>
+    <div class="rbIntroMission">Миссия ${mission.index}/${missions.length}</div>
+    <div class="rbIntroGoal">${esc(mission.goal)}</div>
+    <div class="rbIntroLegend">
+      <span>✓ ПОПАЛ</span><span>💥 МИМО</span>
+    </div>
+    <button type="button" class="primary rbIntroStart" id="rbBeginMission">НАЧАТЬ</button>
+  </div>`;
+}
+
+function hudHtml(vm) {
+  const { mission, state, missions } = vm;
+  const grenades = '💣'.repeat(state.grenades) + (state.grenades < 3 ? '·'.repeat(3 - state.grenades) : '');
+  return `<div class="rbHudBar">
+    <div class="rbHudRow"><span class="rbHudLabel">МИССИЯ ${mission?.index || 1}/${missions?.length || 8}</span></div>
+    <div class="rbHudRow rbHudGoal"><span>ЦЕЛЬ:</span> <b>${esc(mission?.title || '')}</b></div>
+    <div class="rbHudStats">
+      <div class="rbHudStat"><span>${grenades}</span><small>${state.grenades}</small></div>
+      <div class="rbHudStat"><span>КОМБО</span><b class="rbCombo">×${state.combo}</b></div>
+      <div class="rbHudStat"><span>НАЙДЕНО</span><b>${state.found}/${state.targetTotal}</b></div>
+    </div>
+  </div>`;
 }
 
 export function renderBattleshipGame(root, vm, handlers) {
-  const { mission, state, model, missions } = vm;
+  const { mission, state, model, missions, rangeLabel } = vm;
   if (!mission || !model) {
     root.innerHTML = `<div class="panel"><p>Загрузка…</p></div>`;
     return;
   }
 
-  const dots = (missions || []).map((_, i) => {
-    let cls = 'rbDot';
-    if (i === state.missionIndex) cls += ' active';
-    else if (i < state.missionIndex) cls += ' done';
-    return `<span class="${cls}"></span>`;
-  }).join('');
+  const intro = missionIntroHtml(vm);
+  const showMatrix = !state.showMissionIntro;
+  const tutorialBanner = state.tutorialPhase === 'pulse'
+    ? '<p class="rbTutorial">Найди руку из диапазона BTN.</p>'
+    : state.tutorialPhase === 'confirm'
+      ? '<p class="rbTutorial">Да. Попал. <button type="button" class="rbTutorialOk" id="rbTutorialOk">Ок</button></p>'
+      : state.tutorialPhase === 'done'
+        ? '<p class="rbTutorial">Теперь попробуй сам.</p>'
+        : '';
 
-  const submitArea = mission.usesSubmit
-    ? `<div class="rbSubmitArea"><button type="button" class="rbSubmitBtn" id="rbSubmit" ${state.submitted ? 'disabled' : ''}>✅ Готово</button></div>`
-    : '';
-
-  let interaction = '';
-  if (mission.type === 'FULL_SECTOR_CONFIRM' && !state.choiceMade && state.status === 'playing') {
-    const choices = mission.getChoices();
-    interaction = `<div class="rbChoiceGroup">${choices.map((ch) =>
-      `<button type="button" class="rbChoiceBtn" data-choice="${esc(ch)}">${esc(ch)}</button>`
-    ).join('')}</div>`;
-  } else if ((mission.type === 'MIXED_DECISIONS' || mission.type === 'FINAL_BATTLE') && state.status === 'playing') {
-    const hands = mission.type === 'FINAL_BATTLE'
-      ? (state.finalBattleHands.length ? state.finalBattleHands : mission.getActiveHands())
-      : mission.getDecisions();
-    if (state.decisionIndex < hands.length && state.shots > 0) {
-      const hand = hands[state.decisionIndex];
-      interaction = `<p class="rbPrompt">Рука <b>${esc(hand)}</b> (${state.decisionIndex + 1}/${hands.length})</p>
-        <div class="rbDecisionGroup">
-          <button type="button" class="rbDecisionBtn" data-decision="OPEN">OPEN</button>
-          <button type="button" class="rbDecisionBtn" data-decision="FOLD">FOLD</button>
-        </div>`;
-    }
-  }
-
-  const onboarding = state.showOnboarding
-    ? `<div class="rbOnboarding show"><div class="rbOnboardCard">
-        <h2>🎯 Ренджи: Морской бой</h2>
-        <p>Пройди курс из 8 миссий и выучи диапазон <b>${esc(courseLabel(model))}</b>.</p>
-        <p class="rbMuted">Попадание — 💥 взрыв. Промах — ❌ теряешь гранату.</p>
-        <button type="button" class="primary rbStartBtn" id="rbStart">В БОЙ</button>
-      </div></div>`
+  const feedbackPop = state.feedback
+    ? `<div class="rbFeedbackPop rbFeedbackPop--${state.feedback.type}">${esc(state.feedback.text)}</div>`
     : '';
 
   const overlay = state.showOverlay ? renderMissionOverlay(vm) : '';
-  const finalOv = state.showFinal ? renderFinalOverlay(vm, handlers) : '';
+  const finalOv = state.showFinal ? renderFinalOverlay(vm) : '';
 
   root.innerHTML = `<div class="panel rbGame pgShell">
-    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h2>${esc(courseLabel(model))}</h2><span class="ey">МОРСКОЙ БОЙ</span></div>`, 'ranges')}</div>
-    <div class="rbGameInner">
-      ${onboarding}
-      <div class="rbMissionBar"><span>Миссия <b>${state.missionIndex + 1}/${missions.length}</b></span><div class="rbDots">${dots}</div></div>
-      <div class="rbHud">
-        <div><small>💣</small><b>${state.shots}</b></div>
-        <div><small>✓</small><b class="rbGreen">${state.hits}</b></div>
-        <div><small>🔥</small><b class="rbCombo">×${state.combo}</b></div>
-      </div>
-      <div class="rbMissionHead">
-        <div class="rbMissionTitle">${esc(mission.title)}</div>
-        <div class="rbMissionDesc">${esc(mission.description)}</div>
-        ${submitArea}
-      </div>
-      ${matrixHtml(mission, state, model, handlers)}
-      ${interaction}
-      <div class="rbFeedback"><div class="rbAvatar">♠️</div><div class="rbSpeech">${state.speech || 'Выбирай клетку. <b>Правильная рука взорвётся.</b>'}</div></div>
-      <div class="rbBottom"><button type="button" class="rangesHelpBtn" id="rbResetMission">↻ Сброс миссии</button></div>
+    <div class="pgHud rbGameHud">${headWithBack(`<div class="pgHudTitle"><h2>${esc(rangeLabel || courseLabel(model))}</h2><span class="ey">МОРСКОЙ БОЙ</span></div>`, 'ranges')}</div>
+    <div class="rbGameBody">
+      ${intro}
+      ${showMatrix ? `${hudHtml(vm)}
+        <p class="rbInstruction">${esc(mission.instruction)}</p>
+        ${tutorialBanner}
+        ${matrixHtml(mission, state)}
+        ${feedbackPop}
+        <div class="rbSpeechBar">${esc(state.speech || 'Жми на руки из диапазона.')}</div>` : ''}
       ${overlay}
       ${finalOv}
     </div>
   </div>`;
 
   wireBack(root, () => handlers.back?.());
-  root.querySelector('#rbStart')?.addEventListener('click', () => handlers.startBattleship?.());
-  root.querySelector('#rbSubmit')?.addEventListener('click', () => handlers.submitRangeHunt?.());
-  root.querySelector('#rbResetMission')?.addEventListener('click', () => handlers.retryMission?.());
-  root.querySelectorAll('[data-choice]').forEach((btn) => {
-    btn.onclick = () => handlers.handleChoice?.(btn.dataset.choice);
-  });
-  root.querySelectorAll('[data-decision]').forEach((btn) => {
-    btn.onclick = () => handlers.handleDecision?.(btn.dataset.decision);
-  });
+  root.querySelector('#rbBeginMission')?.addEventListener('click', () => handlers.beginMission?.());
+  root.querySelector('#rbTutorialOk')?.addEventListener('click', () => handlers.dismissTutorial?.());
   root.querySelectorAll('[data-hand]').forEach((btn) => {
-    btn.onclick = () => {
-      const hand = btn.dataset.hand;
-      if (mission.type === 'RANGE_HUNT') handlers.toggleHand?.(hand);
-      else if (mission.type === 'FIND_THE_EDGE') handlers.handleEdgeClick?.(hand);
-    };
+    btn.onclick = () => handlers.handleCellTap?.(btn.dataset.hand);
   });
   root.querySelector('#rbNextMission')?.addEventListener('click', () => handlers.nextMission?.());
   root.querySelector('#rbRetryMission')?.addEventListener('click', () => handlers.retryMission?.());
 }
 
 function renderMissionOverlay(vm) {
-  const { mission, state } = vm;
-  const score = state.missionScore ?? 0;
-  const isLast = state.missionIndex >= vm.missions.length - 1;
+  const { mission, state, missions, progress } = vm;
+  const isLast = state.missionIndex >= missions.length - 1;
+  const weak = state.weakSector ? sectorLabel(state.weakSector) : null;
   return `<div class="rbOverlay show"><div class="rbCard">
-    <div class="rbScore">${score}%</div>
-    <h2>${score >= 80 ? '🎯 Отлично!' : score >= 50 ? '👍 Хорошо' : '📖 Учимся'}</h2>
-    <p class="rbSub">Попаданий: ${state.hits} · Промахов: ${state.misses}</p>
+    <div class="rbStamp">МИССИЯ ПРОЙДЕНА</div>
+    <div class="rbScore">${state.missionScore}%</div>
+    <p class="rbSub">ТОЧНОСТЬ ${state.missionScore}%</p>
+    <p class="rbSub">ПОПАДАНИЙ ${state.hits} · ПРОМАХОВ ${state.misses}</p>
+    ${weak ? `<p class="rbWeak">СЛАБАЯ ЗОНА: ${esc(weak)}</p>` : ''}
     <div class="rbActions">
-      <button type="button" class="rangesHelpBtn" id="rbRetryMission">↻ Повторить</button>
-      <button type="button" class="primary" id="rbNextMission">${isLast ? '🏆 Завершить' : '→ Следующая'}</button>
+      <button type="button" class="rangesHelpBtn" id="rbRetryMission">ПОВТОРИТЬ</button>
+      <button type="button" class="primary" id="rbNextMission">${isLast ? 'ФИНАЛ' : 'ДАЛЬШЕ'}</button>
     </div>
   </div></div>`;
 }
 
-function renderFinalOverlay(vm, handlers) {
+function renderFinalOverlay(vm) {
   const stats = vm.progress.getCourseMissions(vm.course.courseId, vm.missionIds).filter((m) => m.completed);
+  const totalHits = stats.reduce((s, m) => s + (m.hits || 0), 0);
+  const totalMisses = stats.reduce((s, m) => s + (m.misses || 0), 0);
   const totalAcc = stats.length
     ? Math.round(stats.reduce((s, m) => s + (m.accuracy || 0), 0) / stats.length)
     : 0;
-  const mastered = totalAcc >= 80 && stats.length >= vm.missions.length;
+  const bestCombo = Math.max(0, ...stats.map((m) => m.bestCombo || 0));
+  const worst = vm.progress.getWeakestMission(vm.course.courseId, vm.missionIds);
+  const weakLabel = worst ? sectorLabel(worst.missionId.replace(/-.*$/, '')) : null;
   return `<div class="rbFinal show"><div class="rbFinalCard">
-    <div class="rbBigScore">${mastered ? '🏆' : '📚'}</div>
-    <h2>${mastered ? `${esc(courseLabel(vm.model))} освоен!` : 'Курс пройден'}</h2>
-    <p class="rbSub">Средняя точность ${totalAcc}% · ${stats.length}/${vm.missions.length} миссий</p>
-    <button type="button" class="primary rbFinalBtn" id="rbRepeatWeak">Повторить слабую миссию</button>
-    <button type="button" class="rangesHelpBtn" id="rbRestart">Пройти ещё раз</button>
-    <button type="button" class="rangesHelpBtn" id="rbBackCatalog">К выбору диапазона</button>
+    <div class="rbFinalTitle">${esc(vm.rangeLabel || courseLabel(vm.model))}</div>
+    <div class="rbFinalBadge">РЕНДЖ ВЫУЧЕН</div>
+    <p class="rbSub">Точность ${totalAcc}% · Попаданий ${totalHits} · Ошибок ${totalMisses}</p>
+    <p class="rbSub">Лучшее комбо ×${bestCombo}</p>
+    ${weakLabel ? `<p class="rbWeak">Слабая зона: ${esc(weakLabel)}</p>` : ''}
+    <button type="button" class="primary rbFinalBtn" id="rbRepeatWeak">ПОВТОРИТЬ СЛАБОЕ</button>
+    <button type="button" class="rangesHelpBtn" id="rbRestart">СЛЕДУЮЩИЙ РЕНДЖ</button>
+    <button type="button" class="rangesHelpBtn" id="rbBackCatalog">В РЕНДЖИ</button>
   </div></div>`;
 }
 
@@ -225,9 +270,8 @@ export function renderBattleshipError(root, vm, handlers) {
   root.querySelector('#rbErrBack').onclick = () => handlers.back?.();
 }
 
-// Wire final overlay buttons after paint — called from main paint cycle
 export function wireFinalOverlay(root, handlers) {
   root.querySelector('#rbRepeatWeak')?.addEventListener('click', () => handlers.repeatWeakMission?.());
-  root.querySelector('#rbRestart')?.addEventListener('click', () => handlers.restartCourse?.());
+  root.querySelector('#rbRestart')?.addEventListener('click', () => handlers.openBattleshipCatalog?.());
   root.querySelector('#rbBackCatalog')?.addEventListener('click', () => handlers.back?.());
 }

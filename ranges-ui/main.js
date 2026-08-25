@@ -48,6 +48,8 @@ const trainerCtl = new TrainerBrowserController({ pack: getPack(), storage });
 const battleCtl = new BattleshipController({ storage });
 
 let mode = 'hub'; // hub | battleship-catalog | battleship-play | trainer | narrowing
+let pickerPos = null;
+let pickerStack = null;
 
 function hubVm() {
   return {
@@ -70,33 +72,26 @@ const handlers = {
     battleCtl.state.phase = 'catalog';
     battleCtl.init().then(() => paint());
   },
+  setPicker(pos, stack) {
+    if (pos) pickerPos = pos;
+    if (stack) pickerStack = stack;
+    else if (pos) pickerStack = null;
+  },
   async selectBattleshipCourse(courseId) {
     mode = 'battleship-play';
     await battleCtl.startCourse(courseId);
     paint();
   },
-  startBattleship() {
-    battleCtl.startGame();
+  beginMission() {
+    battleCtl.beginMission();
     paint();
   },
-  handleChoice(choice) {
-    battleCtl.handleChoice(choice);
+  handleCellTap(hand) {
+    battleCtl.handleCellTap(hand);
     paint();
   },
-  handleDecision(decision) {
-    battleCtl.handleDecision(decision);
-    paint();
-  },
-  toggleHand(hand) {
-    battleCtl.toggleHand(hand);
-    paint();
-  },
-  handleEdgeClick(hand) {
-    battleCtl.handleEdgeClick(hand);
-    paint();
-  },
-  submitRangeHunt() {
-    battleCtl.submitRangeHunt();
+  dismissTutorial() {
+    battleCtl.dismissTutorial();
     paint();
   },
   nextMission() {
@@ -226,6 +221,8 @@ function paint() {
   if (mode === 'battleship-catalog') {
     const vm = battleCtl.viewModel();
     vm.phase = 'catalog';
+    vm.pickerPos = pickerPos;
+    vm.pickerStack = pickerStack;
     BR.renderBattleshipCatalog(el, vm, handlers);
     return;
   }
@@ -247,7 +244,9 @@ function paint() {
   }
 
   if (mode === 'hub') {
-    BR.renderBattleshipHub(el, { ...vm, lastCourse: battleCtl.progress.getLastCourse() }, handlers);
+    battleCtl.init().then(() => {
+      BR.renderBattleshipHub(el, { ...vm, lastCourse: battleCtl.progress.getLastCourse(), courseProgressList: battleCtl.progress.getCourseProgressList(battleCtl.catalog) }, handlers);
+    });
     return;
   }
 
@@ -294,7 +293,10 @@ window.PokerSwipeRanges = {
   battleshipController: battleCtl,
   paint,
   storage,
-  openBattleship: () => handlers.openBattleshipCatalog()
+  openBattleship: () => handlers.openBattleshipCatalog(),
+  selectBattleshipCourse: (courseId) => handlers.selectBattleshipCourse(courseId),
+  beginMission: () => handlers.beginMission(),
+  handleCellTap: (hand) => handlers.handleCellTap(hand)
 };
 
 function boot() {

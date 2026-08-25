@@ -1,7 +1,19 @@
 // Namespaced Battleship progress — does not touch unrelated PokerSwipe storage.
 
 const STORAGE_KEY = 'pokerSwipe_rangeBattle_v1';
-const ONBOARDING_KEY = 'pokerSwipe_rangeBattle_onboarding_v1';
+const TUTORIAL_KEY = 'pokerSwipe_rangeBattle_tutorial_v1';
+
+const SECTOR_LABELS = {
+  pocketPairs: 'Карманки',
+  suitedAx: 'Suited Ax',
+  offsuitAx: 'Offsuit Ax',
+  suitedKx: 'Suited Kx',
+  offsuitKx: 'Offsuit Kx',
+  broadway: 'Broadway',
+  suitedConnectors: 'Коннекторы',
+  suitedGappers: 'Гапперы',
+  other: 'Другое'
+};
 
 export function createProgressStore(storage = null) {
   const st = storage || (typeof localStorage !== 'undefined' ? localStorage : null);
@@ -21,14 +33,14 @@ export function createProgressStore(storage = null) {
     try { st.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { /* quota */ }
   }
 
-  function loadOnboarding() {
+  function loadTutorialCompleted() {
     if (!st) return false;
-    try { return st.getItem(ONBOARDING_KEY) === 'true'; } catch (e) { return false; }
+    try { return st.getItem(TUTORIAL_KEY) === 'true'; } catch (e) { return false; }
   }
 
-  function saveOnboarding() {
+  function saveTutorialCompleted() {
     if (!st) return;
-    try { st.setItem(ONBOARDING_KEY, 'true'); } catch (e) { /* ignore */ }
+    try { st.setItem(TUTORIAL_KEY, 'true'); } catch (e) { /* ignore */ }
   }
 
   function ensureCourse(courseId, chartId) {
@@ -58,16 +70,20 @@ export function createProgressStore(storage = null) {
     data.lastChartId = chartId;
 
     const mastery = data.rangeMastery[chartId] || {};
-    const sector = missionId.replace(/-.*$/, '').replace('connectors', 'connectors');
     const sectorKey = {
       'pocket-pairs': 'pocketPairs',
       'suited-ax': 'suitedAx',
       'offsuit-ax': 'offsuitAx',
       'suited-kx': 'suitedKx',
       broadway: 'broadway',
-      'connectors-gappers': 'connectors'
+      'connectors-gappers': 'connectors',
+      'range-edge': 'offsuitAx',
+      hunt: 'broadway',
+      'final-battle': 'overall'
     }[missionId];
-    if (sectorKey) mastery[sectorKey] = Math.max(mastery[sectorKey] || 0, result.accuracy || 0);
+    if (sectorKey && sectorKey !== 'overall') {
+      mastery[sectorKey] = Math.max(mastery[sectorKey] || 0, result.accuracy || 0);
+    }
     const accs = course.missions.filter((m) => m.completed).map((m) => m.accuracy || 0);
     mastery.overall = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : 0;
     data.rangeMastery[chartId] = mastery;
@@ -100,8 +116,8 @@ export function createProgressStore(storage = null) {
       const w = worst.accuracy || 0;
       if (a < w) worst = m;
       else if (a === w) {
-        const me = (m.mistakes || []).length + (m.missedOpens || []).length;
-        const we = (worst.mistakes || []).length + (worst.missedOpens || []).length;
+        const me = (m.mistakes || []).length;
+        const we = (worst.mistakes || []).length;
         if (me > we) worst = m;
       }
     }
@@ -112,7 +128,7 @@ export function createProgressStore(storage = null) {
     if (!st) return;
     try {
       st.removeItem(STORAGE_KEY);
-      st.removeItem(ONBOARDING_KEY);
+      st.removeItem(TUTORIAL_KEY);
     } catch (e) { /* ignore */ }
   }
 
@@ -122,19 +138,51 @@ export function createProgressStore(storage = null) {
     return { courseId: data.lastCourseId, chartId: data.lastChartId, course: data.courses?.[data.lastCourseId] };
   }
 
+  function saveLastCourse(courseId, chartId) {
+    const data = load() || { courses: {}, rangeMastery: {} };
+    data.lastCourseId = courseId;
+    data.lastChartId = chartId;
+    save(data);
+  }
+
+  function getCourseProgressList(catalog) {
+    const data = load();
+    if (!data?.courses || !catalog?.length) return [];
+    const rows = [];
+    for (const c of catalog) {
+      const course = data.courses[c.courseId];
+      if (!course?.missions?.length) continue;
+      const accs = course.missions.filter((m) => m.completed).map((m) => m.accuracy || 0);
+      if (!accs.length) continue;
+      const pct = Math.round(accs.reduce((a, b) => a + b, 0) / accs.length);
+      const pos = c.position || '';
+      const stack = (c.stack || '').replace('-', '–');
+      rows.push({ courseId: c.courseId, label: `${pos} ${stack} ББ`, pct });
+    }
+    rows.sort((a, b) => b.pct - a.pct);
+    return rows.slice(0, 4);
+  }
+
+  function sectorLabel(key) {
+    return SECTOR_LABELS[key] || key;
+  }
+
   return {
     STORAGE_KEY,
-    ONBOARDING_KEY,
+    TUTORIAL_KEY,
     load,
     save,
-    loadOnboarding,
-    saveOnboarding,
+    loadTutorialCompleted,
+    saveTutorialCompleted,
     saveMissionResult,
     clearCourseProgress,
     getCourseMissions,
     getWeakestMission,
     resetAllBattleshipProgress,
     getLastCourse,
+    saveLastCourse,
+    getCourseProgressList,
+    sectorLabel,
     getRangeMastery(chartId) {
       const data = load();
       return data?.rangeMastery?.[chartId] || null;

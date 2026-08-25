@@ -1,39 +1,38 @@
-// Range Battleship game controller — trainer-backed missions, no hardcoded ranges.
+// Range Battleship game controller — matrix-tap gameplay, trainer-backed only.
 
 import { findCourse, getBattleshipCatalog } from './courses.js';
 import { loadRangeModel, isOpen, courseLabel } from './trainerRangeModel.js';
-import { buildMissions, COURSE_MISSION_IDS } from './missions.js';
+import { buildMissions, COURSE_MISSION_IDS, GRENADES_PER_MISSION, missionRangeLabel } from './missions.js';
 import { createProgressStore } from './progress.js';
 import { getHandCategory } from './matrixUtils.js';
+import { isGradable } from './trainerRangeModel.js';
 
 function freshState() {
   return {
     missionIndex: 0,
-    shots: 12,
-    maxShots: 12,
+    grenades: GRENADES_PER_MISSION,
     hits: 0,
     misses: 0,
     combo: 0,
     bestCombo: 0,
-    used: new Set(),
+    found: 0,
+    targetTotal: 0,
+    resolved: new Set(),
     hitHands: new Set(),
     missHands: new Set(),
     mistakes: [],
-    missedOpens: [],
     status: 'idle',
-    choiceMade: false,
-    selectedChoice: null,
-    edgeAnswered: false,
-    decisionIndex: 0,
-    decisionResults: [],
-    returnToFinal: false,
-    submitted: false,
-    finalBattleHands: [],
-    showOnboarding: false,
+    showMissionIntro: true,
     showOverlay: false,
     showFinal: false,
     speech: '',
-    phase: 'idle'
+    feedback: null,
+    flashHand: null,
+    phase: 'idle',
+    tutorialPhase: null,
+    tutorialHand: null,
+    missionScore: 0,
+    weakSector: null
   };
 }
 
@@ -65,9 +64,11 @@ export class BattleshipController {
       mission,
       state: this.state,
       courseLabel: this.model ? courseLabel(this.model) : '',
+      rangeLabel: this.model ? missionRangeLabel(this.model) : '',
       progress: this.progress,
       lastCourse: this.progress.getLastCourse(),
-      missionIds: COURSE_MISSION_IDS
+      missionIds: COURSE_MISSION_IDS,
+      courseProgressList: this.progress.getCourseProgressList(this.catalog)
     };
   }
 
@@ -88,15 +89,14 @@ export class BattleshipController {
     this.missions = buildMissions(this.model);
     this.state = freshState();
     this.state.phase = 'play';
-    this.state.showOnboarding = !this.progress.loadOnboarding();
-    if (!this.state.showOnboarding) this._loadMission(0);
+    this.state.showMissionIntro = true;
+    this.progress.saveLastCourse(courseId, entry.chartId);
     return this.viewModel();
   }
 
-  startGame() {
-    this.state.showOnboarding = false;
-    this.progress.saveOnboarding();
-    this._loadMission(0);
+  beginMission() {
+    this.state.showMissionIntro = false;
+    this._loadMission(this.state.missionIndex);
     return this.viewModel();
   }
 
@@ -105,6 +105,7 @@ export class BattleshipController {
     this.missions = [];
     this.model = null;
     this.course = null;
+    this.state = freshState();
     return this.viewModel();
   }
 
@@ -117,203 +118,149 @@ export class BattleshipController {
     return isOpen(hand, this.model) === true;
   }
 
+  _setupTutorial(mission) {
+    if (this.progress.loadTutorialCompleted()) return;
+    const targets = mission.getTargetHands();
+    if (!targets.length) return;
+    this.state.tutorialPhase = 'pulse';
+    this.state.tutorialHand = targets[0];
+  }
+
   _loadMission(index) {
     const mission = this.missions[index];
     if (!mission) {
       this._showFinalComplete();
       return this.viewModel();
     }
-    if (mission.id === 'final-battle') mission._cachedHands = null;
+    const targets = mission.getTargetHands();
     Object.assign(this.state, {
       missionIndex: index,
-      maxShots: mission.shots || 0,
-      shots: mission.shots || 0,
+      grenades: GRENADES_PER_MISSION,
       hits: 0,
       misses: 0,
       combo: 0,
-      bestCombo: 0,
-      used: new Set(),
+      found: 0,
+      targetTotal: targets.length,
+      resolved: new Set(),
       hitHands: new Set(),
       missHands: new Set(),
       mistakes: [],
-      missedOpens: [],
       status: 'playing',
-      choiceMade: false,
-      selectedChoice: null,
-      edgeAnswered: false,
-      decisionIndex: 0,
-      decisionResults: [],
-      submitted: false,
-      finalBattleHands: [],
       showOverlay: false,
-      showFinal: false
+      showFinal: false,
+      speech: '',
+      feedback: null,
+      flashHand: null,
+      tutorialPhase: null,
+      tutorialHand: null
     });
     this.state.phase = 'play';
-    return this.viewModel();
-  }
-
-  handleChoice(choice) {
-    const mission = this.missions[this.state.missionIndex];
-    if (!mission || this.state.choiceMade) return this.viewModel();
-    const correct = mission.getCorrectChoice();
-    this.state.choiceMade = true;
-    this.state.selectedChoice = choice;
-    this.state.shots--;
-    if (choice === correct) {
-      this.state.hits++;
-      this.state.combo++;
-      this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
-      this.state.speech = `✅ Правильно! ${choice} входит в open.`;
-    } else {
-      this.state.misses++;
-      this.state.combo = 0;
-      this.state.mistakes.push({ hand: choice, category: mission.id, expected: correct, selected: choice, errorType: 'WRONG_CHOICE' });
-      this.state.speech = `❌ Неправильно. Правильный ответ: ${correct}.`;
+    if (index === 0 && !this.progress.loadTutorialCompleted()) {
+      this._setupTutorial(mission);
     }
-    this._finishMission();
     return this.viewModel();
   }
 
-  handleDecision(decision) {
+  handleCellTap(hand) {
     const mission = this.missions[this.state.missionIndex];
-    if (!mission) return this.viewModel();
-    const hands = mission.type === 'FINAL_BATTLE'
-      ? (this.state.finalBattleHands.length ? this.state.finalBattleHands : mission.getActiveHands())
-      : mission.getDecisions();
-    if (!this.state.finalBattleHands.length && mission.type === 'FINAL_BATTLE') {
-      this.state.finalBattleHands = hands;
+    if (!mission || this.state.status !== 'playing' || this.state.showMissionIntro) {
+      return this.viewModel();
     }
-    if (this.state.decisionIndex >= hands.length) return this.viewModel();
+    if (this.state.resolved.has(hand)) return this.viewModel();
+    if (!isGradable(hand, this.model)) return this.viewModel();
 
-    const hand = hands[this.state.decisionIndex];
-    const open = this._inRange(hand);
-    const correct = open ? 'OPEN' : 'FOLD';
-    const isCorrect = decision === correct;
-    this.state.shots--;
-    this.state.decisionIndex++;
-    this.state.decisionResults.push({ hand, decision, correct, isCorrect });
-    if (isCorrect) {
-      this.state.hits++;
-      this.state.combo++;
-      this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
-    } else {
-      this.state.misses++;
-      this.state.combo = 0;
-      this.state.mistakes.push({ hand, category: getHandCategory(hand), expected: correct, selected: decision, errorType: 'WRONG_DECISION' });
-    }
-    this.state.speech = `${hand} — ${correct === 'OPEN' ? '✅ OPEN' : '❌ FOLD'}`;
-    if (this.state.shots <= 0 || this.state.decisionIndex >= hands.length) this._finishMission();
-    return this.viewModel();
-  }
-
-  toggleHand(hand) {
-    const mission = this.missions[this.state.missionIndex];
-    if (!mission?.usesSubmit || this.state.submitted) return this.viewModel();
-    if (this.state.used.has(hand)) this.state.used.delete(hand);
-    else this.state.used.add(hand);
-    return this.viewModel();
-  }
-
-  handleEdgeClick(hand) {
-    const mission = this.missions[this.state.missionIndex];
-    if (!mission || this.state.edgeAnswered || this.state.shots <= 0) return this.viewModel();
-    this.state.edgeAnswered = true;
-    this.state.used.add(hand);
-    this.state.shots--;
-    const boundary = mission.getBoundary();
-    const continuous = mission.edgeMode ? mission.edgeMode() : boundary.continuous;
-    if (continuous && hand === boundary.lastOpen) {
-      this.state.hits++;
-      this.state.combo++;
-      this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
-      this.state.hitHands.add(hand);
-      this.state.speech = `✅ Правильно! ${hand} — последняя OPEN рука.`;
-    } else if (!continuous) {
-      const ok = this._inRange(hand) === (this.state.used.has(hand));
-      if (this._inRange(hand)) {
-        this.state.hits++;
-        this.state.hitHands.add(hand);
-        this.state.speech = `✅ ${hand} — OPEN`;
-      } else {
-        this.state.misses++;
-        this.state.mistakes.push({ hand, category: mission.id, expected: 'OPEN', selected: hand, errorType: 'WRONG_EDGE' });
-        this.state.speech = `❌ ${hand} — FOLD`;
-      }
-    } else {
-      this.state.misses++;
-      this.state.missHands.add(hand);
-      this.state.mistakes.push({ hand, category: mission.id, expected: boundary.lastOpen, selected: hand, errorType: 'WRONG_EDGE' });
-      this.state.speech = `❌ Неправильно. Правильный ответ: ${boundary.lastOpen}.`;
-    }
-    this._finishMission();
-    return this.viewModel();
-  }
-
-  submitRangeHunt() {
-    const mission = this.missions[this.state.missionIndex];
-    if (!mission?.usesSubmit || this.state.submitted) return this.viewModel();
-    this.state.submitted = true;
-    const challengeHands = mission.getChallengeHands();
     const targetSet = new Set(mission.getTargetHands());
-    for (const hand of challengeHands) {
-      const expectedOpen = targetSet.has(hand);
-      const selectedOpen = this.state.used.has(hand);
-      if (expectedOpen && selectedOpen) {
-        this.state.hitHands.add(hand);
-        this.state.hits++;
-        this.state.combo++;
-        this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
-      } else if (!expectedOpen && !selectedOpen) {
-        /* correct fold */
-      } else if (expectedOpen && !selectedOpen) {
-        this.state.missedOpens.push({ hand, category: getHandCategory(hand), errorType: 'MISSED_OPEN', expected: 'OPEN', selected: 'NOT_SELECTED' });
-      } else {
-        this.state.misses++;
-        this.state.combo = 0;
-        this.state.mistakes.push({ hand, category: getHandCategory(hand), expected: 'FOLD', selected: 'OPEN', errorType: 'FALSE_POSITIVE' });
-      }
+    const isTarget = targetSet.has(hand);
+
+    if (this.state.tutorialPhase === 'pulse') {
+      if (hand !== this.state.tutorialHand) return this.viewModel();
+      this._applyHit(hand, mission);
+      this.state.tutorialPhase = 'confirm';
+      this.state.speech = 'Да. Попал.';
+      this.state.feedback = { type: 'hit', hand, text: 'ПОПАЛ' };
+      return this.viewModel();
     }
-    this._finishMission();
+    if (this.state.tutorialPhase === 'confirm') return this.viewModel();
+
+    this.state.resolved.add(hand);
+    if (isTarget) this._applyHit(hand, mission);
+    else this._applyMiss(hand, mission);
+
+    if (this.state.tutorialPhase === null && !this.progress.loadTutorialCompleted() && this.state.missionIndex === 0) {
+      this.progress.saveTutorialCompleted();
+    }
+
+    if (this.state.found >= this.state.targetTotal) this._finishMission();
+    else if (this.state.grenades <= 0) this._finishMission();
     return this.viewModel();
+  }
+
+  dismissTutorial() {
+    if (this.state.tutorialPhase === 'confirm') {
+      this.state.tutorialPhase = 'done';
+      this.state.speech = 'Теперь попробуй сам.';
+      this.progress.saveTutorialCompleted();
+    }
+    return this.viewModel();
+  }
+
+  _applyHit(hand, mission) {
+    if (!this.state.resolved.has(hand)) this.state.resolved.add(hand);
+    this.state.hitHands.add(hand);
+    this.state.hits++;
+    this.state.found++;
+    this.state.combo++;
+    this.state.bestCombo = Math.max(this.state.bestCombo, this.state.combo);
+    this.state.flashHand = hand;
+    this.state.feedback = { type: 'hit', hand, text: 'ПОПАЛ' };
+    this.state.speech = `ПОПАЛ · ${hand}`;
+  }
+
+  _applyMiss(hand, mission) {
+    this.state.missHands.add(hand);
+    this.state.misses++;
+    this.state.combo = 0;
+    this.state.grenades = Math.max(0, this.state.grenades - 1);
+    this.state.flashHand = hand;
+    this.state.feedback = { type: 'miss', hand, text: 'МИМО' };
+    this.state.speech = `МИМО · ${hand}`;
+    this.state.mistakes.push({
+      hand,
+      category: getHandCategory(hand),
+      expected: 'FOLD',
+      selected: hand,
+      errorType: 'FALSE_POSITIVE'
+    });
   }
 
   _finishMission() {
     this.state.status = 'finished';
     const mission = this.missions[this.state.missionIndex];
-    let score = 0;
-    if (mission.type === 'FULL_SECTOR_CONFIRM') {
-      score = this.state.selectedChoice === mission.getCorrectChoice() ? 100 : 0;
-    } else if (mission.type === 'FIND_THE_EDGE') {
-      const b = mission.getBoundary();
-      score = this.state.hitHands.has(b.lastOpen) ? 100 : (this.state.hits > 0 ? 50 : 0);
-    } else if (mission.type === 'RANGE_HUNT') {
-      const challenge = mission.getChallengeHands();
-      const targetSet = new Set(mission.getTargetHands());
-      let correct = 0;
-      for (const hand of challenge) {
-        const expected = targetSet.has(hand);
-        const selected = this.state.used.has(hand);
-        if ((expected && selected) || (!expected && !selected)) correct++;
-      }
-      score = challenge.length ? Math.round(correct / challenge.length * 100) : 0;
-    } else {
-      const results = this.state.decisionResults;
-      const correct = results.filter((r) => r.isCorrect).length;
-      score = results.length ? Math.round(correct / results.length * 100) : 0;
+    const total = this.state.hits + this.state.misses;
+    const score = total > 0 ? Math.round((this.state.hits / Math.max(this.state.targetTotal, 1)) * 100) : 0;
+    const capped = Math.min(100, score);
+    this.state.missionScore = capped;
+
+    const catCounts = {};
+    for (const m of this.state.mistakes) {
+      const cat = m.category || 'other';
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
     }
-    this.state.missionScore = score;
+    const weak = Object.entries(catCounts).sort((a, b) => b[1] - a[1])[0];
+    this.state.weakSector = weak ? weak[0] : null;
+
     this.progress.saveMissionResult(
       this.course.courseId,
       this.course.chartId,
       mission.id,
       {
         type: mission.type,
-        accuracy: score,
+        accuracy: capped,
         hits: this.state.hits,
         misses: this.state.misses,
         bestCombo: this.state.bestCombo,
         mistakes: this.state.mistakes,
-        missedOpens: this.state.missedOpens
+        missedOpens: []
       },
       COURSE_MISSION_IDS
     );
@@ -324,11 +271,15 @@ export class BattleshipController {
   nextMission() {
     this.state.showOverlay = false;
     if (this.state.missionIndex >= this.missions.length - 1) return this._showFinalComplete();
-    return this._loadMission(this.state.missionIndex + 1);
+    this.state.missionIndex++;
+    this.state.showMissionIntro = true;
+    this.state.phase = 'play';
+    return this.viewModel();
   }
 
   retryMission() {
     this.state.showOverlay = false;
+    this.state.showMissionIntro = false;
     return this._loadMission(this.state.missionIndex);
   }
 
@@ -344,16 +295,17 @@ export class BattleshipController {
     if (!worst) return this.viewModel();
     const index = this.missions.findIndex((m) => m.id === worst.missionId);
     if (index === -1) return this.viewModel();
-    this.state.returnToFinal = true;
     this.state.showFinal = false;
+    this.state.showMissionIntro = false;
     return this._loadMission(index);
   }
 
   restartCourse() {
     this.progress.clearCourseProgress(this.course.courseId, COURSE_MISSION_IDS);
     this.state.showFinal = false;
-    this.state.returnToFinal = false;
-    return this._loadMission(0);
+    this.state.missionIndex = 0;
+    this.state.showMissionIntro = true;
+    return this.viewModel();
   }
 
   resetMissionProgress() {

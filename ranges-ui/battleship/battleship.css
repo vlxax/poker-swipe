@@ -1,79 +1,108 @@
-/* Range Battleship — PokerSwipe dark/lime, 390×844 safe */
+/* Range Battleship — matrix-first game UI, 390×844 safe */
 
-.rbShell{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
-.rbHeroBtn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:left;padding:14px 16px;margin:10px 0;border-radius:16px;border:1px solid rgba(183,255,42,.35);background:linear-gradient(135deg,rgba(183,255,42,.12),rgba(7,16,8,.9));min-height:72px;touch-action:manipulation}
-.rbHeroEy{font-size:9px;letter-spacing:.1em;color:#b6ff28;font-weight:800}
-.rbHeroBtn strong{font-size:15px;color:#f4f7f1;line-height:1.2}
-.rbHeroBtn small{font-size:10px;color:#929c8e}
-.rbContinue{width:100%;margin-bottom:8px}
-.rbLead{font-size:12px!important}
-.rbCatalog{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.rbCourseGroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.rbCoursePos{font-size:11px;font-weight:800;color:#b6ff28;min-width:36px}
-.rbCourseChips{display:flex;flex-wrap:wrap;gap:4px}
-.rbCourseChip{font-size:9px;padding:6px 10px;border-radius:8px;border:1px solid rgba(183,255,42,.2);background:#071008;color:#cbd3c7;touch-action:manipulation}
-.rbCourseChip:active{background:rgba(183,255,42,.1);color:#b6ff28}
+.rbShell{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 
-.rbGame{padding:8px 6px 12px!important;overflow:hidden}
-.rbGameInner{position:relative;background:linear-gradient(180deg,#071008,#050a05);border:1px solid rgba(183,255,42,.2);border-radius:16px;padding:8px 6px 10px}
-.rbMissionBar{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 6px;border-bottom:1px solid rgba(183,255,42,.06);font-size:9px;color:#929c8e}
-.rbMissionBar b{color:#b6ff28;font-size:11px}
-.rbDots{display:flex;gap:3px}
-.rbDot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.08)}
-.rbDot.active{background:#b6ff28;box-shadow:0 0 6px rgba(183,255,42,.35)}
-.rbDot.done{background:#75d900;opacity:.55}
-.rbHud{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:5px 0}
-.rbHud>div{background:rgba(0,0,0,.34);border:1px solid rgba(183,255,42,.08);border-radius:6px;padding:4px 5px;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:800}
-.rbHud small{font-size:6px;color:#929c8e;text-transform:uppercase}
-.rbGreen{color:#b6ff28}
-.rbCombo{color:#b6ff28}
-.rbMissionHead{padding:5px 6px;margin-bottom:4px;background:rgba(0,0,0,.2);border-radius:8px;border-left:2px solid #b6ff28}
-.rbMissionTitle{font-size:12px;font-weight:700;color:#b6ff28}
-.rbMissionDesc{font-size:8px;color:#929c8e;margin-top:2px;line-height:1.3}
-.rbSubmitArea{display:flex;justify-content:flex-end;margin-top:4px}
-.rbSubmitBtn{padding:4px 12px;border-radius:99px;border:1px solid #b6ff28;background:rgba(183,255,42,.08);color:#b6ff28;font-size:8px;font-weight:700}
+/* Hub */
+.rbHeroCard{margin:10px 0;padding:16px;border-radius:18px;background:linear-gradient(145deg,#c8ff3a,#9de600);border:1px solid rgba(0,0,0,.12);box-shadow:0 8px 24px rgba(183,255,42,.18)}
+.rbHeroTag{font-size:10px;font-weight:900;letter-spacing:.12em;color:#0a1408}
+.rbHeroCopy{margin:6px 0 12px;font-size:14px;font-weight:700;line-height:1.25;color:#0a1408}
+.rbHeroPlay{width:100%;background:#0a1408!important;color:#c8ff3a!important;border:none!important;font-weight:800}
+.rbHubSection{margin-top:14px}
+.rbHubHeading{font-size:9px;letter-spacing:.1em;color:#929c8e;margin:0 0 6px;font-weight:800}
+.rbProgressList{display:flex;flex-direction:column;gap:4px;background:rgba(0,0,0,.28);border-radius:12px;padding:8px 10px;border:1px solid rgba(183,255,42,.08)}
+.rbProgressRow{display:flex;justify-content:space-between;font-size:11px;color:#cbd3c7}
+.rbProgressRow b{color:#b6ff28}
+.rbProgressEmpty{font-size:10px;color:#768071;margin:0}
+.rbModeBtn{display:block;width:100%;text-align:left;padding:10px 12px;margin-top:6px;border-radius:10px;border:1px solid rgba(183,255,42,.15);background:rgba(0,0,0,.25);color:#f4f7f1;font-size:12px;touch-action:manipulation}
+.rbModeBtnMuted{color:#929c8e;border-color:rgba(255,255,255,.06)}
 
-.rbAxisTop{display:grid;grid-template-columns:repeat(13,1fr);padding-left:12px;margin-bottom:1px}
-.rbAxisTop span,.rbAxisSide span{font-size:5px;color:#768071;text-align:center;font-weight:600}
-.rbMatrixWrap{display:grid;grid-template-columns:11px 1fr;gap:1px}
+/* Course picker */
+.rbPicker{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.rbPickerBlock{display:flex;flex-direction:column;gap:6px}
+.rbPickerLabel{font-size:9px;letter-spacing:.1em;color:#929c8e;font-weight:800}
+.rbPickRow{display:flex;flex-wrap:wrap;gap:5px}
+.rbPickChip{font-size:10px;padding:7px 11px;border-radius:8px;border:1px solid rgba(183,255,42,.18);background:#071008;color:#cbd3c7;touch-action:manipulation}
+.rbPickChip.active{background:rgba(183,255,42,.18);color:#b6ff28;border-color:#b6ff28}
+.rbPickerPreview{padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(183,255,42,.1)}
+.rbPickerPreview strong{display:block;font-size:14px;color:#f4f7f1}
+.rbPickerPreview small{font-size:10px;color:#929c8e}
+.rbPickerGo{width:100%;margin-top:4px}
+
+/* Game shell */
+.rbGame{padding:6px 6px calc(10px + env(safe-area-inset-bottom,0px))!important;overflow:hidden;max-height:100vh;display:flex;flex-direction:column}
+.rbGameHud{flex:0 0 auto}
+.rbGameBody{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#071008,#050a05);border:1px solid rgba(183,255,42,.18);border-radius:14px;padding:6px 5px 8px;overflow:hidden}
+
+/* Compact mission intro — not full-screen */
+.rbMissionIntro{text-align:center;padding:10px 8px 12px;border-bottom:1px solid rgba(183,255,42,.08);flex:0 0 auto}
+.rbIntroTitle{font-size:13px;font-weight:800;color:#f4f7f1}
+.rbIntroMission{font-size:9px;color:#b6ff28;margin:4px 0;font-weight:700;letter-spacing:.06em}
+.rbIntroGoal{font-size:12px;color:#cbd3c7;margin:6px 0 8px;line-height:1.3}
+.rbIntroLegend{display:flex;justify-content:center;gap:14px;font-size:10px;color:#929c8e;margin-bottom:10px}
+.rbIntroStart{width:100%;max-width:220px}
+
+/* HUD */
+.rbHudBar{flex:0 0 auto;padding:4px 4px 6px;border-bottom:1px solid rgba(183,255,42,.06)}
+.rbHudRow{font-size:8px;color:#929c8e;letter-spacing:.06em}
+.rbHudGoal b{color:#b6ff28;font-size:11px}
+.rbHudStats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:4px}
+.rbHudStat{background:rgba(0,0,0,.35);border:1px solid rgba(183,255,42,.08);border-radius:6px;padding:4px 6px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.rbHudStat span{font-size:9px;color:#cbd3c7}
+.rbHudStat b,.rbHudStat small{font-size:11px;font-weight:800;color:#f4f7f1}
+.rbCombo{color:#b6ff28!important}
+.rbInstruction{flex:0 0 auto;font-size:9px;color:#929c8e;text-align:center;margin:4px 0 2px;padding:0 4px}
+.rbTutorial{flex:0 0 auto;text-align:center;font-size:10px;color:#b6ff28;margin:2px 0 4px}
+.rbTutorialOk{font-size:10px;padding:2px 8px;margin-left:6px;border-radius:6px;border:1px solid #b6ff28;background:transparent;color:#b6ff28}
+
+/* Matrix — hero element */
+.rbMatrixArena{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;max-width:100%;overflow:hidden;padding:0 1px}
+.rbAxisTop{display:grid;grid-template-columns:repeat(13,1fr);padding-left:11px;margin-bottom:1px;flex:0 0 auto}
+.rbAxisTop span,.rbAxisSide span{font-size:5px;color:#768071;text-align:center;font-weight:600;line-height:1}
+.rbMatrixWrap{display:grid;grid-template-columns:10px 1fr;gap:1px;flex:1;min-height:0;align-items:stretch}
 .rbAxisSide{display:grid;grid-template-rows:repeat(13,1fr);align-items:center}
-.rbMatrix{display:grid;grid-template-columns:repeat(13,1fr);gap:1px;padding:2px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.04);border-radius:5px;width:100%;max-width:100%}
-.rbCell{aspect-ratio:1;border:1px solid rgba(255,255,255,.04);border-radius:2px;background:linear-gradient(180deg,#101a0e,#090e08);color:#a2aa9e;font-size:clamp(4px,2.8vw,6px);font-weight:700;padding:0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;user-select:none;font-family:monospace;min-width:0}
-.rbCell:active:not(.locked):not(:disabled){transform:scale(.92)}
+.rbMatrix{display:grid;grid-template-columns:repeat(13,1fr);grid-template-rows:repeat(13,1fr);gap:1px;padding:2px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.05);border-radius:6px;width:100%;aspect-ratio:1;max-height:min(58vh,420px);margin:0 auto}
+.rbCell{border:1px solid rgba(255,255,255,.05);border-radius:2px;background:linear-gradient(180deg,#101a0e,#090e08);color:#a8b0a4;font-size:clamp(4px,2.65vw,6.5px);font-weight:700;padding:0;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;font-family:monospace;min-width:0;min-height:0;transition:background .12s,border-color .12s,transform .08s}
+.rbCell:active:not(:disabled):not(.locked){transform:scale(.9)}
 .rbCell.pair{color:#d7dfd2;background:#111b10}
 .rbCell.suited{color:#b7cdb0}
 .rbCell.offsuit{color:#9aa196}
-.rbCell.dimmed{opacity:.18;pointer-events:none}
-.rbCell.selected-open{border-color:#b6ff28;background:rgba(183,255,42,.12);color:#b6ff28}
-.rbCell.locked{pointer-events:none;opacity:.85}
-.rbFeedback{display:flex;gap:5px;align-items:center;border-top:1px solid rgba(183,255,42,.05);padding-top:5px;min-height:34px;margin-top:4px}
-.rbAvatar{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#10190d;border:1px solid rgba(183,255,42,.12);font-size:12px;flex:0 0 auto}
-.rbSpeech{flex:1;font-size:8px;line-height:1.35;color:#cbd3c7;padding:4px 6px;background:rgba(0,0,0,.28);border-radius:6px}
-.rbSpeech b{color:#b6ff28}
-.rbBottom{margin-top:4px;text-align:center}
-.rbChoiceGroup,.rbDecisionGroup{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:6px 0}
-.rbChoiceBtn,.rbDecisionBtn{padding:8px 10px;border-radius:8px;border:1px solid rgba(183,255,42,.15);background:rgba(0,0,0,.3);color:#f4f7f1;font-size:10px;font-weight:700;touch-action:manipulation}
-.rbPrompt{font-size:9px;text-align:center;margin:4px 0;color:#cbd3c7}
-.rbPrompt b{color:#b6ff28}
+.rbCell.dimmed{opacity:.14;pointer-events:none}
+.rbCell.hit{background:linear-gradient(180deg,#3d6b12,#2a4a0c)!important;border-color:#b6ff28!important;color:#e8ffc0!important;box-shadow:inset 0 0 6px rgba(183,255,42,.25)}
+.rbCell.miss{background:linear-gradient(180deg,#4a1810,#2a0c08)!important;border-color:#ff6b3d!important;color:#ffc4b0!important;opacity:.75}
+.rbCell.locked{pointer-events:none}
+.rbCell.flash-hit{animation:rbHitFlash .35s ease}
+.rbCell.flash-miss{animation:rbMissBoom .45s ease}
+.rbCell.tutorial-pulse{animation:rbPulse 1s ease infinite;border-color:#b6ff28;box-shadow:0 0 10px rgba(183,255,42,.5)}
 
-.rbOnboarding,.rbOverlay,.rbFinal{position:absolute;inset:0;background:rgba(2,4,2,.93);backdrop-filter:blur(8px);z-index:30;display:none;align-items:center;justify-content:center;padding:14px;border-radius:16px;flex-direction:column}
-.rbOnboarding.show,.rbOverlay.show,.rbFinal.show{display:flex}
-.rbOnboardCard,.rbCard,.rbFinalCard{text-align:center;max-width:280px;width:100%}
-.rbOnboardCard h2{color:#b6ff28;font-size:16px;margin-bottom:6px}
-.rbOnboardCard p{font-size:10px;color:#929c8e;line-height:1.45;margin:4px 0}
-.rbMuted{font-size:9px!important;color:#768071!important}
-.rbStartBtn{margin-top:12px;width:100%}
+@keyframes rbHitFlash{0%{background:#c8ff3a;color:#0a1408;transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes rbMissBoom{0%{background:#ff4500;transform:scale(1.12)}50%{background:#4a1810}100%{transform:scale(1)}}
+@keyframes rbPulse{0%,100%{box-shadow:0 0 4px rgba(183,255,42,.3)}50%{box-shadow:0 0 14px rgba(183,255,42,.7)}}
+
+.rbFeedbackPop{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:18px;font-weight:900;letter-spacing:.08em;pointer-events:none;z-index:5;animation:rbPop .5s ease forwards}
+.rbFeedbackPop--hit{color:#b6ff28;text-shadow:0 0 12px rgba(183,255,42,.6)}
+.rbFeedbackPop--miss{color:#ff6b3d;text-shadow:0 0 12px rgba(255,107,61,.5)}
+@keyframes rbPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}30%{opacity:1;transform:translate(-50%,-60%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
+
+.rbSpeechBar{flex:0 0 auto;font-size:9px;color:#cbd3c7;text-align:center;padding:4px 6px;margin-top:2px;min-height:22px}
+
+/* Overlays */
+.rbOverlay,.rbFinal{position:absolute;inset:0;background:rgba(2,4,2,.92);backdrop-filter:blur(6px);z-index:30;display:none;align-items:center;justify-content:center;padding:14px;border-radius:14px}
+.rbOverlay.show,.rbFinal.show{display:flex}
+.rbCard,.rbFinalCard{text-align:center;max-width:280px;width:100%}
+.rbStamp{font-size:10px;letter-spacing:.12em;color:#b6ff28;font-weight:800;margin-bottom:4px}
 .rbScore{font-size:42px;font-weight:950;color:#b6ff28;line-height:1}
-.rbSub{font-size:9px;color:#929c8e;margin:6px 0}
-.rbActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
-.rbBigScore{font-size:48px}
+.rbSub{font-size:9px;color:#929c8e;margin:4px 0}
+.rbWeak{font-size:10px;color:#ff9f6b;margin:6px 0}
+.rbActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px}
+.rbFinalTitle{font-size:14px;font-weight:800;color:#f4f7f1}
+.rbFinalBadge{font-size:16px;font-weight:900;color:#b6ff28;margin:8px 0}
 .rbFinalBtn{width:100%;margin:6px 0}
 .rbFinal .rangesHelpBtn{width:100%;margin-top:4px}
 
 @media (max-width:390px){
   .rbCell{font-size:4.5px}
-  .rbMatrix{gap:.5px}
-  .rbGame{padding:6px 4px 10px!important}
+  .rbMatrix{gap:.5px;max-height:min(52vh,380px)}
+  .rbGame{padding:4px 4px calc(8px + env(safe-area-inset-bottom,0px))!important}
 }
 @media (min-width:431px){
   .rbCell{font-size:7px}

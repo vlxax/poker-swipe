@@ -103,10 +103,19 @@ try {
   results.ranges.catalogShown = /ВЫБЕРИ ДИАПАЗОН|BTN/i.test(catalog);
   await page.screenshot({ path: path.join(OUT, 'battleship_catalog.png') });
 
-  const chip = await page.$('.rbCourseChip');
+  const chip = await page.$('.rbCourseChip, #rbStartCourse');
   if (chip) {
-    await chip.click();
-    await page.waitForTimeout(2000);
+    if (await page.$('#rbStartCourse')) {
+      await page.click('#rbStartCourse');
+    } else {
+      await chip.click();
+    }
+    await page.waitForTimeout(2500);
+    const begin = await page.$('#rbBeginMission');
+    if (begin) {
+      await begin.click();
+      await page.waitForTimeout(600);
+    }
     const game = await page.evaluate(() => ({
       hasMatrix: !!document.querySelector('.rbMatrix'),
       cellCount: document.querySelectorAll('.rbCell').length,
@@ -115,15 +124,12 @@ try {
     results.ranges.matrixVisible = game.hasMatrix && game.cellCount === 169;
     await page.screenshot({ path: path.join(OUT, 'battleship_matrix.png') });
 
-    const start = await page.$('#rbStart');
-    if (start) {
-      await start.click();
+    const cell = await page.$('.rbCell.tutorial-pulse, .rbCell.pair:not(.locked):not(.dimmed)');
+    if (cell) {
+      await cell.click();
       await page.waitForTimeout(500);
-    }
-    const choice = await page.$('.rbChoiceBtn');
-    if (choice) {
-      await choice.click();
-      await page.waitForTimeout(800);
+      const ok = await page.$('#rbTutorialOk');
+      if (ok) await ok.click();
       results.ranges.missionPlayed = true;
       await page.screenshot({ path: path.join(OUT, 'battleship_mission.png') });
     }
