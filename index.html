@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
 <link rel="stylesheet" href="freak-lady-reactive.css">
+<link rel="stylesheet" href="character-system.css">
 <title>POKER SWIPE — V72 REG + UX</title>
 <style>
 :root{
@@ -1658,6 +1659,9 @@ renderHome=function(){
   }
   // stagger X-ray cells for a subtle scanner effect
   h?.querySelectorAll('.miniGrid i').forEach((x,i)=>x.style.setProperty('--i',i));
+  // ensure mainApp is visible (fixes onboarding hidden bug)
+  const mainApp=document.getElementById('mainApp');
+  if(mainApp){mainApp.classList.remove('hidden');mainApp.style.setProperty('display','block','important');}
 };
 function storyScene21(step){
  const cards=step===0?'A♠<|>Q♥':step===1?'Q♠<|>J♥':'7♠<|>2♥';
@@ -3136,6 +3140,7 @@ window.finalizeSwipe = finalizeSwipe = function(s,a,size){
    <p class="pink"><b>${cls.key==='main'?'Редкий случай: даже мне придраться сложно.':cls.key==='alt'?'Нормальная линия. Покер всё ещё не тест ПДД.':cls.key==='exploit'?'Живёт, но требует причины. «Мне показалось» причиной не считается.':'Вот здесь уже есть что лечить.'}</b></p>
    <div id="holdArea"></div>
  </div>`;
+ window.FreakLady?.react(v.querySelector('.swipeFlash'),g,'swipe');
  const delay=g==='g'?2700:g==='y'?3600:4700;
  swTimer=setTimeout(swipeNext,delay);
  $('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext};
@@ -4332,11 +4337,14 @@ function hh59Bind(){
 window.openHandHistoryV59=function(){HH59=hh59Fresh();hh59Render()};
 
 /* Replace only "Разобрать руку" action with the new reconstruction engine. */
-const oldMyGo59=window.myGo18;
-window.myGo18=myGo18=function(v){
- if(v==='recon'){window.myView18='recon59';HH59=hh59Fresh();hh59Render();return}
- return oldMyGo59?oldMyGo59(v):undefined;
-};
+try{
+ const oldMyGo59=window.myGo18;
+ const newGo=function(v){
+  if(v==='recon'){window.myView18='recon59';HH59=hh59Fresh();hh59Render();return}
+  return oldMyGo59?oldMyGo59(v):undefined;
+ };
+ if(typeof myGo18!=='undefined')myGo18=newGo;
+}catch(e){}
 
 /* Hard-wire the bottom nav to the clean V59 tournament journal. */
 function wire59(){
@@ -4775,6 +4783,8 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="mini-app-nav.js" data-mini-app-nav="1"></script>
 <script src="mini-app-compact.js" data-mini-app-compact="1"></script>
 <script src="freak-lady-reactive.js"></script>
+<script src="character-system.js"></script>
+<script src="character-integration.js"></script>
 <script type="module" src="training-ui/main.js"></script>
 <script src="daily-game-patch.js"></script>
 <script type="module" src="ranges-ui/main.js"></script>
