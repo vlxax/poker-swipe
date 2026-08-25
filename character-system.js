@@ -455,6 +455,8 @@
     setRenderMode,
     sequencedReaction,
     selectCharacter,
+    renderMonster,
+    renderFreakLady,
 
     // Constants
     CHARACTERS,
@@ -462,6 +464,7 @@
     SIZING_MODES,
     GRADE_TO_STATE,
     DIALOGUE,
+    MONSTER_VIDEOS,
 
     // Utilities
     normalizeState,
