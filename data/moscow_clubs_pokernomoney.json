@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-25T17:28:46+03:00",
+  "retrieved_at": "2026-08-25T19:20:17+03:00",
   "city": "Москва",
   "count": 65,
   "clubs": [
@@ -650,7 +650,7 @@
           "club": "Moscow Poker Club",
           "tournament": "MPC LUCKY DRAW",
           "fee_rub": 1000,
-          "type": "",
+          "type": "Баунти / Нокаут",
           "source_url": "https://pokernomoney.ru/tournaments/11550",
           "address": "Малый Гнездниковский переулок, 9, стр. 2",
           "late_reg_until": null,
@@ -658,7 +658,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "MPC LUCKY DRAW 19:10 1 000 ₽ Moscow Poker Club Малый Гнездниковский переулок, 9, стр. 2"
+          "source_card_text": "Баунти / Нокаут MPC LUCKY DRAW 19:10 1 000 ₽ Moscow Poker Club Малый Гнездниковский переулок, 9, стр. 2"
         }
       ],
       "upcoming": 1
