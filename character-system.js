@@ -146,6 +146,43 @@
   // ======================
 
   /**
+   * Monster WebM video mapping
+   */
+  const MONSTER_VIDEOS = {
+    idle: 'assets/green-monster/demon-idle.webm',
+    thinking: 'assets/green-monster/demon-thinking.webm',
+    correct: 'assets/green-monster/demon-correct.webm',
+    wrong: 'assets/green-monster/demon-wrong.webm'
+  };
+
+  /**
+   * Render Green Monster using WebM video
+   */
+  function renderMonster(container, mood, options = {}) {
+    if (!container || !container.isConnected) return null;
+
+    const videoMood = typeof mood === 'object' ? mood.mood : mood;
+    const videoSrc = MONSTER_VIDEOS[videoMood] || MONSTER_VIDEOS.thinking;
+
+    const videoEl = document.createElement('video');
+    videoEl.className = 'ps-monster-video';
+    videoEl.src = videoSrc;
+    videoEl.autoplay = true;
+    videoEl.muted = true;
+    videoEl.playsInline = true;
+    videoEl.style.width = '100%';
+    videoEl.style.height = 'auto';
+    videoEl.style.display = 'block';
+    videoEl.style.maxWidth = '100%';
+
+    const loop = videoMood === 'idle' || videoMood === 'thinking';
+    videoEl.loop = loop;
+
+    container.appendChild(videoEl);
+    return videoEl;
+  }
+
+  /**
    * Render FreakLady using existing freak-lady-reactive.js
    */
   function renderFreakLady(container, mood, context, options = {}) {
@@ -161,6 +198,36 @@
       context,
       options
     );
+  }
+
+  /**
+   * Select appropriate character based on context
+   */
+  function selectCharacter(state, context) {
+    const stateInfo = SEMANTIC_STATES[state] || SEMANTIC_STATES.THINKING;
+
+    // Monster for immediate emotional reactions
+    if (['CORRECT', 'WRONG', 'THINKING', 'IDLE'].includes(state)) {
+      return { character: 'monster', mood: stateInfo.mood };
+    }
+
+    // FreakLady for analysis/coaching
+    if (['SKEPTICAL', 'WARNING', 'ANALYZING'].includes(state)) {
+      return { character: 'freak-lady', mood: stateInfo.mood };
+    }
+
+    // FreakLady for complex verdicts
+    if (context && ['sizing', 'daily', 'review', 'solver', 'session'].includes(context)) {
+      return { character: 'freak-lady', mood: stateInfo.mood };
+    }
+
+    // Monster for SWIPE emotional feedback
+    if (context === 'swipe') {
+      return { character: 'monster', mood: stateInfo.mood };
+    }
+
+    // Default
+    return { character: 'freak-lady', mood: stateInfo.mood };
   }
 
   /**
@@ -194,6 +261,7 @@
 
   /**
    * Show character reaction to a verdict
+   * Selects appropriate character (Monster for emotion, FreakLady for analysis)
    * @param {Element} container - Where to render the reaction
    * @param {string} grade - 'g', 'y', or 'r'
    * @param {string} context - 'swipe', 'sizing', 'daily', etc
@@ -208,19 +276,36 @@
 
     const semanticState = gradeToSemanticState(grade);
     const stateInfo = SEMANTIC_STATES[semanticState];
+    const charSelection = selectCharacter(semanticState, context);
 
-    // Render using FreakLady (currently the main character)
-    const reaction = renderFreakLady(
-      container,
-      stateInfo.mood,
-      context,
-      { wide: options.wide }
-    );
+    let reaction = null;
 
-    if (reaction) {
-      reaction.classList.add('ps-character-reaction');
-      reaction.dataset.grade = grade;
-      reaction.dataset.context = context;
+    // Use character selection logic
+    if (charSelection.character === 'monster') {
+      // Monster for immediate emotional feedback
+      const wrapper = document.createElement('div');
+      wrapper.className = 'ps-character-reaction ps-monster-reaction';
+      wrapper.dataset.grade = grade;
+      wrapper.dataset.context = context;
+      wrapper.dataset.character = 'monster';
+      container.appendChild(wrapper);
+      renderMonster(wrapper, charSelection.mood, options);
+      reaction = wrapper;
+    } else {
+      // FreakLady for analysis/coaching
+      reaction = renderFreakLady(
+        container,
+        charSelection.mood,
+        context,
+        { wide: options.wide }
+      );
+
+      if (reaction) {
+        reaction.classList.add('ps-character-reaction');
+        reaction.dataset.grade = grade;
+        reaction.dataset.context = context;
+        reaction.dataset.character = 'freak-lady';
+      }
     }
 
     return reaction;
@@ -322,6 +407,40 @@
     renderMode = mode;
   }
 
+  /**
+   * Sequenced reaction with staggered timing
+   * @param {Element} container - Verdict container
+   * @param {string} grade - 'g', 'y', 'r'
+   * @param {string} context - Flow context
+   * @param {Object} sequence - { delay, characterDelay, speechDelay }
+   */
+  function sequencedReaction(container, grade, context = 'swipe', sequence = {}) {
+    if (!container || !container.isConnected) return null;
+
+    const {
+      delay = 0,
+      characterDelay = 100,
+      speechDelay = 300,
+      duration = 400
+    } = sequence;
+
+    // First: verdict appears (usually immediately)
+    if (delay > 0) {
+      container.style.opacity = '0';
+      container.style.transition = `opacity ${duration}ms ease-out`;
+      setTimeout(() => {
+        container.style.opacity = '1';
+      }, delay);
+    }
+
+    // Second: character appears after brief delay
+    setTimeout(() => {
+      reactToVerdict(container, grade, context);
+    }, characterDelay);
+
+    return container;
+  }
+
   // ======================
   // EXPORT API
   // ======================
@@ -334,6 +453,8 @@
     clear,
     preload,
     setRenderMode,
+    sequencedReaction,
+    selectCharacter,
 
     // Constants
     CHARACTERS,
