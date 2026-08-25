@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-08-26T00:01:28+03:00",
+  "updated_at": "2026-08-26T00:59:51+03:00",
   "date": "2026-08-26",
   "city": "Москва",
   "source_card_count": 43,
@@ -524,7 +524,7 @@
       "time": "19:15",
       "club": "DUCKS POKER CLUB",
       "tournament": "GIPER BOUNTY",
-      "fee_rub": 0,
+      "fee_rub": 1000,
       "type": "Баунти / Нокаут",
       "source_url": "https://pokernomoney.ru/tournaments/12433",
       "address": "проспект Мира, 102с25",
@@ -533,7 +533,7 @@
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "duration_minutes": null,
-      "source_card_text": "Баунти / Нокаут GIPER BOUNTY 19:15 уточняйте DUCKS POKER CLUB проспект Мира, 102с25"
+      "source_card_text": "Баунти / Нокаут GIPER BOUNTY 19:15 1 000 ₽ DUCKS POKER CLUB проспект Мира, 102с25"
     },
     {
       "date": "2026-08-26",
