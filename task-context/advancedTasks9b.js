@@ -58,7 +58,7 @@ export const ADVANCED_TASKS_9B = [
     street: 'ПРЕФЛОП', format: 'MTT', blinds: [1500, 3000], ante: 400, stage: 'БАББЛ',
     table: '6-MAX', left: '6 LEFT', position: 'BTN', hero: ['K♦', 'J♦'], heroStack: 14, villain: 'SB',
     villainStack: 32, opp: 'РЕГ', board: [], pot: 5.2,
-    history: [{ street: 'ПРЕФЛОП', text: 'Баббл: 6 left, призовых 5. SB запушил 32 ББ, BB сфолдил.', pot: 5.2 }],
+    history: [{ street: 'ПРЕФЛОП', text: 'BTN. Баббл: 6 left, призовых 5. SB запушил 32 ББ, BB сфолдил.', pot: 5.2 }],
     question: 'Что делаешь с KJs на баттоне при 14 ББ против пуша SB на баббле?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'ФОЛД', alsoOk: [],
     concept: 'bubble ICM KJs fold', explain: 'KJs доминируется Ax и парами в пуше SB. На баббле ICM-фолд: приз за 5-е место дороже chipEV от маргинального колла.',

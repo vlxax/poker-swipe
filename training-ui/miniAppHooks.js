@@ -120,27 +120,23 @@ export function installMiniAppHooks(store, { appWindow = null } = {}) {
   });
 
   wrap('newSwipeSession', (orig) => {
-    if (bridge.hasProfile()) {
-      const legacy = legacyPools();
-      const session = bridge.prepareSwipeSession(10, legacy.swipe);
-      if (session && session.items.length) {
-        assignGlobal('swSession', session.items);
-        assignGlobal('swIndex', 0);
-        assignGlobal('swSessionGrades', []);
-        return;
-      }
+    const legacy = legacyPools();
+    const session = bridge.prepareSwipeSession(10, legacy.swipe);
+    if (session && session.items.length) {
+      assignGlobal('swSession', session.items);
+      assignGlobal('swIndex', 0);
+      assignGlobal('swSessionGrades', []);
+      return;
     }
     return orig();
   });
 
   wrap('renderSizing', (orig) => {
-    if (bridge.hasProfile()) {
-      const spot = bridge.prepareSizingSpot(legacyPools().sizing);
-      if (spot && spot._library) {
-        state.sizingSpot = spot;
-        pinSizingSpot(spot);
-        return orig();
-      }
+    const spot = bridge.prepareSizingSpot(legacyPools().sizing);
+    if (spot && spot._library) {
+      state.sizingSpot = spot;
+      pinSizingSpot(spot);
+      return orig();
     }
     unpinSizingSpot();
     state.sizingSpot = null;
@@ -148,13 +144,11 @@ export function installMiniAppHooks(store, { appWindow = null } = {}) {
   });
 
   wrap('renderReview', (orig) => {
-    if (bridge.hasProfile()) {
-      const spot = bridge.prepareReviewSpot(legacyPools().reviews);
-      if (spot && spot._library) {
-        state.reviewSpot = spot;
-        pinReviewSpot(spot);
-        return orig();
-      }
+    const spot = bridge.prepareReviewSpot(legacyPools().reviews);
+    if (spot && spot._library) {
+      state.reviewSpot = spot;
+      pinReviewSpot(spot);
+      return orig();
     }
     unpinReviewSpot();
     state.reviewSpot = null;

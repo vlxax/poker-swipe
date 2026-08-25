@@ -1,5 +1,7 @@
 // Trainer-native candidate pool — browser-safe (no Node fs imports).
 
+import { filterActiveCandidates } from './decisionQualityGate.js';
+import { variantFamilyId } from './sessionDiversity.js';
 import { sampleTrainerSession } from './trainerCurriculum.js';
 import { weaknessWeightsForSession } from './trainerPersonalization.js';
 import { dueSpacedReviews } from './trainerSpacedReview.js';
@@ -38,7 +40,10 @@ export async function loadTrainerCandidateIndex(url = 'data/trainer/built/traine
 
 export function getTrainerPreflopCandidates() {
   const idx = loadTrainerCandidateIndexSync();
-  return (idx.candidates || []).map((t) => ({ ...t, _trainerNative: true }));
+  return filterActiveCandidates(
+    (idx.candidates || []).map((t) => ({ ...t, _trainerNative: true })),
+    'swipe'
+  );
 }
 
 export function buildTrainerSwipeSession(store, {
@@ -56,6 +61,13 @@ export function buildTrainerSwipeSession(store, {
     recent.map((h) => h.contentFingerprint).filter(Boolean)
   );
 
+  const recentFamilies = new Set(
+    recent.map((h) => variantFamilyId(h.spotId || h.taskId)).filter(Boolean)
+  );
+  const recentSourceModes = recent
+    .map((h) => h.trainerSourceMode || h.sourceMode)
+    .filter(Boolean);
+
   const due = store ? dueSpacedReviews(store, { now, limit: 2 }) : [];
   const dueIds = new Set(due.map((d) => d.taskId));
   const dueTasks = pool.filter((t) => dueIds.has(t.id));
@@ -65,6 +77,8 @@ export function buildTrainerSwipeSession(store, {
     count: Math.max(0, remaining),
     weaknessSkills,
     recentFingerprints,
+    recentFamilies,
+    recentSourceModes,
     rng
   });
 
