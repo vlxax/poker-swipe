@@ -17,6 +17,7 @@ import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
 import { installOnboardingHooks } from './onboardingHooks.js';
 import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
+import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import { drillViewModel } from './viewModel.js';
 import * as R from './renderer.js';
@@ -31,6 +32,9 @@ const storage = (() => {
 })();
 
 const store = createTrainingStore({ storage });
+if (typeof window !== 'undefined') {
+  window.TaskContextCanonical = { buildCanonicalSpot };
+}
 loadTrainerCandidateIndex().catch(() => {});
 const miniApps = installMiniAppHooks(store, { appWindow: typeof window !== 'undefined' ? window : undefined });
 
