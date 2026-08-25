@@ -5,6 +5,9 @@ import {
   updateSkillProfileInStore, deriveSkillTags, drillFromLibraryTask,
   libraryTaskToBrainSpot
 } from '../solver/src/index.js';
+import { buildTrainerSwipeSession } from '../solver/src/training/trainerCandidatePool.js';
+import { recordTrainerOutcome } from '../solver/src/training/trainerPersonalization.js';
+import { buildGradingProvenanceRecord } from '../solver/src/training/gradingProvenance.js';
 import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';
 import { buildMiniAppPlan, MINI_APP_SPECS } from '../solver/src/training/miniAppPlanner.js';
 import { contentFingerprint } from '../solver/src/training/sessionDiversity.js';
@@ -15,6 +18,7 @@ import {
   libraryTaskToMiniAppSpot, libraryTaskToSizingSpot,
   libraryTaskToReviewSpot, libraryTaskToXraySpot, isMttTask, taskEligibleForMiniApp
 } from './miniAppSpotAdapter.js';
+import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 
 const GRADE_MAP = { g: 'EXCELLENT', y: 'GOOD', r: 'MISTAKE' };
 const EV_MAP = { g: 0, y: 0.08, r: 0.65 };
@@ -28,10 +32,20 @@ export function letterGradeToEvLoss(letter) {
 }
 
 function libraryTaskToSwipe(task) {
-  const spot = libraryTaskToBrainSpot(task);
+  const enriched = {
+    ...task,
+    _canonical: task._canonical || buildCanonicalSpot({ ...task, _legacy: !task._library })
+  };
+  const spot = libraryTaskToBrainSpot(enriched);
   if (!spot) return null;
+  spot._canonical = enriched._canonical;
+  spot.position = enriched._canonical.position;
+  spot.villain = enriched._canonical.villain;
+  spot.heroStack = enriched._canonical.heroStack;
+  spot.stack = enriched._canonical.heroStack;
   if (String(task.street || '') === 'ПРЕФЛОП') {
-    spot._trainerGradePath = 'poker_brain_trainer_bridge';
+    spot._trainerGradePath = task._trainerNative ? 'trainer_exact' : 'poker_brain_trainer_bridge';
+    if (task.trainerMeta) spot.trainerMeta = task.trainerMeta;
   }
   return spot;
 }
@@ -108,6 +122,18 @@ export function createMiniAppBridge(store) {
   }
 
   function prepareSwipeSession(count = 10, legacySwipe = []) {
+    if (hasProfile()) {
+      const trainerSession = buildTrainerSwipeSession(store, { count });
+      if (trainerSession.items.length >= Math.min(5, count)) {
+        const items = trainerSession.items.map((t) => libraryTaskToSwipe(t)).filter(Boolean);
+        if (items.length) {
+          for (const item of items) {
+            if (item?.id) recentIds.add(item.id);
+          }
+          return { plan: trainerSession.plan, items, spotIds: trainerSession.plan.spotIds };
+        }
+      }
+    }
     return prepareSession('swipe', { legacy: { swipe: legacySwipe }, count });
   }
 
@@ -171,12 +197,21 @@ export function createMiniAppBridge(store) {
     });
   }
 
-  function recordLegacyOutcome({ item, mode, gradeLetter, grade, evLossBb, spacedReview = false } = {}) {
+  function recordLegacyOutcome({ item, mode, gradeLetter, grade, evLossBb, spacedReview = false, trainerMeta = null } = {}) {
     if (!item || !hasProfile()) return null;
     const drill = makeDrillFromLegacy(item, mode);
     const trainingGrade = grade || letterGradeToTraining(gradeLetter);
     const loss = evLossBb != null ? evLossBb : letterGradeToEvLoss(gradeLetter);
     const skillTags = skillTagsForLegacy(item, mode);
+    const meta = trainerMeta || item.trainerMeta;
+    if (meta?.gradingSource?.startsWith('TRAINER') || item._trainerNative) {
+      recordTrainerOutcome(store, {
+        task: item,
+        grade: trainingGrade,
+        gradingSource: meta?.gradingSource || 'TRAINER_EXACT',
+        trainerMeta: meta
+      });
+    }
     const result = recordTrainingResult(store, { drill, grade: trainingGrade, evLossBb: loss });
     if (spacedReview) {
       const hist = store.loadHistory() || [];

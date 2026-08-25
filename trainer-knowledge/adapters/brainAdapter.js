@@ -3,6 +3,7 @@
 import { MATCH_STATUS, TRAINER_STATUS, canGradeWithTrainerAction } from '../status.js';
 import { selectionToTrainerQuery } from './rangesAdapter.js';
 import { formatProvenanceDebug } from '../provenance.js';
+import { buildTrainerQueryFromCanonical } from '../canonicalTrainerQuery.js';
 
 const POS_MAP = {
   UTG: 'EP',
@@ -37,46 +38,34 @@ export function inferTrainerQueryFromSpot(spot = {}, handClass = null) {
   const street = streetRaw === 'ПРЕФЛОП' ? 'PREFLOP' : streetRaw;
   if (street !== 'PREFLOP' && street !== 'PRE') return null;
 
-  const rawPos = String(spot.pos || spot.heroSeat || spot.position || '').split(/\s|vs/i)[0].toUpperCase();
-  const heroPosition = POS_MAP[rawPos] || rawPos;
-  const stack = spot.stack ?? spot.effStack ?? null;
-  const ctx = String([spot.ctx, spot.context, spot.preflopLine, spot.currentLine].filter(Boolean).join(' ')).toLowerCase();
-  let sourceMode = null;
-  let rawSpot = null;
-  if (/unopened|first in|сфолдили|rfi|uo/i.test(ctx)) {
-    sourceMode = 'uo';
-  } else if (/resteal/i.test(ctx)) {
-    sourceMode = 'callpush';
-    rawSpot = 'Resteal';
-  } else if (/squeeze/i.test(ctx)) {
-    sourceMode = 'vssqueeze';
-  } else if (/3-bet|3bet|vs 3/i.test(ctx)) {
-    sourceMode = 'vs3bet';
-  } else if (/4-bet|4bet/i.test(ctx)) {
-    sourceMode = 'vs4bet';
-  } else if (/open|открыл/i.test(ctx) && heroPosition === 'BB') {
-    sourceMode = 'vs1rshort';
-    rawSpot = 'Def_BB';
+  // Prefer structured canonical spot when available (P0 architecture).
+  if (spot._canonical || spot.position || spot.history?.length) {
+    const canonical = spot._canonical || spot;
+    const built = buildTrainerQueryFromCanonical(canonical, handClass);
+    if (built.query && built.complete) {
+      return built.query;
+    }
+    if (built.query) {
+      return { ...built.query, _incomplete: true, _missing: built.missing };
+    }
   }
 
-  const villainMatch = ctx.match(/(UTG|EP|MP|LJ|HJ|CO|BTN|SB|BB)/gi);
-  const opponentPosition = villainMatch?.length
-    ? POS_MAP[villainMatch[villainMatch.length - 1].toUpperCase()] || villainMatch[villainMatch.length - 1].toUpperCase()
-    : spot.villainSeat || spot.villainPosition || spot.opener || spot.villain || null;
-
-  const betMatch = ctx.match(/(\d+(?:\.\d+)?x)/i);
-  const betSize = betMatch ? betMatch[1] : spot.betSize || spot.sizing || null;
-
+  // Legacy structured fields only — no concept/tag/description inference.
+  const rawPos = String(spot.pos || spot.heroSeat || spot.position || '').split(/\s|vs/i)[0].toUpperCase();
+  const heroPosition = POS_MAP[rawPos] || rawPos;
   const stackRaw = spot.stack ?? spot.effStack ?? null;
-  const stackBand = sourceMode === 'uo' && stackRaw != null ? uoStackBand(stackRaw) : null;
+  const stack = spot.sourceMode === 'uo' && stackRaw != null
+    ? uoStackBand(stackRaw)
+    : (stackRaw != null ? `${stackRaw}BB` : null);
 
   return {
     heroPosition,
-    stack: stackBand || (stackRaw != null ? `${stackRaw}BB` : null),
-    opponentPosition,
-    betSize,
-    sourceMode,
-    rawSpot,
+    stack,
+    opponentPosition: spot.villainSeat || spot.villainPosition || spot.villain || spot.opener || null,
+    betSize: spot.betSize || spot.sizing || null,
+    sourceMode: spot.sourceMode || spot.trainerSourceMode || null,
+    rawSpot: spot.rawSpot || spot.trainerSpot || null,
+    trainerCanonicalId: spot.trainerCanonicalId || null,
     hand: handClass
   };
 }
@@ -99,6 +88,15 @@ export function buildBrainTrainerResult(lookup, spot, handClass) {
   const query = inferTrainerQueryFromSpot(spot, handClass);
   if (!query) {
     return { status: 'NO_TRAINER_DATA', query: null, trainer: null, mismatches: [] };
+  }
+  if (query._incomplete) {
+    return {
+      status: 'PARTIAL_TRAINER_MATCH',
+      query,
+      trainer: null,
+      mismatches: query._missing || ['incomplete canonical dimensions'],
+      chartId: null
+    };
   }
 
   const fullQuery = { ...selectionToTrainerQuery({

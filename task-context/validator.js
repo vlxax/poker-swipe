@@ -11,11 +11,12 @@ export function validateTask(spot) {
   const errors = [];
   const warn = [];
   const add = (msg) => errors.push(msg);
+  const addWarn = (msg) => warn.push(msg);
 
   if (!spot || typeof spot !== 'object') { add('Задача не объект'); return { errors, warn }; }
 
   if (typeof spot.id !== 'string' || !spot.id.trim()) add('Нет id');
-  if (!/^[A-Z0-9_]+$/.test(spot.id || '')) warn(`id "${spot.id}" — не только латиница/цифры/_`);
+  if (!/^[A-Z0-9_]+$/.test(spot.id || '')) addWarn(`id "${spot.id}" — не только латиница/цифры/_`);
 
   if (!STREETS.includes(spot.street)) add(`street "${spot.street}" вне ${STREETS.join('/')}`);
   if (!FORMATS.includes(spot.format)) add(`format "${spot.format}" вне ${FORMATS.join('/')}`);
@@ -31,9 +32,9 @@ export function validateTask(spot) {
     if (spot.board.length > 5) add('board больше 5 карт');
     spot.board.forEach((c, i) => { if (!isValidCard(c)) add(`board[${i}] "${c}" не карта`); });
     if (spot.board.length && STREETS.indexOf(spot.street) < STREETS.indexOf('ФЛОП'))
-      warn(`board задан на улице "${spot.street}"`);
+      addWarn(`board задан на улице "${spot.street}"`);
     if (!spot.board.length && spot.street !== 'ПРЕФЛОП')
-      warn(`нет board на улице "${spot.street}"`);
+      addWarn(`нет board на улице "${spot.street}"`);
   }
 
   if (hasDuplicates(spot)) add(`дубли карт: ${cardsOf(spot).join(' ')}`);
@@ -42,14 +43,14 @@ export function validateTask(spot) {
   if (!(spot.villainStack > 0)) add(`villainStack ${spot.villainStack} не положительный`);
   if (!(spot.effStack > 0)) add(`effStack ${spot.effStack} не положительный`);
   if (spot.effStack > Math.min(spot.heroStack, spot.villainStack) + 1e-9)
-    warn(`effStack ${spot.effStack} больше min(стеки)`);
+    addWarn(`effStack ${spot.effStack} больше min(стеки)`);
 
   if (!Array.isArray(spot.blinds) || spot.blinds.length !== 2 || spot.blinds.some(b => !(b > 0)))
     add('blinds должны быть [SB, BB] > 0');
   if (!(spot.ante >= 0)) add('ante не может быть отрицательным');
 
   if (!(spot.pot > 0)) add(`pot ${spot.pot} не положительный`);
-  else if (spot.pot < 1.5) warn(`pot ${spot.pot} меньше размера банка от блайндов 1.5`);
+  else if (spot.pot < 1.5) addWarn(`pot ${spot.pot} меньше размера банка от блайндов 1.5`);
 
   if (!spot.position || !POSITIONS[spot.position]) add(`position "${spot.position}" не известна`);
   if (!spot.villain || !POSITIONS[spot.villain]) add(`villain "${spot.villain}" не известна`);
@@ -66,7 +67,7 @@ export function validateTask(spot) {
   if (spot.opp) {
     if (typeof spot.opp.vpip !== 'number' || typeof spot.opp.pfr !== 'number')
       add('opp: нужны vpip и pfr числами');
-    if (spot.opp.vpip < spot.opp.pfr) warn('opp: vpip меньше pfr — подозрительно');
+    if (spot.opp.vpip < spot.opp.pfr) addWarn('opp: vpip меньше pfr — подозрительно');
   }
 
   return { errors, warn };
