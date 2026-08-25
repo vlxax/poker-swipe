@@ -4,6 +4,9 @@ node_modules/
 # Logs
 *.log
 
+# Wrangler build artifacts
+.wrangler/
+
 # Trainer build artifacts — regenerate via buildTrainerKnowledge.mjs
 data/trainer/built/chart-images/
 data/trainer/built/batch2-parsed-hands.json
