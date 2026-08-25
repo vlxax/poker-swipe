@@ -116,6 +116,35 @@ radial-gradient(circle at 55% 18%,#c8ff3d21,transparent 34%),radial-gradient(cir
 .modal{position:fixed;z-index:100;inset:0;background:#000a;display:grid;align-items:end}.sheet{max-width:480px;width:100%;margin:auto;background:#111116;border:1px solid #34343e;border-radius:28px 28px 0 0;padding:18px 16px 30px}.close{float:right;border:0;background:#22222a;color:white;border-radius:50%;width:34px;height:34px}
 @media(max-width:380px){h1{font-size:33px}.xrCell{font-size:5px}.pc{width:44px;height:62px}}
 
+/* V21 VERDICT REPORT REDESIGN */
+.verdictReportV21{padding:0;display:flex;flex-direction:column;gap:0;background:transparent}
+.verdictHeader{padding:16px 16px 0;text-align:center;margin-bottom:8px}
+.verdictHeader h2{margin:0;font-size:20px;letter-spacing:-.03em}.verdictHeader .subhead{display:block;font-size:9px;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.verdictLabel{margin:0 14px 10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:#0f0f14;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+.verdictLabel .ey{display:block;font-size:8px}.verdictLabel h3{margin:4px 0 0;font-size:16px}
+.actionSummary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 14px 10px;padding:0}
+.actionCard{border:1px solid var(--line);border-radius:14px;background:#0f0f14;padding:11px;text-align:center}
+.actionCard .ey{display:block;margin-bottom:4px}.actionCard b{display:block;font-size:16px;margin-top:2px;letter-spacing:-.02em}
+.brainCardCompact{margin:0 14px 12px;padding:12px;border:1px solid var(--line);border-radius:18px;background:#0f0f14}
+.brainCardCompact .brainPanel{margin:0;padding:0;background:transparent;border:0}
+.brainCardCompact .brainHead{margin-bottom:8px}
+.brainCardCompact .brainPolicy{margin:6px 0;gap:0}
+.brainCardCompact .brainAction{padding:6px 0;gap:6px}
+.semanticGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:0 14px 12px;padding:0}
+.semanticCard{border:1px solid var(--line);border-radius:14px;background:radial-gradient(circle at 100% 0,#c8ff3d10,transparent 80%),#0f0f14;padding:11px;display:flex;flex-direction:column;gap:6px;min-height:90px}
+.semanticCard .cardIcon{font-size:20px;line-height:1}
+.semanticCard h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9f99a6;font-weight:900}
+.semanticCard p{margin:0;font-size:12px;line-height:1.35;color:var(--text)}
+.verdictCharacter{margin:0 14px 12px;border:1px solid var(--line);border-radius:18px;background:#0f0f14;min-height:240px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.verdictCharacter.grade-g{border-color:#42e78633;background:radial-gradient(circle at 50% 50%,#42e78610,transparent)}
+.verdictCharacter.grade-y{border-color:#ffd25733;background:radial-gradient(circle at 50% 50%,#ffd25710,transparent)}
+.verdictCharacter.grade-r{border-color:#ff4b6833;background:radial-gradient(circle at 50% 50%,#ff4b6810,transparent)}
+.verdictCharacter .charWrapper{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.verdictFeedback{margin:0 14px 12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#0f0f14}
+.verdictFeedback p{margin:0;font-size:13px;line-height:1.4}
+.verdictCTA{margin:0 14px calc(14px + var(--safe));padding:0}
+.verdictCTA .primary{margin:12px 0 0}
+
 /* ===== V14.4 SWIPE UX ===== */
 .swipeShell{margin:0 14px 12px;position:relative}
 .swipeTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -1426,8 +1455,18 @@ function brainPanel(r){if(!r)return'';const pol=(r.topActions||[]).map(x=>`<div 
 const _recordEventV16=recordEvent;
 recordEvent=function(e){const ev=_recordEventV16({...e,conceptId:e.conceptId||null,brainVersion:window.PokerBrain?.version||null});return ev}
 
+/* V21: Six semantic explanation cards for SWIPE verdict */
+function buildSwipeSemanticCards(s,a,br,g){const cards=[
+{title:'ЧТО БЫЛО ПЕРЕД ЭТИМ',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,120):'(контекст в задаче)'},
+{title:'НА ЭТОЙ УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · Борд: ${s.board.join(' ')}`:'')},
+{title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`+(s.board.length>0?` на ${s.board.length}-street board`:'')},
+{title:'ДИНАМИКА РЕЙНДЖЕЙ',icon:'≈',content:br.topActions&&br.topActions.length>0?`Top action: ${br.topActions[0].action} (${Math.round(br.topActions[0].freq*100)}%)`:br.confidence?`GTO Brain confidence: ${br.confidence}%`:'(данные модели)'},
+{title:'ПОЧЕМУ ЭТОТ ВЫБОР',icon:'💡',content:s.concept||s.why.substring(0,100)||'Решение соответствует диапазону'},
+{title:'СТЕК И БАНК',icon:'🏛',content:`Стек: ${s.stack} BB · Банк: ${s.pot} BB`}
+];return`<div class="semanticGrid">${cards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`}
+
 /* Poker Swipe: grading is now driven by PokerBrain, not preferred/live/sizeZone */
-finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'МИМО SIZE-FAMILY'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}${brainPanel(br)}<p class="pink"><b>${g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.'}</b></p><div id="holdArea"></div></div>`;window.FreakLady?.react(v.querySelector('.swipeFlash'),g,'swipe');requestAnimationFrame(()=>v.scrollIntoView({behavior:'smooth',block:'nearest'}));const delay=g==='g'?2800:g==='y'?3800:5200;const schedule=()=>{swTimer=setTimeout(swipeNext,delay);$('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext}};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НАСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
+finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerBrain.gradeDecision({...s,spotId:s.id},a,size);const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictText=g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.';v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeader"><h2>POKER SWIPE</h2><span class="subhead">BY FRIKOVAYA DAMA</span></div><div class="verdictLabel"><span class="ey">${verdictLabel}</span><h3>${s.street}</h3></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}</b></div><div class="actionCard"><span class="ey">GTO ОЦЕНКА</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${buildSwipeSemanticCards(s,a,br,g)}<div class="verdictCharacter grade-${g}"><div class="charWrapper"></div></div><div class="verdictFeedback"><p><b>${verdictText}</b></p></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const charWrapper=v.querySelector('.charWrapper');window.FreakLady?.react(charWrapper,g,'swipe');$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>v.scrollIntoView({behavior:'smooth',block:'nearest'}));const delay=g==='g'?2800:g==='y'?3800:5200;setTimeout(()=>{$('#verdictNext').focus()},delay)}
 
 /* Sizing: action + sizing family from Brain */
 renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · ЛАБОРАТОРИЯ РАЗМЕРА</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerBrain.gradeDecision({...s,spotId:s.id},action,v||null),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">РАЗМЕР СТАВКИ</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;window.FreakLady?.react($('#sizeResult').querySelector('.verdict'),g,'sizing');$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
@@ -3128,22 +3167,25 @@ window.finalizeSwipe = finalizeSwipe = function(s,a,size){
  swSessionGrades.push({g,street:s.street,concept:s.concept});
  const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score,decisionClass:cls.key});
  $$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});
- const alt=(br.topActions||[]).filter(x=>x.action!==br.action).slice(0,2);
- const freq=Number.isFinite(br.actionFrequency)?Math.round(br.actionFrequency*100):null;
  const v=$('#swipeVerdict');v.classList.remove('hidden');
- v.innerHTML=`<div class="swipeFlash" id="swipeFlash">
-   <span class="v31DecisionBadge ${cls.key}">${cls.label}</span>
-   <h3 style="margin:9px 0 7px">${a}${size!=null?' · '+size+'%':''}</h3>
-   <p class="v31Why">${br.explanation||'Для этого узла пока недостаточно точной модели, поэтому жёсткий диагноз не ставим.'}</p>
-   ${freq!=null?`<p class="mut small">Частота выбранной линии в текущей reference-модели: <b>${freq}%</b>. ${alt.length?`Ближайшая альтернатива: ${alt.map(x=>`${x.action} ${Math.round(x.freq*100)}%`).join(' · ')}.`:''}</p>`:''}
-   ${br.source==='NO_MODEL'?`<p class="mut small">Данных недостаточно: это решение не будет превращено в «грубую ошибку» только потому, что модель не знает узел.</p>`:''}
-   <p class="pink"><b>${cls.key==='main'?'Редкий случай: даже мне придраться сложно.':cls.key==='alt'?'Нормальная линия. Покер всё ещё не тест ПДД.':cls.key==='exploit'?'Живёт, но требует причины. «Мне показалось» причиной не считается.':'Вот здесь уже есть что лечить.'}</b></p>
-   <div id="holdArea"></div>
- </div>`;
- window.FreakLady?.react(v.querySelector('.swipeFlash'),g,'swipe');
- const delay=g==='g'?2700:g==='y'?3600:4700;
- swTimer=setTimeout(swipeNext,delay);
- $('#swipeFlash').onclick=()=>{clearTimeout(swTimer);$('#holdArea').innerHTML='<button class="secondary" id="manualNext">ДАЛЬШЕ →</button>';$('#manualNext').onclick=swipeNext};
+ const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';
+ const verdictText=g==='g'?'Чисто. Даже софт не нашёл, за что тебя сегодня уволить.':g==='y'?'Живёт. Но это уже смесь, а не религия.':'Сейчас это не «не повезло». Модель реально предпочитает другое.';
+ const semanticCards=[
+  {title:'ЧТО БЫЛО ПЕРЕД ЭТИМ',icon:'◀',content:(s.ctx&&s.ctx.length>0)?s.ctx.substring(0,120):'(контекст в задаче)'},
+  {title:'НА ЭТОЙ УЛИЦЕ',icon:'↗',content:s.street+(s.board&&s.board.length>0?` · Борд: ${s.board.join(' ')}`:'')},
+  {title:'ТВОЯ РУКА',icon:'🎴',content:`${s.hero[0]} ${s.hero[1]}`+(s.board.length>0?` на ${s.board.length}-street board`:'')},
+  {title:'ДИНАМИКА РЕЙНДЖЕЙ',icon:'≈',content:br.topActions&&br.topActions.length>0?`Top: ${br.topActions[0].action} (${Math.round(br.topActions[0].freq*100)}%)`:br.confidence?`GTO confidence: ${br.confidence}%`:'(данные модели)'},
+  {title:'ПОЧЕМУ ЭТОТ ВЫБОР',icon:'💡',content:s.concept||s.why.substring(0,100)||'Решение соответствует диапазону'},
+  {title:'СТЕК И БАНК',icon:'🏛',content:`Стек: ${s.stack} BB · Банк: ${s.pot} BB`}
+ ];
+ const semanticHtml=`<div class="semanticGrid">${semanticCards.map((c,i)=>`<div class="semanticCard"><div class="cardIcon">${c.icon}</div><h4>${c.title}</h4><p>${esc(c.content)}</p></div>`).join('')}</div>`;
+ v.innerHTML=`<div class="verdictReportV21"><div class="verdictHeader"><h2>POKER SWIPE</h2><span class="subhead">BY FRIKOVAYA DAMA</span></div><div class="verdictLabel"><span class="ey">${verdictLabel}</span><h3>${s.street}</h3></div><div class="actionSummary"><div class="actionCard"><span class="ey">ТЫ ВЫБРАЛ</span><b>${a}${size!=null?' · '+size+'%':''}</b></div><div class="actionCard"><span class="ey">GTO ОЦЕНКА</span><b class="grade-${g}">${verdictLabel}</b></div></div><div class="brainCardCompact">${brainPanel(br)}</div>${semanticHtml}<div class="verdictCharacter grade-${g}"><div class="charWrapper"></div></div><div class="verdictFeedback"><p><b>${verdictText}</b></p></div><div class="verdictCTA"><button class="primary" id="verdictNext">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;
+ const charWrapper=v.querySelector('.charWrapper');
+ window.FreakLady?.react(charWrapper,g,'swipe');
+ $('#verdictNext').onclick=()=>{swipeNext()};
+ requestAnimationFrame(()=>v.scrollIntoView({behavior:'smooth',block:'nearest'}));
+ const delay=g==='g'?2800:g==='y'?3800:5200;
+ setTimeout(()=>{$('#verdictNext').focus()},delay);
 };
 
 /* Full passport in regular swipe, including preflop line for postflop decisions. */
