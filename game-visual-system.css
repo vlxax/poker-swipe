@@ -1,0 +1,392 @@
+/**
+ * PokerSwipe — Premium Game Visual System V2
+ * Black / emerald / acid lime editorial game UI
+ */
+
+:root {
+  --ps-game-bg: #050605;
+  --ps-game-surface: #0a0c0a;
+  --ps-game-panel: #0e100e;
+  --ps-game-felt: #173824;
+  --ps-game-lime: #c8ff3d;
+  --ps-game-lime-dim: #9fd42e;
+  --ps-game-emerald: #1a4d32;
+  --ps-game-rim: rgba(200, 255, 61, 0.22);
+  --ps-game-rim-strong: rgba(200, 255, 61, 0.42);
+  --ps-game-text: #f2f7ea;
+  --ps-game-muted: #8f9688;
+  --ps-game-danger: #ff4b68;
+  --ps-game-warn: #ffd257;
+  --ps-game-success: #42e786;
+  --ps-game-gold: #e8bf72;
+  --ps-game-radius: 20px;
+  --ps-game-radius-sm: 14px;
+  --ps-game-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+  --ps-game-press: 100ms;
+}
+
+body.psGameVisualV2 {
+  background: var(--ps-game-bg) !important;
+}
+
+body.psGameVisualV2 .app {
+  background:
+    radial-gradient(circle at 88% 0%, rgba(200, 255, 61, 0.06), transparent 28%),
+    radial-gradient(circle at 8% 40%, rgba(26, 77, 50, 0.12), transparent 32%),
+    var(--ps-game-bg) !important;
+}
+
+/* ── Editorial game panels ── */
+.psGamePanel {
+  position: relative;
+  margin: 0 12px 12px;
+  padding: 16px 14px;
+  border-radius: var(--ps-game-radius);
+  border: 1px solid var(--ps-game-rim);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(200, 255, 61, 0.05), transparent 48%),
+    linear-gradient(160deg, rgba(14, 16, 14, 0.98), rgba(6, 7, 6, 0.99));
+  box-shadow: var(--ps-game-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.psGamePanel--glow {
+  border-color: var(--ps-game-rim-strong);
+  box-shadow:
+    var(--ps-game-shadow),
+    0 0 24px rgba(200, 255, 61, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.psGameTitle {
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 1000;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+  color: #fff;
+}
+
+.psGameTitle .accent {
+  color: var(--ps-game-lime);
+}
+
+.psGameSubtitle {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ps-game-muted);
+  margin: 0 0 12px;
+}
+
+/* ── Physical CTA buttons ── */
+body.psGameVisualV2 .primary,
+body.psGameVisualV2 .pgCta {
+  background: linear-gradient(180deg, #d4ff52 0%, #b8ed2f 48%, #9fd42e 100%) !important;
+  color: #071007 !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 6px 0 #6a8f1c,
+    0 10px 24px rgba(200, 255, 61, 0.22) !important;
+  transition: transform var(--ps-game-press) ease, box-shadow var(--ps-game-press) ease !important;
+}
+
+body.psGameVisualV2 .primary:active,
+body.psGameVisualV2 .pgCta:active {
+  transform: translateY(3px) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 2px 0 #6a8f1c,
+    0 4px 12px rgba(200, 255, 61, 0.15) !important;
+}
+
+body.psGameVisualV2 .secondary {
+  background: linear-gradient(160deg, #141614, #0c0e0c) !important;
+  border: 1px solid rgba(200, 255, 61, 0.16) !important;
+  color: #e8ece4 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+/* ── Home lobby upgrade ── */
+body.psGameVisualV2 #home .v30Home,
+body.psGameVisualV2 #home .v31Home {
+  padding-bottom: 110px;
+}
+
+body.psGameVisualV2 .v30Hero,
+body.psGameVisualV2 .v31Hero {
+  border: 1px solid var(--ps-game-rim) !important;
+  box-shadow: var(--ps-game-shadow), 0 0 32px rgba(200, 255, 61, 0.06) !important;
+}
+
+body.psGameVisualV2 .v30Action.main,
+body.psGameVisualV2 .v31Mode.main {
+  border: 1px solid var(--ps-game-rim-strong) !important;
+  box-shadow: 0 0 28px rgba(200, 255, 61, 0.1), var(--ps-game-shadow) !important;
+}
+
+body.psGameVisualV2 .v30Mini,
+body.psGameVisualV2 .v31Mini {
+  border: 1px solid rgba(200, 255, 61, 0.1) !important;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+body.psGameVisualV2 .v30Mini:active,
+body.psGameVisualV2 .v31Mini:active {
+  transform: scale(0.98);
+  border-color: var(--ps-game-rim) !important;
+}
+
+body.psGameVisualV2 .v30Leak,
+body.psGameVisualV2 .v31Insight {
+  border: 1px solid var(--ps-game-rim) !important;
+  border-left: 3px solid var(--ps-game-lime) !important;
+}
+
+/* ── Swipe verdict upgrade ── */
+body.psGameVisualV2 .v31Verdict {
+  background: var(--ps-game-bg);
+  padding: 12px 10px 20px;
+}
+
+body.psGameVisualV2 .v31Result {
+  border: 1px solid var(--ps-game-rim-strong) !important;
+  box-shadow: 0 0 28px rgba(200, 255, 61, 0.08) !important;
+}
+
+body.psGameVisualV2 .v31BrainHUD {
+  border: 1px solid var(--ps-game-rim) !important;
+}
+
+body.psGameVisualV2 .verdictCharacterZone {
+  pointer-events: none;
+  min-height: clamp(140px, 36vw, 200px);
+  margin: -20px 10px 0;
+  padding: 0 4px;
+  z-index: 12;
+}
+
+body.psGameVisualV2 .verdictCharacterZone .psCharCompose--result {
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) min(44%, 170px);
+}
+
+body.psGameVisualV2 .verdictCharacterZone .psCharCompose__art {
+  margin-bottom: 0;
+  align-self: flex-end;
+}
+
+body.psGameVisualV2 .verdictCharacterZone .psCharCompose__art .freakCoachAvatar {
+  height: clamp(130px, 34vw, 200px);
+}
+
+body.psGameVisualV2 .verdictScene {
+  max-height: min(46vh, 360px);
+  overflow: hidden;
+}
+
+body.psGameVisualV2 .verdictCTA {
+  position: relative;
+  z-index: 20;
+  pointer-events: auto;
+  margin-top: 8px;
+  padding: 0 14px 12px;
+}
+
+body.psGameVisualV2 .verdictReportV21 {
+  border: 1px solid var(--ps-game-rim);
+  border-radius: var(--ps-game-radius);
+  margin: 0 10px 12px;
+  background: linear-gradient(160deg, rgba(10, 12, 10, 0.98), rgba(5, 6, 5, 0.99));
+  box-shadow: var(--ps-game-shadow);
+  overflow: hidden;
+}
+
+body.psGameVisualV2 .v31VerdictContent {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* ── Review forensic investigation ── */
+.psReviewForensic {
+  padding: 0 12px 16px;
+}
+
+.psReviewForensic__title {
+  font-size: clamp(32px, 9vw, 44px);
+  font-weight: 1000;
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  margin: 8px 0 4px;
+  color: #fff;
+}
+
+.psReviewForensic__title span {
+  color: var(--ps-game-lime);
+}
+
+.psReviewForensic__sub {
+  font-size: 11px;
+  color: var(--ps-game-muted);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.psLossMap {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 16px;
+  padding: 12px;
+  border-radius: var(--ps-game-radius-sm);
+  border: 1px solid var(--ps-game-rim);
+  background: rgba(8, 10, 8, 0.85);
+}
+
+.psLossMap__label {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--ps-game-muted);
+  margin-bottom: 4px;
+}
+
+.psLossMap__row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.psLossMap__street {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #d8ddd0;
+}
+
+.psLossMap__bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(200, 255, 61, 0.1);
+  overflow: hidden;
+}
+
+.psLossMap__bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ps-game-lime), var(--ps-game-warn));
+  transition: width 0.35s ease;
+}
+
+.psLossMap__row.is-problem .psLossMap__bar i {
+  background: linear-gradient(90deg, var(--ps-game-warn), var(--ps-game-danger));
+}
+
+.psLossMap__row.is-problem .psLossMap__street {
+  color: var(--ps-game-lime);
+}
+
+.psLossMap__val {
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--ps-game-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
+.psInsightGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.psInsightCard {
+  padding: 10px 11px;
+  border-radius: var(--ps-game-radius-sm);
+  border: 1px solid rgba(200, 255, 61, 0.1);
+  background: rgba(10, 12, 10, 0.9);
+}
+
+.psInsightCard.is-problem {
+  border-color: var(--ps-game-rim-strong);
+  box-shadow: 0 0 16px rgba(200, 255, 61, 0.08);
+}
+
+.psInsightCard__street {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--ps-game-muted);
+}
+
+.psInsightCard__status {
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  margin-top: 4px;
+  color: #eef2e8;
+}
+
+.psInsightCard.is-problem .psInsightCard__status {
+  color: var(--ps-game-lime);
+}
+
+/* ── Ranges hub game identity ── */
+body.psGameVisualV2 .rbShell,
+body.psGameVisualV2 .rnShell {
+  background: var(--ps-game-bg) !important;
+}
+
+body.psGameVisualV2 .rbHeroCard,
+body.psGameVisualV2 .rnHeroCard {
+  border: 1px solid var(--ps-game-rim) !important;
+}
+
+/* ── Profile dossier ── */
+body.psGameVisualV2 #profile .youMethod,
+body.psGameVisualV2 #profile .rank28Hero {
+  border: 1px solid var(--ps-game-rim);
+  border-radius: var(--ps-game-radius);
+}
+
+/* ── Nav safety ── */
+body.psGameVisualV2 .nav {
+  z-index: 50;
+  pointer-events: auto;
+}
+
+body.psGameVisualV2 .psCharCompose,
+body.psGameVisualV2 .psCharCompose__art {
+  pointer-events: none;
+}
+
+/* ── pgShell felt upgrade ── */
+body.psGameVisualV2 .pgFelt {
+  border-color: rgba(8, 8, 10, 0.98) !important;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(200, 255, 61, 0.04) !important;
+}
+
+body.psGameVisualV2 .pgHud {
+  border-bottom-color: var(--ps-game-rim) !important;
+}
+
+@media (max-width: 390px) {
+  .psInsightGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.psGameVisualV2 .primary:active,
+  body.psGameVisualV2 .pgCta:active {
+    transform: none !important;
+  }
+}

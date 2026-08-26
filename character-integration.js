@@ -6,6 +6,11 @@
 (function() {
   'use strict';
 
+  if (window.__psGameVisualV2) {
+    console.log('[CharacterIntegration] Skipped — GameVisualV2 owns character wiring');
+    return;
+  }
+
   if (!window.CharacterSystem) {
     console.warn('[CharacterIntegration] CharacterSystem not loaded');
     return;
