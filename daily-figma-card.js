@@ -138,3 +138,13 @@ if(document.readyState==='loading'){
 
 window.PokerSwipeVisualAssetsV4={build:BUILD,refresh:enhance,assets:ASSETS};
 })();
+
+/* Hand of the Day — load bridge (iframe mount for modules/hand-of-the-day.html) */
+(function loadHandDayBridge(){
+  if (window.PsHandDayBridge) return;
+  var s = document.createElement('script');
+  s.src = 'hand-day-bridge.js';
+  s.defer = true;
+  s.onerror = function(){ console.warn('[PokerSwipe] hand-day-bridge.js failed to load'); };
+  document.head.appendChild(s);
+})();
