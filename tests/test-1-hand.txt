@@ -1,0 +1,35 @@
+Hand #1234567890
+PokerOK - Texas Holdem 6-max
+2024-01-15 14:30:45 UTC
+Blinds 0.50/1.00
+
+Seat 1 (Button): Player_A (50.00)
+Seat 2 (SB): Player_B (40.00)
+Seat 3 (BB): Player_C (60.00)
+Seat 4: Player_D (45.00)
+Seat 5: Player_E (50.00)
+Seat 6: Hero (50.00)
+
+Hero received hole cards: [As Kd]
+
+Player_D: raises 3.00 to 3.00
+Player_E: calls 3.00
+Hero: raises 10.00 to 13.00
+Player_A: folds
+Player_B: folds
+Player_C: folds
+Player_D: calls 10.00
+Player_E: folds
+
+*** FLOP *** [Qs 9h 8d]
+Player_D: checks
+Hero: bets 15.00
+Player_D: calls 15.00
+
+*** TURN *** [Qs 9h 8d 6c]
+Player_D: checks
+Hero: bets 20.00
+Player_D: folds
+
+Hero wins the pot (31.00)
+Total pot: 31.00
