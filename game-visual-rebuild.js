@@ -88,33 +88,38 @@
   }
 
   function restructureSwipeVerdict(s, a, size) {
+    const report = document.querySelector('.verdictReportV21');
     const scene = document.querySelector('.verdictScene');
-    if (!scene || scene.dataset.psSceneV2) return;
+    if (!report || !scene || report.dataset.psSceneV2) return null;
 
     const sceneContent = scene.querySelector('.sceneContent');
-    if (!sceneContent) return;
+    if (!sceneContent) return null;
 
+    report.classList.add('psVerdictReport');
     scene.classList.add('psVerdictScene');
-    scene.dataset.psSceneV2 = '1';
+    report.dataset.psSceneV2 = '1';
 
     const narrative = document.createElement('div');
     narrative.innerHTML = buildNarrativeFlow(s, a, size);
     const narrativeEl = narrative.firstElementChild;
 
-    const brain = sceneContent.querySelector('.brainCardCompact');
     sceneContent.innerHTML = '';
-    if (brain) sceneContent.appendChild(brain);
     if (narrativeEl) sceneContent.appendChild(narrativeEl);
 
-    let coachLayer = scene.querySelector('.psVerdictCoachLayer');
+    let coachLayer = report.querySelector('.psVerdictCoachLayer');
     if (!coachLayer) {
       coachLayer = document.createElement('div');
       coachLayer.className = 'psVerdictCoachLayer';
-      scene.appendChild(coachLayer);
+      const cta = report.querySelector('.verdictCTA');
+      if (cta) report.insertBefore(coachLayer, cta);
+      else report.appendChild(coachLayer);
     }
 
     const legacyZone = document.querySelector('.verdictCharacterZone');
-    if (legacyZone) legacyZone.style.display = 'none';
+    if (legacyZone) {
+      legacyZone.innerHTML = '';
+      legacyZone.style.display = 'none';
+    }
 
     return coachLayer;
   }
@@ -168,6 +173,76 @@
     if (verdict) obs.observe(verdict, { childList: true, subtree: true });
   }
 
+  function paintReviewForensic() {
+    const area = document.getElementById('reviewArea');
+    const panel = area?.querySelector('.panel, .pgShell');
+    if (!panel || !window.FreakLady) return false;
+    if (!panel.querySelector('.brainPanel, .evidence, .brainExplain')) return false;
+
+    const R = window.REVIEWS?.[window.rv % (window.REVIEWS?.length || 1)];
+    const bm = window.PokerBrain?.reviewLine?.(R);
+    if (!bm) return false;
+
+    const pointOk = (bm.clean && window.rvPick === 'none') || (!bm.clean && window.rvPick === bm.culpritIndex);
+    const grade = pointOk ? 'g' : 'r';
+
+    panel.querySelectorAll('.psReviewForensic, .psReviewCoachHost').forEach((el) => el.remove());
+    panel.querySelector('.freakCoachReaction')?.remove();
+
+    const forensic = document.createElement('div');
+    forensic.className = 'psReviewForensic';
+
+    const sceneInner = document.createElement('div');
+    sceneInner.className = 'psReviewForensic__scene';
+
+    if (!bm.clean) {
+      const losses = bm.losses?.length
+        ? bm.losses
+        : (R?.nodes || []).map((_, i) => (i === bm.culpritIndex ? 1 : 0.15));
+      sceneInner.innerHTML = `
+        <div class="psReviewForensic__title">ГДЕ<br><span>СЛОМАЛОСЬ?</span></div>
+        <p class="psReviewForensic__sub">Найди улицу, где EV начал утекать.</p>
+        ${buildLossMapHTML(losses, R?.nodes)}
+      `;
+    } else {
+      sceneInner.innerHTML = `
+        <div class="psReviewForensic__title">ЧИСТАЯ<br><span>ЛИНИЯ.</span></div>
+        <p class="psReviewForensic__sub">EV не утекал — разбор для тренировки внимания.</p>
+      `;
+    }
+
+    const coachHost = document.createElement('div');
+    coachHost.className = 'psReviewCoachHost';
+    sceneInner.appendChild(coachHost);
+    forensic.appendChild(sceneInner);
+
+    const anchor = panel.querySelector('h1.impact, .impact, .pgHud');
+    if (anchor) anchor.insertAdjacentElement('afterend', forensic);
+    else panel.insertAdjacentElement('afterbegin', forensic);
+
+    panel.querySelector('.evidence')?.classList.add('psReviewEvidence--compact');
+    panel.querySelector('.brainPanel')?.classList.add('psReviewBrain--hidden');
+
+    const headline = pointOk
+      ? 'НАШЛА.<br><span class="accent">УЗЕЛ.</span>'
+      : 'СОФТ ВИДИТ<br><span class="accent">ДРУГОЙ УЗЕЛ.</span>';
+
+    window.FreakLady.react(coachHost, grade, 'review', {
+      layout: 'scene',
+      side: 'right',
+      headline,
+      replace: true,
+      concept: R?.concept
+    });
+
+    return true;
+  }
+
+  function scheduleReviewForensic(retry = 0) {
+    if (paintReviewForensic()) return;
+    if (retry < 24) setTimeout(() => scheduleReviewForensic(retry + 1), 120);
+  }
+
   /* ── REVIEW: forensic investigation layout ── */
   function enhanceReviewReveal() {
     const orig = window.reviewReveal;
@@ -175,60 +250,7 @@
 
     window.reviewReveal = function () {
       const out = orig.apply(this, arguments);
-      setTimeout(() => {
-        const area = document.getElementById('reviewArea');
-        const panel = area?.querySelector('.panel, .pgShell');
-        if (!panel || !window.FreakLady) return;
-
-        panel.querySelectorAll('.psReviewForensic, .psReviewCoachHost').forEach((el) => el.remove());
-
-        const R = window.REVIEWS?.[window.rv % (window.REVIEWS?.length || 1)];
-        const bm = window.PokerBrain?.reviewLine?.(R);
-        if (!bm) return;
-
-        const pointOk = (bm.clean && window.rvPick === 'none') || (!bm.clean && window.rvPick === bm.culpritIndex);
-        const grade = pointOk ? 'g' : 'r';
-
-        const forensic = document.createElement('div');
-        forensic.className = 'psReviewForensic';
-
-        const sceneInner = document.createElement('div');
-        sceneInner.className = 'psReviewForensic__scene';
-
-        if (!bm.clean && bm.losses?.length) {
-          sceneInner.innerHTML = `
-            <div class="psReviewForensic__title">ГДЕ<br><span>СЛОМАЛОСЬ?</span></div>
-            <p class="psReviewForensic__sub">Найди улицу, где EV начал утекать.</p>
-            ${buildLossMapHTML(bm.losses, R?.nodes)}
-          `;
-        } else {
-          sceneInner.innerHTML = `
-            <div class="psReviewForensic__title">ЧИСТАЯ<br><span>ЛИНИЯ.</span></div>
-            <p class="psReviewForensic__sub">EV не утекал — разбор для тренировки внимания.</p>
-          `;
-        }
-
-        const coachHost = document.createElement('div');
-        coachHost.className = 'psReviewCoachHost';
-        sceneInner.appendChild(coachHost);
-        forensic.appendChild(sceneInner);
-
-        const brainPanel = panel.querySelector('.brainPanel');
-        if (brainPanel) brainPanel.insertAdjacentElement('beforebegin', forensic);
-        else panel.insertAdjacentElement('afterbegin', forensic);
-
-        const headline = pointOk
-          ? 'НАШЛА.<br><span class="accent">УЗЕЛ.</span>'
-          : 'СОФТ ВИДИТ<br><span class="accent">ДРУГОЙ УЗЕЛ.</span>';
-
-        window.FreakLady.react(coachHost, grade, 'review', {
-          layout: 'scene',
-          side: 'right',
-          headline,
-          replace: true,
-          concept: R?.concept
-        });
-      }, 80);
+      scheduleReviewForensic();
       return out;
     };
     window.reviewReveal.__psVisualV2 = true;
@@ -296,6 +318,7 @@
           if (!panel || !window.FreakLady) return;
 
           panel.querySelector('.psDailyCoachHost')?.remove();
+          panel.querySelector('.freakCoachReaction')?.remove();
 
           const gradeBox = panel.querySelector('.gradeBox.r, .gradeBox.g, .gradeBox.y');
           let grade = 'y';
@@ -304,9 +327,13 @@
 
           const host = document.createElement('div');
           host.className = 'psDailyCoachHost';
-          const cta = panel.querySelector('.primary, .pgCta, #dHome');
-          if (cta) cta.parentElement?.insertBefore(host, cta);
-          else panel.appendChild(host);
+          const headline = panel.querySelector('h1.impact, .impact');
+          if (headline) headline.insertAdjacentElement('afterend', host);
+          else {
+            const cta = panel.querySelector('.primary, .pgCta, #dHome');
+            if (cta) cta.parentElement?.insertBefore(host, cta);
+            else panel.appendChild(host);
+          }
 
           window.FreakLady.react(host, grade, 'daily', {
             layout: 'scene',

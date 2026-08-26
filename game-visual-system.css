@@ -165,28 +165,6 @@ body.psGameVisualV2 .verdictCharacterZone {
   display: none !important;
 }
 
-body.psGameVisualV2 .verdictScene {
-  position: relative;
-  max-height: none;
-  overflow: visible;
-  margin: 8px 10px 0;
-  padding-bottom: 0;
-  min-height: clamp(280px, 52vh, 420px);
-}
-
-body.psGameVisualV2 .verdictScene .sceneBg {
-  border-radius: 22px;
-  inset: 0 0 clamp(40px, 12vw, 72px) 0;
-}
-
-body.psGameVisualV2 .verdictScene .sceneContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 14px 14px clamp(120px, 32vw, 180px);
-  min-height: clamp(200px, 38vh, 300px);
-}
-
 body.psGameVisualV2 .psVerdictNarrative {
   display: grid;
   gap: 0;
@@ -252,25 +230,6 @@ body.psGameVisualV2 .verdictScene .actionSummary {
   display: none !important;
 }
 
-body.psGameVisualV2 .verdictScene .brainCardCompact {
-  margin-bottom: 4px;
-}
-
-body.psGameVisualV2 .psVerdictCoachLayer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 12;
-  min-height: clamp(200px, 40vh, 320px);
-  pointer-events: none;
-  overflow: visible;
-}
-
-body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene {
-  min-height: clamp(200px, 38vh, 300px);
-}
-
 body.psGameVisualV2 .verdictCTA {
   position: relative;
   z-index: 20;
@@ -285,7 +244,69 @@ body.psGameVisualV2 .verdictReportV21 {
   margin: 0 10px 12px;
   background: linear-gradient(160deg, rgba(10, 12, 10, 0.98), rgba(5, 6, 5, 0.99));
   box-shadow: var(--ps-game-shadow);
-  overflow: hidden;
+  overflow: visible !important;
+  position: relative;
+  padding-bottom: clamp(120px, 30vw, 180px);
+}
+
+body.psGameVisualV2 .verdictScene {
+  position: relative;
+  max-height: none;
+  overflow: visible;
+  margin: 8px 10px 0;
+  padding-bottom: 0;
+  min-height: clamp(200px, 34vh, 280px);
+}
+
+body.psGameVisualV2 .verdictScene .sceneBg {
+  border-radius: 22px;
+  inset: 0;
+  bottom: 0;
+}
+
+body.psGameVisualV2 .verdictScene .sceneContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 14px 14px 16px;
+  min-height: clamp(160px, 28vh, 220px);
+}
+
+body.psGameVisualV2 #swipeVerdict {
+  overflow: visible !important;
+}
+
+body.psGameVisualV2 .verdictScene .brainCardCompact {
+  display: none !important;
+}
+
+body.psGameVisualV2 #reviewArea .panel .freakCoachReaction {
+  display: none !important;
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: clamp(68px, 16vw, 84px);
+  z-index: 14;
+  min-height: clamp(220px, 38vh, 300px);
+  pointer-events: none;
+  overflow: visible;
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene {
+  min-height: clamp(220px, 38vh, 300px);
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene .psCharCompose__art {
+  width: min(58%, 240px);
+  right: -4%;
+  bottom: -24px;
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+  height: clamp(280px, 62vw, 380px);
 }
 
 body.psGameVisualV2 .v31VerdictContent {
@@ -328,13 +349,29 @@ body.psGameVisualV2 .v31VerdictContent {
 
 .psDailyCoachHost {
   position: relative;
-  margin: 8px 12px 12px;
-  min-height: clamp(240px, 46vh, 360px);
+  margin: 4px -4px 8px;
+  min-height: clamp(260px, 48vh, 360px);
   overflow: visible;
+  z-index: 6;
+}
+
+.psDailyCoachHost .psCharCompose--scene .psCharCompose__art {
+  width: min(56%, 230px);
+  right: -8%;
+  bottom: -20px;
 }
 
 .psDailyCoachHost .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
-  height: clamp(260px, 58vw, 380px);
+  height: clamp(300px, 66vw, 400px);
+}
+
+body.psGameVisualV2 #dailyArea .panel .freakCoachReaction {
+  display: none !important;
+}
+
+body.psGameVisualV2 #dailyArea .dualGrade {
+  position: relative;
+  z-index: 2;
 }
 
 .psSizingCoachHost {
@@ -346,6 +383,20 @@ body.psGameVisualV2 .v31VerdictContent {
 
 .psReviewForensic .psInsightGrid {
   display: none;
+}
+
+body.psGameVisualV2 .psReviewBrain--hidden {
+  display: none !important;
+}
+
+body.psGameVisualV2 .psReviewEvidence--compact {
+  display: none !important;
+}
+
+body.psGameVisualV2 #reviewArea .panel > h1.impact,
+body.psGameVisualV2 #reviewArea .pgShell > h1.impact {
+  position: relative;
+  z-index: 2;
 }
 
 .psReviewForensic__title {
@@ -490,32 +541,40 @@ body.psGameVisualV2 #profile .rank28Hero {
 
 /* ── Nav safety + compact height ── */
 body.psGameVisualV2 {
-  --bottom-nav-height: 64px;
+  --bottom-nav-height: 58px;
 }
 
 body.psGameVisualV2 .screen {
-  padding-bottom: calc(var(--bottom-nav-height) + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px)) + 28px) !important;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px)) + 22px) !important;
 }
 
 body.psGameVisualV2 .nav {
   z-index: 50;
   pointer-events: auto;
   min-height: calc(var(--bottom-nav-height) + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
-  padding-top: 6px !important;
-  padding-bottom: calc(6px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
-  padding-left: 8px !important;
-  padding-right: 8px !important;
+  height: auto !important;
+  padding-top: 4px !important;
+  padding-bottom: calc(4px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
 }
 
 body.psGameVisualV2 .nav button {
-  padding: 4px 2px 2px !important;
-  font-size: 9px !important;
-  gap: 2px !important;
+  padding: 2px 1px 0 !important;
+  font-size: 8px !important;
+  gap: 1px !important;
+  min-height: 0 !important;
 }
 
 body.psGameVisualV2 .nav button i,
 body.psGameVisualV2 .nav button svg {
-  font-size: 18px !important;
+  font-size: 17px !important;
+  margin-bottom: 0 !important;
+}
+
+body.psGameVisualV2 .nav .dnaNav {
+  width: 20px !important;
+  height: 18px !important;
   margin-bottom: 1px !important;
 }
 
@@ -547,4 +606,25 @@ body.psGameVisualV2 .pgHud {
   body.psGameVisualV2 .pgCta:active {
     transform: none !important;
   }
+}
+
+/* Nav compact — override late-loaded nav sheets */
+html body.psGameVisualV2 .nav {
+  --bottom-nav-height: 56px;
+  min-height: calc(56px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+  max-height: calc(64px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+  padding-top: 3px !important;
+  padding-bottom: calc(3px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+}
+
+html body.psGameVisualV2 .nav button {
+  min-height: 48px !important;
+  padding-top: 2px !important;
+  padding-bottom: 0 !important;
+}
+
+html body.psGameVisualV2 .nav button span,
+html body.psGameVisualV2 .nav button small {
+  font-size: 7.5px !important;
+  line-height: 1.1 !important;
 }
