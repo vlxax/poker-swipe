@@ -297,7 +297,8 @@ class P0RegressionTests {
 
   test_P03_IllegalCall() {
     try {
-      const hand = {
+      // Test 1: CALL with no bet to call
+      const hand1 = {
         heroSeat: 'BTN',
         villainSeat: 'BB',
         hero: ['A♠', 'K♠'],
@@ -305,10 +306,10 @@ class P0RegressionTests {
         board: ['T♠', '9♠', '8♠'],
         street: 'FLOP',
         pot: 5,
-        pending: 0,  // No pending bet
+        pending: 0,
         actions: [
           { actor: 'VILLAIN', street: 'FLOP', action: 'CHECK' },
-          { actor: 'HERO', street: 'FLOP', action: 'CALL' }  // ILLEGAL: CALL with no bet
+          { actor: 'HERO', street: 'FLOP', action: 'CALL' }  // ILLEGAL: no bet to call
         ],
         potHistory: [{ street: 'FLOP', pot: 5 }],
         result: 'NO_SHOWDOWN',
@@ -321,11 +322,41 @@ class P0RegressionTests {
         resultNote: ''
       };
 
-      const validation = HandValidation.validateActionSequence(hand);
-      // This one might be permissive, but we're testing the validation layer exists
+      const validation1 = HandValidation.validateActionSequence(hand1);
+      this.assert(!validation1.valid, 'CALL with no bet should fail');
+      this.assert(validation1.error.includes('CALL'), 'Error should mention CALL');
+
+      // Test 2: CALL after already matched bet
+      const hand2 = {
+        heroSeat: 'BTN',
+        villainSeat: 'BB',
+        hero: ['A♠', 'K♠'],
+        villain: [],
+        board: ['T♠', '9♠', '8♠'],
+        street: 'FLOP',
+        pot: 10,
+        pending: 0,
+        actions: [
+          { actor: 'VILLAIN', street: 'FLOP', action: 'BET', size: 5, potBefore: 5 },
+          { actor: 'HERO', street: 'FLOP', action: 'CALL', size: 5 },
+          { actor: 'HERO', street: 'FLOP', action: 'CALL', size: 5 }  // ILLEGAL: already called
+        ],
+        potHistory: [{ street: 'FLOP', pot: 10 }],
+        result: 'NO_SHOWDOWN',
+        format: 'MTT',
+        effStack: 30,
+        decisionStreet: 'RIVER',
+        heroReason: '',
+        villainRead: '',
+        question: '',
+        resultNote: ''
+      };
+
+      const validation2 = HandValidation.validateActionSequence(hand2);
+      this.assert(!validation2.valid, 'Double CALL should fail');
 
       this.passed++;
-      console.log('✅ test_P03_IllegalCall PASSED (validation exists)');
+      console.log('✅ test_P03_IllegalCall PASSED (correctly rejects illegal calls)');
     } catch (e) {
       this.failed++;
       this.findings.push({ test: 'test_P03_IllegalCall', error: e.message });
@@ -498,6 +529,122 @@ class P0RegressionTests {
       this.failed++;
       this.findings.push({ test: 'test_P01_ValidOldSavedHand', error: e.message });
       console.log(`❌ test_P01_ValidOldSavedHand FAILED: ${e.message}`);
+    }
+  }
+
+  test_P03_CheckFacingBet() {
+    try {
+      const hand = {
+        heroSeat: 'BTN',
+        villainSeat: 'BB',
+        hero: ['A♠', 'K♠'],
+        villain: [],
+        board: ['T♠', '9♠', '8♠'],
+        street: 'FLOP',
+        pot: 10,
+        pending: 5,
+        actions: [
+          { actor: 'VILLAIN', street: 'FLOP', action: 'BET', size: 5, potBefore: 5 },
+          { actor: 'HERO', street: 'FLOP', action: 'CHECK' }  // ILLEGAL: CHECK facing 5 BB bet
+        ],
+        potHistory: [{ street: 'FLOP', pot: 10 }],
+        result: 'NO_SHOWDOWN',
+        format: 'MTT',
+        effStack: 30,
+        decisionStreet: 'RIVER',
+        heroReason: '',
+        villainRead: '',
+        question: '',
+        resultNote: ''
+      };
+
+      const validation = HandValidation.validateActionSequence(hand);
+      this.assert(!validation.valid, 'CHECK facing bet should fail');
+      this.assert(validation.error.includes('CHECK'), 'Error should mention CHECK');
+
+      this.passed++;
+      console.log('✅ test_P03_CheckFacingBet PASSED (correctly rejects CHECK vs bet)');
+    } catch (e) {
+      this.failed++;
+      this.findings.push({ test: 'test_P03_CheckFacingBet', error: e.message });
+      console.log(`❌ test_P03_CheckFacingBet FAILED: ${e.message}`);
+    }
+  }
+
+  test_P03_BetLargerThanStack() {
+    try {
+      const hand = {
+        heroSeat: 'BTN',
+        villainSeat: 'BB',
+        hero: ['A♠', 'K♠'],
+        villain: [],
+        board: [],
+        street: 'PREFLOP',
+        pot: 1.5,
+        pending: 0,
+        actions: [
+          { actor: 'HERO', street: 'PREFLOP', action: 'RAISE', size: 50 }  // Stack only 30 BB
+        ],
+        potHistory: [{ street: 'PRE', pot: 1.5 }],
+        result: 'NO_SHOWDOWN',
+        format: 'MTT',
+        effStack: 30,
+        decisionStreet: 'RIVER',
+        heroReason: '',
+        villainRead: '',
+        question: '',
+        resultNote: ''
+      };
+
+      const validation = HandValidation.validateActionSequence(hand);
+      this.assert(!validation.valid, 'Bet larger than stack should fail');
+      this.assert(validation.error.includes('stack'), 'Error should mention stack');
+
+      this.passed++;
+      console.log('✅ test_P03_BetLargerThanStack PASSED (correctly rejects oversized bet)');
+    } catch (e) {
+      this.failed++;
+      this.findings.push({ test: 'test_P03_BetLargerThanStack', error: e.message });
+      console.log(`❌ test_P03_BetLargerThanStack FAILED: ${e.message}`);
+    }
+  }
+
+  test_P03_RaiseTooSmall() {
+    try {
+      const hand = {
+        heroSeat: 'BTN',
+        villainSeat: 'BB',
+        hero: ['A♠', 'K♠'],
+        villain: [],
+        board: [],
+        street: 'PREFLOP',
+        pot: 1.5,
+        pending: 2.5,
+        actions: [
+          { actor: 'VILLAIN', street: 'PREFLOP', action: 'RAISE', size: 2.5, potBefore: 1.5 },
+          { actor: 'HERO', street: 'PREFLOP', action: 'RAISE', size: 2.6 }  // Not greater than 2.5
+        ],
+        potHistory: [{ street: 'PRE', pot: 1.5 }],
+        result: 'NO_SHOWDOWN',
+        format: 'MTT',
+        effStack: 30,
+        decisionStreet: 'RIVER',
+        heroReason: '',
+        villainRead: '',
+        question: '',
+        resultNote: ''
+      };
+
+      const validation = HandValidation.validateActionSequence(hand);
+      this.assert(!validation.valid, 'Raise smaller than previous bet should fail');
+      this.assert(validation.error.includes('greater'), 'Error should mention raise amount');
+
+      this.passed++;
+      console.log('✅ test_P03_RaiseTooSmall PASSED (correctly rejects min-raise violation)');
+    } catch (e) {
+      this.failed++;
+      this.findings.push({ test: 'test_P03_RaiseTooSmall', error: e.message });
+      console.log(`❌ test_P03_RaiseTooSmall FAILED: ${e.message}`);
     }
   }
 

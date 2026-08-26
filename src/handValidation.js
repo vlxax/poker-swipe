@@ -70,94 +70,153 @@ const HandValidation = (() => {
 
   // ===== ACTION SEQUENCE VALIDATION =====
 
-  // P0-3: Action legality validation
+  // P0-3: Action legality validation with betting state machine
   function validateActionSequence(hand) {
     const actions = hand.actions || [];
     if (actions.length === 0) return { valid: true };
 
+    const effStack = hand.effStack || 100;
+    const streetOrder = ['PREFLOP', 'FLOP', 'TURN', 'RIVER'];
+
+    // Betting state per actor
+    const state = {
+      HERO: { contributed: 0, remaining: effStack, allIn: false },
+      VILLAIN: { contributed: 0, remaining: effStack, allIn: false }
+    };
+
+    let currentBetTo = 0;  // How much the aggressor bet/raised to
+    let lastActor = null;
     let lastActorWasFold = false;
-    let allInActors = new Set();
     let handEnded = false;
     let lastStreet = 'PREFLOP';
-    let pending = hand.pending || 0;
-    let lastActor = null;
+    let streetRoundClosed = false;
+    let hasAnyAction = false;
 
     for (let i = 0; i < actions.length; i++) {
       const action = actions[i];
 
-      // Check required fields
+      // Required fields
       if (!action.actor || !action.action) {
         return { valid: false, error: `Action ${i} missing actor or action` };
       }
 
-      // Check valid actor
       if (!['HERO', 'VILLAIN'].includes(action.actor)) {
         return { valid: false, error: `Invalid actor: ${action.actor}` };
       }
 
-      // Check valid action
       if (!VALID_ACTIONS.includes(action.action)) {
         return { valid: false, error: `Invalid action: ${action.action}` };
       }
 
       const street = action.street || lastStreet;
+      const streetChanged = street !== lastStreet;
+
+      // P0-3-0: Reset betting state on new street (bets don't carry over)
+      if (streetChanged) {
+        currentBetTo = 0;
+      }
 
       // P0-3-1: No action after fold
-      if (lastActorWasFold) {
-        return {
-          valid: false,
-          error: `Action after fold at index ${i}: ${action.actor} cannot act after previous fold`
-        };
-      }
-
-      // P0-3-2: No action after hand ends (both all-in)
-      if (handEnded) {
-        return {
-          valid: false,
-          error: `Action after hand ended at index ${i}: both actors are all-in`
-        };
-      }
-
-      // P0-3-3: Valid street progression
-      const streetOrder = ['PREFLOP', 'FLOP', 'TURN', 'RIVER'];
-      const lastIdx = streetOrder.indexOf(lastStreet);
-      const currIdx = streetOrder.indexOf(street);
-
-      if (currIdx < lastIdx) {
-        return { valid: false, error: `Invalid street progression at index ${i}: ${street} comes before ${lastStreet}` };
-      }
-
-      // P0-3-4: Check action validity for street
-      if (street === 'PREFLOP' && action.action === 'CHECK') {
-        return { valid: false, error: `Invalid action at index ${i}: cannot CHECK preflop` };
-      }
-
-      // P0-3-5: Check BET/RAISE when there's a pending bet (cannot BET when facing bet)
-      if (pending > 0 && action.action === 'BET') {
-        return { valid: false, error: `Invalid action at index ${i}: cannot BET when facing a bet, must RAISE or FOLD` };
-      }
-
-      // P0-3-6: Check bet sizing (must be positive)
-      if ((action.action === 'BET' || action.action === 'RAISE' || action.action === 'PUSH') && action.size !== undefined) {
-        if (typeof action.size !== 'number' || action.size <= 0) {
-          return { valid: false, error: `Invalid bet size at index ${i}: ${action.size} must be > 0` };
-        }
-      }
-
-      // Update state for next iteration
-      if (action.action === 'FOLD') {
-        lastActorWasFold = true;
-        handEnded = true;  // Hand ends when someone folds
-      } else {
+      if (lastActorWasFold && action.actor === lastActor) {
+        // Same actor acting twice means first action wasn't fold
         lastActorWasFold = false;
       }
+      if (lastActorWasFold && action.actor !== lastActor) {
+        return {
+          valid: false,
+          error: `Action after fold at index ${i}: cannot continue after fold`
+        };
+      }
 
-      // Track all-in actors
-      if (action.action === 'PUSH') {
-        allInActors.add(action.actor);
-        if (allInActors.size === 2) {
-          handEnded = true;  // Hand ends when both all-in
+      // P0-3-2: No action after hand ends
+      if (handEnded) {
+        return { valid: false, error: `Action after hand ended at index ${i}` };
+      }
+
+      // P0-3-3: Street progression validation
+      const lastIdx = streetOrder.indexOf(lastStreet);
+      const currIdx = streetOrder.indexOf(street);
+      if (currIdx < lastIdx) {
+        return { valid: false, error: `Invalid street regression at ${i}: ${street} < ${lastStreet}` };
+      }
+
+      // P0-3-4: Bet sizing validation
+      if ((action.action === 'BET' || action.action === 'RAISE' || action.action === 'PUSH') && action.size !== undefined) {
+        if (typeof action.size !== 'number' || action.size <= 0) {
+          return { valid: false, error: `Invalid bet size at ${i}: ${action.size} must be > 0` };
         }
+        // Size cannot exceed remaining stack
+        if (action.size > state[action.actor].remaining + state[action.actor].contributed) {
+          return { valid: false, error: `Bet size ${action.size} exceeds stack at ${i}` };
+        }
+      }
+
+      // P0-3-5: Action-specific validation
+      const amountToCall = Math.max(0, currentBetTo - state[action.actor].contributed);
+
+      if (action.action === 'CHECK') {
+        // CHECK only legal if no bet to call (amountToCall === 0)
+        if (amountToCall > 0) {
+          return { valid: false, error: `Cannot CHECK facing bet of ${amountToCall} at ${i}` };
+        }
+        // First action preflop cannot be CHECK (must address big blind)
+        if (i === 0 && street === 'PREFLOP') {
+          return { valid: false, error: `Cannot CHECK as first action preflop at ${i}` };
+        }
+      }
+
+      if (action.action === 'CALL') {
+        // CALL requires something to call
+        if (amountToCall <= 0 && currentBetTo > 0) {
+          return { valid: false, error: `Cannot CALL: already matched bet at ${i}` };
+        }
+        if (amountToCall === 0 && currentBetTo === 0) {
+          return { valid: false, error: `Cannot CALL: no bet to call at ${i}` };
+        }
+      }
+
+      if (action.action === 'BET' && currentBetTo > 0) {
+        // Can't BET when facing a bet, must RAISE
+        return { valid: false, error: `Cannot BET facing bet at ${i}, must RAISE` };
+      }
+
+      if (action.action === 'RAISE') {
+        // RAISE must be greater than current bet
+        const raiseSize = action.size || 0;
+        if (raiseSize <= currentBetTo) {
+          return { valid: false, error: `Raise ${raiseSize} not greater than bet ${currentBetTo} at ${i}` };
+        }
+      }
+
+      // Update betting state
+      if (action.action === 'BET' || action.action === 'RAISE') {
+        currentBetTo = action.size || 0;
+        state[action.actor].contributed = state[action.actor].contributed + (action.size || 0);
+        state[action.actor].remaining -= (action.size || 0);
+      } else if (action.action === 'CALL') {
+        const toAdd = amountToCall;
+        state[action.actor].contributed += toAdd;
+        state[action.actor].remaining -= toAdd;
+      } else if (action.action === 'PUSH') {
+        // All-in
+        const allInAmount = state[action.actor].remaining + state[action.actor].contributed;
+        state[action.actor].allIn = true;
+        state[action.actor].contributed = allInAmount;
+        state[action.actor].remaining = 0;
+        currentBetTo = allInAmount;
+      } else if (action.action === 'FOLD') {
+        lastActorWasFold = true;
+        handEnded = true;
+      }
+
+      // Check if both are all-in
+      if (state.HERO.allIn && state.VILLAIN.allIn) {
+        handEnded = true;
+      }
+
+      // Negative stack is illegal
+      if (state[action.actor].remaining < 0) {
+        return { valid: false, error: `Negative stack for ${action.actor} at ${i}` };
       }
 
       lastActor = action.actor;
