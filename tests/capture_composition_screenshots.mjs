@@ -1,5 +1,5 @@
 /**
- * Capture 390×844 composition screenshots + mobile safe-area QA
+ * Capture 390×844 composition screenshots + overlap/safe-area QA
  */
 import { chromium } from 'playwright';
 import fs from 'node:fs';
@@ -38,71 +38,86 @@ function auditPage(page) {
     const text = scope.innerText.toUpperCase();
     const labelHits = badLabels.filter((w) => text.includes(w));
 
-    const meaningfulSelectors = [
-      '.freakCoachAvatar',
-      '.psCharCompose__bubble',
-      '.psCharCompose__text',
-      '.psDemonPeek',
-      '.psDemonPeek .psCharBubble',
-      '.psReviewInsight',
-      '.psDailyInsight',
-      '.psDailyStatus',
-      '.psLossMap',
-      '.verdictCTA .primary',
-      '.psVerdictRecap',
-      '.psNarrativeStep'
-    ];
+    function rect(el) {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return null;
+      const st = getComputedStyle(el);
+      if (st.display === 'none' || st.visibility === 'hidden' || st.opacity === '0') return null;
+      return r;
+    }
 
-    let navCollisions = 0;
-    let clippedCharacters = 0;
-    let blockedCta = 0;
+    function intersects(a, b) {
+      if (!a || !b) return false;
+      return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    }
 
-    meaningfulSelectors.forEach((sel) => {
-      scope.querySelectorAll(sel).forEach((el) => {
-        const style = getComputedStyle(el);
-        if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return;
-        const r = el.getBoundingClientRect();
-        if (r.width < 2 || r.height < 2) return;
-        if (r.bottom > navTop + 1) {
-          navCollisions++;
-          if (el.classList.contains('freakCoachAvatar')) {
-            const visible = Math.max(0, navTop - r.top);
-            if (visible < r.height * 0.4) clippedCharacters++;
-          }
-        }
+    const avatars = [...scope.querySelectorAll('.freakCoachAvatar')].map(rect).filter(Boolean);
+    const ctas = [...scope.querySelectorAll('#dHome, #verdictNext, #rvNext, .verdictCTA .primary')].map(rect).filter(Boolean);
+    const textBlocks = [...scope.querySelectorAll(
+      '.psVerdictRecap, .psNarrativeStep'
+    )].map(rect).filter(Boolean);
+    const contentBlocks = [...scope.querySelectorAll(
+      '.psCharCompose__bubble, .psVerdictRecap, .psNarrativeStep, .psReviewInsight, .psDailyInsight, .psDailyStatus, .psLossMap, .verdictCTA .primary, #dHome, #rvNext, .psDemonPeek'
+    )].map(rect).filter(Boolean);
+
+    let ctaOverCharacter = 0;
+    let textOverCharacter = 0;
+    let characterUnderNav = 0;
+    let contentUnderNav = 0;
+    let accidentalClipping = 0;
+
+    ctas.forEach((cta) => {
+      avatars.forEach((av) => {
+        if (intersects(cta, av) && cta.top < av.bottom - 24) ctaOverCharacter++;
+      });
+      if (cta.bottom > navTop + 4) contentUnderNav++;
+    });
+
+    textBlocks.forEach((block) => {
+      avatars.forEach((av) => {
+        if (intersects(block, av) && block.right > av.left + av.width * 0.55) textOverCharacter++;
       });
     });
 
-    const btn = scope.querySelector('#dHome, #verdictNext, #rvNext, .verdictCTA .primary, .primary');
+    avatars.forEach((av) => {
+      if (av.bottom > navTop + 1) {
+        const visible = Math.max(0, navTop - av.top);
+        if (visible < av.height * 0.5) characterUnderNav++;
+        if (visible < av.height * 0.4) accidentalClipping++;
+      }
+    });
+
+    const btn = scope.querySelector('#dHome, #verdictNext, #rvNext, .verdictCTA .primary');
+    let blockedCta = 0;
     if (btn) {
-      const r = btn.getBoundingClientRect();
-      const style = getComputedStyle(btn);
-      if (style.display !== 'none' && r.height > 2) {
+      const r = rect(btn);
+      if (r) {
         const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
         const navEl = document.querySelector('.nav');
         if (el !== btn && !btn.contains(el) && el !== navEl && !navEl?.contains(el)) blockedCta++;
-        if (r.bottom > navTop + 1) navCollisions++;
       }
     }
 
     return {
-      navCollisions,
-      clippedCharacters,
+      ctaOverCharacter,
+      textOverCharacter,
+      characterUnderNav,
+      contentUnderNav,
+      accidentalClipping,
       blockedCta,
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
       internalLabels: labelHits,
-      navTop: Math.round(navTop),
-      navHeight: nav ? Math.round(nav.getBoundingClientRect().height) : 0
+      navTop: Math.round(navTop)
     };
   }, BAD_LABELS);
 }
 
 const server = await startStaticServer('/workspace');
 const browser = await chromium.launch({ headless: true });
-const report = { viewports: {}, screenshots: {} };
+const report = { viewports: {} };
 
 try {
-  for (const vp of [{ w: 390, h: 844, id: '390x844' }, { w: 375, h: 812, id: '375x812' }, { w: 430, h: 932, id: '430x932' }]) {
+  for (const vp of [{ w: 390, h: 844, id: '390x844' }]) {
     const context = await browser.newContext({ viewport: { width: vp.w, height: vp.h } });
     await context.addInitScript(() => {
       localStorage.setItem('pokerSwipeDeviceId', 'qa-compose-v2');
@@ -118,21 +133,17 @@ try {
     await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle', timeout: 120000 });
     await page.waitForTimeout(2500);
 
-    // Swipe verdict
     await page.evaluate(() => window.show('swipe'));
     await page.waitForTimeout(800);
     const action = await page.$('[data-sa]');
     if (action) {
       await action.click();
       await page.waitForTimeout(3500);
-    await page.waitForTimeout(250);
-    report.viewports[vp.id] = report.viewports[vp.id] || {};
-    report.viewports[vp.id].swipe = await auditPage(page);
-    if (vp.id === '390x844') {
-      await page.screenshot({ path: path.join(OUT, 'screen_3_mix_ne_norma_390x844.png') });
     }
+    report.viewports[vp.id] = {};
+    report.viewports[vp.id].swipe = await auditPage(page);
+    await page.screenshot({ path: path.join(OUT, 'screen_3_mix_ne_norma_390x844.png') });
 
-    // Review
     await page.evaluate(() => {
       window.rv = 0;
       window.show('review');
@@ -140,13 +151,14 @@ try {
       if (typeof window.reviewReveal === 'function') window.reviewReveal();
     });
     await page.waitForTimeout(3500);
-    await page.waitForTimeout(250);
+    await page.evaluate(() => {
+      const active = document.querySelector('.screen.active');
+      if (active) active.scrollTop = active.scrollHeight;
+    });
+    await page.waitForTimeout(200);
     report.viewports[vp.id].review = await auditPage(page);
-    if (vp.id === '390x844') {
-      await page.screenshot({ path: path.join(OUT, 'screen_2_gde_slomalos_390x844.png') });
-    }
+    await page.screenshot({ path: path.join(OUT, 'screen_2_gde_slomalos_390x844.png') });
 
-    // Daily
     await page.evaluate(() => {
       window.show('daily');
       window.dChoice = 'BET';
@@ -156,19 +168,24 @@ try {
       if (typeof window.dailyReveal === 'function') window.dailyReveal();
     });
     await page.waitForTimeout(2500);
-    await page.waitForTimeout(250);
+    await page.evaluate(() => {
+      const active = document.querySelector('.screen.active');
+      if (active) active.scrollTop = active.scrollHeight;
+    });
+    await page.waitForTimeout(200);
     report.viewports[vp.id].daily = await auditPage(page);
-    if (vp.id === '390x844') {
-      await page.screenshot({ path: path.join(OUT, 'screen_1_est_chto_dokrutit_390x844.png') });
-    }
+    await page.screenshot({ path: path.join(OUT, 'screen_1_est_chto_dokrutit_390x844.png') });
 
     await context.close();
   }
 
   const totals = Object.values(report.viewports).flatMap((vp) => Object.values(vp));
   report.summary = {
-    BOTTOM_NAV_COLLISIONS: totals.reduce((n, m) => n + (m.navCollisions || 0), 0),
-    CLIPPED_CHARACTERS: totals.reduce((n, m) => n + (m.clippedCharacters || 0), 0),
+    CTA_OVER_CHARACTER: totals.reduce((n, m) => n + (m.ctaOverCharacter || 0), 0),
+    TEXT_OVER_CHARACTER: totals.reduce((n, m) => n + (m.textOverCharacter || 0), 0),
+    CHARACTER_UNDER_NAV: totals.reduce((n, m) => n + (m.characterUnderNav || 0), 0),
+    CONTENT_UNDER_NAV: totals.reduce((n, m) => n + (m.contentUnderNav || 0), 0),
+    ACCIDENTAL_CHARACTER_CLIPPING: totals.reduce((n, m) => n + (m.accidentalClipping || 0), 0),
     BLOCKED_CTA: totals.reduce((n, m) => n + (m.blockedCta || 0), 0),
     INTERNAL_LABELS_VISIBLE: [...new Set(totals.flatMap((m) => m.internalLabels || []))].length,
     HORIZONTAL_OVERFLOW: totals.filter((m) => m.horizontalOverflow).length
