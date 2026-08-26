@@ -501,6 +501,76 @@
     });
   }
 
+  /* ── Global section reveal + motion ── */
+  function enhanceShow() {
+    const orig = window.show;
+    if (!orig || orig.__psVisualV2) return;
+
+    window.show = function (id) {
+      const out = orig.apply(this, arguments);
+      requestAnimationFrame(() => {
+        const screen = document.getElementById(id);
+        if (!screen) return;
+        screen.classList.add('psGameSection');
+        screen.querySelectorAll('.tile, .metric, .myEntry, .panel, .pspEvent, .mt-pro-card, .rank28Card').forEach((el, i) => {
+          el.classList.remove('psGameReveal', 'psGameReveal--delay1', 'psGameReveal--delay2', 'psGameReveal--delay3');
+          void el.offsetWidth;
+          el.classList.add('psGameReveal');
+          if (i % 4 === 1) el.classList.add('psGameReveal--delay1');
+          if (i % 4 === 2) el.classList.add('psGameReveal--delay2');
+          if (i % 4 === 3) el.classList.add('psGameReveal--delay3');
+        });
+      });
+      return out;
+    };
+    window.show.__psVisualV2 = true;
+  }
+
+  function bridgeTournamentTokens() {
+    const screen = document.getElementById('ps72TournamentScreen');
+    if (screen) screen.classList.add('psGameSection');
+  }
+
+  function enhanceMyHands() {
+    const orig = window.renderMy;
+    if (!orig || orig.__psVisualV2) return;
+    window.renderMy = function () {
+      const out = orig.apply(this, arguments);
+      const hero = document.querySelector('#myArea .myHero');
+      if (hero) hero.classList.add('psGameReveal');
+      return out;
+    };
+    window.renderMy.__psVisualV2 = true;
+  }
+
+  function enhanceProfile() {
+    const orig = window.renderProfile;
+    if (!orig || orig.__psVisualV2) return;
+    window.renderProfile = function () {
+      const out = orig.apply(this, arguments);
+      const root = document.getElementById('profileArea');
+      if (root) {
+        root.classList.add('psGameSection');
+        root.querySelectorAll('.rank28Card, .you20Section, .rank30Progress').forEach((el, i) => {
+          el.classList.add('psGameReveal');
+          if (i % 3 === 1) el.classList.add('psGameReveal--delay1');
+        });
+      }
+      return out;
+    };
+    window.renderProfile.__psVisualV2 = true;
+  }
+
+  function enhanceNavFeedback() {
+    document.querySelectorAll('[data-nav]').forEach((btn) => {
+      if (btn.__psNavTap) return;
+      btn.addEventListener('pointerdown', () => btn.classList.add('ps-nav-tap'), { passive: true });
+      btn.addEventListener('pointerup', () => btn.classList.remove('ps-nav-tap'), { passive: true });
+      btn.addEventListener('pointerleave', () => btn.classList.remove('ps-nav-tap'), { passive: true });
+      btn.__psNavTap = true;
+    });
+  }
+
   function init() {
     const boot = () => {
       enhanceFinalizeSwipe();
@@ -508,11 +578,18 @@
       enhanceSizingResults();
       enhanceDailyFlow();
       enhanceHome();
+      enhanceShow();
+      enhanceMyHands();
+      enhanceProfile();
+      enhanceNavFeedback();
+      bridgeTournamentTokens();
       silenceDuplicateIntegration();
       setTimeout(() => {
         if (window.finalizeSwipe && !window.finalizeSwipe.__psVisualV2) {
           enhanceFinalizeSwipe();
         }
+        enhanceNavFeedback();
+        bridgeTournamentTokens();
       }, 500);
       console.log('[GameVisualV2] Premium game visual system active');
     };

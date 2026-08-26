@@ -100,13 +100,13 @@ function mountSizingChips(){
 }
 
 function mountMyTournaments(){
-  const roots=[
-    document.querySelector('#ps72TournamentScreen'),
+  // My Tournaments Pro (ps72) manages its own empty-state companion edge-peek.
+  const legacyRoots=[
     document.querySelector('#tournamentsArea'),
     document.querySelector('#tournaments')
   ].filter(Boolean);
 
-  for(const root of roots){
+  for(const root of legacyRoots){
     let hero=root.querySelector('.ps72hero,.t23Hero,.v48Hero,.t23,.panel');
     if(!hero)hero=root;
     hero.classList.add('psTournamentHeroV3');

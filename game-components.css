@@ -1,0 +1,323 @@
+/**
+ * PokerSwipe — Game Components Library
+ * Unified cards, buttons, chips, tabs, badges, stats, progress, empty states
+ */
+
+body.psGameVisualV2 {
+  --ps-font-display: clamp(28px, 8vw, 40px);
+  --ps-font-section: clamp(20px, 5.5vw, 28px);
+  --ps-font-card: 15px;
+  --ps-font-body: 13px;
+  --ps-font-caption: 11px;
+  --ps-font-label: 8px;
+  --ps-font-stat: clamp(22px, 6vw, 32px);
+  --ps-font-cta: 14px;
+  --ps-glass: rgba(10, 12, 10, 0.82);
+  --ps-glass-border: rgba(200, 255, 61, 0.14);
+  --ps-glow-soft: 0 0 24px rgba(200, 255, 61, 0.08);
+  --ps-glow-active: 0 0 32px rgba(200, 255, 61, 0.16);
+}
+
+/* ── Typography scale ── */
+body.psGameVisualV2 .psTypeDisplay {
+  font-size: var(--ps-font-display);
+  font-weight: 1000;
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+body.psGameVisualV2 .psTypeDisplay .accent,
+body.psGameVisualV2 h1.impact .pink,
+body.psGameVisualV2 .impact .pink {
+  color: var(--ps-game-lime) !important;
+}
+
+body.psGameVisualV2 .ey,
+body.psGameVisualV2 .psTypeLabel {
+  font-size: var(--ps-font-label);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ps-game-muted);
+}
+
+body.psGameVisualV2 .mut,
+body.psGameVisualV2 .psTypeCaption {
+  font-size: var(--ps-font-caption);
+  line-height: 1.4;
+  color: var(--ps-game-muted);
+}
+
+body.psGameVisualV2 .psTypeStat {
+  font-size: var(--ps-font-stat);
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+
+/* ── Game cards (unified panel family) ── */
+body.psGameVisualV2 .panel,
+body.psGameVisualV2 .tile,
+body.psGameVisualV2 .metric,
+body.psGameVisualV2 .myHero,
+body.psGameVisualV2 .myEntry,
+body.psGameVisualV2 .v30Hero,
+body.psGameVisualV2 .v31Mode,
+body.psGameVisualV2 .v31Mini,
+body.psGameVisualV2 .rank28Card,
+body.psGameVisualV2 .you20Section,
+body.psGameVisualV2 .youMethod {
+  border-color: var(--ps-game-rim) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(200, 255, 61, 0.04), transparent 48%),
+    linear-gradient(160deg, rgba(14, 16, 14, 0.98), rgba(6, 7, 6, 0.99)) !important;
+  box-shadow: var(--ps-game-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+body.psGameVisualV2 .tile {
+  transition: border-color var(--motion-fast, 0.2s) ease,
+    transform var(--ps-game-press, 100ms) ease,
+    box-shadow var(--motion-fast, 0.2s) ease !important;
+}
+
+body.psGameVisualV2 .tile:active {
+  transform: scale(0.985);
+  border-color: var(--ps-game-rim-strong) !important;
+}
+
+body.psGameVisualV2 .tile .go {
+  color: var(--ps-game-lime) !important;
+}
+
+body.psGameVisualV2 .metric {
+  border-radius: var(--ps-game-radius-sm) !important;
+}
+
+body.psGameVisualV2 .metric b,
+body.psGameVisualV2 .metric .pink {
+  color: var(--ps-game-lime) !important;
+}
+
+/* ── Stat cards ── */
+body.psGameVisualV2 .psStatCard {
+  padding: 12px 14px;
+  border-radius: var(--ps-game-radius-sm);
+  border: 1px solid var(--ps-game-rim);
+  background: var(--ps-glass);
+}
+
+body.psGameVisualV2 .psStatCard__label {
+  display: block;
+  font-size: var(--ps-font-label);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--ps-game-muted);
+  margin-bottom: 4px;
+}
+
+body.psGameVisualV2 .psStatCard__value {
+  font-size: 22px;
+  font-weight: 1000;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+/* ── Chips / filters ── */
+body.psGameVisualV2 .chips button,
+body.psGameVisualV2 .chip,
+body.psGameVisualV2 .v30StatChip,
+body.psGameVisualV2 .pspChip,
+body.psGameVisualV2 .pspTab,
+body.psGameVisualV2 .mt-pro-chip {
+  border: 1px solid rgba(200, 255, 61, 0.12) !important;
+  background: rgba(8, 10, 8, 0.85) !important;
+  color: #d8ddd0 !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease !important;
+}
+
+body.psGameVisualV2 .chips button.on,
+body.psGameVisualV2 .chip.on,
+body.psGameVisualV2 .pspChip.on,
+body.psGameVisualV2 .pspTab.on,
+body.psGameVisualV2 .mt-pro-chip.is-active {
+  border-color: var(--ps-game-lime) !important;
+  background: rgba(200, 255, 61, 0.12) !important;
+  color: var(--ps-game-lime) !important;
+  box-shadow: var(--ps-glow-soft) !important;
+}
+
+/* ── Tab systems ── */
+body.psGameVisualV2 .pspTabs,
+body.psGameVisualV2 .mt-pro-tabs {
+  gap: 7px !important;
+}
+
+body.psGameVisualV2 .pspTab,
+body.psGameVisualV2 .mt-pro-tab {
+  min-height: 44px !important;
+}
+
+/* ── Status badges ── */
+body.psGameVisualV2 .psBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--ps-game-rim);
+  background: rgba(8, 10, 8, 0.9);
+  color: var(--ps-game-muted);
+}
+
+body.psGameVisualV2 .psBadge--success {
+  border-color: rgba(66, 231, 134, 0.35);
+  color: var(--ps-game-success);
+}
+
+body.psGameVisualV2 .psBadge--warn {
+  border-color: rgba(255, 210, 87, 0.35);
+  color: var(--ps-game-warn);
+}
+
+body.psGameVisualV2 .psBadge--danger {
+  border-color: rgba(255, 75, 104, 0.35);
+  color: var(--ps-game-danger);
+}
+
+body.psGameVisualV2 .psBadge--live {
+  border-color: var(--ps-game-rim-strong);
+  color: var(--ps-game-lime);
+  box-shadow: var(--ps-glow-soft);
+}
+
+body.psGameVisualV2 .psBadge--live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ps-game-lime);
+  box-shadow: 0 0 8px var(--ps-game-lime);
+}
+
+/* ── Progress bars ── */
+body.psGameVisualV2 .psProgress {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(200, 255, 61, 0.1);
+  overflow: hidden;
+}
+
+body.psGameVisualV2 .psProgress > i,
+body.psGameVisualV2 .psProgress > span,
+body.psGameVisualV2 .v30Progress i,
+body.psGameVisualV2 .rank30Progress .rank30Bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ps-game-emerald), var(--ps-game-lime));
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.psGameVisualV2 .v30Progress,
+body.psGameVisualV2 .rank30Progress .rank30Bar {
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: rgba(200, 255, 61, 0.1) !important;
+  overflow: hidden !important;
+}
+
+/* ── Ghost / icon buttons ── */
+body.psGameVisualV2 .ghost,
+body.psGameVisualV2 .iconBtn,
+body.psGameVisualV2 .pspTool {
+  border: 1px solid var(--ps-game-rim) !important;
+  background: rgba(8, 10, 8, 0.85) !important;
+  color: #e8ece4 !important;
+  border-radius: 50% !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+body.psGameVisualV2 .ghost:active,
+body.psGameVisualV2 .iconBtn:active,
+body.psGameVisualV2 .pspTool:active {
+  border-color: var(--ps-game-rim-strong) !important;
+  box-shadow: var(--ps-glow-soft) !important;
+}
+
+body.psGameVisualV2 .pspTool.acid {
+  color: var(--ps-game-lime) !important;
+  box-shadow: var(--ps-glow-soft) !important;
+}
+
+/* ── Empty states ── */
+body.psGameVisualV2 .pspEmpty,
+body.psGameVisualV2 .mt-pro-empty {
+  border: 1px dashed var(--ps-game-rim) !important;
+  border-radius: var(--ps-game-radius-sm) !important;
+  background: rgba(8, 10, 8, 0.5) !important;
+  color: var(--ps-game-muted) !important;
+}
+
+/* ── List event cards (polyana) ── */
+body.psGameVisualV2 #polyana .pspEvent {
+  border: 1px solid var(--ps-game-rim) !important;
+  border-left: 3px solid var(--ps-game-lime) !important;
+  border-radius: var(--ps-game-radius-sm) !important;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(200, 255, 61, 0.04), transparent 40%),
+    linear-gradient(145deg, rgba(14, 16, 14, 0.98), rgba(8, 9, 8, 0.99)) !important;
+  box-shadow: var(--ps-game-shadow) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+body.psGameVisualV2 #polyana .pspTime {
+  color: var(--ps-game-lime) !important;
+}
+
+body.psGameVisualV2 #polyana .pspFee {
+  color: var(--ps-game-lime) !important;
+}
+
+body.psGameVisualV2 #polyana .pspTag.acid {
+  border-color: var(--ps-game-rim-strong) !important;
+  color: var(--ps-game-lime) !important;
+}
+
+/* ── Reveal animation for cards ── */
+body.psGameVisualV2 .psGameReveal {
+  animation: psGameRevealIn var(--motion-reveal, 0.42s) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body.psGameVisualV2 .psGameReveal--delay1 { animation-delay: 60ms; }
+body.psGameVisualV2 .psGameReveal--delay2 { animation-delay: 120ms; }
+body.psGameVisualV2 .psGameReveal--delay3 { animation-delay: 180ms; }
+
+@keyframes psGameRevealIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.psGameVisualV2 .psGameReveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
