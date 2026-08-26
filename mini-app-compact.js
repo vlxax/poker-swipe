@@ -604,11 +604,18 @@
 
   /* ── SWIPE: table-centric decision ── */
   replaceRender('renderSwipe', function renderSwipeGame() {
-    if (!window.swSession?.length || window.swIndex >= window.swSession.length) {
-      if (typeof window.newSwipeSession === 'function') window.newSwipeSession();
-      else return renderSwipeGame._maOrig?.();
-    }
-    if (!window.swSession?.length || window.swIndex >= window.swSession.length) return;
+    try {
+      if (!window.swSession?.length || window.swIndex >= window.swSession.length) {
+        if (typeof window.newSwipeSession === 'function') {
+          try { window.newSwipeSession(); } catch (_) { /* fall through */ }
+        }
+        if (!window.swSession?.length || window.swIndex >= window.swSession.length) {
+          return renderSwipeGame._maOrig?.();
+        }
+      }
+      if (!window.swSession?.length || window.swIndex >= window.swSession.length) {
+        return renderSwipeGame._maOrig?.();
+      }
     const s = window.swSession[window.swIndex];
     window.swLocked = false;
     window.swStart = window.now();
@@ -658,6 +665,9 @@
       };
     });
     wireContextButtons(document.getElementById('swipeCard'));
+    } catch (_) {
+      return renderSwipeGame._maOrig?.();
+    }
   });
 
   /* ── DAILY: personalised training uses training-ui/gameShell.js ── */
