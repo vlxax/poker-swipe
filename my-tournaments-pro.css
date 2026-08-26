@@ -44,6 +44,10 @@
   animation: mtProIn 0.22s ease forwards;
 }
 
+body:has(#ps72TournamentScreen.on) .creatorTop .topRightMark24 {
+  display: none !important;
+}
+
 #ps72TournamentScreen *,
 #mtProModal *,
 #mtProAnalytics *,
@@ -102,7 +106,7 @@
 }
 
 .mt-pro-bottom-spacer {
-  height: calc(var(--mt-bottom-nav) + var(--mt-bottom-safe) + 28px);
+  height: calc(var(--mt-bottom-nav) + var(--mt-bottom-safe) + 56px);
   flex-shrink: 0;
   pointer-events: none;
 }
@@ -2130,4 +2134,450 @@
   .mt-pro-seg { font-size: 8px; padding: 9px 2px; }
   .mt-pro-conclusions { grid-template-columns: 1fr; }
   .mt-pro-conclusion.span2 { grid-column: span 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PERFORMANCE CENTER — composition v-performance-v1
+   ═══════════════════════════════════════════════════════════ */
+
+#ps72TournamentScreen .mt-pro-brand,
+#ps72TournamentScreen .mt-pro-head,
+#ps72TournamentScreen .mt-pro-add,
+#ps72TournamentScreen .mt-pro-empty {
+  display: none !important;
+}
+
+#ps72TournamentScreen .mt-pro-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0 10px;
+}
+
+#ps72TournamentScreen .mt-pro-header__copy {
+  min-width: 0;
+  flex: 1;
+}
+
+#ps72TournamentScreen .mt-pro-title {
+  margin: 4px 0 0;
+  font-size: clamp(28px, 7.2vw, 34px);
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+#ps72TournamentScreen .mt-pro-title em {
+  font-style: normal;
+  color: var(--mt-lime);
+}
+
+#ps72TournamentScreen .mt-pro-eyebrow {
+  margin-top: 0;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: var(--mt-muted-2);
+}
+
+#ps72TournamentScreen .mt-pro-add-compact {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(200, 255, 61, 0.28);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(200, 255, 61, 0.16), rgba(200, 255, 61, 0.06));
+  color: var(--mt-lime);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+}
+
+#ps72TournamentScreen .mt-pro-add-compact:active {
+  transform: scale(0.94);
+  border-color: var(--mt-lime);
+  background: rgba(200, 255, 61, 0.22);
+}
+
+/* Segmented controls */
+#ps72TournamentScreen .mt-pro-seg {
+  position: relative;
+  display: grid;
+  padding: 3px;
+  border-radius: 14px;
+  border: 1px solid var(--mt-border);
+  background: rgba(8, 10, 8, 0.88);
+  overflow: hidden;
+}
+
+#ps72TournamentScreen .mt-pro-seg--period {
+  opacity: 0.92;
+}
+
+#ps72TournamentScreen .mt-pro-seg__indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / var(--seg-count, 4));
+  transform: translateX(calc(var(--seg-index, 0) * 100%));
+  border-radius: 11px;
+  background: linear-gradient(180deg, rgba(200, 255, 61, 0.22), rgba(200, 255, 61, 0.1));
+  border: 1px solid rgba(200, 255, 61, 0.28);
+  box-shadow: 0 0 14px rgba(200, 255, 61, 0.1);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#ps72TournamentScreen .mt-pro-filter-row--seg {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--seg-count, 4), minmax(0, 1fr));
+  gap: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+#ps72TournamentScreen #mtTypeSeg .mt-pro-filter-row--seg {
+  --seg-count: 4;
+}
+
+#ps72TournamentScreen #mtPeriodSeg .mt-pro-filter-row--seg {
+  --seg-count: 5;
+}
+
+#ps72TournamentScreen .mt-pro-filter-row--seg .mt-pro-chip {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--mt-muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border-radius: 11px;
+  box-shadow: none;
+  text-align: center;
+}
+
+#ps72TournamentScreen .mt-pro-filter-row--seg .mt-pro-chip.active {
+  color: var(--mt-lime);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+#ps72TournamentScreen .mt-pro-filter-row--seg .mt-pro-chip.type-online.active {
+  color: var(--mt-purple);
+}
+
+#ps72TournamentScreen .mt-pro-filter-row--seg .mt-pro-chip.type-sport.active {
+  color: var(--mt-gold);
+}
+
+#ps72TournamentScreen .mt-pro-filter-block--type .mt-pro-filter-label {
+  color: var(--mt-muted);
+  font-weight: 800;
+}
+
+#ps72TournamentScreen .mt-pro-filter-block--period .mt-pro-filter-label {
+  color: var(--mt-muted-2);
+  font-size: 8px;
+}
+
+/* Performance hero stats */
+#ps72TournamentScreen .mt-pro-perf-hero {
+  position: relative;
+  z-index: 2;
+  margin-top: 8px;
+}
+
+#ps72TournamentScreen .mt-pro-perf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+#ps72TournamentScreen .mt-pro-perf-grid.cols-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#ps72TournamentScreen .mt-pro-stat-tile {
+  padding: 12px 13px;
+  border-radius: 16px;
+  border: 1px solid var(--mt-border);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(200, 255, 61, 0.05), transparent 48%),
+    linear-gradient(160deg, rgba(14, 16, 14, 0.98), rgba(6, 7, 6, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+#ps72TournamentScreen .mt-pro-stat-tile__label {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--mt-muted-2);
+  margin-bottom: 6px;
+}
+
+#ps72TournamentScreen .mt-pro-stat-tile__value {
+  display: block;
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 1000;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+
+#ps72TournamentScreen .mt-pro-stat-tile__value.pos { color: var(--mt-lime); }
+#ps72TournamentScreen .mt-pro-stat-tile__value.neg { color: var(--mt-coral); }
+#ps72TournamentScreen .mt-pro-stat-tile__value.neutral { color: var(--mt-muted); }
+
+#ps72TournamentScreen .mt-pro-perf-grid--empty,
+#ps72TournamentScreen .mt-pro-perf-empty {
+  grid-column: 1 / -1;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px dashed var(--mt-border);
+  background: rgba(8, 10, 8, 0.5);
+  text-align: center;
+  font-size: 12px;
+  color: var(--mt-muted);
+}
+
+/* Chart */
+#ps72TournamentScreen .mt-pro-chart-wrap {
+  padding-top: 12px;
+}
+
+#ps72TournamentScreen .mt-pro-chart-wrap--reveal .mt-pro-chart-card {
+  animation: mtChartReveal 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes mtChartReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+#ps72TournamentScreen .mt-pro-chart-card {
+  border-color: var(--mt-border);
+  background:
+    radial-gradient(circle at 88% 0%, rgba(200, 255, 61, 0.04), transparent 32%),
+    linear-gradient(160deg, rgba(12, 14, 12, 0.98), rgba(6, 7, 6, 0.99));
+  padding: 14px 12px 10px;
+}
+
+#ps72TournamentScreen .mt-pro-chart {
+  height: 132px;
+}
+
+/* Empty state hero */
+#ps72TournamentScreen .mt-pro-empty-hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 16px 0 8px;
+  padding: 28px 18px 20px;
+  border-radius: 20px;
+  border: 1px solid var(--mt-border);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(200, 255, 61, 0.06), transparent 42%),
+    linear-gradient(160deg, rgba(12, 14, 12, 0.98), rgba(6, 7, 6, 0.99));
+  overflow: hidden;
+}
+
+#ps72TournamentScreen .mt-pro-empty-hero__icon {
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 10px;
+  filter: grayscale(0.2) drop-shadow(0 0 12px rgba(200, 255, 61, 0.2));
+}
+
+#ps72TournamentScreen .mt-pro-empty-hero h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+#ps72TournamentScreen .mt-pro-empty-hero p {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--mt-muted);
+  max-width: 260px;
+}
+
+#ps72TournamentScreen .mt-pro-empty-cta {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 280px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #d4ff52 0%, #b8ed2f 48%, #9fd42e 100%);
+  color: #071007;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 4px 0 #6a8f1c,
+    0 8px 20px rgba(200, 255, 61, 0.18);
+  transition: transform 0.1s ease;
+}
+
+#ps72TournamentScreen .mt-pro-empty-cta:active {
+  transform: translateY(2px);
+}
+
+#ps72TournamentScreen .mt-pro-empty-companion {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  width: 38%;
+  max-width: 120px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+}
+
+#ps72TournamentScreen .mt-pro-empty-companion__art {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+}
+
+#ps72TournamentScreen .mt-pro-filter-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  border-radius: 14px;
+  border: 1px dashed var(--mt-border);
+  color: var(--mt-muted);
+  font-size: 12px;
+}
+
+#ps72TournamentScreen .mt-pro-filter-empty p {
+  margin: 0;
+}
+
+/* Tournament cards — career entries */
+#ps72TournamentScreen .mt-pro-card {
+  padding: 12px 13px 10px;
+  border-radius: 16px;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+
+#ps72TournamentScreen .mt-pro-card:active {
+  transform: scale(0.985);
+}
+
+#ps72TournamentScreen .mt-pro-card--offline {
+  border-left: 3px solid var(--mt-lime);
+}
+
+#ps72TournamentScreen .mt-pro-card--online {
+  border-left: 3px solid var(--mt-purple);
+}
+
+#ps72TournamentScreen .mt-pro-card--sport {
+  border-left: 3px solid var(--mt-gold);
+}
+
+#ps72TournamentScreen .mt-pro-card.loss {
+  border-color: rgba(255, 107, 91, 0.2);
+}
+
+#ps72TournamentScreen .mt-pro-card-date {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--mt-muted);
+  text-transform: uppercase;
+}
+
+#ps72TournamentScreen .mt-pro-card-main {
+  margin-bottom: 10px;
+}
+
+#ps72TournamentScreen .mt-pro-card-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+
+#ps72TournamentScreen .mt-pro-card-venue {
+  font-size: 10px;
+  color: var(--mt-muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+#ps72TournamentScreen .mt-pro-card-result-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 10px 0 8px;
+  border-top: 1px solid var(--mt-border-soft);
+  border-bottom: 1px solid var(--mt-border-soft);
+  margin-bottom: 8px;
+}
+
+#ps72TournamentScreen .mt-pro-card-place-label,
+#ps72TournamentScreen .mt-pro-card-fin-label {
+  display: block;
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--mt-muted-2);
+  margin-bottom: 3px;
+}
+
+#ps72TournamentScreen .mt-pro-card-result {
+  font-size: clamp(15px, 4vw, 17px);
+}
+
+#ps72TournamentScreen .mt-pro-card-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+#ps72TournamentScreen .mt-pro-list-title {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #ps72TournamentScreen .mt-pro-seg__indicator,
+  #ps72TournamentScreen .mt-pro-chart-wrap--reveal .mt-pro-chart-card,
+  #ps72TournamentScreen .mt-pro-card {
+    transition: none !important;
+    animation: none !important;
+  }
 }
