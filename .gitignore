@@ -14,7 +14,6 @@ data/trainer/built/batch2-hand-records.json
 data/trainer/built/batch2-shards/
 test-results/
 
-# Polyana sync artifacts (temporary backups and state)
+# Polyana sync artifacts (temporary backups and logs only, not state)
 data/.backup_*.json
-data/.polyana_sync*.json
 data/.polyana_sync.log
