@@ -484,8 +484,8 @@ button.pgPathNode {
 /* ── Daily game lobby + motion ── */
 .pgDailyLobby .pgArena,
 .pgDailyDrill .pgArena {
-  min-height: 200px;
-  max-height: 42vh;
+  min-height: 0;
+  max-height: none;
 }
 
 .pgDailyChallenge {
@@ -567,8 +567,6 @@ button.pgPathNode {
 }
 
 @media (max-width: 390px) {
-  .pgArena .pc { width: 42px !important; height: 58px !important; font-size: 16px !important; }
-  .pgHeroZone .pc { width: 46px !important; height: 62px !important; font-size: 17px !important; }
   .pgDecisionReadout b { font-size: 24px; }
 }
 
