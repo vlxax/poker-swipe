@@ -1,0 +1,298 @@
+/**
+ * PokerSwipe — Game Layout System
+ * Screen containers, safe areas, nav, section scaffolding
+ */
+
+body.psGameVisualV2 {
+  --ps-section-pad-x: 14px;
+  --ps-section-pad-top: 8px;
+  --ps-nav-glass: rgba(6, 8, 6, 0.92);
+  --ps-nav-border: rgba(200, 255, 61, 0.12);
+}
+
+/* ── Screen containers ── */
+body.psGameVisualV2 .screen {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: var(--ps-content-safe-bottom) !important;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+body.psGameVisualV2 .screen.active {
+  animation: psScreenFadeIn var(--motion-screen, 0.33s) ease both;
+}
+
+@keyframes psScreenFadeIn {
+  from { opacity: 0.92; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.psGameVisualV2 .screen.active {
+    animation: none !important;
+  }
+}
+
+/* ── Section roots ── */
+body.psGameVisualV2 #home,
+body.psGameVisualV2 #myhands,
+body.psGameVisualV2 #profile,
+body.psGameVisualV2 #polyana,
+body.psGameVisualV2 #tournaments,
+body.psGameVisualV2 #mytournaments {
+  background: transparent;
+}
+
+body.psGameVisualV2 #myArea,
+body.psGameVisualV2 #profileArea,
+body.psGameVisualV2 #psPolyanaArea,
+body.psGameVisualV2 #tournamentsArea {
+  padding-left: var(--ps-section-pad-x);
+  padding-right: var(--ps-section-pad-x);
+  padding-top: var(--ps-section-pad-top);
+  max-width: 480px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ── Premium bottom nav ── */
+body.psGameVisualV2 .nav {
+  position: fixed !important;
+  z-index: 90 !important;
+  left: 50% !important;
+  bottom: 0 !important;
+  transform: translateX(-50%) !important;
+  width: min(480px, 100%) !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 2px !important;
+  padding: 4px 6px calc(4px + var(--ps-safe-inset-bottom)) !important;
+  min-height: calc(var(--ps-bottom-nav-height) + var(--ps-safe-inset-bottom)) !important;
+  max-height: calc(58px + var(--ps-safe-inset-bottom)) !important;
+  height: auto !important;
+  background:
+    linear-gradient(180deg, rgba(200, 255, 61, 0.04) 0%, transparent 12%),
+    var(--ps-nav-glass) !important;
+  backdrop-filter: blur(20px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+  border-top: 1px solid var(--ps-nav-border) !important;
+  box-shadow:
+    0 -12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+body.psGameVisualV2 .nav button {
+  position: relative;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--ps-game-muted) !important;
+  font-size: 7px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  padding: 2px 1px 0 !important;
+  min-height: 44px !important;
+  border-radius: 12px !important;
+  gap: 1px !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
+}
+
+body.psGameVisualV2 .nav button i,
+body.psGameVisualV2 .nav button svg {
+  display: block !important;
+  font-size: 16px !important;
+  font-style: normal !important;
+  margin: 0 auto 1px !important;
+  opacity: 0.72;
+  transition: opacity 0.15s ease, filter 0.15s ease !important;
+}
+
+body.psGameVisualV2 .nav button.on,
+body.psGameVisualV2 .nav button.active {
+  color: #fff !important;
+  background: rgba(200, 255, 61, 0.08) !important;
+}
+
+body.psGameVisualV2 .nav button.on i,
+body.psGameVisualV2 .nav button.on svg,
+body.psGameVisualV2 .nav button.active i {
+  opacity: 1 !important;
+  color: var(--ps-game-lime) !important;
+  filter: drop-shadow(0 0 8px rgba(200, 255, 61, 0.45)) !important;
+}
+
+body.psGameVisualV2 .nav button.on::before,
+body.psGameVisualV2 .nav button.active::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--ps-game-lime);
+  box-shadow: 0 0 10px var(--ps-game-lime);
+}
+
+body.psGameVisualV2 .nav button.ps-nav-tap,
+body.psGameVisualV2 .nav button.ps-pressed {
+  opacity: 0.82 !important;
+}
+
+/* ── Top bar / headers ── */
+body.psGameVisualV2 .top,
+body.psGameVisualV2 .v30Topline,
+body.psGameVisualV2 .v31HomeTop,
+body.psGameVisualV2 #polyana .pspTop {
+  border-bottom: 0;
+  margin-bottom: 8px;
+}
+
+body.psGameVisualV2 .pgHud {
+  border-bottom: 1px solid var(--ps-game-rim) !important;
+  background: rgba(6, 8, 6, 0.6) !important;
+}
+
+body.psGameVisualV2 .pgBack {
+  color: var(--ps-game-lime) !important;
+  border-color: var(--ps-game-rim) !important;
+}
+
+/* ── My Hands tactical mode ── */
+body.psGameVisualV2 .myHero {
+  border-radius: var(--ps-game-radius) !important;
+  padding: 18px !important;
+  margin: 0 0 12px !important;
+}
+
+body.psGameVisualV2 .myEntry.primaryEntry {
+  border-color: var(--ps-game-rim-strong) !important;
+  box-shadow: var(--ps-glow-soft) !important;
+}
+
+body.psGameVisualV2 .myEntry b {
+  color: #fff !important;
+}
+
+body.psGameVisualV2 .aggroRule {
+  border: 1px solid var(--ps-game-rim) !important;
+  border-radius: var(--ps-game-radius-sm) !important;
+  background: rgba(8, 10, 8, 0.72) !important;
+  padding: 10px 12px !important;
+  font-size: 11px !important;
+  color: var(--ps-game-muted) !important;
+}
+
+body.psGameVisualV2 .aggroRule b {
+  color: var(--ps-game-lime) !important;
+}
+
+/* ── Profile player identity ── */
+body.psGameVisualV2 #profileArea .panel,
+body.psGameVisualV2 #profileArea .you20 {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.psGameVisualV2 .rank28Hero,
+body.psGameVisualV2 .you20Hero,
+body.psGameVisualV2 .rank28Card {
+  border-radius: var(--ps-game-radius) !important;
+}
+
+body.psGameVisualV2 .rank28Hero h2,
+body.psGameVisualV2 .you20Hero h2 {
+  color: #fff !important;
+}
+
+body.psGameVisualV2 .rank30Progress {
+  border: 1px solid var(--ps-game-rim) !important;
+  border-radius: var(--ps-game-radius-sm) !important;
+  background: rgba(8, 10, 8, 0.72) !important;
+  padding: 12px 14px !important;
+  margin: 12px 0 !important;
+}
+
+body.psGameVisualV2 .rank30Item strong.ok {
+  color: var(--ps-game-success) !important;
+}
+
+body.psGameVisualV2 .rank30Item strong.bad {
+  color: var(--ps-game-warn) !important;
+}
+
+/* ── Polyana hub ── */
+body.psGameVisualV2 #polyana {
+  padding-bottom: var(--ps-content-safe-bottom) !important;
+}
+
+body.psGameVisualV2 #polyana .pspHero h1 span,
+body.psGameVisualV2 #polyana .pspLogo i {
+  color: var(--ps-game-lime) !important;
+}
+
+body.psGameVisualV2 #polyana .pspFresh {
+  border-color: var(--ps-game-rim-strong) !important;
+  background: rgba(8, 10, 8, 0.85) !important;
+}
+
+body.psGameVisualV2 #polyana .pspFreshDot {
+  background: var(--ps-game-lime) !important;
+  box-shadow: 0 0 12px var(--ps-game-lime) !important;
+}
+
+/* ── My Tournaments token bridge ── */
+body.psGameVisualV2 #ps72TournamentScreen {
+  --mt-lime: var(--ps-game-lime);
+  --mt-lime-dim: rgba(200, 255, 61, 0.14);
+  --mt-bg: var(--ps-game-bg);
+  --mt-text: var(--ps-game-text);
+  --mt-muted: var(--ps-game-muted);
+  --mt-border: var(--ps-game-rim);
+  --mt-radius-lg: var(--ps-game-radius);
+  --mt-radius-md: var(--ps-game-radius-sm);
+  --mt-bottom-nav: var(--ps-bottom-nav-height);
+  --mt-scroll-pad: var(--ps-content-safe-bottom);
+}
+
+body.psGameVisualV2 #ps72TournamentScreen .mt-pro-card,
+body.psGameVisualV2 #ps72TournamentScreen .mt-pro-stat,
+body.psGameVisualV2 #ps72TournamentScreen .mt-pro-hero {
+  border-color: var(--ps-game-rim) !important;
+}
+
+body.psGameVisualV2 #ps72TournamentScreen .mt-pro-head h2 em {
+  color: var(--ps-game-lime) !important;
+  font-style: normal;
+}
+
+body.psGameVisualV2 #ps72TournamentScreen .mt-pro-add {
+  background: linear-gradient(180deg, #d4ff52 0%, #b8ed2f 48%, #9fd42e 100%) !important;
+  color: #071007 !important;
+  border: 0 !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 4px 0 #6a8f1c,
+    0 8px 20px rgba(200, 255, 61, 0.2) !important;
+}
+
+/* ── Scroll safety: never under nav ── */
+body.psGameVisualV2 .v30Home,
+body.psGameVisualV2 .v31Home,
+body.psGameVisualV2 .pgShell,
+body.psGameVisualV2 #myArea,
+body.psGameVisualV2 #profileArea {
+  padding-bottom: calc(var(--ps-content-safe-bottom) - 16px);
+}
+
+/* ── CTA safe zone ── */
+body.psGameVisualV2 .primary,
+body.psGameVisualV2 .pgCta,
+body.psGameVisualV2 .verdictCTA,
+body.psGameVisualV2 #dHome {
+  position: relative;
+  z-index: 20;
+}
