@@ -3394,6 +3394,18 @@ window.d25Finish = d25Finish = function(){
  D25.results.forEach(x=>recordEvent({mode:'diagnostic',diagVersion:31,baseline:true,concept:x.concept,conceptId:x.br?.concept||null,street:x.spot.street,action:x.action,grade:x.score>=78?'g':x.score>=48?'y':'r',confidence:x.confidence,responseMs:x.responseMs,policyScore:x.score,why:x.br?.explanation||'',brainSource:x.br?.source||'',brainConfidence:x.br?.confidence||0}));
  const real=(S.events||[]).filter(e=>e.mode!=='diagnostic').length;if(real<20)S.skill=p.overall;save();
 
+ // Update Supabase profile if authenticated
+ if(window.PokerSwipeAuth&&window.PokerSwipeAuth.getToken()){
+   window.PokerSwipeAuth.updateProfile({
+     onboarding_completed:true,
+     onboarding_completed_at:new Date().toISOString(),
+     initial_assessment:D25.results.length,
+     assessment_score:Math.round(p.overall),
+     assessment_version:31,
+     skill:Math.round(p.overall)
+   }).catch(e=>console.error('[d25Finish] Profile update failed:',e));
+ }
+
  const rank=v31Rank(p.overall), conf=v31DiagConfidence(p);
  const dims=Object.entries(p.dims).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);
  const strongest=dims.slice(0,2), weakest=[...dims].reverse().slice(0,2);
