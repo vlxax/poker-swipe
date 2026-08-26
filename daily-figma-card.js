@@ -66,17 +66,8 @@ function mountDailyDemon(){
   addDailyCta(card);
   const art=card.querySelector('.v36Cards');
   if(!art)return;
-  art.classList.remove('dailyChipVisual');
-  art.classList.add('dailyDemonVisual');
+  art.classList.remove('dailyDemonVisual');
   art.querySelectorAll('i,.dailyPokerChip,.dailyDemonAsset').forEach(el=>el.remove());
-  const demon=makeImg('dailyDemonAsset',ASSETS.dailyWebp);
-  demon.onerror=()=>{
-    if(!demon.dataset.fallback){
-      demon.dataset.fallback='1';
-      demon.src=ASSETS.dailyPng;
-    }
-  };
-  art.appendChild(demon);
 }
 
 function mountSizingChips(){
@@ -100,34 +91,11 @@ function mountSizingChips(){
 }
 
 function mountMyTournaments(){
-  // My Tournaments Pro (ps72) manages its own empty-state companion edge-peek.
-  const legacyRoots=[
-    document.querySelector('#tournamentsArea'),
-    document.querySelector('#tournaments')
-  ].filter(Boolean);
-
-  for(const root of legacyRoots){
-    let hero=root.querySelector('.ps72hero,.t23Hero,.v48Hero,.t23,.panel');
-    if(!hero)hero=root;
-    hero.classList.add('psTournamentHeroV3');
-    if(!hero.querySelector(':scope > .psTournamentDemonV3')){
-      hero.appendChild(makeImg('psTournamentDemonV3',ASSETS.tournaments));
-    }
-    break;
-  }
+  // Giant decorative demons removed — Mt Pro uses small empty-state companion only.
 }
 
 function mountMyHands(){
-  const root=document.querySelector('#myhands,#myArea,#my');
-  if(!root)return;
-
-  let hero=root.querySelector('.my18,.myHero,.panel,.myHandsHero');
-  if(!hero)hero=root;
-  hero.classList.add('psMyHandsHeroV3');
-
-  if(!hero.querySelector(':scope > .psMyHandsDemonV3')){
-    hero.appendChild(makeImg('psMyHandsDemonV3',ASSETS.hands));
-  }
+  // Giant decorative demons removed from My Hands hero.
 }
 
 function enhance(){
