@@ -3739,10 +3739,13 @@ function buildFiveNav(){
   let my=nav.querySelector('[data-nav="mytournaments"]');
   if(!my){
     const field=nav.querySelector('[data-nav="tournaments"],[data-nav="polyana"]');
+    const profileBtn=nav.querySelector('[data-nav="profile"]');
     my=document.createElement('button');
     my.type='button';my.dataset.nav='mytournaments';
     my.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
-    if(field)nav.insertBefore(my,field.nextElementSibling||field);else nav.appendChild(my);
+    if(profileBtn)nav.insertBefore(my,profileBtn.nextElementSibling);
+    else if(field)nav.appendChild(my);
+    else nav.appendChild(my);
   }
   const field=nav.querySelector('[data-nav="tournaments"],[data-nav="polyana"]');
   const home=nav.querySelector('[data-nav="home"]');
