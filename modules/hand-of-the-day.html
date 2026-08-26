@@ -18,10 +18,13 @@
   }
   async function main() {
     try {
-      var ra = await fetch('hand-of-the-day.b64.a?v=1');
-      var rb = await fetch('hand-of-the-day.b64.b?v=1');
-      if (!ra.ok || !rb.ok) throw new Error('b64 parts HTTP ' + ra.status + '/' + rb.status);
-      var B64 = ((await ra.text()) + (await rb.text())).replace(/\s+/g, '');
+      var parts = [];
+      for (var i = 0; i < 5; i++) {
+        var r = await fetch('hand-of-the-day.b64.' + i + '?v=1');
+        if (!r.ok) throw new Error('chunk ' + i + ' HTTP ' + r.status);
+        parts.push(await r.text());
+      }
+      var B64 = parts.join('').replace(/\s+/g, '');
       var bytes = b64ToU8(B64);
       var ds = new DecompressionStream('gzip');
       var stream = new Blob([bytes]).stream().pipeThrough(ds);
