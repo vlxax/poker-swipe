@@ -29,7 +29,7 @@
   function mountFreakLady(target, mood, context, opts) {
     if (!target || !window.FreakLady?.react) return null;
     return window.FreakLady.react(target, mood, context, {
-      layout: 'coach',
+      layout: 'scene',
       side: 'right',
       wide: true,
       ...opts
@@ -61,33 +61,73 @@
     return `<div class="psLossMap"><span class="psLossMap__label">КАРТА ПОТЕРЬ · EV ПО УЛИЦАМ</span>${rows}</div>`;
   }
 
-  function buildInsightGrid(losses, nodes, culpritIndex) {
-    if (!Array.isArray(nodes) || !nodes.length) return '';
-    const streets = nodes.map((n, i) => ({
-      street: (n[0] || ['PRE', 'FLOP', 'TURN', 'RIVER'][i] || '').toString().toUpperCase(),
-      idx: i
-    }));
+  function buildNarrativeFlow(s, a, size) {
+    const grade = gradeFromSelected();
+    const verdictLabel = grade === 'g' ? 'ЧИСТО' : grade === 'y' ? 'ЖИВЁТ' : 'ОШИБКА';
+    const ctx = (s?.ctx && s.ctx.length > 0) ? s.ctx.substring(0, 80) : 'Контекст спота';
+    const hand = s?.hero ? `${s.hero[0]} ${s.hero[1]}` : '—';
+    const street = s?.street || '—';
+    const concept = s?.concept || 'Концепция';
+    const action = `${a || '—'}${size != null ? ` · ${size}%` : ''}`;
 
-    return `<div class="psInsightGrid">${streets.map(({ street, idx }) => {
-      const isProblem = idx === culpritIndex;
-      const status = isProblem ? 'ПРОБЛЕМА' : (idx < culpritIndex ? 'СИГНАЛ' : 'СЛЕДСТВИЕ');
-      return `<div class="psInsightCard${isProblem ? ' is-problem' : ''}">
-        <span class="psInsightCard__street">${street}</span>
-        <strong class="psInsightCard__status">${status}</strong>
-      </div>`;
-    }).join('')}</div>`;
+    const steps = [
+      { n: '1', label: 'ЧТО БЫЛО', value: ctx },
+      { n: '2', label: 'ГДЕ СЛОМАЛОСЬ', value: `${street}${s?.board?.length ? ` · ${s.board.length}-street` : ''}` },
+      { n: '3', label: 'ПОЧЕМУ', value: `${hand} · ${concept}` },
+      { n: '4', label: 'ЧТО ДАЛЬШЕ', value: `${action} → ${verdictLabel}`, verdict: true }
+    ];
+
+    return `<div class="psVerdictNarrative">${steps.map((step) => `
+      <div class="psNarrativeStep${step.verdict ? ' is-verdict' : ''}">
+        <span class="psNarrativeStep__marker">${step.n}</span>
+        <div>
+          <span class="psNarrativeStep__label">${step.label}</span>
+          <strong class="psNarrativeStep__value">${step.value}</strong>
+        </div>
+      </div>`).join('')}</div>`;
   }
 
-  /* ── SWIPE: replace static sprite with FreakLady composition ── */
-  function mountSwipeCharacter(s, a) {
-    const zone = document.querySelector('.verdictCharacterZone, .v31CharacterZone');
-    const g = gradeFromSelected();
-    if (!zone || !window.FreakLady) return;
+  function restructureSwipeVerdict(s, a, size) {
+    const scene = document.querySelector('.verdictScene');
+    if (!scene || scene.dataset.psSceneV2) return;
 
-    zone.innerHTML = '';
-    zone.className = (zone.className.split(' ').filter((c) => !c.startsWith('char')).join(' ') + ' verdictCharacterZone psCharZoneResult').trim();
-    window.FreakLady.react(zone, g, 'swipe', {
-      layout: 'result',
+    const sceneContent = scene.querySelector('.sceneContent');
+    if (!sceneContent) return;
+
+    scene.classList.add('psVerdictScene');
+    scene.dataset.psSceneV2 = '1';
+
+    const narrative = document.createElement('div');
+    narrative.innerHTML = buildNarrativeFlow(s, a, size);
+    const narrativeEl = narrative.firstElementChild;
+
+    const brain = sceneContent.querySelector('.brainCardCompact');
+    sceneContent.innerHTML = '';
+    if (brain) sceneContent.appendChild(brain);
+    if (narrativeEl) sceneContent.appendChild(narrativeEl);
+
+    let coachLayer = scene.querySelector('.psVerdictCoachLayer');
+    if (!coachLayer) {
+      coachLayer = document.createElement('div');
+      coachLayer.className = 'psVerdictCoachLayer';
+      scene.appendChild(coachLayer);
+    }
+
+    const legacyZone = document.querySelector('.verdictCharacterZone');
+    if (legacyZone) legacyZone.style.display = 'none';
+
+    return coachLayer;
+  }
+
+  /* ── SWIPE: scene character overlapping verdict analysis ── */
+  function mountSwipeCharacter(s, a, size) {
+    const g = gradeFromSelected();
+    const coachLayer = restructureSwipeVerdict(s, a, size) || document.querySelector('.psVerdictCoachLayer, .verdictCharacterZone');
+    if (!coachLayer || !window.FreakLady) return;
+
+    coachLayer.innerHTML = '';
+    window.FreakLady.react(coachLayer, g, 'swipe', {
+      layout: 'scene',
       side: 'right',
       replace: true,
       concept: s?.concept,
@@ -102,7 +142,7 @@
       const wrapped = function (s, a, size) {
         const out = orig.apply(this, arguments);
         requestAnimationFrame(() => {
-          setTimeout(() => mountSwipeCharacter(s, a), 120);
+          setTimeout(() => mountSwipeCharacter(s, a, size), 120);
         });
         return out;
       };
@@ -113,13 +153,14 @@
     window.finalizeSwipe = wrap(window.finalizeSwipe);
 
     const obs = new MutationObserver(() => {
+      const scene = document.querySelector('.verdictScene:not([data-ps-scene-v2])');
       const zone = document.querySelector('.verdictCharacterZone, .v31CharacterZone');
-      if (zone && window.FreakLady && !zone.querySelector('.psCharCompose')) {
-        const staticImg = zone.querySelector('.charArtwork img, .v31Character img');
-        if (staticImg) {
+      if ((scene || zone) && window.FreakLady && !document.querySelector('.psVerdictCoachLayer .psCharCompose')) {
+        const staticImg = zone?.querySelector('.charArtwork img, .v31Character img');
+        if (staticImg || scene) {
           const s = window.swSession?.[window.swIndex];
           const btn = document.querySelector('[data-sa].selected');
-          mountSwipeCharacter(s, btn?.dataset?.sa);
+          mountSwipeCharacter(s, btn?.dataset?.sa, btn?.dataset?.size);
         }
       }
     });
@@ -139,6 +180,8 @@
         const panel = area?.querySelector('.panel, .pgShell');
         if (!panel || !window.FreakLady) return;
 
+        panel.querySelectorAll('.psReviewForensic, .psReviewCoachHost').forEach((el) => el.remove());
+
         const R = window.REVIEWS?.[window.rv % (window.REVIEWS?.length || 1)];
         const bm = window.PokerBrain?.reviewLine?.(R);
         if (!bm) return;
@@ -146,35 +189,43 @@
         const pointOk = (bm.clean && window.rvPick === 'none') || (!bm.clean && window.rvPick === bm.culpritIndex);
         const grade = pointOk ? 'g' : 'r';
 
+        const forensic = document.createElement('div');
+        forensic.className = 'psReviewForensic';
+
+        const sceneInner = document.createElement('div');
+        sceneInner.className = 'psReviewForensic__scene';
+
         if (!bm.clean && bm.losses?.length) {
-          const forensic = document.createElement('div');
-          forensic.className = 'psReviewForensic';
-          forensic.innerHTML = `
+          sceneInner.innerHTML = `
             <div class="psReviewForensic__title">ГДЕ<br><span>СЛОМАЛОСЬ?</span></div>
             <p class="psReviewForensic__sub">Найди улицу, где EV начал утекать.</p>
             ${buildLossMapHTML(bm.losses, R?.nodes)}
-            ${buildInsightGrid(bm.losses, R?.nodes, bm.culpritIndex)}
           `;
-
-          const brainPanel = panel.querySelector('.brainPanel');
-          if (brainPanel) brainPanel.insertAdjacentElement('beforebegin', forensic);
-          else panel.insertAdjacentElement('afterbegin', forensic);
+        } else {
+          sceneInner.innerHTML = `
+            <div class="psReviewForensic__title">ЧИСТАЯ<br><span>ЛИНИЯ.</span></div>
+            <p class="psReviewForensic__sub">EV не утекал — разбор для тренировки внимания.</p>
+          `;
         }
 
         const coachHost = document.createElement('div');
         coachHost.className = 'psReviewCoachHost';
-        const cta = panel.querySelector('.primary, .pgCta, #rvNext, #rvGo');
-        if (cta) cta.parentElement?.insertBefore(coachHost, cta);
-        else panel.appendChild(coachHost);
+        sceneInner.appendChild(coachHost);
+        forensic.appendChild(sceneInner);
+
+        const brainPanel = panel.querySelector('.brainPanel');
+        if (brainPanel) brainPanel.insertAdjacentElement('beforebegin', forensic);
+        else panel.insertAdjacentElement('afterbegin', forensic);
 
         const headline = pointOk
           ? 'НАШЛА.<br><span class="accent">УЗЕЛ.</span>'
           : 'СОФТ ВИДИТ<br><span class="accent">ДРУГОЙ УЗЕЛ.</span>';
 
         window.FreakLady.react(coachHost, grade, 'review', {
-          layout: 'analysis',
-          side: 'left',
+          layout: 'scene',
+          side: 'right',
           headline,
+          replace: true,
           concept: R?.concept
         });
       }, 80);
@@ -220,7 +271,7 @@
               const next = verdict.querySelector('.primary, .pgCta');
               if (next) verdict.insertBefore(host, next);
               else verdict.appendChild(host);
-              window.FreakLady.react(host, grade, 'sizing', { layout: 'coach', side: 'right' });
+              window.FreakLady.react(host, grade, 'sizing', { layout: 'scene', side: 'right' });
             }
           }, 120);
           return clickResult;
@@ -234,7 +285,7 @@
     window.renderSizing = wrapped;
   }
 
-  /* ── DAILY: cinematic intro thinking state ── */
+  /* ── DAILY: cinematic coach scene ── */
   function enhanceDailyFlow() {
     const origReveal = window.dailyReveal;
     if (origReveal && !origReveal.__psVisualV2) {
@@ -243,6 +294,9 @@
         setTimeout(() => {
           const panel = document.querySelector('#dailyArea .panel, #dailyArea .pgShell');
           if (!panel || !window.FreakLady) return;
+
+          panel.querySelector('.psDailyCoachHost')?.remove();
+
           const gradeBox = panel.querySelector('.gradeBox.r, .gradeBox.g, .gradeBox.y');
           let grade = 'y';
           if (gradeBox?.classList.contains('g')) grade = 'g';
@@ -255,8 +309,10 @@
           else panel.appendChild(host);
 
           window.FreakLady.react(host, grade, 'daily', {
-            layout: 'hero',
+            layout: 'scene',
+            side: 'right',
             wide: true,
+            replace: true,
             confidence: window.dConf
           });
         }, 100);
@@ -327,6 +383,7 @@
   window.PsGameVisual = {
     mountFreakLady,
     buildLossMapHTML,
-    buildInsightGrid
+    buildNarrativeFlow,
+    restructureSwipeVerdict
   };
 })();
