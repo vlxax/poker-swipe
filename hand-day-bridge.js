@@ -1,13 +1,14 @@
 /**
  * PokerSwipe — Hand of the Day bridge
- * Mounts modules/hand-of-the-day.html as fullscreen overlay on show('daily').
- * No engine rewrite. Scoped isolation via iframe. Hides app bottom nav while open.
+ * Fullscreen overlay on show('daily'). Hides app bottom nav. No engine rewrite.
+ * Module: PokerSwipe_DailyHand_STAGE3_1.html (production engine + DAILY_HUMAN_001-003).
+ * Redesign hand_day_redesign can replace MODULE_SRC when assets are in place.
  */
 (function () {
   'use strict';
 
-  const BUILD = 'hand-day-bridge-v1';
-  const MODULE_SRC = 'modules/hand-of-the-day.html';
+  const BUILD = 'hand-day-bridge-v2';
+  const MODULE_SRC = 'PokerSwipe_DailyHand_STAGE3_1.html';
   const OVERLAY_ID = 'psHandDayOverlay';
 
   function ensureOverlay() {
@@ -55,16 +56,7 @@
     const overlay = ensureOverlay();
     const frame = document.getElementById('psHandDayFrame');
     if (!frame) return;
-    if (frame.dataset.loaded !== '1' || frame.src.indexOf(MODULE_SRC) === -1) {
-      frame.src = MODULE_SRC + '?v=' + encodeURIComponent(BUILD);
-      frame.dataset.loaded = '1';
-    } else {
-      try {
-        frame.contentWindow.location.reload();
-      } catch (_) {
-        frame.src = MODULE_SRC + '?v=' + Date.now();
-      }
-    }
+    frame.src = MODULE_SRC + '?v=' + encodeURIComponent(BUILD) + '&t=' + Date.now();
     overlay.style.display = 'block';
     overlay.setAttribute('aria-hidden', 'false');
     setAppNavHidden(true);
@@ -75,6 +67,10 @@
     if (overlay) {
       overlay.style.display = 'none';
       overlay.setAttribute('aria-hidden', 'true');
+    }
+    const frame = document.getElementById('psHandDayFrame');
+    if (frame) {
+      try { frame.src = 'about:blank'; } catch (_) {}
     }
     setAppNavHidden(false);
     if (typeof window.show === 'function') {
@@ -128,9 +124,14 @@
     injectCss();
     patchShow();
     window.addEventListener('message', onMessage);
+    window.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && document.documentElement.classList.contains('psHandDayOpen')) {
+        closeHandDay();
+      }
+    });
     setTimeout(patchShow, 0);
     setTimeout(patchShow, 400);
-    window.PsHandDayBridge = { BUILD, open: openHandDay, close: closeHandDay };
+    window.PsHandDayBridge = { BUILD, open: openHandDay, close: closeHandDay, MODULE_SRC: MODULE_SRC };
   }
 
   if (document.readyState === 'loading') {
