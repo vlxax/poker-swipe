@@ -36,7 +36,17 @@
     });
   }
 
-  function buildLossMapHTML(losses, nodes) {
+  function escHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  const coachSceneOpts = { hideCoachLabel: true, hideHeadline: true };
+
+  function buildLossMapHTML(losses, nodes, why) {
     if (!Array.isArray(losses) || !losses.length) return '';
     const max = Math.max(...losses.map((x) => Number(x) || 0), 0.01);
     let problemIdx = 0;
@@ -58,23 +68,63 @@
       </div>`;
     }).join('');
 
-    return `<div class="psLossMap"><span class="psLossMap__label">КАРТА ПОТЕРЬ · EV ПО УЛИЦАМ</span>${rows}</div>`;
+    const whyHtml = why
+      ? `<p class="psLossMap__why">${escHtml(why)}</p>`
+      : '';
+
+    return `<div class="psLossMap">
+      <span class="psLossMap__label">КАРТА ПОТЕРЬ</span>
+      ${rows}
+      ${whyHtml}
+    </div>`;
+  }
+
+  function buildReviewInsights(R, culpritIndex) {
+    const reasons = R?.reasons || [];
+    if (!reasons.length) return '';
+    return `<div class="psReviewInsights">${reasons.slice(0, 2).map((reason, i) => `
+      <div class="psReviewInsight${i === 0 ? ' is-key' : ''}">
+        <span class="psReviewInsight__ey">${i === 0 ? 'ГЛАВНЫЙ УЗЕЛ' : 'СЛЕДСТВИЕ'}</span>
+        <p>${escHtml(reason)}</p>
+      </div>`).join('')}</div>`;
+  }
+
+  function buildDailyScene(panel, grade) {
+    const boxes = panel.querySelectorAll('.gradeBox');
+    const action = boxes[0]?.querySelector('b')?.textContent?.trim() || '—';
+    const sizeLogic = boxes[1]?.querySelector('b')?.textContent?.trim() || '—';
+    const status = grade === 'g' ? 'ЛИНИЯ ЖИВЁТ' : grade === 'r' ? 'ЕСТЬ РЫЧАГ ДЛЯ РОСТА' : 'НУЖНА ДОВОДКА';
+    const hint = grade === 'g'
+      ? 'Собрала картину — можно усиливать давление на похожих спотах.'
+      : grade === 'r'
+        ? 'Тут линия бьёт по EV. Сфокусируйся на одном рычаге за раз.'
+        : 'Живёт, но без чёткой причины это уже не стратегия.';
+
+    return `<div class="psDailyScene">
+      <div class="psDailyStatus is-${grade}">
+        <span class="psDailyStatus__ey">СТАТУС РАЗБОРА</span>
+        <strong>${status}</strong>
+        <p>${hint}</p>
+      </div>
+      <div class="psDailyInsights">
+        <div class="psDailyInsight"><span>ДЕЙСТВИЕ</span><b>${escHtml(action)}</b></div>
+        <div class="psDailyInsight"><span>SIZE / ЛОГИКА</span><b>${escHtml(sizeLogic)}</b></div>
+      </div>
+    </div>`;
   }
 
   function buildNarrativeFlow(s, a, size) {
     const grade = gradeFromSelected();
     const verdictLabel = grade === 'g' ? 'ЧИСТО' : grade === 'y' ? 'ЖИВЁТ' : 'ОШИБКА';
-    const ctx = (s?.ctx && s.ctx.length > 0) ? s.ctx.substring(0, 80) : 'Контекст спота';
+    const ctx = (s?.ctx && s.ctx.length > 0) ? s.ctx.substring(0, 72) : 'Контекст спота';
     const hand = s?.hero ? `${s.hero[0]} ${s.hero[1]}` : '—';
-    const street = s?.street || '—';
     const concept = s?.concept || 'Концепция';
     const action = `${a || '—'}${size != null ? ` · ${size}%` : ''}`;
 
     const steps = [
       { n: '1', label: 'ЧТО БЫЛО', value: ctx },
-      { n: '2', label: 'ГДЕ СЛОМАЛОСЬ', value: `${street}${s?.board?.length ? ` · ${s.board.length}-street` : ''}` },
-      { n: '3', label: 'ПОЧЕМУ', value: `${hand} · ${concept}` },
-      { n: '4', label: 'ЧТО ДАЛЬШЕ', value: `${action} → ${verdictLabel}`, verdict: true }
+      { n: '2', label: 'ПОЧЕМУ ЭТО ЖИВЁТ', value: `${hand} · ${concept}` },
+      { n: '3', label: 'ВЕРДИКТ', value: `${action} → ${verdictLabel}`, verdict: true }
     ];
 
     return `<div class="psVerdictNarrative">${steps.map((step) => `
@@ -82,7 +132,7 @@
         <span class="psNarrativeStep__marker">${step.n}</span>
         <div>
           <span class="psNarrativeStep__label">${step.label}</span>
-          <strong class="psNarrativeStep__value">${step.value}</strong>
+          <strong class="psNarrativeStep__value">${escHtml(step.value)}</strong>
         </div>
       </div>`).join('')}</div>`;
   }
@@ -135,7 +185,8 @@
       replace: true,
       concept: s?.concept,
       action: actionKey(a),
-      confidence: s?.confidence
+      confidence: s?.confidence,
+      ...coachSceneOpts
     });
   }
 
@@ -175,7 +226,8 @@
     const area = document.getElementById('reviewArea');
     const panel = area?.querySelector('.panel, .pgShell');
     if (!panel || !window.FreakLady) return false;
-    if (!panel.querySelector('.brainPanel, .evidence, .brainExplain')) return false;
+    if (panel.querySelector('.psReviewForensic')) return true;
+    if (!panel.querySelector('.brainPanel, .evidence, .brainExplain, h1.impact, .impact')) return false;
 
     const R = window.REVIEWS?.[window.rv % (window.REVIEWS?.length || 1)];
     const bm = window.PokerBrain?.reviewLine?.(R);
@@ -186,6 +238,10 @@
 
     panel.querySelectorAll('.psReviewForensic, .psReviewCoachHost').forEach((el) => el.remove());
     panel.querySelector('.freakCoachReaction')?.remove();
+    panel.querySelectorAll('h1.impact, .pgHud, .brainPanel, .evidence').forEach((el) => {
+      el.classList.add('psReviewLegacy--hidden');
+    });
+    panel.querySelectorAll(':scope > .ey').forEach((el) => el.classList.add('psReviewLegacy--hidden'));
 
     const forensic = document.createElement('div');
     forensic.className = 'psReviewForensic';
@@ -199,13 +255,14 @@
         : (R?.nodes || []).map((_, i) => (i === bm.culpritIndex ? 1 : 0.15));
       sceneInner.innerHTML = `
         <div class="psReviewForensic__title">ГДЕ<br><span>СЛОМАЛОСЬ?</span></div>
-        <p class="psReviewForensic__sub">Найди улицу, где EV начал утекать.</p>
-        ${buildLossMapHTML(losses, R?.nodes)}
+        <p class="psReviewForensic__sub">Смотри, где EV начал утекать по улицам.</p>
+        ${buildLossMapHTML(losses, R?.nodes, bm.why)}
+        ${buildReviewInsights(R, bm.culpritIndex)}
       `;
     } else {
       sceneInner.innerHTML = `
         <div class="psReviewForensic__title">ЧИСТАЯ<br><span>ЛИНИЯ.</span></div>
-        <p class="psReviewForensic__sub">EV не утекал — разбор для тренировки внимания.</p>
+        <p class="psReviewForensic__sub">${escHtml(bm.why || 'EV не утекал — разбор для тренировки внимания.')}</p>
       `;
     }
 
@@ -214,23 +271,15 @@
     sceneInner.appendChild(coachHost);
     forensic.appendChild(sceneInner);
 
-    const anchor = panel.querySelector('h1.impact, .impact, .pgHud');
-    if (anchor) anchor.insertAdjacentElement('afterend', forensic);
-    else panel.insertAdjacentElement('afterbegin', forensic);
-
-    panel.querySelector('.evidence')?.classList.add('psReviewEvidence--compact');
-    panel.querySelector('.brainPanel')?.classList.add('psReviewBrain--hidden');
-
-    const headline = pointOk
-      ? 'НАШЛА.<br><span class="accent">УЗЕЛ.</span>'
-      : 'СОФТ ВИДИТ<br><span class="accent">ДРУГОЙ УЗЕЛ.</span>';
+    const mount = panel.querySelector('h1.impact, .impact, .pgHud') || panel;
+    mount.insertAdjacentElement('afterend', forensic);
 
     window.FreakLady.react(coachHost, grade, 'review', {
       layout: 'scene',
       side: 'right',
-      headline,
       replace: true,
-      concept: R?.concept
+      concept: R?.concept,
+      ...coachSceneOpts
     });
 
     return true;
@@ -238,11 +287,25 @@
 
   function scheduleReviewForensic(retry = 0) {
     if (paintReviewForensic()) return;
-    if (retry < 24) setTimeout(() => scheduleReviewForensic(retry + 1), 120);
+    if (retry < 36) setTimeout(() => scheduleReviewForensic(retry + 1), 120);
+  }
+
+  function watchReviewForensic() {
+    const area = document.getElementById('reviewArea');
+    if (!area || area.dataset.psReviewWatch) return;
+    area.dataset.psReviewWatch = '1';
+    const obs = new MutationObserver(() => {
+      if (!document.getElementById('review')?.classList.contains('active')) return;
+      if (area.querySelector('.brainPanel, .evidence, .brainExplain') && !area.querySelector('.psReviewForensic')) {
+        paintReviewForensic();
+      }
+    });
+    obs.observe(area, { childList: true, subtree: true });
   }
 
   /* ── REVIEW: forensic investigation layout ── */
   function enhanceReviewReveal() {
+    watchReviewForensic();
     const orig = window.reviewReveal;
     if (!orig || orig.__psVisualV2) return;
 
@@ -312,19 +375,26 @@
     if (!panel.querySelector('h1.impact, .impact')) return false;
 
     panel.querySelector('.psDailyCoachHost')?.remove();
+    panel.querySelector('.psDailyScene')?.remove();
     panel.querySelector('.freakCoachReaction')?.remove();
     panel.querySelectorAll('.dualGrade, .brainPanel').forEach((el) => el.classList.add('psDailyDash--hidden'));
+    panel.querySelectorAll(':scope > .ey').forEach((el) => el.classList.add('psDailyDash--hidden'));
 
     const gradeBox = panel.querySelector('.gradeBox.r, .gradeBox.g, .gradeBox.y');
     let grade = 'y';
     if (gradeBox?.classList.contains('g')) grade = 'g';
     if (gradeBox?.classList.contains('r')) grade = 'r';
 
+    const headline = panel.querySelector('h1.impact, .impact');
+    const scene = document.createElement('div');
+    scene.innerHTML = buildDailyScene(panel, grade);
+    const sceneEl = scene.firstElementChild;
+    if (headline) headline.insertAdjacentElement('afterend', sceneEl);
+    else panel.insertAdjacentElement('afterbegin', sceneEl);
+
     const host = document.createElement('div');
     host.className = 'psDailyCoachHost';
-    const headline = panel.querySelector('h1.impact, .impact');
-    if (headline) headline.insertAdjacentElement('afterend', host);
-    else panel.appendChild(host);
+    sceneEl.insertAdjacentElement('afterend', host);
 
     const demon = panel.querySelector('.psCharReaction:not(.psDemonPeek)');
 
@@ -333,7 +403,8 @@
       side: 'right',
       wide: true,
       replace: true,
-      confidence: window.dConf
+      confidence: window.dConf,
+      ...coachSceneOpts
     });
 
     if (demon) {

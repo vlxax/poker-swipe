@@ -56,6 +56,15 @@ try {
   }
   await page.waitForTimeout(3500);
 
+  const labelAudit = await page.evaluate(() => {
+    const text = document.body.innerText.toUpperCase();
+    const bad = ['GENERIC', 'SKEPTICAL', 'THINKING', 'CORRECT.PNG', 'WRONG.PNG', 'STREAK', '· GENERIC'];
+    return {
+      hasGeneric: text.includes('GENERIC'),
+      hits: bad.filter((w) => text.includes(w))
+    };
+  });
+
   const swipeMetrics = await page.evaluate(() => {
     const art = document.querySelector('.psVerdictCoachLayer .freakCoachAvatar, .psCharCompose--scene .freakCoachAvatar');
     const rect = art?.getBoundingClientRect();
@@ -68,7 +77,7 @@ try {
       hasBubble: !!document.querySelector('.psCharCompose__bubble')
     };
   });
-  await page.screenshot({ path: path.join(OUT, 'screen_result_reaction_390x844.png') });
+  await page.screenshot({ path: path.join(OUT, 'screen_3_mix_ne_norma_390x844.png') });
 
   // 2. Review / loss map
   await page.evaluate(() => {
@@ -88,7 +97,7 @@ try {
       charWidthPct: rect ? Math.round((rect.width / 390) * 100) : 0
     };
   });
-  await page.screenshot({ path: path.join(OUT, 'screen_review_lossmap_390x844.png') });
+  await page.screenshot({ path: path.join(OUT, 'screen_2_gde_slomalos_390x844.png') });
 
   // 3. Daily coach moment
   await page.evaluate(() => {
@@ -109,7 +118,7 @@ try {
       charHeightPct: rect ? Math.round((rect.height / 844) * 100) : 0
     };
   });
-  await page.screenshot({ path: path.join(OUT, 'screen_daily_coach_390x844.png') });
+  await page.screenshot({ path: path.join(OUT, 'screen_1_est_chto_dokrutit_390x844.png') });
 
   const navMetrics = await page.evaluate(() => {
     const nav = document.querySelector('.nav');
@@ -117,7 +126,7 @@ try {
     return { navHeight: r ? Math.round(r.height) : 0 };
   });
 
-  const summary = { swipeMetrics, reviewMetrics, dailyMetrics, navMetrics };
+  const summary = { labelAudit, swipeMetrics, reviewMetrics, dailyMetrics, navMetrics };
   fs.writeFileSync(path.join(OUT, 'composition_metrics.json'), JSON.stringify(summary, null, 2));
   console.log(JSON.stringify(summary, null, 2));
 } finally {
