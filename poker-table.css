@@ -8,13 +8,20 @@
   --ps-poker-table-ratio: 1672 / 941;
   --ps-scene-table-width: min(100%, calc(100vw - 2px));
   --ps-scene-table-max: 430px;
-  /* Positions tuned to canonical oval felt */
-  --ps-board-y: 35%;
-  --ps-hero-y: 70%;
+  /* Safe oval play area inside canonical PNG */
+  --ps-play-inset-top: 18%;
+  --ps-play-inset-x: 15%;
+  --ps-play-inset-bottom: 24%;
+  /* HUD positions on felt */
   --ps-pot-y: 19%;
   --ps-street-y: 10%;
   --ps-villain-y: 5%;
   --ps-hero-seat-y: 91%;
+  /* Card sizes (scaled down via data-count on board zone) */
+  --ps-board-card-w: 38px;
+  --ps-board-card-h: 52px;
+  --ps-hero-card-w: 44px;
+  --ps-hero-card-h: 60px;
 }
 
 /* ═══════════════════════════════════════════
@@ -77,7 +84,7 @@
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .psPokerTable::before,
@@ -172,22 +179,48 @@
   text-shadow: 0 0 10px rgba(200, 255, 61, 0.3);
 }
 
+/* Card play area — keeps board + hero centered inside the oval felt */
+.pgPlayArea {
+  position: absolute;
+  top: var(--ps-play-inset-top);
+  right: var(--ps-play-inset-x);
+  bottom: var(--ps-play-inset-bottom);
+  left: var(--ps-play-inset-x);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .pgBoardZone {
-  top: var(--ps-board-y);
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   display: flex;
   gap: 4px;
   align-items: flex-end;
+  justify-content: center;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .pgHeroZone {
-  top: var(--ps-hero-y);
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   display: flex;
   gap: 5px;
   align-items: flex-end;
+  justify-content: center;
+  flex-wrap: nowrap;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .pgSeat {
@@ -233,20 +266,39 @@
 }
 
 .pgBoardZone .pc {
-  width: 38px !important;
-  height: 52px !important;
+  width: var(--ps-board-card-w) !important;
+  height: var(--ps-board-card-h) !important;
   font-size: 15px !important;
+  flex: 0 0 auto;
 }
 
 .pgHeroZone .pc {
-  width: 44px !important;
-  height: 60px !important;
+  width: var(--ps-hero-card-w) !important;
+  height: var(--ps-hero-card-h) !important;
   font-size: 17px !important;
-  transform: translateY(2px) rotate(-1deg);
+  transform: translateY(1px);
+  flex: 0 0 auto;
 }
 
-.pgHeroZone .pc + .pc {
-  transform: translateY(2px) rotate(1deg);
+/* Scale board cards down when many cards — stay inside felt */
+.pgBoardZone[data-count="4"] {
+  gap: 3px;
+}
+
+.pgBoardZone[data-count="4"] .pc {
+  width: 34px !important;
+  height: 47px !important;
+  font-size: 14px !important;
+}
+
+.pgBoardZone[data-count="5"] {
+  gap: 2px;
+}
+
+.pgBoardZone[data-count="5"] .pc {
+  width: 30px !important;
+  height: 42px !important;
+  font-size: 12px !important;
 }
 
 /* ═══════════════════════════════════════════
@@ -337,7 +389,7 @@
 
 .pgShell.pgSizing .pgControls {
   gap: 6px !important;
-  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 /* ═══════════════════════════════════════════
@@ -503,6 +555,20 @@
   width: 100%;
 }
 
+/* X-ray stage: compact table above range matrix */
+.pgXrayTable .psTableScene {
+  padding: 0;
+}
+
+.pgXrayTable .pgArena {
+  max-width: min(100%, 360px);
+  margin: 0 auto;
+}
+
+.pgXrayArena .pgXrayTable + .pgXrayCombo {
+  margin-top: 4px;
+}
+
 /* ═══════════════════════════════════════════
    LEGACY FALLBACKS
    ═══════════════════════════════════════════ */
@@ -518,7 +584,7 @@
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .table::before {
@@ -535,6 +601,36 @@
 
 .table::after { display: none !important; }
 .table > * { position: relative; z-index: 1; }
+
+/* Legacy fallback: position floating card rows inside the felt oval */
+.table .dailyBoard,
+.table .cards:not(.holeCards) {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 !important;
+  max-width: calc(100% - 30%);
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.table + .cards.holeCards,
+.table + .holeCards {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0 !important;
+}
+
+.table .pot {
+  position: absolute;
+  top: var(--ps-pot-y);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
 
 .hr22Felt,
 .pokerDesk {
@@ -572,40 +668,33 @@
 @media (max-width: 390px) {
   :root {
     --ps-scene-table-max: 100%;
+    --ps-board-card-w: 34px;
+    --ps-board-card-h: 47px;
+    --ps-hero-card-w: 40px;
+    --ps-hero-card-h: 55px;
+    --ps-play-inset-x: 14%;
   }
 
-  .pgBoardZone .pc {
-    width: 36px !important;
-    height: 50px !important;
-    font-size: 14px !important;
-  }
-
-  .pgHeroZone .pc {
-    width: 42px !important;
-    height: 58px !important;
-    font-size: 16px !important;
+  .pgBoardZone[data-count="5"] .pc {
+    width: 28px !important;
+    height: 39px !important;
+    font-size: 11px !important;
   }
 }
 
 @media (max-width: 375px) {
   :root {
-    --ps-board-y: 34%;
-    --ps-hero-y: 69%;
+    --ps-play-inset-top: 17%;
+    --ps-play-inset-bottom: 23%;
   }
 }
 
 @media (min-width: 430px) {
   :root {
     --ps-scene-table-max: 440px;
-  }
-
-  .pgBoardZone .pc {
-    width: 40px !important;
-    height: 54px !important;
-  }
-
-  .pgHeroZone .pc {
-    width: 46px !important;
-    height: 62px !important;
+    --ps-board-card-w: 40px;
+    --ps-board-card-h: 54px;
+    --ps-hero-card-w: 46px;
+    --ps-hero-card-h: 62px;
   }
 }
