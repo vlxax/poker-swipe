@@ -106,13 +106,11 @@
     sceneContent.innerHTML = '';
     if (narrativeEl) sceneContent.appendChild(narrativeEl);
 
-    let coachLayer = report.querySelector('.psVerdictCoachLayer');
+    let coachLayer = scene.querySelector('.psVerdictCoachLayer');
     if (!coachLayer) {
       coachLayer = document.createElement('div');
       coachLayer.className = 'psVerdictCoachLayer';
-      const cta = report.querySelector('.verdictCTA');
-      if (cta) report.insertBefore(coachLayer, cta);
-      else report.appendChild(coachLayer);
+      scene.appendChild(coachLayer);
     }
 
     const legacyZone = document.querySelector('.verdictCharacterZone');
@@ -308,41 +306,55 @@
   }
 
   /* ── DAILY: cinematic coach scene ── */
+  function paintDailyCoach() {
+    const panel = document.querySelector('#dailyArea .panel, #dailyArea .pgShell');
+    if (!panel || !window.FreakLady) return false;
+    if (!panel.querySelector('h1.impact, .impact')) return false;
+
+    panel.querySelector('.psDailyCoachHost')?.remove();
+    panel.querySelector('.freakCoachReaction')?.remove();
+    panel.querySelectorAll('.dualGrade, .brainPanel').forEach((el) => el.classList.add('psDailyDash--hidden'));
+
+    const gradeBox = panel.querySelector('.gradeBox.r, .gradeBox.g, .gradeBox.y');
+    let grade = 'y';
+    if (gradeBox?.classList.contains('g')) grade = 'g';
+    if (gradeBox?.classList.contains('r')) grade = 'r';
+
+    const host = document.createElement('div');
+    host.className = 'psDailyCoachHost';
+    const headline = panel.querySelector('h1.impact, .impact');
+    if (headline) headline.insertAdjacentElement('afterend', host);
+    else panel.appendChild(host);
+
+    const demon = panel.querySelector('.psCharReaction:not(.psDemonPeek)');
+
+    window.FreakLady.react(host, grade, 'daily', {
+      layout: 'scene',
+      side: 'right',
+      wide: true,
+      replace: true,
+      confidence: window.dConf
+    });
+
+    if (demon) {
+      demon.classList.add('psDemonPeek');
+      host.appendChild(demon);
+    }
+
+    return true;
+  }
+
+  function scheduleDailyCoach(retry = 0) {
+    if (paintDailyCoach()) return;
+    if (retry < 20) setTimeout(() => scheduleDailyCoach(retry + 1), 120);
+  }
+
   function enhanceDailyFlow() {
     const origReveal = window.dailyReveal;
     if (origReveal && !origReveal.__psVisualV2) {
       window.dailyReveal = function () {
         const out = origReveal.apply(this, arguments);
-        setTimeout(() => {
-          const panel = document.querySelector('#dailyArea .panel, #dailyArea .pgShell');
-          if (!panel || !window.FreakLady) return;
-
-          panel.querySelector('.psDailyCoachHost')?.remove();
-          panel.querySelector('.freakCoachReaction')?.remove();
-
-          const gradeBox = panel.querySelector('.gradeBox.r, .gradeBox.g, .gradeBox.y');
-          let grade = 'y';
-          if (gradeBox?.classList.contains('g')) grade = 'g';
-          if (gradeBox?.classList.contains('r')) grade = 'r';
-
-          const host = document.createElement('div');
-          host.className = 'psDailyCoachHost';
-          const headline = panel.querySelector('h1.impact, .impact');
-          if (headline) headline.insertAdjacentElement('afterend', host);
-          else {
-            const cta = panel.querySelector('.primary, .pgCta, #dHome');
-            if (cta) cta.parentElement?.insertBefore(host, cta);
-            else panel.appendChild(host);
-          }
-
-          window.FreakLady.react(host, grade, 'daily', {
-            layout: 'scene',
-            side: 'right',
-            wide: true,
-            replace: true,
-            confidence: window.dConf
-          });
-        }, 100);
+        scheduleDailyCoach();
         return out;
       };
       window.dailyReveal.__psVisualV2 = true;
