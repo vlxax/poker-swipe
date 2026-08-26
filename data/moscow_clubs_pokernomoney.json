@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-26T08:18:57+03:00",
+  "retrieved_at": "2026-08-26T11:04:17+03:00",
   "city": "Москва",
   "count": 66,
   "clubs": [
@@ -188,6 +188,22 @@
       "schedule": [
         {
           "date": "2026-08-26",
+          "time": "18:30",
+          "club": "CARTEL POKER CLUB",
+          "tournament": "Обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/12500",
+          "address": "Волоколамское шоссе, 124",
+          "late_reg_until": "22:30",
+          "late_reg_minutes": 240,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Обучение 18:30 Бесплатно вход до 22:30 CARTEL POKER CLUB Волоколамское шоссе, 124"
+        },
+        {
+          "date": "2026-08-26",
           "time": "19:00",
           "club": "CARTEL POKER CLUB",
           "tournament": "DOUBLE RATING TOURNAMENT",
@@ -203,7 +219,7 @@
           "source_card_text": "DOUBLE RATING TOURNAMENT 19:00 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "Check-Check Club",
@@ -855,12 +871,12 @@
           "type": "Mystery Bounty",
           "source_url": "https://pokernomoney.ru/tournaments/11962",
           "address": "Даев пер., д. 2",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "23:00",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Mystery Bounty MYSTERY WOMAN DAY 20:00 1 500 ₽ Poker Room GTO Даев пер., д. 2"
+          "source_card_text": "Mystery Bounty MYSTERY WOMAN DAY 20:00 1 500 ₽ вход до 23:00 Poker Room GTO Даев пер., д. 2"
         }
       ],
       "upcoming": 1
@@ -1143,12 +1159,12 @@
           "type": "Mystery Bounty",
           "source_url": "https://pokernomoney.ru/tournaments/11852",
           "address": "Новолесная улица, д. 8/12",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:30",
+          "late_reg_minutes": 210,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Mystery Bounty MYSTERY BOUNTY TOURNAMENT POKER 19:00 Бесплатно SRP EQUITY Новолесная улица, д. 8/12"
+          "source_card_text": "Mystery Bounty MYSTERY BOUNTY TOURNAMENT POKER 19:00 Бесплатно вход до 22:30 SRP EQUITY Новолесная улица, д. 8/12"
         }
       ],
       "upcoming": 1
@@ -1443,7 +1459,7 @@
           "club": "НУАР",
           "tournament": "WINNER TAKES THE BUTTON",
           "fee_rub": 0,
-          "type": "",
+          "type": "Фрирол",
           "source_url": "https://pokernomoney.ru/tournaments/12077",
           "address": "ул. Краснопрудная 24с1",
           "late_reg_until": null,
@@ -1451,7 +1467,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "WINNER TAKES THE BUTTON 19:00 Бесплатно НУАР ул. Краснопрудная 24с1"
+          "source_card_text": "Фрирол WINNER TAKES THE BUTTON 19:00 Бесплатно НУАР ул. Краснопрудная 24с1"
         }
       ],
       "upcoming": 1
