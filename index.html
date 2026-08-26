@@ -3396,14 +3396,20 @@ window.d25Finish = d25Finish = function(){
 
  // Update Supabase profile if authenticated
  if(window.PokerSwipeAuth&&window.PokerSwipeAuth.getToken()){
-   window.PokerSwipeAuth.updateProfile({
+   const skillLevel=p.overall>=75?'pro':p.overall>=55?'intermediate':p.overall>=35?'beginner':'beginner';
+   const updateOk=await window.PokerSwipeAuth.updateProfile({
      onboarding_completed:true,
      onboarding_completed_at:new Date().toISOString(),
-     initial_assessment:D25.results.length,
-     assessment_score:Math.round(p.overall),
-     assessment_version:31,
-     skill:Math.round(p.overall)
-   }).catch(e=>console.error('[d25Finish] Profile update failed:',e));
+     initial_assessment:{
+       version:31,
+       overall:Math.round(p.overall),
+       dimensions:Object.fromEntries(Object.entries(p.dims).filter(x=>x[1]!=null)),
+       results_count:D25.results.length,
+       timestamp:new Date().toISOString()
+     },
+     skill:skillLevel
+   });
+   if(!updateOk)console.error('[d25Finish] Profile update failed');
  }
 
  const rank=v31Rank(p.overall), conf=v31DiagConfidence(p);

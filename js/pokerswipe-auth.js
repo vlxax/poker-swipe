@@ -21,8 +21,16 @@ window.PokerSwipeAuth = (() => {
     }
   };
 
-  const setSession = (token, user, expiresAt) => {
-    const session = { token, user, expiresAt, savedAt: Date.now() };
+  const setSession = (token, user, expiresAt, refreshToken) => {
+    const session = {
+      access_token: token,
+      refresh_token: refreshToken,
+      user,
+      expires_at: Math.floor(new Date(expiresAt).getTime() / 1000),
+      expires_in: 3600,
+      token_type: 'Bearer',
+      savedAt: Date.now()
+    };
     localStorage.setItem('pokerswipe_auth_session', JSON.stringify(session));
     sessionToken = token;
     sessionUser = user;
@@ -34,6 +42,33 @@ window.PokerSwipeAuth = (() => {
     sessionToken = null;
     sessionUser = null;
     log('Session cleared');
+  };
+
+  // Refresh access token using refresh_token
+  const refreshAccessToken = async (refreshToken) => {
+    if (!refreshToken) return null;
+    log('Attempting token refresh');
+    try {
+      const result = await supabaseCall('/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        authenticated: false,
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+
+      if (result?.access_token) {
+        const newSession = { ...getSession() };
+        newSession.access_token = result.access_token;
+        if (result.expires_in) newSession.expires_in = result.expires_in;
+        if (result.expires_at) newSession.expires_at = result.expires_at;
+        localStorage.setItem('pokerswipe_auth_session', JSON.stringify(newSession));
+        sessionToken = result.access_token;
+        log('Token refreshed successfully');
+        return result.access_token;
+      }
+    } catch (e) {
+      log('Token refresh failed:', e);
+    }
+    return null;
   };
 
   // Supabase API calls
@@ -64,27 +99,30 @@ window.PokerSwipeAuth = (() => {
     return response.json();
   };
 
-  // Email authentication
+  // Send OTP to email (requires Supabase email template with {{ .Token }})
   const sendMagicLink = async (email) => {
-    log('Sending magic link to', email);
+    log('Sending OTP to', email);
     try {
       const result = await supabaseCall('/auth/v1/otp', {
         method: 'POST',
         authenticated: false,
         body: JSON.stringify({
           email: email.toLowerCase().trim(),
-          data: {}
+          data: {},
+          create_user: true
         })
       });
-      log('Magic link sent', result);
+      log('OTP sent', result);
       return { ok: true, method: 'otp' };
     } catch (e) {
-      console.error('[PokerSwipeAuth] Magic link error:', e);
+      console.error('[PokerSwipeAuth] OTP send error:', e);
       throw e;
     }
   };
 
-  // Verify OTP token from email
+  // Verify 6-digit OTP code from email
+  // Note: Requires Supabase email template with {{ .Token }} variable
+  // If project uses magic-link ({{ .ConfirmationURL }}), this flow will not work
   const verifyOTP = async (email, otp) => {
     log('Verifying OTP for', email);
     try {
@@ -92,14 +130,19 @@ window.PokerSwipeAuth = (() => {
         method: 'POST',
         authenticated: false,
         body: JSON.stringify({
-          type: 'magiclink',
+          type: 'otp',
           email: email.toLowerCase().trim(),
           token: otp
         })
       });
 
       if (result?.session?.access_token && result?.user) {
-        setSession(result.session.access_token, result.user, result.session.expires_at);
+        setSession(
+          result.session.access_token,
+          result.user,
+          result.session.expires_at,
+          result.session.refresh_token
+        );
         return { ok: true, user: result.user, session: result.session };
       }
       throw new Error('No session in response');
@@ -109,55 +152,78 @@ window.PokerSwipeAuth = (() => {
     }
   };
 
-  // Get current session from localStorage
+  // Get current session from localStorage with auto-refresh
   const getCurrentSession = async () => {
     const stored = getSession();
     if (!stored) return null;
 
-    // Check if expired
-    const expiresAt = new Date(stored.expiresAt).getTime();
-    if (Date.now() > expiresAt) {
+    // Check if token needs refresh (check 5 min before expiry)
+    const expiresAt = (stored.expires_at || stored.expiresAt) * 1000;
+    const nowMs = Date.now();
+    const refreshWindow = 5 * 60 * 1000; // 5 minutes before expiry
+
+    if (nowMs > expiresAt) {
+      // Token expired, try refresh
+      if (stored.refresh_token) {
+        const newToken = await refreshAccessToken(stored.refresh_token);
+        if (!newToken) {
+          clearSession();
+          return null;
+        }
+        sessionToken = newToken;
+        sessionUser = stored.user;
+        return getSession();
+      }
+      // No refresh token, session is expired
       clearSession();
       return null;
     }
 
-    sessionToken = stored.token;
+    // Token valid, but check if refresh is needed proactively
+    if (nowMs > expiresAt - refreshWindow && stored.refresh_token) {
+      await refreshAccessToken(stored.refresh_token);
+    }
+
+    sessionToken = stored.access_token || stored.token;
     sessionUser = stored.user;
     return stored;
   };
 
-  // Load profile from public.profiles
+  // Load profile from public.profiles (created by DB trigger on auth.users insert)
   const loadProfile = async (uid) => {
     if (!sessionToken || !uid) return null;
 
     log('Loading profile for uid', uid);
-    try {
-      const result = await supabaseCall(
-        `${cfg.profilesUrl}?id=eq.${uid}&select=*`,
-        { method: 'GET' }
-      );
+    let retries = 5;
+    while (retries > 0) {
+      try {
+        const result = await supabaseCall(
+          `${cfg.profilesUrl}?id=eq.${uid}&select=*`,
+          { method: 'GET' }
+        );
 
-      if (Array.isArray(result) && result.length > 0) {
-        return result[0];
+        if (Array.isArray(result) && result.length > 0) {
+          log('Profile loaded', result[0]);
+          return result[0];
+        }
+
+        // Profile not found - DB trigger might be processing, retry with backoff
+        retries--;
+        if (retries > 0) {
+          log('Profile not found, retrying...', retries);
+          await new Promise(r => setTimeout(r, Math.pow(2, 5 - retries) * 500)); // 500ms, 1s, 2s, 4s, 8s
+        }
+      } catch (e) {
+        console.error('[PokerSwipeAuth] Profile load error:', e);
+        retries--;
+        if (retries > 0) {
+          await new Promise(r => setTimeout(r, Math.pow(2, 5 - retries) * 500));
+        }
       }
-
-      log('Profile not found, creating...');
-      // Profile should be auto-created by trigger, but handle race condition
-      const created = await supabaseCall(`${cfg.profilesUrl}`, {
-        method: 'POST',
-        body: JSON.stringify({
-          id: uid,
-          email: sessionUser.email,
-          onboarding_completed: false,
-          onboarding_completed_at: null,
-          created_at: new Date().toISOString()
-        })
-      });
-      return created?.[0] || { id: uid, email: sessionUser.email, onboarding_completed: false };
-    } catch (e) {
-      console.error('[PokerSwipeAuth] Profile load error:', e);
-      return null;
     }
+
+    console.error('[PokerSwipeAuth] Profile not found after retries for uid:', uid);
+    return null;
   };
 
   // Update profile after assessment
@@ -237,13 +303,26 @@ window.PokerSwipeAuth = (() => {
     log('Migrating legacy assessment');
     try {
       const legacy = window.S;
-      await updateProfile({
+      const skillLevel = (legacy.skill || 50) >= 75 ? 'pro' : (legacy.skill || 50) >= 55 ? 'intermediate' : 'beginner';
+
+      const updateOk = await updateProfile({
         onboarding_completed: true,
         onboarding_completed_at: new Date().toISOString(),
         migrated_from_local: true,
-        initial_assessment: legacy.diagnostic.length,
-        skill: legacy.skill || 50
+        initial_assessment: {
+          legacy: true,
+          results_count: legacy.diagnostic.length,
+          skill_level: legacy.skill || 50,
+          migrated_at: new Date().toISOString()
+        },
+        skill: skillLevel
       });
+
+      if (!updateOk) {
+        console.error('[PokerSwipeAuth] Migration profile update failed');
+        return false;
+      }
+
       log('Migration complete');
       return true;
     } catch (e) {
