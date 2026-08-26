@@ -148,7 +148,7 @@ const HandImportSystem = (() => {
     }
 
     // Extract villain's shown hand
-    const showdownPattern = /(?:shows?|Показал)\s+\[?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])\]?/i;
+    const showdownPattern = /(?:shows?|Показал)\s+\[?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])\]?/gi;
     const showdownMatches = [...text.matchAll(showdownPattern)];
     if (showdownMatches.length > 0) {
       const lastMatch = showdownMatches[showdownMatches.length - 1];
@@ -518,7 +518,7 @@ const HandImportSystem = (() => {
     // Calculate aggregate stats
     stats.vpip = participatedHands / hands.length * 100;
     stats.winRate = totalWins / hands.length * 100;
-    stats.roi = (totalProfit / (hands.length * stats.bbSize)) * 100 if stats.bbSize else 0;
+    stats.roi = stats.bbSize ? (totalProfit / (hands.length * stats.bbSize)) * 100 : 0;
     stats.byPosition = positionStats;
 
     return stats;
@@ -571,4 +571,10 @@ const HandImportSystem = (() => {
 // Export for use
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { HandImportSystem };
+}
+if (typeof exports !== 'undefined') {
+  exports.HandImportSystem = HandImportSystem;
+}
+if (typeof window !== 'undefined') {
+  window.HandImportSystem = HandImportSystem;
 }
