@@ -46,42 +46,6 @@
 
   const coachSceneOpts = { hideCoachLabel: true, hideHeadline: true };
 
-  function fitCoachAboveNav(host, opts = {}) {
-    if (!host?.isConnected) return;
-    const nav = document.querySelector('.nav');
-    if (!nav) return;
-    const navTop = nav.getBoundingClientRect().top;
-    const hostTop = host.getBoundingClientRect().top;
-    const minH = opts.minHeight || 196;
-    const maxCap = opts.maxHeight || 420;
-    const maxH = Math.max(minH, Math.min(maxCap, Math.floor(navTop - hostTop - (opts.gap || 14))));
-    host.style.minHeight = `${maxH}px`;
-    if (opts.lockHeight !== false) host.style.maxHeight = `${maxH}px`;
-    const scene = host.querySelector('.psCharCompose--scene');
-    const art = host.querySelector('.psCharCompose__art');
-    const av = host.querySelector('.freakCoachAvatar');
-    [scene, art].forEach((el) => {
-      if (!el) return;
-      el.style.minHeight = `${maxH}px`;
-      el.style.maxHeight = `${maxH}px`;
-      if (el === art) {
-        el.style.height = `${maxH}px`;
-      }
-    });
-    if (av) {
-      av.style.height = `${maxH}px`;
-      av.style.maxHeight = `${maxH}px`;
-    }
-  }
-
-  function scheduleCoachFit(host, opts) {
-    const run = () => fitCoachAboveNav(host, opts);
-    requestAnimationFrame(() => {
-      run();
-      setTimeout(run, 120);
-    });
-  }
-
   function buildLossMapHTML(losses, nodes, why) {
     if (!Array.isArray(losses) || !losses.length) return '';
     const max = Math.max(...losses.map((x) => Number(x) || 0), 0.01);
@@ -218,10 +182,8 @@
     let coachLayer = scene.querySelector('.psVerdictCoachLayer');
     if (!coachLayer) {
       coachLayer = document.createElement('div');
-      coachLayer.className = 'psVerdictCoachLayer psMobileSafeCoach';
+      coachLayer.className = 'psVerdictCoachLayer';
       scene.appendChild(coachLayer);
-    } else {
-      coachLayer.classList.add('psMobileSafeCoach');
     }
 
     const legacyZone = document.querySelector('.verdictCharacterZone');
@@ -249,7 +211,6 @@
       confidence: s?.confidence,
       ...coachSceneOpts
     });
-    scheduleCoachFit(coachLayer, { minHeight: 240, maxHeight: 460, gap: 18 });
   }
 
   function enhanceFinalizeSwipe() {
@@ -330,7 +291,7 @@
     }
 
     const coachHost = document.createElement('div');
-    coachHost.className = 'psReviewCoachHost psMobileSafeCoach';
+    coachHost.className = 'psReviewCoachHost';
     sceneInner.appendChild(coachHost);
     forensic.appendChild(sceneInner);
 
@@ -346,7 +307,7 @@
     });
 
     requestAnimationFrame(() => {
-      scheduleCoachFit(coachHost, { minHeight: 196, maxHeight: 320 });
+      coachHost.scrollIntoView({ block: 'end', behavior: 'instant' });
     });
 
     return true;
@@ -460,14 +421,8 @@
     else panel.insertAdjacentElement('afterbegin', sceneEl);
 
     const host = document.createElement('div');
-    host.className = 'psDailyCoachHost psMobileSafeCoach';
+    host.className = 'psDailyCoachHost';
     sceneEl.insertAdjacentElement('afterend', host);
-
-    const homeBtn = panel.querySelector('#dHome, .primary');
-    if (homeBtn) {
-      homeBtn.classList.add('psDailyHomeCta');
-      host.insertAdjacentElement('beforebegin', homeBtn);
-    }
 
     const demon = panel.querySelector('.psCharReaction:not(.psDemonPeek)');
 
@@ -485,7 +440,10 @@
       host.appendChild(demon);
     }
 
-    scheduleCoachFit(host, { minHeight: 280, maxHeight: 460, gap: 12 });
+    requestAnimationFrame(() => {
+      const btn = panel.querySelector('#dHome, .primary');
+      btn?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+    });
 
     return true;
   }
