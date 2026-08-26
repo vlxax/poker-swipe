@@ -88,7 +88,7 @@ function gameArena({ board = [], hero = [], pot, street, heroPos, villainPos, vi
   const boardHtml = (board || []).map((c) => pc(c)).join('') || '';
   const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
   const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
-  return `<div class="pgArena ${dealClass}"><div class="pgFelt">
+  return `<div class="pgArena ${dealClass}"><div class="pgFelt psPokerTable">
     ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
     ${potLabel ? `<div class="pgPot"><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
     <div class="pgBoardZone">${boardHtml}</div>
