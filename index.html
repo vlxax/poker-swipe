@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PokerSwipe">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://telegram.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://jtdwsnodmprueuwnlycq.supabase.co wss://jtdwsnodmprueuwnlycq.supabase.co; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'">
 <link rel="manifest" href="app.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180x180.png">
 <link rel="stylesheet" href="css/pwa-install.css">
@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="game-character-layout.css">
 <link rel="stylesheet" href="game-visual-system.css">
 <link rel="stylesheet" href="character-system.css">
+<link rel="stylesheet" href="css/pokerswipe-auth.css">
 <title>POKER SWIPE — V72 REG + UX</title>
 <style>
 :root{
@@ -1137,6 +1138,42 @@ button{letter-spacing:-.01em}
       <h1 class="impact">ЗАГРУЖАЮ<br><span class="pink">МОЗГ.</span></h1>
       <p id="bootStatus">Поднимаю локальный GTO Brain и профиль игрока…</p>
     </div></section>
+
+<!-- Auth Screens -->
+<section id="authWelcome" class="pokerswipe-auth-screen hidden">
+  <div class="pokerswipe-auth-container">
+    <div class="pokerswipe-auth-header">
+      <div class="pokerswipe-auth-icon">♠</div>
+      <span class="pokerswipe-auth-tag">PokerSwipe</span>
+      <h1 class="pokerswipe-auth-title">POKR<span class="pink">SWIPE</span></h1>
+      <p class="pokerswipe-auth-subtitle">Покерный тренажёр решений и анализа от Фриковой Дамы</p>
+    </div>
+    <div class="pokerswipe-auth-form">
+      <button class="pokerswipe-auth-button" id="authEmailBtn">ВХОД ПО ПОЧТЕ</button>
+      <p class="pokerswipe-auth-state" id="authWelcomeState"></p>
+    </div>
+  </div>
+</section>
+
+<section id="authEmail" class="pokerswipe-auth-screen hidden">
+  <div class="pokerswipe-auth-container">
+    <div class="pokerswipe-auth-header">
+      <div class="pokerswipe-auth-icon">✉</div>
+      <h1 class="pokerswipe-auth-title">УКАЖИ <span class="pink">ПОЧТУ</span></h1>
+      <p class="pokerswipe-auth-subtitle">Отправим магическую ссылку для входа</p>
+    </div>
+    <div class="pokerswipe-auth-form">
+      <input type="email" class="pokerswipe-auth-input" id="authEmailInput" placeholder="твоя@почта.ru" autocomplete="email">
+      <button class="pokerswipe-auth-button" id="authEmailSendBtn">ПОЛУЧИТЬ ССЫЛКУ</button>
+      <div class="pokerswipe-auth-error hidden" id="authEmailError"></div>
+      <div class="pokerswipe-auth-success hidden" id="authEmailSuccess"></div>
+      <p class="pokerswipe-auth-state" id="authEmailState"></p>
+      <div class="pokerswipe-auth-link">
+        <a href="#" id="authBackToWelcome">← НАЗАД</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div id="mainApp" class="hidden">
 <header class="top creatorTop"><div class="brandBlock"><div class="brand">POKER <span class="pink">SWIPE</span></div><button id="editNickBtn" class="nickEdit" aria-label="Изменить имя"><span id="hello"></span><i>✎</i></button></div><div class="topRightMark24"><span>by</span><b>Фриковая Дама</b><i>💋</i></div><div class="chip skillChip" id="levelChip">SKILL 50</div></header>
@@ -3337,6 +3374,24 @@ window.d25Finish = d25Finish = function(){
  D25.results.forEach(x=>recordEvent({mode:'diagnostic',diagVersion:31,baseline:true,concept:x.concept,conceptId:x.br?.concept||null,street:x.spot.street,action:x.action,grade:x.score>=78?'g':x.score>=48?'y':'r',confidence:x.confidence,responseMs:x.responseMs,policyScore:x.score,why:x.br?.explanation||'',brainSource:x.br?.source||'',brainConfidence:x.br?.confidence||0}));
  const real=(S.events||[]).filter(e=>e.mode!=='diagnostic').length;if(real<20)S.skill=p.overall;save();
 
+ // Update Supabase profile if authenticated
+ if(window.PokerSwipeAuth&&window.PokerSwipeAuth.getToken()){
+   const skillLevel=p.overall>=75?'pro':p.overall>=55?'intermediate':p.overall>=35?'beginner':'beginner';
+   const updateOk=await window.PokerSwipeAuth.updateProfile({
+     onboarding_completed:true,
+     onboarding_completed_at:new Date().toISOString(),
+     initial_assessment:{
+       version:31,
+       overall:Math.round(p.overall),
+       dimensions:Object.fromEntries(Object.entries(p.dims).filter(x=>x[1]!=null)),
+       results_count:D25.results.length,
+       timestamp:new Date().toISOString()
+     },
+     skill:skillLevel
+   });
+   if(!updateOk)console.error('[d25Finish] Profile update failed');
+ }
+
  const rank=v31Rank(p.overall), conf=v31DiagConfidence(p);
  const dims=Object.entries(p.dims).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);
  const strongest=dims.slice(0,2), weakest=[...dims].reverse().slice(0,2);
@@ -3995,6 +4050,10 @@ function hookNav(){const field=document.querySelector('.nav [data-nav="tournamen
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hookNav);else hookNav();window.addEventListener('load',hookNav);window.openPolyanaV56=()=>{if(typeof show==='function')show('tournaments');load()};document.documentElement.dataset.pokerSwipeVersion='69-polyana-visual';window.POKER_SWIPE_BUILD='V71 REWRITTEN';
 })();
 </script>
+
+<script src="js/supabase-config.js"></script>
+<script src="js/pokerswipe-auth.js"></script>
+<script src="js/pokerswipe-auth-bootstrap.js"></script>
 
 
 <style id="v57-club-intelligence">
