@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-26T02:59:02+03:00",
+  "retrieved_at": "2026-08-26T06:37:07+03:00",
   "city": "Москва",
   "count": 66,
   "clubs": [
@@ -1251,8 +1251,25 @@
       "name": "БЛЕФ?",
       "address": "Проспект Мира, 102с12, подъезд 6",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "date": "2026-08-26",
+          "time": "19:00",
+          "club": "БЛЕФ?",
+          "tournament": "FREEROLL",
+          "fee_rub": 0,
+          "type": "Фрирол",
+          "source_url": "https://pokernomoney.ru/tournaments/12460",
+          "address": "Проспект Мира, 102с12, подъезд 6",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "Фрирол FREEROLL 19:00 Бесплатно БЛЕФ? Проспект Мира, 102с12, подъезд 6"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "Восьмёрка Кикер",
