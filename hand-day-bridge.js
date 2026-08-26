@@ -1,14 +1,13 @@
 /**
  * PokerSwipe — Hand of the Day bridge
  * Fullscreen overlay on show('daily'). Hides app bottom nav. No engine rewrite.
- * Module: PokerSwipe_DailyHand_STAGE3_1.html (production engine + DAILY_HUMAN_001-003).
- * Redesign hand_day_redesign can replace MODULE_SRC when assets are in place.
+ * Module: modules/hand-of-the-day.html (approved redesign).
  */
 (function () {
   'use strict';
 
-  const BUILD = 'hand-day-bridge-v2';
-  const MODULE_SRC = 'PokerSwipe_DailyHand_STAGE3_1.html';
+  const BUILD = 'hand-day-bridge-v3';
+  const MODULE_SRC = 'modules/hand-of-the-day.html';
   const OVERLAY_ID = 'psHandDayOverlay';
 
   function ensureOverlay() {
@@ -115,7 +114,8 @@
       'html.psHandDayOpen, body.psHandDayOpen { overflow: hidden !important; }',
       'html.psHandDayOpen .nav, body.psHandDayOpen .nav,',
       'html.psHandDayOpen #bottomNav, body.psHandDayOpen #bottomNav { display: none !important; }',
-      '#' + OVERLAY_ID + ' { touch-action: none; }'
+      '#' + OVERLAY_ID + ' { touch-action: auto; }',
+      '#' + OVERLAY_ID + ' iframe { touch-action: manipulation; }'
     ].join('\n');
     document.head.appendChild(style);
   }
