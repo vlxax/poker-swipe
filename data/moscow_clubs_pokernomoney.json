@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-26T06:37:07+03:00",
+  "retrieved_at": "2026-08-26T08:18:57+03:00",
   "city": "Москва",
   "count": 66,
   "clubs": [
@@ -1413,7 +1413,7 @@
           "club": "МАКСИМУМ",
           "tournament": "Freezeout Tournament",
           "fee_rub": 2000,
-          "type": "Freezeout",
+          "type": "Bomb Pot",
           "source_url": "https://pokernomoney.ru/tournaments/11953",
           "address": "Большая Никитская 43",
           "late_reg_until": null,
@@ -1421,7 +1421,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Freezeout Freezeout Tournament 19:00 2 000 ₽ МАКСИМУМ Большая Никитская 43"
+          "source_card_text": "Bomb Pot Freezeout Tournament 19:00 2 000 ₽ МАКСИМУМ Большая Никитская 43"
         }
       ]
     },
