@@ -88,12 +88,16 @@ function gameArena({ board = [], hero = [], pot, street, heroPos, villainPos, vi
   const boardHtml = (board || []).map((c) => pc(c)).join('') || '';
   const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
   const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
+  const boardCount = (board || []).length;
+  const playArea = `<div class="pgPlayArea">
+    ${boardHtml ? `<div class="pgBoardZone" data-count="${boardCount}">${boardHtml}</div>` : ''}
+    ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
+  </div>`;
   const inner = `<div class="pgArena ${dealClass}"><div class="pgFelt psPokerTable">
     ${villainPos ? `<div class="pgSeat villain">${esc(villainPos)} · ${esc(villainType || 'рег')}</div>` : ''}
     ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
     ${potLabel ? `<div class="pgPot"><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
-    ${boardHtml ? `<div class="pgBoardZone">${boardHtml}</div>` : ''}
-    ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
+    ${playArea}
     ${heroPos ? `<div class="pgSeat hero">ТЫ · ${esc(heroPos)}</div>` : ''}
   </div></div>`;
   return `<div class="psTableScene"><div class="psTableScene__ambient" aria-hidden="true"></div>${inner}</div>`;

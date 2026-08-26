@@ -372,13 +372,17 @@
     const boardHtml = (board || []).map((c) => pc(c)).join('') || '';
     const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
     const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
+    const boardCount = (board || []).length;
+    const playArea = `<div class="pgPlayArea">
+        ${boardHtml ? `<div class="pgBoardZone" data-count="${boardCount}">${boardHtml}</div>` : ''}
+        ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
+      </div>`;
     const inner = `<div class="pgArena">
       <div class="pgFelt psPokerTable">
         ${villainPos ? `<div class="pgSeat villain">${esc(villainPos)} · ${esc(villainType || 'рег')}</div>` : ''}
         ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
         ${potLabel ? `<div class="pgPot"><div class="pgPotChips"><i></i><i></i><i></i></div><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
-        ${boardHtml ? `<div class="pgBoardZone">${boardHtml}</div>` : ''}
-        ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
+        ${playArea}
         ${heroPos ? `<div class="pgSeat hero">ТЫ · ${esc(heroPos)}</div>` : ''}
       </div>
     </div>`;
@@ -713,7 +717,7 @@
     document.getElementById('xrayArea').innerHTML = `<div class="xrStage pgShell pgXray">
       ${hudStrip(ctx, id, { title: `<h2>${esc(window.xrStreetQuestion(s, window.xrStage))}</h2>`, subtitle: streetNames[window.xrStage] })}
       <div class="pgXrayArena">
-        <div class="pgXrayBoard">${boardSlice.map((c) => pc(c)).join('')}</div>
+        <div class="pgXrayTable pgArenaWrap pgDealIn">${gameArena({ board: boardSlice, hero: s.hero || [], pot: ['3.5', '8', '18', '35'][window.xrStage], street: streetNames[window.xrStage], heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
         <div class="pgXrayCombo"><div><span class="ey">КОМБО</span><b id="xrLive">${live}</b></div><div><span class="ey">БОРД</span><b>${boardSlice.length || 0}</b></div></div>
         <div class="pgXrayMatrix">${window.xrGrid()}</div>
       </div>
