@@ -401,8 +401,7 @@ body.psGameVisualV2 .psGameReveal {
 }
 
 /* Gameplay shells */
-body.psGameVisualV2 .pgShell,
-body.psGameVisualV2 .pgFelt {
+body.psGameVisualV2 .pgShell {
   box-shadow:
     inset 0 0 48px rgba(0, 0, 0, 0.45),
     0 0 32px rgba(26, 77, 50, 0.06) !important;

@@ -230,7 +230,7 @@
   }
 
   function hudStrip(ctx, id, opts = {}) {
-    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">${hudBody(ctx, id, opts)}</div>`;
+    return `<div class="pgHud pgHud--slim" data-ma-ctx-id="${esc(id || 'ctx')}">${hudBody(ctx, id, opts)}</div>`;
   }
 
   function hudWithBack(ctx, id, opts, app, canBack) {
@@ -238,7 +238,7 @@
     if (!nav) return hudStrip(ctx, id, opts);
     const disabled = canBack === false ? true : !nav.canBack(app);
     const body = hudBody(ctx, id, opts);
-    return `<div class="pgHud" data-ma-ctx-id="${esc(id || 'ctx')}">${nav.headRow(app, body, { disabled })}</div>`;
+    return `<div class="pgHud pgHud--slim" data-ma-ctx-id="${esc(id || 'ctx')}">${nav.headRow(app, body, { disabled })}</div>`;
   }
 
   function navGoHome() {
@@ -363,21 +363,26 @@
   initMiniAppNavOnShow();
   wrapReviewNavFns();
 
-  /** Central poker table arena */
+  /** Central poker table arena — shared scene system */
+  function tableScene(arenaInner) {
+    return `<div class="psTableScene"><div class="psTableScene__ambient" aria-hidden="true"></div>${arenaInner}</div>`;
+  }
+
   function gameArena({ board = [], hero = [], pot, street, heroPos, villainPos, villainType } = {}) {
-    const boardHtml = (board || []).map((c) => pc(c)).join('') || '<span class="mut" style="font-size:9px">—</span>';
+    const boardHtml = (board || []).map((c) => pc(c)).join('') || '';
     const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
     const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
-    return `<div class="pgArena">
-      <div class="pgFelt">
+    const inner = `<div class="pgArena">
+      <div class="pgFelt psPokerTable">
+        ${villainPos ? `<div class="pgSeat villain">${esc(villainPos)} · ${esc(villainType || 'рег')}</div>` : ''}
         ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
         ${potLabel ? `<div class="pgPot"><div class="pgPotChips"><i></i><i></i><i></i></div><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
-        <div class="pgBoardZone">${boardHtml}</div>
+        ${boardHtml ? `<div class="pgBoardZone">${boardHtml}</div>` : ''}
         ${heroHtml ? `<div class="pgHeroZone">${heroHtml}</div>` : ''}
         ${heroPos ? `<div class="pgSeat hero">ТЫ · ${esc(heroPos)}</div>` : ''}
-        ${villainPos ? `<div class="pgSeat villain">${esc(villainPos)} · ${esc(villainType || 'рег')}</div>` : ''}
       </div>
     </div>`;
+    return tableScene(inner);
   }
 
   /** Vertical glowing path timeline */
@@ -417,11 +422,13 @@
     const area = document.getElementById('reviewArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgReview">
       ${hudWithBack(ctx, id, { title: '<h1 class="impact psGameTitle">ГДЕ<br><span class="accent">СЛОМАЛОСЬ?</span></h1>', subtitle: `Раздача ${taskNum}/${total} · FORENSIC REVIEW` }, 'review')}
-      <div class="pgArenaWrap pgDealIn">${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
-      ${gamePath(R.nodes, { pickable: true })}
-      <div class="pgControls">
-        <button type="button" class="choice reviewNone" id="rvNone">НИГДЕ. ЛИНИЯ НОРМАЛЬНАЯ.</button>
-        <div id="rvGo"></div>
+      <div class="psForensicFlow">
+        <div class="pgArenaWrap pgDealIn">${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
+        ${gamePath(R.nodes, { pickable: true })}
+        <div class="pgControls">
+          <button type="button" class="choice reviewNone" id="rvNone">НИГДЕ. ЛИНИЯ НОРМАЛЬНАЯ.</button>
+          <div id="rvGo"></div>
+        </div>
       </div>
     </div>`;
 
@@ -487,20 +494,22 @@
     const area = document.getElementById('sizingArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgSizing">
       ${hudWithBack(ctx, id, { title: '<h2>Какой сайз?</h2>', subtitle: `Task ${taskNum}/${total} · ${esc(s.street)} · САЙЗИНГ` }, 'sizing')}
-      <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
-      <div class="pgControls">
-        <div class="pgControlsHead">ТВОЁ РЕШЕНИЕ</div>
-        <div class="pgDecisionReadout"><b id="sizePct">50%</b><strong id="sizeBB">${(s.pot * 0.5).toFixed(1)} ББ</strong></div>
-        <input class="range" id="sizeRange" type="range" min="0" max="150" value="50">
-        <div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div>
-        <div class="pgActionRow">
-          <button type="button" class="action call" id="sizeCheck">CHECK</button>
-          <button type="button" class="action raise on" id="sizeBet">BET</button>
-          <button type="button" class="action fold" id="sizeAllin">ALL-IN</button>
+      <div class="psPlayScene">
+        <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
+        <div class="pgControls">
+          <div class="pgControlsHead">ТВОЁ РЕШЕНИЕ</div>
+          <div class="pgDecisionReadout"><b id="sizePct">50%</b><strong id="sizeBB">${(s.pot * 0.5).toFixed(1)} ББ</strong></div>
+          <input class="range" id="sizeRange" type="range" min="0" max="150" value="50">
+          <div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div>
+          <div class="pgActionRow">
+            <button type="button" class="action call" id="sizeCheck">CHECK</button>
+            <button type="button" class="action raise on" id="sizeBet">BET</button>
+            <button type="button" class="action fold" id="sizeAllin">ALL-IN</button>
+          </div>
+          <div class="pgSizeRow">${[25, 33, 50, 75, 100, 125].map((v) => `<button type="button" class="choice pgSizeBtn" data-size-pill="${v}">${v}%</button>`).join('')}<button type="button" class="choice pgSizeBtn" data-size-pill="150">ALL-IN</button></div>
+          <button class="primary pgCta" id="sizeLock">ПОСТАВИТЬ 50% →</button>
+          <div id="sizeResult"></div>
         </div>
-        <div class="pgSizeRow">${[25, 33, 50, 75, 100, 125].map((v) => `<button type="button" class="choice pgSizeBtn" data-size-pill="${v}">${v}%</button>`).join('')}<button type="button" class="choice pgSizeBtn" data-size-pill="150">ALL-IN</button></div>
-        <button class="primary pgCta" id="sizeLock">ПОСТАВИТЬ 50% →</button>
-        <div id="sizeResult"></div>
       </div>
     </div>`;
 
@@ -625,8 +634,8 @@
     document.getElementById('swipeCard').innerHTML = `${qb}<div class="swipeShell pgSwipeWrap">
       <div class="swipeTop"><span class="ey">${mem ? 'ПАМЯТЬ · ' : ''}${esc(s.street)} · ${esc(posLabel)}</span><span class="ey">${mem ? 'CONCEPT' : 'РУКА ' + (window.swIndex + 1) + '/10'}</span></div>
       <div class="swipeProgress"><span style="width:${window.swIndex / 10 * 100}%"></span></div>
-      <div class="swipeCardV in" id="swipeVisual">
-        ${hudStrip(ctx, id, { title: '<h2>Твоё решение?</h2>' })}
+      <div class="swipeCardV in pgSwipeScene" id="swipeVisual">
+        <div class="pgHud pgHud--scene">${hudBody(ctx, id, { title: '<h2>Твоё решение?</h2>' })}</div>
         <div class="pgArenaWrap pgDealIn">${gameArena({ board: s.board, hero: s.hero, pot: s.pot, street: s.street, heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       </div>
     </div>`;
@@ -734,5 +743,5 @@
     };
   }
 
-  window.MaCompact = { hudStrip, hudWithBack, gameArena, gamePath, getCtx30 };
+  window.MaCompact = { hudStrip, hudWithBack, hudBody, gameArena, tableScene, gamePath, getCtx30 };
 })();
