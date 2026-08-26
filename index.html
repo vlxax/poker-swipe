@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="app-version" content="35.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -1156,6 +1159,7 @@ button{letter-spacing:-.01em}
 <button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i>МОИ</button>
 <button data-nav="polyana"><i class="tourNav23">♛</i>ПОЛЯНА</button>
 <button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>ПРОФИЛЬ</button>
+<button data-nav="mytournaments"><i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span></button>
 </nav>
 </div>
 
@@ -3813,27 +3817,28 @@ window.renderTournaments23 = renderTournaments23 = function(){
 
 function buildFiveNav(){
   const nav=document.querySelector('.nav');if(!nav)return;
-  nav.querySelectorAll('[data-nav="mytournaments"]').forEach(x=>x.remove());
-
-  const field=nav.querySelector('[data-nav="tournaments"]');
-  const my=document.createElement('button');
-  my.type='button';my.dataset.nav='mytournaments';
-  my.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
-  if(field)nav.insertBefore(my,field);else nav.appendChild(my);
-
+  let my=nav.querySelector('[data-nav="mytournaments"]');
+  if(!my){
+    const field=nav.querySelector('[data-nav="tournaments"],[data-nav="polyana"]');
+    const profileBtn=nav.querySelector('[data-nav="profile"]');
+    my=document.createElement('button');
+    my.type='button';my.dataset.nav='mytournaments';
+    my.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
+    if(profileBtn)nav.insertBefore(my,profileBtn.nextElementSibling);
+    else if(field)nav.appendChild(my);
+    else nav.appendChild(my);
+  }
+  const field=nav.querySelector('[data-nav="tournaments"],[data-nav="polyana"]');
   const home=nav.querySelector('[data-nav="home"]');
   const hands=nav.querySelector('[data-nav="myhands"]');
   const profile=nav.querySelector('[data-nav="profile"]');
-
-  my.onclick=function(e){e.preventDefault();e.stopPropagation();openJournal()};
   if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
-
   [home,hands,profile].filter(Boolean).forEach(b=>{
     const id=b.dataset.nav;
     b.onclick=function(e){
       V54_MODE='polyana';
       if(typeof show==='function')show(id);
-    }
+    };
   });
 }
 
@@ -5046,6 +5051,8 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <link rel="stylesheet" href="game-layout.css">
 <link rel="stylesheet" href="game-character-integration.css">
 <link rel="stylesheet" href="game-polish.css">
+<link rel="stylesheet" href="app-shell.css">
+<script src="app-shell.js"></script>
 <script src="character-engine.js"></script>
 <script src="mini-app-nav.js" data-mini-app-nav="1"></script>
 <script src="mini-app-compact.js" data-mini-app-compact="1"></script>
