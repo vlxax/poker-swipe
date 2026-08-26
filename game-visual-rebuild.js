@@ -46,6 +46,42 @@
 
   const coachSceneOpts = { hideCoachLabel: true, hideHeadline: true };
 
+  function fitCoachAboveNav(host, opts = {}) {
+    if (!host?.isConnected) return;
+    const nav = document.querySelector('.nav');
+    if (!nav) return;
+    const navTop = nav.getBoundingClientRect().top;
+    const hostTop = host.getBoundingClientRect().top;
+    const minH = opts.minHeight || 196;
+    const maxCap = opts.maxHeight || 420;
+    const maxH = Math.max(minH, Math.min(maxCap, Math.floor(navTop - hostTop - (opts.gap || 14))));
+    host.style.minHeight = `${maxH}px`;
+    if (opts.lockHeight !== false) host.style.maxHeight = `${maxH}px`;
+    const scene = host.querySelector('.psCharCompose--scene');
+    const art = host.querySelector('.psCharCompose__art');
+    const av = host.querySelector('.freakCoachAvatar');
+    [scene, art].forEach((el) => {
+      if (!el) return;
+      el.style.minHeight = `${maxH}px`;
+      el.style.maxHeight = `${maxH}px`;
+      if (el === art) {
+        el.style.height = `${maxH}px`;
+      }
+    });
+    if (av) {
+      av.style.height = `${maxH}px`;
+      av.style.maxHeight = `${maxH}px`;
+    }
+  }
+
+  function scheduleCoachFit(host, opts) {
+    const run = () => fitCoachAboveNav(host, opts);
+    requestAnimationFrame(() => {
+      run();
+      setTimeout(run, 120);
+    });
+  }
+
   function buildLossMapHTML(losses, nodes, why) {
     if (!Array.isArray(losses) || !losses.length) return '';
     const max = Math.max(...losses.map((x) => Number(x) || 0), 0.01);
@@ -89,10 +125,37 @@
       </div>`).join('')}</div>`;
   }
 
+  function formatDailyAction(action) {
+    const map = { BET: 'СТАВКА', CHECK: 'ЧЕК', CALL: 'КОЛЛ', FOLD: 'ФОЛД', RAISE: 'РЕЙЗ' };
+    const key = String(action || '').toUpperCase();
+    return map[key] || action || '—';
+  }
+
+  function formatDailySizeLogic() {
+    const D = typeof window.dailyToday === 'function' ? window.dailyToday() : null;
+    const total = D?.args?.length || 0;
+    let argGood = 0;
+    if (D && window.dArgs) {
+      D.args.forEach((a, i) => {
+        const expected = a[1] === 'bet' ? 'bet' : a[1] === 'check' ? 'check' : a[1];
+        if (window.dArgs[i] === expected) argGood++;
+      });
+    }
+    let logicPart = 'Логика на месте';
+    if (total > 0) {
+      if (argGood === 0) logicPart = 'Логика не собрана';
+      else if (argGood < total - 1) logicPart = 'Логика частично собрана';
+      else if (argGood < total) logicPart = 'Логика почти собрана';
+    }
+    if (window.dSize) return `${window.dSize}% · ${logicPart}`;
+    return logicPart;
+  }
+
   function buildDailyScene(panel, grade) {
     const boxes = panel.querySelectorAll('.gradeBox');
-    const action = boxes[0]?.querySelector('b')?.textContent?.trim() || '—';
-    const sizeLogic = boxes[1]?.querySelector('b')?.textContent?.trim() || '—';
+    const rawAction = boxes[0]?.querySelector('b')?.textContent?.trim() || window.dChoice || '—';
+    const action = formatDailyAction(rawAction.split('·')[0].trim());
+    const sizeLogic = formatDailySizeLogic();
     const status = grade === 'g' ? 'ЛИНИЯ ЖИВЁТ' : grade === 'r' ? 'ЕСТЬ РЫЧАГ ДЛЯ РОСТА' : 'НУЖНА ДОВОДКА';
     const hint = grade === 'g'
       ? 'Собрала картину — можно усиливать давление на похожих спотах.'
@@ -108,7 +171,7 @@
       </div>
       <div class="psDailyInsights">
         <div class="psDailyInsight"><span>ДЕЙСТВИЕ</span><b>${escHtml(action)}</b></div>
-        <div class="psDailyInsight"><span>SIZE / ЛОГИКА</span><b>${escHtml(sizeLogic)}</b></div>
+        <div class="psDailyInsight"><span>СТАВКА И ЛОГИКА</span><b>${escHtml(sizeLogic)}</b></div>
       </div>
     </div>`;
   }
@@ -155,8 +218,10 @@
     let coachLayer = scene.querySelector('.psVerdictCoachLayer');
     if (!coachLayer) {
       coachLayer = document.createElement('div');
-      coachLayer.className = 'psVerdictCoachLayer';
+      coachLayer.className = 'psVerdictCoachLayer psMobileSafeCoach';
       scene.appendChild(coachLayer);
+    } else {
+      coachLayer.classList.add('psMobileSafeCoach');
     }
 
     const legacyZone = document.querySelector('.verdictCharacterZone');
@@ -184,6 +249,7 @@
       confidence: s?.confidence,
       ...coachSceneOpts
     });
+    scheduleCoachFit(coachLayer, { minHeight: 240, maxHeight: 460, gap: 18 });
   }
 
   function enhanceFinalizeSwipe() {
@@ -264,7 +330,7 @@
     }
 
     const coachHost = document.createElement('div');
-    coachHost.className = 'psReviewCoachHost';
+    coachHost.className = 'psReviewCoachHost psMobileSafeCoach';
     sceneInner.appendChild(coachHost);
     forensic.appendChild(sceneInner);
 
@@ -277,6 +343,10 @@
       replace: true,
       concept: R?.concept,
       ...coachSceneOpts
+    });
+
+    requestAnimationFrame(() => {
+      scheduleCoachFit(coachHost, { minHeight: 196, maxHeight: 320 });
     });
 
     return true;
@@ -390,8 +460,14 @@
     else panel.insertAdjacentElement('afterbegin', sceneEl);
 
     const host = document.createElement('div');
-    host.className = 'psDailyCoachHost';
+    host.className = 'psDailyCoachHost psMobileSafeCoach';
     sceneEl.insertAdjacentElement('afterend', host);
+
+    const homeBtn = panel.querySelector('#dHome, .primary');
+    if (homeBtn) {
+      homeBtn.classList.add('psDailyHomeCta');
+      host.insertAdjacentElement('beforebegin', homeBtn);
+    }
 
     const demon = panel.querySelector('.psCharReaction:not(.psDemonPeek)');
 
@@ -408,6 +484,8 @@
       demon.classList.add('psDemonPeek');
       host.appendChild(demon);
     }
+
+    scheduleCoachFit(host, { minHeight: 280, maxHeight: 460, gap: 12 });
 
     return true;
   }
