@@ -1,26 +1,32 @@
-# Hand of the Day module
+# Hand of the Day — integration status
 
-## Files
-- `modules/hand-of-the-day.html` — production module (gzip bootstrap expands redesign)
-- `hand-day-bridge.js` — intercepts `show('daily')`, fullscreen iframe, hides bottom nav
-- `daily-figma-card.js` — loads bridge; home CTA → `show('daily')`
+## Live on `main`
 
-## Assets (required)
-Place character images:
-- `assets/daily-hand/monster.jpg`
-- `assets/daily-hand/freak_lady.jpg`
-
-Until uploaded, UI uses CSS/emoji fallbacks (`onerror`).
+| File | Role |
+|------|------|
+| `hand-day-bridge.js` | Intercepts `show('daily')`, fullscreen iframe, hides bottom nav, Esc → home |
+| `daily-figma-card.js` | Home CTA → `show('daily')`; loads bridge |
+| `PokerSwipe_DailyHand_STAGE3_1.html` | **Current module** (engine + DAILY_HUMAN_001/002/003) |
 
 ## Flow
-1. Home card «ПЕРЕЙТИ К РАЗДАЧЕ ДНЯ» → `show('daily')`
-2. Bridge opens `#psHandDayOverlay` iframe → `modules/hand-of-the-day.html`
-3. Back on intro → `postMessage({type:'HAND_DAY_BACK'})` → home
-4. Scenarios: `DAILY_HUMAN_001` / `002` / `003` unchanged
+1. Home «ПЕРЕЙТИ К РАЗДАЧЕ ДНЯ» → `show('daily')`
+2. Bridge opens overlay iframe → STAGE3 module
+3. Esc or `postMessage({type:'HAND_DAY_BACK'})` → home
+4. App bottom nav hidden while open (no double nav)
 
-## QA checklist
-- [ ] No second bottom nav
-- [ ] Back from intro → home
-- [ ] Restart on finish works
-- [ ] Mobile 390×844
-- [ ] Console clean (no engine errors)
+## Swap to storyboard redesign (`hand_day_redesign.html`)
+
+1. Upload production file as `modules/hand-of-the-day.html` (from local artifacts).
+2. Upload images:
+   - `assets/daily-hand/monster.jpg`
+   - `assets/daily-hand/freak_lady.jpg`
+3. In `hand-day-bridge.js` set:
+   `const MODULE_SRC = 'modules/hand-of-the-day.html';`
+4. Module must post `HAND_DAY_BACK` on intro back.
+
+## QA
+- [x] Navigation from home card
+- [x] Single bottom nav (hidden in overlay)
+- [x] Esc closes
+- [ ] Redesign visuals (pending large-file upload)
+- [ ] Character assets monster / freak_lady
