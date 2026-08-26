@@ -209,6 +209,18 @@
     return { category, text, label };
   }
 
+  function coachEyeline(phrase, visualState, opts={}) {
+    if (opts.hideCoachLabel) return '';
+    if (opts.coachLabel) return String(opts.coachLabel);
+    return 'ФРИКОВАЯ ДАМА';
+  }
+
+  function bubbleInnerHtml(meta, opts={}) {
+    const ey = coachEyeline(null, null, opts);
+    const eyHtml = ey ? `<span class="ey psCharCompose__ey">${ey}</span>` : '';
+    return `${eyHtml}<strong class="psCharCompose__text"></strong>`;
+  }
+
   function renderReaction(target, phrase, visualState, opts={}){
     if (!target || !target.isConnected) return null;
 
@@ -232,7 +244,10 @@
     const copy = document.createElement('div');
     copy.className = 'freakCoachCopy';
     const meta = phraseMeta(phrase, visualState);
-    copy.innerHTML = `<span class="ey">ФРИКОВАЯ ДАМА · ${meta.label}</span><strong></strong>`;
+    const ey = coachEyeline(phrase, visualState, opts);
+    copy.innerHTML = ey
+      ? `<span class="ey">${ey}</span><strong></strong>`
+      : '<strong></strong>';
     copy.querySelector('strong').textContent = meta.text;
 
     row.append(avatar, copy);
@@ -260,10 +275,10 @@
 
     const bubble = document.createElement('div');
     bubble.className = 'psCharCompose__bubble';
-    bubble.innerHTML = `<span class="ey psCharCompose__ey">ФРИКОВАЯ ДАМА · ${meta.label}</span><strong class="psCharCompose__text"></strong>`;
+    bubble.innerHTML = bubbleInnerHtml(meta, { hideCoachLabel: opts.hideCoachLabel !== false, coachLabel: opts.coachLabel });
     bubble.querySelector('.psCharCompose__text').textContent = meta.text;
 
-    if (opts.headline) {
+    if (opts.headline && !opts.hideHeadline) {
       const head = document.createElement('div');
       head.className = 'psCharCompose__headline';
       head.innerHTML = opts.headline;
@@ -312,10 +327,10 @@
 
     const panel = document.createElement('div');
     panel.className = 'psCharCompose__panel';
-    panel.innerHTML = `<span class="ey psCharCompose__ey">ФРИКОВАЯ ДАМА · ${meta.label}</span><strong class="psCharCompose__text"></strong>`;
+    panel.innerHTML = bubbleInnerHtml(meta, opts);
     panel.querySelector('.psCharCompose__text').textContent = meta.text;
 
-    if (opts.headline) {
+    if (opts.headline && !opts.hideHeadline) {
       const head = document.createElement('div');
       head.className = 'psCharCompose__headline';
       head.innerHTML = opts.headline;

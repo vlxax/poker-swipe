@@ -232,10 +232,38 @@ body.psGameVisualV2 .verdictScene .actionSummary {
 
 body.psGameVisualV2 .verdictCTA {
   position: relative;
-  z-index: 20;
+  z-index: 24;
   pointer-events: auto;
-  margin-top: 4px;
-  padding: 0 14px 10px;
+  margin-top: 14px;
+  padding: 10px 14px 12px;
+  background: linear-gradient(180deg, transparent, rgba(5, 6, 5, 0.92) 28%);
+}
+
+body.psGameVisualV2 .verdictScene {
+  padding-bottom: clamp(108px, 28vw, 148px);
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer {
+  bottom: clamp(-56px, -12vw, -36px);
+  min-height: clamp(260px, 46vh, 360px);
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene {
+  min-height: clamp(260px, 46vh, 360px);
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+  height: clamp(340px, 78vw, 440px);
+}
+
+body.psGameVisualV2 .psCharCompose--scene .psCharCompose__bubble {
+  top: 0;
+  max-width: min(64%, 230px);
+}
+
+body.psGameVisualV2 .psCharCompose--scene .psCharCompose__text {
+  font-size: 15px;
+  line-height: 1.28;
 }
 
 body.psGameVisualV2 .verdictReportV21 {
@@ -340,40 +368,180 @@ body.psGameVisualV2 .v31VerdictContent {
 /* ── Review forensic investigation ── */
 .psReviewForensic {
   position: relative;
-  padding: 0 12px 0;
-  min-height: clamp(260px, 48vh, 400px);
+  padding: 0 4px 8px;
   overflow: visible;
 }
 
 .psReviewForensic__scene {
   position: relative;
-  padding: 12px;
-  border-radius: var(--ps-game-radius);
-  border: 1px solid var(--ps-game-rim);
-  background:
-    radial-gradient(circle at 12% 0%, rgba(200, 255, 61, 0.05), transparent 48%),
-    linear-gradient(160deg, rgba(10, 12, 10, 0.98), rgba(5, 6, 5, 0.99));
-  box-shadow: var(--ps-game-shadow);
-  min-height: clamp(260px, 46vh, 360px);
-  padding-bottom: clamp(160px, 38vw, 220px);
+  padding: 0 2px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: clamp(240px, 44vh, 340px);
+  padding-bottom: clamp(150px, 36vw, 210px);
   overflow: visible;
+}
+
+body.psGameVisualV2 .psReviewLegacy--hidden,
+body.psGameVisualV2 .psReviewBrain--hidden,
+body.psGameVisualV2 .psReviewEvidence--compact {
+  display: none !important;
+}
+
+.psReviewForensic__title {
+  font-size: clamp(34px, 9.5vw, 46px);
+  font-weight: 1000;
+  line-height: 0.88;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+  margin: 4px 0 6px;
+  color: #fff;
+}
+
+.psReviewForensic__title span {
+  color: var(--ps-game-lime);
+}
+
+.psReviewForensic__sub {
+  font-size: 12px;
+  color: var(--ps-game-muted);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+.psLossMap__why {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(200, 255, 61, 0.1);
+  font-size: 12px;
+  line-height: 1.45;
+  color: #dce2d6;
+}
+
+.psReviewInsights {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.psReviewInsight {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(200, 255, 61, 0.12);
+  background: rgba(8, 10, 8, 0.72);
+}
+
+.psReviewInsight.is-key {
+  border-color: var(--ps-game-rim-strong);
+  box-shadow: 0 0 18px rgba(200, 255, 61, 0.08);
+}
+
+.psReviewInsight__ey {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--ps-game-muted);
+  margin-bottom: 4px;
+}
+
+.psReviewInsight p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #eef2e8;
+  font-weight: 700;
 }
 
 .psReviewCoachHost {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: clamp(-48px, -10vw, -24px);
+  bottom: clamp(-40px, -8vw, -20px);
   z-index: 12;
-  min-height: clamp(280px, 50vh, 400px);
+  min-height: clamp(260px, 48vh, 380px);
   pointer-events: none;
   overflow: visible;
 }
 
+/* ── Daily coach scene ── */
+.psDailyScene {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 4px;
+}
+
+.psDailyStatus {
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--ps-game-rim);
+  background: rgba(8, 10, 8, 0.82);
+}
+
+.psDailyStatus.is-g { border-color: rgba(66, 231, 134, 0.35); }
+.psDailyStatus.is-y { border-color: rgba(255, 210, 87, 0.35); }
+.psDailyStatus.is-r { border-color: rgba(255, 75, 104, 0.35); }
+
+.psDailyStatus__ey {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--ps-game-muted);
+  margin-bottom: 4px;
+}
+
+.psDailyStatus strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 1000;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.psDailyStatus p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #c8cec2;
+}
+
+.psDailyInsights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.psDailyInsight {
+  padding: 10px 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(200, 255, 61, 0.12);
+  background: rgba(8, 10, 8, 0.72);
+}
+
+.psDailyInsight span {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--ps-game-muted);
+  margin-bottom: 4px;
+}
+
+.psDailyInsight b {
+  display: block;
+  font-size: 14px;
+  font-weight: 900;
+  color: #f2f6ec;
+  letter-spacing: -0.02em;
+}
+
 .psDailyCoachHost {
   position: relative;
-  margin: 0 -8px 4px;
-  min-height: clamp(320px, 54vh, 440px);
+  margin: 2px -6px 0;
+  min-height: clamp(280px, 50vh, 400px);
   overflow: visible;
   z-index: 6;
 }
@@ -438,29 +606,7 @@ body.psGameVisualV2 .psReviewEvidence--compact {
 
 body.psGameVisualV2 #reviewArea .panel > h1.impact,
 body.psGameVisualV2 #reviewArea .pgShell > h1.impact {
-  position: relative;
-  z-index: 2;
-}
-
-.psReviewForensic__title {
-  font-size: clamp(32px, 9vw, 44px);
-  font-weight: 1000;
-  line-height: 0.88;
-  letter-spacing: -0.06em;
-  text-transform: uppercase;
-  margin: 8px 0 4px;
-  color: #fff;
-}
-
-.psReviewForensic__title span {
-  color: var(--ps-game-lime);
-}
-
-.psReviewForensic__sub {
-  font-size: 11px;
-  color: var(--ps-game-muted);
-  margin-bottom: 14px;
-  line-height: 1.4;
+  display: none !important;
 }
 
 .psLossMap {
