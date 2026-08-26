@@ -1,14 +1,130 @@
 // PokerSwipe Auth Bootstrap — Initialize auth flow on page load
-// Handles Welcome → Email → OTP → Profile → Assessment → Home
+// Handles Welcome → Email → Magic Link → Profile → Assessment → Home
 
 (function() {
   'use strict';
 
   let currentEmail = '';
-  let authState = 'INITIALIZING'; // INITIALIZING, WELCOME, EMAIL, OTP, AUTHENTICATED, ASSESSMENT, HOME
+  let authState = 'INITIALIZING'; // INITIALIZING, WELCOME, EMAIL, WAITING_LINK, AUTHENTICATED, ASSESSMENT, HOME
 
   const log = (msg, data) => {
     if (window.DEBUG_AUTH) console.log('[AuthBootstrap]', msg, data || '');
+  };
+
+  // Parse magic link callback from URL
+  const parseCallbackUrl = () => {
+    const url = new URL(window.location.href);
+    const accessToken = url.searchParams.get('access_token');
+    const refreshToken = url.searchParams.get('refresh_token');
+    const type = url.searchParams.get('type');
+    const expiresIn = url.searchParams.get('expires_in');
+    const expiresAt = url.searchParams.get('expires_at');
+
+    if (!accessToken) return null;
+
+    log('Callback detected', { type, hasRefresh: !!refreshToken });
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      type,
+      expires_in: expiresIn ? parseInt(expiresIn) : 3600,
+      expires_at: expiresAt ? parseInt(expiresAt) : null,
+      user: null // Will be loaded from session after parsing
+    };
+  };
+
+  // Clean callback parameters from URL
+  const cleanCallbackUrl = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('access_token');
+    url.searchParams.delete('refresh_token');
+    url.searchParams.delete('type');
+    url.searchParams.delete('expires_in');
+    url.searchParams.delete('expires_at');
+    url.searchParams.delete('error');
+    url.searchParams.delete('error_description');
+    window.history.replaceState({}, '', url.toString());
+    log('Callback parameters cleaned from URL');
+  };
+
+  // Decode JWT to get user ID and email (basic decode, no verification needed)
+  const decodeJWT = (token) => {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const decoded = JSON.parse(atob(parts[1]));
+      return {
+        id: decoded.sub,
+        email: decoded.email,
+        aud: decoded.aud
+      };
+    } catch (e) {
+      log('JWT decode error:', e);
+      return null;
+    }
+  };
+
+  // Process magic link callback
+  const processCallback = async (callbackData) => {
+    log('Processing magic link callback');
+    try {
+      // Decode access_token to get user info
+      const userInfo = decodeJWT(callbackData.access_token);
+      if (!userInfo || !userInfo.id) {
+        log('Failed to decode user info from access_token');
+        showError('authWelcome', 'Ошибка входа. Попробуй ещё раз.');
+        cleanCallbackUrl();
+        showWelcome();
+        return;
+      }
+
+      log('User decoded from JWT', { id: userInfo.id, email: userInfo.email });
+
+      // Create session object from callback data
+      const session = {
+        access_token: callbackData.access_token,
+        refresh_token: callbackData.refresh_token,
+        user: {
+          id: userInfo.id,
+          email: userInfo.email
+        },
+        expires_at: callbackData.expires_at,
+        expires_in: callbackData.expires_in || 3600,
+        token_type: 'Bearer',
+        savedAt: Date.now()
+      };
+
+      // Save to localStorage
+      localStorage.setItem('pokerswipe_auth_session', JSON.stringify(session));
+      log('Session restored from magic link callback', {
+        uid: userInfo.id,
+        email: userInfo.email,
+        expiresAt: session.expires_at
+      });
+
+      // Validate via getCurrentSession to ensure everything is consistent
+      const restoredSession = await window.PokerSwipeAuth.getCurrentSession();
+      if (!restoredSession) {
+        log('Failed to validate session from callback');
+        localStorage.removeItem('pokerswipe_auth_session');
+        showError('authWelcome', 'Ошибка входа. Попробуй ещё раз.');
+        cleanCallbackUrl();
+        showWelcome();
+        return;
+      }
+
+      // Load profile
+      const profile = await window.PokerSwipeAuth.loadProfile(userInfo.id);
+
+      // Complete auth flow
+      completeAuth({ session: restoredSession, user: restoredSession.user, profile });
+    } catch (e) {
+      log('Callback processing error:', e);
+      localStorage.removeItem('pokerswipe_auth_session');
+      showError('authWelcome', 'Ошибка входа: ' + (e.message || 'Неизвестная ошибка'));
+      cleanCallbackUrl();
+      showWelcome();
+    }
   };
 
   // Show/hide screens
@@ -31,45 +147,6 @@
     });
   };
 
-  // Create OTP input fields
-  const initOTPInputs = () => {
-    const container = document.getElementById('authOTPInputs');
-    if (!container) return;
-    container.innerHTML = '';
-    for (let i = 0; i < 6; i++) {
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.maxLength = '1';
-      input.class = 'pokerswipe-auth-otp-input';
-      input.classList.add('pokerswipe-auth-otp-input');
-      input.setAttribute('data-index', i);
-      input.inputMode = 'numeric';
-      input.autocomplete = 'off';
-      input.addEventListener('input', (e) => {
-        if (e.target.value && e.target.value.match(/\D/)) {
-          e.target.value = '';
-          return;
-        }
-        if (e.target.value && i < 5) {
-          const next = container.querySelector(`[data-index="${i + 1}"]`);
-          if (next) next.focus();
-        }
-      });
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !e.target.value && i > 0) {
-          const prev = container.querySelector(`[data-index="${i - 1}"]`);
-          if (prev) prev.focus();
-        }
-      });
-      container.appendChild(input);
-    }
-  };
-
-  // Get OTP value
-  const getOTPValue = () => {
-    const inputs = document.querySelectorAll('.pokerswipe-auth-otp-input');
-    return Array.from(inputs).map(el => el.value).join('');
-  };
 
   // Show error message
   const showError = (screenId, msg) => {
@@ -101,8 +178,7 @@
       if (loading) {
         btn.innerHTML = '<span class="pokerswipe-auth-loading"></span>';
       } else {
-        if (btnId === 'authEmailSendBtn') btn.textContent = 'ОТПРАВИТЬ КОД';
-        if (btnId === 'authOTPVerifyBtn') btn.textContent = 'ПОДТВЕРДИТЬ';
+        if (btnId === 'authEmailSendBtn') btn.textContent = 'ПОЛУЧИТЬ ССЫЛКУ';
         if (btnId === 'authEmailBtn') btn.textContent = 'ВХОД ПО ПОЧТЕ';
       }
     }
@@ -125,37 +201,13 @@
 
     try {
       await window.PokerSwipeAuth.sendMagicLink(email);
-      showSuccess('authEmail', 'Проверь почту! Отправили код.');
-      document.getElementById('authOTPEmail').textContent = `Код отправлен на ${email}`;
-      setTimeout(() => showScreen('authOTP'), 800);
+      showSuccess('authEmail', 'Проверь почту!');
+      showWaitingScreen(email);
     } catch (e) {
       log('Email error:', e);
       showError('authEmail', 'Ошибка: ' + (e.message || 'Не удалось отправить'));
     } finally {
       setLoading('authEmailSendBtn', false);
-    }
-  };
-
-  // Handle OTP submission
-  const handleOTPSubmit = async () => {
-    const otp = getOTPValue();
-    if (otp.length !== 6) {
-      showError('authOTP', 'Введи все 6 цифр');
-      return;
-    }
-
-    setLoading('authOTPVerifyBtn', true);
-
-    try {
-      const result = await window.PokerSwipeAuth.verifyOTP(currentEmail, otp);
-      showSuccess('authOTP', 'Вошли успешно!');
-      log('OTP verified:', result.user);
-      setTimeout(() => completeAuth(result), 800);
-    } catch (e) {
-      log('OTP error:', e);
-      showError('authOTP', 'Неверный код. Попробуй снова.');
-    } finally {
-      setLoading('authOTPVerifyBtn', false);
     }
   };
 
@@ -229,6 +281,78 @@
     showScreen('authEmail');
   };
 
+  // Show waiting screen after email sent
+  const showWaitingScreen = (email) => {
+    authState = 'WAITING_LINK';
+    hideAuthScreens();
+
+    // Create or update waiting screen
+    let waitScreen = document.getElementById('authWaitingLink');
+    if (!waitScreen) {
+      waitScreen = document.createElement('section');
+      waitScreen.id = 'authWaitingLink';
+      waitScreen.className = 'pokerswipe-auth-screen';
+      const onboarding = document.getElementById('onboarding');
+      if (onboarding) onboarding.appendChild(waitScreen);
+    }
+
+    waitScreen.innerHTML = `
+      <div class="pokerswipe-auth-container">
+        <h2>ПРОВЕРЬ ПОЧТУ</h2>
+        <p>Мы отправили ссылку для входа на:</p>
+        <p style="font-weight: bold; margin: 1rem 0;">${email}</p>
+        <p>Нажми на ссылку в письме, чтобы вернуться и войти.</p>
+        <div style="margin-top: 2rem;">
+          <button id="authResendBtn" class="pokerswipe-auth-button">ОТПРАВИТЬ ЕЩЁ РАЗ</button>
+        </div>
+        <button id="authChangeEmailBtn" class="pokerswipe-auth-button-secondary" style="margin-top: 1rem;">← ИЗМЕНИТЬ ПОЧТУ</button>
+      </div>
+    `;
+
+    const resendBtn = document.getElementById('authResendBtn');
+    if (resendBtn) {
+      resendBtn.addEventListener('click', () => handleResendEmail(email));
+    }
+
+    const changeEmailBtn = document.getElementById('authChangeEmailBtn');
+    if (changeEmailBtn) {
+      changeEmailBtn.addEventListener('click', () => showEmailEntry());
+    }
+
+    waitScreen.classList.remove('hidden');
+    log('Waiting screen shown for:', email);
+  };
+
+  // Resend magic link to same email
+  const handleResendEmail = async (email) => {
+    const btn = document.getElementById('authResendBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="pokerswipe-auth-loading"></span>';
+    }
+
+    try {
+      await window.PokerSwipeAuth.sendMagicLink(email);
+      log('Magic link resent to:', email);
+      if (btn) {
+        btn.textContent = 'ССЫЛКА ОТПРАВЛЕНА!';
+        btn.disabled = false;
+      }
+    } catch (e) {
+      log('Resend error:', e);
+      if (btn) {
+        btn.textContent = 'ОТПРАВИТЬ ЕЩЁ РАЗ';
+        btn.disabled = false;
+      }
+      // Show error but don't break the flow
+      const errorEl = document.createElement('div');
+      errorEl.className = 'pokerswipe-auth-error';
+      errorEl.textContent = 'Ошибка: ' + (e.message || 'Не удалось переотправить');
+      const container = document.querySelector('.pokerswipe-auth-container');
+      if (container) container.insertBefore(errorEl, btn);
+    }
+  };
+
   // Event listeners
   const bindEvents = () => {
     // Welcome screen
@@ -257,22 +381,6 @@
         showWelcome();
       });
     }
-
-    // OTP screen
-    initOTPInputs();
-
-    const otpVerifyBtn = document.getElementById('authOTPVerifyBtn');
-    if (otpVerifyBtn) {
-      otpVerifyBtn.addEventListener('click', handleOTPSubmit);
-    }
-
-    const backToEmail = document.getElementById('authBackToEmail');
-    if (backToEmail) {
-      backToEmail.addEventListener('click', (e) => {
-        e.preventDefault();
-        showEmailEntry();
-      });
-    }
   };
 
   // Main bootstrap function
@@ -289,7 +397,26 @@
     // Bind events early
     bindEvents();
 
-    // Initialize auth system
+    // Check for magic link callback in URL
+    const callbackData = parseCallbackUrl();
+    if (callbackData) {
+      log('Magic link callback detected');
+      await processCallback(callbackData);
+      return;
+    }
+
+    // Check for error callback
+    const errorParam = new URL(window.location.href).searchParams.get('error');
+    if (errorParam) {
+      log('Auth error in callback:', errorParam);
+      const errorDesc = new URL(window.location.href).searchParams.get('error_description');
+      showError('authWelcome', `Ошибка входа: ${errorDesc || errorParam}`);
+      cleanCallbackUrl();
+      showWelcome();
+      return;
+    }
+
+    // No callback, check for existing session
     const authData = await window.PokerSwipeAuth.init();
 
     if (!authData) {

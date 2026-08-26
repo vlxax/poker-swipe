@@ -132,9 +132,10 @@ window.PokerSwipeAuth = (() => {
     return response.json();
   };
 
-  // Send OTP to email (requires Supabase email template with {{ .Token }})
+  // Send magic link to email (uses Supabase standard email template with {{ .ConfirmationURL }})
+  // Redirect: https://vlxax.github.io/poker-swipe/
   const sendMagicLink = async (email) => {
-    log('Sending OTP to', email);
+    log('Sending magic link to', email);
     try {
       const result = await supabaseCall('/auth/v1/otp', {
         method: 'POST',
@@ -145,10 +146,10 @@ window.PokerSwipeAuth = (() => {
           create_user: true
         })
       });
-      log('OTP sent', result);
-      return { ok: true, method: 'otp' };
+      log('Magic link sent', result);
+      return { ok: true, method: 'magiclink' };
     } catch (e) {
-      console.error('[PokerSwipeAuth] OTP send error:', e);
+      console.error('[PokerSwipeAuth] Magic link send error:', e);
       throw e;
     }
   };
