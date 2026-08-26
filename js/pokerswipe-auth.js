@@ -21,20 +21,40 @@ window.PokerSwipeAuth = (() => {
     }
   };
 
-  const setSession = (token, user, expiresAt, refreshToken) => {
+  // Normalize expires_at to Unix timestamp (seconds)
+  const normalizeExpiresAt = (expiresAt, expiresIn) => {
+    // If expiresAt is already Unix seconds (number)
+    if (typeof expiresAt === 'number' && expiresAt > 1000000000) {
+      return expiresAt;
+    }
+    // If expiresAt is ISO string, parse it
+    if (typeof expiresAt === 'string') {
+      const ms = new Date(expiresAt).getTime();
+      if (!isNaN(ms)) return Math.floor(ms / 1000);
+    }
+    // Fall back to expires_in
+    return Math.floor(Date.now() / 1000) + (expiresIn || 3600);
+  };
+
+  const setSession = (token, user, expiresAt, refreshToken, expiresIn) => {
     const session = {
       access_token: token,
       refresh_token: refreshToken,
       user,
-      expires_at: Math.floor(new Date(expiresAt).getTime() / 1000),
-      expires_in: 3600,
+      expires_at: normalizeExpiresAt(expiresAt, expiresIn),
+      expires_in: expiresIn || 3600,
       token_type: 'Bearer',
       savedAt: Date.now()
     };
     localStorage.setItem('pokerswipe_auth_session', JSON.stringify(session));
     sessionToken = token;
     sessionUser = user;
-    log('Session saved', { uid: user?.id, email: user?.email });
+    log('Session saved', {
+      uid: user?.id,
+      email: user?.email,
+      expiresAt: session.expires_at,
+      expiresIn: session.expires_in
+    });
   };
 
   const clearSession = () => {
@@ -44,7 +64,7 @@ window.PokerSwipeAuth = (() => {
     log('Session cleared');
   };
 
-  // Refresh access token using refresh_token
+  // Refresh access token using refresh_token (with rotation support)
   const refreshAccessToken = async (refreshToken) => {
     if (!refreshToken) return null;
     log('Attempting token refresh');
@@ -56,13 +76,26 @@ window.PokerSwipeAuth = (() => {
       });
 
       if (result?.access_token) {
-        const newSession = { ...getSession() };
-        newSession.access_token = result.access_token;
-        if (result.expires_in) newSession.expires_in = result.expires_in;
-        if (result.expires_at) newSession.expires_at = result.expires_at;
+        const oldSession = getSession();
+        const newSession = {
+          ...oldSession,
+          access_token: result.access_token,
+          refresh_token: result.refresh_token || oldSession.refresh_token,
+          expires_in: result.expires_in || oldSession.expires_in || 3600,
+          expires_at: normalizeExpiresAt(
+            result.expires_at,
+            result.expires_in || oldSession.expires_in
+          ),
+          token_type: result.token_type || oldSession.token_type || 'Bearer',
+          user: result.user || oldSession.user,
+          savedAt: Date.now()
+        };
         localStorage.setItem('pokerswipe_auth_session', JSON.stringify(newSession));
         sessionToken = result.access_token;
-        log('Token refreshed successfully');
+        log('Token refreshed', {
+          hasNewRefreshToken: result.refresh_token ? true : false,
+          newExpiresAt: newSession.expires_at
+        });
         return result.access_token;
       }
     } catch (e) {
@@ -121,8 +154,7 @@ window.PokerSwipeAuth = (() => {
   };
 
   // Verify 6-digit OTP code from email
-  // Note: Requires Supabase email template with {{ .Token }} variable
-  // If project uses magic-link ({{ .ConfirmationURL }}), this flow will not work
+  // Requires Supabase email template with {{ .Token }} variable (not {{ .ConfirmationURL }})
   const verifyOTP = async (email, otp) => {
     log('Verifying OTP for', email);
     try {
@@ -130,7 +162,7 @@ window.PokerSwipeAuth = (() => {
         method: 'POST',
         authenticated: false,
         body: JSON.stringify({
-          type: 'otp',
+          type: 'email',
           email: email.toLowerCase().trim(),
           token: otp
         })
@@ -141,7 +173,8 @@ window.PokerSwipeAuth = (() => {
           result.session.access_token,
           result.user,
           result.session.expires_at,
-          result.session.refresh_token
+          result.session.refresh_token,
+          result.session.expires_in
         );
         return { ok: true, user: result.user, session: result.session };
       }
@@ -157,34 +190,39 @@ window.PokerSwipeAuth = (() => {
     const stored = getSession();
     if (!stored) return null;
 
-    // Check if token needs refresh (check 5 min before expiry)
-    const expiresAt = (stored.expires_at || stored.expiresAt) * 1000;
+    // expires_at is Unix timestamp in seconds, convert to milliseconds
+    const expiresAtMs = stored.expires_at * 1000;
     const nowMs = Date.now();
-    const refreshWindow = 5 * 60 * 1000; // 5 minutes before expiry
+    const refreshWindowMs = 5 * 60 * 1000; // 5 minutes before expiry
 
-    if (nowMs > expiresAt) {
+    if (nowMs > expiresAtMs) {
       // Token expired, try refresh
       if (stored.refresh_token) {
+        log('Token expired, attempting refresh', { expiresAt: stored.expires_at, now: Math.floor(nowMs / 1000) });
         const newToken = await refreshAccessToken(stored.refresh_token);
         if (!newToken) {
+          log('Token refresh failed, clearing session');
           clearSession();
           return null;
         }
-        sessionToken = newToken;
-        sessionUser = stored.user;
-        return getSession();
+        const updated = getSession();
+        sessionToken = updated.access_token;
+        sessionUser = updated.user;
+        return updated;
       }
       // No refresh token, session is expired
+      log('Token expired and no refresh token available');
       clearSession();
       return null;
     }
 
     // Token valid, but check if refresh is needed proactively
-    if (nowMs > expiresAt - refreshWindow && stored.refresh_token) {
+    if (nowMs > expiresAtMs - refreshWindowMs && stored.refresh_token) {
+      log('Proactive token refresh (5 min before expiry)');
       await refreshAccessToken(stored.refresh_token);
     }
 
-    sessionToken = stored.access_token || stored.token;
+    sessionToken = stored.access_token;
     sessionUser = stored.user;
     return stored;
   };
