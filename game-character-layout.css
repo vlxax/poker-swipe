@@ -27,12 +27,12 @@
 .psCharCompose.mood-wrong { --ps-char-accent: #ff4b68; }
 .psCharCompose.mood-thinking { --ps-char-accent: #c8ff3d; }
 
-/* ── Scene: large character overlapping analysis (primary layout) ── */
+/* ── Scene: immersive character overlapping analysis ── */
 .psCharCompose--scene {
   display: block;
   position: relative;
   width: 100%;
-  min-height: clamp(220px, 42vh, 340px);
+  min-height: clamp(300px, 50vh, 420px);
   margin: 0;
   padding: 0;
   overflow: visible;
@@ -40,89 +40,102 @@
 
 .psCharCompose--scene .psCharCompose__art {
   position: absolute;
-  bottom: -8px;
-  right: -6%;
-  z-index: 8;
+  left: 18%;
+  right: auto;
+  bottom: -80px;
+  z-index: 11;
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
-  width: min(52%, 220px);
+  justify-content: center;
+  width: 82%;
+  max-width: 360px;
   margin: 0;
   pointer-events: none;
 }
 
 .psCharCompose--scene.psCharCompose--left .psCharCompose__art {
-  right: auto;
-  left: -6%;
-  justify-content: flex-start;
+  left: auto;
+  right: 12%;
 }
 
 .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
   width: 100%;
-  height: clamp(240px, 52vw, 360px);
+  height: clamp(380px, 88vw, 520px);
   max-width: none;
   object-fit: contain;
   object-position: bottom center;
+  filter:
+    drop-shadow(0 0 28px color-mix(in srgb, var(--ps-char-accent) 28%, transparent))
+    drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
 }
 
 .psCharCompose--scene .psCharCompose__bubble {
   position: absolute;
-  z-index: 9;
-  left: 0;
-  bottom: clamp(100px, 28vw, 160px);
-  width: min(68%, 260px);
-  padding: 12px 14px 14px;
-  border-radius: 18px 18px 6px 18px;
-  border: 1px solid color-mix(in srgb, var(--ps-char-accent) 32%, #2a2a32);
-  background:
-    radial-gradient(circle at 0% 50%, color-mix(in srgb, var(--ps-char-accent) 10%, transparent), transparent 58%),
-    linear-gradient(155deg, rgba(14, 16, 14, 0.97), rgba(7, 8, 10, 0.99));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 14px 36px rgba(0, 0, 0, 0.42);
+  z-index: 12;
+  left: 6px;
+  top: 4px;
+  bottom: auto;
+  width: min(58%, 220px);
+  padding: 10px 12px 11px;
+  border-radius: 16px 16px 16px 6px;
+  border: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  background: rgba(8, 10, 8, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+}
+
+.psCharCompose--scene .psCharCompose__ey {
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  margin-bottom: 4px;
+}
+
+.psCharCompose--scene .psCharCompose__text {
+  font-size: 14px;
+  line-height: 1.24;
+  font-weight: 900;
 }
 
 .psCharCompose--scene.psCharCompose--right .psCharCompose__bubble::after {
   content: "";
   position: absolute;
-  right: 18px;
-  bottom: -10px;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(155deg, rgba(14, 16, 14, 0.97), rgba(7, 8, 10, 0.99));
-  border-right: 1px solid color-mix(in srgb, var(--ps-char-accent) 32%, #2a2a32);
-  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 32%, #2a2a32);
+  right: 22px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(8, 10, 8, 0.72);
+  border-right: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
   transform: rotate(45deg);
-  z-index: -1;
 }
 
 .psCharCompose--scene.psCharCompose--left .psCharCompose__bubble {
   left: auto;
-  right: 0;
-  border-radius: 18px 18px 18px 6px;
+  right: 6px;
+  border-radius: 16px 16px 6px 16px;
 }
 
 .psCharCompose--scene.psCharCompose--left .psCharCompose__bubble::after {
   content: "";
   position: absolute;
-  left: 18px;
-  bottom: -10px;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(155deg, rgba(14, 16, 14, 0.97), rgba(7, 8, 10, 0.99));
-  border-left: 1px solid color-mix(in srgb, var(--ps-char-accent) 32%, #2a2a32);
-  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 32%, #2a2a32);
+  left: 22px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(8, 10, 8, 0.72);
+  border-left: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
   transform: rotate(45deg);
-  z-index: -1;
 }
 
 .psCharCompose--scene .psCharCompose__headline {
-  font-size: clamp(20px, 5.5vw, 28px);
+  font-size: clamp(22px, 6vw, 32px);
   font-weight: 1000;
-  line-height: 0.92;
+  line-height: 0.9;
   letter-spacing: -0.05em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #fff;
 }
 
@@ -232,7 +245,6 @@
   width: min(72%, 280px);
 }
 
-/* Transparent avatar — no black rectangle */
 .freakCoachAvatarWrap,
 .psCharCompose__art {
   background: transparent !important;
@@ -255,17 +267,23 @@
 }
 
 @media (max-width: 390px) {
+  .psCharCompose--scene {
+    min-height: clamp(280px, 48vh, 380px);
+  }
+
   .psCharCompose--scene .psCharCompose__art {
-    width: min(54%, 200px);
+    left: 14%;
+    width: 86%;
+    bottom: -64px;
   }
 
   .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
-    height: clamp(220px, 56vw, 320px);
+    height: clamp(340px, 92vw, 460px);
   }
 
   .psCharCompose--scene .psCharCompose__bubble {
-    width: min(72%, 240px);
-    bottom: clamp(88px, 26vw, 140px);
+    width: min(62%, 210px);
+    top: 0;
   }
 
   .psCharCompose--coach {

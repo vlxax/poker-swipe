@@ -54,6 +54,8 @@ try {
     await action.click();
     await page.waitForTimeout(2800);
   }
+  await page.waitForTimeout(3500);
+
   const swipeMetrics = await page.evaluate(() => {
     const art = document.querySelector('.psVerdictCoachLayer .freakCoachAvatar, .psCharCompose--scene .freakCoachAvatar');
     const rect = art?.getBoundingClientRect();
