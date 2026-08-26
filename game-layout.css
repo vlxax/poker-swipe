@@ -65,7 +65,7 @@ body.psGameVisualV2 .nav {
   transform: translateX(-50%) !important;
   width: min(480px, 100%) !important;
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   gap: 2px !important;
   padding: 4px 6px calc(4px + var(--ps-safe-inset-bottom)) !important;
   min-height: calc(var(--ps-bottom-nav-height) + var(--ps-safe-inset-bottom)) !important;
