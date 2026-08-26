@@ -98,10 +98,11 @@ function ensureTournamentNav(){
     btn.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
   }
 
-  /* Stable order: ГЛАВНАЯ · РАЗДАЧИ · ПОЛЯНА · МОИ ТУРНИРЫ · ТЫ */
+  /* Stable order: ИГРАТЬ · МОИ · ПОЛЯНА · ПРОФИЛЬ · МОИ ТУРНИРЫ */
   const profile=nav.querySelector('[data-nav="profile"]');
-  if(profile && btn.nextElementSibling!==profile) nav.insertBefore(btn,profile);
-  else if(!btn.isConnected) nav.appendChild(btn);
+  if(profile){
+    if(btn!==profile.nextElementSibling) nav.insertBefore(btn, profile.nextElementSibling);
+  }else if(!btn.isConnected) nav.appendChild(btn);
 
   if(btn.dataset.psTournamentHotfix!==BUILD){
     btn.dataset.psTournamentHotfix=BUILD;
