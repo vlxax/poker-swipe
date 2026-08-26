@@ -1,6 +1,6 @@
 {
   "source": "https://pokernomoney.ru/",
-  "retrieved_at": "2026-08-26T11:04:17+03:00",
+  "retrieved_at": "2026-08-26T13:09:02+03:00",
   "city": "Москва",
   "count": 66,
   "clubs": [
@@ -11,6 +11,22 @@
       "schedule": [
         {
           "date": "2026-08-26",
+          "time": "18:00",
+          "club": "Ace Poker Club",
+          "tournament": "Обучение",
+          "fee_rub": 0,
+          "type": "Обучающий",
+          "source_url": "https://pokernomoney.ru/tournaments/12513",
+          "address": "улица Сергия Радонежского, 9с5",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "duration_minutes": null,
+          "source_card_text": "★ PREMIUM Обучающий Обучение 18:00 Бесплатно Ace Poker Club улица Сергия Радонежского, 9с5"
+        },
+        {
+          "date": "2026-08-26",
           "time": "19:00",
           "club": "Ace Poker Club",
           "tournament": "Freeroll",
@@ -18,15 +34,15 @@
           "type": "Фрирол",
           "source_url": "https://pokernomoney.ru/tournaments/11938",
           "address": "улица Сергия Радонежского, 9с5",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:00",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Фрирол Freeroll 19:00 Бесплатно Ace Poker Club улица Сергия Радонежского, 9с5"
+          "source_card_text": "★ PREMIUM Фрирол Freeroll 19:00 Бесплатно вход до 22:00 Ace Poker Club улица Сергия Радонежского, 9с5"
         }
       ],
-      "upcoming": 1
+      "upcoming": 2
     },
     {
       "name": "AK77",
@@ -128,7 +144,7 @@
           "time": "20:00",
           "club": "BlackWood",
           "tournament": "Win the Button",
-          "fee_rub": 1500,
+          "fee_rub": 500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11860",
           "address": "Олимпийский проспект, 12",
@@ -137,7 +153,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Win the Button 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12"
+          "source_card_text": "Win the Button 20:00 500 ₽ BlackWood Олимпийский проспект, 12"
         }
       ]
     },
@@ -718,7 +734,7 @@
           "date": "2026-08-26",
           "time": "19:00",
           "club": "Ocean's Poker Club",
-          "tournament": "SATTELITE TOURNAMENT TO FINAL OF SEASON",
+          "tournament": "Сателлит SATTELITE TOURNAMENT TO FINAL OF SEASON",
           "fee_rub": 1500,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11892",
@@ -728,7 +744,7 @@
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "SATTELITE TOURNAMENT TO FINAL OF SEASON 19:00 1 500 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
+          "source_card_text": "Сателлит SATTELITE TOURNAMENT TO FINAL OF SEASON 19:00 1 500 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59"
         }
       ],
       "upcoming": 1
@@ -1068,12 +1084,12 @@
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11946",
           "address": "ул. Азовская 18 (4 этаж)",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:30",
+          "late_reg_minutes": 180,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "OLD SCHOOL 19:30 Бесплатно Raise Club ул. Азовская 18 (4 этаж)"
+          "source_card_text": "OLD SCHOOL 19:30 Бесплатно вход до 22:30 Raise Club ул. Азовская 18 (4 этаж)"
         }
       ]
     },
@@ -1552,28 +1568,28 @@
           "type": "Обучающий",
           "source_url": "https://pokernomoney.ru/tournaments/11623",
           "address": "Боровая, 19А",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:25",
+          "late_reg_minutes": 265,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "Обучающий Обучение 18:00 Бесплатно ХАРТС Боровая, 19А"
+          "source_card_text": "Обучающий Обучение 18:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
         },
         {
           "date": "2026-08-26",
           "time": "19:00",
           "club": "ХАРТС",
           "tournament": "DEALER CHOICE TOURNEY",
-          "fee_rub": 1000,
+          "fee_rub": 0,
           "type": "",
           "source_url": "https://pokernomoney.ru/tournaments/11616",
           "address": "Боровая, 19А",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
+          "late_reg_until": "22:25",
+          "late_reg_minutes": 205,
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "duration_minutes": null,
-          "source_card_text": "DEALER CHOICE TOURNEY 19:00 1 000 ₽ ХАРТС Боровая, 19А"
+          "source_card_text": "DEALER CHOICE TOURNEY 19:00 Бесплатно вход до 22:25 ХАРТС Боровая, 19А"
         }
       ],
       "upcoming": 2
