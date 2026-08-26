@@ -501,6 +501,63 @@
     });
   }
 
+  function installAtmosphere() {
+    const app = document.querySelector('.app, #mainApp');
+    if (!app || app.querySelector('.psAtmosphere')) return;
+    const layer = document.createElement('div');
+    layer.className = 'psAtmosphere';
+    layer.setAttribute('aria-hidden', 'true');
+    app.insertBefore(layer, app.firstChild);
+  }
+
+  const ZONE_MAP = {
+    home: 'lobby',
+    swipe: 'swipe',
+    sizing: 'sizing',
+    review: 'forensic',
+    daily: 'cinematic',
+    myhands: 'tactical',
+    polyana: 'discovery',
+    tournaments: 'discovery',
+    profile: 'dossier',
+    ranges: 'training',
+    xray: 'training'
+  };
+
+  function tagScreenZone(id) {
+    document.querySelectorAll('.screen').forEach((s) => {
+      s.classList.remove('ps-screen-enter');
+      Object.values(ZONE_MAP).forEach((z) => s.classList.remove('psZone--' + z));
+    });
+    const screen = document.getElementById(id);
+    if (!screen) return;
+    const zone = ZONE_MAP[id];
+    if (zone) screen.classList.add('psZone--' + zone);
+    screen.classList.add('ps-screen-enter');
+    setTimeout(() => screen.classList.remove('ps-screen-enter'), 320);
+  }
+
+  function enhanceGlobalPress() {
+    if (document.documentElement.dataset.psPolishPress) return;
+    document.documentElement.dataset.psPolishPress = '1';
+    const SEL = '.chip, .pspChip, .pspTab, .mt-pro-chip, .myEntry, .v31Mini, .pspEvent, .rank28Card';
+    let active = null;
+    document.addEventListener('pointerdown', (e) => {
+      const el = e.target.closest(SEL);
+      if (!el || el.disabled) return;
+      active = el;
+      el.classList.add('ps-pressed');
+    }, { passive: true });
+    document.addEventListener('pointerup', () => {
+      if (active) active.classList.remove('ps-pressed');
+      active = null;
+    }, { passive: true });
+    document.addEventListener('pointercancel', () => {
+      if (active) active.classList.remove('ps-pressed');
+      active = null;
+    }, { passive: true });
+  }
+
   /* ── Global section reveal + motion ── */
   function enhanceShow() {
     const orig = window.show;
@@ -509,10 +566,11 @@
     window.show = function (id) {
       const out = orig.apply(this, arguments);
       requestAnimationFrame(() => {
+        tagScreenZone(id);
         const screen = document.getElementById(id);
         if (!screen) return;
         screen.classList.add('psGameSection');
-        screen.querySelectorAll('.tile, .metric, .myEntry, .panel, .pspEvent, .mt-pro-card, .rank28Card').forEach((el, i) => {
+        screen.querySelectorAll('.tile, .metric, .myEntry, .panel, .pspEvent, .mt-pro-card, .rank28Card, .v31Mode, .v31Mini').forEach((el, i) => {
           el.classList.remove('psGameReveal', 'psGameReveal--delay1', 'psGameReveal--delay2', 'psGameReveal--delay3');
           void el.offsetWidth;
           el.classList.add('psGameReveal');
@@ -573,6 +631,7 @@
 
   function init() {
     const boot = () => {
+      installAtmosphere();
       enhanceFinalizeSwipe();
       enhanceReviewReveal();
       enhanceSizingResults();
@@ -582,8 +641,11 @@
       enhanceMyHands();
       enhanceProfile();
       enhanceNavFeedback();
+      enhanceGlobalPress();
       bridgeTournamentTokens();
       silenceDuplicateIntegration();
+      const active = document.querySelector('.screen.active');
+      if (active?.id) tagScreenZone(active.id);
       setTimeout(() => {
         if (window.finalizeSwipe && !window.finalizeSwipe.__psVisualV2) {
           enhanceFinalizeSwipe();
@@ -591,7 +653,7 @@
         enhanceNavFeedback();
         bridgeTournamentTokens();
       }, 500);
-      console.log('[GameVisualV2] Premium game visual system active');
+      console.log('[GameVisualV2] Premium game polish active');
     };
 
     if (document.readyState === 'complete') boot();

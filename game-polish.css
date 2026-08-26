@@ -1,0 +1,441 @@
+/**
+ * PokerSwipe — Global Premium Game Polish
+ * Cinematic atmosphere, button family, glow hierarchy, dock nav, section identity
+ */
+
+body.psGameVisualV2 {
+  --ps-tap: 100ms;
+  --ps-local: 200ms;
+  --ps-panel-motion: 260ms;
+  --ps-screen-motion: 280ms;
+  --ps-glow-l1: 0 0 60px rgba(26, 77, 50, 0.08);
+  --ps-glow-l2: 0 0 20px rgba(200, 255, 61, 0.1);
+  --ps-glow-l3: 0 0 28px rgba(200, 255, 61, 0.22), 0 8px 24px rgba(200, 255, 61, 0.12);
+  --ps-glow-l4: 0 0 40px rgba(200, 255, 61, 0.32), 0 12px 32px rgba(200, 255, 61, 0.16);
+  --ps-glow-danger: 0 0 24px rgba(255, 75, 104, 0.2);
+  --ps-glow-gold: 0 0 24px rgba(232, 191, 114, 0.22);
+  --ps-panel-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --ps-panel-depth: 0 14px 36px rgba(0, 0, 0, 0.38);
+  --ps-dock-surface: linear-gradient(180deg, rgba(18, 22, 16, 0.97) 0%, rgba(6, 8, 6, 0.99) 100%);
+}
+
+/* ═══════════════════════════════════════════
+   CINEMATIC ATMOSPHERE LAYER
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .app,
+body.psGameVisualV2 #mainApp {
+  position: relative;
+  isolation: isolate;
+}
+
+body.psGameVisualV2 .psAtmosphere {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(26, 77, 50, 0.14), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 100% 30%, rgba(200, 255, 61, 0.04), transparent 50%),
+    radial-gradient(ellipse 60% 45% at 0% 70%, rgba(26, 77, 50, 0.08), transparent 48%),
+    var(--ps-game-bg);
+}
+
+body.psGameVisualV2 .psAtmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.45) 100%);
+  opacity: 0.65;
+}
+
+body.psGameVisualV2 .psAtmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image:
+    linear-gradient(rgba(200, 255, 61, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 255, 61, 0.15) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 20%, transparent 75%);
+}
+
+body.psGameVisualV2 .screen {
+  position: relative;
+  z-index: 1;
+}
+
+/* Section identity — ambient accent zones */
+body.psGameVisualV2 .screen.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+body.psGameVisualV2 #home.active::before {
+  background: radial-gradient(ellipse 90% 45% at 50% 8%, rgba(200, 255, 61, 0.07), transparent 62%);
+}
+
+body.psGameVisualV2 #swipe.active::before,
+body.psGameVisualV2 #sizing.active::before {
+  background: radial-gradient(ellipse 80% 40% at 50% 12%, rgba(26, 77, 50, 0.12), transparent 58%);
+}
+
+body.psGameVisualV2 #review.active::before,
+body.psGameVisualV2 #daily.active::before {
+  background: radial-gradient(ellipse 75% 50% at 30% 20%, rgba(200, 255, 61, 0.06), transparent 55%);
+}
+
+body.psGameVisualV2 #polyana.active::before,
+body.psGameVisualV2 #tournaments.active::before {
+  background: radial-gradient(ellipse 85% 42% at 50% 5%, rgba(26, 77, 50, 0.1), transparent 60%);
+}
+
+body.psGameVisualV2 #profile.active::before {
+  background: radial-gradient(ellipse 70% 45% at 50% 10%, rgba(232, 191, 114, 0.05), transparent 58%);
+}
+
+body.psGameVisualV2 .screen.active > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON FAMILY — PRIMARY (lacquer CTA)
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .primary,
+body.psGameVisualV2 .pgCta,
+body.psGameVisualV2 .mt-pro-empty-cta {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 28%),
+    linear-gradient(180deg, #d4ff52 0%, #b8ed2f 46%, #9fd42e 100%) !important;
+  box-shadow:
+    var(--ps-panel-highlight),
+    0 5px 0 #6a8f1c,
+    var(--ps-glow-l3) !important;
+  transition:
+    transform var(--ps-tap) cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow var(--ps-tap) ease,
+    filter var(--ps-tap) ease !important;
+}
+
+body.psGameVisualV2 .primary::after,
+body.psGameVisualV2 .pgCta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 40%;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent);
+  pointer-events: none;
+}
+
+body.psGameVisualV2 .primary:active,
+body.psGameVisualV2 .pgCta:active,
+body.psGameVisualV2 .primary.ps-pressed,
+body.psGameVisualV2 .pgCta.ps-pressed {
+  transform: translateY(3px) scale(0.985) !important;
+  filter: brightness(0.97);
+  box-shadow:
+    var(--ps-panel-highlight),
+    0 2px 0 #6a8f1c,
+    var(--ps-glow-l2) !important;
+}
+
+/* SECONDARY — raised dark */
+body.psGameVisualV2 .secondary,
+body.psGameVisualV2 .ghost {
+  background:
+    linear-gradient(165deg, rgba(22, 26, 20, 0.98), rgba(8, 10, 8, 0.99)) !important;
+  border: 1px solid rgba(200, 255, 61, 0.14) !important;
+  box-shadow:
+    var(--ps-panel-highlight),
+    var(--ps-panel-depth),
+    var(--ps-glow-l1) !important;
+  transition: transform var(--ps-tap) ease, border-color var(--ps-local) ease, box-shadow var(--ps-local) ease !important;
+}
+
+body.psGameVisualV2 .secondary:active,
+body.psGameVisualV2 .ghost:active {
+  transform: scale(0.98) !important;
+  border-color: rgba(200, 255, 61, 0.28) !important;
+  box-shadow: var(--ps-glow-l2) !important;
+}
+
+/* ICON BUTTONS */
+body.psGameVisualV2 .iconBtn,
+body.psGameVisualV2 .pspTool,
+body.psGameVisualV2 .mt-pro-add-compact {
+  background:
+    linear-gradient(165deg, rgba(16, 18, 14, 0.95), rgba(8, 10, 8, 0.98)) !important;
+  box-shadow:
+    var(--ps-panel-highlight),
+    0 4px 14px rgba(0, 0, 0, 0.32) !important;
+  transition: transform var(--ps-tap) ease, box-shadow var(--ps-tap) ease, border-color var(--ps-local) ease !important;
+}
+
+body.psGameVisualV2 .iconBtn:active,
+body.psGameVisualV2 .pspTool:active,
+body.psGameVisualV2 .mt-pro-add-compact:active {
+  transform: scale(0.94) !important;
+  box-shadow: var(--ps-glow-l2) !important;
+}
+
+body.psGameVisualV2 .pspTool.acid,
+body.psGameVisualV2 .mt-pro-add-compact {
+  border-color: rgba(200, 255, 61, 0.32) !important;
+  color: var(--ps-game-lime) !important;
+}
+
+/* CHIPS / TABS — tactile */
+body.psGameVisualV2 .chip,
+body.psGameVisualV2 .pspChip,
+body.psGameVisualV2 .pspTab,
+body.psGameVisualV2 .mt-pro-chip,
+body.psGameVisualV2 .chips button {
+  transition:
+    transform var(--ps-tap) ease,
+    background var(--ps-local) ease,
+    border-color var(--ps-local) ease,
+    box-shadow var(--ps-local) ease,
+    color var(--ps-local) ease !important;
+}
+
+body.psGameVisualV2 .chip:active,
+body.psGameVisualV2 .pspChip:active,
+body.psGameVisualV2 .pspTab:active,
+body.psGameVisualV2 .mt-pro-chip:active {
+  transform: scale(0.96) !important;
+}
+
+body.psGameVisualV2 .chip.on,
+body.psGameVisualV2 .pspChip.on,
+body.psGameVisualV2 .pspTab.on,
+body.psGameVisualV2 .mt-pro-chip.active {
+  box-shadow: var(--ps-glow-l2) !important;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL / CARD FAMILY
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .panel,
+body.psGameVisualV2 .tile,
+body.psGameVisualV2 .metric,
+body.psGameVisualV2 .myHero,
+body.psGameVisualV2 .myEntry,
+body.psGameVisualV2 .v30Hero,
+body.psGameVisualV2 .v31Mode,
+body.psGameVisualV2 .v31Mini,
+body.psGameVisualV2 .v31Insight,
+body.psGameVisualV2 .rank28Card,
+body.psGameVisualV2 .you20Section,
+body.psGameVisualV2 .pspEvent,
+body.psGameVisualV2 .mt-pro-card,
+body.psGameVisualV2 .mt-pro-chart-card,
+body.psGameVisualV2 .mt-pro-stat-tile,
+body.psGameVisualV2 .pgShell.panel,
+body.psGameVisualV2 .rbHeroCard,
+body.psGameVisualV2 .rnHeroCard {
+  position: relative;
+  border-color: rgba(200, 255, 61, 0.14) !important;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(200, 255, 61, 0.045), transparent 46%),
+    linear-gradient(168deg, rgba(14, 16, 14, 0.98) 0%, rgba(6, 7, 6, 0.995) 100%) !important;
+  box-shadow:
+    var(--ps-panel-highlight),
+    var(--ps-panel-depth) !important;
+  transition:
+    transform var(--ps-tap) ease,
+    border-color var(--ps-local) ease,
+    box-shadow var(--ps-local) ease !important;
+}
+
+body.psGameVisualV2 .tile:active,
+body.psGameVisualV2 .metric:active,
+body.psGameVisualV2 .myEntry:active,
+body.psGameVisualV2 .v31Mini:active,
+body.psGameVisualV2 .pspEvent:active {
+  transform: scale(0.985) !important;
+  border-color: rgba(200, 255, 61, 0.26) !important;
+  box-shadow: var(--ps-glow-l2), var(--ps-panel-depth) !important;
+}
+
+body.psGameVisualV2 .tile.main,
+body.psGameVisualV2 .v31Mode.main,
+body.psGameVisualV2 .myEntry.primaryEntry {
+  border-color: rgba(200, 255, 61, 0.32) !important;
+  box-shadow:
+    var(--ps-panel-highlight),
+    var(--ps-panel-depth),
+    var(--ps-glow-l2) !important;
+}
+
+/* Result glow levels */
+body.psGameVisualV2 .ps-pulse-good,
+body.psGameVisualV2 .grade-g,
+body.psGameVisualV2 .mt-pro-stat-tile__value.pos {
+  text-shadow: 0 0 20px rgba(200, 255, 61, 0.25);
+}
+
+body.psGameVisualV2 .ps-pulse-bad,
+body.psGameVisualV2 .grade-r,
+body.psGameVisualV2 .mt-pro-stat-tile__value.neg {
+  text-shadow: 0 0 16px rgba(255, 75, 104, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   PREMIUM GAME DOCK — bottom nav
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .nav {
+  background: var(--ps-dock-surface) !important;
+  border-top: 1px solid rgba(200, 255, 61, 0.1) !important;
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 -16px 48px rgba(0, 0, 0, 0.55),
+    var(--ps-glow-l1) !important;
+}
+
+body.psGameVisualV2 .nav::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200, 255, 61, 0.2), transparent);
+  pointer-events: none;
+}
+
+body.psGameVisualV2 .nav .ps-nav-indicator {
+  bottom: calc(4px + var(--ps-safe-inset-bottom));
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ps-game-lime), transparent);
+  box-shadow: var(--ps-glow-l3);
+  border-radius: 999px;
+}
+
+body.psGameVisualV2 .nav button.on,
+body.psGameVisualV2 .nav button.active {
+  background: rgba(200, 255, 61, 0.06) !important;
+}
+
+body.psGameVisualV2 .nav button.on i,
+body.psGameVisualV2 .nav button.active i {
+  filter: drop-shadow(0 0 10px rgba(200, 255, 61, 0.55)) !important;
+}
+
+/* ═══════════════════════════════════════════
+   MODALS / SHEETS
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .mt-pro-sheet,
+body.psGameVisualV2 .mt-pro-analytics-sheet,
+body.psGameVisualV2 #mtProModal .mt-pro-sheet {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200, 255, 61, 0.05), transparent 50%),
+    linear-gradient(180deg, #12140f 0%, #080a08 100%) !important;
+  border-color: rgba(200, 255, 61, 0.12) !important;
+  box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.55), var(--ps-glow-l1) !important;
+}
+
+/* ═══════════════════════════════════════════
+   EMPTY STATES
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .pspEmpty,
+body.psGameVisualV2 .mt-pro-empty-hero,
+body.psGameVisualV2 .mt-pro-filter-empty {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(200, 255, 61, 0.05), transparent 48%),
+    linear-gradient(160deg, rgba(12, 14, 12, 0.95), rgba(6, 7, 6, 0.98)) !important;
+  border-style: solid !important;
+  border-color: rgba(200, 255, 61, 0.12) !important;
+}
+
+/* ═══════════════════════════════════════════
+   CHARTS
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .mt-pro-chart-card,
+body.psGameVisualV2 .psLossMap {
+  box-shadow:
+    var(--ps-panel-highlight),
+    var(--ps-panel-depth),
+    inset 0 0 40px rgba(26, 77, 50, 0.04) !important;
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN TRANSITIONS + REVEAL
+   ═══════════════════════════════════════════ */
+
+body.psGameVisualV2 .screen.ps-screen-enter {
+  animation: psScreenEnter var(--ps-screen-motion) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes psScreenEnter {
+  from {
+    opacity: 0.88;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.psGameVisualV2 .psGameReveal {
+  animation-duration: var(--ps-panel-motion);
+}
+
+/* Gameplay shells */
+body.psGameVisualV2 .pgShell,
+body.psGameVisualV2 .pgFelt {
+  box-shadow:
+    inset 0 0 48px rgba(0, 0, 0, 0.45),
+    0 0 32px rgba(26, 77, 50, 0.06) !important;
+}
+
+body.psGameVisualV2 .pgHud {
+  background: rgba(6, 8, 6, 0.72) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Ranges / Battleship hubs */
+body.psGameVisualV2 .rbShell,
+body.psGameVisualV2 .rnShell {
+  background: transparent !important;
+}
+
+body.psGameVisualV2 .rbHeroCard,
+body.psGameVisualV2 .rnHeroCard {
+  box-shadow: var(--ps-panel-highlight), var(--ps-panel-depth), var(--ps-glow-l1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.psGameVisualV2 .screen.ps-screen-enter,
+  body.psGameVisualV2 .psGameReveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  body.psGameVisualV2 .primary:active,
+  body.psGameVisualV2 .pgCta:active,
+  body.psGameVisualV2 .tile:active {
+    transform: none !important;
+  }
+}
