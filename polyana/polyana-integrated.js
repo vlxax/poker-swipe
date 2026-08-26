@@ -98,17 +98,25 @@ function normalize(e,i){
     reentryCount=0;
   }
 
+  // New fields from v2 parser: prefer JSON data over parsing
+  const gameFromData=e.game?String(e.game).toUpperCase():'';
+  const districtFromData=e.district||null;
+  const lateRegSource=e.late_reg_source||null; // Track source of late reg data
+
   return {
     ...e,
     _id:i,
     _title:title,
-    _game:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
+    _game:['NLH','PLO','PLO5'].includes(gameFromData)?gameFromData:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
     _type:type||typeOf(title),
     _isFreezeout:isFreezeout,
     _isBounty:isBounty,
     _isFreeroll:isFreeroll,
     _reentryCount:reentryCount,
-    _reentryUnlimited:reentryUnlimited
+    _reentryUnlimited:reentryUnlimited,
+    _district:districtFromData,
+    _lateRegSource:lateRegSource,
+    _fetchedAt:e.fetched_at||null
   };
 }
 
