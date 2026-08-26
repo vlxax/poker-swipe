@@ -369,7 +369,7 @@
     const heroHtml = (hero || []).map((c) => pc(c, 'hero')).join('');
     const potLabel = pot != null ? esc(String(pot).replace(/ ББ$/, '')) + ' ББ' : '';
     return `<div class="pgArena">
-      <div class="pgFelt">
+      <div class="pgFelt psPokerTable">
         ${street ? `<div class="pgStreetBadge">${esc(street)}</div>` : ''}
         ${potLabel ? `<div class="pgPot"><div class="pgPotChips"><i></i><i></i><i></i></div><span class="pgPotLabel">БАНК ${potLabel}</span></div>` : ''}
         <div class="pgBoardZone">${boardHtml}</div>

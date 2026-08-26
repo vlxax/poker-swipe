@@ -1,0 +1,210 @@
+/**
+ * PokerSwipe — Canonical poker table visual
+ * Asset: assets/47E8A69D-35C9-4268-8937-E1FD874EC272.PNG
+ */
+:root {
+  --ps-poker-table-url: url('assets/47E8A69D-35C9-4268-8937-E1FD874EC272.PNG');
+  --ps-poker-table-ratio: 1672 / 941;
+}
+
+/* ── Shared primitive: .psPokerTable + production alias .pgFelt ── */
+.psPokerTable,
+.pgFelt {
+  position: relative;
+  width: min(100%, 360px);
+  max-width: 100%;
+  margin-inline: auto;
+  aspect-ratio: var(--ps-poker-table-ratio);
+  min-height: unset !important;
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+.psPokerTable::before,
+.pgFelt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ps-poker-table-url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 14px 36px rgba(0, 0, 0, 0.42));
+}
+
+.psPokerTable::after,
+.pgFelt::after {
+  content: "";
+  position: absolute;
+  inset: 10% 14%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 52%, rgba(200, 255, 61, 0.05), transparent 70%);
+}
+
+.psPokerTable > *,
+.pgFelt > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Arena wrapper — let table define height */
+.pgArena {
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  padding: 4px 0 8px;
+}
+
+.pgArenaWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── Legacy .table (sizing fallback) ── */
+.table.psPokerTable,
+.table {
+  position: relative;
+  width: min(100%, 340px) !important;
+  max-width: 100%;
+  height: auto !important;
+  aspect-ratio: var(--ps-poker-table-ratio);
+  margin: 14px auto !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+.table::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ps-poker-table-url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.38));
+}
+
+.table::after {
+  display: none !important;
+}
+
+.table > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Hand reconstruction seat picker ── */
+.hr22Felt {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+
+.hr22Felt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ps-poker-table-url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.35));
+}
+
+.hr22Felt::after {
+  display: none !important;
+}
+
+/* ── Legacy pokerDesk (if rendered) ── */
+.pokerDesk {
+  position: relative;
+  width: min(100%, 340px) !important;
+  height: auto !important;
+  aspect-ratio: var(--ps-poker-table-ratio);
+  margin: 15px auto !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.pokerDesk::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--ps-poker-table-url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pokerDesk::after {
+  display: none !important;
+}
+
+.pokerDesk > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Loading state ── */
+.pgFeltLoading::before {
+  opacity: 0.45;
+  filter: grayscale(0.2) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.3));
+}
+
+.pgFeltLoading > * {
+  z-index: 2;
+}
+
+/* ── Card grounding on felt ── */
+.pgArena .pc,
+.table .pc,
+.table .cards .pc {
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.5),
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    inset 0 -4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── Daily compact arena ── */
+.pgDailyArena .pgFelt {
+  width: min(100%, 320px);
+}
+
+@media (max-width: 390px) {
+  .pgFelt,
+  .psPokerTable {
+    width: min(100%, 100%);
+  }
+}
+
+@media (max-width: 375px) {
+  .pgBoardZone {
+    top: 30%;
+  }
+
+  .pgHeroZone {
+    bottom: 10%;
+  }
+}
