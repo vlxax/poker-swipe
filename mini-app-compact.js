@@ -416,7 +416,7 @@
     const qb = typeof window.quickBanner === 'function' ? window.quickBanner('review') : '';
     const area = document.getElementById('reviewArea');
     area.innerHTML = `${qb}<div class="panel pgShell pgReview">
-      ${hudWithBack(ctx, id, { title: '<h1 class="impact">ГДЕ ЛИНИЯ <span class="pink">СЛОМАЛАСЬ?</span></h1>', subtitle: `Task ${taskNum}/${total} · LOSS MAP` }, 'review')}
+      ${hudWithBack(ctx, id, { title: '<h1 class="impact psGameTitle">ГДЕ<br><span class="accent">СЛОМАЛОСЬ?</span></h1>', subtitle: `Раздача ${taskNum}/${total} · FORENSIC REVIEW` }, 'review')}
       <div class="pgArenaWrap pgDealIn">${gameArena({ board: R.board, hero: R.hero, pot: ctx.pot, street: 'РИВЕР', heroPos: ctx.heroPos, villainPos: ctx.villainPos, villainType: ctx.villainType })}</div>
       ${gamePath(R.nodes, { pickable: true })}
       <div class="pgControls">

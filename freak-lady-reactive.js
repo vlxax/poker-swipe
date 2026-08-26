@@ -1,5 +1,7 @@
 (function(){
   'use strict';
+  /** @deprecated Legacy sprite engine — detached from production. Use js/freak-lady-library.js + js/freak-lady-reactive.js */
+  if (window.FreakLady && window.FREAK_LADY_LIBRARY) return;
 
   const BASE='assets/freak-lady';
   const stateToAsset={

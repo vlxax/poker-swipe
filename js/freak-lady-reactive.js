@@ -202,10 +202,34 @@
     return img;
   }
 
+  function phraseMeta(phrase, visualState){
+    const category = phrase?.category || visualState;
+    const text = phrase?.text || (visualState === 'thinking' ? 'Смотрю.' : 'Фриковая Дама');
+    const label = String(category).replaceAll('_', ' ').toUpperCase();
+    return { category, text, label };
+  }
+
+  function coachEyeline(phrase, visualState, opts={}) {
+    if (opts.hideCoachLabel) return '';
+    if (opts.coachLabel) return String(opts.coachLabel);
+    return 'ФРИКОВАЯ ДАМА';
+  }
+
+  function bubbleInnerHtml(meta, opts={}) {
+    const ey = coachEyeline(null, null, opts);
+    const eyHtml = ey ? `<span class="ey psCharCompose__ey">${ey}</span>` : '';
+    return `${eyHtml}<strong class="psCharCompose__text"></strong>`;
+  }
+
   function renderReaction(target, phrase, visualState, opts={}){
     if (!target || !target.isConnected) return null;
 
-    const prior = target.querySelector(':scope > .freakCoachReaction');
+    const layout = opts.layout || 'compact';
+    if (layout !== 'compact') {
+      return renderComposition(target, phrase, visualState, opts);
+    }
+
+    const prior = target.querySelector(':scope > .freakCoachReaction, :scope > .psCharCompose');
     if (prior) prior.remove();
 
     const row = document.createElement('div');
@@ -219,12 +243,12 @@
 
     const copy = document.createElement('div');
     copy.className = 'freakCoachCopy';
-
-    const category = phrase?.category || visualState;
-    const text = phrase?.text || (visualState === 'thinking' ? 'Смотрю.' : 'Фриковая Дама');
-
-    copy.innerHTML = `<span class="ey">ФРИКОВАЯ ДАМА · ${String(category).replaceAll('_',' ').toUpperCase()}</span><strong></strong>`;
-    copy.querySelector('strong').textContent = text;
+    const meta = phraseMeta(phrase, visualState);
+    const ey = coachEyeline(phrase, visualState, opts);
+    copy.innerHTML = ey
+      ? `<span class="ey">${ey}</span><strong></strong>`
+      : '<strong></strong>';
+    copy.querySelector('strong').textContent = meta.text;
 
     row.append(avatar, copy);
 
@@ -233,6 +257,115 @@
     else target.appendChild(row);
 
     return row;
+  }
+
+  function renderSceneComposition(target, phrase, visualState, opts={}){
+    const side = opts.side === 'left' ? 'left' : 'right';
+    const meta = phraseMeta(phrase, visualState);
+
+    const row = document.createElement('div');
+    row.className = `psCharCompose psCharCompose--scene psCharCompose--${side} mood-${visualState}`;
+    if (opts.wide) row.classList.add('psCharCompose--wide');
+    row.dataset.mood = visualState;
+    row.setAttribute('aria-label', 'Реакция Фриковой Дамы');
+
+    const art = document.createElement('div');
+    art.className = 'psCharCompose__art';
+    art.appendChild(makeImage(visualState));
+
+    const bubble = document.createElement('div');
+    bubble.className = 'psCharCompose__bubble';
+    bubble.innerHTML = bubbleInnerHtml(meta, { hideCoachLabel: opts.hideCoachLabel !== false, coachLabel: opts.coachLabel });
+    bubble.querySelector('.psCharCompose__text').textContent = meta.text;
+
+    if (opts.headline && !opts.hideHeadline) {
+      const head = document.createElement('div');
+      head.className = 'psCharCompose__headline';
+      head.innerHTML = opts.headline;
+      bubble.insertBefore(head, bubble.firstChild);
+    }
+
+    row.append(bubble, art);
+
+    const replace = opts.replace === true;
+    if (replace) {
+      target.innerHTML = '';
+      target.appendChild(row);
+    } else {
+      const button = target.querySelector(':scope > .primary, :scope > .secondary, :scope > button.primary, :scope > button.secondary, #holdArea, .v31VerdictCTA');
+      if (button) target.insertBefore(row, button);
+      else target.appendChild(row);
+    }
+
+    requestAnimationFrame(() => row.classList.add('psCharCompose--in'));
+    return row;
+  }
+
+  function renderComposition(target, phrase, visualState, opts={}){
+    if (!target || !target.isConnected) return null;
+
+    const prior = target.querySelector(':scope > .freakCoachReaction, :scope > .psCharCompose');
+    if (prior) prior.remove();
+
+    const layout = opts.layout || 'coach';
+    if (layout === 'scene' || layout === 'result' || layout === 'analysis' || layout === 'hero') {
+      return renderSceneComposition(target, phrase, visualState, { ...opts, layout: 'scene' });
+    }
+
+    const side = opts.side === 'left' ? 'left' : 'right';
+    const meta = phraseMeta(phrase, visualState);
+
+    const row = document.createElement('div');
+    row.className = `psCharCompose psCharCompose--${layout} psCharCompose--${side} mood-${visualState}`;
+    if (opts.wide) row.classList.add('psCharCompose--wide');
+    row.dataset.mood = visualState;
+    row.setAttribute('aria-label', 'Реакция Фриковой Дамы');
+
+    const art = document.createElement('div');
+    art.className = 'psCharCompose__art';
+    art.appendChild(makeImage(visualState));
+
+    const panel = document.createElement('div');
+    panel.className = 'psCharCompose__panel';
+    panel.innerHTML = bubbleInnerHtml(meta, opts);
+    panel.querySelector('.psCharCompose__text').textContent = meta.text;
+
+    if (opts.headline && !opts.hideHeadline) {
+      const head = document.createElement('div');
+      head.className = 'psCharCompose__headline';
+      head.innerHTML = opts.headline;
+      panel.insertBefore(head, panel.firstChild);
+    }
+
+    if (side === 'left') row.append(art, panel);
+    else row.append(panel, art);
+
+    const replace = opts.replace === true;
+    if (replace) {
+      target.innerHTML = '';
+      target.appendChild(row);
+    } else {
+      const button = target.querySelector(':scope > .primary, :scope > .secondary, :scope > button.primary, :scope > button.secondary, #holdArea, .v31VerdictCTA');
+      if (button) target.insertBefore(row, button);
+      else target.appendChild(row);
+    }
+
+    requestAnimationFrame(() => row.classList.add('psCharCompose--in'));
+    return row;
+  }
+
+  function mountComposition(target, opts={}){
+    const mood = opts.mood || 'thinking';
+    const context = opts.context || 'swipe';
+    const n = normalizeGrade(mood);
+
+    if (n === 'thinking') {
+      return renderComposition(target, { category: 'thinking', text: opts.text || 'Смотрю.' }, 'thinking', opts);
+    }
+
+    const phrase = selectPhrase(n, context, opts);
+    const visualState = opts.visualState || assetStateFor(n);
+    return renderComposition(target, phrase, visualState, opts);
   }
 
   function react(target, mood='thinking', context='swipe', opts={}){
@@ -291,10 +424,19 @@
     return Promise.resolve();
   }
 
+  function sessionMood(g, y, r){
+    if (g >= 8 && r <= 1) return 'streak';
+    if (r >= 4) return 'r';
+    if (y >= 4 || r >= 2) return 'y';
+    return 'g';
+  }
+
   const api = {
     react,
     play,
+    mountComposition,
     getSessionSummary,
+    sessionMood,
     assets: stateToImage,
     debug: {
       selectPhrase,
