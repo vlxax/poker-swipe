@@ -174,3 +174,32 @@ html body.psAppShell .mt-pro-empty-companion {
   max-height: 80px !important;
   overflow: hidden !important;
 }
+
+/* Swipe screen must fill the app viewport when opened from home */
+html body.psAppShell #swipe.active {
+  display: flex !important;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: calc(
+    var(--ps-app-height, 100dvh)
+    - var(--ps-bottom-nav-height, 52px)
+    - var(--ps-safe-inset-bottom, env(safe-area-inset-bottom, 0px))
+    - 64px
+  );
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+html body.psAppShell #swipe.active #swipeCard {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+html body.psAppShell #home .v36Tile,
+html body.psAppShell #home .v36Quick,
+html body.psAppShell #home .tile,
+html body.psAppShell #home #v36Daily {
+  touch-action: manipulation;
+  cursor: pointer;
+}
