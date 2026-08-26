@@ -14,6 +14,34 @@
   background: #060806;
 }
 
+.pgShell.pgSizing,
+.pgShell.pgReview,
+.pgShell.pgSwipeWrap {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+#swipe.active {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#swipe.active #swipeCard {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#swipe.active #swipeCard > .swipeShell,
+#swipe.active #swipeCard > .pgSwipeWrap {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .pgShell.panel,
 .pgShell.swipeCardV,
 .pgShell.xrStage,
@@ -128,136 +156,12 @@
   min-height: 28px !important;
 }
 
-/* ── Central game arena ── */
-.pgArena {
-  position: relative;
-  flex: 1 1 auto;
-  display: grid;
-  place-items: center;
-  margin: 8px 10px 6px;
-}
-
-/* .pgFelt visual base — see poker-table.css */
+/* ── Central game arena — layout in poker-table.css ── */
 .pgFelt {
   overflow: visible;
 }
 
-.pgStreetBadge {
-  position: absolute;
-  top: 6%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 8px;
-  font-weight: 1000;
-  letter-spacing: 0.14em;
-  color: #c8ff3d;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(200, 255, 61, 0.2);
-  z-index: 3;
-}
-
-.pgPot {
-  position: absolute;
-  top: 14%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 3;
-}
-
-.pgPotChips {
-  display: flex;
-  gap: -4px;
-}
-
-.pgPotChips i {
-  display: block;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.35);
-  margin-left: -4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.pgPotChips i:nth-child(1) { background: #1a1a1a; margin-left: 0; }
-.pgPotChips i:nth-child(2) { background: #c8ff3d; }
-.pgPotChips i:nth-child(3) { background: #ff6b8a; }
-
-.pgPotLabel {
-  font-size: 9px;
-  font-weight: 950;
-  letter-spacing: 0.06em;
-  color: #eaff8a;
-  text-shadow: 0 0 12px rgba(200, 255, 61, 0.35);
-}
-
-.pgBoardZone {
-  position: absolute;
-  top: 32%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
-  z-index: 2;
-}
-
-.pgHeroZone {
-  position: absolute;
-  bottom: 12%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  z-index: 2;
-}
-
-.pgSeat {
-  position: absolute;
-  font-size: 8px;
-  font-weight: 950;
-  letter-spacing: 0.06em;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #c8c8c8;
-  z-index: 3;
-}
-
-.pgSeat.hero {
-  bottom: 2%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-color: rgba(200, 255, 61, 0.35);
-  color: #eaff8a;
-}
-
-.pgSeat.villain {
-  top: 2%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.pgArena .pc {
-  width: 46px !important;
-  height: 64px !important;
-  font-size: 18px !important;
-  border-radius: 9px !important;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), inset 0 -4px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-.pgHeroZone .pc {
-  width: 50px !important;
-  height: 68px !important;
-  font-size: 19px !important;
-}
-
-/* ── Game path timeline (review) ── */
+/* Path timeline — base; forensic flow overrides in poker-table.css */
 .pgPath {
   padding: 6px 12px 8px;
   max-height: 34vh;
@@ -438,7 +342,8 @@ button.pgPathNode {
 .pgSwipeWrap {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 180px);
+  min-height: 0;
+  flex: 1 1 auto;
 }
 
 .pgSwipeWrap .swipeTop,
@@ -453,6 +358,7 @@ button.pgPathNode {
   padding: 0 !important;
   background: transparent !important;
   border: none !important;
+  min-height: 0;
 }
 
 .pgSwipeWrap #swipeActions,
@@ -551,8 +457,9 @@ button.pgPathNode {
 }
 
 /* ── Daily game ── */
-.pgDailyArena .pgFelt {
-  width: min(100%, 320px);
+.pgDailyLobby .pgArenaWrap,
+.pgDailyDrill .pgArenaWrap {
+  flex-shrink: 0;
 }
 
 .pgStreetDots {
