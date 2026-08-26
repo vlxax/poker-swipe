@@ -244,6 +244,48 @@
     return row;
   }
 
+  function renderSceneComposition(target, phrase, visualState, opts={}){
+    const side = opts.side === 'left' ? 'left' : 'right';
+    const meta = phraseMeta(phrase, visualState);
+
+    const row = document.createElement('div');
+    row.className = `psCharCompose psCharCompose--scene psCharCompose--${side} mood-${visualState}`;
+    if (opts.wide) row.classList.add('psCharCompose--wide');
+    row.dataset.mood = visualState;
+    row.setAttribute('aria-label', 'Реакция Фриковой Дамы');
+
+    const art = document.createElement('div');
+    art.className = 'psCharCompose__art';
+    art.appendChild(makeImage(visualState));
+
+    const bubble = document.createElement('div');
+    bubble.className = 'psCharCompose__bubble';
+    bubble.innerHTML = `<span class="ey psCharCompose__ey">ФРИКОВАЯ ДАМА · ${meta.label}</span><strong class="psCharCompose__text"></strong>`;
+    bubble.querySelector('.psCharCompose__text').textContent = meta.text;
+
+    if (opts.headline) {
+      const head = document.createElement('div');
+      head.className = 'psCharCompose__headline';
+      head.innerHTML = opts.headline;
+      bubble.insertBefore(head, bubble.firstChild);
+    }
+
+    row.append(bubble, art);
+
+    const replace = opts.replace === true;
+    if (replace) {
+      target.innerHTML = '';
+      target.appendChild(row);
+    } else {
+      const button = target.querySelector(':scope > .primary, :scope > .secondary, :scope > button.primary, :scope > button.secondary, #holdArea, .v31VerdictCTA');
+      if (button) target.insertBefore(row, button);
+      else target.appendChild(row);
+    }
+
+    requestAnimationFrame(() => row.classList.add('psCharCompose--in'));
+    return row;
+  }
+
   function renderComposition(target, phrase, visualState, opts={}){
     if (!target || !target.isConnected) return null;
 
@@ -251,6 +293,10 @@
     if (prior) prior.remove();
 
     const layout = opts.layout || 'coach';
+    if (layout === 'scene' || layout === 'result' || layout === 'analysis' || layout === 'hero') {
+      return renderSceneComposition(target, phrase, visualState, { ...opts, layout: 'scene' });
+    }
+
     const side = opts.side === 'left' ? 'left' : 'right';
     const meta = phraseMeta(phrase, visualState);
 

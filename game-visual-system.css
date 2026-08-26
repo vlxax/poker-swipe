@@ -162,38 +162,121 @@ body.psGameVisualV2 .v31BrainHUD {
 }
 
 body.psGameVisualV2 .verdictCharacterZone {
-  pointer-events: none;
-  min-height: clamp(140px, 36vw, 200px);
-  margin: -20px 10px 0;
-  padding: 0 4px;
-  z-index: 12;
-}
-
-body.psGameVisualV2 .verdictCharacterZone .psCharCompose--result {
-  width: 100%;
-  grid-template-columns: minmax(0, 1fr) min(44%, 170px);
-}
-
-body.psGameVisualV2 .verdictCharacterZone .psCharCompose__art {
-  margin-bottom: 0;
-  align-self: flex-end;
-}
-
-body.psGameVisualV2 .verdictCharacterZone .psCharCompose__art .freakCoachAvatar {
-  height: clamp(130px, 34vw, 200px);
+  display: none !important;
 }
 
 body.psGameVisualV2 .verdictScene {
-  max-height: min(46vh, 360px);
-  overflow: hidden;
+  position: relative;
+  max-height: none;
+  overflow: visible;
+  margin: 8px 10px 0;
+  padding-bottom: 0;
+  min-height: clamp(280px, 52vh, 420px);
+}
+
+body.psGameVisualV2 .verdictScene .sceneBg {
+  border-radius: 22px;
+  inset: 0 0 clamp(40px, 12vw, 72px) 0;
+}
+
+body.psGameVisualV2 .verdictScene .sceneContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 14px 14px clamp(120px, 32vw, 180px);
+  min-height: clamp(200px, 38vh, 300px);
+}
+
+body.psGameVisualV2 .psVerdictNarrative {
+  display: grid;
+  gap: 0;
+  position: relative;
+  z-index: 4;
+}
+
+body.psGameVisualV2 .psNarrativeStep {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(200, 255, 61, 0.08);
+}
+
+body.psGameVisualV2 .psNarrativeStep:last-child {
+  border-bottom: 0;
+  padding-bottom: 4px;
+}
+
+body.psGameVisualV2 .psNarrativeStep__marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 1000;
+  color: var(--ps-game-lime);
+  border: 1px solid var(--ps-game-rim);
+  background: rgba(8, 10, 8, 0.9);
+}
+
+body.psGameVisualV2 .psNarrativeStep__label {
+  display: block;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--ps-game-muted);
+  margin-bottom: 3px;
+}
+
+body.psGameVisualV2 .psNarrativeStep__value {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #eef2e8;
+  letter-spacing: -0.02em;
+}
+
+body.psGameVisualV2 .psNarrativeStep.is-verdict .psNarrativeStep__value {
+  color: var(--ps-game-lime);
+  font-size: 15px;
+}
+
+body.psGameVisualV2 .verdictScene .semanticGrid {
+  display: none !important;
+}
+
+body.psGameVisualV2 .verdictScene .actionSummary {
+  display: none !important;
+}
+
+body.psGameVisualV2 .verdictScene .brainCardCompact {
+  margin-bottom: 4px;
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 12;
+  min-height: clamp(200px, 40vh, 320px);
+  pointer-events: none;
+  overflow: visible;
+}
+
+body.psGameVisualV2 .psVerdictCoachLayer .psCharCompose--scene {
+  min-height: clamp(200px, 38vh, 300px);
 }
 
 body.psGameVisualV2 .verdictCTA {
   position: relative;
   z-index: 20;
   pointer-events: auto;
-  margin-top: 8px;
-  padding: 0 14px 12px;
+  margin-top: 4px;
+  padding: 0 14px 10px;
 }
 
 body.psGameVisualV2 .verdictReportV21 {
@@ -212,7 +295,57 @@ body.psGameVisualV2 .v31VerdictContent {
 
 /* ── Review forensic investigation ── */
 .psReviewForensic {
-  padding: 0 12px 16px;
+  position: relative;
+  padding: 0 12px 0;
+  min-height: clamp(260px, 48vh, 400px);
+  overflow: visible;
+}
+
+.psReviewForensic__scene {
+  position: relative;
+  padding: 12px;
+  border-radius: var(--ps-game-radius);
+  border: 1px solid var(--ps-game-rim);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(200, 255, 61, 0.05), transparent 48%),
+    linear-gradient(160deg, rgba(10, 12, 10, 0.98), rgba(5, 6, 5, 0.99));
+  box-shadow: var(--ps-game-shadow);
+  min-height: clamp(220px, 42vh, 340px);
+  padding-bottom: clamp(100px, 28vw, 160px);
+  overflow: visible;
+}
+
+.psReviewCoachHost {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  min-height: clamp(180px, 36vh, 280px);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.psDailyCoachHost {
+  position: relative;
+  margin: 8px 12px 12px;
+  min-height: clamp(240px, 46vh, 360px);
+  overflow: visible;
+}
+
+.psDailyCoachHost .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+  height: clamp(260px, 58vw, 380px);
+}
+
+.psSizingCoachHost {
+  position: relative;
+  margin: 8px 0 12px;
+  min-height: clamp(200px, 40vh, 300px);
+  overflow: visible;
+}
+
+.psReviewForensic .psInsightGrid {
+  display: none;
 }
 
 .psReviewForensic__title {
@@ -355,10 +488,35 @@ body.psGameVisualV2 #profile .rank28Hero {
   border-radius: var(--ps-game-radius);
 }
 
-/* ── Nav safety ── */
+/* ── Nav safety + compact height ── */
+body.psGameVisualV2 {
+  --bottom-nav-height: 64px;
+}
+
+body.psGameVisualV2 .screen {
+  padding-bottom: calc(var(--bottom-nav-height) + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px)) + 28px) !important;
+}
+
 body.psGameVisualV2 .nav {
   z-index: 50;
   pointer-events: auto;
+  min-height: calc(var(--bottom-nav-height) + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+  padding-top: 6px !important;
+  padding-bottom: calc(6px + var(--tg-bottom-safe, env(safe-area-inset-bottom, 0px))) !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+body.psGameVisualV2 .nav button {
+  padding: 4px 2px 2px !important;
+  font-size: 9px !important;
+  gap: 2px !important;
+}
+
+body.psGameVisualV2 .nav button i,
+body.psGameVisualV2 .nav button svg {
+  font-size: 18px !important;
+  margin-bottom: 1px !important;
 }
 
 body.psGameVisualV2 .psCharCompose,
