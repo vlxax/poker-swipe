@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>PokerSwipe — Рука дня</title>
+<link rel="stylesheet" href="../poker-table.css" />
 <style>
 
 :root{
@@ -30,7 +31,7 @@
   font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:#030504;color:var(--text);min-height:100%;}
+html,body{margin:0;background:#030504;color:var(--text);min-height:100%;overflow-x:hidden;}
 body{display:flex;justify-content:center}
 button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 .app#app{
@@ -83,18 +84,13 @@ main{position:relative;z-index:1}
 /* Table felt on intro */
 .intro-table{
   position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
-  width:280px;height:160px;border-radius:50%;
-  background:radial-gradient(ellipse at 50% 45%,#163322 0%,#0c1a12 60%,#08100c 100%);
-  border:3px solid #1e3328;box-shadow:
-    0 0 0 6px #0a140f,
-    0 20px 40px rgba(0,0,0,.5),
-    inset 0 0 30px rgba(0,0,0,.4);
+  width:min(100%,320px);height:150px;
+  background-image:url('../assets/47E8A69D-35C9-4268-8937-E1FD874EC272.PNG');
+  background-size:contain;background-position:center;background-repeat:no-repeat;
+  background-color:transparent;border:none;box-shadow:none;
   pointer-events:none;
 }
-.intro-table:after{
-  content:"";position:absolute;inset:12px;border-radius:50%;
-  border:1px solid rgba(200,255,61,.08);
-}
+.intro-table:after{display:none}
 /* Monster character */
 .monster{
   position:absolute;right:8px;top:28px;width:170px;height:210px;
@@ -608,11 +604,11 @@ h2{font-size:18px;line-height:1.1;letter-spacing:-.03em;margin:6px 0 8px;font-we
 .read-monster-img{width:110px;height:120px;margin:8px auto}
 .finish-monster-img{width:100px;height:110px;margin:0 auto 8px}
 .coach-img-wrap{
-  width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;
-  border:2px solid #6a4a7a;box-shadow:0 4px 14px rgba(0,0,0,.4);
-  background:#1a1220;
+  width:48px;height:48px;border-radius:50%;overflow:visible;flex-shrink:0;
+  border:2px solid rgba(200,255,61,.35);box-shadow:0 4px 14px rgba(0,0,0,.4);
+  background:transparent;
 }
-.coach-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.coach-img-wrap img{width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent!important}
 .coach-inline .coach-img-wrap{width:36px;height:36px}
 .finish-coach{display:flex;align-items:flex-start;gap:10px;margin:12px 0;padding:10px;
   background:rgba(12,16,13,.9);border:1px solid var(--line);border-radius:14px}
@@ -875,6 +871,25 @@ h2{font-size:18px;line-height:1.1;letter-spacing:-.03em;margin:6px 0 8px;font-we
 /* Embedded in PokerSwipe iframe — hide duplicate nav */
 html.psEmbedded .bottomNav{display:none!important;}
 html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
+
+/* Daily Hand — canonical table scene */
+.hdTableScene{width:100%;max-width:430px;margin:0 auto 6px}
+.hdTableScene .poker-table{
+  background:transparent!important;border:none!important;box-shadow:none!important;
+  min-height:0!important;padding:0!important;border-radius:0!important;
+  display:block!important;
+}
+.hdTableScene .poker-table:before,.hdTableScene .poker-table:after{display:none!important}
+.hdTableScene .seat-villain{
+  position:absolute;top:2%;left:50%;transform:translateX(-50%);z-index:4;margin-top:0;
+}
+.hdTableScene .pot-center{
+  position:absolute;top:var(--ps-pot-y);left:50%;transform:translate(-50%,-50%);z-index:3;
+}
+.hdTableScene .pgPlayArea .pc{width:var(--ps-board-card-w);height:var(--ps-board-card-h);font-size:11px}
+.hdTableScene .pgHeroZone .pc{width:var(--ps-hero-card-w);height:var(--ps-hero-card-h);font-size:12px}
+.hdTableScene .pgBoardZone[data-count="5"] .pc{width:34px;height:48px;font-size:10px}
+.hdTableScene .seat-hero-info{position:relative;margin-top:4px;text-align:center}
 </style>
 </head>
 <body>
@@ -893,7 +908,7 @@ html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
         <div class="heroGlow"></div>
         <div class="intro-table" aria-hidden="true"></div>
         <div class="monster monster-img-wrap" aria-hidden="true">
-          <img class="char-img" src="../assets/daily-hand/monster.jpg" alt="" onerror="this.style.display='none';this.parentElement.classList.add('css-fallback')"/>
+          <img class="char-img" src="../assets/daily-hand/monster_table.png" alt="" onerror="this.style.display='none';this.parentElement.classList.add('css-fallback')"/>
         </div>
         <div class="chip-stack" aria-hidden="true">
           <div class="chip"></div><div class="chip"></div><div class="chip"></div>
@@ -909,7 +924,7 @@ html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
           </div>
         </div>
         <div class="coach">
-          <div class="coach-img-wrap"><img src="../assets/daily-hand/freak_lady.jpg" alt="" onerror="this.parentElement.innerHTML='👩'"/></div>
+          <div class="coach-img-wrap"><img src="../assets/daily-hand/freak_lady.png" alt="" onerror="this.parentElement.innerHTML='👩'"/></div>
           <div class="coach-bubble">Не ищи правильную кнопку.<br>Сыграй человека.</div>
         </div>
         <button class="btn-primary primary" id="playBtn">СЕСТЬ ЗА СТОЛ →</button>
@@ -935,11 +950,12 @@ html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
         </div>
         <div class="passport" id="passport"></div>
 
-        <div class="poker-table" id="pokerTable">
+        <div class="psTableScene hdTableScene">
+        <div class="poker-table pgFelt psPokerTable" id="pokerTable">
           <!-- Villain seat -->
           <div class="seat-villain">
             <div class="monster-sm-img" aria-hidden="true">
-              <img class="char-img" src="../assets/daily-hand/monster.jpg" alt="" onerror="this.style.display='none'"/>
+              <img class="char-img" src="../assets/daily-hand/monster_suit.png" alt="" onerror="this.style.display='none'"/>
             </div>
             <div class="seat-info">
               <div class="pos" id="oppPosLabel">BB</div>
@@ -948,26 +964,27 @@ html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
             <div class="villain-action-bubble" id="villainBubble" style="display:none"></div>
           </div>
 
-          <!-- Board + pot -->
-          <div class="pot-center">
+          <!-- Board + pot inside felt -->
+          <div class="pot-center pgPot">
             <div class="pot-label">БАНК</div>
             <div class="pot-value" id="potValue">0 ББ</div>
             <div class="pot-chips" id="potChips" aria-hidden="true">
               <div class="chip-physical"></div><div class="chip-physical"></div>
             </div>
           </div>
-          <div class="board-row" id="boardWrap">
-            <div class="empty-board mut" style="font-size:10px;font-weight:800;letter-spacing:.08em">ДОСКА ЗАКРЫТА</div>
-          </div>
-
-          <!-- Hero seat -->
-          <div class="seat-hero">
-            <div class="hero-cards-row" id="heroCards"></div>
-            <div class="seat-info">
-              <div class="pos">BTN</div>
-              <div class="stack" id="effValue">40 ББ</div>
+          <div class="pgPlayArea">
+            <div class="pgBoardZone board-row" id="boardWrap" data-count="0">
+              <div class="empty-board mut" style="font-size:10px;font-weight:800;letter-spacing:.08em">ДОСКА ЗАКРЫТА</div>
+            </div>
+            <div class="pgHeroZone">
+              <div class="hero-cards-row" id="heroCards"></div>
+              <div class="seat-info seat-hero-info">
+                <div class="pos" id="heroPosLabel">BTN</div>
+                <div class="stack" id="effValue">40 ББ</div>
+              </div>
             </div>
           </div>
+        </div>
         </div>
 
         <!-- Tell / read notes -->
@@ -996,7 +1013,7 @@ html.psEmbedded .app{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
         <h1>КАК ТЫ ЕГО<br><span class="lime">ПРОЧИТАЛА?</span></h1>
         <p class="mut" style="font-size:11px;margin:0 0 8px">Выбери, что означает его линия</p>
         <div class="read-monster-img" aria-hidden="true">
-          <img class="char-img" src="../assets/daily-hand/monster.jpg" alt="" onerror="this.style.display='none'"/>
+          <img class="char-img" src="../assets/daily-hand/monster_suit.png" alt="" onerror="this.style.display='none'"/>
         </div>
         <div class="read-cards">
           <div class="pc card-back"><span class="back-logo">POKER<br>SWIPE</span></div>
@@ -1139,7 +1156,9 @@ rngSeed: 0,
 decisionCounter: 0,
 bettingState: { currentBetTo: 0, lastFullRaiseSize: 0, lastAggressor: null, actionReopened: false },
 auditVillainQueue: [],
-auditQueueConsumed: 0
+auditQueueConsumed: 0,
+pendingScenarioKey: null,
+_readTransitionScheduled: false
 };
 // ============================================================
 // CHIP FUNCTIONS
@@ -2312,6 +2331,27 @@ readOptions: [
 // ============================================================
 // END HAND & SETTLEMENT
 // ============================================================
+function transitionToReadScreen(){
+if(isAuditMode) return;
+if(state._readTransitionScheduled) return;
+if(!state.handOver) return;
+state._readTransitionScheduled = true;
+var delay = 0;
+try {
+  if(typeof VIS !== 'undefined' && VIS.reducedMotion) delay = 0;
+  else {
+    delay = 280;
+    var table = document.getElementById('pokerTable');
+    if(table && table.classList.contains('river-drama')) delay = 420;
+  }
+} catch(e) { delay = 280; }
+setTimeout(function(){
+  state._readTransitionScheduled = false;
+  if(state.handOver && typeof showReadScreen === 'function'){
+    showReadScreen();
+  }
+}, delay);
+}
 function endHand(reason, winner){
 if(reason === 'showdown' && !canResolveShowdown()){
 throw new Error('Cannot resolve showdown with unresolved betting action');
@@ -2330,6 +2370,7 @@ settlePot(winner);
 
 state.waitingHeroResponse = false;
 state.actionLock = false;
+transitionToReadScreen();
 }
 function settlePot(winner){
 if(winner === 'hero'){
@@ -2449,7 +2490,42 @@ if(c.ante > 0) addAction('PREFLOP', 'Ante', 'ante', totalAnte, 0, '');
 
 state.totalChipsBaseline = state.initialHeroStack + state.initialVillainStack + state.deadMoneyFromOthers;
 }
-function loadScenario(key){
+function populateIntro(scenario, key){
+if(!scenario) return;
+var c = scenario.context || {};
+var idNum = (key || scenario.id || '001').replace(/\D/g, '').slice(-3) || '001';
+var ey = document.getElementById('introEy');
+if(ey) ey.textContent = 'РУКА ДНЯ · #' + String(idNum).padStart(3, '0');
+var meta = document.getElementById('introMeta');
+if(meta) meta.textContent = (c.gameType || 'MTT') + ' · ' + (c.tableSize || '6-max') + ' · ' + Math.round(c.heroStack || 40) + ' ББ';
+var reads = scenario.publicReads || [];
+var obsRead = null;
+for(var ri = 0; ri < reads.length; ri++){
+  if(reads[ri] && reads[ri].displayOnly){ obsRead = reads[ri]; break; }
+}
+if(!obsRead && reads.length) obsRead = reads[0];
+var obs = document.getElementById('introObs');
+if(obs && obsRead) obs.textContent = typeof obsRead === 'string' ? obsRead : obsRead.text;
+var identity = scenario.publicIdentity || {};
+var hl = document.getElementById('introHeadline');
+if(hl){
+  var mins = identity.observedMinutes || 48;
+  var name = identity.displayName || 'ОППОНЕНТ';
+  hl.innerHTML = name.toUpperCase() + '<br><span class="lime">УЖЕ ' + mins + ' МИНУТ.</span>';
+}
+var tc = document.getElementById('topCounter');
+if(tc) tc.textContent = 'РУКА ДНЯ';
+}
+function bootstrapDailyIntro(){
+var keys = ['DAILY_HUMAN_001', 'DAILY_HUMAN_001', 'DAILY_HUMAN_002', 'DAILY_HUMAN_003'];
+var selected = keys[Math.floor(Math.random() * keys.length)];
+state.pendingScenarioKey = selected;
+populateIntro(SCENARIOS[selected], selected);
+show('introScreen');
+}
+function loadScenario(key, options){
+options = options || {};
+var autoShow = options.autoShow !== false;
 var scenario = SCENARIOS[key];
 if(!scenario) return;
 initializeForcedBets(scenario.context.heroStack, scenario.context.villainStack, scenario);
@@ -2459,8 +2535,11 @@ state.actionLock = false;
 state.waitingHeroResponse = false;
 state.auditVillainQueue = [];
 state.auditQueueConsumed = 0;
+state.pendingScenarioKey = key;
+if(autoShow){
 show('handScreen');
 renderCurrentStreet();
+}
 }
 function resetProductionHand(){
 state.street = 'preflop';
@@ -2487,6 +2566,7 @@ state.actionLock = false;
 state.waitingHeroResponse = false;
 state.auditVillainQueue = [];
 state.auditQueueConsumed = 0;
+state._readTransitionScheduled = false;
 resetBettingState();
 resetRNG(42);
 var heroCards = document.getElementById('heroCards');
@@ -2505,10 +2585,13 @@ var finishContent = document.getElementById('finishContent');
 if(finishContent) finishContent.innerHTML = '';
 }
 function startDailyHand(){
-resetProductionHand();
+var key = state.pendingScenarioKey;
+if(!key){
 var keys = ['DAILY_HUMAN_001', 'DAILY_HUMAN_002', 'DAILY_HUMAN_003'];
-var selected = keys[Math.floor(Math.random() * keys.length)];
-loadScenario(selected);
+key = keys[Math.floor(Math.random() * keys.length)];
+}
+resetProductionHand();
+loadScenario(key, { autoShow: true });
 }
 // ============================================================
 // UI RENDER FUNCTIONS
@@ -2560,8 +2643,10 @@ function renderBoard(){
 var cards = getBoard();
 var wrap = document.getElementById('boardWrap');
 if(cards.length){
-wrap.innerHTML = '<span class="ey" style="text-align:center;margin-bottom:7px">ДОСКА</span><div class="cards">' + cardsHTML(cards) + '</div>';
+wrap.setAttribute('data-count', String(cards.length));
+wrap.innerHTML = '<div class="cards">' + cardsHTML(cards) + '</div>';
 } else {
+wrap.setAttribute('data-count', '0');
 wrap.innerHTML = '<div class="emptyBoard">ДОСКА ЕЩЁ НЕ ОТКРЫТА</div>';
 }
 }
@@ -2599,7 +2684,8 @@ document.getElementById('effValue').textContent = 'ЭФФ. ' + fmt(Math.min(stat
 
 var publicId = state.scenario.publicIdentity || { displayName: 'Игрок справа', observedMinutes: 48 };
 document.getElementById('oppLabel').textContent = publicId.displayName;
-document.getElementById('oppSample').textContent = 'За столом ' + publicId.observedMinutes + ' минут';
+var heroPos = document.getElementById('heroPosLabel');
+if(heroPos && state.scenario.context) heroPos.textContent = state.scenario.context.heroPos || 'BTN';
 }
 function renderDecisionArea(html){
 document.getElementById('decisionArea').innerHTML = html;
@@ -2998,6 +3084,7 @@ if(callback) callback();
 }
 function renderCurrentStreet(){
 renderHand();
+if(state.handOver) return;
 if(state.street === 'preflop') renderPreflopActions();
 else if(state.street === 'flop') renderFlopActions();
 else if(state.street === 'turn') renderTurnActions();
@@ -3866,8 +3953,10 @@ console.log('STOP. DO NOT PROCEED TO STAGE 4.');
     var board = getBoard();
     if(!board || board.length === 0){
       wrap.innerHTML = '<div class="empty-board mut" style="font-size:10px;font-weight:800;letter-spacing:.08em">ДОСКА ЗАКРЫТА</div>';
+      wrap.setAttribute('data-count', '0');
       return;
     }
+    wrap.setAttribute('data-count', String(board.length));
     var html = '';
     for(var i=0;i<board.length;i++){
       html += cardHTML(board[i]);
@@ -3933,6 +4022,7 @@ console.log('STOP. DO NOT PROCEED TO STAGE 4.');
 
 
 document.addEventListener('DOMContentLoaded', function(){
+  if(typeof bootstrapDailyIntro === 'function') bootstrapDailyIntro();
   var playBtn = document.getElementById('playBtn');
   if(playBtn){
     playBtn.addEventListener('click', function(){
@@ -3952,7 +4042,7 @@ document.addEventListener('DOMContentLoaded', function(){
   if(restartBtn){
     restartBtn.addEventListener('click', function(){
       if(typeof resetProductionHand === 'function') resetProductionHand();
-      if(typeof show === 'function') show('introScreen');
+      if(typeof bootstrapDailyIntro === 'function') bootstrapDailyIntro();
     });
   }
   var sheetClose = document.getElementById('sheetClose');
@@ -3986,7 +4076,7 @@ document.addEventListener('DOMContentLoaded', function(){
 // ============================================================
 // PRODUCTION VISUAL LAYER (does not alter poker math)
 // ============================================================
-var ASSETS = { freakLady: '../assets/daily-hand/freak_lady.jpg', monster: '../assets/daily-hand/monster.jpg' };
+var ASSETS = { freakLady: '../assets/daily-hand/freak_lady.png', monster: '../assets/daily-hand/monster_suit.png', monsterTable: '../assets/daily-hand/monster_table.png' };
 var VIS = {
   revealedTells: [],
   streetScores: {},
@@ -4139,10 +4229,6 @@ function maybeRevealStreetTells(){
   }
   if(street === 'turn' && reads[2]){
     showTellEvent('ЗАМЕТИЛА 👁', reads[2].text);
-  }
-  // Synthetic timing tell on turn if only few reads
-  if(street === 'turn' && reads.length < 3){
-    showTellEvent('ЗАМЕТИЛА 👁', 'На флопе колл за 0.8 сек.');
   }
 }
 
@@ -4548,6 +4634,111 @@ window.runHandDayQA = function(){
 };
 
 console.log('[HandDay] Visual layer ready. Run window.runHandDayQA() for QA.');
+
+// ============================================================
+// POST-RIVER FLOW REGRESSION TEST
+// ============================================================
+window.__handDayRiverFlowTest = function(opts){
+  opts = opts || {};
+  var report = {
+    POST_RIVER_TRANSITION: false,
+    READ_STAGE_REACHABLE: false,
+    SHOWDOWN_REACHABLE: false,
+    DAILY_COMPLETION: false,
+    cases: []
+  };
+
+  function wait(ms){
+    return new Promise(function(resolve){ setTimeout(resolve, ms); });
+  }
+
+  function clearUiLock(){
+    if(typeof window.__clearActionProcessing === 'function') window.__clearActionProcessing();
+    state.actionLock = false;
+    state._readTransitionScheduled = false;
+  }
+
+  function clickChoice(preferred){
+    clearUiLock();
+    var cont = document.getElementById('continueBtn');
+    if(cont){ cont.click(); return true; }
+    var btns = document.querySelectorAll('#decisionArea .choice');
+    if(!btns.length) return false;
+    var pick = null;
+    for(var i=0;i<btns.length;i++){
+      var act = btns[i].dataset.action || btns[i].dataset.response;
+      if(act === preferred){ pick = btns[i]; break; }
+    }
+    if(!pick){
+      for(var j=0;j<btns.length;j++){
+        var a = btns[j].dataset.action || btns[j].dataset.response;
+        if(a !== 'fold'){ pick = btns[j]; break; }
+      }
+    }
+    if(!pick) pick = btns[0];
+    pick.click();
+    return true;
+  }
+
+  function playToRiverEnd(riverPreferred){
+    resetProductionHand();
+    loadScenario('DAILY_HUMAN_001', { autoShow: true });
+    var guard = 0;
+    return (async function(){
+      while(!state.handOver && guard < 40){
+        guard++;
+        clearUiLock();
+        if(state.street === 'river'){
+          clickChoice(riverPreferred || 'call');
+        } else if(state.street === 'preflop'){
+          clickChoice('raise');
+        } else if(state.waitingHeroResponse){
+          clickChoice('call');
+        } else {
+          clickChoice('check');
+        }
+        await wait(420);
+      }
+      await wait(520);
+      return state.handOver;
+    })();
+  }
+
+  function runCase(name, riverPreferred){
+    return playToRiverEnd(riverPreferred).then(function(ended){
+      var c = {
+        name: name,
+        handOver: !!ended,
+        readActive: !!document.getElementById('readScreen') && document.getElementById('readScreen').classList.contains('active'),
+        finishActive: false,
+        pass: false
+      };
+      if(c.readActive){
+        var opts = document.querySelectorAll('[data-read]');
+        if(opts.length) opts[0].click();
+        var rev = document.getElementById('revealBtn2');
+        if(rev && !rev.disabled) rev.click();
+      }
+      return wait(550).then(function(){
+        c.finishActive = !!document.getElementById('finishScreen') && document.getElementById('finishScreen').classList.contains('active');
+        c.pass = c.handOver && c.readActive && c.finishActive;
+        report.cases.push(c);
+        return c;
+      });
+    });
+  }
+
+  return runCase('river_call', 'call').then(function(){
+    return runCase('river_fold', 'fold');
+  }).then(function(){
+    report.POST_RIVER_TRANSITION = report.cases.every(function(x){ return x.handOver; });
+    report.READ_STAGE_REACHABLE = report.cases.every(function(x){ return x.readActive; });
+    report.SHOWDOWN_REACHABLE = report.cases.every(function(x){ return x.finishActive; });
+    report.DAILY_COMPLETION = report.POST_RIVER_TRANSITION && report.READ_STAGE_REACHABLE && report.SHOWDOWN_REACHABLE;
+    console.log('HAND_DAY_RIVER_FLOW', JSON.stringify(report, null, 2));
+    return report;
+  });
+};
 
 
 // ============================================================
