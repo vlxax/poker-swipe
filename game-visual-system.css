@@ -172,6 +172,18 @@ body.psGameVisualV2 .psVerdictNarrative {
   z-index: 4;
 }
 
+body.psGameVisualV2 .psVerdictRecap {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(200, 255, 61, 0.12);
+  background: rgba(8, 10, 8, 0.72);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #dce2d6;
+}
+
 body.psGameVisualV2 .psNarrativeStep {
   display: grid;
   grid-template-columns: 28px 1fr;
@@ -234,13 +246,13 @@ body.psGameVisualV2 .verdictCTA {
   position: relative;
   z-index: 24;
   pointer-events: auto;
-  margin-top: 14px;
-  padding: 10px 14px 12px;
-  background: linear-gradient(180deg, transparent, rgba(5, 6, 5, 0.92) 28%);
+  margin-top: 8px;
+  padding: 12px 14px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 6, 5, 0.88) 22%, rgba(5, 6, 5, 0.96) 100%);
 }
 
 body.psGameVisualV2 .verdictScene {
-  padding-bottom: clamp(108px, 28vw, 148px);
+  padding-bottom: clamp(96px, 24vw, 132px);
 }
 
 body.psGameVisualV2 .psVerdictCoachLayer {
@@ -380,8 +392,13 @@ body.psGameVisualV2 .v31VerdictContent {
   background: transparent;
   box-shadow: none;
   min-height: clamp(240px, 44vh, 340px);
-  padding-bottom: clamp(150px, 36vw, 210px);
+  padding-bottom: 8px;
   overflow: visible;
+}
+
+body.psGameVisualV2 #reviewArea .psReviewForensicPanel > .pgHud,
+body.psGameVisualV2 #reviewArea .psReviewForensicPanel > .ey {
+  display: none !important;
 }
 
 body.psGameVisualV2 .psReviewLegacy--hidden,
@@ -424,6 +441,8 @@ body.psGameVisualV2 .psReviewEvidence--compact {
   display: grid;
   gap: 8px;
   margin-top: 12px;
+  position: relative;
+  z-index: 14;
 }
 
 .psReviewInsight {
@@ -456,12 +475,12 @@ body.psGameVisualV2 .psReviewEvidence--compact {
 }
 
 .psReviewCoachHost {
-  position: absolute;
+  position: relative;
   left: 0;
   right: 0;
-  bottom: clamp(-40px, -8vw, -20px);
+  margin: 4px -6px 0;
   z-index: 12;
-  min-height: clamp(260px, 48vh, 380px);
+  min-height: clamp(220px, 40vh, 300px);
   pointer-events: none;
   overflow: visible;
 }
@@ -540,10 +559,23 @@ body.psGameVisualV2 .psReviewEvidence--compact {
 
 .psDailyCoachHost {
   position: relative;
-  margin: 2px -6px 0;
-  min-height: clamp(280px, 50vh, 400px);
+  margin: -36px -8px 0;
+  min-height: clamp(300px, 52vh, 400px);
   overflow: visible;
   z-index: 6;
+}
+
+body.psGameVisualV2 #dailyArea .panel::before,
+body.psGameVisualV2 #dailyArea .pgShell::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 0;
+  top: 38%;
+  height: 42%;
+  background: radial-gradient(ellipse at 70% 60%, rgba(66, 231, 134, 0.12), transparent 68%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 body.psGameVisualV2 #dailyArea .panel,

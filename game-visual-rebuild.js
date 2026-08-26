@@ -116,25 +116,21 @@
   function buildNarrativeFlow(s, a, size) {
     const grade = gradeFromSelected();
     const verdictLabel = grade === 'g' ? 'ЧИСТО' : grade === 'y' ? 'ЖИВЁТ' : 'ОШИБКА';
-    const ctx = (s?.ctx && s.ctx.length > 0) ? s.ctx.substring(0, 72) : 'Контекст спота';
     const hand = s?.hero ? `${s.hero[0]} ${s.hero[1]}` : '—';
     const concept = s?.concept || 'Концепция';
     const action = `${a || '—'}${size != null ? ` · ${size}%` : ''}`;
+    const recap = `${hand} · ${concept}`;
 
-    const steps = [
-      { n: '1', label: 'ЧТО БЫЛО', value: ctx },
-      { n: '2', label: 'ПОЧЕМУ ЭТО ЖИВЁТ', value: `${hand} · ${concept}` },
-      { n: '3', label: 'ВЕРДИКТ', value: `${action} → ${verdictLabel}`, verdict: true }
-    ];
-
-    return `<div class="psVerdictNarrative">${steps.map((step) => `
-      <div class="psNarrativeStep${step.verdict ? ' is-verdict' : ''}">
-        <span class="psNarrativeStep__marker">${step.n}</span>
+    return `<div class="psVerdictNarrative">
+      <p class="psVerdictRecap">${escHtml(recap)}</p>
+      <div class="psNarrativeStep is-verdict">
+        <span class="psNarrativeStep__marker">✓</span>
         <div>
-          <span class="psNarrativeStep__label">${step.label}</span>
-          <strong class="psNarrativeStep__value">${escHtml(step.value)}</strong>
+          <span class="psNarrativeStep__label">ВЕРДИКТ</span>
+          <strong class="psNarrativeStep__value">${escHtml(action)} → ${verdictLabel}</strong>
         </div>
-      </div>`).join('')}</div>`;
+      </div>
+    </div>`;
   }
 
   function restructureSwipeVerdict(s, a, size) {
@@ -238,10 +234,11 @@
 
     panel.querySelectorAll('.psReviewForensic, .psReviewCoachHost').forEach((el) => el.remove());
     panel.querySelector('.freakCoachReaction')?.remove();
-    panel.querySelectorAll('h1.impact, .pgHud, .brainPanel, .evidence').forEach((el) => {
+    panel.classList.add('psReviewForensicPanel');
+    panel.querySelectorAll('h1.impact, .pgHud, .brainPanel, .evidence, .pgHudTitle').forEach((el) => {
       el.classList.add('psReviewLegacy--hidden');
     });
-    panel.querySelectorAll(':scope > .ey').forEach((el) => el.classList.add('psReviewLegacy--hidden'));
+    panel.querySelectorAll(':scope > .ey, .pgHud .ey').forEach((el) => el.classList.add('psReviewLegacy--hidden'));
 
     const forensic = document.createElement('div');
     forensic.className = 'psReviewForensic';
