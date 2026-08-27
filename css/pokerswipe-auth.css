@@ -245,3 +245,8 @@
     font-size: 18px;
   }
 }
+
+/* Utility class for hiding elements */
+.hidden {
+  display: none !important;
+}

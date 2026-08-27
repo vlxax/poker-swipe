@@ -270,8 +270,8 @@
   // Show welcome screen
   const showWelcome = () => {
     authState = 'WELCOME';
-    document.getElementById('onboarding').classList.remove('hidden');  // ✅ Показываем онбординг
-    document.getElementById('mainApp').classList.add('hidden');  // ✅ Прячем основное приложение
+    const onboarding = document.getElementById('onboarding');
+    if (onboarding) onboarding.classList.add('hidden');  // Hide loading screen
     showScreen('authWelcome');
   };
 
