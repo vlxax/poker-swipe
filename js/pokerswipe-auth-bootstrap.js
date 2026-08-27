@@ -242,8 +242,10 @@
     log('Showing HOME');
     authState = 'HOME';
     hideAuthScreens();
-    document.getElementById('onboarding').classList.add('hidden');
-    document.getElementById('mainApp').classList.remove('hidden');
+    const onboarding = document.getElementById('onboarding');
+    const mainApp = document.getElementById('mainApp');
+    if (onboarding) onboarding.classList.add('hidden');
+    if (mainApp) mainApp.classList.remove('hidden');
     // Existing app initialization will handle rendering home
     if (typeof window.renderStory === 'function') {
       window.renderStory('home');
@@ -255,8 +257,10 @@
     log('Showing ASSESSMENT');
     authState = 'ASSESSMENT';
     hideAuthScreens();
-    document.getElementById('onboarding').classList.add('hidden');
-    document.getElementById('mainApp').classList.remove('hidden');
+    const onboarding = document.getElementById('onboarding');
+    const mainApp = document.getElementById('mainApp');
+    if (onboarding) onboarding.classList.add('hidden');
+    if (mainApp) mainApp.classList.remove('hidden');
     // Show diagnostic assessment
     if (typeof window.renderDiagnostic === 'function') {
       window.renderDiagnostic();
@@ -266,7 +270,8 @@
   // Show welcome screen
   const showWelcome = () => {
     authState = 'WELCOME';
-    document.getElementById('onboarding').classList.add('hidden');
+    document.getElementById('onboarding').classList.remove('hidden');  // ✅ Показываем онбординг
+    document.getElementById('mainApp').classList.add('hidden');  // ✅ Прячем основное приложение
     showScreen('authWelcome');
   };
 
@@ -274,10 +279,15 @@
   const showEmailEntry = () => {
     authState = 'EMAIL';
     currentEmail = '';
-    document.getElementById('authEmailInput').value = '';
-    document.getElementById('authEmailInput').focus();
-    document.getElementById('authEmailError').classList.add('hidden');
-    document.getElementById('authEmailSuccess').classList.add('hidden');
+    const emailInput = document.getElementById('authEmailInput');
+    if (emailInput) {
+      emailInput.value = '';
+      emailInput.focus();
+    }
+    const errorEl = document.getElementById('authEmailError');
+    if (errorEl) errorEl.classList.add('hidden');
+    const successEl = document.getElementById('authEmailSuccess');
+    if (successEl) successEl.classList.add('hidden');
     showScreen('authEmail');
   };
 
@@ -390,7 +400,16 @@
     // Wait for PokerSwipeAuth to be available
     if (!window.PokerSwipeAuth) {
       console.error('[AuthBootstrap] PokerSwipeAuth not available');
-      document.getElementById('bootStatus').textContent = 'Ошибка: Auth модуль не загружен';
+      const bootStatus = document.getElementById('bootStatus');
+      if (bootStatus) bootStatus.textContent = 'Ошибка: Auth модуль не загружен';
+      return;
+    }
+
+    // Ensure onboarding and mainApp elements exist
+    const onboardingEl = document.getElementById('onboarding');
+    const mainAppEl = document.getElementById('mainApp');
+    if (!onboardingEl) {
+      console.error('[AuthBootstrap] onboarding element not found');
       return;
     }
 
