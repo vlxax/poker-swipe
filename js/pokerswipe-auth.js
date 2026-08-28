@@ -1,14 +1,16 @@
-// PokerSwipe Supabase Auth Module — HOTFIX
-// Passwordless email auth with robust session handling.
-// Compatible with the standard Supabase Magic Link template ({{ .ConfirmationURL }}).
-
+// PokerSwipe Supabase Auth Module — persistent Safari/PWA session bridge
 window.PokerSwipeAuth = (() => {
   'use strict';
 
   const cfg = window.PokerSwipeSupabase;
+  const SESSION_KEY = 'pokerswipe_auth_session';
+  const BRIDGE_COOKIE = 'pokerswipe_refresh_bridge';
+  const BRIDGE_MAX_AGE_SEC = 60 * 60 * 24 * 180;
+
   let sessionToken = null;
   let sessionUser = null;
   let authState = 'INITIALIZING';
+  let refreshPromise = null;
 
   const log = (msg, data) => {
     if (window.DEBUG_AUTH) console.log('[PokerSwipeAuth]', msg, data || '');
@@ -16,19 +18,66 @@ window.PokerSwipeAuth = (() => {
 
   const nowSec = () => Math.floor(Date.now() / 1000);
 
-  const getSession = () => {
+  const getCookiePath = () => {
+    let path = window.location.pathname || '/';
+    path = path.replace(/index\.html$/i, '');
+    if (!path.endsWith('/')) {
+      const lastSlash = path.lastIndexOf('/');
+      path = lastSlash >= 0 ? path.slice(0, lastSlash + 1) : '/';
+    }
+    return path || '/';
+  };
+
+  const readCookie = (name) => {
+    const prefix = `${name}=`;
+    const item = String(document.cookie || '')
+      .split(';')
+      .map(part => part.trim())
+      .find(part => part.startsWith(prefix));
+    if (!item) return null;
     try {
-      const raw = localStorage.getItem('pokerswipe_auth_session');
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      console.warn('[PokerSwipeAuth] Broken stored session removed');
-      localStorage.removeItem('pokerswipe_auth_session');
+      return decodeURIComponent(item.slice(prefix.length));
+    } catch (_) {
       return null;
     }
   };
 
-  // Supabase normally returns expires_at in Unix seconds.
-  // This also tolerates milliseconds, numeric strings, ISO strings, or missing expires_at.
+  const writeBridgeToken = (refreshToken) => {
+    if (!refreshToken) return;
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie =
+      `${BRIDGE_COOKIE}=${encodeURIComponent(refreshToken)}` +
+      `; Path=${getCookiePath()}` +
+      `; Max-Age=${BRIDGE_MAX_AGE_SEC}` +
+      '; SameSite=Lax' +
+      secure;
+  };
+
+  const readBridgeToken = () => readCookie(BRIDGE_COOKIE);
+
+  const clearBridgeToken = () => {
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie =
+      `${BRIDGE_COOKIE}=; Path=${getCookiePath()}; Max-Age=0; SameSite=Lax${secure}`;
+  };
+
+  const getSession = () => {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.warn('[PokerSwipeAuth] Broken stored session removed');
+      localStorage.removeItem(SESSION_KEY);
+      return null;
+    }
+  };
+
+  const clearLocalSession = () => {
+    localStorage.removeItem(SESSION_KEY);
+    sessionToken = null;
+    sessionUser = null;
+  };
+
   const normalizeExpiresAt = (expiresAt, expiresIn) => {
     const fallbackTtl = Number(expiresIn) > 0 ? Number(expiresIn) : 3600;
 
@@ -62,9 +111,11 @@ window.PokerSwipeAuth = (() => {
       savedAt: Date.now()
     };
 
-    localStorage.setItem('pokerswipe_auth_session', JSON.stringify(normalized));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(normalized));
     sessionToken = normalized.access_token;
     sessionUser = normalized.user;
+
+    if (normalized.refresh_token) writeBridgeToken(normalized.refresh_token);
     return normalized;
   };
 
@@ -81,16 +132,16 @@ window.PokerSwipeAuth = (() => {
     log('Session saved', {
       uid: session?.user?.id,
       email: session?.user?.email,
-      expiresAt: session?.expires_at
+      expiresAt: session?.expires_at,
+      hasBridge: !!readBridgeToken()
     });
 
     return session;
   };
 
   const clearSession = () => {
-    localStorage.removeItem('pokerswipe_auth_session');
-    sessionToken = null;
-    sessionUser = null;
+    clearLocalSession();
+    clearBridgeToken();
     log('Session cleared');
   };
 
@@ -117,7 +168,9 @@ window.PokerSwipeAuth = (() => {
       try {
         errorText = await response.text();
       } catch (_) {}
-      throw new Error(`Supabase ${response.status}: ${(errorText || response.statusText || 'request failed').slice(0, 180)}`);
+      throw new Error(
+        `Supabase ${response.status}: ${(errorText || response.statusText || 'request failed').slice(0, 180)}`
+      );
     }
 
     if (response.status === 204) return null;
@@ -128,42 +181,54 @@ window.PokerSwipeAuth = (() => {
 
   const refreshAccessToken = async (refreshToken) => {
     if (!refreshToken) return null;
-    log('Attempting token refresh');
+    if (refreshPromise) return refreshPromise;
+
+    refreshPromise = (async () => {
+      log('Attempting token refresh');
+
+      try {
+        const result = await supabaseCall('/auth/v1/token?grant_type=refresh_token', {
+          method: 'POST',
+          authenticated: false,
+          body: JSON.stringify({ refresh_token: refreshToken })
+        });
+
+        if (!result?.access_token) return null;
+
+        const oldSession = getSession() || {};
+        const user = result.user || oldSession.user || null;
+        if (!user?.id) return null;
+
+        const updated = saveSessionObject({
+          ...oldSession,
+          access_token: result.access_token,
+          refresh_token: result.refresh_token || oldSession.refresh_token || refreshToken,
+          expires_in: result.expires_in || oldSession.expires_in || 3600,
+          expires_at: result.expires_at,
+          token_type: result.token_type || oldSession.token_type || 'Bearer',
+          user
+        });
+
+        log('Token refreshed', {
+          hasRotatedRefreshToken: !!result.refresh_token,
+          expiresAt: updated?.expires_at
+        });
+
+        return updated?.access_token || null;
+      } catch (e) {
+        log('Token refresh failed', e);
+        return null;
+      }
+    })();
 
     try {
-      const result = await supabaseCall('/auth/v1/token?grant_type=refresh_token', {
-        method: 'POST',
-        authenticated: false,
-        body: JSON.stringify({ refresh_token: refreshToken })
-      });
-
-      if (!result?.access_token) return null;
-
-      const oldSession = getSession() || {};
-      const updated = saveSessionObject({
-        ...oldSession,
-        access_token: result.access_token,
-        refresh_token: result.refresh_token || oldSession.refresh_token || refreshToken,
-        expires_in: result.expires_in || oldSession.expires_in || 3600,
-        expires_at: result.expires_at,
-        token_type: result.token_type || oldSession.token_type || 'Bearer',
-        user: result.user || oldSession.user
-      });
-
-      log('Token refreshed', {
-        hasRotatedRefreshToken: !!result.refresh_token,
-        expiresAt: updated?.expires_at
-      });
-
-      return updated?.access_token || null;
-    } catch (e) {
-      log('Token refresh failed', e);
-      return null;
+      return await refreshPromise;
+    } finally {
+      refreshPromise = null;
     }
   };
 
   const getRedirectUrl = () => {
-    // Keep GitHub Pages project root stable even when the page was opened as /index.html.
     const url = new URL(window.location.href);
     url.search = '';
     url.hash = '';
@@ -172,14 +237,12 @@ window.PokerSwipeAuth = (() => {
     return url.toString();
   };
 
-  // Standard Supabase email template sends a Magic Link.
-  // redirect_to is explicitly passed so the email returns to this PokerSwipe deployment.
   const sendMagicLink = async (email) => {
     const normalizedEmail = String(email || '').toLowerCase().trim();
     if (!normalizedEmail) throw new Error('Email is required');
 
     const redirectTo = getRedirectUrl();
-    log('Sending magic link', { email: normalizedEmail, redirectTo });
+    log('Sending OTP email', { email: normalizedEmail, redirectTo });
 
     await supabaseCall(`/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`, {
       method: 'POST',
@@ -191,10 +254,9 @@ window.PokerSwipeAuth = (() => {
       })
     });
 
-    return { ok: true, method: 'magiclink', redirectTo };
+    return { ok: true, method: 'email', redirectTo };
   };
 
-  // Kept for compatibility if the Supabase template is later switched to {{ .Token }}.
   const verifyOTP = async (email, otp) => {
     const normalizedEmail = String(email || '').toLowerCase().trim();
     const token = String(otp || '').trim();
@@ -209,16 +271,16 @@ window.PokerSwipeAuth = (() => {
       })
     });
 
-    const session = result?.session;
-    const user = result?.user || session?.user;
+    const source = result?.session?.access_token ? result.session : result;
+    const user = result?.user || source?.user || null;
 
-    if (session?.access_token && user?.id) {
+    if (source?.access_token && user?.id) {
       const saved = setSession(
-        session.access_token,
+        source.access_token,
         user,
-        session.expires_at,
-        session.refresh_token,
-        session.expires_in
+        source.expires_at,
+        source.refresh_token,
+        source.expires_in
       );
       return { ok: true, user, session: saved };
     }
@@ -226,14 +288,47 @@ window.PokerSwipeAuth = (() => {
     throw new Error('No session in OTP response');
   };
 
-  const getCurrentSession = async () => {
-    let stored = getSession();
-    if (!stored?.access_token || !stored?.user?.id) {
-      if (stored) clearSession();
+  const recoverFromBridgeCookie = async () => {
+    const bridgeToken = readBridgeToken();
+    if (!bridgeToken) return null;
+
+    log('Trying iOS PWA session bridge');
+
+    const newToken = await refreshAccessToken(bridgeToken);
+    if (!newToken) {
+      clearBridgeToken();
+      clearLocalSession();
+      log('PWA bridge rejected; falling back to OTP');
       return null;
     }
 
-    // Repair older sessions that were saved with null/string/millisecond expires_at.
+    const recovered = getSession();
+    if (!recovered?.access_token || !recovered?.user?.id) {
+      clearBridgeToken();
+      clearLocalSession();
+      return null;
+    }
+
+    log('PWA session restored from bridge', {
+      uid: recovered.user.id,
+      email: recovered.user.email
+    });
+
+    return recovered;
+  };
+
+  const getCurrentSession = async () => {
+    let stored = getSession();
+
+    if (!stored?.access_token || !stored?.user?.id) {
+      if (stored) clearLocalSession();
+      const recovered = await recoverFromBridgeCookie();
+      if (recovered) return recovered;
+      return null;
+    }
+
+    if (stored.refresh_token) writeBridgeToken(stored.refresh_token);
+
     const normalizedExpiresAt = normalizeExpiresAt(stored.expires_at, stored.expires_in);
     if (stored.expires_at !== normalizedExpiresAt) {
       stored = saveSessionObject({ ...stored, expires_at: normalizedExpiresAt });
@@ -248,6 +343,9 @@ window.PokerSwipeAuth = (() => {
 
     if (nowMs >= expiresAtMs) {
       if (!stored.refresh_token) {
+        clearLocalSession();
+        const recovered = await recoverFromBridgeCookie();
+        if (recovered) return recovered;
         clearSession();
         return null;
       }
@@ -273,7 +371,6 @@ window.PokerSwipeAuth = (() => {
   const loadProfile = async (uid) => {
     if (!uid) return null;
 
-    // A callback can write localStorage before sessionToken is initialized.
     if (!sessionToken) {
       const stored = getSession();
       if (stored?.access_token) {
@@ -302,7 +399,9 @@ window.PokerSwipeAuth = (() => {
       retries -= 1;
       if (retries > 0) {
         const attempt = 5 - retries;
-        await new Promise(resolve => setTimeout(resolve, Math.min(4000, 500 * (2 ** Math.max(0, attempt - 1)))));
+        await new Promise(resolve =>
+          setTimeout(resolve, Math.min(4000, 500 * (2 ** Math.max(0, attempt - 1))))
+        );
       }
     }
 
@@ -379,7 +478,10 @@ window.PokerSwipeAuth = (() => {
     try {
       const legacy = window.S;
       const numericSkill = Number(legacy.skill || 50);
-      const skillLevel = numericSkill >= 75 ? 'pro' : numericSkill >= 55 ? 'intermediate' : 'beginner';
+      const skillLevel =
+        numericSkill >= 75 ? 'pro' :
+        numericSkill >= 55 ? 'intermediate' :
+        'beginner';
 
       return await updateProfile({
         onboarding_completed: true,
@@ -413,6 +515,10 @@ window.PokerSwipeAuth = (() => {
     getRedirectUrl,
     getState: () => authState,
     getUser: () => sessionUser,
-    getToken: () => sessionToken
+    getToken: () => sessionToken,
+    getBridgeState: () => ({
+      present: !!readBridgeToken(),
+      path: getCookiePath()
+    })
   };
 })();

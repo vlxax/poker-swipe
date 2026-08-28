@@ -1,26 +1,35 @@
-PokerSwipe — OTP + обязательный начальный тест
-================================================
+PokerSwipe — iOS PWA persistent auth fix
 
-Заменить в GitHub только файл:
-
-js/pokerswipe-auth-bootstrap.js
-
-Новый цикл:
-1. Email
-2. Получить код
-3. Ввести код в приложении
-4. «Вход успешен»
-5. ОБЯЗАТЕЛЬНЫЙ новый начальный тест
-6. Экран результата теста
-7. Главная PokerSwipe
-8. При следующем запуске вход и тест повторно не запрашиваются
+Заменить в GitHub только:
+js/pokerswipe-auth.js
 
 Что исправлено:
-- старый локальный diagDone больше не пропускает новый тест;
-- старый migrated_from_local профиль считается незавершённым onboarding;
-- стартуется production assessment с force reset;
-- после завершения production assessment onboarding_completed записывается в Supabase;
-- migrated_from_local сбрасывается в false;
-- следующий запуск уже ведёт на главную.
+- полная Supabase-сессия по-прежнему хранится в localStorage;
+- refresh_token дополнительно зеркалится в SameSite=Lax cookie;
+- при установке PokerSwipe на Home Screen iOS может перенести cookie;
+- если у PWA пустой localStorage, она обменивает bridge refresh token в Supabase и восстанавливает полноценную сессию;
+- при ротации refresh token cookie обновляется;
+- добавлена защита от параллельных refresh-запросов;
+- signOut очищает и localStorage, и bridge cookie;
+- OTP verify поддерживает оба формата ответа Supabase.
 
-Supabase email template менять больше не нужно — {{ .Token }} уже настроен.
+ВАЖНО ДЛЯ ТЕСТА:
+После выкладки фикса:
+1. Открыть PokerSwipe в Safari, где пользователь уже авторизован.
+2. Один раз обновить страницу — это создаст bridge cookie из существующей сессии.
+3. Удалить СТАРУЮ иконку PokerSwipe с Домашнего экрана.
+4. Снова Safari → Поделиться → На экран «Домой».
+5. Открыть новую иконку.
+6. Второй OTP запрашиваться не должен.
+
+Старую уже установленную иконку фикс задним числом не снабдит Safari-cookie:
+cookie переносится при установке Home Screen web app.
+
+Cookie:
+name: pokerswipe_refresh_bridge
+SameSite=Lax
+Secure на HTTPS
+Max-Age: 180 дней
+Path: корень текущего GitHub Pages приложения
+
+JS syntax: PASS
