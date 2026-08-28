@@ -565,10 +565,128 @@
     }
   };
 
+  let assessmentCompletionObserver = null;
+
+  const persistAssessmentCompletion = async () => {
+    const auth = window.PokerSwipeAuth;
+    const user = auth?.getUser?.();
+    if (!user?.id || typeof auth?.updateProfile !== 'function') {
+      console.warn('[AuthBootstrap] Cannot persist onboarding: auth user/profile API unavailable');
+      return false;
+    }
+
+    const numericSkill = Number(window.S?.skill || 50);
+    const skill = numericSkill >= 75
+      ? 'pro'
+      : numericSkill >= 55
+        ? 'intermediate'
+        : 'beginner';
+
+    const diagnosticCount = Array.isArray(window.S?.diagnostic)
+      ? window.S.diagnostic.length
+      : 0;
+
+    const updates = {
+      onboarding_completed: true,
+      onboarding_completed_at: new Date().toISOString(),
+      migrated_from_local: false,
+      initial_assessment: {
+        source: 'production_assessment_v12',
+        results_count: diagnosticCount,
+        skill_level: Number.isFinite(numericSkill) ? numericSkill : 50,
+        completed_at: new Date().toISOString()
+      },
+      skill
+    };
+
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        const ok = await withTimeout(
+          auth.updateProfile(updates),
+          8000,
+          'Сохранение начального теста'
+        );
+        if (ok) {
+          log('Initial assessment persisted to profile', {
+            uid: user.id,
+            attempt,
+            diagnosticCount
+          });
+          return true;
+        }
+      } catch (e) {
+        console.error('[AuthBootstrap] Failed to persist initial assessment', e);
+      }
+
+      if (attempt < 3) {
+        await sleep(500 * attempt);
+      }
+    }
+
+    console.error('[AuthBootstrap] Initial assessment was not persisted after 3 attempts');
+    return false;
+  };
+
+  const watchAssessmentCompletion = () => {
+    if (assessmentCompletionObserver) {
+      assessmentCompletionObserver.disconnect();
+      assessmentCompletionObserver = null;
+    }
+
+    let persisted = false;
+    const check = async () => {
+      if (persisted) return;
+
+      const summaryReady =
+        window.S?.diagDone === true &&
+        !!document.getElementById('psAssessEnter');
+
+      if (!summaryReady) return;
+
+      persisted = true;
+      assessmentCompletionObserver?.disconnect();
+      assessmentCompletionObserver = null;
+
+      const ok = await persistAssessmentCompletion();
+      if (!ok) {
+        console.warn('[AuthBootstrap] Assessment complete locally but server persistence failed');
+      }
+    };
+
+    const root =
+      document.getElementById('story') ||
+      document.getElementById('onboarding') ||
+      document.body;
+
+    if (typeof MutationObserver === 'function' && root) {
+      assessmentCompletionObserver = new MutationObserver(() => {
+        void check();
+      });
+      assessmentCompletionObserver.observe(root, {
+        childList: true,
+        subtree: true
+      });
+    }
+
+    void check();
+  };
+
   const showAssessment = () => {
     authState = 'ASSESSMENT';
     hideAuthScreens();
     hideBootLayer();
+
+    // Pre-auth local diagnostic data must never skip the real first-run assessment.
+    if (window.S) {
+      window.S.diagDone = false;
+    }
+
+    watchAssessmentCompletion();
+
+    if (typeof window.startDiagnostic25 === 'function') {
+      window.startDiagnostic25(true);
+      return;
+    }
 
     const mainApp = document.getElementById('mainApp');
     if (mainApp) mainApp.classList.remove('hidden');
@@ -598,28 +716,14 @@
       }
     }
 
-    if (
-      window.PokerSwipeAuth?.hasLegacyAssessment?.() &&
-      !profile?.onboarding_completed
-    ) {
-      try {
-        const migrated = await withTimeout(
-          window.PokerSwipeAuth.migrateLegacyAssessment(profile),
-          8000,
-          'Миграция'
-        );
-        if (migrated) {
-          profile = {
-            ...(profile || {}),
-            onboarding_completed: true
-          };
-        }
-      } catch (e) {
-        log('Legacy migration skipped', e);
-      }
-    }
+    // A profile completed only by the legacy local migration is not enough.
+    // The user must complete the current production assessment once.
+    const completedByRealAssessment =
+      profile?.onboarding_completed === true &&
+      profile?.migrated_from_local !== true &&
+      profile?.initial_assessment?.legacy !== true;
 
-    if (profile?.onboarding_completed) showHome();
+    if (completedByRealAssessment) showHome();
     else showAssessment();
   };
 
