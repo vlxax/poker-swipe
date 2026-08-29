@@ -35,9 +35,12 @@ export function getCombinedRangeInventory() {
     bySourceMode: byMode,
     metaStats: meta?.stats || {},
     shardIndexPresent: existsSync(join(BUILT, 'trainer-shard-index.json')),
-    strategyMapDefaultLibrary: 'reference-6max',
+    strategyMapDefaultLibrary: 'trainer-1698',
+    strategyMapReferenceLibrary: 'reference-6max',
     strategyMapTrainerEligible: charts.length,
-    unmappedSpotCount: meta?.unmappedSpotCount ?? meta?.stats?.unmappedSpotCount ?? null
+    unmappedSpotCount: meta?.unmappedSpotCount ?? meta?.stats?.unmappedSpotCount ?? null,
+    unmappedSpots: meta?.unmappedSpots || [],
+    unexplainedUnmapped: meta?.spotMapStatusCounts?.unexplainedUnmapped ?? null
   };
 }
 
@@ -59,8 +62,9 @@ export function countTrainerGradableHands() {
       const hands = compact.h || {};
       for (const cell of Object.values(hands)) {
         const raw = cell.a;
+        const mixed = cell.m === 1;
         const g = raw === 'UNSELECTED' ? 1 : cell.g;
-        if (g === 1) gradable += 1;
+        if (g === 1 && !mixed) gradable += 1;
         else blocked += 1;
       }
     }

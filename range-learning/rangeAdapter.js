@@ -228,6 +228,9 @@ export function trainerCellToDistribution(cell) {
   if (!cell) {
     return { skip: true, reason: 'missing', semantics: 'UNSUPPORTED' };
   }
+  if (cell.isMixed || cell.m === 1) {
+    return { skip: true, reason: 'mixed_cell', semantics: 'UNSUPPORTED' };
+  }
   if (cell.gradingAllowed === false) {
     return { skip: true, reason: cell.dataStatus || 'not_gradable', semantics: 'UNSUPPORTED' };
   }

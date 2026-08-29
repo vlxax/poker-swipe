@@ -42,10 +42,22 @@ export {
 } from './persistence.js';
 export {
   getProductionStrategyMap,
+  getTrainerStrategyMap,
+  getReferenceStrategyMap,
   resetProductionStrategyMap,
   loadProductionLibraryInto,
-  signalsForItem
+  signalsForItem,
+  neighborsForRange
 } from './strategyMapRuntime.js';
 export { recordCanonicalAttempts, recordOneAttempt, reviewQueueForUser } from './memoryRuntime.js';
 export { RANGE_INTELLIGENCE_POLICY, maybeEnrichWithRangeIntelligence } from './rangeIntelligence.js';
 export { getCombinedRangeInventory, countTrainerGradableHands } from './trainerInventory.js';
+export { adaptTrainerLibrary, adaptTrainerChartById } from './trainerLibrary.js';
+export {
+  computeDatasetVersion,
+  readStructuralCache,
+  writeStructuralCache,
+  cacheMatchesVersion,
+  CACHE_SCHEMA,
+  ADAPTER_VERSION
+} from './strategyMapCache.js';

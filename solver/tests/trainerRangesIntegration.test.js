@@ -66,7 +66,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
   test('UNSELECTED hand grades as FOLD (trainer-confirmed)', async () => {
     resetTrainerCache();
     const lookup = nodeLookup();
-    const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo' };
+    const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo', situation: 'uo_open' };
     const hand = lookup.lookupHandAction({ ...selectionToTrainerQuery(sel), hand: 'K2s' });
     assert.equal(hand.action, 'UNSELECTED');
     assert.equal(hand.gradingAllowed, true);
@@ -78,7 +78,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
 
   test('partial match: wrong stack not exact', () => {
     resetTrainerCache();
-    const spot = lookupTrainerSpot({ sourceMode: 'uo', heroPosition: 'EP', stack: '999BB' });
+    const spot = lookupTrainerSpot({ sourceMode: 'uo', sourceGroup: 'UO', heroPosition: 'EP', stack: '999BB' });
     assert.notEqual(spot.status, MATCH_STATUS.EXACT_TRAINER_MATCH);
   });
 
@@ -103,7 +103,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
   test('buildTrainerMatrix maps UNSELECTED to FOLD with trainer provenance', async () => {
     resetTrainerCache();
     const lookup = nodeLookup();
-    const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo' };
+    const sel = { dataSource: 'trainer', position: 'EP', stackBand: '2-4', trainerSourceMode: 'uo', situation: 'uo_open' };
     const matrix = await buildTrainerMatrix(lookup, sel);
     assert.ok(matrix.supported);
     assert.equal(matrix.sourceType, 'trainer');
@@ -128,7 +128,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
   test('five scenario groups have chart matches', () => {
     resetTrainerCache();
     const groups = [
-      { sourceMode: 'uo', heroPosition: 'CO', stack: '3BB' },
+      { sourceMode: 'uo', sourceGroup: 'UO', heroPosition: 'CO', stack: '3BB' },
       { sourceMode: 'callpush', rawSpot: 'Resteal', stack: '25BB' },
       { sourceMode: 'vssqueeze', rawSpot: 'Caller_IP_R_Mid', stack: '25BB', betSize: '5x' },
       { sourceMode: 'sbvsbb', rawSpot: 'BB_Def', heroPosition: 'BB', stack: '20BB' },

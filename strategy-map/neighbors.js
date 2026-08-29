@@ -15,7 +15,10 @@ export function findNearestRanges(targetRange, library, options = {}) {
     excludeSelf = true,
     candidatePoolSize = 50,
     useFullComparison = true,
-    fullCompareFn = null
+    fullCompareFn = null,
+    fingerprintCache = null,
+    metadataPrefilter = null,
+    rangeLoader = null
   } = options;
 
   if (!targetRange || !library || library.length === 0) {
@@ -24,15 +27,21 @@ export function findNearestRanges(targetRange, library, options = {}) {
 
   const compareFn = fullCompareFn || compareStrategySimilarity;
   const targetId = targetRange.id || targetRange.rangeId;
-  const targetFp = buildRangeFingerprint(targetRange);
+  const targetFp = fingerprintCache?.get(targetId) || buildRangeFingerprint(targetRange);
+
+  let pool = library;
+  if (metadataPrefilter) {
+    const filtered = library.filter((range) => matchesMetadataPrefilter(range, targetRange, metadataPrefilter));
+    if (filtered.length >= Math.min(8, library.length)) pool = filtered;
+  }
 
   const candidates = [];
 
-  for (const range of library) {
+  for (const range of pool) {
     const rangeId = range.id || range.rangeId;
     if (excludeSelf && rangeId === targetId) continue;
 
-    const fp = buildRangeFingerprint(range);
+    const fp = fingerprintCache?.get(rangeId) || buildRangeFingerprint(range);
     const fpComparison = compareFingerprints(targetFp, fp);
 
     candidates.push({
@@ -55,6 +64,11 @@ export function findNearestRanges(targetRange, library, options = {}) {
   const results = [];
 
   for (const candidate of topCandidates) {
+    if (rangeLoader && (!candidate.range.hands || Object.keys(candidate.range.hands).length === 0)) {
+      const loaded = rangeLoader(candidate.rangeId);
+      if (loaded) candidate.range = loaded;
+    }
+
     let strategySimilarity;
     let comparison;
 
@@ -86,6 +100,15 @@ export function findNearestRanges(targetRange, library, options = {}) {
 
   results.sort((a, b) => b.similarity - a.similarity);
   return results.slice(0, maxResults);
+}
+
+function matchesMetadataPrefilter(range, target, prefilter) {
+  const meta = range.metadata || {};
+  const t = target.metadata || {};
+  if (prefilter.sameFamily && (meta.family || meta.category) !== (t.family || t.category)) return false;
+  if (prefilter.sameSource && meta.source !== t.source) return false;
+  if (prefilter.samePosition && (meta.heroPosition || meta.position) !== (t.heroPosition || t.position)) return false;
+  return true;
 }
 
 function computeMetadataSimilarity(metaA, metaB) {

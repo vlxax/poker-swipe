@@ -9,6 +9,12 @@ import { parseTrainerPosition, positionMatchKind } from './positionParser.js';
 import { mapTrainerSpot } from './spotMapper.js';
 import { trainerProvenance } from './provenance.js';
 import { matchQueryToRecord, parseTrainerStack } from './stackParser.js';
+import {
+  chartUoFamily,
+  resolveUoFamily,
+  findAmbiguousUoPair
+} from './uoFamily.js';
+import { canonicalRangeId } from './rangeIdAlias.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -54,10 +60,11 @@ function loadShardIndex() {
 }
 
 function loadChartFromShard(chartId) {
-  if (_chartHandsCache.has(chartId)) return _chartHandsCache.get(chartId);
+  const resolved = canonicalRangeId(chartId);
+  if (_chartHandsCache.has(resolved)) return _chartHandsCache.get(resolved);
   const index = loadShardIndex();
   if (!index?.chartToShard) return null;
-  const shardId = index.chartToShard[chartId];
+  const shardId = index.chartToShard[resolved];
   if (!shardId) return null;
   if (!_shardCache.has(shardId)) {
     const shardPath = join(BUILT_DIR, 'trainer-shards', `${shardId}.json`);
@@ -65,14 +72,14 @@ function loadChartFromShard(chartId) {
     const shard = JSON.parse(readFileSync(shardPath, 'utf8'));
     _shardCache.set(shardId, shard.charts || {});
   }
-  const compact = _shardCache.get(shardId)[chartId];
+  const compact = _shardCache.get(shardId)[resolved];
   if (!compact?.h) return null;
   const hands = {};
   for (const [hand, cell] of Object.entries(compact.h)) {
     hands[hand] = expandCompactHand(cell);
   }
-  const chart = { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
-  _chartHandsCache.set(chartId, chart);
+  const chart = { chartId: resolved, requestedId: chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
+  _chartHandsCache.set(resolved, chart);
   return chart;
 }
 
@@ -107,7 +114,8 @@ export function getTrainerMeta() {
 
 export function getChartById(chartId) {
   const { charts } = loadBuilt();
-  return charts.find((c) => c.id === chartId) || null;
+  const resolved = canonicalRangeId(chartId);
+  return charts.find((c) => c.id === resolved || c.id === chartId) || null;
 }
 
 export function listCharts(filter = {}) {
@@ -152,17 +160,14 @@ function stackMatch(queryStack, recordStack) {
   return 'none';
 }
 
-/** Dual UO family: prefer UO_* (zip) vs BL_uo-* (BekhtOLD) without cross-stealing. */
+/** Family score is only applied when the caller named a family explicitly. */
 function familyPreference(chart, query) {
-  const id = chart.id || '';
-  const isZipUo = id.startsWith('UO_');
-  const isBlUo = id.startsWith('BL_uo');
-  if (query.sourceGroup === 'UO') return isZipUo ? 2 : isBlUo ? -2 : 0;
-  if (query.sourceGroup === 'uo') return isBlUo ? 2 : isZipUo ? -2 : 0;
-  // Default (incl. brain queries with no sourceMode): trusted zip UO_* wins over BL_uo-*.
-  if (isZipUo) return 1;
-  if (isBlUo) return -1;
-  return 0;
+  const family = resolveUoFamily(query);
+  if (!family) return 0;
+  const chartFamily = chartUoFamily(chart);
+  if (!chartFamily) return 0;
+  if (chartFamily === family) return 2;
+  return -2;
 }
 
 function opponentMatch(queryOpp, recordOpp) {
@@ -199,8 +204,10 @@ function scoreChartMatch(chart, query) {
 
   const stackKind = stackMatch(query.stack, chart.stack);
   if (stackKind === 'exact') score += 25;
-  else if (stackKind === 'band') score += 20;
-  else if (query.stack) mismatches.push(`stack: wanted ${query.stack}, have ${chart.stack?.raw}`);
+  else if (stackKind === 'band') {
+    score += 20;
+    mismatches.push(`stack band match (${chart.stack?.raw})`);
+  } else if (query.stack) mismatches.push(`stack: wanted ${query.stack}, have ${chart.stack?.raw}`);
   else score += 5;
 
   const oppKind = opponentMatch(query.opponentPosition, chart.opponentPosition);
@@ -229,9 +236,20 @@ function scoreChartMatch(chart, query) {
 
 export function lookupTrainerCharts(query = {}) {
   const { charts } = loadBuilt();
-  const ranked = charts
+  const family = resolveUoFamily(query);
+  const pool = family
+    ? charts.filter((c) => {
+        const cf = chartUoFamily(c);
+        return cf == null || cf === family;
+      })
+    : charts;
+  const ranked = pool
     .map((chart) => ({ chart, ...scoreChartMatch(chart, query) }))
     .filter((r) => r.score > 0)
+    .filter((r) => {
+      const cf = chartUoFamily(r.chart);
+      return !family || !cf || cf === family;
+    })
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       if (b.familyPref !== a.familyPref) return b.familyPref - a.familyPref;
@@ -259,9 +277,41 @@ export function lookupTrainerHand({ chartId, hand }) {
 }
 
 export function lookupTrainerSpot(query = {}) {
+  if (query.chartId || query.id) {
+    const chart = getChartById(query.chartId || query.id);
+    if (!chart) {
+      return { status: MATCH_STATUS.NO_TRAINER_DATA, matches: [], provenance: null, chart: null };
+    }
+    return {
+      status: MATCH_STATUS.EXACT_TRAINER_MATCH,
+      chart,
+      mismatches: [],
+      score: 100,
+      matches: [{ chartId: chart.id, score: 100, mismatches: [] }],
+      provenance: chart.provenance
+    };
+  }
+
   const ranked = lookupTrainerCharts(query);
   if (!ranked.length) {
-    return { status: MATCH_STATUS.NO_TRAINER_DATA, matches: [], provenance: null };
+    return { status: MATCH_STATUS.NO_TRAINER_DATA, matches: [], provenance: null, chart: null };
+  }
+
+  const ambiguous = findAmbiguousUoPair(ranked, query);
+  if (ambiguous) {
+    return {
+      status: MATCH_STATUS.AMBIGUOUS_UO_FAMILY,
+      chart: null,
+      mismatches: [
+        `UO family unspecified: zip=${ambiguous.zip.chart.id} vs bekhtold=${ambiguous.bekhtold.chart.id}. Pass uoFamily: 'zip' | 'bekhtold' (or sourceGroup: 'UO' | 'uo').`
+      ],
+      score: 0,
+      matches: [
+        { chartId: ambiguous.zip.chart.id, score: ambiguous.zip.score, family: 'zip' },
+        { chartId: ambiguous.bekhtold.chart.id, score: ambiguous.bekhtold.score, family: 'bekhtold' }
+      ],
+      provenance: null
+    };
   }
 
   const best = ranked[0];
@@ -321,6 +371,10 @@ export function lookupTrainerHandAction(query = {}) {
     provenance: handRec.provenance || spot.provenance,
     sourceColor: handRec.sourceColor || null
   };
+}
+
+export function getTrainerChartHands(chartId) {
+  return loadChartFromShard(chartId);
 }
 
 export function getUnmappedSpotsReport() {

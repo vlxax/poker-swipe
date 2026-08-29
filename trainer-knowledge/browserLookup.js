@@ -8,6 +8,7 @@ import {
 } from './status.js';
 import { positionMatchKind } from './positionParser.js';
 import { formatProvenanceDebug } from './provenance.js';
+import { chartUoFamily, resolveUoFamily, findAmbiguousUoPair } from './uoFamily.js';
 
 const BUILT_BASE = 'data/trainer/built';
 
@@ -22,11 +23,16 @@ async function fetchJson(path) {
 export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   if (_state?.base === base && _state.ready) return _state.api;
 
-  const [charts, meta, shardIndex] = await Promise.all([
+  const [charts, meta, shardIndex, aliasTable] = await Promise.all([
     fetchJson(`${base}/charts-index.json`),
     fetchJson(`${base}/meta.json`),
-    fetchJson(`${base}/trainer-shard-index.json`)
+    fetchJson(`${base}/trainer-shard-index.json`),
+    fetchJson(`${base}/b2-id-alias.json`).catch(() => ({ b2ToCanonical: {} }))
   ]);
+  const b2ToCanonical = aliasTable?.b2ToCanonical || {};
+  function canonicalId(id) {
+    return b2ToCanonical[id] || id;
+  }
 
   const chartHandsCache = new Map();
   const shardCache = new Map();
@@ -57,11 +63,12 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   }
 
   async function loadChartFromShard(chartId) {
-    if (chartHandsCache.has(chartId)) return chartHandsCache.get(chartId);
+    const resolved = canonicalId(chartId);
+    if (chartHandsCache.has(resolved)) return chartHandsCache.get(resolved);
 
-    const shardId = shardIndex?.chartToShard?.[chartId];
+    const shardId = shardIndex?.chartToShard?.[resolved];
     if (!shardId) {
-      chartHandsCache.set(chartId, null);
+      chartHandsCache.set(resolved, null);
       return null;
     }
 
@@ -70,14 +77,14 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
         const shard = await fetchJson(`${base}/trainer-shards/${shardId}.json`);
         shardCache.set(shardId, shard.charts || {});
       } catch {
-        chartHandsCache.set(chartId, null);
+        chartHandsCache.set(resolved, null);
         return null;
       }
     }
 
-    const compact = shardCache.get(shardId)?.[chartId];
+    const compact = shardCache.get(shardId)?.[resolved];
     if (!compact?.h) {
-      chartHandsCache.set(chartId, null);
+      chartHandsCache.set(resolved, null);
       return null;
     }
 
@@ -85,8 +92,8 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     for (const [hand, cell] of Object.entries(compact.h)) {
       hands[hand] = expandCompactHand(cell);
     }
-    const chart = { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
-    chartHandsCache.set(chartId, chart);
+    const chart = { chartId: resolved, hands, parseStatus: compact.ps, parseStats: compact.st };
+    chartHandsCache.set(resolved, chart);
     return chart;
   }
 
@@ -95,14 +102,12 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   }
 
   function familyPreference(chart, query) {
-    const id = chart.id || '';
-    const isZipUo = id.startsWith('UO_');
-    const isBlUo = id.startsWith('BL_uo');
-    if (query.sourceGroup === 'UO') return isZipUo ? 2 : isBlUo ? -2 : 0;
-    if (query.sourceGroup === 'uo') return isBlUo ? 2 : isZipUo ? -2 : 0;
-    if (isZipUo) return 1;
-    if (isBlUo) return -1;
-    return 0;
+    const family = resolveUoFamily(query);
+    if (!family) return 0;
+    const chartFamily = chartUoFamily(chart);
+    if (!chartFamily) return 0;
+    if (chartFamily === family) return 2;
+    return -2;
   }
 
   function scoreChartMatch(chart, query) {
@@ -134,12 +139,15 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
         const [lo, hi] = rStack.replace(/bb/i, '').split('-').map(Number);
         if (Number.isFinite(num) && Number.isFinite(lo) && Number.isFinite(hi) && num >= lo && num <= hi) {
           score += 20;
+          mismatches.push(`stack band match (${rStackRaw})`);
         } else mismatches.push(`stack: ${qStack} ∉ ${rStackRaw}`);
       } else if (/^\d+(?:\.\d+)?\+$/i.test(rStack.replace(/bb/i, ''))) {
         const minBb = parseFloat(rStack);
         const num = parseFloat(qNorm);
-        if (Number.isFinite(num) && Number.isFinite(minBb) && num >= minBb) score += 20;
-        else mismatches.push(`stack: ${qStack} ∉ ${rStackRaw}`);
+        if (Number.isFinite(num) && Number.isFinite(minBb) && num >= minBb) {
+          score += 20;
+          mismatches.push(`stack band match (${rStackRaw})`);
+        } else mismatches.push(`stack: ${qStack} ∉ ${rStackRaw}`);
       } else mismatches.push(`stack: ${qStack} ≠ ${rStackRaw}`);
     } else score += 5;
 
@@ -169,9 +177,20 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   }
 
   function lookupCharts(query = {}) {
-    return charts
+    const family = resolveUoFamily(query);
+    const pool = family
+      ? charts.filter((c) => {
+          const cf = chartUoFamily(c);
+          return cf == null || cf === family;
+        })
+      : charts;
+    return pool
       .map((chart) => ({ chart, ...scoreChartMatch(chart, query) }))
       .filter((r) => r.score > 0)
+      .filter((r) => {
+        const cf = chartUoFamily(r.chart);
+        return !family || !cf || cf === family;
+      })
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if (b.familyPref !== a.familyPref) return b.familyPref - a.familyPref;
@@ -180,9 +199,37 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   }
 
   function lookupSpot(query = {}) {
+    if (query.chartId || query.id) {
+      const chart = charts.find((c) => c.id === canonicalId(query.chartId || query.id) || c.id === (query.chartId || query.id));
+      if (!chart) {
+        return { status: MATCH_STATUS.NO_TRAINER_DATA, chart: null, mismatches: [], matches: [] };
+      }
+      return {
+        status: MATCH_STATUS.EXACT_TRAINER_MATCH,
+        chart,
+        mismatches: [],
+        score: 100,
+        matches: [{ chartId: chart.id, score: 100, mismatches: [] }]
+      };
+    }
     const ranked = lookupCharts(query);
     if (!ranked.length) {
       return { status: MATCH_STATUS.NO_TRAINER_DATA, chart: null, mismatches: [], matches: [] };
+    }
+    const ambiguous = findAmbiguousUoPair(ranked, query);
+    if (ambiguous) {
+      return {
+        status: MATCH_STATUS.AMBIGUOUS_UO_FAMILY,
+        chart: null,
+        mismatches: [
+          `UO family unspecified: zip=${ambiguous.zip.chart.id} vs bekhtold=${ambiguous.bekhtold.chart.id}. Pass uoFamily: 'zip' | 'bekhtold'.`
+        ],
+        score: 0,
+        matches: [
+          { chartId: ambiguous.zip.chart.id, score: ambiguous.zip.score, family: 'zip' },
+          { chartId: ambiguous.bekhtold.chart.id, score: ambiguous.bekhtold.score, family: 'bekhtold' }
+        ]
+      };
     }
     const best = ranked[0];
     let status = MATCH_STATUS.PARTIAL_TRAINER_MATCH;
@@ -260,7 +307,7 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     lookupSpot,
     lookupHand,
     lookupHandAction,
-    getChartById: (id) => charts.find((c) => c.id === id) || null,
+    getChartById: (id) => charts.find((c) => c.id === canonicalId(id) || c.id === id) || null,
     formatProvenanceDebug,
     _debug: { chartHandsCache, shardCache }
   };

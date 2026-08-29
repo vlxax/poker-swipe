@@ -1722,5 +1722,298 @@
     "totalShardBytes": 26288679,
     "avgShardBytes": 773196,
     "maxShardBytes": 885735
+  },
+  "datasetSummary": {
+    "dataset": "PokerSwipe trainer production library — reconstructed 1698",
+    "compiler": "compileTrainerProduction.py",
+    "totalCharts": 1698,
+    "bekhtoldCharts": 1638,
+    "uoZipCharts": 60,
+    "blUoCharts": 60,
+    "b2LegacyCharts": 0,
+    "sourceModes": {
+      "callpush": 615,
+      "huante": 172,
+      "sbvsbb": 34,
+      "uo": 120,
+      "vs1r": 323,
+      "vs1r1c": 68,
+      "vs1rshort": 33,
+      "vs2r": 53,
+      "vs3bet": 56,
+      "vs4bet": 11,
+      "vslimp": 11,
+      "vssqueeze": 202
+    },
+    "sourceGroups": {
+      "callpush": 615,
+      "huante": 172,
+      "sbvsbb": 34,
+      "uo": 60,
+      "vs1r": 323,
+      "vs1r1c": 68,
+      "vs1rshort": 33,
+      "vs2r": 53,
+      "vs3bet": 56,
+      "vs4bet": 11,
+      "vslimp": 11,
+      "vssqueeze": 202,
+      "UO": 60
+    },
+    "datasets": {
+      "bekhtold_import_v1": 1638,
+      "UO_batch_1": 60
+    },
+    "referenceRanges": {
+      "role": "canonical Greenline 6-max solver references",
+      "count": 37,
+      "path": "data/ranges/reference/6max/ranges",
+      "notTrainerLibrary": true
+    },
+    "historicalBatch2Summary": "data/trainer/recon-baseline-1638/meta.json",
+    "b2AliasTable": "data/trainer/built/b2-id-alias.json",
+    "note": "B2_* ids replaced by BL_* via provenance sourceHash. UO zip ids unchanged. 37 reference ranges are a separate solver set."
+  },
+  "unmappedSpotCount": 21,
+  "unmappedSpots": [
+    {
+      "trainerCanonicalId": "callpush::Open Push",
+      "rawSpot": "Open Push",
+      "sourceMode": "callpush",
+      "sourceGroup": "callpush",
+      "chartCount": 135,
+      "exampleChartId": "BL_callpush-0199476e3ff3",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "callpush::vs 4Bet Push",
+      "rawSpot": "vs 4Bet Push",
+      "sourceMode": "callpush",
+      "sourceGroup": "callpush",
+      "chartCount": 92,
+      "exampleChartId": "BL_callpush-009789affc23",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Raiser IP",
+      "rawSpot": "Raiser IP",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 48,
+      "exampleChartId": "BL_vssqueeze-02f7b6fd8abd",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::IP + SB",
+      "rawSpot": "IP + SB",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 46,
+      "exampleChartId": "BL_vssqueeze-001df7da6eaa",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs1rshort::Def BB",
+      "rawSpot": "Def BB",
+      "sourceMode": "vs1rshort",
+      "sourceGroup": "vs1rshort",
+      "chartCount": 24,
+      "exampleChartId": "BL_vs1rshort-0cafea1eade5",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller IP (R_EP)",
+      "rawSpot": "Caller IP (R_EP)",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "BL_vssqueeze-03b7f8465b56",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller OOP (R_EP/MP)",
+      "rawSpot": "Caller OOP (R_EP/MP)",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "BL_vssqueeze-0410be84c07c",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller IP (R_Mid)",
+      "rawSpot": "Caller IP (R_Mid)",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "BL_vssqueeze-0a390564c6c0",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Raiser OOP",
+      "rawSpot": "Raiser OOP",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 24,
+      "exampleChartId": "BL_vssqueeze-14d702697c33",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "sbvsbb::BB Def",
+      "rawSpot": "BB Def",
+      "sourceMode": "sbvsbb",
+      "sourceGroup": "sbvsbb",
+      "chartCount": 18,
+      "exampleChartId": "BL_sbvsbb-115c38821656",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero OOP (HJ–CO + SB)",
+      "rawSpot": "Hero OOP (HJ–CO + SB)",
+      "sourceMode": "vs3bet",
+      "sourceGroup": "vs3bet",
+      "chartCount": 18,
+      "exampleChartId": "BL_vs3bet-2521647d1023",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero OOP (EP–LJ)",
+      "rawSpot": "Hero OOP (EP–LJ)",
+      "sourceMode": "vs3bet",
+      "sourceGroup": "vs3bet",
+      "chartCount": 17,
+      "exampleChartId": "BL_vs3bet-1bd4008f5be4",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vssqueeze::Caller OOP (R_LJ/HJ)",
+      "rawSpot": "Caller OOP (R_LJ/HJ)",
+      "sourceMode": "vssqueeze",
+      "sourceGroup": "vssqueeze",
+      "chartCount": 12,
+      "exampleChartId": "BL_vssqueeze-16c5ecb1dcd3",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs1rshort::Предельные дипы для 3бета",
+      "rawSpot": "Предельные дипы для 3бета",
+      "sourceMode": "vs1rshort",
+      "sourceGroup": "vs1rshort",
+      "chartCount": 9,
+      "exampleChartId": "BL_vs1rshort-02d239beb92c",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs3bet::20BB Game",
+      "rawSpot": "20BB Game",
+      "sourceMode": "vs3bet",
+      "sourceGroup": "vs3bet",
+      "chartCount": 9,
+      "exampleChartId": "BL_vs3bet-09968b0eeba0",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "sbvsbb::SB UO",
+      "rawSpot": "SB UO",
+      "sourceMode": "sbvsbb",
+      "sourceGroup": "sbvsbb",
+      "chartCount": 8,
+      "exampleChartId": "BL_sbvsbb-14c76b3194c1",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "sbvsbb::BB ISO",
+      "rawSpot": "BB ISO",
+      "sourceMode": "sbvsbb",
+      "sourceGroup": "sbvsbb",
+      "chartCount": 8,
+      "exampleChartId": "BL_sbvsbb-15e0ada94f7e",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero IP (HJ–BTN)",
+      "rawSpot": "Hero IP (HJ–BTN)",
+      "sourceMode": "vs3bet",
+      "sourceGroup": "vs3bet",
+      "chartCount": 6,
+      "exampleChartId": "BL_vs3bet-28422ddb575c",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs3bet::Hero IP (EP–LJ)",
+      "rawSpot": "Hero IP (EP–LJ)",
+      "sourceMode": "vs3bet",
+      "sourceGroup": "vs3bet",
+      "chartCount": 6,
+      "exampleChartId": "BL_vs3bet-3fe20a137e5d",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs4bet::Hero IP",
+      "rawSpot": "Hero IP",
+      "sourceMode": "vs4bet",
+      "sourceGroup": "vs4bet",
+      "chartCount": 6,
+      "exampleChartId": "BL_vs4bet-4022c077e210",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    },
+    {
+      "trainerCanonicalId": "vs4bet::Hero IP (vs Cold 4Bet)",
+      "rawSpot": "Hero IP (vs Cold 4Bet)",
+      "sourceMode": "vs4bet",
+      "sourceGroup": "vs4bet",
+      "chartCount": 5,
+      "exampleChartId": "BL_vs4bet-2ea8827c6136",
+      "reason": "Trainer spot has no PokerSwipe situation alias in map_spot/spotMapper",
+      "mergeBlocker": false,
+      "explained": true
+    }
+  ],
+  "spotMapStatusCounts": {
+    "charts": 1698,
+    "mappedExact": 388,
+    "mappedPartial": 747,
+    "unmappedTrainerSpot": 563,
+    "uniqueUnmappedCanonicalIds": 21,
+    "unexplainedUnmapped": 0
   }
 }

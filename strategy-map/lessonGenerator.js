@@ -65,14 +65,14 @@ export function createTransitionLesson(rangeA, rangeB, options = {}) {
 
   const quizCandidates = selectQuizCandidates(comparison, boundariesA, boundariesB);
 
+  const totalCompared = comparison.numChangedHands + comparison.numStableHands;
   const lessonMetrics = {
     similarity: comparison.similarity,
     distance: comparison.distance,
     numChangedHands: comparison.numChangedHands,
     numStableHands: comparison.numStableHands,
-    totalHands: comparison.numChangedHands + comparison.numStableHands,
-    changePercentage: (comparison.numChangedHands / 
-      (comparison.numChangedHands + comparison.numStableHands + 1)) * 100,
+    totalHands: totalCompared,
+    changePercentage: totalCompared > 0 ? (comparison.numChangedHands / totalCompared) * 100 : 0,
     boundaryChangeCount: Object.keys(comparison.boundaryChanges).length
   };
 

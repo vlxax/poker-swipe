@@ -53,9 +53,6 @@ export function findDuplicateStrategies(library, options = {}) {
       duplicates: []
     };
 
-    let hasExact = false;
-    let hasNear = false;
-
     for (let j = i + 1; j < ranges.length; j++) {
       if (processed.has(j)) continue;
 
@@ -70,7 +67,6 @@ export function findDuplicateStrategies(library, options = {}) {
           type: 'EXACT'
         });
         processed.add(j);
-        hasExact = true;
       } else if (similarity >= nearThreshold) {
         nearGroup.duplicates.push({
           id: ranges[j].id,
@@ -79,7 +75,6 @@ export function findDuplicateStrategies(library, options = {}) {
           type: 'NEAR'
         });
         processed.add(j);
-        hasNear = true;
       }
     }
 
@@ -91,7 +86,7 @@ export function findDuplicateStrategies(library, options = {}) {
       });
     }
 
-    if (nearGroup.duplicates.length > 0 && !hasExact) {
+    if (nearGroup.duplicates.length > 0) {
       nearDuplicates.push({
         primary: nearGroup.primary,
         duplicates: nearGroup.duplicates,

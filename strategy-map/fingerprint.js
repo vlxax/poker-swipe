@@ -18,12 +18,15 @@ import {
 export const ALL_ACTIONS = ['AI', 'ALLIN', 'CALL', 'FOLD', 'RAISE', 'CHECK', 'BET', 'PUSH', '3BET', '4BET'];
 
 export function buildRangeFingerprint(range) {
-  if (!range || !range.hands) {
-    return createEmptyFingerprint();
+  if (!range || !range.hands || Object.keys(range.hands).length === 0) {
+    return createEmptyFingerprint(range?.metadata || {});
   }
 
   const hands = Object.keys(range.hands);
   const numHands = hands.length;
+  if (numHands === 0) {
+    return createEmptyFingerprint(range.metadata || {});
+  }
 
   // Strict validation - invalid distributions are rejected immediately
   for (const hand of hands) {
@@ -97,7 +100,7 @@ export function buildRangeFingerprint(range) {
   const actionMass = {};
   for (const action of ALL_ACTIONS) {
     const count = actionCounts[action] || 0;
-    actionMass[action] = count / numHands;
+    actionMass[action] = numHands > 0 ? count / numHands : 0;
   }
 
   const entropies = Object.values(handData).map(h => h.entropy);
@@ -131,7 +134,9 @@ export function buildRangeFingerprint(range) {
   };
 }
 
-function createEmptyFingerprint() {
+function createEmptyFingerprint(metadata = {}) {
+  const actionMass = {};
+  for (const action of ALL_ACTIONS) actionMass[action] = 0;
   return {
     numHands: 0,
     numPureHands: 0,
@@ -145,11 +150,41 @@ function createEmptyFingerprint() {
     minEntropy: 0,
     averageActiveActions: 0,
     actionFrequencies: {},
-    actionMass: {},
+    actionMass,
     boundaryDensity: 0,
     handData: {},
-    metadata: {}
+    metadata
   };
+}
+
+export function compactFingerprint(fp) {
+  if (!fp) return null;
+  const { handData, ...rest } = fp;
+  const boundaryHands = [];
+  for (const [hand, data] of Object.entries(handData || {})) {
+    const dist = data.distribution || {};
+    const vals = Object.values(dist);
+    const maxFreq = vals.length ? Math.max(...vals) : 1;
+    if ((data.activeActions || 0) > 1 && maxFreq < 0.7) boundaryHands.push(hand);
+  }
+  return { ...rest, boundaryHands, handData: undefined };
+}
+
+export function fingerprintIsFinite(fp) {
+  if (!fp) return false;
+  const nums = [
+    fp.numHands, fp.purePercentage, fp.mixedPercentage, fp.averageEntropy,
+    fp.normalizedAverageEntropy, fp.entropyVariance, fp.maxEntropy, fp.minEntropy,
+    fp.averageActiveActions, fp.boundaryDensity
+  ];
+  if (nums.some((n) => typeof n === 'number' && !Number.isFinite(n))) return false;
+  for (const v of Object.values(fp.actionFrequencies || {})) {
+    if (!Number.isFinite(v)) return false;
+  }
+  for (const v of Object.values(fp.actionMass || {})) {
+    if (!Number.isFinite(v)) return false;
+  }
+  return true;
 }
 
 export function compareFingerprints(fpA, fpB) {

@@ -20,6 +20,27 @@ export class StrategyMapIndex {
     this.familyIndex = new Map();
     this.stackIndex = new Map();
     this.positionIndex = new Map();
+    this.rangeLoader = null;
+  }
+
+  setRangeLoader(fn) {
+    this.rangeLoader = fn;
+  }
+
+  lazyRange(id) {
+    let range = this.ranges.get(id);
+    if (range?.hands && Object.keys(range.hands).length > 0) return range;
+    if (this.rangeLoader) {
+      const loaded = this.rangeLoader(id);
+      if (loaded) {
+        this.ranges.set(id, loaded);
+        if (this.options.cacheFingerprints && !this.fingerprints.has(id)) {
+          this.fingerprints.set(id, buildRangeFingerprint(loaded));
+        }
+        return loaded;
+      }
+    }
+    return range || null;
   }
 
   add(range) {
@@ -116,14 +137,29 @@ export class StrategyMapIndex {
   }
 
   findNeighbors(id, options = {}) {
-    const range = this.ranges.get(id);
+    const range = this.lazyRange(id) || this.ranges.get(id);
     if (!range) return [];
 
-    const library = Array.from(this.ranges.values());
+    const familyIds = this.findFamily(id);
+    let candidateIds = familyIds.length > 1 ? familyIds : null;
+    if (!candidateIds || candidateIds.length < 8) {
+      const pos = range.metadata?.heroPosition || range.metadata?.position;
+      const posIds = pos ? this.getByPosition(pos) : [];
+      const merged = new Set([...(candidateIds || []), ...posIds]);
+      if (merged.size >= 8) candidateIds = [...merged];
+    }
+    const library = candidateIds
+      ? candidateIds.map((cid) => this.ranges.get(cid)).filter(Boolean)
+      : Array.from(this.ranges.values());
+
     const mergedOptions = {
-      candidatePoolSize: this.options.candidatePoolSize,
+      ...options,
+      candidatePoolSize: options.candidatePoolSize ?? (this.ranges.size > 80 ? 12 : this.options.candidatePoolSize),
       fullCompareFn: options.fullCompareFn || this.options.fullCompareFn,
-      ...options
+      fingerprintCache: this.fingerprints,
+      metadataPrefilter: options.metadataPrefilter || { sameSource: true },
+      rangeLoader: this.rangeLoader,
+      useFullComparison: options.useFullComparison ?? this.ranges.size <= 80
     };
 
     return findNearestRanges(range, library, mergedOptions);

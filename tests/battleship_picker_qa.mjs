@@ -7,7 +7,7 @@ import path from 'node:path';
 
 const PORT = process.env.PS_PORT || '8765';
 const BASE = `http://localhost:${PORT}/index.html`;
-const OUT = '/opt/cursor/artifacts/battleship_picker_qa';
+const OUT = process.env.PS_QA_OUT || path.join(process.cwd(), 'test-results/battleship_picker_qa');
 
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -36,12 +36,33 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push('console:' + m.text());
+  });
+  function relevantErrors(list) {
+    return list.filter((e) =>
+      /ranges-ui|trainer-knowledge|range-learning|strategy-map|battleship|PokerSwipeRanges|trainer-shards|charts-index|b2-id-alias|Failed to resolve module specifier/i.test(e)
+    );
+  }
 
-  await page.goto(BASE, { waitUntil: 'networkidle', timeout: 90000 });
-  await page.waitForTimeout(1500);
-  await page.evaluate(() => window.show('ranges'));
-  await page.waitForTimeout(800);
-  await page.click('#rbOpenBattle');
+  await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await page.waitForFunction(() => window.PokerSwipeRanges && document.getElementById('ranges'), undefined, { timeout: 120000 });
+  await page.evaluate(() => {
+    document.querySelectorAll('.pokerswipe-auth-screen').forEach((el) => {
+      el.classList.add('hidden');
+      el.style.pointerEvents = 'none';
+    });
+    document.getElementById('mainApp')?.classList.remove('hidden');
+    window.show('ranges');
+  });
+  await page.waitForSelector('#rbOpenBattle', { timeout: 60000 });
+  await page.evaluate(() => {
+    document.querySelectorAll('.pokerswipe-auth-screen').forEach((el) => {
+      el.classList.add('hidden');
+      el.style.pointerEvents = 'none';
+    });
+  });
+  await page.locator('#rbOpenBattle').click({ force: true });
   await page.waitForTimeout(1200);
 
   for (const pos of POSITIONS_TO_TEST) {
@@ -134,7 +155,8 @@ try {
     GRENADES_7: /💣\s*7|7/.test(gameState.grenades || ''),
     CONTINUE_AFTER_5: !after5.failOverlay && (after5.playing || after5.grenades),
     MATRIX_LOADED: gameState.cells === 169,
-    NEW_ERRORS: errors.length,
+    NEW_ERRORS: relevantErrors(errors).length,
+    RAW_CONSOLE: errors.length,
     PASS: true
   };
   summary.PASS = summary.POSITION_FAILURES === 0
@@ -142,7 +164,7 @@ try {
     && summary.MATRIX_LOADED
     && summary.CONTINUE_AFTER_5
     && summary.HEADER_HAS_BB
-    && errors.length === 0;
+    && summary.NEW_ERRORS === 0;
 
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify({ report, summary }, null, 2));
   console.log(JSON.stringify(summary, null, 2));

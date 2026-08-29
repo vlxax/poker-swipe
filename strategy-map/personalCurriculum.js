@@ -33,7 +33,7 @@ export function buildPersonalLearningPath({
     };
   }
 
-  const graph = buildCurriculumGraph(library);
+  const graph = buildCurriculumGraph(library, options);
 
   let currentRange = startRange;
   if (!currentRange) {

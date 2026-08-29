@@ -561,12 +561,12 @@ describe('range-learning production integration', () => {
   it('performance: strategy map builds on library load, not per click', () => {
     resetProductionStrategyMap();
     const t0 = performance.now();
-    const cache = getProductionStrategyMap({ force: true });
+    const cache = getProductionStrategyMap({ force: true, library: 'reference' });
     perf.strategyMapBuildMs = performance.now() - t0;
     assert.ok(cache.adapted.length >= 37);
 
     const t1 = performance.now();
-    const again = getProductionStrategyMap();
+    const again = getProductionStrategyMap({ library: 'reference' });
     perf.strategyMapCacheHitMs = performance.now() - t1;
     assert.equal(again.version, cache.version);
     assert.ok(perf.strategyMapCacheHitMs < perf.strategyMapBuildMs);
@@ -600,11 +600,11 @@ describe('range-learning production integration', () => {
 
   it('loadProductionLibraryInto reload is idempotent', () => {
     const engine = new StrategyMapEngine();
-    const first = loadProductionLibraryInto(engine);
-    const second = loadProductionLibraryInto(engine);
+    const first = loadProductionLibraryInto(engine, getReferenceRanges());
+    const second = loadProductionLibraryInto(engine, getReferenceRanges());
     assert.equal(engine.getStats().totalRanges, first.adapted.length);
     assert.equal(engine.getStats().totalRanges, second.adapted.length);
-    const familyCounts = [...engine.index.familyIndex.values()].map((arr) => arr.length);
+    assert.equal(first.adapted.length, 37);
     const rfi = engine.index.getByMetadata('situation', 'rfi');
     assert.equal(rfi.length, new Set(rfi).size);
   });

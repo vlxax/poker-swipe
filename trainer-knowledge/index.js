@@ -29,9 +29,18 @@ export {
   lookupTrainerHand,
   lookupTrainerSpot,
   lookupTrainerHandAction,
+  getTrainerChartHands,
   getUnmappedSpotsReport,
   getTermsToClarify
 } from './lookup.js';
+export { UO_FAMILY, chartUoFamily, resolveUoFamily } from './uoFamily.js';
+export {
+  canonicalRangeId,
+  resolveRangeId,
+  isLegacyB2Id,
+  migratePersistedRangeIds,
+  loadB2AliasTable
+} from './rangeIdAlias.js';
 
 export {
   loadTrainerSemanticLegend,

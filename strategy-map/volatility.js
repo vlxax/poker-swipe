@@ -56,7 +56,7 @@ export function analyzeVolatility(orderedRanges, options = {}) {
   const volatileEdge = [];
 
   for (const [hand, data] of Object.entries(volatilityByHand)) {
-    if (data.volatility < volatilityThreshold) {
+    if (data.volatility < volatilityThreshold && (data.meanTransitionMagnitude || 0) < volatilityThreshold) {
       stableCore.push(hand);
     } else {
       volatileEdge.push(hand);

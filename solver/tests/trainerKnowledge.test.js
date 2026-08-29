@@ -201,7 +201,11 @@ test('partial match does not claim exact when dimensions mismatch', () => {
   if (result.status === MATCH_STATUS.EXACT_TRAINER_MATCH) {
     assert.equal(result.mismatches.length, 0);
   } else {
-    assert.ok(result.mismatches.length > 0 || result.status !== MATCH_STATUS.EXACT_TRAINER_MATCH);
+    assert.ok(
+      result.status === MATCH_STATUS.AMBIGUOUS_UO_FAMILY ||
+        result.mismatches.length > 0 ||
+        result.status !== MATCH_STATUS.EXACT_TRAINER_MATCH
+    );
   }
 });
 
@@ -210,8 +214,14 @@ test('missing data does not invent strategy', () => {
     heroPosition: 'EP',
     stack: '999BB',
     sourceMode: 'uo',
+    sourceGroup: 'UO',
     hand: 'AA'
   });
+  assert.ok(
+    result.status === MATCH_STATUS.NO_TRAINER_DATA ||
+      (result.mismatches && result.mismatches.length > 0) ||
+      result.gradingAllowed === false
+  );
   if (result.status === MATCH_STATUS.NO_TRAINER_DATA) {
     assert.equal(result.action, null);
     assert.equal(result.gradingAllowed, false);

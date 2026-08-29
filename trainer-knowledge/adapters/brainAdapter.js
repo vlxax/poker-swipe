@@ -43,10 +43,14 @@ export function inferTrainerQueryFromSpot(spot = {}, handClass = null) {
     const canonical = spot._canonical || spot;
     const built = buildTrainerQueryFromCanonical(canonical, handClass);
     if (built.query && built.complete) {
-      return built.query;
+      const q = { ...built.query };
+      if (q.sourceMode === 'uo' && !q.sourceGroup && !q.uoFamily) q.sourceGroup = 'UO';
+      return q;
     }
     if (built.query) {
-      return { ...built.query, _incomplete: true, _missing: built.missing };
+      const q = { ...built.query };
+      if (q.sourceMode === 'uo' && !q.sourceGroup && !q.uoFamily) q.sourceGroup = 'UO';
+      return { ...q, _incomplete: true, _missing: built.missing };
     }
   }
 
@@ -84,6 +88,9 @@ export function inferTrainerQueryFromSpot(spot = {}, handClass = null) {
 export function brainTrainerStatusFromMatch(matchStatus, handResult) {
   if (!matchStatus || matchStatus === MATCH_STATUS.NO_TRAINER_DATA) {
     return 'NO_TRAINER_DATA';
+  }
+  if (matchStatus === MATCH_STATUS.AMBIGUOUS_UO_FAMILY) {
+    return 'AMBIGUOUS_UO_FAMILY';
   }
   if (handResult?.dataStatus === TRAINER_STATUS.NEEDS_CLARIFICATION || !handResult?.gradingAllowed) {
     return 'TRAINER_DATA_NEEDS_CLARIFICATION';

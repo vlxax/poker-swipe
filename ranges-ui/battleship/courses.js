@@ -3,6 +3,7 @@
 import { ensureTrainerLookup, buildTrainerMatrixAsync } from '../trainerRanges.js';
 import { MATCH_STATUS } from '../../trainer-knowledge/status.js';
 import { buildRangeModelFromMatrix } from './trainerRangeModel.js';
+import { chartUoFamily, UO_FAMILY } from '../../trainer-knowledge/uoFamily.js';
 
 const MIN_GRADABLE = 140;
 const MAX_BLOCKED = 10;
@@ -98,7 +99,7 @@ async function evaluateChart(chart, buildMatrix) {
 /** Node/test scan using explicit charts + sync matrix builder. */
 export async function scanBattleshipCoursesNode(charts, buildMatrix) {
   const eligible = [];
-  for (const chart of charts.filter((c) => c.sourceMode === 'uo')) {
+  for (const chart of charts.filter((c) => c.sourceMode === 'uo' && chartUoFamily(c) === UO_FAMILY.ZIP)) {
     const row = await evaluateChart(chart, buildMatrix);
     if (row) eligible.push(row);
   }
@@ -109,7 +110,7 @@ export async function scanBattleshipCoursesNode(charts, buildMatrix) {
 /** Browser scan via trainer lookup + async matrix builder. */
 export async function scanBattleshipCourses() {
   const lookup = await ensureTrainerLookup();
-  const charts = (lookup.charts || []).filter((c) => c.sourceMode === 'uo');
+  const charts = (lookup.charts || []).filter((c) => c.sourceMode === 'uo' && chartUoFamily(c) === UO_FAMILY.ZIP);
   const eligible = [];
   for (const chart of charts) {
     const row = await evaluateChart(chart, (sel) => buildTrainerMatrixAsync(sel));

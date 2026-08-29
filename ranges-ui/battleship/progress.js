@@ -1,4 +1,4 @@
-// Namespaced Battleship progress — does not touch unrelated PokerSwipe storage.
+import { migratePersistedRangeIds } from '../../trainer-knowledge/rangeIdAlias.js';
 
 const STORAGE_KEY = 'pokerSwipe_rangeBattle_v1';
 const TUTORIAL_KEY = 'pokerSwipe_rangeBattle_tutorial_v1';
@@ -22,7 +22,11 @@ export function createProgressStore(storage = null) {
     if (!st) return null;
     try {
       const raw = st.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      const { data, changed } = migratePersistedRangeIds(parsed);
+      if (changed > 0) save(data);
+      return data;
     } catch (e) {
       return null;
     }

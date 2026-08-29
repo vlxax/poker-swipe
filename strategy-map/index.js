@@ -58,8 +58,15 @@ export class StrategyMapEngine {
   }
 
   neighbors(targetRange, options = {}) {
+    const id = targetRange?.id || targetRange?.rangeId;
+    if (id && this.index.ranges.has(id)) {
+      return this.index.findNeighbors(id, options);
+    }
     const library = Array.from(this.index.ranges.values());
-    return findNearestRanges(targetRange, library, options);
+    return findNearestRanges(targetRange, library, {
+      fingerprintCache: this.index.fingerprints,
+      ...options
+    });
   }
 
   transitions(ranges) {
@@ -79,11 +86,31 @@ export class StrategyMapEngine {
   }
 
   curriculum(options = {}) {
+    if (this.index.ranges.size > 80 && options.allowFullGraph !== true) {
+      throw new Error(
+        'Full pairwise curriculum graph is offline-only above 80 ranges. Use index.findNeighbors(id) or pass allowFullGraph: true.'
+      );
+    }
     const library = Array.from(this.index.ranges.values());
     return buildCurriculumGraph(library, options);
   }
 
+  duplicates(options = {}) {
+    if (this.index.ranges.size > 80 && options.allowFullScan !== true) {
+      throw new Error(
+        'Full duplicate scan is offline-only above 80 ranges. Pass allowFullScan: true to run it.'
+      );
+    }
+    const library = Array.from(this.index.ranges.values());
+    return findDuplicateStrategies(library, options);
+  }
+
   personalPath({ learnerModel, startRange, maxSteps, options = {} }) {
+    if (this.index.ranges.size > 80 && options.allowFullGraph !== true) {
+      throw new Error(
+        'personalPath builds a pairwise graph and is offline-only above 80 ranges. Use neighbors() for interaction.'
+      );
+    }
     const library = Array.from(this.index.ranges.values());
     return buildPersonalLearningPath({
       library,
@@ -102,11 +129,6 @@ export class StrategyMapEngine {
     return selectTransitionQuizHands(rangeA, rangeB, options);
   }
 
-  duplicates(options = {}) {
-    const library = Array.from(this.index.ranges.values());
-    return findDuplicateStrategies(library, options);
-  }
-
   getStats() {
     return this.index.getStats();
   }
@@ -114,7 +136,7 @@ export class StrategyMapEngine {
 
 // Re-export all functions
 export { StrategyMapIndex };
-export { buildRangeFingerprint, compareFingerprints, ALL_ACTIONS } from './fingerprint.js';
+export { buildRangeFingerprint, compareFingerprints, compactFingerprint, fingerprintIsFinite, ALL_ACTIONS } from './fingerprint.js';
 export { compareStrategySimilarity } from './similarity.js';
 export { findNearestRanges } from './neighbors.js';
 export { analyzeStackTransitions, extractStackValue, sortRangesByStack } from './transitions.js';

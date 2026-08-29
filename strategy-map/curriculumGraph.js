@@ -11,10 +11,11 @@ export function buildCurriculumGraph(library, options = {}) {
     maxEdges = 5,
     minSimilarity = 0.3,
     maxSimilarity = 0.99,
-    duplicateThreshold = 0.999,
     includeMetadataRelationships = true,
     candidatePoolSize = 50
   } = options;
+  // duplicateThreshold was unused (dead). Duplicate clustering is
+  // findDuplicateStrategies(), an offline API — not part of curriculum edges.
 
   if (!library || library.length === 0) {
     return {

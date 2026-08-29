@@ -29,7 +29,9 @@ describe('combined trainer-1698 + strategy-memory visibility', () => {
     assert.equal(ids.filter((id) => id.startsWith('B2_')).length, 0);
     assert.ok(ids.filter((id) => id.startsWith('BL_')).length >= 1578);
     assert.ok(getChartById('UO_2-4_EP'));
-    assert.equal(getChartById('B2_0001'), null);
+    const aliased = getChartById('B2_0001');
+    assert.ok(aliased);
+    assert.ok(aliased.id.startsWith('BL_'));
   });
 
   it('trusted UO zip AA is still AI and Strategy Map can adapt it', async () => {
