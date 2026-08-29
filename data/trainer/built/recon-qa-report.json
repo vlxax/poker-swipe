@@ -1,0 +1,32 @@
+{
+  "elapsedSec": 21.01,
+  "coldBytes": 3094815,
+  "firstBlShardBytes": 745631,
+  "firstBlShardId": "shard-000",
+  "firstUoShardBytes": 723738,
+  "firstUoShardId": "shard-033",
+  "eagerUoBytes": 6372178,
+  "b2BlPairs": 1578,
+  "b2HandCompare": {
+    "compared_charts": 0,
+    "compared_hands": 0,
+    "exact": 0,
+    "mismatches": 0,
+    "samples": []
+  },
+  "metaStats": {
+    "totalCharts": 1698,
+    "bekhtoldCharts": 1638,
+    "uoZipCharts": 60,
+    "uoDataSource": "trusted_production_uo-hand-records",
+    "bekhtoldDataSource": "normalized_import",
+    "shardCount": 34,
+    "coldStartupFiles": [
+      "charts-index.json",
+      "trainer-shard-index.json",
+      "meta.json"
+    ]
+  },
+  "passes": 31,
+  "failures": []
+}

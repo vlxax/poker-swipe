@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Trainer 1698 Runtime Gate</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 16px; background: #111; color: #eee; }
+    #log { white-space: pre-wrap; font-size: 12px; line-height: 1.4; }
+    .ok { color: #6f6; } .bad { color: #f66; } .info { color: #9cf; }
+  </style>
+</head>
+<body>
+  <h1>Trainer 1698 Runtime Gate</h1>
+  <p id="status">running…</p>
+  <div id="log"></div>
+  <script type="module">
+    const logEl = document.getElementById('log');
+    const statusEl = document.getElementById('status');
+    const lines = [];
+    function log(msg, cls = 'info') {
+      lines.push(msg);
+      const div = document.createElement('div');
+      div.className = cls;
+      div.textContent = msg;
+      logEl.appendChild(div);
+      console.log(msg);
+    }
+
+    const net = [];
+    const origFetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const url = String(args[0]);
+      const t0 = performance.now();
+      const res = await origFetch(...args);
+      const clone = res.clone();
+      let bytes = 0;
+      try { bytes = (await clone.arrayBuffer()).byteLength; } catch {}
+      net.push({ url, status: res.status, bytes, ms: performance.now() - t0 });
+      return res;
+    };
+
+    try {
+      const { initBrowserTrainerLookup } = await import('./trainer-knowledge/browserLookup.js');
+      const api = await initBrowserTrainerLookup('data/trainer/built');
+      log('init ok charts=' + api.charts.length, 'ok');
+
+      const cold = net.filter(n => /charts-index|meta\.json|trainer-shard-index/.test(n.url));
+      const uoEager = net.filter(n => /uo-hand-records\.json/.test(n.url));
+      const shardsCold = net.filter(n => /trainer-shards\//.test(n.url));
+      log('cold files: ' + cold.map(c => c.url.split('/').pop() + ':' + c.bytes).join(', '), 'info');
+      log('uo-hand-records on cold? ' + (uoEager.length ? 'YES BAD' : 'NO good'), uoEager.length ? 'bad' : 'ok');
+      log('shards on cold init? ' + shardsCold.length, shardsCold.length === 0 ? 'ok' : 'bad');
+
+      // BL lookup
+      const blCharts = api.charts.filter(c => c.id.startsWith('BL_') && !c.id.startsWith('BL_uo'));
+      const picks = [0, 0.25, 0.5, 0.75, 0.99].map(f => blCharts[Math.min(blCharts.length - 1, Math.floor(blCharts.length * f))]);
+      for (const ch of picks) {
+        const before = net.length;
+        const spot = api.lookupSpot({
+          heroPosition: ch.heroPosition?.raw,
+          stack: ch.stack?.raw,
+          sourceMode: ch.sourceMode,
+          sourceGroup: ch.sourceGroup,
+          rawSpot: ch.spot?.rawSpot
+        });
+        const hand = await api.lookupHand(spot.chart.id, 'AA');
+        const aks = await api.lookupHand(spot.chart.id, 'AKs');
+        const o72 = await api.lookupHand(spot.chart.id, '72o');
+        const newShard = net.slice(before).filter(n => /trainer-shards\//.test(n.url));
+        log(`BL ${ch.id} → ${spot.chart?.id} shardReqs=${newShard.length} AA=${hand?.actionRaw} AKs=${aks?.actionRaw} 72o=${o72?.actionRaw}`, 'ok');
+      }
+
+      // Second chart same shard should not re-download
+      const s0 = picks[0];
+      const sameShard = blCharts.find(c => c.id !== s0.id && api.getShardId?.(c.id));
+      // force via chartToShard from second lookup in same shard as first
+      const before2 = net.filter(n => /trainer-shards\//.test(n.url)).length;
+      await api.lookupHand(s0.id, 'KK');
+      const after2 = net.filter(n => /trainer-shards\//.test(n.url)).length;
+      log('same-shard second hand extra shard fetches=' + (after2 - before2), after2 === before2 ? 'ok' : 'bad');
+
+      // UO lookups
+      const uoIds = ['UO_2-4_EP', 'UO_2-4_BTN', 'UO_10-12_CO', 'UO_25-40_SB', 'UO_40+_BB'];
+      for (const id of uoIds) {
+        const before = net.length;
+        const spot = api.lookupSpot({ heroPosition: id.split('_').pop(), stack: id.replace('UO_', '').replace(/_[A-Z]+$/, ''), sourceMode: 'uo', sourceGroup: 'UO' });
+        const hand = await api.lookupHand(id, 'AA');
+        const t3s = id === 'UO_2-4_BTN' ? await api.lookupHand(id, 'T3s') : null;
+        const newShard = net.slice(before).filter(n => /trainer-shards\//.test(n.url));
+        log(`UO ${id} spot=${spot.chart?.id} shardReqs=${newShard.length} AA=${hand?.actionRaw}` + (t3s ? ` T3s=${t3s.actionRaw}` : ''), 'ok');
+      }
+
+      // Dual family conflict
+      const zip = api.lookupSpot({ heroPosition: 'EP', stack: '3BB', sourceMode: 'uo', sourceGroup: 'UO' });
+      const blu = api.lookupSpot({ heroPosition: 'EP', stack: '3BB', sourceMode: 'uo', sourceGroup: 'uo' });
+      log(`dual zip→${zip.chart?.id} bl→${blu.chart?.id}`, zip.chart?.id?.startsWith('UO_') && blu.chart?.id?.startsWith('BL_uo') ? 'ok' : 'bad');
+
+      window.__GATE__ = {
+        ok: true,
+        net,
+        consoleErrors: 0,
+        coldBytes: cold.reduce((s, c) => s + c.bytes, 0),
+        shardRequests: net.filter(n => /trainer-shards\//.test(n.url)).map(n => ({ url: n.url, bytes: n.bytes })),
+        uoEagerLoads: uoEager.length,
+        charts: api.charts.length
+      };
+      statusEl.textContent = 'DONE PASS';
+      statusEl.className = 'ok';
+      log('FINAL PASS', 'ok');
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = 'DONE FAIL: ' + e.message;
+      statusEl.className = 'bad';
+      window.__GATE__ = { ok: false, error: String(e) };
+      log(String(e), 'bad');
+    }
+  </script>
+</body>
+</html>

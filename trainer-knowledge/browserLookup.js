@@ -1,4 +1,5 @@
 // Browser-safe trainer lookup — fetch built JSON, no fs.
+// Unified lazy-shard runtime (1698 reconstruction): cold index only, no eager UO payload.
 
 import {
   MATCH_STATUS,
@@ -21,38 +22,26 @@ async function fetchJson(path) {
 export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   if (_state?.base === base && _state.ready) return _state.api;
 
-  const [charts, uoHands, meta] = await Promise.all([
+  const [charts, meta, shardIndex] = await Promise.all([
     fetchJson(`${base}/charts-index.json`),
-    fetchJson(`${base}/uo-hand-records.json`),
-    fetchJson(`${base}/meta.json`)
+    fetchJson(`${base}/meta.json`),
+    fetchJson(`${base}/trainer-shard-index.json`)
   ]);
 
-  const uoByChart = new Map();
-  for (const rec of uoHands) {
-    if (!uoByChart.has(rec.chartId)) uoByChart.set(rec.chartId, new Map());
-    uoByChart.get(rec.chartId).set(rec.hand, rec);
-  }
-
-  const batch2HandsCache = new Map();
-  let shardIndex = null;
-
-  async function loadShardIndex() {
-    if (shardIndex) return shardIndex;
-    try {
-      shardIndex = await fetchJson(`${base}/batch2-shard-index.json`);
-      return shardIndex;
-    } catch {
-      return null;
-    }
-  }
+  const chartHandsCache = new Map();
+  const shardCache = new Map();
 
   function expandCompactHand(compact) {
     if (!compact) return null;
     if (compact.actionRaw !== undefined) return compact;
+    const actionRaw = compact.a ?? null;
+    const isUnselectedFold = actionRaw === 'UNSELECTED';
     const out = {
-      actionRaw: compact.a ?? null,
-      dataStatus: compact.d || TRAINER_STATUS.NEEDS_CLARIFICATION,
-      gradingAllowed: compact.g === 1,
+      actionRaw,
+      dataStatus: isUnselectedFold
+        ? TRAINER_STATUS.EXACT_TRAINER_DATA
+        : compact.d || TRAINER_STATUS.NEEDS_CLARIFICATION,
+      gradingAllowed: isUnselectedFold ? true : compact.g === 1,
       parsingStatus: compact.p || 'PARSED',
       isMixed: compact.m === 1
     };
@@ -67,38 +56,53 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     return out;
   }
 
-  async function loadBatch2Chart(chartId) {
-    if (batch2HandsCache.has(chartId)) return batch2HandsCache.get(chartId);
+  async function loadChartFromShard(chartId) {
+    if (chartHandsCache.has(chartId)) return chartHandsCache.get(chartId);
 
-    const idx = await loadShardIndex();
-    if (idx?.chartToShard?.[chartId]) {
-      const shardId = idx.chartToShard[chartId];
+    const shardId = shardIndex?.chartToShard?.[chartId];
+    if (!shardId) {
+      chartHandsCache.set(chartId, null);
+      return null;
+    }
+
+    if (!shardCache.has(shardId)) {
       try {
-        const shard = await fetchJson(`${base}/batch2-shards/${shardId}.json`);
-        const compact = shard.charts?.[chartId];
-        if (compact?.h) {
-          const hands = {};
-          for (const [hand, cell] of Object.entries(compact.h)) {
-            hands[hand] = expandCompactHand(cell);
-          }
-          const chart = { chartId, hands, parseStatus: compact.ps };
-          batch2HandsCache.set(chartId, chart);
-          return chart;
-        }
+        const shard = await fetchJson(`${base}/trainer-shards/${shardId}.json`);
+        shardCache.set(shardId, shard.charts || {});
       } catch {
-        /* fall through */
+        chartHandsCache.set(chartId, null);
+        return null;
       }
     }
 
-    try {
-      const data = await fetchJson(`${base}/batch2-parsed-hands.json`);
-      const chart = data.charts?.[chartId] || null;
-      batch2HandsCache.set(chartId, chart);
-      return chart;
-    } catch {
-      batch2HandsCache.set(chartId, null);
+    const compact = shardCache.get(shardId)?.[chartId];
+    if (!compact?.h) {
+      chartHandsCache.set(chartId, null);
       return null;
     }
+
+    const hands = {};
+    for (const [hand, cell] of Object.entries(compact.h)) {
+      hands[hand] = expandCompactHand(cell);
+    }
+    const chart = { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
+    chartHandsCache.set(chartId, chart);
+    return chart;
+  }
+
+  function normalizeStackDashes(s) {
+    return String(s || '').replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-');
+  }
+
+  function familyPreference(chart, query) {
+    const id = chart.id || '';
+    const isZipUo = id.startsWith('UO_');
+    const isBlUo = id.startsWith('BL_uo');
+    if (query.sourceGroup === 'UO') return isZipUo ? 2 : isBlUo ? -2 : 0;
+    if (query.sourceGroup === 'uo') return isBlUo ? 2 : isZipUo ? -2 : 0;
+    if (isZipUo) return 1;
+    if (isBlUo) return -1;
+    return 0;
   }
 
   function scoreChartMatch(chart, query) {
@@ -115,15 +119,28 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     } else score += 5;
 
     const qStack = String(query.stack || '').trim();
-    const rStack = chart.stack?.raw || '';
-    if (qStack && rStack) {
-      if (qStack === rStack || qStack.replace(/bb/i, '') === rStack) score += 25;
-      else if (rStack.includes('-')) {
-        const num = parseFloat(qStack);
-        const [lo, hi] = rStack.split('-').map(Number);
-        if (num >= lo && num <= hi) score += 20;
-        else mismatches.push(`stack: ${qStack} ∉ ${rStack}`);
-      } else mismatches.push(`stack: ${qStack} ≠ ${rStack}`);
+    const rStackRaw = chart.stack?.raw || '';
+    const rStack = normalizeStackDashes(rStackRaw);
+    if (qStack && rStackRaw) {
+      const qNorm = normalizeStackDashes(qStack);
+      if (
+        qStack === rStackRaw ||
+        qNorm === rStack ||
+        qNorm.replace(/bb/i, '') === rStack.replace(/bb/i, '')
+      ) {
+        score += 25;
+      } else if (rStack.includes('-')) {
+        const num = parseFloat(qNorm);
+        const [lo, hi] = rStack.replace(/bb/i, '').split('-').map(Number);
+        if (Number.isFinite(num) && Number.isFinite(lo) && Number.isFinite(hi) && num >= lo && num <= hi) {
+          score += 20;
+        } else mismatches.push(`stack: ${qStack} ∉ ${rStackRaw}`);
+      } else if (/^\d+(?:\.\d+)?\+$/i.test(rStack.replace(/bb/i, ''))) {
+        const minBb = parseFloat(rStack);
+        const num = parseFloat(qNorm);
+        if (Number.isFinite(num) && Number.isFinite(minBb) && num >= minBb) score += 20;
+        else mismatches.push(`stack: ${qStack} ∉ ${rStackRaw}`);
+      } else mismatches.push(`stack: ${qStack} ≠ ${rStackRaw}`);
     } else score += 5;
 
     if (query.opponentPosition && chart.opponentPosition?.raw) {
@@ -134,6 +151,8 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
         score += 8;
         mismatches.push(`opponent group (${r})`);
       } else mismatches.push(`opponent: ${q} ≠ ${r}`);
+    } else if (query.opponentPosition && chart.sourceMode === 'uo' && !chart.opponentPosition?.raw) {
+      score += 5;
     } else score += 5;
 
     if (query.betSize && chart.betSize?.raw) {
@@ -142,17 +161,22 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     } else score += 3;
 
     if (query.sourceMode && chart.sourceMode === query.sourceMode) score += 10;
+    if (query.sourceGroup && chart.sourceGroup === query.sourceGroup) score += 12;
     if (query.rawSpot && chart.spot?.rawSpot === query.rawSpot) score += 10;
     if (query.trainerCanonicalId && chart.spot?.trainerCanonicalId === query.trainerCanonicalId) score += 15;
 
-    return { score, mismatches, posKind };
+    return { score, mismatches, posKind, familyPref: familyPreference(chart, query) };
   }
 
   function lookupCharts(query = {}) {
     return charts
       .map((chart) => ({ chart, ...scoreChartMatch(chart, query) }))
       .filter((r) => r.score > 0)
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        if (b.familyPref !== a.familyPref) return b.familyPref - a.familyPref;
+        return String(a.chart.id).localeCompare(String(b.chart.id));
+      });
   }
 
   function lookupSpot(query = {}) {
@@ -182,10 +206,8 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
 
   async function lookupHand(chartId, hand) {
     const h = String(hand || '').trim();
-    const uo = uoByChart.get(chartId)?.get(h);
-    if (uo) return uo;
-    const b2 = await loadBatch2Chart(chartId);
-    const rec = b2?.hands?.[h];
+    const loaded = await loadChartFromShard(chartId);
+    const rec = loaded?.hands?.[h];
     if (!rec) return null;
     const gradingAllowed = rec.isMixed ? false : Boolean(rec.gradingAllowed ?? canGradeWithTrainerAction(rec.actionRaw));
     return {
@@ -233,12 +255,14 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
   const api = {
     charts,
     meta,
+    shardIndex,
     lookupCharts,
     lookupSpot,
     lookupHand,
     lookupHandAction,
     getChartById: (id) => charts.find((c) => c.id === id) || null,
-    formatProvenanceDebug
+    formatProvenanceDebug,
+    _debug: { chartHandsCache, shardCache }
   };
 
   _state = { base, ready: true, api };

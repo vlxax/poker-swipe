@@ -1,8 +1,10 @@
 /**
  * Cached Strategy Map over production PokerSwipe ranges.
  *
- * Lifecycle: rebuild only when the adapted library version changes.
- * Player answers never rebuild the graph.
+ * Default structural library = reference 6-max (37 Greenline charts).
+ * Trainer charts (1698 on the reconstructed library) are a separate
+ * production source; use getCombinedRangeInventory / adaptTrainerRange.
+ * Do not replace the trainer library with the 37 reference ranges.
  */
 
 import { StrategyMapEngine } from '../strategy-map/index.js';

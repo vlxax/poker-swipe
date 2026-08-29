@@ -13,6 +13,13 @@ export const UO_RAISE_THRESHOLD_BB = 18;
  * @property {string} [note]
  */
 
+/** Normalize unicode dashes so "2–4BB" parses like "2-4BB". */
+function normalizeStackRaw(stackRaw) {
+  return String(stackRaw || '')
+    .trim()
+    .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-');
+}
+
 /** @param {string|null|undefined} stackRaw */
 export function parseTrainerStack(stackRaw) {
   const raw = String(stackRaw || '').trim();
@@ -22,11 +29,21 @@ export function parseTrainerStack(stackRaw) {
     return parseContextStack(raw);
   }
 
-  const normalized = raw.toUpperCase().replace(/BBPLUS/g, 'BB+').replace(/PLUS/g, '+');
+  // Preserve original raw; parse against dash-normalized uppercase form.
+  const normalized = normalizeStackRaw(raw)
+    .toUpperCase()
+    .replace(/BBPLUS/g, 'BB+')
+    .replace(/PLUS/g, '+');
 
   const plusMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*BB\+$/);
   if (plusMatch) {
     return { type: 'MINIMUM', raw, minBb: parseFloat(plusMatch[1]) };
+  }
+
+  // Bare "40+" (UO zip band) — treat as minimum BB.
+  const barePlusMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*\+$/);
+  if (barePlusMatch) {
+    return { type: 'MINIMUM', raw, minBb: parseFloat(barePlusMatch[1]) };
   }
 
   const rangeMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*BB$/);
@@ -36,6 +53,17 @@ export function parseTrainerStack(stackRaw) {
       raw,
       minBb: parseFloat(rangeMatch[1]),
       maxBb: parseFloat(rangeMatch[2])
+    };
+  }
+
+  // Bare "2-4" (UO zip band labels) — treat as RANGE without requiring BB suffix.
+  const bareRangeMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)$/);
+  if (bareRangeMatch) {
+    return {
+      type: 'RANGE',
+      raw,
+      minBb: parseFloat(bareRangeMatch[1]),
+      maxBb: parseFloat(bareRangeMatch[2])
     };
   }
 

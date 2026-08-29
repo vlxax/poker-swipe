@@ -54,16 +54,27 @@ export function inferTrainerQueryFromSpot(spot = {}, handClass = null) {
   const rawPos = String(spot.pos || spot.heroSeat || spot.position || '').split(/\s|vs/i)[0].toUpperCase();
   const heroPosition = POS_MAP[rawPos] || rawPos;
   const stackRaw = spot.stack ?? spot.effStack ?? null;
-  const stack = spot.sourceMode === 'uo' && stackRaw != null
-    ? uoStackBand(stackRaw)
-    : (stackRaw != null ? `${stackRaw}BB` : null);
+  const ctx = String(spot.ctx || spot.context || '').toLowerCase();
+  const explicitMode = spot.sourceMode || spot.trainerSourceMode || null;
+  const inferredUo =
+    explicitMode === 'uo' ||
+    /\bunopened\b/.test(ctx) ||
+    /все сфолдили/.test(ctx) ||
+    /\brfi\b/.test(ctx);
+  const stack =
+    inferredUo && stackRaw != null
+      ? uoStackBand(stackRaw)
+      : stackRaw != null
+        ? `${stackRaw}BB`
+        : null;
 
   return {
     heroPosition,
     stack,
     opponentPosition: spot.villainSeat || spot.villainPosition || spot.villain || spot.opener || null,
     betSize: spot.betSize || spot.sizing || null,
-    sourceMode: spot.sourceMode || spot.trainerSourceMode || null,
+    sourceMode: explicitMode || (inferredUo ? 'uo' : null),
+    sourceGroup: spot.sourceGroup || (inferredUo ? 'UO' : null),
     rawSpot: spot.rawSpot || spot.trainerSpot || null,
     trainerCanonicalId: spot.trainerCanonicalId || null,
     hand: handClass
@@ -104,6 +115,7 @@ export function buildBrainTrainerResult(lookup, spot, handClass) {
     position: query.heroPosition,
     stackBand: query.stack,
     trainerSourceMode: query.sourceMode,
+    sourceGroup: query.sourceGroup,
     trainerSpot: query.rawSpot,
     opener: query.opponentPosition,
     betSize: query.betSize

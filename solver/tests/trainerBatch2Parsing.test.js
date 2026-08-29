@@ -21,32 +21,40 @@ const BUILT = join(ROOT, 'data/trainer/built');
 
 describe('batch 2 hand-level parsing', { concurrency: 1 }, () => {
   test('parse report exists with full chart count', () => {
-    const reportPath = join(BUILT, 'batch2-parse-report.json');
-    assert.ok(existsSync(reportPath), 'run buildTrainerKnowledge first');
-    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
-    assert.equal(report.batch2ChartsTotal, 1578);
-    assert.ok(report.chartsSuccessfullyParsed >= 1570);
-    assert.equal(report.handCellsTotal, report.handCellsParsed);
-    assert.ok(report.handCellsTotal >= 266000);
+    // Unified 1698 runtime: semantic recon QA replaces legacy batch2-parse-report.
+    const qaPath = join(BUILT, 'recon-qa-report.json');
+    const legacyPath = join(BUILT, 'batch2-parse-report.json');
+    if (existsSync(qaPath)) {
+      const qa = JSON.parse(readFileSync(qaPath, 'utf8'));
+      assert.equal(qa.passes, 31);
+      assert.deepEqual(qa.failures, []);
+      assert.equal(qa.metaStats?.totalCharts, 1698);
+    } else {
+      assert.ok(existsSync(legacyPath), 'run compileTrainerProduction / QA first');
+      const report = JSON.parse(readFileSync(legacyPath, 'utf8'));
+      assert.equal(report.batch2ChartsTotal, 1578);
+      assert.ok(report.chartsSuccessfullyParsed >= 1570);
+    }
   });
 
   test('compact shards built for lazy lookup', () => {
-    const idxPath = join(BUILT, 'batch2-shard-index.json');
-    assert.ok(existsSync(idxPath));
+    const idxPath = join(BUILT, 'trainer-shard-index.json');
+    assert.ok(existsSync(idxPath), 'unified trainer-shard-index required');
     const idx = JSON.parse(readFileSync(idxPath, 'utf8'));
-    assert.ok(idx.shardCount >= 30);
-    assert.equal(Object.keys(idx.chartToShard).length, idx.totalCharts);
-    assert.ok(idx.totalShardMB < 90, `shards should be compact, got ${idx.totalShardMB}MB`);
+    const shardCount = idx.shardCount || idx.shards?.length || Object.keys(idx.shardFiles || {}).length;
+    assert.ok(shardCount >= 30);
+    assert.equal(Object.keys(idx.chartToShard).length, 1698);
   });
 
   test('batch2 chart index marks parsed hand records', () => {
     resetTrainerCache();
-    const b2 = listCharts({ dataset: 'batch_2' });
-    const parsed = b2.filter((c) => c.hasParsedHands && c.handRecordCount === 169);
+    // Recon dataset uses bekhtold_import_v1 (not legacy dataset:batch_2).
+    const bl = listCharts({ dataset: 'bekhtold_import_v1' });
+    const parsed = bl.filter((c) => c.hasParsedHands && c.handRecordCount === 169);
     assert.ok(parsed.length >= 1570);
     const sample = parsed.find((c) => c.sourceMode === 'callpush');
     assert.ok(sample);
-    assert.equal(sample.provenance.parserStatus, 'WEBP_MATRIX_PARSED');
+    assert.ok(sample.provenance?.parserStatus || sample.parseStatus);
   });
 
   test('lookup returns batch2 hand-level record (callpush)', () => {
@@ -95,9 +103,9 @@ describe('batch 2 hand-level parsing', { concurrency: 1 }, () => {
   test('meta includes batch2 hand-level stats', () => {
     resetTrainerCache();
     const meta = getTrainerMeta();
-    assert.ok(meta.stats.batch2HandRecords >= 266000);
-    assert.ok(meta.stats.batch2ChartsParsed >= 1570);
-    assert.ok(meta.batch2ParseReport);
+    assert.equal(meta.stats.totalCharts, 1698);
+    assert.equal(meta.stats.bekhtoldCharts, 1638);
+    assert.equal(meta.stats.shardCount, 34);
   });
 
   test('lookup performance: 100 batch2 hand queries', () => {

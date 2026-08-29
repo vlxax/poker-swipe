@@ -113,12 +113,14 @@ export function selectionToTrainerQuery(sel) {
     opponentPosition: sel.opener || sel.opponent || null,
     betSize: sel.betSize || sel.sizing || null,
     sourceMode: sel.trainerSourceMode || sel.sourceMode || null,
+    sourceGroup: sel.sourceGroup || sel.trainerSourceGroup || null,
     rawSpot: sel.trainerSpot || sel.rawSpot || null,
     trainerCanonicalId: sel.trainerCanonicalId || null
   };
 
   if (sel.situation === 'uo_open' || sel.situation === 'rfi' && sel.dataSource === 'trainer' && sel.trainerSourceMode === 'uo') {
     q.sourceMode = 'uo';
+    if (!q.sourceGroup) q.sourceGroup = 'UO';
   }
 
   const situationToMode = {

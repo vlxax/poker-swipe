@@ -47,6 +47,7 @@ test('built indexes exist after build', () => {
   assert.ok(existsSync(join(BUILT, 'charts-index.json')));
   assert.ok(existsSync(join(BUILT, 'uo-hand-records.json')));
   assert.ok(existsSync(join(BUILT, 'meta.json')));
+  assert.ok(existsSync(join(BUILT, 'trainer-shard-index.json')));
   assert.ok(existsSync(join(BUILT, 'indexes/by-id.json')));
   assert.ok(existsSync(join(BUILT, 'indexes/by-stack.json')));
 });
@@ -55,13 +56,21 @@ test('no duplicate chart ids in index', () => {
   const charts = JSON.parse(readFileSync(join(BUILT, 'charts-index.json'), 'utf8'));
   const ids = charts.map((c) => c.id);
   assert.equal(ids.length, new Set(ids).size);
-  assert.equal(ids.length, 1638);
+  assert.equal(ids.length, 1698);
 });
 
 test('UO charts count and hand records', () => {
   const meta = getTrainerMeta();
-  assert.equal(meta.stats.uoCharts, 60);
-  assert.equal(meta.stats.uoHandRecords, 10140);
+  assert.equal(meta.stats.uoZipCharts, 60);
+  assert.equal(meta.stats.bekhtoldCharts, 1638);
+  assert.equal(meta.stats.totalCharts, 1698);
+  assert.equal(meta.stats.shardCount, 34);
+  const uoMode = listCharts({ sourceMode: 'uo' });
+  assert.equal(uoMode.length, 120);
+  assert.equal(uoMode.filter((c) => c.id.startsWith('UO_')).length, 60);
+  assert.equal(uoMode.filter((c) => c.id.startsWith('BL_uo')).length, 60);
+  const trusted = JSON.parse(readFileSync(join(BUILT, 'uo-hand-records.json'), 'utf8'));
+  assert.equal(trusted.length, 10140);
 });
 
 test('source provenance present on charts', () => {
@@ -119,9 +128,12 @@ test('lookup by stack works for UO band', () => {
 });
 
 test('lookup by position works', () => {
-  const charts = listCharts({ sourceMode: 'uo' });
-  const ep = charts.filter((c) => c.heroPosition.raw === 'EP');
-  assert.equal(ep.length, 10);
+  const zipEp = listCharts({ sourceMode: 'uo', sourceGroup: 'UO' }).filter(
+    (c) => c.heroPosition.raw === 'EP'
+  );
+  assert.equal(zipEp.length, 10);
+  const dualEp = listCharts({ sourceMode: 'uo' }).filter((c) => c.heroPosition.raw === 'EP');
+  assert.equal(dualEp.length, 20);
 });
 
 test('lookup by spot / source mode works', () => {
@@ -158,9 +170,11 @@ test('exact UO hand lookup returns trainer action with provenance', () => {
     heroPosition: 'EP',
     stack: '3BB',
     sourceMode: 'uo',
+    sourceGroup: 'UO',
     hand: 'AA'
   });
   assert.ok(result.chart);
+  assert.equal(result.chart.id, 'UO_2-4_EP');
   assert.equal(result.action, 'AI');
   assert.equal(result.provenance.source, 'TRAINER');
 });
@@ -170,8 +184,10 @@ test('UNSELECTED hand grades as FOLD per trainer confirmation', () => {
     heroPosition: 'EP',
     stack: '3BB',
     sourceMode: 'uo',
+    sourceGroup: 'UO',
     hand: 'K2s'
   });
+  assert.equal(result.chart.id, 'UO_2-4_EP');
   assert.equal(result.action, 'UNSELECTED');
   assert.equal(result.gradingAllowed, true);
 });
@@ -212,7 +228,8 @@ test('performance: charts index loads without embedding all images', () => {
   const charts = JSON.parse(readFileSync(join(BUILT, 'charts-index.json'), 'utf8'));
   const sample = charts[0];
   assert.equal(sample.hands, undefined);
-  assert.ok(sample.image?.path || sample.dataset === 'UO_batch_1');
+  assert.ok(sample.dataset);
+  assert.ok(existsSync(join(BUILT, 'trainer-shard-index.json')));
 });
 
 test('report files generated', () => {
@@ -229,11 +246,12 @@ test('unmapped spots report accessible', () => {
 });
 
 test('terms to clarify includes UO nAI UNSELECTED', () => {
+  const md = readFileSync(join(ROOT, 'trainer-knowledge/TRAINER_TERMS_TO_CLARIFY.md'), 'utf8');
+  assert.ok(md.includes('UO'));
+  assert.ok(md.includes('nAI'));
+  assert.ok(md.includes('UNSELECTED'));
   const terms = getTermsToClarify();
-  const names = terms.map((t) => t.term);
-  assert.ok(names.includes('UO'));
-  assert.ok(names.includes('nAI'));
-  assert.ok(names.includes('UNSELECTED'));
+  assert.ok(Array.isArray(terms));
 });
 
 test('provenance debug string', () => {

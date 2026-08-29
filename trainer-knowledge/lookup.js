@@ -15,16 +15,21 @@ const ROOT = join(__dirname, '..');
 const BUILT_DIR = join(ROOT, 'data/trainer/built');
 
 let _cache = null;
-let _batch2ShardIndex = null;
-let _batch2ShardCache = new Map();
+let _shardIndex = null;
+let _shardCache = new Map();
+let _chartHandsCache = new Map();
 
 function expandCompactHand(compact) {
   if (!compact) return null;
   if (compact.actionRaw !== undefined) return compact; // already expanded
+  const actionRaw = compact.a ?? null;
+  const isUnselectedFold = actionRaw === 'UNSELECTED';
   const out = {
-    actionRaw: compact.a ?? null,
-    dataStatus: compact.d || 'NEEDS_CLARIFICATION',
-    gradingAllowed: compact.g === 1,
+    actionRaw,
+    dataStatus: isUnselectedFold
+      ? TRAINER_STATUS.EXACT_TRAINER_DATA
+      : compact.d || 'NEEDS_CLARIFICATION',
+    gradingAllowed: isUnselectedFold ? true : compact.g === 1,
     parsingStatus: compact.p || 'PARSED',
     isMixed: compact.m === 1
   };
@@ -41,63 +46,59 @@ function expandCompactHand(compact) {
 }
 
 function loadShardIndex() {
-  if (_batch2ShardIndex) return _batch2ShardIndex;
-  const path = join(BUILT_DIR, 'batch2-shard-index.json');
+  if (_shardIndex) return _shardIndex;
+  const path = join(BUILT_DIR, 'trainer-shard-index.json');
   if (!existsSync(path)) return null;
-  _batch2ShardIndex = JSON.parse(readFileSync(path, 'utf8'));
-  return _batch2ShardIndex;
+  _shardIndex = JSON.parse(readFileSync(path, 'utf8'));
+  return _shardIndex;
 }
 
-function loadBatch2ChartFromShard(chartId) {
+function loadChartFromShard(chartId) {
+  if (_chartHandsCache.has(chartId)) return _chartHandsCache.get(chartId);
   const index = loadShardIndex();
   if (!index?.chartToShard) return null;
   const shardId = index.chartToShard[chartId];
   if (!shardId) return null;
-  if (!_batch2ShardCache.has(shardId)) {
-    const shardPath = join(BUILT_DIR, 'batch2-shards', `${shardId}.json`);
+  if (!_shardCache.has(shardId)) {
+    const shardPath = join(BUILT_DIR, 'trainer-shards', `${shardId}.json`);
     if (!existsSync(shardPath)) return null;
     const shard = JSON.parse(readFileSync(shardPath, 'utf8'));
-    _batch2ShardCache.set(shardId, shard.charts || {});
+    _shardCache.set(shardId, shard.charts || {});
   }
-  const compact = _batch2ShardCache.get(shardId)[chartId];
+  const compact = _shardCache.get(shardId)[chartId];
   if (!compact?.h) return null;
   const hands = {};
   for (const [hand, cell] of Object.entries(compact.h)) {
     hands[hand] = expandCompactHand(cell);
   }
-  return { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
-}
-
-function loadBatch2HandsFile() {
-  const path = join(BUILT_DIR, 'batch2-parsed-hands.json');
-  if (!existsSync(path)) return {};
-  const data = JSON.parse(readFileSync(path, 'utf8'));
-  return data.charts || {};
+  const chart = { chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
+  _chartHandsCache.set(chartId, chart);
+  return chart;
 }
 
 function loadBuilt() {
   if (_cache) return _cache;
   const chartsPath = join(BUILT_DIR, 'charts-index.json');
-  const uoPath = join(BUILT_DIR, 'uo-hand-records.json');
   const metaPath = join(BUILT_DIR, 'meta.json');
   if (!existsSync(chartsPath)) {
     throw new Error(
-      'Trainer knowledge not built. Run: node trainer-knowledge/scripts/buildTrainerKnowledge.mjs'
+      'Trainer knowledge not built. Run: python3 trainer-knowledge/scripts/compileTrainerProduction.py'
     );
   }
+  const byIdPath = join(BUILT_DIR, 'indexes/by-id.json');
   _cache = {
     charts: JSON.parse(readFileSync(chartsPath, 'utf8')),
-    uoHands: existsSync(uoPath) ? JSON.parse(readFileSync(uoPath, 'utf8')) : [],
     meta: existsSync(metaPath) ? JSON.parse(readFileSync(metaPath, 'utf8')) : {},
-    indexes: JSON.parse(readFileSync(join(BUILT_DIR, 'indexes/by-id.json'), 'utf8'))
+    indexes: existsSync(byIdPath) ? JSON.parse(readFileSync(byIdPath, 'utf8')) : {}
   };
   return _cache;
 }
 
 export function resetTrainerCache() {
   _cache = null;
-  _batch2ShardIndex = null;
-  _batch2ShardCache = new Map();
+  _shardIndex = null;
+  _shardCache = new Map();
+  _chartHandsCache = new Map();
 }
 
 export function getTrainerMeta() {
@@ -130,16 +131,38 @@ function stackMatch(queryStack, recordStack) {
   if (q === rRaw) return 'exact';
 
   const qSem = parseTrainerStack(q);
-  const rSem = recordStack.semantics || parseTrainerStack(rRaw);
+  // Always re-parse raw: compile-time semantics may be UNKNOWN for unicode-dash stacks.
+  const rSem = parseTrainerStack(rRaw);
 
   if (qSem.type === 'EXACT') {
     const kind = matchQueryToRecord(qSem.bb, rSem);
     return kind === 'none' ? 'none' : kind;
   }
 
-  // Non-exact query against record — raw equality only unless semantics match
+  // Non-exact query against record — raw equality or equivalent band labels
   if (qSem.raw === rSem.raw) return 'exact';
+  if (
+    (qSem.type === 'RANGE' || qSem.type === 'MINIMUM') &&
+    qSem.type === rSem.type &&
+    qSem.minBb === rSem.minBb &&
+    qSem.maxBb === rSem.maxBb
+  ) {
+    return 'exact';
+  }
   return 'none';
+}
+
+/** Dual UO family: prefer UO_* (zip) vs BL_uo-* (BekhtOLD) without cross-stealing. */
+function familyPreference(chart, query) {
+  const id = chart.id || '';
+  const isZipUo = id.startsWith('UO_');
+  const isBlUo = id.startsWith('BL_uo');
+  if (query.sourceGroup === 'UO') return isZipUo ? 2 : isBlUo ? -2 : 0;
+  if (query.sourceGroup === 'uo') return isBlUo ? 2 : isZipUo ? -2 : 0;
+  // Default (incl. brain queries with no sourceMode): trusted zip UO_* wins over BL_uo-*.
+  if (isZipUo) return 1;
+  if (isBlUo) return -1;
+  return 0;
 }
 
 function opponentMatch(queryOpp, recordOpp) {
@@ -186,7 +209,9 @@ function scoreChartMatch(chart, query) {
     score += 8;
     mismatches.push(`opponent group match (${chart.opponentPosition?.raw})`);
   } else if (query.opponentPosition) {
-    mismatches.push(`opponent: wanted ${query.opponentPosition}, have ${chart.opponentPosition?.raw}`);
+    // UO open charts have no villain seat — inferred BB from task canonical must not block.
+    if (chart.sourceMode === 'uo' && !chart.opponentPosition?.raw) score += 5;
+    else mismatches.push(`opponent: wanted ${query.opponentPosition}, have ${chart.opponentPosition?.raw}`);
   } else score += 5;
 
   const betKind = sizingMatch(query.betSize, chart.betSize);
@@ -195,10 +220,11 @@ function scoreChartMatch(chart, query) {
   else score += 3;
 
   if (query.sourceMode && chart.sourceMode === query.sourceMode) score += 10;
+  if (query.sourceGroup && chart.sourceGroup === query.sourceGroup) score += 12;
   if (query.rawSpot && chart.spot?.rawSpot === query.rawSpot) score += 10;
   if (query.trainerCanonicalId && chart.spot?.trainerCanonicalId === query.trainerCanonicalId) score += 15;
 
-  return { score, mismatches, posKind };
+  return { score, mismatches, posKind, familyPref: familyPreference(chart, query) };
 }
 
 export function lookupTrainerCharts(query = {}) {
@@ -206,37 +232,29 @@ export function lookupTrainerCharts(query = {}) {
   const ranked = charts
     .map((chart) => ({ chart, ...scoreChartMatch(chart, query) }))
     .filter((r) => r.score > 0)
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.familyPref !== a.familyPref) return b.familyPref - a.familyPref;
+      return String(a.chart.id).localeCompare(String(b.chart.id));
+    });
   return ranked;
 }
 
 export function lookupTrainerHand({ chartId, hand }) {
-  const { uoHands } = loadBuilt();
   const h = String(hand || '').trim();
-  return uoHands.find((r) => r.chartId === chartId && r.hand === h) || null;
-}
-
-function lookupBatch2Hand(chartId, hand) {
-  const h = String(hand || '').trim();
-  let chart = loadBatch2ChartFromShard(chartId);
-  if (!chart) {
-    const charts = loadBatch2HandsFile();
-    chart = charts[chartId];
-  }
-  if (!chart?.hands) return null;
-  const rec = chart.hands[h];
+  const chart = loadChartFromShard(chartId);
+  const rec = chart?.hands?.[h];
   if (!rec) return null;
-  const expanded = expandCompactHand(rec);
   return {
     chartId,
     hand: h,
-    actionRaw: expanded.actionRaw,
-    dataStatus: expanded.dataStatus,
-    gradingAllowed: expanded.isMixed ? false : Boolean(expanded.gradingAllowed),
-    strategies: expanded.strategies || null,
-    isMixed: Boolean(expanded.isMixed),
-    parsingStatus: expanded.parsingStatus,
-    parserStatus: expanded.parsingStatus
+    actionRaw: rec.actionRaw,
+    dataStatus: rec.dataStatus,
+    gradingAllowed: rec.isMixed ? false : Boolean(rec.gradingAllowed),
+    strategies: rec.strategies || null,
+    isMixed: Boolean(rec.isMixed),
+    parsingStatus: rec.parsingStatus,
+    parserStatus: rec.parsingStatus
   };
 }
 
@@ -276,10 +294,7 @@ export function lookupTrainerHandAction(query = {}) {
     return { ...spot, hand: query.hand, action: null, gradingAllowed: false };
   }
 
-  const handRec =
-    lookupTrainerHand({ chartId: spot.chart.id, hand: query.hand }) ||
-    lookupBatch2Hand(spot.chart.id, query.hand) ||
-    null;
+  const handRec = lookupTrainerHand({ chartId: spot.chart.id, hand: query.hand });
 
   if (!handRec) {
     return {

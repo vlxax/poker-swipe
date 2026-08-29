@@ -46,7 +46,7 @@ describe('trainer ranges integration', { concurrency: 1 }, () => {
     assert.ok(inv.uoPositions.includes('EP'));
     assert.ok(inv.uoStacks.includes('2-4'));
     assert.ok(inv.modeInventory.callpush);
-    assert.equal(inv.chartCount, 1638);
+    assert.equal(inv.chartCount, 1698);
   });
 
   test('UO exact match: EP 2-4 AA → AI gradable', async () => {
