@@ -72,10 +72,19 @@ window.PokerSwipeAuth = (() => {
     }
   };
 
+  const emitAuthChange = (type) => {
+    try {
+      if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('pokerswipe-auth-changed', { detail: { type } }));
+      }
+    } catch (_) { /* ignore */ }
+  };
+
   const clearLocalSession = () => {
     localStorage.removeItem(SESSION_KEY);
     sessionToken = null;
     sessionUser = null;
+    emitAuthChange('logout');
   };
 
   const normalizeExpiresAt = (expiresAt, expiresIn) => {
@@ -116,6 +125,7 @@ window.PokerSwipeAuth = (() => {
     sessionUser = normalized.user;
 
     if (normalized.refresh_token) writeBridgeToken(normalized.refresh_token);
+    emitAuthChange('login');
     return normalized;
   };
 

@@ -15,11 +15,16 @@ import {
   stepFeedback,
   summaryFeedback
 } from './narrowingEngine.js';
+import { lookupReferenceRange } from './referenceRanges.js';
+import { attemptsFromNarrowingGrade } from '../range-learning/attemptAdapter.js';
+import { PersistentLearnerMemory } from '../range-learning/persistence.js';
 
 export class RangeController {
-  constructor({ pack, storage = null } = {}) {
+  constructor({ pack, storage = null, learnerMemory = null } = {}) {
     this.pack = pack;
     this.storage = storage;
+    this.learnerMemory = learnerMemory || new PersistentLearnerMemory({ storage });
+    this.learnerMemory.load();
     this.phase = 'intro';
     this.scenario = null;
     this.stepIndex = 0;
@@ -28,6 +33,7 @@ export class RangeController {
     this.scores = [];
     this.showHelp = false;
     this.progress = loadProgress(storage);
+    this._attemptSeq = 0;
   }
 
   _freshScenario(excludeId = null) {
@@ -144,6 +150,7 @@ export class RangeController {
     const answer = new Set([...this.userSelection].filter((h) => candidates.has(h)));
     const score = scoreStep(answer, step.truth, candidates);
     const feedback = stepFeedback(step, score);
+    this._recordReferenceAttempts(step, answer, candidates);
 
     this.answers[this.stepIndex] = answer;
     this.scores[this.stepIndex] = { ...score, feedback };
@@ -171,6 +178,32 @@ export class RangeController {
       this.progress = completeOnboarding(this.storage);
     }
     return this.viewModel();
+  }
+
+  _recordReferenceAttempts(step, answer, candidates) {
+    try {
+      const rangeObj = lookupReferenceRange(step.truthSel || {});
+      const rangeId = rangeObj?.id;
+      if (!rangeId) return;
+      const truthHands = step.truth?.hands instanceof Set ? step.truth.hands : new Set(step.truth?.hands || []);
+      const attempts = [];
+      const ts = Date.now();
+      for (const hand of candidates) {
+        this._attemptSeq += 1;
+        const built = attemptsFromNarrowingGrade({
+          rangeId,
+          source: 'reference',
+          hand,
+          inRangeTruth: truthHands.has(hand),
+          playerSaidInRange: answer.has(hand),
+          timestamp: ts,
+          producer: 'reference-narrowing',
+          sequence: this._attemptSeq
+        });
+        if (built.ok) attempts.push(built.attempt);
+      }
+      if (attempts.length) this.learnerMemory.recordAttempts(attempts);
+    } catch (_) { /* never break gameplay */ }
   }
 
   nextScenario() {

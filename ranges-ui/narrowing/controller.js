@@ -3,6 +3,9 @@
 import { getNarrowingCatalog, loadLesson, findLesson } from './lessons.js';
 import { buildExercises, gradeExercise, lessonCounts } from './exercises.js';
 import { createNarrowingStore } from './storage.js';
+import { isOpen } from '../battleship/trainerRangeModel.js';
+import { attemptsFromNarrowingGrade } from '../../range-learning/attemptAdapter.js';
+import { PersistentLearnerMemory } from '../../range-learning/persistence.js';
 
 function freshState() {
   return {
@@ -22,11 +25,14 @@ function freshState() {
 }
 
 export class NarrowingController {
-  constructor({ storage } = {}) {
+  constructor({ storage, learnerMemory } = {}) {
     this.storage = storage;
     this.store = createNarrowingStore(storage);
+    this.learnerMemory = learnerMemory || new PersistentLearnerMemory({ storage });
+    this.learnerMemory.load();
     this.catalog = [];
     this.state = freshState();
+    this._answerSeq = 0;
   }
 
   async init() {
@@ -116,6 +122,7 @@ export class NarrowingController {
     const exercise = this.state.exercises[this.state.exerciseIndex];
     if (!exercise || exercise.type !== 'mc') return this.viewModel();
     const grade = gradeExercise(exercise, choice);
+    this._recordNarrowingAttempt(exercise, choice, grade);
     this._applyGrade(grade, choice);
     return this.viewModel();
   }
@@ -124,6 +131,7 @@ export class NarrowingController {
     const exercise = this.state.exercises[this.state.exerciseIndex];
     if (!exercise || exercise.type !== 'yesno') return this.viewModel();
     const grade = gradeExercise(exercise, answer);
+    this._recordNarrowingAttempt(exercise, answer, grade);
     this._applyGrade(grade, answer);
     return this.viewModel();
   }
@@ -132,6 +140,7 @@ export class NarrowingController {
     const exercise = this.state.exercises[this.state.exerciseIndex];
     if (!exercise || exercise.type !== 'tap' || this.state.phase !== 'exercise') return this.viewModel();
     const grade = gradeExercise(exercise, hand);
+    this._recordNarrowingAttempt(exercise, hand, grade);
     this.state.flashHand = hand;
     if (grade.correct) {
       this.state.feedback = { type: 'ok', text: 'Верно' };
@@ -142,6 +151,40 @@ export class NarrowingController {
     }
     if (grade.correct) this._advanceExercise(grade);
     return this.viewModel();
+  }
+
+  _recordNarrowingAttempt(exercise, answer, grade) {
+    try {
+      const rangeId = this.state.model?.chartId;
+      if (!rangeId || !exercise) return;
+      this._answerSeq += 1;
+      const timestamp = Date.now();
+      let hand = null;
+      let playerSaidInRange = null;
+      if (exercise.type === 'mc') {
+        hand = answer;
+        playerSaidInRange = exercise.id === 'pick-stays';
+        if (exercise.id === 'pick-not-in') playerSaidInRange = false;
+      } else if (exercise.type === 'yesno') {
+        hand = exercise.hand;
+        playerSaidInRange = answer === 'yes';
+      } else if (exercise.type === 'tap') {
+        hand = answer;
+        playerSaidInRange = exercise.mode !== 'gone';
+      }
+      if (!hand || playerSaidInRange == null) return;
+      const built = attemptsFromNarrowingGrade({
+        rangeId,
+        source: 'trainer',
+        hand,
+        inRangeTruth: isOpen(hand, this.state.model) === true,
+        playerSaidInRange,
+        timestamp,
+        producer: 'narrowing',
+        sequence: this._answerSeq
+      });
+      if (built.ok) this.learnerMemory.recordAttempts([built.attempt]);
+    } catch (_) { /* never break gameplay */ }
   }
 
   _applyGrade(grade, answer) {

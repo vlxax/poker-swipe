@@ -1,0 +1,14 @@
+{
+  "name": "strategy-map",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Strategy Map & Adaptive Curriculum Engine for PokerSwipe",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0"
+  }
+}

@@ -6,6 +6,8 @@ import { buildMissions, grenadesForMission, DEFAULT_GRENADES, missionRangeLabel 
 import { createProgressStore } from './progress.js';
 import { getHandCategory } from './matrixUtils.js';
 import { isGradable } from './trainerRangeModel.js';
+import { attemptFromBattleshipTap } from '../../range-learning/attemptAdapter.js';
+import { PersistentLearnerMemory } from '../../range-learning/persistence.js';
 
 function freshState() {
   return {
@@ -41,15 +43,18 @@ function freshState() {
 }
 
 export class BattleshipController {
-  constructor({ storage } = {}) {
+  constructor({ storage, learnerMemory } = {}) {
     this.storage = storage;
     this.progress = createProgressStore(storage);
+    this.learnerMemory = learnerMemory || new PersistentLearnerMemory({ storage });
+    this.learnerMemory.load();
     this.catalog = [];
     this.course = null;
     this.model = null;
     this.missions = [];
     this.state = freshState();
     this._handlers = {};
+    this._tapSeq = 0;
   }
 
   async init() {
@@ -183,6 +188,7 @@ export class BattleshipController {
     if (this.state.tutorialPhase === 'pulse') {
       if (hand !== this.state.tutorialHand) return this.viewModel();
       this._applyHit(hand, mission);
+      this._recordStrategyAttempt(hand, true, mission);
       this.state.tutorialPhase = 'confirm';
       this.state.speech = 'Да. Попал.';
       this.state.feedback = { type: 'hit', hand, text: 'ПОПАЛ' };
@@ -193,6 +199,7 @@ export class BattleshipController {
     this.state.resolved.add(hand);
     if (isTarget) this._applyHit(hand, mission);
     else this._applyMiss(hand, mission);
+    this._recordStrategyAttempt(hand, isTarget, mission);
 
     if (this.state.tutorialPhase === null && !this.progress.loadTutorialCompleted() && this.state.missionIndex === 0) {
       this.progress.saveTutorialCompleted();
@@ -211,6 +218,23 @@ export class BattleshipController {
       this.progress.saveTutorialCompleted();
     }
     return this.viewModel();
+  }
+
+  _recordStrategyAttempt(hand, isTarget, mission) {
+    try {
+      this._tapSeq += 1;
+      const built = attemptFromBattleshipTap({
+        model: this.model,
+        mission,
+        hand,
+        timestamp: Date.now(),
+        sequence: this._tapSeq,
+        isTarget,
+        inRange: this._inRange(hand)
+      });
+      if (!built.ok || !built.attempt) return;
+      this.learnerMemory.recordAttempts([built.attempt]);
+    } catch (_) { /* memory must never break gameplay */ }
   }
 
   _applyHit(hand, mission) {
