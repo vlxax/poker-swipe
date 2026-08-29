@@ -367,5 +367,4 @@ const HandValidation = (() => {
   };
 })();
 
-// Export for Node.js / test runners (ES modules)
-export { HandValidation };
+globalThis.HandValidation = HandValidation;

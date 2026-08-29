@@ -14,6 +14,7 @@
 import { matrixClasses } from '../ranges-ui/matrix.js';
 import { mapProductionDistribution } from './actionMapping.js';
 import { rangeStrategyVersion } from './strategyVersion.js';
+import { canGradeWithTrainerAction } from '../trainer-knowledge/status.js';
 
 export const MISSING_HAND_SEMANTICS = {
   reference: {
@@ -231,11 +232,11 @@ export function trainerCellToDistribution(cell) {
   if (cell.isMixed || cell.m === 1) {
     return { skip: true, reason: 'mixed_cell', semantics: 'UNSUPPORTED' };
   }
-  if (cell.gradingAllowed === false) {
+  const raw = cell.trainerActionRaw || cell.actionRaw || cell.normalizedAction || cell.action || cell.a;
+  if (cell.gradingAllowed === false && !canGradeWithTrainerAction(raw)) {
     return { skip: true, reason: cell.dataStatus || 'not_gradable', semantics: 'UNSUPPORTED' };
   }
 
-  const raw = cell.trainerActionRaw || cell.actionRaw || cell.normalizedAction || cell.action;
   if (!raw) {
     return { skip: true, reason: 'no_action', semantics: 'UNSUPPORTED' };
   }

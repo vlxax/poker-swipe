@@ -957,11 +957,28 @@ main{padding-bottom:96px}
 .players28{margin-top:20px}.player28{display:grid;width:100%;grid-template-columns:50px 1fr auto;align-items:center;gap:10px;padding:9px;margin:7px 0;border:1px solid #302933;background:#131318;color:#fff;border-radius:17px;text-align:left}.player28 img{width:50px;height:50px;object-fit:cover;border-radius:14px}.player28 b{display:block;font-size:11px}.player28 small{display:block;color:#aaa;font-size:8px;margin-top:2px}.player28 strong{font-size:14px;color:#ff4f9a}.sync28{padding:10px 12px;border-radius:14px;border:1px solid #302b31;background:#0f0f13;color:#aaa;font-size:9px;line-height:1.4}
 .pub28Head{display:flex;gap:13px;align-items:center;margin:8px 0 13px}.pub28Head img{width:98px;height:98px;border-radius:22px;object-fit:cover}.pub28Head h2{margin:2px 0}.analysis28{margin:12px 0;padding:14px;border-radius:18px;border:1px solid #5a2840;background:linear-gradient(145deg,#281522,#111116)}.analysis28 .verdict{font-size:21px;line-height:1.05;font-weight:950;margin:5px 0 8px}.analysis28 .why{font-size:10px;line-height:1.45;color:#d9d0d5}.compare28{display:grid;gap:6px;margin:10px 0}.compare28>div{display:grid;grid-template-columns:78px 1fr 42px;align-items:center;gap:7px;font-size:9px}.compare28 i{height:6px;border-radius:99px;background:#28242a;overflow:hidden}.compare28 i span{height:100%;display:block;border-radius:99px;background:#ff348e}.sample28{padding:9px 10px;border-radius:12px;background:#0c0c10;font-size:9px;color:#aaa;line-height:1.4}.pub28Note{font-size:9px;color:#aaa;line-height:1.4;margin:10px 0}
 </style>
-<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
+<script>
+(function () {
+  var inTelegram = !!(window.TelegramWebviewProxy
+    || /Telegram/i.test(navigator.userAgent || '')
+    || /tgWebApp/i.test(String(location.hash || '') + String(location.search || '')));
+  if (inTelegram) {
+    document.write('<script src="https://telegram.org/js/telegram-web-app.js?63"><\\/script>');
+    return;
+  }
+  window.Telegram = window.Telegram || {
+    WebApp: {
+      initDataUnsafe: {},
+      ready: function () {},
+      expand: function () {},
+      close: function () {}
+    }
+  };
+})();
+</script>
 <script src="poker_brain_v20.js"></script>
 <script src="src/handValidation.js"></script>
 <script src="src/handImport.js"></script>
-<script src="tests/test_p0_fixes.js"></script>
 
 <style id="v31-premium">
 /* ===== V31 · PREMIUM RUSSIAN UI ===== */
@@ -1125,7 +1142,6 @@ button{letter-spacing:-.01em}
 <meta http-equiv="Expires" content="0">
 
 <link rel="stylesheet" href="polyana/polyana-integrated.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="js/pwa-standalone.js"></script>
 <script src="js/pwa-install-helper.js"></script>
 </head>
@@ -3366,7 +3382,7 @@ window.d25RenderSpot = d25RenderSpot = function(){
 };
 
 /* Diagnostic finale: human analysis first, numbers second. */
-window.d25Finish = d25Finish = function(){
+window.d25Finish = d25Finish = async function(){
  const p=d25Profile(D25.results);
  S.diagDone=true;S.diagVersion=31;S.diagnosticProfile25=p;S.diagnosticProfile31={...p,rank:v31Rank(p.overall)};
  S.diagnostic=D25.results.map(x=>({concept:x.concept,ok:x.score>=72,score:x.score,confidence:x.confidence,dim:x.dim,action:x.action,source:x.br?.source||'',brainConfidence:x.br?.confidence||0,decisionClass:x.decisionClass}));
@@ -4984,7 +5000,6 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="my-tournaments-pro.js" data-my-tournaments-pro="1"></script>
 <link rel="stylesheet" href="poker-glossy-ui.css" data-glossy-ui="1">
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="polyana/polyana-integrated.js"></script>
 
 <script>
@@ -5130,7 +5145,6 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="exploit-training/pokerswipe-ui.js" data-exploit-training="1"></script>
 <script src="exploit-training/integration-bridge.js" data-exploit-training="1"></script>
 <script src="game-visual-rebuild.js"></script>
-<script src="tests/freak-lady-test.js"></script>
 <link rel="stylesheet" href="screen-router.css">
 <script src="poker_swipe_v73_hotfix.js"></script>
 <script src="screen-router.js"></script>

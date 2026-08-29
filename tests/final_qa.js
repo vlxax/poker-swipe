@@ -4,7 +4,9 @@
  * Tests all 5 scenarios through the validation layer
  */
 
-import { HandValidation } from '../src/handValidation.js';
+import '../src/handValidation.js';
+
+const HandValidation = globalThis.HandValidation;
 
 console.log('🧪 FINAL QA TEST SUITE\n');
 console.log('='.repeat(60));

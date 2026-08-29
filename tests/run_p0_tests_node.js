@@ -4,8 +4,10 @@
  * Run with: node tests/run_p0_tests_node.js
  */
 
-import { HandValidation } from '../src/handValidation.js';
+import '../src/handValidation.js';
 import { P0RegressionTests } from './test_p0_fixes.js';
+
+const HandValidation = globalThis.HandValidation;
 
 // Make HandValidation globally available (like in browser)
 global.HandValidation = HandValidation;
