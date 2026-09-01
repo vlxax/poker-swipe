@@ -107,7 +107,7 @@ body,.app{color:var(--text)}
 
 /* Bottom navigation feels like an app, not a debug toolbar. */
 .nav{background:rgba(7,9,8,.93)!important;border-top:1px solid rgba(255,255,255,.075)!important;box-shadow:0 -16px 42px rgba(0,0,0,.35)!important}
-.nav button{color:#737d73!important;min-height:54px}
+.nav button{color:#737d73!important;min-height:44px}
 .nav button.on{color:#f5f8f2!important;background:rgba(200,255,61,.045)!important}
 .nav button.on i{color:var(--v35-accent)!important}
 
