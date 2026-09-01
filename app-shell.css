@@ -203,3 +203,26 @@ html body.psAppShell #home #v36Daily {
   touch-action: manipulation;
   cursor: pointer;
 }
+
+/* 3D nav sheet must stay compact on mobile (safe-area belongs on .nav, not each button). */
+html body.psAppShell .nav[data-ps3d-build] [data-nav] {
+  min-height: 44px !important;
+  max-height: none !important;
+  padding: 2px 1px 0 !important;
+  gap: 2px !important;
+}
+
+html body.psAppShell .nav[data-ps3d-build] .ps3d-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+html body.psAppShell .nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+html body.psAppShell .nav[data-ps3d-build] .ps3d-label {
+  font-size: 6.5px !important;
+  line-height: 1 !important;
+}

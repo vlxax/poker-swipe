@@ -307,3 +307,203 @@ export function attemptsFromNarrowingGrade({
     }
   };
 }
+
+/**
+ * Decision-UI action labels → production mapping keys.
+ * Russian PokerBrain labels and common English aliases only.
+ * Does not collapse 3BET/4BET/AI into RAISE.
+ */
+export const DECISION_ACTION_ALIASES = {
+  FOLD: 'FOLD',
+  ФОЛД: 'FOLD',
+  CALL: 'CALL',
+  КОЛЛ: 'CALL',
+  RAISE: 'RAISE',
+  РЕЙЗ: 'RAISE',
+  CHECK: 'CHECK',
+  ЧЕК: 'CHECK',
+  BET: 'BET',
+  СТАВКА: 'BET',
+  PUSH: 'PUSH',
+  ПУШ: 'PUSH',
+  AI: 'AI',
+  ALLIN: 'ALLIN',
+  'ALL-IN': 'ALLIN',
+  'ALL_IN': 'ALLIN',
+  '3BET': '3BET',
+  '3-БЕТ': '3BET',
+  '4BET': '4BET',
+  '4-БЕТ': '4BET'
+};
+
+export function mapDecisionAction(raw) {
+  if (raw == null || raw === '') return mapProductionAction(raw);
+  const key = String(raw).trim();
+  const aliased = DECISION_ACTION_ALIASES[key] || DECISION_ACTION_ALIASES[key.toUpperCase()] || key;
+  return mapProductionAction(aliased);
+}
+
+/**
+ * Canonical grading result → Mistake Memory classification.
+ *
+ * Explicit mapping — PokerBrain g/y/r is NOT equivalent to MM categories.
+ *
+ *   Frequency distribution present
+ *     → classifyChosenAction (PURE_MATCH / IN_MIX / RARE_MIX / OUT_OF_STRATEGY)
+ *   Solver / assessment with honest correctness
+ *     → correct | EXCELLENT | GOOD | nearOptimal → PURE_MATCH
+ *     → nearOptimal-only / mixed INACCURACY → IN_MIX
+ *     → MISTAKE | BIG_MISTAKE | BIG MISTAKE | correct===false → OUT_OF_STRATEGY
+ *   Brain g/y/r without a distribution
+ *     → skip (null). Do not invent PURE_MATCH from green.
+ *   INACCURACY without mix or correctness
+ *     → skip
+ */
+export function mapCanonicalToMemory(canonical = {}) {
+  if (!canonical || canonical.ok === false) {
+    return { classification: null, strategyOk: null, reason: 'not_gradable', distribution: null };
+  }
+
+  const dist = canonical.metadata?.distribution || null;
+  const chosenRaw = canonical.action;
+  const chosen = chosenRaw != null && chosenRaw !== '' ? mapDecisionAction(chosenRaw) : { canonical: null };
+
+  if (dist && typeof dist === 'object' && chosen.canonical) {
+    const grade = classifyChosenAction(chosen.canonical, dist);
+    if (!grade.classification) {
+      return { classification: null, strategyOk: null, reason: grade.reason, distribution: dist };
+    }
+    return {
+      classification: grade.classification,
+      strategyOk: grade.strategyOk,
+      reason: 'frequency',
+      distribution: dist,
+      chosenCanonical: grade.chosenCanonical
+    };
+  }
+
+  if (canonical.correctness === true || canonical.verdict === 'EXCELLENT' || canonical.verdict === 'GOOD') {
+    if (!chosen.canonical && canonical.correctness !== true) {
+      return { classification: null, strategyOk: null, reason: 'no_mappable_action', distribution: null };
+    }
+    return {
+      classification: 'PURE_MATCH',
+      strategyOk: true,
+      reason: 'solver_correct',
+      distribution: null,
+      chosenCanonical: chosen.canonical || null
+    };
+  }
+
+  if (canonical.correctness === false && canonical.metadata?.nearOptimal === true) {
+    return {
+      classification: 'IN_MIX',
+      strategyOk: true,
+      reason: 'assessment_near_optimal',
+      distribution: null,
+      chosenCanonical: chosen.canonical || null
+    };
+  }
+
+  if (canonical.verdict === 'INACCURACY' && canonical.metadata?.mixedStrategy === true) {
+    return {
+      classification: 'IN_MIX',
+      strategyOk: true,
+      reason: 'solver_mixed_inaccuracy',
+      distribution: null,
+      chosenCanonical: chosen.canonical || null
+    };
+  }
+
+  if (
+    canonical.correctness === false
+    || canonical.verdict === 'MISTAKE'
+    || canonical.verdict === 'BIG_MISTAKE'
+    || canonical.verdict === 'BIG MISTAKE'
+  ) {
+    return {
+      classification: 'OUT_OF_STRATEGY',
+      strategyOk: false,
+      reason: 'solver_incorrect',
+      distribution: null,
+      chosenCanonical: chosen.canonical || null
+    };
+  }
+
+  return {
+    classification: null,
+    strategyOk: null,
+    reason: 'ambiguous_brain_grade',
+    distribution: dist
+  };
+}
+
+export function attemptFromGradingResult({
+  canonical,
+  timestamp,
+  producer,
+  sequence,
+  attemptId,
+  context = {}
+} = {}) {
+  if (!canonical || canonical.ok === false) {
+    return { ok: false, attempt: null, skip: true, error: 'not_gradable' };
+  }
+
+  const mapped = mapCanonicalToMemory(canonical);
+  if (!mapped.classification) {
+    return { ok: false, attempt: null, skip: true, error: mapped.reason };
+  }
+
+  const rangeId = canonical.metadata?.spotId || canonical.decisionId;
+  const hand = canonical.metadata?.handClass;
+  if (!rangeId || !hand) {
+    return { ok: false, attempt: null, skip: true, error: 'missing_item_identity' };
+  }
+
+  const ts = timestamp;
+  if (typeof ts !== 'number' || !Number.isFinite(ts)) {
+    return { ok: false, attempt: null, skip: true, error: 'missing_timestamp' };
+  }
+
+  const itemId = canonicalItemId({
+    source: 'decision',
+    rangeId: String(rangeId),
+    hand: String(hand),
+    distribution: mapped.distribution || undefined
+  });
+  const prod = producer || canonical.mode || 'decision';
+  const id = attemptId || attemptIdFor({
+    producer: prod,
+    itemId,
+    sequence: sequence != null ? sequence : canonical.decisionId,
+    timestamp: ts
+  });
+
+  return {
+    ok: true,
+    attempt: {
+      itemId,
+      timestamp: ts,
+      attemptId: id,
+      classification: mapped.classification,
+      chosenAction: mapped.chosenCanonical || undefined,
+      targetDistribution: mapped.distribution && Object.keys(mapped.distribution).length >= 2
+        ? mapped.distribution
+        : undefined,
+      context: {
+        ...context,
+        source: 'decision',
+        producer: prod,
+        mode: canonical.mode || null,
+        spotId: String(rangeId),
+        hand: String(hand),
+        strategyOk: mapped.strategyOk,
+        mappingReason: mapped.reason,
+        decisionId: canonical.decisionId || null,
+        strategyVersion: handStrategyVersion(mapped.distribution || { [mapped.chosenCanonical || 'CHECK']: 1 }),
+        hasFrequencyTarget: !!(mapped.distribution && Object.keys(mapped.distribution).length >= 2)
+      }
+    }
+  };
+}

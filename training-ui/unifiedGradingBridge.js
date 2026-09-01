@@ -4,8 +4,16 @@
  * Phase 3: Complete runtime integration without changing UI/CSS
  */
 
+/**
+ * SUPERSEDED by training-ui/gradingGateway.js.
+ * Do not load this file in production. Guarded against dual monkey-patching.
+ */
 (function() {
   'use strict';
+
+  if (typeof window !== 'undefined' && window.PokerSwipeGrading && window.PokerSwipeGrading.__owner) {
+    return;
+  }
 
   if (typeof window.gradeSwipeDecision === 'undefined' ||
       typeof window.gradeSwipeSizing === 'undefined') {

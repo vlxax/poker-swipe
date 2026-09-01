@@ -22,6 +22,9 @@ import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
 import { drillViewModel } from './viewModel.js';
 import * as R from './renderer.js';
+import { installGradingGateway } from './gradingGateway.js';
+
+if (typeof window !== 'undefined') installGradingGateway(window);
 
 const storage = (() => {
   try {

@@ -39,7 +39,8 @@ describe('browser production import graph has no Node fs Strategy Map path', () 
       join(ROOT, 'trainer-knowledge', 'adapters', 'rangesAdapter.js'),
       join(ROOT, 'trainer-knowledge', 'adapters', 'brainAdapter.js'),
       join(ROOT, 'range-learning', 'attemptAdapter.js'),
-      join(ROOT, 'range-learning', 'persistence.js')
+      join(ROOT, 'range-learning', 'persistence.js'),
+      join(ROOT, 'training-ui', 'gradingGateway.js')
     ];
     const files = [];
     for (const r of roots) {

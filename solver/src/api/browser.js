@@ -10,7 +10,7 @@
   // This script expects unifiedGrading.js and modeAdapters.js to be loaded first
   // It wraps their exports as window globals for use in mini-app-compact and training flows
 
-  if (typeof window.gradeDecision !== 'undefined') {
+  if (typeof window.gradeDecision !== 'undefined' || (typeof window.PokerSwipeGrading !== 'undefined' && window.PokerSwipeGrading.__owner)) {
     console.log('[UnifiedGradingBrowser] Adapters already loaded');
     return;
   }

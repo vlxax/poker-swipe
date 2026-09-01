@@ -10,8 +10,17 @@
  * - QUICK (mini-app-compact.js): wraps SWIPE
  */
 
+/**
+ * SUPERSEDED by training-ui/gradingGateway.js.
+ * Do not load this file in production. Guarded so a leftover script tag
+ * cannot double-wrap finalizeSwipe / renderSizing.
+ */
 (function() {
   'use strict';
+
+  if (typeof window !== 'undefined' && window.PokerSwipeGrading && window.PokerSwipeGrading.__owner) {
+    return;
+  }
 
   console.log('[UnifiedGradingIntegration] Initializing Phase 3 runtime...');
 
