@@ -1,395 +1,301 @@
 /**
- * PokerSwipe — Game Motion System
- * P0 layout-stable: transforms ONLY on the tapped control. No page/shell movement.
+ * PokerSwipe — Game Feel / Motion System
+ * Touch-first tactile responses, screen transitions, stagger reveals.
+ * Does NOT change visual design: colors, fonts, layout stay as-is.
+ * Prefer transform + opacity only. 60fps target.
  */
 
 :root {
-  --motion-tap: 160ms;
-  --motion-fast: 215ms;
-  --motion-screen: 330ms;
-  --motion-reveal: 420ms;
-  --motion-hand: 480ms;
-  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ps-viewport-h: 100dvh;
-  --ps-nav-offset: 118px;
+  --gf-press-ms: 110ms;
+  --gf-release-ms: 140ms;
+  --gf-screen-ms: 200ms;
+  --gf-stagger-step: 32ms;
+  --gf-stagger-dist: 8px;
+  --gf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --gf-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@supports not (height: 100dvh) {
-  :root { --ps-viewport-h: 100vh; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --motion-tap: 0ms;
-    --motion-fast: 0ms;
-    --motion-screen: 0ms;
-    --motion-reveal: 0ms;
-    --motion-hand: 0ms;
-  }
-}
-
-/* ══════════════════════════════════════════════
-   P0 — LAYOUT STABILITY (no page-level motion)
-   ══════════════════════════════════════════════ */
-
-html {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
-  overflow-x: hidden;
-  width: 100%;
-  position: fixed;
-  inset: 0;
-}
-
-.app,
-#mainApp {
-  height: var(--ps-viewport-h);
-  min-height: var(--ps-viewport-h);
-  max-height: var(--ps-viewport-h);
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-#mainApp main {
-  min-height: calc(var(--ps-viewport-h) - var(--ps-nav-offset));
-}
-
-/* Reserve feedback slot — prevents height expansion scroll jump */
-#sizeResult,
-#swipeVerdict:not(.hidden) {
-  min-height: 148px;
-}
-
-#sizeResult:empty,
-#swipeVerdict.hidden {
-  min-height: 0;
-}
-
-#sizeResult .verdict,
-#swipeVerdict .verdict {
-  min-height: 132px;
-}
-
-/* Legacy screen enter animation — disabled (duplicate of motion wrap) */
-.screen.active {
-  animation: none !important;
-  transform: none !important;
-}
-
-/* Screen swap: no translate/scale on containers */
-.screen.ps-screen-out,
-.screen.ps-screen-in,
-.screen.ps-screen-back-out,
-.screen.ps-screen-back-in {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: none !important;
-}
-
-body.ps-transitioning {
-  overflow: visible;
-}
-
-/* Shells / panels must not transform */
-.pgShell,
-.panel.pgShell,
-.swipeShell,
-.screen,
-.screen.active,
-#mainApp,
-.app,
-main {
-  transform: none !important;
-}
-
-.panel.pgShell,
-.pgShell.panel {
-  transition: opacity var(--motion-fast) var(--motion-ease-out),
-    box-shadow var(--motion-fast) var(--motion-ease-out) !important;
-}
-
-/* Bottom nav — anchored, never scaled/translated with page */
-.nav,
-.bottomNav {
-  position: fixed;
-  transform: translateX(-50%) !important;
-  will-change: auto;
-}
-
-.nav button,
-.bottomNav button,
-.nav button.on,
-.nav button:active,
-.bottomNav button:active,
-[data-nav].ps-pressed,
-[data-nav].ps-nav-tap {
-  transform: none !important;
-  transition: opacity var(--motion-tap) var(--motion-ease-out),
-    color var(--motion-tap) ease,
-    background var(--motion-tap) ease !important;
-}
-
-.nav button.ps-pressed,
-.bottomNav button.ps-pressed {
-  opacity: 0.82;
-}
-
-/* Kill duplicate legacy transforms — ps-pressed is sole tap feedback */
+/* ── Pressable base ── */
+.gf-pressable,
+.v36Tile,
+.v36Daily,
+.v36Quick,
+.v36Stat,
+.v36SwipeMain,
+.v36Personal button,
+.v36Hand,
+.action,
+.choice,
 .primary,
 .secondary,
-.tile,
-.metric,
-.action,
-.choice {
-  transform: none !important;
-}
-
-.tile:active,
-.metric:active,
-.primary:active,
-.secondary:active,
-.action:active,
-.choice:active,
-.quick5:active,
-.my18Tool:active,
-.v36Mini:active,
-.v36Quick:active,
-.pgBubblePress:active,
-.pgBubblePress.pgPressed,
-.nav button.on,
-.nav button:active {
-  transform: none !important;
-}
-
-.pgBubblePress {
-  transition: opacity var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease;
-}
-
-.pgBubblePress.pgPressed {
-  filter: brightness(0.98);
-}
-
-.pgEnter {
-  animation: none !important;
-}
-
-/* ══════════════════════════════════════════════
-   Bottom nav indicator (opacity/position only)
-   ══════════════════════════════════════════════ */
-
-.ps-nav-indicator {
-  position: absolute;
-  bottom: 6px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(200, 255, 61, 0.85), transparent);
-  pointer-events: none;
-  transition: left var(--motion-screen) var(--motion-ease-out),
-    width var(--motion-screen) var(--motion-ease-out),
-    opacity var(--motion-fast) ease;
-  opacity: 0;
-  z-index: 2;
-}
-
-.bottomNav.ps-nav-ready .ps-nav-indicator,
-.nav.ps-nav-ready .ps-nav-indicator {
-  opacity: 0.85;
-}
-
-/* ══════════════════════════════════════════════
-   Button press — ONLY on the tapped element
-   ══════════════════════════════════════════════ */
-
-.ps-bubble,
-.primary,
-.choice,
-.action,
+.ghost,
 .pgCta,
-.tile,
-.rangesCell[data-rhand],
-.pgPathNode.node,
-.pgSizeBtn,
-.metric,
-.v36Mini,
-.v36Quick {
+.p40Primary,
+.v35Start,
+.nav button,
+[data-sa],
+[data-nav],
+.chip,
+.pspChip,
+.pspTab {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.primary.ps-pressed,
-.pgCta.ps-pressed,
-.tile.ps-pressed,
-.metric.ps-pressed {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease !important;
+/* JS-driven pressed state (pointerdown) — stronger than :active alone */
+.gf-pressed {
+  transition:
+    transform var(--gf-press-ms) var(--gf-ease),
+    filter var(--gf-press-ms) ease,
+    box-shadow var(--gf-press-ms) ease !important;
+  will-change: transform;
+}
+
+/* Card / large game objects — slightly deeper press */
+.v36Tile.gf-pressed,
+.v36Daily.gf-pressed,
+.v36Quick.gf-pressed,
+.v36SwipeMain.gf-pressed,
+.v36Hand.gf-pressed,
+.swipeCardV.gf-pressed {
+  transform: scale(0.972) translateY(1px) !important;
   filter: brightness(0.97);
 }
 
-.choice.ps-pressed,
-.action.ps-pressed,
-.pgPathNode.ps-pressed,
-.pgSizeBtn.ps-pressed {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease !important;
-  filter: brightness(0.98);
+/* Secondary tiles */
+.v36GridSecondary .v36Tile.gf-pressed,
+.v36Stat.gf-pressed {
+  transform: scale(0.978) !important;
 }
 
-.choice.ps-decision-locked,
-.action.ps-decision-locked {
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.28) !important;
+/* Primary CTA — physical "sink" */
+.primary.gf-pressed,
+.pgCta.gf-pressed,
+.p40Primary.gf-pressed,
+.v35Start.gf-pressed,
+.v36Personal button.gf-pressed {
+  transform: translateY(3px) scale(0.975) !important;
+  filter: brightness(0.96);
+}
+
+/* Action buttons (FOLD / CALL / RAISE) */
+.action.gf-pressed,
+[data-sa].gf-pressed,
+.choice.gf-pressed {
+  transform: scale(0.96) translateY(1px) !important;
+  filter: brightness(1.05);
+}
+
+/* Nav — almost invisible compress */
+.nav button.gf-pressed {
+  transform: scale(0.92) !important;
+}
+
+/* Inner art nudge on big cards */
+.v36SwipeMain.gf-pressed .v36SwipeMark,
+.v36Daily.gf-pressed .v36Cards,
+.v36Sizing.gf-pressed .v36Chips {
+  transform: translateY(2px);
+  transition: transform var(--gf-press-ms) var(--gf-ease);
+}
+
+.v36SwipeMain .v36SwipeMark,
+.v36Daily .v36Cards,
+.v36Sizing .v36Chips {
+  transition: transform var(--gf-release-ms) var(--gf-ease-out);
+}
+
+/* ── Selected / success / error feedback ── */
+.gf-selected,
+.action.selected,
+[data-sa].selected {
+  transition:
+    transform 120ms var(--gf-ease),
+    box-shadow 120ms ease,
+    border-color 120ms ease,
+    background 120ms ease !important;
+}
+
+.gf-success,
+.action.selected.grade-g,
+[data-sa].selected.grade-g {
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.45), 0 0 18px rgba(200, 255, 61, 0.22) !important;
+}
+
+.gf-error,
+.action.selected.grade-r,
+[data-sa].selected.grade-r {
+  box-shadow: 0 0 0 1px rgba(255, 75, 104, 0.4), 0 0 16px rgba(255, 75, 104, 0.18) !important;
+}
+
+.gf-warn,
+.action.selected.grade-y,
+[data-sa].selected.grade-y {
+  box-shadow: 0 0 0 1px rgba(232, 191, 114, 0.4), 0 0 14px rgba(232, 191, 114, 0.16) !important;
+}
+
+/* Short confirmation flash on result */
+@keyframes gfConfirmPulse {
+  0% { filter: brightness(1); }
+  40% { filter: brightness(1.12); }
+  100% { filter: brightness(1); }
+}
+.gf-confirm {
+  animation: gfConfirmPulse 280ms var(--gf-ease) both;
+}
+
+/* ── Screen transitions ── */
+/* Leaving screen stays painted while exit runs (overrides display:none) */
+.screen.gf-leaving {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 auto auto 0;
+  width: 100%;
+  z-index: 2;
+  pointer-events: none !important;
+}
+
+.screen.gf-exit-forward {
+  animation: gfExitFwd var(--gf-screen-ms) var(--gf-ease) both;
+}
+.screen.gf-enter-forward {
+  animation: gfEnterFwd var(--gf-screen-ms) var(--gf-ease) both;
+}
+.screen.gf-exit-back {
+  animation: gfExitBack var(--gf-screen-ms) var(--gf-ease) both;
+}
+.screen.gf-enter-back {
+  animation: gfEnterBack var(--gf-screen-ms) var(--gf-ease) both;
+}
+
+@keyframes gfExitFwd {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-6px); }
+}
+@keyframes gfEnterFwd {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes gfExitBack {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(6px); }
+}
+@keyframes gfEnterBack {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Stagger reveal on content ── */
+.gf-stagger > * {
+  opacity: 0;
+  transform: translateY(var(--gf-stagger-dist));
+  animation: gfStaggerIn 220ms var(--gf-ease-out) both;
+}
+.gf-stagger > *:nth-child(1) { animation-delay: calc(var(--gf-stagger-step) * 0); }
+.gf-stagger > *:nth-child(2) { animation-delay: calc(var(--gf-stagger-step) * 1); }
+.gf-stagger > *:nth-child(3) { animation-delay: calc(var(--gf-stagger-step) * 2); }
+.gf-stagger > *:nth-child(4) { animation-delay: calc(var(--gf-stagger-step) * 3); }
+.gf-stagger > *:nth-child(5) { animation-delay: calc(var(--gf-stagger-step) * 4); }
+.gf-stagger > *:nth-child(6) { animation-delay: calc(var(--gf-stagger-step) * 5); }
+.gf-stagger > *:nth-child(7) { animation-delay: calc(var(--gf-stagger-step) * 6); }
+.gf-stagger > *:nth-child(8) { animation-delay: calc(var(--gf-stagger-step) * 7); }
+.gf-stagger > *:nth-child(9) { animation-delay: calc(var(--gf-stagger-step) * 8); }
+.gf-stagger > *:nth-child(10){ animation-delay: calc(var(--gf-stagger-step) * 9); }
+
+@keyframes gfStaggerIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Home-specific stagger targets */
+.psPremiumHome.gf-stagger .v36Stats,
+.psPremiumHome.gf-stagger .v36Daily,
+.psPremiumHome.gf-stagger .v36Personal,
+.psPremiumHome.gf-stagger .v36SwipeMain,
+.psPremiumHome.gf-stagger .v36SectionLabel,
+.psPremiumHome.gf-stagger .v36GridSecondary,
+.psPremiumHome.gf-stagger .v36Quick {
+  opacity: 0;
+  transform: translateY(var(--gf-stagger-dist));
+  animation: gfStaggerIn 240ms var(--gf-ease-out) both;
+}
+.psPremiumHome.gf-stagger .v36Stats { animation-delay: 0ms; }
+.psPremiumHome.gf-stagger .v36Daily { animation-delay: 28ms; }
+.psPremiumHome.gf-stagger .v36Personal { animation-delay: 52ms; }
+.psPremiumHome.gf-stagger .v36SwipeMain { animation-delay: 76ms; }
+.psPremiumHome.gf-stagger .v36SectionLabel { animation-delay: 100ms; }
+.psPremiumHome.gf-stagger .v36GridSecondary { animation-delay: 120ms; }
+.psPremiumHome.gf-stagger .v36Quick { animation-delay: 148ms; }
+
+/* Swipe card enter */
+.swipeCardV.gf-card-in {
+  animation: gfCardIn 220ms var(--gf-ease-out) both;
+}
+@keyframes gfCardIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Swipe card exit (existing .out kept; enhance slightly) */
+.swipeCardV.out {
+  transition: transform 200ms var(--gf-ease), opacity 200ms ease !important;
+}
+
+/* ── Nav active underline micro ── */
+.nav button.on i,
+.nav button.active i {
+  transition: transform 120ms var(--gf-ease), filter 120ms ease, color 120ms ease;
+}
+.nav button.gf-pressed i {
+  transform: scale(0.9);
+}
+
+/* ── Guard: block double-taps during transition ── */
+html.gf-transitioning {
+  pointer-events: none;
+}
+html.gf-transitioning .nav {
   pointer-events: none;
 }
 
-/* Hand start — opacity only, no layout movement */
-.pgShell.ps-hand-starting .pgArenaWrap,
-.pgShell.ps-hand-starting .pgArena,
-.pgShell.ps-hand-starting .pgControls {
-  animation: psFadeIn var(--motion-hand) var(--motion-ease-out) both;
-}
-
-.pgShell.ps-dim-surround .pgDailyChallenge,
-.pgShell.ps-dim-surround .pgHudTitle .ey {
-  opacity: 0.72;
-  transition: opacity var(--motion-fast) var(--motion-ease-out);
-}
-
-@keyframes psFadeIn {
-  from { opacity: 0.55; }
-  to { opacity: 1; }
-}
-
-/* Card deal — opacity only (transform causes layout shift in flex) */
-.pgDealIn.ps-deal-run .pgBoardZone .pc,
-.pgDealIn.ps-deal-run .pgHeroZone .pc {
-  animation: psDealFade var(--motion-fast) var(--motion-ease-out) backwards;
-}
-
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(1) { animation-delay: 0.06s; }
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(2) { animation-delay: 0.12s; }
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(3) { animation-delay: 0.18s; }
-.pgDealIn.ps-deal-turn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.1s; }
-.pgDealIn.ps-deal-river .pgBoardZone .pc:nth-child(5) { animation-delay: 0.1s; }
-.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(1) { animation-delay: 0.14s; }
-.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(2) { animation-delay: 0.2s; }
-
-@keyframes psDealFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Localized feedback — box-shadow only, no transform */
-.pgVerdictCompact.ps-pulse-good,
-.verdict.ps-pulse-good {
-  animation: psHaloGood 0.55s var(--motion-ease-out);
-}
-
-.pgVerdictCompact.ps-pulse-bad,
-.verdict.ps-pulse-bad {
-  animation: psHaloBad 0.55s var(--motion-ease-out);
-}
-
-.pgVerdictCompact.ps-pulse-warn,
-.verdict.ps-pulse-warn {
-  animation: psHaloWarn 0.55s var(--motion-ease-out);
-}
-
-@keyframes psHaloGood {
-  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.22); }
-  100% { box-shadow: 0 0 0 10px rgba(200, 255, 61, 0); }
-}
-
-@keyframes psHaloBad {
-  0% { box-shadow: 0 0 0 0 rgba(255, 140, 80, 0.2); }
-  100% { box-shadow: 0 0 0 10px rgba(255, 140, 80, 0); }
-}
-
-@keyframes psHaloWarn {
-  0% { box-shadow: 0 0 0 0 rgba(255, 170, 70, 0.18); }
-  100% { box-shadow: 0 0 0 9px rgba(255, 170, 70, 0); }
-}
-
-/* Sizing readout — no scale */
-.pgDecisionReadout.ps-size-tick b,
-.pgDecisionReadout.ps-size-tick strong {
-  animation: psReadoutTick 0.24s var(--motion-ease-out);
-}
-
-@keyframes psReadoutTick {
-  0%, 100% { opacity: 1; }
-  45% { opacity: 0.75; }
-}
-
-.pgPot.ps-bet-to-pot {
-  animation: psBetFade 0.38s var(--motion-ease-out);
-}
-
-@keyframes psBetFade {
-  0%, 100% { opacity: 1; }
-  40% { opacity: 0.85; }
-}
-
-/* Review timeline — opacity/box-shadow only */
-.pgPath.ps-timeline-run .pgPathNode {
-  opacity: 0.5;
-  transition: opacity var(--motion-fast) var(--motion-ease-out),
-    box-shadow var(--motion-fast) var(--motion-ease-out);
-}
-
-.pgPath.ps-timeline-run .pgPathNode.ps-step-lit {
-  opacity: 1;
-}
-
-.pgPathNode.ps-step-good {
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.18);
-}
-
-.pgPathNode.ps-step-critical {
-  box-shadow: 0 0 0 1px rgba(255, 150, 60, 0.42);
-  background: rgba(255, 130, 60, 0.06);
-}
-
-/* Progressive reveal — opacity only (no translateY layout shift) */
-.ps-reveal-stage {
-  opacity: 0;
-  transition: opacity var(--motion-reveal) var(--motion-ease-out);
-}
-
-.ps-reveal-stage.ps-reveal-show {
-  opacity: 1;
-}
-
-/* Ranges cell — subtle scale on cell only */
-.rangesCell[data-rhand].ps-cell-press {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out);
-}
-
-input.range.ps-slider-active::-webkit-slider-thumb {
-  transition: box-shadow var(--motion-tap) var(--motion-ease-out);
-  box-shadow: 0 0 0 4px rgba(200, 255, 61, 0.15);
-}
-
+/* ── prefers-reduced-motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .pgShell.ps-hand-starting .pgArena,
-  .pgShell.ps-hand-starting .pgControls,
-  .pgDealIn.ps-deal-run .pc,
-  .ps-reveal-stage {
+  :root {
+    --gf-press-ms: 1ms;
+    --gf-release-ms: 1ms;
+    --gf-screen-ms: 1ms;
+    --gf-stagger-step: 0ms;
+  }
+
+  .gf-pressed,
+  .v36Tile.gf-pressed,
+  .v36Daily.gf-pressed,
+  .v36Quick.gf-pressed,
+  .v36SwipeMain.gf-pressed,
+  .primary.gf-pressed,
+  .action.gf-pressed,
+  .nav button.gf-pressed {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .screen.gf-exit-forward,
+  .screen.gf-enter-forward,
+  .screen.gf-exit-back,
+  .screen.gf-enter-back,
+  .gf-stagger > *,
+  .psPremiumHome.gf-stagger .v36Stats,
+  .psPremiumHome.gf-stagger .v36Daily,
+  .psPremiumHome.gf-stagger .v36Personal,
+  .psPremiumHome.gf-stagger .v36SwipeMain,
+  .psPremiumHome.gf-stagger .v36SectionLabel,
+  .psPremiumHome.gf-stagger .v36GridSecondary,
+  .psPremiumHome.gf-stagger .v36Quick,
+  .swipeCardV.gf-card-in,
+  .gf-confirm {
     animation: none !important;
-    transition: none !important;
     opacity: 1 !important;
+    transform: none !important;
   }
 }
