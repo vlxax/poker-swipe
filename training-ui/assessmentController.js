@@ -6,7 +6,6 @@ import {
   createDiagnosticSessionSeed,
   selectNextDiagnosticItem,
   submitDiagnosticAnswer,
-  gradeAssessmentItem,
   runAssessment,
   createAnalytics,
   buildLeakProfile,
@@ -14,6 +13,7 @@ import {
 } from '../solver/src/index.js';
 import { seedSkillEvidenceFromAssessment, buildSkillProfile } from '../solver/src/training/skillProfile.js';
 import { assessmentViewModel, assessmentSummaryViewModel } from './viewModel.js';
+import { gradeDecision as gradeProductionDecision } from './gradingGateway.js';
 
 export class AssessmentController {
   constructor({
@@ -112,7 +112,14 @@ export class AssessmentController {
     const item = this.current();
     if (!item) return null;
 
-    const grade = gradeAssessmentItem(item, choice);
+    const graded = gradeProductionDecision({
+      mode: 'assessment',
+      item,
+      choice,
+      eventKey: `${item.id || 'item'}|${this.index}`
+    }, { now: this.now() });
+    const grade = graded.solver;
+    if (!grade) return null;
     submitDiagnosticAnswer(this.session, choice, grade);
     this.answers.push({ id: item.id, choice, confidence: null });
     this.set.push(item);

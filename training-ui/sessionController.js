@@ -4,9 +4,10 @@
 // Pure state + solver calls; DOM rendering stays in renderer.js.
 
 import {
-  buildPersonalizedSessionAsync, gradeAnswer, recordTrainingResult,
+  buildPersonalizedSessionAsync, recordTrainingResult,
   getTopLeaks, getDailyPersonalizedTraining
 } from '../solver/src/index.js';
+import { gradeDecision as gradeProductionDecision } from './gradingGateway.js';
 import { rebuildSkillProfileFromStore } from '../solver/src/training/dynamicPlayerProfile.js';
 import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
 
@@ -181,7 +182,14 @@ export class SessionController {
     this.answering = true;
     let result = null;
     try {
-      result = gradeAnswer({ drill, chosenId: optionId });
+      const graded = gradeProductionDecision({
+        mode: 'daily',
+        drill,
+        chosenActionId: optionId,
+        eventKey: `${drill.id || drill.spotId || 'drill'}|${this.index}`
+      }, { now: this.now() });
+      result = graded.solver;
+      if (!result) return null;
       recordTrainingResult(this.store, {
         drill, grade: result.grade, evLossBb: result.evLossBb, now: this.now()
       });

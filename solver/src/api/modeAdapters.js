@@ -49,13 +49,13 @@ export function gradeSwipeSizing(input = {}) {
  * Output: unified grade result
  */
 export function gradeSwipeDecision(input = {}) {
-  const { scenario = {}, action } = input;
+  const { scenario = {}, action, sizePct = null } = input;
 
   const gradingContext = {
-    mode: 'swipe',
+    mode: input.mode || 'swipe',
     scenario: {
       id: scenario.id || scenario.spotId,
-      spotId: scenario.spotId,
+      spotId: scenario.spotId || scenario.id,
       street: scenario.street,
       heroCards: scenario.hero || scenario.heroCards,
       villainCards: scenario.villain,
@@ -67,6 +67,7 @@ export function gradeSwipeDecision(input = {}) {
       description: scenario.ctx || scenario.description || ''
     },
     chosenActionType: action,
+    chosenSize: sizePct,
     useLegacyBrain: true  // SWIPE uses legacy brain for now
   };
 

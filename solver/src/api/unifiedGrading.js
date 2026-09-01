@@ -209,6 +209,7 @@ function gradeViaLegacy(input = {}) {
       severity: null,
       source: adapted.source,
       confidence: adapted.confidence,
+      legacyResult,
       metadata: {
         legacyGrade: adapted.legacyGrade,
         actionFrequency: adapted.actionFrequency,

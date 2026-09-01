@@ -564,7 +564,7 @@
         const lockBtn = document.getElementById('sizeLock');
         const v = mode === 'check' ? 0 : mode === 'allin' ? 150 : +r.value;
         const action = v === 0 ? 'CHECK' : 'BET';
-        const br = window.PokerBrain?.gradeDecision({ ...s, spotId: s.id }, action, v || null);
+        const br = window.PokerSwipeGrading.gradeBrain({ ...s, spotId: s.id }, action, v || null, 'sizing');
         const g = br?.grade || 'y';
         window.PsMotion?.decisionLock(lockBtn);
         window.recordEvent({

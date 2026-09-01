@@ -38,7 +38,7 @@
       const reviews=keys.map(k=>{
         const s=state.streets[k], street=map[k], action=s.heroAction||'CHECK';
         const spot={spotId:'USER_HAND_'+street,street,pos:`${state.heroPos||'HERO'} vs ${state.villPos||'VILLAIN'}`,hero:state.hero||[],board:cardsFor(k),stack:state.stack,pot:s.pot,currentLine:s.historyNote||'',ctx:s.historyNote||'',preflopLine:state.streets.pre?.historyNote||'',format:state.format||'MTT'};
-        const r=window.PokerBrain.gradeDecision(spot,action,s.heroSize||null), sec=r.analysisDetails?.sections||{};
+        const r=window.PokerSwipeGrading.gradeBrain(spot,action,s.heroSize||null,'myhands'), sec=r.analysisDetails?.sections||{};
         return `<div class="v34Street"><div class="v34StreetHead"><b>${title[k]}</b><span>${esc(action)} · ${r.score??'—'}/100</span></div><p><strong>Изменение:</strong> ${esc(sec.change||'')}</p><p><strong>Рука:</strong> ${esc(sec.hand||'')}</p><p><strong>Почему:</strong> ${esc(sec.action||'')}</p></div>`;
       }).join('');
       root.insertAdjacentHTML('beforeend',`<section class="v34StreetReview"><span class="ey">РАЗДАЧА ПО УЛИЦАМ</span><h2>НЕ «ПРАВИЛЬНО / НЕПРАВИЛЬНО», А ПОЧЕМУ</h2>${reviews}</section>`);
