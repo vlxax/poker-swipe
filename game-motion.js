@@ -1,6 +1,6 @@
 /**
  * PokerSwipe — Game Motion System
- * Modern tactile press, screen enter, stagger, answer feedback.
+ * Modern tactile press, screen enter, stagger, answer feedback + haptics.
  * No color/font/layout changes. Animation layer only.
  */
 (function () {
@@ -37,6 +37,53 @@
     return new Promise(function (r) { setTimeout(r, duration); });
   }
 
+  function tgHaptic() {
+    try {
+      return window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function vibrateNative(pattern) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    } catch (_) {}
+  }
+
+  function hapticPress() {
+    var h = tgHaptic();
+    if (h) {
+      try { h.impactOccurred('light'); return; } catch (_) {}
+    }
+    vibrateNative(8);
+  }
+
+  function hapticSuccess() {
+    var h = tgHaptic();
+    if (h) {
+      try { h.notificationOccurred('success'); return; } catch (_) {}
+    }
+    vibrateNative([12, 40, 12]);
+  }
+
+  function hapticError() {
+    var h = tgHaptic();
+    if (h) {
+      try { h.notificationOccurred('error'); return; } catch (_) {}
+      try { h.impactOccurred('heavy'); return; } catch (_) {}
+    }
+    vibrateNative([30, 50, 30, 50, 40]);
+  }
+
+  function hapticWarning() {
+    var h = tgHaptic();
+    if (h) {
+      try { h.notificationOccurred('warning'); return; } catch (_) {}
+    }
+    vibrateNative([20, 30, 20]);
+  }
+
   function gradePulse(grade) {
     if (grade === 'g' || grade === 'EXCELLENT' || grade === 'GOOD') return 'good';
     if (grade === 'r' || grade === 'MISTAKE' || grade === 'BLUNDER') return 'bad';
@@ -53,6 +100,9 @@
     setTimeout(function () {
       el.classList.remove('ps-pulse-' + kind);
     }, 560);
+    if (kind === 'bad') hapticError();
+    else if (kind === 'good') hapticSuccess();
+    else hapticWarning();
   }
 
   function bindBubblePress() {
@@ -66,6 +116,7 @@
       active = el;
       el.classList.remove('ps-release-pop');
       el.classList.add('ps-pressed');
+      hapticPress();
       try {
         if (window.PsGameFeel && window.PsGameFeel.press) window.PsGameFeel.press();
       } catch (_) {}
@@ -195,6 +246,24 @@
     window.__psSwipeWrapped = true;
   }
 
+  function bindAnswerHaptics() {
+    if (document.documentElement.dataset.psAnswerHaptic) return;
+    document.documentElement.dataset.psAnswerHaptic = '1';
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.action, .choice, [data-sa], .pgPathNode.node');
+      if (!btn) return;
+      setTimeout(function () {
+        if (btn.classList.contains('grade-r') || btn.classList.contains('isWrong') || btn.classList.contains('wrong')) {
+          hapticError();
+        } else if (btn.classList.contains('grade-g') || btn.classList.contains('isCorrect') || btn.classList.contains('correct')) {
+          hapticSuccess();
+        } else if (btn.classList.contains('grade-y')) {
+          hapticWarning();
+        }
+      }, 40);
+    }, true);
+  }
+
   function observeShells() {
     ['dailyArea', 'reviewArea', 'sizingArea', 'swipeCard', 'xrayArea', 'rangesArea'].forEach(function (id) {
       var area = document.getElementById(id);
@@ -206,14 +275,20 @@
           shell.dataset.psMotionBound = '1';
           bindBubblePress();
         }
+        var wrong = area.querySelector('.grade-r.selected, .selected.grade-r, .isWrong, .action.grade-r');
+        if (wrong && !wrong.dataset.psHapticFired) {
+          wrong.dataset.psHapticFired = '1';
+          hapticError();
+        }
       });
-      obs.observe(area, { childList: true, subtree: true });
+      obs.observe(area, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     });
   }
 
   function init() {
     bindBubblePress();
     bindNavIndicator();
+    bindAnswerHaptics();
     wrapShow();
     wrapFinalizeSwipe();
     observeShells();
@@ -237,10 +312,11 @@
   }
 
   window.PsGameFeel = {
-    press: function () {},
+    press: hapticPress,
     release: function () {},
-    success: function () {},
-    error: function () {},
+    success: hapticSuccess,
+    error: hapticError,
+    warning: hapticWarning,
     screenChange: function () {}
   };
 
@@ -252,6 +328,9 @@
     enterScreen: enterScreen,
     progressiveReveal: progressiveReveal,
     syncNavIndicator: syncNavIndicator,
+    hapticError: hapticError,
+    hapticSuccess: hapticSuccess,
+    hapticPress: hapticPress,
     reduced: reduced,
     wait: wait,
     ms: ms
