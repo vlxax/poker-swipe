@@ -1,15 +1,17 @@
 /**
  * PokerSwipe — Game Motion System
- * P0 layout-stable + game-feel tactile (TZ)
+ * Modern micro-animations. Colors, fonts, layout unchanged.
+ * Transform + opacity only. Respects prefers-reduced-motion.
  */
 
 :root {
-  --motion-tap: 160ms;
-  --motion-fast: 215ms;
-  --motion-screen: 330ms;
-  --motion-reveal: 420ms;
-  --motion-hand: 480ms;
-  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-tap: 140ms;
+  --motion-fast: 200ms;
+  --motion-screen: 280ms;
+  --motion-reveal: 380ms;
+  --motion-stagger: 36ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --ps-viewport-h: 100dvh;
   --ps-nav-offset: 118px;
 }
@@ -24,93 +26,138 @@
     --motion-fast: 0ms;
     --motion-screen: 0ms;
     --motion-reveal: 0ms;
-    --motion-hand: 0ms;
+    --motion-stagger: 0ms;
   }
 }
 
 /* Layout stability */
 html { height: 100%; overflow: hidden; }
 body {
-  height: 100%; min-height: 100%; overflow: hidden; overflow-x: hidden;
-  width: 100%; position: fixed; inset: 0;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  position: fixed;
+  inset: 0;
 }
-.app, #mainApp {
+.app,
+#mainApp {
   height: var(--ps-viewport-h);
   min-height: var(--ps-viewport-h);
   max-height: var(--ps-viewport-h);
-  overflow-y: auto; overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
 
-#sizeResult, #swipeVerdict:not(.hidden) { min-height: 148px; }
-#sizeResult:empty, #swipeVerdict.hidden { min-height: 0; }
+#sizeResult,
+#swipeVerdict:not(.hidden) { min-height: 148px; }
+#sizeResult:empty,
+#swipeVerdict.hidden { min-height: 0; }
 
-.screen.active { animation: none !important; transform: none !important; }
-.pgShell, .panel.pgShell, .swipeShell, .screen, #mainApp, .app, main {
-  transform: none !important;
-}
+.screen.active { animation: none !important; }
 
-.nav, .bottomNav {
-  position: fixed;
-  transform: translateX(-50%) !important;
-  will-change: auto;
-}
-.nav button, .bottomNav button, [data-nav].ps-pressed {
-  transform: none !important;
-  transition: opacity var(--motion-tap) var(--motion-ease-out), color var(--motion-tap) ease !important;
-}
-.nav button.ps-pressed, .bottomNav button.ps-pressed { opacity: 0.82; }
-
-/* Press feedback — transform only on control */
-.primary, .choice, .action, .pgCta, .tile, .v36Tile, .v36Daily, .v36Quick, .v36Stat, .v36SwipeMain,
-.v36Personal button, .v36Hand, .v35Start, .p40Primary, .secondary, .ghost, .chip, .pspChip, .pspTab, .gf-pressable {
+/* Press targets */
+.primary,
+.choice,
+.action,
+.pgCta,
+.tile,
+.v36Tile,
+.v36Daily,
+.v36Quick,
+.v36Stat,
+.v36SwipeMain,
+.v36Personal button,
+.v36Hand,
+.v35Start,
+.p40Primary,
+.secondary,
+.ghost,
+.chip,
+.pspChip,
+.pspTab,
+.gf-pressable,
+.metric,
+.pgSizeBtn {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  transition:
+    transform var(--motion-tap) var(--motion-spring),
+    filter var(--motion-tap) var(--motion-ease),
+    opacity var(--motion-tap) ease;
 }
 
-.primary.ps-pressed, .pgCta.ps-pressed, .p40Primary.ps-pressed, .v35Start.ps-pressed, .v36Personal button.ps-pressed {
-  transform: translateY(3px) scale(0.975) !important;
+.primary.ps-pressed,
+.pgCta.ps-pressed,
+.p40Primary.ps-pressed,
+.v35Start.ps-pressed,
+.v36Personal button.ps-pressed {
+  transform: translateY(2px) scale(0.97) !important;
+  filter: brightness(0.94);
+}
+
+.v36Tile.ps-pressed,
+.v36Daily.ps-pressed,
+.v36Quick.ps-pressed,
+.v36SwipeMain.ps-pressed,
+.v36Hand.ps-pressed,
+.tile.ps-pressed {
+  transform: scale(0.97) !important;
   filter: brightness(0.96);
-  transition: transform var(--motion-tap) var(--motion-ease-out), filter var(--motion-tap) ease !important;
 }
-.v36Tile.ps-pressed, .v36Daily.ps-pressed, .v36Quick.ps-pressed, .v36SwipeMain.ps-pressed, .v36Hand.ps-pressed {
-  transform: scale(0.972) !important;
-  filter: brightness(0.97);
-  transition: transform var(--motion-tap) var(--motion-ease-out), filter var(--motion-tap) ease !important;
+
+.v36Stat.ps-pressed,
+.v36GridSecondary .v36Tile.ps-pressed,
+.metric.ps-pressed {
+  transform: scale(0.98) !important;
 }
-.v36Stat.ps-pressed, .v36GridSecondary .v36Tile.ps-pressed {
-  transform: scale(0.978) !important;
-}
-.action.ps-pressed, .choice.ps-pressed, [data-sa].ps-pressed {
-  transform: scale(0.965) !important;
-  filter: brightness(1.04);
-}
-.tile.ps-pressed, .metric.ps-pressed {
-  transform: scale(0.99) !important;
-  filter: brightness(0.97);
+
+.action.ps-pressed,
+.choice.ps-pressed,
+[data-sa].ps-pressed {
+  transform: scale(0.96) !important;
+  filter: brightness(1.06);
 }
 
 .v36SwipeMain.ps-pressed .v36SwipeMark,
 .v36Daily.ps-pressed .v36Cards,
 .v36Sizing.ps-pressed .v36Chips {
-  transform: translateY(2px);
-  transition: transform var(--motion-tap) var(--motion-ease-out);
+  transform: translateY(3px) scale(0.96);
+  transition: transform var(--motion-tap) var(--motion-spring);
 }
-.v36SwipeMark, .v36Cards, .v36Chips {
-  transition: transform 140ms var(--motion-ease-out);
+.v36SwipeMark,
+.v36Cards,
+.v36Chips {
+  transition: transform 160ms var(--motion-ease);
+  will-change: transform;
 }
 
-/* Soft screen enter */
+.ps-release-pop {
+  animation: gfReleasePop 280ms var(--motion-spring) both;
+}
+@keyframes gfReleasePop {
+  0%   { transform: scale(0.97); }
+  55%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
 .screen.gf-screen-enter {
-  animation: gfScreenEnter var(--motion-screen) var(--motion-ease-out) both;
+  animation: gfScreenEnter var(--motion-screen) var(--motion-ease) both;
 }
 @keyframes gfScreenEnter {
-  from { opacity: 0.88; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0.82;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-/* Home stagger */
 .psPremiumHome.gf-stagger .v36Stats,
 .psPremiumHome.gf-stagger .v36Daily,
 .psPremiumHome.gf-stagger .v36Personal,
@@ -121,46 +168,171 @@ body {
 .psPremiumHome.gf-stagger .v36Quick,
 .v36Home.gf-stagger > * {
   opacity: 0;
-  transform: translateY(8px);
-  animation: gfStaggerIn 240ms var(--motion-ease-out) both;
+  transform: translateY(12px);
+  animation: gfStaggerIn 320ms var(--motion-ease) both;
 }
-.psPremiumHome.gf-stagger .v36Stats { animation-delay: 0ms; }
-.psPremiumHome.gf-stagger .v36Daily { animation-delay: 28ms; }
-.psPremiumHome.gf-stagger .v36Personal { animation-delay: 52ms; }
-.psPremiumHome.gf-stagger .v36SwipeMain { animation-delay: 72ms; }
-.psPremiumHome.gf-stagger .v36SectionLabel { animation-delay: 96ms; }
+.psPremiumHome.gf-stagger .v36Stats          { animation-delay: calc(var(--motion-stagger) * 0); }
+.psPremiumHome.gf-stagger .v36Daily          { animation-delay: calc(var(--motion-stagger) * 1); }
+.psPremiumHome.gf-stagger .v36Personal       { animation-delay: calc(var(--motion-stagger) * 2); }
+.psPremiumHome.gf-stagger .v36SwipeMain      { animation-delay: calc(var(--motion-stagger) * 2.5); }
+.psPremiumHome.gf-stagger .v36SectionLabel   { animation-delay: calc(var(--motion-stagger) * 3.2); }
 .psPremiumHome.gf-stagger .v36Grid,
-.psPremiumHome.gf-stagger .v36GridSecondary { animation-delay: 116ms; }
-.psPremiumHome.gf-stagger .v36Quick { animation-delay: 140ms; }
+.psPremiumHome.gf-stagger .v36GridSecondary  { animation-delay: calc(var(--motion-stagger) * 3.8); }
+.psPremiumHome.gf-stagger .v36Quick          { animation-delay: calc(var(--motion-stagger) * 4.5); }
 
 @keyframes gfStaggerIn {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Answer confirm */
 @keyframes gfConfirmPulse {
-  0% { filter: brightness(1); }
-  40% { filter: brightness(1.1); }
-  100% { filter: brightness(1); }
+  0%   { filter: brightness(1); transform: scale(1); }
+  35%  { filter: brightness(1.12); transform: scale(1.03); }
+  100% { filter: brightness(1); transform: scale(1); }
 }
 .action.selected.grade-g,
-[data-sa].selected.grade-g {
-  animation: gfConfirmPulse 280ms var(--motion-ease-out) both;
+[data-sa].selected.grade-g,
+.choice.selected.grade-g {
+  animation: gfConfirmPulse 320ms var(--motion-spring) both;
 }
 
-.pgVerdictCompact.ps-pulse-good, .verdict.ps-pulse-good {
-  animation: psHaloGood 0.55s var(--motion-ease-out);
+@keyframes gfShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
 }
-.pgVerdictCompact.ps-pulse-bad, .verdict.ps-pulse-bad {
-  animation: psHaloBad 0.55s var(--motion-ease-out);
+.action.selected.grade-r,
+[data-sa].selected.grade-r {
+  animation: gfShake 280ms var(--motion-ease) both;
+}
+
+.pgVerdictCompact.ps-pulse-good,
+.verdict.ps-pulse-good,
+#swipeVerdict .swipeFlash.ps-pulse-good {
+  animation: psHaloGood 0.55s var(--motion-ease);
+}
+.pgVerdictCompact.ps-pulse-bad,
+.verdict.ps-pulse-bad,
+#swipeVerdict .swipeFlash.ps-pulse-bad {
+  animation: psHaloBad 0.55s var(--motion-ease);
+}
+.pgVerdictCompact.ps-pulse-warn,
+.verdict.ps-pulse-warn {
+  animation: psHaloWarn 0.5s var(--motion-ease);
 }
 @keyframes psHaloGood {
-  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.22); }
-  100% { box-shadow: 0 0 0 10px rgba(200, 255, 61, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.28); }
+  100% { box-shadow: 0 0 0 14px rgba(200, 255, 61, 0); }
 }
 @keyframes psHaloBad {
-  0% { box-shadow: 0 0 0 0 rgba(255, 140, 80, 0.2); }
-  100% { box-shadow: 0 0 0 10px rgba(255, 140, 80, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(255, 140, 80, 0.25); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 140, 80, 0); }
+}
+@keyframes psHaloWarn {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 200, 80, 0.22); }
+  100% { box-shadow: 0 0 0 12px rgba(255, 200, 80, 0); }
+}
+
+.ps-reveal-stage {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease),
+    transform var(--motion-reveal) var(--motion-ease);
+}
+.ps-reveal-stage.ps-reveal-show {
+  opacity: 1;
+  transform: none;
+}
+
+.nav,
+.bottomNav {
+  position: fixed;
+  transform: translateX(-50%) !important;
+  will-change: auto;
+}
+.nav button,
+.bottomNav button,
+[data-nav].ps-pressed {
+  transform: none !important;
+  transition:
+    opacity var(--motion-tap) var(--motion-ease),
+    color var(--motion-tap) ease,
+    background var(--motion-fast) ease !important;
+}
+.nav button.ps-pressed,
+.bottomNav button.ps-pressed {
+  opacity: 0.78;
+}
+
+.ps-nav-indicator {
+  position: absolute;
+  bottom: 6px;
+  height: 3px;
+  border-radius: 99px;
+  background: currentColor;
+  opacity: 0.55;
+  pointer-events: none;
+  transition:
+    left var(--motion-fast) var(--motion-ease),
+    width var(--motion-fast) var(--motion-ease);
+  will-change: left, width;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .v36Tile:hover,
+  .v36Daily:hover,
+  .v36Quick:hover,
+  .v36SwipeMain:hover,
+  .v36Hand:hover,
+  .tile:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms var(--motion-ease);
+  }
+  .primary:hover,
+  .pgCta:hover,
+  .p40Primary:hover {
+    filter: brightness(1.04);
+    transition: filter 160ms ease;
+  }
+}
+
+.ps-deal-run .pc {
+  animation: gfCardDeal 420ms var(--motion-spring) both;
+}
+.ps-deal-run .pc:nth-child(1) { animation-delay: 0ms; }
+.ps-deal-run .pc:nth-child(2) { animation-delay: 40ms; }
+.ps-deal-run .pc:nth-child(3) { animation-delay: 80ms; }
+.ps-deal-run .pc:nth-child(4) { animation-delay: 120ms; }
+.ps-deal-run .pc:nth-child(5) { animation-delay: 160ms; }
+@keyframes gfCardDeal {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ps-hand-starting {
+  animation: gfHandFlash 480ms var(--motion-ease) both;
+}
+@keyframes gfHandFlash {
+  0%   { filter: brightness(0.88); }
+  40%  { filter: brightness(1.02); }
+  100% { filter: brightness(1); }
+}
+
+.ps-cell-press {
+  animation: gfCellFlash 160ms var(--motion-ease) both;
+}
+@keyframes gfCellFlash {
+  0%   { filter: brightness(1.15); transform: scale(1.04); }
+  100% { filter: brightness(1); transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -175,14 +347,28 @@ body {
   .psPremiumHome.gf-stagger .v36Quick,
   .v36Home.gf-stagger > *,
   .action.selected.grade-g,
-  [data-sa].selected.grade-g {
+  [data-sa].selected.grade-g,
+  .action.selected.grade-r,
+  [data-sa].selected.grade-r,
+  .ps-release-pop,
+  .ps-deal-run .pc,
+  .ps-hand-starting,
+  .ps-cell-press,
+  .ps-reveal-stage {
     animation: none !important;
+    transition: none !important;
     opacity: 1 !important;
-    transform: none !important;
-  }
-  .v36Tile.ps-pressed, .v36Daily.ps-pressed, .v36Quick.ps-pressed,
-  .v36SwipeMain.ps-pressed, .primary.ps-pressed, .action.ps-pressed {
     transform: none !important;
     filter: none !important;
   }
+  .v36Tile.ps-pressed,
+  .v36Daily.ps-pressed,
+  .v36Quick.ps-pressed,
+  .v36SwipeMain.ps-pressed,
+  .primary.ps-pressed,
+  .action.ps-pressed {
+    transform: none !important;
+    filter: none !important;
+  }
+  .ps-nav-indicator { transition: none !important; }
 }
