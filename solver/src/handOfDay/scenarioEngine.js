@@ -76,14 +76,18 @@ export class ScenarioEngine {
 
   // Resolve which node comes next based on action choice
   _resolveNext(node, action) {
-    if (!node.actions) return node.nextNode || null;
+    // If no actions on this node, just follow nextNode
+    if (!node.actions || !Array.isArray(node.actions)) {
+      return node.nextNode || null;
+    }
 
     // Find the action config
-    const actionCfg = Array.isArray(node.actions)
-      ? node.actions.find((a) => a.id === action)
-      : null;
+    const actionCfg = node.actions.find((a) => a.id === action);
 
-    if (!actionCfg) return node.nextNode || null;
+    if (!actionCfg) {
+      // Action not found, fall back to default next
+      return node.nextNode || null;
+    }
 
     // Return next node ID (can be explicit or computed)
     if (actionCfg.nextNode) return actionCfg.nextNode;
