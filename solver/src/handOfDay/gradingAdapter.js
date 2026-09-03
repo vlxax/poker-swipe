@@ -22,48 +22,45 @@ const CANONICAL_GRADES = {
  * Map Hand of the Day grade to canonical grade for storage in Mistake Memory.
  *
  * Strategy:
- * - BEST → GOOD (optimal decision, no EV loss)
- * - GOOD → GOOD (acceptable alternative, minimal loss)
- * - MIXED → INACCURACY (contextually valid but riskier)
- * - INACCURATE → INACCURACY or MISTAKE (depends on severity)
- * - MISTAKE → MISTAKE or BLUNDER (depends on severity)
- *
- * For simplicity without EV data, we map conservatively:
- * - INACCURATE → INACCURACY (err on side of learning, not punishment)
+ * - BEST → GOOD (optimal decision)
+ * - GOOD → GOOD (acceptable alternative)
+ * - MIXED → INACCURACY (contextually valid, learnable)
+ * - INACCURATE → INACCURACY (suboptimal but learnable)
  * - MISTAKE → MISTAKE (clear error)
  *
- * Implied EV losses (for history entry, not canonical grading):
- * - BEST: 0 BB
- * - GOOD: 0.02 BB (small loss)
- * - MIXED: 0.10 BB (context-dependent)
- * - INACCURATE: 0.40 BB (substantial but not terrible)
- * - MISTAKE: 0.80 BB (clear error)
+ * Severity distinctions are preserved through CANONICAL GRADE only.
+ * No EV losses are fabricated. The grade itself determines learning severity:
+ * - GOOD: treated as near-optimal in mastery calculation
+ * - INACCURACY: treated as suboptimal/learnable
+ * - MISTAKE: treated as error/punished
+ *
+ * Original Hand of the Day semantics are preserved in metadata for reference.
  */
 
 const GRADE_MAPPING = {
   [HOD_GRADES.BEST]: {
     canonical: CANONICAL_GRADES.GOOD,
-    impliedEvLossBB: 0,
+    evLossBb: 0,
     explanation: 'Hand of the Day: Optimal decision'
   },
   [HOD_GRADES.GOOD]: {
     canonical: CANONICAL_GRADES.GOOD,
-    impliedEvLossBB: 0.02,
+    evLossBb: 0,
     explanation: 'Hand of the Day: Acceptable alternative'
   },
   [HOD_GRADES.MIXED]: {
     canonical: CANONICAL_GRADES.INACCURACY,
-    impliedEvLossBB: 0.10,
+    evLossBb: 0,
     explanation: 'Hand of the Day: Context-dependent strategy'
   },
   [HOD_GRADES.INACCURATE]: {
     canonical: CANONICAL_GRADES.INACCURACY,
-    impliedEvLossBB: 0.40,
+    evLossBb: 0,
     explanation: 'Hand of the Day: Suboptimal but learnable'
   },
   [HOD_GRADES.MISTAKE]: {
     canonical: CANONICAL_GRADES.MISTAKE,
-    impliedEvLossBB: 0.80,
+    evLossBb: 0,
     explanation: 'Hand of the Day: Clear strategic error'
   }
 };
@@ -80,8 +77,8 @@ const GRADE_MAPPING = {
  *
  * Output:
  *   {
- *     canonicalGrade: 'GOOD' | 'INACCURACY' | 'MISTAKE' | 'BLUNDER',
- *     impliedEvLossBB: number,  (conservative estimate)
+ *     canonicalGrade: 'GOOD' | 'INACCURACY' | 'MISTAKE',
+ *     evLossBb: 0 (semantic grade only, no fabricated EV),
  *     hodGrade: string,         (original grade, preserved in metadata)
  *     hodClassification?: string,
  *     hodExplanation?: string,
@@ -92,7 +89,7 @@ export function adaptHodGradeToCanonical(hodResult) {
   if (!hodResult || !hodResult.grade) {
     return {
       canonicalGrade: CANONICAL_GRADES.GOOD,
-      impliedEvLossBB: 0,
+      evLossBb: 0,
       hodGrade: 'UNKNOWN',
       adaptationReason: 'No grade provided; defaulting to GOOD'
     };
@@ -104,7 +101,7 @@ export function adaptHodGradeToCanonical(hodResult) {
   if (!mapping) {
     return {
       canonicalGrade: CANONICAL_GRADES.GOOD,
-      impliedEvLossBB: 0,
+      evLossBb: 0,
       hodGrade,
       hodClassification: hodResult.classification,
       hodExplanation: hodResult.explanation,
@@ -114,7 +111,7 @@ export function adaptHodGradeToCanonical(hodResult) {
 
   return {
     canonicalGrade: mapping.canonical,
-    impliedEvLossBB: mapping.impliedEvLossBB,
+    evLossBb: 0,
     hodGrade,
     hodClassification: hodResult.classification,
     hodExplanation: hodResult.explanation,
@@ -170,7 +167,7 @@ export function buildMistakeMemoryAttempt({
       scenario: { id: scenarioId, actionSequence }
     },
     grade: adapted.canonicalGrade,
-    evLossBb: adapted.impliedEvLossBB,
+    evLossBb: adapted.evLossBb,
 
     // Metadata (preserved for UI, debugging, future analysis)
     hodMetadata: {
@@ -213,18 +210,18 @@ export function areHodAttemptsIdentical(attempt1, attempt2) {
 /**
  * Grading Mapping Summary for Reference:
  *
- * Hand of the Day (UI)     Canonical (Storage)    Implied EV Loss
+ * Hand of the Day (UI)     →  Canonical (Storage)    Severity
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * BEST     ⭐              GOOD                   0 BB
- * GOOD     ✅              GOOD                   0.02 BB
- * MIXED    ⚖️              INACCURACY             0.10 BB
- * INACCURATE ⚠️            INACCURACY             0.40 BB
- * MISTAKE  ❌              MISTAKE                0.80 BB
+ * BEST     ⭐              →  GOOD                   optimal (not punished)
+ * GOOD     ✅              →  GOOD                   near-optimal (not punished)
+ * MIXED    ⚖️              →  INACCURACY             context-valid (learnable)
+ * INACCURATE ⚠️            →  INACCURACY             suboptimal (learnable)
+ * MISTAKE  ❌              →  MISTAKE                error (punished)
  *
  * Notes:
- * - Implied EV losses are CONSERVATIVE estimates, not computed from solver.
- * - Mapping preserves semantic distinction (GOOD stays learnable, MISTAKE stays punished).
- * - Original HOD context is stored in metadata for future analysis.
- * - Two non-BEST decisions with same action sequence are treated as INACCURACY
- *   (learnable), not MISTAKE (punished), respecting mixed-strategy semantics.
+ * - Severity is determined by CANONICAL GRADE only (semantic classification).
+ * - No EV losses are fabricated; evLossBb = 0 for all grades.
+ * - Mastery system uses grade to determine learning impact (GOOD vs INACCURACY vs MISTAKE).
+ * - Original HOD context is stored in metadata for reference/analytics.
+ * - INACCURACY and MISTAKE have different learning severity through canonical grade.
  */

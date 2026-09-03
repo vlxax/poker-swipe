@@ -54,43 +54,43 @@ describe('Hand of the Day Brain Integration', () => {
   });
 
   describe('Grading Adaptation', () => {
-    it('maps BEST to canonical GOOD', () => {
+    it('maps BEST to canonical GOOD (no fabricated EV)', () => {
       const result = adaptHodGradeToCanonical({ grade: 'BEST', classification: 'optimal' });
       assert.strictEqual(result.canonicalGrade, 'GOOD');
-      assert.strictEqual(result.impliedEvLossBB, 0);
+      assert.strictEqual(result.evLossBb, 0);
       assert.strictEqual(result.hodGrade, 'BEST');
       assert.strictEqual(result.hodClassification, 'optimal');
     });
 
-    it('maps GOOD to canonical GOOD', () => {
+    it('maps GOOD to canonical GOOD (semantic only, no fabricated EV)', () => {
       const result = adaptHodGradeToCanonical({ grade: 'GOOD' });
       assert.strictEqual(result.canonicalGrade, 'GOOD');
-      assert.strictEqual(result.impliedEvLossBB, 0.02);
+      assert.strictEqual(result.evLossBb, 0);
     });
 
-    it('maps MIXED to canonical INACCURACY', () => {
+    it('maps MIXED to canonical INACCURACY (semantic only)', () => {
       const result = adaptHodGradeToCanonical({ grade: 'MIXED' });
       assert.strictEqual(result.canonicalGrade, 'INACCURACY');
-      assert.strictEqual(result.impliedEvLossBB, 0.10);
+      assert.strictEqual(result.evLossBb, 0);
     });
 
-    it('maps INACCURATE to canonical INACCURACY', () => {
+    it('maps INACCURATE to canonical INACCURACY (semantic only)', () => {
       const result = adaptHodGradeToCanonical({ grade: 'INACCURATE' });
       assert.strictEqual(result.canonicalGrade, 'INACCURACY');
-      assert.strictEqual(result.impliedEvLossBB, 0.40);
+      assert.strictEqual(result.evLossBb, 0);
     });
 
-    it('maps MISTAKE to canonical MISTAKE', () => {
+    it('maps MISTAKE to canonical MISTAKE (semantic only)', () => {
       const result = adaptHodGradeToCanonical({ grade: 'MISTAKE', explanation: 'bad spot' });
       assert.strictEqual(result.canonicalGrade, 'MISTAKE');
-      assert.strictEqual(result.impliedEvLossBB, 0.80);
+      assert.strictEqual(result.evLossBb, 0);
       assert.strictEqual(result.hodExplanation, 'bad spot');
     });
 
     it('handles missing grade gracefully', () => {
       const result = adaptHodGradeToCanonical({});
       assert.strictEqual(result.canonicalGrade, 'GOOD');
-      assert.strictEqual(result.impliedEvLossBB, 0);
+      assert.strictEqual(result.evLossBb, 0);
     });
 
     it('preserves HOD metadata in adaptation', () => {
