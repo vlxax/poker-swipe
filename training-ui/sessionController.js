@@ -10,6 +10,7 @@ import {
 import { gradeDecision as gradeProductionDecision } from './gradingGateway.js';
 import { rebuildSkillProfileFromStore } from '../solver/src/training/dynamicPlayerProfile.js';
 import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
+import { ScenarioEngine, getScenarioById } from '../solver/src/handOfDay/index.js';
 
 export class SessionController {
   constructor({ store, solve, solveOpts = {}, config = {}, onStateChange = null, now = Date.now } = {}) {
@@ -33,6 +34,12 @@ export class SessionController {
     this.lastAnswer = null;
     this.showingFeedback = false;
     this.taskStates = {};
+
+    // Hand of the Day support
+    this.mode = 'drill'; // drill | hand-of-day
+    this.scenarioEngine = null;
+    this.currentScenario = null;
+    this.scenarioState = 'init'; // init | playing | showdown | read | complete
   }
 
   // ---- Home -----------------------------------------------------------------
@@ -268,5 +275,60 @@ export class SessionController {
       baselineLosses: primary ? this.baselineLossByConcept[primary] || [] : [],
       minSamples: this.config.trendMinSamples || 5
     });
+  }
+
+  // ---- Hand of the Day -------------------------------------------------------
+
+  startHandOfDay(scenarioId) {
+    if (this.state === 'loading') return { started: false, reason: 'busy' };
+
+    const scenario = getScenarioById(scenarioId);
+    if (!scenario) return { started: false, reason: 'scenario_not_found' };
+
+    this.mode = 'hand-of-day';
+    this.currentScenario = scenario;
+    this.scenarioEngine = new ScenarioEngine(scenario);
+    this.scenarioState = this.scenarioEngine.state;
+    this.state = 'ready';
+    this._notify();
+
+    return { started: true, scenario };
+  }
+
+  currentNode() {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return null;
+    return this.scenarioEngine.currentNode();
+  }
+
+  advanceScenario(action) {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return null;
+
+    const result = this.scenarioEngine.advance(action);
+    this.scenarioState = this.scenarioEngine.state;
+    this._notify();
+
+    return result;
+  }
+
+  recordReadChoice(readChoice) {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return null;
+    return this.scenarioEngine.recordRead(readChoice);
+  }
+
+  getHandOfDayObservations() {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return [];
+    return this.scenarioEngine.getObservations();
+  }
+
+  getHandOfDayReveal() {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return null;
+    return this.scenarioEngine.getReveal();
+  }
+
+  resetHandOfDay() {
+    if (this.mode !== 'hand-of-day' || !this.scenarioEngine) return null;
+    this.scenarioEngine.reset();
+    this.scenarioState = this.scenarioEngine.state;
+    this._notify();
   }
 }
