@@ -1,15 +1,17 @@
 /**
  * PokerSwipe — Game Motion System
- * P0 layout-stable: transforms ONLY on the tapped control. No page/shell movement.
+ * Modern micro-animations. Colors, fonts, layout unchanged.
+ * Transform + opacity only. Respects prefers-reduced-motion.
  */
 
 :root {
-  --motion-tap: 160ms;
-  --motion-fast: 215ms;
-  --motion-screen: 330ms;
-  --motion-reveal: 420ms;
-  --motion-hand: 480ms;
-  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-tap: 140ms;
+  --motion-fast: 200ms;
+  --motion-screen: 280ms;
+  --motion-reveal: 380ms;
+  --motion-stagger: 36ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --ps-viewport-h: 100dvh;
   --ps-nav-offset: 118px;
 }
@@ -24,19 +26,12 @@
     --motion-fast: 0ms;
     --motion-screen: 0ms;
     --motion-reveal: 0ms;
-    --motion-hand: 0ms;
+    --motion-stagger: 0ms;
   }
 }
 
-/* ══════════════════════════════════════════════
-   P0 — LAYOUT STABILITY (no page-level motion)
-   ══════════════════════════════════════════════ */
-
-html {
-  height: 100%;
-  overflow: hidden;
-}
-
+/* Layout stability */
+html { height: 100%; overflow: hidden; }
 body {
   height: 100%;
   min-height: 100%;
@@ -46,7 +41,6 @@ body {
   position: fixed;
   inset: 0;
 }
-
 .app,
 #mainApp {
   height: var(--ps-viewport-h);
@@ -58,338 +52,323 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-#mainApp main {
-  min-height: calc(var(--ps-viewport-h) - var(--ps-nav-offset));
-}
-
-/* Reserve feedback slot — prevents height expansion scroll jump */
 #sizeResult,
-#swipeVerdict:not(.hidden) {
-  min-height: 148px;
-}
-
+#swipeVerdict:not(.hidden) { min-height: 148px; }
 #sizeResult:empty,
-#swipeVerdict.hidden {
-  min-height: 0;
+#swipeVerdict.hidden { min-height: 0; }
+
+.screen.active { animation: none !important; }
+
+/* Press targets */
+.primary,
+.choice,
+.action,
+.pgCta,
+.tile,
+.v36Tile,
+.v36Daily,
+.v36Quick,
+.v36Stat,
+.v36SwipeMain,
+.v36Personal button,
+.v36Hand,
+.v35Start,
+.p40Primary,
+.secondary,
+.ghost,
+.chip,
+.pspChip,
+.pspTab,
+.gf-pressable,
+.metric,
+.pgSizeBtn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform var(--motion-tap) var(--motion-spring),
+    filter var(--motion-tap) var(--motion-ease),
+    opacity var(--motion-tap) ease;
 }
 
-#sizeResult .verdict,
-#swipeVerdict .verdict {
-  min-height: 132px;
+.primary.ps-pressed,
+.pgCta.ps-pressed,
+.p40Primary.ps-pressed,
+.v35Start.ps-pressed,
+.v36Personal button.ps-pressed {
+  transform: translateY(2px) scale(0.97) !important;
+  filter: brightness(0.94);
 }
 
-/* Legacy screen enter animation — disabled (duplicate of motion wrap) */
-.screen.active {
-  animation: none !important;
-  transform: none !important;
+.v36Tile.ps-pressed,
+.v36Daily.ps-pressed,
+.v36Quick.ps-pressed,
+.v36SwipeMain.ps-pressed,
+.v36Hand.ps-pressed,
+.tile.ps-pressed {
+  transform: scale(0.97) !important;
+  filter: brightness(0.96);
 }
 
-/* Screen swap: no translate/scale on containers */
-.screen.ps-screen-out,
-.screen.ps-screen-in,
-.screen.ps-screen-back-out,
-.screen.ps-screen-back-in {
-  animation: none !important;
-  opacity: 1 !important;
-  transform: none !important;
+.v36Stat.ps-pressed,
+.v36GridSecondary .v36Tile.ps-pressed,
+.metric.ps-pressed {
+  transform: scale(0.98) !important;
 }
 
-body.ps-transitioning {
-  overflow: visible;
+.action.ps-pressed,
+.choice.ps-pressed,
+[data-sa].ps-pressed {
+  transform: scale(0.96) !important;
+  filter: brightness(1.06);
 }
 
-/* Shells / panels must not transform */
-.pgShell,
-.panel.pgShell,
-.swipeShell,
-.screen,
-.screen.active,
-#mainApp,
-.app,
-main {
-  transform: none !important;
+.v36SwipeMain.ps-pressed .v36SwipeMark,
+.v36Daily.ps-pressed .v36Cards,
+.v36Sizing.ps-pressed .v36Chips {
+  transform: translateY(3px) scale(0.96);
+  transition: transform var(--motion-tap) var(--motion-spring);
+}
+.v36SwipeMark,
+.v36Cards,
+.v36Chips {
+  transition: transform 160ms var(--motion-ease);
+  will-change: transform;
 }
 
-.panel.pgShell,
-.pgShell.panel {
-  transition: opacity var(--motion-fast) var(--motion-ease-out),
-    box-shadow var(--motion-fast) var(--motion-ease-out) !important;
+.ps-release-pop {
+  animation: gfReleasePop 280ms var(--motion-spring) both;
+}
+@keyframes gfReleasePop {
+  0%   { transform: scale(0.97); }
+  55%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
 }
 
-/* Bottom nav — anchored, never scaled/translated with page */
+.screen.gf-screen-enter {
+  animation: gfScreenEnter var(--motion-screen) var(--motion-ease) both;
+}
+@keyframes gfScreenEnter {
+  from {
+    opacity: 0.82;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.psPremiumHome.gf-stagger .v36Stats,
+.psPremiumHome.gf-stagger .v36Daily,
+.psPremiumHome.gf-stagger .v36Personal,
+.psPremiumHome.gf-stagger .v36SwipeMain,
+.psPremiumHome.gf-stagger .v36SectionLabel,
+.psPremiumHome.gf-stagger .v36Grid,
+.psPremiumHome.gf-stagger .v36GridSecondary,
+.psPremiumHome.gf-stagger .v36Quick,
+.v36Home.gf-stagger > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: gfStaggerIn 320ms var(--motion-ease) both;
+}
+.psPremiumHome.gf-stagger .v36Stats          { animation-delay: calc(var(--motion-stagger) * 0); }
+.psPremiumHome.gf-stagger .v36Daily          { animation-delay: calc(var(--motion-stagger) * 1); }
+.psPremiumHome.gf-stagger .v36Personal       { animation-delay: calc(var(--motion-stagger) * 2); }
+.psPremiumHome.gf-stagger .v36SwipeMain      { animation-delay: calc(var(--motion-stagger) * 2.5); }
+.psPremiumHome.gf-stagger .v36SectionLabel   { animation-delay: calc(var(--motion-stagger) * 3.2); }
+.psPremiumHome.gf-stagger .v36Grid,
+.psPremiumHome.gf-stagger .v36GridSecondary  { animation-delay: calc(var(--motion-stagger) * 3.8); }
+.psPremiumHome.gf-stagger .v36Quick          { animation-delay: calc(var(--motion-stagger) * 4.5); }
+
+@keyframes gfStaggerIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gfConfirmPulse {
+  0%   { filter: brightness(1); transform: scale(1); }
+  35%  { filter: brightness(1.12); transform: scale(1.03); }
+  100% { filter: brightness(1); transform: scale(1); }
+}
+.action.selected.grade-g,
+[data-sa].selected.grade-g,
+.choice.selected.grade-g {
+  animation: gfConfirmPulse 320ms var(--motion-spring) both;
+}
+
+@keyframes gfShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.action.selected.grade-r,
+[data-sa].selected.grade-r {
+  animation: gfShake 280ms var(--motion-ease) both;
+}
+
+.pgVerdictCompact.ps-pulse-good,
+.verdict.ps-pulse-good,
+#swipeVerdict .swipeFlash.ps-pulse-good {
+  animation: psHaloGood 0.55s var(--motion-ease);
+}
+.pgVerdictCompact.ps-pulse-bad,
+.verdict.ps-pulse-bad,
+#swipeVerdict .swipeFlash.ps-pulse-bad {
+  animation: psHaloBad 0.55s var(--motion-ease);
+}
+.pgVerdictCompact.ps-pulse-warn,
+.verdict.ps-pulse-warn {
+  animation: psHaloWarn 0.5s var(--motion-ease);
+}
+@keyframes psHaloGood {
+  0%   { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.28); }
+  100% { box-shadow: 0 0 0 14px rgba(200, 255, 61, 0); }
+}
+@keyframes psHaloBad {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 140, 80, 0.25); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 140, 80, 0); }
+}
+@keyframes psHaloWarn {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 200, 80, 0.22); }
+  100% { box-shadow: 0 0 0 12px rgba(255, 200, 80, 0); }
+}
+
+.ps-reveal-stage {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease),
+    transform var(--motion-reveal) var(--motion-ease);
+}
+.ps-reveal-stage.ps-reveal-show {
+  opacity: 1;
+  transform: none;
+}
+
 .nav,
 .bottomNav {
   position: fixed;
   transform: translateX(-50%) !important;
   will-change: auto;
 }
-
 .nav button,
 .bottomNav button,
-.nav button.on,
-.nav button:active,
-.bottomNav button:active,
-[data-nav].ps-pressed,
-[data-nav].ps-nav-tap {
+[data-nav].ps-pressed {
   transform: none !important;
-  transition: opacity var(--motion-tap) var(--motion-ease-out),
+  transition:
+    opacity var(--motion-tap) var(--motion-ease),
     color var(--motion-tap) ease,
-    background var(--motion-tap) ease !important;
+    background var(--motion-fast) ease !important;
 }
-
 .nav button.ps-pressed,
 .bottomNav button.ps-pressed {
-  opacity: 0.82;
+  opacity: 0.78;
 }
-
-/* Kill duplicate legacy transforms — ps-pressed is sole tap feedback */
-.primary,
-.secondary,
-.tile,
-.metric,
-.action,
-.choice {
-  transform: none !important;
-}
-
-.tile:active,
-.metric:active,
-.primary:active,
-.secondary:active,
-.action:active,
-.choice:active,
-.quick5:active,
-.my18Tool:active,
-.v36Mini:active,
-.v36Quick:active,
-.pgBubblePress:active,
-.pgBubblePress.pgPressed,
-.nav button.on,
-.nav button:active {
-  transform: none !important;
-}
-
-.pgBubblePress {
-  transition: opacity var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease;
-}
-
-.pgBubblePress.pgPressed {
-  filter: brightness(0.98);
-}
-
-.pgEnter {
-  animation: none !important;
-}
-
-/* ══════════════════════════════════════════════
-   Bottom nav indicator (opacity/position only)
-   ══════════════════════════════════════════════ */
 
 .ps-nav-indicator {
   position: absolute;
   bottom: 6px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(200, 255, 61, 0.85), transparent);
+  height: 3px;
+  border-radius: 99px;
+  background: currentColor;
+  opacity: 0.55;
   pointer-events: none;
-  transition: left var(--motion-screen) var(--motion-ease-out),
-    width var(--motion-screen) var(--motion-ease-out),
-    opacity var(--motion-fast) ease;
-  opacity: 0;
-  z-index: 2;
+  transition:
+    left var(--motion-fast) var(--motion-ease),
+    width var(--motion-fast) var(--motion-ease);
+  will-change: left, width;
 }
 
-.bottomNav.ps-nav-ready .ps-nav-indicator,
-.nav.ps-nav-ready .ps-nav-indicator {
-  opacity: 0.85;
+@media (hover: hover) and (pointer: fine) {
+  .v36Tile:hover,
+  .v36Daily:hover,
+  .v36Quick:hover,
+  .v36SwipeMain:hover,
+  .v36Hand:hover,
+  .tile:hover {
+    transform: translateY(-2px);
+    transition: transform 180ms var(--motion-ease);
+  }
+  .primary:hover,
+  .pgCta:hover,
+  .p40Primary:hover {
+    filter: brightness(1.04);
+    transition: filter 160ms ease;
+  }
 }
 
-/* ══════════════════════════════════════════════
-   Button press — ONLY on the tapped element
-   ══════════════════════════════════════════════ */
-
-.ps-bubble,
-.primary,
-.choice,
-.action,
-.pgCta,
-.tile,
-.rangesCell[data-rhand],
-.pgPathNode.node,
-.pgSizeBtn,
-.metric,
-.v36Mini,
-.v36Quick {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+.ps-deal-run .pc {
+  animation: gfCardDeal 420ms var(--motion-spring) both;
+}
+.ps-deal-run .pc:nth-child(1) { animation-delay: 0ms; }
+.ps-deal-run .pc:nth-child(2) { animation-delay: 40ms; }
+.ps-deal-run .pc:nth-child(3) { animation-delay: 80ms; }
+.ps-deal-run .pc:nth-child(4) { animation-delay: 120ms; }
+.ps-deal-run .pc:nth-child(5) { animation-delay: 160ms; }
+@keyframes gfCardDeal {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.primary.ps-pressed,
-.pgCta.ps-pressed,
-.tile.ps-pressed,
-.metric.ps-pressed {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease !important;
-  filter: brightness(0.97);
+.ps-hand-starting {
+  animation: gfHandFlash 480ms var(--motion-ease) both;
+}
+@keyframes gfHandFlash {
+  0%   { filter: brightness(0.88); }
+  40%  { filter: brightness(1.02); }
+  100% { filter: brightness(1); }
 }
 
-.choice.ps-pressed,
-.action.ps-pressed,
-.pgPathNode.ps-pressed,
-.pgSizeBtn.ps-pressed {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out),
-    box-shadow var(--motion-tap) ease,
-    filter var(--motion-tap) ease !important;
-  filter: brightness(0.98);
+.ps-cell-press {
+  animation: gfCellFlash 160ms var(--motion-ease) both;
 }
-
-.choice.ps-decision-locked,
-.action.ps-decision-locked {
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.28) !important;
-  pointer-events: none;
-}
-
-/* Hand start — opacity only, no layout movement */
-.pgShell.ps-hand-starting .pgArenaWrap,
-.pgShell.ps-hand-starting .pgArena,
-.pgShell.ps-hand-starting .pgControls {
-  animation: psFadeIn var(--motion-hand) var(--motion-ease-out) both;
-}
-
-.pgShell.ps-dim-surround .pgDailyChallenge,
-.pgShell.ps-dim-surround .pgHudTitle .ey {
-  opacity: 0.72;
-  transition: opacity var(--motion-fast) var(--motion-ease-out);
-}
-
-@keyframes psFadeIn {
-  from { opacity: 0.55; }
-  to { opacity: 1; }
-}
-
-/* Card deal — opacity only (transform causes layout shift in flex) */
-.pgDealIn.ps-deal-run .pgBoardZone .pc,
-.pgDealIn.ps-deal-run .pgHeroZone .pc {
-  animation: psDealFade var(--motion-fast) var(--motion-ease-out) backwards;
-}
-
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(1) { animation-delay: 0.06s; }
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(2) { animation-delay: 0.12s; }
-.pgDealIn.ps-deal-flop .pgBoardZone .pc:nth-child(3) { animation-delay: 0.18s; }
-.pgDealIn.ps-deal-turn .pgBoardZone .pc:nth-child(4) { animation-delay: 0.1s; }
-.pgDealIn.ps-deal-river .pgBoardZone .pc:nth-child(5) { animation-delay: 0.1s; }
-.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(1) { animation-delay: 0.14s; }
-.pgDealIn.ps-deal-run .pgHeroZone .pc:nth-child(2) { animation-delay: 0.2s; }
-
-@keyframes psDealFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Localized feedback — box-shadow only, no transform */
-.pgVerdictCompact.ps-pulse-good,
-.verdict.ps-pulse-good {
-  animation: psHaloGood 0.55s var(--motion-ease-out);
-}
-
-.pgVerdictCompact.ps-pulse-bad,
-.verdict.ps-pulse-bad {
-  animation: psHaloBad 0.55s var(--motion-ease-out);
-}
-
-.pgVerdictCompact.ps-pulse-warn,
-.verdict.ps-pulse-warn {
-  animation: psHaloWarn 0.55s var(--motion-ease-out);
-}
-
-@keyframes psHaloGood {
-  0% { box-shadow: 0 0 0 0 rgba(200, 255, 61, 0.22); }
-  100% { box-shadow: 0 0 0 10px rgba(200, 255, 61, 0); }
-}
-
-@keyframes psHaloBad {
-  0% { box-shadow: 0 0 0 0 rgba(255, 140, 80, 0.2); }
-  100% { box-shadow: 0 0 0 10px rgba(255, 140, 80, 0); }
-}
-
-@keyframes psHaloWarn {
-  0% { box-shadow: 0 0 0 0 rgba(255, 170, 70, 0.18); }
-  100% { box-shadow: 0 0 0 9px rgba(255, 170, 70, 0); }
-}
-
-/* Sizing readout — no scale */
-.pgDecisionReadout.ps-size-tick b,
-.pgDecisionReadout.ps-size-tick strong {
-  animation: psReadoutTick 0.24s var(--motion-ease-out);
-}
-
-@keyframes psReadoutTick {
-  0%, 100% { opacity: 1; }
-  45% { opacity: 0.75; }
-}
-
-.pgPot.ps-bet-to-pot {
-  animation: psBetFade 0.38s var(--motion-ease-out);
-}
-
-@keyframes psBetFade {
-  0%, 100% { opacity: 1; }
-  40% { opacity: 0.85; }
-}
-
-/* Review timeline — opacity/box-shadow only */
-.pgPath.ps-timeline-run .pgPathNode {
-  opacity: 0.5;
-  transition: opacity var(--motion-fast) var(--motion-ease-out),
-    box-shadow var(--motion-fast) var(--motion-ease-out);
-}
-
-.pgPath.ps-timeline-run .pgPathNode.ps-step-lit {
-  opacity: 1;
-}
-
-.pgPathNode.ps-step-good {
-  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.18);
-}
-
-.pgPathNode.ps-step-critical {
-  box-shadow: 0 0 0 1px rgba(255, 150, 60, 0.42);
-  background: rgba(255, 130, 60, 0.06);
-}
-
-/* Progressive reveal — opacity only (no translateY layout shift) */
-.ps-reveal-stage {
-  opacity: 0;
-  transition: opacity var(--motion-reveal) var(--motion-ease-out);
-}
-
-.ps-reveal-stage.ps-reveal-show {
-  opacity: 1;
-}
-
-/* Ranges cell — subtle scale on cell only */
-.rangesCell[data-rhand].ps-cell-press {
-  transform: scale(0.99) !important;
-  transition: transform var(--motion-tap) var(--motion-ease-out);
-}
-
-input.range.ps-slider-active::-webkit-slider-thumb {
-  transition: box-shadow var(--motion-tap) var(--motion-ease-out);
-  box-shadow: 0 0 0 4px rgba(200, 255, 61, 0.15);
+@keyframes gfCellFlash {
+  0%   { filter: brightness(1.15); transform: scale(1.04); }
+  100% { filter: brightness(1); transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pgShell.ps-hand-starting .pgArena,
-  .pgShell.ps-hand-starting .pgControls,
-  .pgDealIn.ps-deal-run .pc,
+  .screen.gf-screen-enter,
+  .psPremiumHome.gf-stagger .v36Stats,
+  .psPremiumHome.gf-stagger .v36Daily,
+  .psPremiumHome.gf-stagger .v36Personal,
+  .psPremiumHome.gf-stagger .v36SwipeMain,
+  .psPremiumHome.gf-stagger .v36SectionLabel,
+  .psPremiumHome.gf-stagger .v36Grid,
+  .psPremiumHome.gf-stagger .v36GridSecondary,
+  .psPremiumHome.gf-stagger .v36Quick,
+  .v36Home.gf-stagger > *,
+  .action.selected.grade-g,
+  [data-sa].selected.grade-g,
+  .action.selected.grade-r,
+  [data-sa].selected.grade-r,
+  .ps-release-pop,
+  .ps-deal-run .pc,
+  .ps-hand-starting,
+  .ps-cell-press,
   .ps-reveal-stage {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
+  .v36Tile.ps-pressed,
+  .v36Daily.ps-pressed,
+  .v36Quick.ps-pressed,
+  .v36SwipeMain.ps-pressed,
+  .primary.ps-pressed,
+  .action.ps-pressed {
+    transform: none !important;
+    filter: none !important;
+  }
+  .ps-nav-indicator { transition: none !important; }
 }

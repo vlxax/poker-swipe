@@ -138,5 +138,15 @@ export { spotFingerprint, contentFingerprint, diversityPenalty, isTooSimilar, se
 export { createPersonalizationSeed, seededRng, seedToNumber } from './training/personalizationSeed.js';
 export { leakBoostForSpot, spotMatchesLeakConcept, LEAK_SPOT_MATCHERS } from './training/leakSpotMapping.js';
 export { createAnalytics, isKnownEvent } from './training/analytics.js';
+// Hand of the Day brain integration
+export {
+  getConceptForScenario, isScenarioMapped, getMappedScenarios, getUnmappedScenarios, MAPPING_REPORT
+} from './handOfDay/scenarioConceptMapping.js';
+export {
+  adaptHodGradeToCanonical, buildMistakeMemoryAttempt, areHodAttemptsIdentical
+} from './handOfDay/gradingAdapter.js';
+export {
+  HandOfDayBrainIntegration, initHandOfDayIntegration, getHandOfDayIntegration, resetHandOfDayIntegration
+} from './handOfDay/brainIntegration.js';
 
 export default PokerSwipeSolver;
