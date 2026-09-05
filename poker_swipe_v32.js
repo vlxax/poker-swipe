@@ -160,6 +160,7 @@ window.rankMetrics28=rankMetricsV32;
 let sizingAttempt=null,reviewAttempt=null;
 const baseRecord=window.recordEvent;
 window.recordEvent=function recordEventV32(input={}){
+  if(!baseRecord){console.warn('v32 wrapper: baseRecord undefined, skipping');return}
   const event={...input};
   if(event.mode==='daily')event.attemptId=event.attemptId||`daily:${localDay()}:${event.spotId||'spot'}`;
   else if(event.mode==='heal'){
@@ -189,8 +190,9 @@ function stripDecorativeContextV32(){
   qa('#swipeCard > .spot30:not(.ctxCard),#sizingArea > .spot30:not(.ctxCard),#dailyArea > .spot30:not(.ctxCard),#reviewArea > .spot30:not(.ctxCard),#healArea > .spot30:not(.ctxCard),#xrayArea > .spot30:not(.ctxCard)').forEach(el=>el.remove());
 }
 const baseSwipe=window.renderSwipe;
-window.renderSwipe=function renderSwipeV32(){const result=baseSwipe.apply(this,arguments);setTimeout(stripDecorativeContextV32,0);return result};
+window.renderSwipe=function renderSwipeV32(){if(!baseSwipe){console.warn('v32 wrapper: baseSwipe undefined, skipping');return}const result=baseSwipe.apply(this,arguments);setTimeout(stripDecorativeContextV32,0);return result};
 window.renderSizing=function renderSizingV32(){
+  if(!baseSizing){console.warn('v32 wrapper: baseSizing undefined, skipping');return}
   sizingAttempt=uid('sizing');
   const result=baseSizing.apply(this,arguments);
   setTimeout(()=>{
@@ -207,7 +209,7 @@ window.renderSizing=function renderSizingV32(){
   return result;
 };
 const baseReview=window.renderReview;
-window.renderReview=function renderReviewV32(){reviewAttempt=uid('review');return baseReview.apply(this,arguments)};
+window.renderReview=function renderReviewV32(){if(!baseReview){console.warn('v32 wrapper: baseReview undefined, skipping');return}reviewAttempt=uid('review');return baseReview.apply(this,arguments)};
 
 function cancelQuickV32(goHome=true){
   clearTimeout(window.swTimer);
@@ -223,6 +225,7 @@ window.quickBanner=function quickBannerV32(){
 const baseShow=window.show;
 window.show=function showV32(id){
   if(window.quick?.active&&['home','myhands','tournaments','profile','quickgame30'].includes(id))cancelQuickV32(false);
+  if(!baseShow){console.warn('v32 wrapper: baseShow undefined, skipping');return}
   const result=baseShow.apply(this,arguments);setTimeout(stripDecorativeContextV32,0);return result;
 };
 
@@ -247,7 +250,7 @@ function enhanceHomeV32(){
   });
 }
 const baseHome=window.renderHome;
-window.renderHome=function renderHomeV32(){const result=baseHome.apply(this,arguments);enhanceHomeV32();return result};
+window.renderHome=function renderHomeV32(){if(!baseHome){console.warn('v32 wrapper: baseHome undefined, skipping');return}const result=baseHome.apply(this,arguments);enhanceHomeV32();return result};
 
 function downloadJson(data,name){
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -284,7 +287,7 @@ function profileToolsV32(){
   const players=q('#players28Box');if(players)players.innerHTML='<h3>ДРУГИЕ ИГРОКИ</h3><div class="sync28">Публичные профили временно отключены: сначала серверная проверка Telegram и RLS, потом социальный слой.</div>';
 }
 const baseProfile=window.renderProfile;
-window.renderProfile=function renderProfileV32(){const result=baseProfile.apply(this,arguments);profileToolsV32();setTimeout(profileToolsV32,60);return result};
+window.renderProfile=function renderProfileV32(){if(!baseProfile){console.warn('v32 wrapper: baseProfile undefined, skipping');return}const result=baseProfile.apply(this,arguments);profileToolsV32();setTimeout(profileToolsV32,60);return result};
 
 /* Disable the unsafe automatic public layer until a verified backend is added. */
 window.publishProfile28=async()=>false;
@@ -340,10 +343,11 @@ function confirmHandDelete(id){
   setTimeout(()=>{q('#v32HandNo').onclick=window.closeModal;q('#v32HandYes').onclick=()=>{const index=state().myHands18.findIndex(x=>String(x.id)===String(id));const removed=state().myHands18.splice(index,1)[0];saveV32();window.closeModal();window.renderMy();window.openModal('<h2>РАЗДАЧА УДАЛЕНА</h2><button class="primary" id="v32UndoHand">ОТМЕНИТЬ →</button>');setTimeout(()=>q('#v32UndoHand').onclick=()=>{state().myHands18.splice(index,0,removed);saveV32();window.closeModal();window.renderMy()},0)}},0);
 }
 const baseMy=window.renderMy;
-window.renderMy=function renderMyV32(){const result=baseMy.apply(this,arguments);setTimeout(bindHandsV32,0);return result};
+window.renderMy=function renderMyV32(){if(!baseMy){console.warn('v32 wrapper: baseMy undefined, skipping');return}const result=baseMy.apply(this,arguments);setTimeout(bindHandsV32,0);return result};
 
 const baseHandSave=window.hr22Save;
 window.hr22Save=function saveHandV32(){
+  if(!baseHandSave){console.warn('v32 wrapper: baseHandSave undefined, skipping');return}
   const hand=baseHandSave.apply(this,arguments);
   if(state().drafts)delete state().drafts.hand;
   saveV32();
