@@ -29,6 +29,49 @@ function sectorLabel(key) {
   return map[key] || key;
 }
 
+export function renderRangesHub(root, vm, handlers) {
+  // New unified Ranges hub — primary entry point showing all learning modes
+  let continueCard = '';
+  if (vm.lastStudiedRange) {
+    const r = vm.lastStudiedRange;
+    const pct = r.masteryPercent ? `<div class="rhMastery"><span>Освоено</span><b>${r.masteryPercent}%</b></div>` : '';
+    continueCard = `<div class="rhCard rhCardContinue">
+      <h3>ПРОДОЛЖИТЬ</h3>
+      <div class="rhRangeLabel">${esc(r.positionLabel)} · ${esc(r.stackLabel)}</div>
+      <div class="rhRangeContext">${esc(r.situationLabel)}</div>
+      ${pct}
+      <button type="button" class="primary pgCta pgBubblePress" id="rhContinue">ПРОДОЛЖИТЬ</button>
+    </div>`;
+  }
+
+  root.innerHTML = `<div class="panel pgShell rhShell">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">РЕНДЖИ</h1></div>`, 'ranges')}</div>
+    <p class="rhSubtitle">Изучай, тренируй и повторяй префлоп-диапазоны.</p>
+    ${continueCard}
+    <div class="rhPathsContainer">
+      <button type="button" class="rhPath rhPathPrimary pgCta pgBubblePress" id="rhStudy">
+        <span class="rhPathTitle">ИЗУЧАТЬ РЕНДЖ</span>
+        <span class="rhPathDesc">Выбери позицию и стек</span>
+      </button>
+      <button type="button" class="rhPath pgCta pgBubblePress" id="rhBattleship">
+        <span class="rhPathTitle">МОРСКОЙ БОЙ</span>
+        <span class="rhPathDesc">Запомни диапазон в игре</span>
+      </button>
+      <button type="button" class="rhPath pgCta pgBubblePress" id="rhNarrowing">
+        <span class="rhPathTitle">КАК СУЖАЕТСЯ РЕНДЖ</span>
+        <span class="rhPathDesc">Посмотри как меняется диапазон</span>
+      </button>
+    </div>
+  </div>`;
+  wireBack(root, () => handlers.back?.());
+  root.querySelector('#rhStudy').onclick = () => handlers.openTrainer?.();
+  root.querySelector('#rhBattleship').onclick = () => handlers.openBattleshipCatalog?.();
+  root.querySelector('#rhNarrowing').onclick = () => handlers.openNarrowing?.();
+  if (vm.lastStudiedRange) {
+    root.querySelector('#rhContinue').onclick = () => handlers.continueLastRange?.();
+  }
+}
+
 export function renderBattleshipHub(root, vm, handlers) {
   const progressRows = (vm.courseProgressList || []).map((r) =>
     `<div class="rbProgressRow"><span>${esc(r.label)}</span><b>${r.pct}%</b></div>`

@@ -12,7 +12,7 @@
 .rangesPlayTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .rangesCounter{font-size:12px;font-weight:800;color:#c8ff8a;background:#1c2414;border:1px solid #3a4a28;border-radius:999px;padding:4px 10px}
 .rangesQuestion{margin:6px 0 10px;font-size:17px;line-height:1.3}
-.rangesActionChip{display:inline-block;margin:0 0 8px;padding:6px 10px;border-radius:999px;background:#1a2430;border:1px solid #2f4558;color:#b8d4ff;font-size:11px;font-weight:800;letter-spacing:.03em}
+.rangesContextChip{display:inline-block;margin:0 0 8px;padding:6px 10px;border-radius:8px;background:#0f1218;border:1px solid #2f3848;color:#c5ccd6;font-size:11px;font-weight:700}
 .rangesNarrative{margin:0 0 10px;font-size:12px;line-height:1.45}
 .rangesCta{margin-top:16px;width:100%;min-height:48px;touch-action:manipulation}
 .rangesCta[disabled]{opacity:.45}
@@ -50,8 +50,9 @@ button.rangesCell{cursor:pointer}
 .rangesProv{font-size:9px;color:#6a7380;word-break:break-all}
 .rangesMismatch{font-size:9px;color:#c9a227;margin:4px 0;padding-left:16px}
 .rangesStats{font-size:9px;color:#7a8490}
-.rangesHandPanel{margin:8px 0;padding:8px;border:1px solid #2a3038;border-radius:8px;font-size:11px}
-.rangesWarn{color:#ff8aa8;font-size:9px;margin-left:6px}
+.rangesHandPanel{margin:12px 0 8px;padding:12px;border:1px solid #2a3038;border-radius:10px;font-size:12px;background:#0f1218}
+.rangesHandPanel b{display:block;font-size:16px;margin:0 0 8px;color:#eef2f7}
+.rangesHandAction{font-weight:700;color:#8fd84a;font-size:13px}
 .rangesLegendSwatch.trainer-ai{background:linear-gradient(180deg,#a855f7,#6b21a8)}
 .rangesLegendSwatch.trainer-raise{background:linear-gradient(180deg,#8fd84a,#4ea828)}
 .rangesLegendSwatch.trainer-unselected{background:#3a4048}
@@ -75,9 +76,11 @@ button.rangesCell{cursor:pointer}
 .rangesEmpty{text-align:center;padding:24px 12px}
 .rangesEmpty p{color:#9aa3af;font-size:13px;line-height:1.5}
 @media (max-width:430px){
-  .rangesMatrix{gap:2px}
-  .rangesCell{font-size:8px}
-  .rangesCell::before{inset:-4px}
+  .rangesMatrix{gap:2px;max-width:100%;overflow-x:hidden}
+  .rangesCell{font-size:10px;aspect-ratio:1}
+  .rangesCell::before{inset:-3px}
+  .rangesCellLabel{font-size:10px;font-weight:900;text-shadow:0 0 2px rgba(0,0,0,.9)}
   .rangesQuestion{font-size:16px}
   .rangesLead{font-size:16px}
+  .rangesMatrixWrap{margin:8px 0 12px;width:100%;overflow:hidden}
 }

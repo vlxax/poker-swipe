@@ -168,9 +168,16 @@ export class TrainerBrowserController {
     this.loading = true;
     try {
       this.matrixResult = await buildTrainerMatrixAsync(this.selection);
-      this.phase = 'matrix';
-      this.selectedHand = null;
-      this.handDetail = null;
+      if (!this.matrixResult.supported) {
+        this.loadError = 'Для этой ситуации пока нет готового ренджа.';
+        this.phase = 'error';
+        this.selectedHand = null;
+        this.handDetail = null;
+      } else {
+        this.phase = 'matrix';
+        this.selectedHand = null;
+        this.handDetail = null;
+      }
     } catch (e) {
       this.loadError = e.message;
       this.phase = 'error';

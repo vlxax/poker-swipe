@@ -62,10 +62,21 @@ let narrowPickerPos = null;
 let narrowPickerStack = null;
 
 function hubVm() {
+  // Build last studied range from storage if available
+  let lastStudiedRange = null;
+  try {
+    const lastRange = storage?.getItem?.('lastStudiedRange');
+    if (lastRange) {
+      lastStudiedRange = JSON.parse(lastRange);
+    }
+  } catch (e) {
+    // Ignore storage errors
+  }
+
   return {
     phase: 'hub',
     title: 'РЕНДЖИ',
-    subtitle: 'Морской бой + сужение диапазона'
+    lastStudiedRange
   };
 }
 
@@ -122,6 +133,30 @@ const handlers = {
     mode = 'trainer';
     trainerCtl.init().then(() => paint());
   },
+  continueLastRange() {
+    mode = 'trainer';
+    try {
+      const lastRange = storage?.getItem?.('lastStudiedRange');
+      if (lastRange) {
+        const parsed = JSON.parse(lastRange);
+        trainerCtl.init().then(() => {
+          if (parsed.situation && parsed.position && parsed.stack) {
+            trainerCtl.selection = {
+              ...trainerCtl.selection,
+              situation: parsed.situation,
+              position: parsed.position,
+              stackBand: parsed.stack
+            };
+          }
+          paint();
+        });
+        return;
+      }
+    } catch (e) {
+      // Fallback to regular trainer
+    }
+    trainerCtl.init().then(() => paint());
+  },
   openNarrowing() {
     mode = 'narrowing';
     narrowCtl.openCatalog();
@@ -168,6 +203,28 @@ const handlers = {
   },
   async showRange() {
     await trainerCtl.showRange();
+    // Save last studied range for continuation
+    try {
+      const sel = trainerCtl.selection;
+      const catalog = trainerCtl.catalog || {};
+      const situations = catalog.situations || [];
+      const positions = catalog.positions || [];
+      const sit = situations.find(s => s.id === sel.situation);
+      const posObj = positions.find(p => p.id === sel.position);
+      if (sit && posObj) {
+        const lastRange = {
+          situation: sel.situation,
+          position: sel.position,
+          stack: sel.stackBand || sel.stack,
+          situationLabel: sit.label || sit.id,
+          positionLabel: posObj.display || posObj.id,
+          stackLabel: sel.stackBand || sel.stack || ''
+        };
+        storage?.setItem?.('lastStudiedRange', JSON.stringify(lastRange));
+      }
+    } catch (e) {
+      // Ignore storage errors
+    }
     paint();
   },
   async selectHand(hand) {
@@ -273,13 +330,7 @@ function paint() {
 
   if (mode === 'hub') {
     const vm = hubVm();
-    battleCtl.init().then(() => {
-      BR.renderBattleshipHub(el, {
-        ...vm,
-        lastCourse: battleCtl.progress.getLastCourse(),
-        courseProgressList: battleCtl.progress.getCourseProgressList(battleCtl.catalog)
-      }, handlers);
-    });
+    BR.renderRangesHub(el, vm, handlers);
   }
 }
 

@@ -206,7 +206,8 @@ export function attemptFromBattleshipTap({
   timestamp,
   sequence,
   isTarget,
-  inRange
+  inRange,
+  missionType = null
 }) {
   const rangeId = model.chartId;
   if (!rangeId) return { ok: false, attempt: null, error: 'no_chart_id' };
@@ -225,7 +226,15 @@ export function attemptFromBattleshipTap({
     missionResult = 'MISSION_HIT';
     strategyOk = true;
     chosenAction = 'RAISE';
+  } else if (missionType === 'MISSION_OFF_TARGET') {
+    // Hand is valid in strategy but not this mission's target
+    // MUST NOT create a strategy mistake
+    classification = 'PURE_MATCH';
+    missionResult = 'MISSION_OFF_TARGET';
+    strategyOk = true;
+    chosenAction = 'RAISE';
   } else if (open) {
+    // Fallback for backwards compatibility
     classification = 'PURE_MATCH';
     missionResult = 'MISSION_OFF_TARGET';
     strategyOk = true;

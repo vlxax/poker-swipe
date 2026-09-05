@@ -108,3 +108,20 @@
 @media (min-width:431px){
   .rbCell{font-size:7px}
 }
+
+/* Unified Ranges Hub */
+.rhShell{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.rhSubtitle{font-size:13px;color:#c5ccd6;margin:0 0 16px;line-height:1.4}
+.rhCard{margin:12px 0;padding:14px;border-radius:14px;border:1px solid #2f3848;background:#141a22}
+.rhCardContinue{border-color:#8fd84a;background:rgba(143,216,74,.08)}
+.rhCardContinue h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;color:#8fd84a;font-weight:800;text-transform:uppercase}
+.rhRangeLabel{font-size:13px;font-weight:800;color:#eef2f7;margin:0 0 4px}
+.rhRangeContext{font-size:11px;color:#c5ccd6;margin:0 0 10px}
+.rhMastery{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#c5ccd6;margin:8px 0;padding:6px 0;border-top:1px solid rgba(143,216,74,.15)}
+.rhMastery b{color:#8fd84a;font-size:14px}
+.rhPathsContainer{display:flex;flex-direction:column;gap:8px}
+.rhPath{display:flex;flex-direction:column;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid #2f3848;background:#0f1218;color:#eef2f7;font-size:13px;font-weight:700;touch-action:manipulation;transition:all 200ms}
+.rhPath:active{opacity:.7}
+.rhPathPrimary{border-color:#8fd84a;background:rgba(143,216,74,.12)}
+.rhPathTitle{display:block;font-size:13px;margin:0 0 4px}
+.rhPathDesc{display:block;font-size:10px;color:#9aa3af;font-weight:400}

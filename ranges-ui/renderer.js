@@ -226,10 +226,10 @@ function trainerMatrixGrid(cells, { selectedHand = null } = {}) {
 
 function trainerLegendHtml() {
   return `<div class="rangesLegendBar">
-    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-ai"></i>AI</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-ai"></i>Олл-ин</span>
     <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-raise"></i>Рейз</span>
-    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unselected"></i>UNSELECTED</span>
-    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unknown"></i>?</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unselected"></i>Вне диапазона</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unknown"></i>Не определено</span>
   </div>`;
 }
 
@@ -273,17 +273,16 @@ export function renderTrainerSelector(root, vm, handlers = {}) {
 export function renderTrainerMatrix(root, vm, handlers = {}) {
   if (!root) return;
   const meta = vm.chartMeta || {};
-  const match = vm.matchStatus || 'NO_TRAINER_DATA';
-  const mismatch = (vm.mismatches || []).map((m) => `<li>${esc(m)}</li>`).join('');
-  const prov = vm.provenanceDebug ? `<p class="rangesProv">${esc(vm.provenanceDebug)}</p>` : '';
+  const header = vm.subtitle || 'РЕНДЖ';
+  const posLabel = meta.heroPosition?.display || '';
+  const stackLabel = meta.stack ? `${meta.stack} BB` : '';
+  const contextLabel = [posLabel, stackLabel].filter(Boolean).join(' · ');
+
   root.innerHTML = `<div class="panel pgRangesPlay pgShell">
-    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h2>${esc(vm.subtitle)}</h2><span class="ey">${esc(match)}</span></div>`, 'ranges')}</div>
-    <div class="rangesActionChip">${esc(meta.sourceMode || '')} · ${esc(meta.rawSpot || 'UO')} · ${esc(meta.stack || '')} · ${esc(meta.heroPosition?.raw || '')}</div>
-    ${mismatch ? `<ul class="rangesMismatch">${mismatch}</ul>` : ''}
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h2>${esc(header)}</h2></div>`, 'ranges')}</div>
+    ${contextLabel ? `<div class="rangesContextChip">${esc(contextLabel)}</div>` : ''}
     ${trainerLegendHtml()}
     ${trainerMatrixGrid(vm.cells || {}, { selectedHand: vm.selectedHand })}
-    <p class="rangesStats">gradable: ${vm.stats?.gradable || 0} · unknown: ${vm.stats?.unknown || 0} · UNSELECTED: ${vm.stats?.unselected || 0}</p>
-    ${prov}
     <div id="rangesHandDetail"></div>
     <button type="button" class="rangesHelpBtn" id="rangesBackSel">${esc(vm.cta)}</button>
   </div>`;
@@ -294,10 +293,24 @@ export function renderTrainerMatrix(root, vm, handlers = {}) {
   root.querySelector('#rangesBackSel').onclick = () => handlers.back?.();
   if (vm.handDetail) {
     const d = vm.handDetail;
+    let actionText = '';
+    if (d.trainerActionRaw === 'UNSELECTED' || !d.trainerActionRaw || d.trainerActionRaw === 'UO') {
+      actionText = 'Не в диапазоне';
+    } else if (d.trainerActionRaw === 'AI') {
+      actionText = 'ОЛЛ-ИН';
+    } else if (d.trainerActionRaw === 'RAISE') {
+      actionText = 'РЕЙЗ';
+    } else if (d.trainerActionRaw === 'CALL') {
+      actionText = 'КОЛЛ';
+    } else if (d.trainerActionRaw === 'FOLD') {
+      actionText = 'ФОЛД';
+    } else {
+      actionText = esc(d.actionLabel || '—');
+    }
+
     root.querySelector('#rangesHandDetail').innerHTML = `<div class="rangesHandPanel">
-      <b>${esc(d.hand)}</b> → ${esc(d.trainerActionRaw || d.actionLabel || '—')}
-      <span class="ey">${esc(d.dataStatus || '')}</span>
-      ${d.gradingAllowed ? '' : '<span class="rangesWarn">не для grading</span>'}
+      <b>${esc(d.hand)}</b>
+      <div class="rangesHandAction">${actionText}</div>
     </div>`;
   }
 }
