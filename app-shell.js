@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const BUILD = 'ps-app-shell-v2';
+  const BUILD = 'ps-app-shell-v3-nav-tap-guard';
 
   const HOME_MODE_ROUTES = {
     v36Swipe: 'swipe',
@@ -23,6 +23,16 @@
     homeDaily: 'daily',
     homeXray: 'xray'
   };
+
+  const HOME_TILE_SELECTOR =
+    '#v36Swipe,#v36Quick,#v36Sizing,#v36Review,#v36Daily,#v36Xray,#v36Exploit,' +
+    '#homeSwipe,#homePlay30,#homeSwipe30,#homeSizing,#homeReview,#homeDaily,#homeXray';
+
+  const TAP_SLOP_PX = 12;
+  const NAV_DEDUPE_MS = 400;
+  let pendingHomeTap = null;
+  let lastNavAt = 0;
+  let lastNavRoute = null;
 
   function syncAppHeight() {
     const h = window.visualViewport?.height || window.innerHeight || 0;
@@ -57,13 +67,13 @@
     window.show.__psAppShellPatch = true;
   }
 
-  let lastHomeRouteAt = 0;
   function openHomeModeRoute(id) {
     const route = HOME_MODE_ROUTES[id];
     if (!route || typeof window.show !== 'function') return false;
     const now = Date.now();
-    if (now - lastHomeRouteAt < 350) return true;
-    lastHomeRouteAt = now;
+    if (now - lastNavAt < NAV_DEDUPE_MS && lastNavRoute === route) return true;
+    lastNavAt = now;
+    lastNavRoute = route;
     if (route === 'swipe') {
       try { window.swSession = []; } catch (_) { /* ignore */ }
     }
@@ -71,17 +81,24 @@
     return true;
   }
 
-  /* Reliable iOS fallback: pointerup on home mode tiles (click can be suppressed by Safari). */
-  function onHomeModePointerUp(e) {
+  function onHomeModePointerDown(e) {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     const home = document.getElementById('home');
     if (!home?.classList.contains('active')) return;
-    const tile = e.target.closest?.(
-      '#v36Swipe,#v36Quick,#v36Sizing,#v36Review,#v36Daily,#v36Xray,#v36Exploit,' +
-      '#homeSwipe,#homePlay30,#homeSwipe30,#homeSizing,#homeReview,#homeDaily,#homeXray'
-    );
-    if (!tile?.id) return;
-    if (!HOME_MODE_ROUTES[tile.id]) return;
+    const tile = e.target.closest?.(HOME_TILE_SELECTOR);
+    if (!tile?.id || !HOME_MODE_ROUTES[tile.id]) return;
+    pendingHomeTap = { id: tile.id, x: e.clientX, y: e.clientY };
+  }
+
+  function onHomeModePointerUp(e) {
+    if (!pendingHomeTap) return;
+    const tap = pendingHomeTap;
+    pendingHomeTap = null;
+    const home = document.getElementById('home');
+    if (!home?.classList.contains('active')) return;
+    if (Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > TAP_SLOP_PX) return;
+    const tile = e.target.closest?.(HOME_TILE_SELECTOR);
+    if (!tile || tile.id !== tap.id) return;
     openHomeModeRoute(tile.id);
   }
 
@@ -103,7 +120,9 @@
     document.addEventListener('gesturechange', preventGestureZoom, { passive: false });
     document.addEventListener('gestureend', preventGestureZoom, { passive: false });
 
+    document.addEventListener('pointerdown', onHomeModePointerDown, true);
     document.addEventListener('pointerup', onHomeModePointerUp, true);
+    document.addEventListener('pointercancel', () => { pendingHomeTap = null; }, true);
     patchShow();
     if (document.readyState === 'complete') patchShow();
     else window.addEventListener('load', patchShow, { once: true });
