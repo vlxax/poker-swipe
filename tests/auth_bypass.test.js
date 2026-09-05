@@ -234,4 +234,14 @@ describe('auth bypass (AUTH_REQUIRED=false)', () => {
     resetTrainerCache();
     assert.equal(listCharts().length, 1698);
   });
+
+  it('AUTH_REQUIRED=true restores auth gate without code changes', () => {
+    const cfg = fs.readFileSync(path.join(root, 'js/pokerswipe-config.js'), 'utf8');
+    const bootstrap = fs.readFileSync(path.join(root, 'js/pokerswipe-auth-bootstrap.js'), 'utf8');
+    assert.match(cfg, /AUTH_REQUIRED:\s*false/);
+    assert.match(bootstrap, /isAuthRequired\s*=\s*\(\)\s*=>\s*window\.PokerSwipeConfig\?\.AUTH_REQUIRED\s*!==\s*false/);
+    assert.match(bootstrap, /if \(!isAuthRequired\(\)\)/);
+    assert.match(bootstrap, /showEmailEntry\(\)/);
+    assert.match(bootstrap, /ensureEmailScreen\(\)/);
+  });
 });
