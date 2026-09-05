@@ -197,9 +197,20 @@ export class BattleshipController {
     if (this.state.tutorialPhase === 'confirm') return this.viewModel();
 
     this.state.resolved.add(hand);
-    if (isTarget) this._applyHit(hand, mission);
-    else this._applyMiss(hand, mission);
-    this._recordStrategyAttempt(hand, isTarget, mission);
+    const inRange = this._inRange(hand);
+
+    if (isTarget) {
+      this._applyHit(hand, mission);
+      this._recordStrategyAttempt(hand, isTarget, mission);
+    } else if (inRange) {
+      // Hand is valid in strategy but not this mission's target
+      this._applyMissionOffTarget(hand, mission);
+      this._recordStrategyAttempt(hand, false, mission, 'MISSION_OFF_TARGET');
+    } else {
+      // Hand is not valid in strategy
+      this._applyMiss(hand, mission);
+      this._recordStrategyAttempt(hand, false, mission);
+    }
 
     if (this.state.tutorialPhase === null && !this.progress.loadTutorialCompleted() && this.state.missionIndex === 0) {
       this.progress.saveTutorialCompleted();
@@ -220,7 +231,7 @@ export class BattleshipController {
     return this.viewModel();
   }
 
-  _recordStrategyAttempt(hand, isTarget, mission) {
+  _recordStrategyAttempt(hand, isTarget, mission, missionType = null) {
     try {
       this._tapSeq += 1;
       const built = attemptFromBattleshipTap({
@@ -230,7 +241,8 @@ export class BattleshipController {
         timestamp: Date.now(),
         sequence: this._tapSeq,
         isTarget,
-        inRange: this._inRange(hand)
+        inRange: this._inRange(hand),
+        missionType
       });
       if (!built.ok || !built.attempt) return;
       this.learnerMemory.recordAttempts([built.attempt]);
@@ -247,6 +259,15 @@ export class BattleshipController {
     this.state.flashHand = hand;
     this.state.feedback = { type: 'hit', hand, text: 'ПОПАЛ' };
     this.state.speech = `ПОПАЛ · ${hand}`;
+  }
+
+  _applyMissionOffTarget(hand, mission) {
+    // Hand is strategically valid but not part of this mission's category
+    // Mark as resolved but do NOT count as mistake
+    if (!this.state.resolved.has(hand)) this.state.resolved.add(hand);
+    this.state.flashHand = hand;
+    this.state.feedback = { type: 'off-target', hand, text: 'ВНЕ МИССИИ' };
+    this.state.speech = `${hand} - в диапазоне, но не в категории`;
   }
 
   _applyMiss(hand, mission) {
