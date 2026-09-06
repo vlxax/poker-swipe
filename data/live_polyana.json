@@ -1,11 +1,11 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-09-06T11:46:32+03:00",
-  "fetched_at": "2026-09-06T11:46:32+03:00",
-  "lastSuccessfulSync": "2026-09-06T11:46:32+03:00",
+  "updated_at": "2026-09-06T15:21:16+03:00",
+  "fetched_at": "2026-09-06T15:21:16+03:00",
+  "lastSuccessfulSync": "2026-09-06T15:21:16+03:00",
   "club_count": 71,
-  "event_count": 55,
-  "source_card_count": 55,
+  "event_count": 58,
+  "source_card_count": 58,
   "exact_homepage_match": true,
   "clubs": [
     {
@@ -41,15 +41,15 @@
           "district": null,
           "source_url": "https://pokernomoney.ru/tournaments/12980",
           "address": "улица Сергия Радонежского, 9с5",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
-          "late_reg_source": null,
+          "late_reg_until": "20:00",
+          "late_reg_minutes": 480,
+          "late_reg_source": "homepage_text",
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM APC 3.0: Кубок клубов спортивного покера 12:00 взнос уточняется Ace Poker Club улица Сергия Радонежского, 9с5",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "★ PREMIUM APC 3.0: Кубок клубов спортивного покера 12:00 взнос уточняется вход до 20:00 Ace Poker Club улица Сергия Радонежского, 9с5",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -64,15 +64,15 @@
           "district": null,
           "source_url": "https://pokernomoney.ru/tournaments/13462",
           "address": "улица Сергия Радонежского, 9с5",
-          "late_reg_until": null,
-          "late_reg_minutes": null,
-          "late_reg_source": null,
+          "late_reg_until": "20:00",
+          "late_reg_minutes": 180,
+          "late_reg_source": "homepage_text",
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Freezeout Freezeout 17:00 2 000 ₽ Ace Poker Club улица Сергия Радонежского, 9с5",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "★ PREMIUM Freezeout Freezeout 17:00 2 000 ₽ вход до 20:00 Ace Poker Club улица Сергия Радонежского, 9с5",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -124,7 +124,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "ROYALE REBIRTH 18:00 1 000 ₽ Aria Royale ул. Братиславская, д. 28 (2 этаж)",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -171,7 +171,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Aura Summer Season Grand Final 16:00 Бесплатно Aura Poker Club Новоясеневский проспект, 1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -187,7 +187,7 @@
           "time": "18:00",
           "club": "AURUM",
           "tournament": "Дип-стек FreezeAurum Deep Stack",
-          "fee_rub": 0,
+          "fee_rub": 1000,
           "type": "",
           "game": null,
           "district": null,
@@ -200,8 +200,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Дип-стек FreezeAurum Deep Stack 18:00 Бесплатно вход до 21:30 AURUM Алтуфьевское ш., д. 22Б",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Дип-стек FreezeAurum Deep Stack 18:00 1 000 ₽ вход до 21:30 AURUM Алтуфьевское ш., д. 22Б",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -234,7 +234,7 @@
           "time": "20:00",
           "club": "BlackWood",
           "tournament": "Golden Card",
-          "fee_rub": 500,
+          "fee_rub": 1500,
           "type": "",
           "game": null,
           "district": null,
@@ -247,8 +247,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Golden Card 20:00 500 ₽ BlackWood Олимпийский проспект, 12",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Golden Card 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -278,7 +278,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Колесо Фортуны Варфоломеева 18:00 1 000 ₽ BLEF BET Измайловское ш., д. 73Ж",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -301,7 +301,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Men vs Girl Варфоломееf 18:00 1 000 ₽ BLEF BET Измайловское ш., д. 73Ж",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -332,7 +332,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Обучающий Обучение 17:30 Бесплатно вход до 21:30 CARTEL POKER CLUB Волоколамское шоссе, 124",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -355,7 +355,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Mystery Bounty Mystery Bounty Tournament 18:00 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -378,7 +378,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "CARTEL едет в Питер 19:00 CARTEL POKER CLUB Волоколамское шоссе, 124",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -424,7 +424,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Классика Воскресный классик 18:00 1 200 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -447,13 +447,13 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Month Grand Final 18:05 Бесплатно Check-Check Club Нижний Сусальный пер., д. 5с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
           "_id": "14bb71b9",
           "date": "2026-09-06",
-          "time": "19:00",
+          "time": "18:10",
           "club": "Check-Check Club",
           "tournament": "DEEP Limited",
           "fee_rub": 1000,
@@ -469,8 +469,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "DEEP Limited 19:00 1 000 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "DEEP Limited 18:10 1 000 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -500,7 +500,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут CLASSIC 17:00 500 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -554,7 +554,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "DOUBLE RATING x2 18:00 1 000 ₽ COOLER POKER CLUB♠️ ул. Грузинский Вал, 11",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -586,7 +586,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Final 15:00 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -617,7 +617,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Гранд-финал 19:00 1 500 ₽ EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -673,7 +673,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Омаха Финал 5-Card Omaha 17:10 Бесплатно вход до 20:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -688,15 +688,15 @@
           "district": null,
           "source_url": "https://pokernomoney.ru/tournaments/14367",
           "address": "Русаковская набережная, д. 1А, стр. 1",
-          "late_reg_until": "20:10",
-          "late_reg_minutes": 180,
+          "late_reg_until": "21:10",
+          "late_reg_minutes": 240,
           "late_reg_source": "homepage_text",
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Баунти / Нокаут Classic Knockout 17:10 1 000 ₽ вход до 20:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "★ PREMIUM Баунти / Нокаут Classic Knockout 17:10 1 000 ₽ вход до 21:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -725,7 +725,7 @@
         {
           "_id": "55238290",
           "date": "2026-09-06",
-          "time": "19:00",
+          "time": "17:00",
           "club": "GARAGE Game Club",
           "tournament": "ONE DOG FREEZEOUT",
           "fee_rub": 1500,
@@ -741,8 +741,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Freezeout ONE DOG FREEZEOUT 19:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Freezeout ONE DOG FREEZEOUT 17:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -772,7 +772,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Double Life DOUBLE CHANCE 19:00 1 000 ₽ HEADS UP проспект Мира, 26с2",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -855,7 +855,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Баунти / Нокаут DEEP STACK BOUNTY 16:00 1 000 ₽ вход до 20:00 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -907,7 +907,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Дип-стек OLD SCHOOL 18:00 1 000 ₽ Magnum Club Большая Новодмитровская ул., д. 36с13",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -929,8 +929,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Secret TV Final 19:00 Magnum Club Большая Новодмитровская ул., д. 36с13",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Secret TV Final 19:00 Бесплатно Magnum Club Большая Новодмитровская ул., д. 36с13",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -977,7 +977,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "ALL INCLUSIVE FINAL OF AUGUST POKER SEASON 19:00 1 500 ₽ вход до 21:30 MASK OFF POKER Сущевский вал, д.16с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1061,7 +1061,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Турнир за ТВ столом 16:00 1 000 ₽ вход до 19:30 Nuts poker club Moscow Б. Спасоглинищевский пер., д. 3, стр. 5",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1084,7 +1084,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Mystery Bounty Nuts Mystery Bounty 17:00 1 000 ₽ вход до 19:30 Nuts poker club Moscow Б. Спасоглинищевский пер., д. 3, стр. 5",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1121,7 +1121,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Team Play Tournament Poker 19:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1152,7 +1152,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Parliament Турнир 19:30 1 000 ₽ PARLIAMENT Вешняковская ул., д. 22А",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1183,7 +1183,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Омаха DEALER CHOISE TOURNAMENT 19:00 1 900 ₽ PLAYWAY Москва, Винницкая, 8, корпус 2.",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1213,7 +1213,7 @@
         {
           "_id": "3bbdf340",
           "date": "2026-09-06",
-          "time": "19:00",
+          "time": "18:00",
           "club": "Pocket Rockets Club",
           "tournament": "Lucky Sevens",
           "fee_rub": 1000,
@@ -1229,8 +1229,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Lucky Sevens 19:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Lucky Sevens 18:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1281,7 +1281,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Финал 16:00 взнос уточняется Poker Room GTO Даев пер., д. 2",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1304,7 +1304,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "MIDNIGHT SWITCH WOMAN DAY 20:00 1 500 ₽ вход до 23:00 Poker Room GTO Даев пер., д. 2",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1366,7 +1366,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "PRESTIGE TOURNAMENT 18:00 1 500 ₽ PRIDE ул. Ладожская, д. 11",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1396,7 +1396,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1443,7 +1443,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Дип-стек DEEP STACK 18:00 1 500 ₽ Quantum Новая Басманная улица, 19 ст7",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1494,7 +1494,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Классика Классический Холдем 18:00 1 000 ₽ River Room Сретенский бульвар, д. 6 с. 1/1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1502,7 +1502,7 @@
           "date": "2026-09-06",
           "time": "18:00",
           "club": "River Room",
-          "tournament": "Sunday River",
+          "tournament": "Классика Classic Texas",
           "fee_rub": 1000,
           "type": "",
           "game": null,
@@ -1516,8 +1516,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Sunday River 18:00 1 000 ₽ вход до 22:20 River Room Сретенский бульвар, д. 6 с. 1/1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Классика Classic Texas 18:00 1 000 ₽ вход до 22:20 River Room Сретенский бульвар, д. 6 с. 1/1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1562,7 +1562,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Обучающий Бесплатное обучение покеру 19:00 Бесплатно Showdown Новый Арбат, 19",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1585,7 +1585,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Воскресный Showdown. XL Texas Hold'em 20:00 1 000 ₽ Showdown Новый Арбат, 19",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1615,7 +1615,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "BOSS HUNTER 19:00 1 000 ₽ SNAP CALL CLUB Проспект Андропова 48с2",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1646,7 +1646,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Обучающий Обучение для новичков и любителей 16:00 Бесплатно SRP EQUITY Новолесная улица, д. 8/12",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1669,7 +1669,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Классика DEEP CLASSIC TOURNAMENT POKER 18:00 1 000 ₽ вход до 21:30 SRP EQUITY Новолесная улица, д. 8/12",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1716,7 +1716,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Финал Второго Сезона 19:00 Straddle poker club Валовая улица, 32/75с2 (2 этаж)",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1725,15 +1725,86 @@
       "name": "TROYA покер",
       "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "_id": "d7e7618e",
+          "date": "2026-09-06",
+          "time": "19:00",
+          "club": "TROYA покер",
+          "tournament": "Классика TROYA CLASSIC",
+          "fee_rub": 1000,
+          "type": "",
+          "game": null,
+          "district": null,
+          "source_url": "https://pokernomoney.ru/tournaments/14453",
+          "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+          "late_reg_until": null,
+          "late_reg_minutes": null,
+          "late_reg_source": null,
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "addon_allowed": null,
+          "duration_minutes": null,
+          "source_card_text": "Классика TROYA CLASSIC 19:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
+          "source": "https://pokernomoney.ru"
+        }
+      ],
+      "upcoming": 1
     },
     {
       "name": "YAKUDZA POKER COMMUNITY",
       "address": "ЗИЛАРТ, набережная Марка Шагала 1к1",
       "contacts": {},
-      "schedule": [],
-      "upcoming": 0
+      "schedule": [
+        {
+          "_id": "e72206f5",
+          "date": "2026-09-06",
+          "time": "18:00",
+          "club": "YAKUDZA POKER COMMUNITY",
+          "tournament": "Обучение до старта игры",
+          "fee_rub": 1000,
+          "type": "Обучающий",
+          "game": null,
+          "district": null,
+          "source_url": "https://pokernomoney.ru/tournaments/14463",
+          "address": "ЗИЛАРТ, набережная Марка Шагала 1к1",
+          "late_reg_until": "23:00",
+          "late_reg_minutes": 300,
+          "late_reg_source": "homepage_text",
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "addon_allowed": null,
+          "duration_minutes": null,
+          "source_card_text": "Обучающий Обучение до старта игры 18:00 1 000 ₽ вход до 23:00 YAKUDZA POKER COMMUNITY ЗИЛАРТ, набережная Марка Шагала 1к1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
+          "source": "https://pokernomoney.ru"
+        },
+        {
+          "_id": "00cb2935",
+          "date": "2026-09-06",
+          "time": "19:00",
+          "club": "YAKUDZA POKER COMMUNITY",
+          "tournament": "CHILL & PLAY TOURNAMENT",
+          "fee_rub": 1000,
+          "type": "",
+          "game": null,
+          "district": null,
+          "source_url": "https://pokernomoney.ru/tournaments/14462",
+          "address": "ЗИЛАРТ, набережная Марка Шагала 1к1",
+          "late_reg_until": "23:00",
+          "late_reg_minutes": 240,
+          "late_reg_source": "homepage_text",
+          "reentry_limit": null,
+          "reentry_cost_rub": null,
+          "addon_allowed": null,
+          "duration_minutes": null,
+          "source_card_text": "CHILL & PLAY TOURNAMENT 19:00 1 000 ₽ вход до 23:00 YAKUDZA POKER COMMUNITY ЗИЛАРТ, набережная Марка Шагала 1к1",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
+          "source": "https://pokernomoney.ru"
+        }
+      ],
+      "upcoming": 2
     },
     {
       "name": "БАРРЕЛЬ",
@@ -1767,7 +1838,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут 🔥ВОСКРЕСЕНЬЕ 6.09🔥 BOUNTY TOURNAMENT 19:00 1 000 ₽ БАРРЕЛЬ ЗИЛ ЖК Зиларт, ул. Архитектора Щусева, 2к3",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1799,7 +1870,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Классика CLASSIC ONE 18:00 1 000 ₽ БЛЕФ? Проспект Мира, 102с12, подъезд 6",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1830,7 +1901,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Sunday Championship 17:00 1 000 ₽ Восьмёрка Кикер ул. Каретный ряд, д. 10",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1878,8 +1949,8 @@
           "time": "17:00",
           "club": "Дойл (Doyle poker club)",
           "tournament": "Финал месяца",
-          "fee_rub": 1000,
-          "type": "",
+          "fee_rub": 0,
+          "type": "Freezeout",
           "game": null,
           "district": null,
           "source_url": "https://pokernomoney.ru/tournaments/13294",
@@ -1891,8 +1962,8 @@
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "Финал месяца 17:00 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "source_card_text": "Freezeout Финал месяца 17:00 Бесплатно Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1922,7 +1993,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Bonus Life 17:00 2 000 ₽ КАРЕТА Гороховский переулок, 19",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1975,7 +2046,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "ФИНАЛ X ПОКЕРНОГО СЕЗОНА 18:00 Комьюнити Компас Дмитровское ш., 81",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2023,7 +2094,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Evening at the Maximum 18:00 1 200 ₽ вход до 22:10 МАКСИМУМ Большая Никитская 43",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -2060,7 +2131,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Freezeout ONE SHOT 19:00 500 ₽ НУАР ул. Краснопрудная 24с1",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2126,7 +2197,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "RELOAD TEAM TOURNAMENT 17:00 1 000 ₽ СТРИТ Средняя первомайская ул, дом 4",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2171,7 +2242,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Mystery Bounty МИСТЕРИ ХРОНИКИ / Отбор на Вечерний Покер 18:00 1 200 ₽ ХРОНИКИ Садовая-Кудринская улица, 3А, Москва",
-          "fetched_at": "2026-09-06T11:46:32+03:00",
+          "fetched_at": "2026-09-06T15:21:16+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2191,15 +2262,15 @@
       "district": null,
       "source_url": "https://pokernomoney.ru/tournaments/12980",
       "address": "улица Сергия Радонежского, 9с5",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "late_reg_source": null,
+      "late_reg_until": "20:00",
+      "late_reg_minutes": 480,
+      "late_reg_source": "homepage_text",
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM APC 3.0: Кубок клубов спортивного покера 12:00 взнос уточняется Ace Poker Club улица Сергия Радонежского, 9с5",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "★ PREMIUM APC 3.0: Кубок клубов спортивного покера 12:00 взнос уточняется вход до 20:00 Ace Poker Club улица Сергия Радонежского, 9с5",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2222,7 +2293,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Final 15:00 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2245,7 +2316,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Aura Summer Season Grand Final 16:00 Бесплатно Aura Poker Club Новоясеневский проспект, 1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2268,7 +2339,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Баунти / Нокаут DEEP STACK BOUNTY 16:00 1 000 ₽ вход до 20:00 Joker Poker Club Moscow Варшавское ш. д. 160, ТЦ Галерея Атлантис, 3 эт. Запись в 1 клик",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2291,7 +2362,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Турнир за ТВ столом 16:00 1 000 ₽ вход до 19:30 Nuts poker club Moscow Б. Спасоглинищевский пер., д. 3, стр. 5",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2314,7 +2385,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Финал 16:00 взнос уточняется Poker Room GTO Даев пер., д. 2",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2337,7 +2408,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Обучающий Обучение для новичков и любителей 16:00 Бесплатно SRP EQUITY Новолесная улица, д. 8/12",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2352,15 +2423,15 @@
       "district": null,
       "source_url": "https://pokernomoney.ru/tournaments/13462",
       "address": "улица Сергия Радонежского, 9с5",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "late_reg_source": null,
+      "late_reg_until": "20:00",
+      "late_reg_minutes": 180,
+      "late_reg_source": "homepage_text",
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Freezeout Freezeout 17:00 2 000 ₽ Ace Poker Club улица Сергия Радонежского, 9с5",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "★ PREMIUM Freezeout Freezeout 17:00 2 000 ₽ вход до 20:00 Ace Poker Club улица Сергия Радонежского, 9с5",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2383,7 +2454,30 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут CLASSIC 17:00 500 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "55238290",
+      "date": "2026-09-06",
+      "time": "17:00",
+      "club": "GARAGE Game Club",
+      "tournament": "ONE DOG FREEZEOUT",
+      "fee_rub": 1500,
+      "type": "Freezeout",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/13369",
+      "address": "пр. Аэропорта, 8, стр. 7",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "late_reg_source": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "Freezeout ONE DOG FREEZEOUT 17:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2406,7 +2500,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Mystery Bounty Nuts Mystery Bounty 17:00 1 000 ₽ вход до 19:30 Nuts poker club Moscow Б. Спасоглинищевский пер., д. 3, стр. 5",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2429,7 +2523,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Sunday Championship 17:00 1 000 ₽ Восьмёрка Кикер ул. Каретный ряд, д. 10",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2438,8 +2532,8 @@
       "time": "17:00",
       "club": "Дойл (Doyle poker club)",
       "tournament": "Финал месяца",
-      "fee_rub": 1000,
-      "type": "",
+      "fee_rub": 0,
+      "type": "Freezeout",
       "game": null,
       "district": null,
       "source_url": "https://pokernomoney.ru/tournaments/13294",
@@ -2451,8 +2545,8 @@
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "Финал месяца 17:00 1 000 ₽ Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "Freezeout Финал месяца 17:00 Бесплатно Дойл (Doyle poker club) Б. Сухаревская пл. д. 14/7",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2475,7 +2569,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Bonus Life 17:00 2 000 ₽ КАРЕТА Гороховский переулок, 19",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2498,7 +2592,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "RELOAD TEAM TOURNAMENT 17:00 1 000 ₽ СТРИТ Средняя первомайская ул, дом 4",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2521,7 +2615,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Омаха Финал 5-Card Omaha 17:10 Бесплатно вход до 20:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2536,15 +2630,15 @@
       "district": null,
       "source_url": "https://pokernomoney.ru/tournaments/14367",
       "address": "Русаковская набережная, д. 1А, стр. 1",
-      "late_reg_until": "20:10",
-      "late_reg_minutes": 180,
+      "late_reg_until": "21:10",
+      "late_reg_minutes": 240,
       "late_reg_source": "homepage_text",
       "reentry_limit": null,
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Баунти / Нокаут Classic Knockout 17:10 1 000 ₽ вход до 20:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "★ PREMIUM Баунти / Нокаут Classic Knockout 17:10 1 000 ₽ вход до 21:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2567,7 +2661,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Обучающий Обучение 17:30 Бесплатно вход до 21:30 CARTEL POKER CLUB Волоколамское шоссе, 124",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2590,7 +2684,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "ROYALE REBIRTH 18:00 1 000 ₽ Aria Royale ул. Братиславская, д. 28 (2 этаж)",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2599,7 +2693,7 @@
       "time": "18:00",
       "club": "AURUM",
       "tournament": "Дип-стек FreezeAurum Deep Stack",
-      "fee_rub": 0,
+      "fee_rub": 1000,
       "type": "",
       "game": null,
       "district": null,
@@ -2612,8 +2706,8 @@
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "Дип-стек FreezeAurum Deep Stack 18:00 Бесплатно вход до 21:30 AURUM Алтуфьевское ш., д. 22Б",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "Дип-стек FreezeAurum Deep Stack 18:00 1 000 ₽ вход до 21:30 AURUM Алтуфьевское ш., д. 22Б",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2636,7 +2730,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Колесо Фортуны Варфоломеева 18:00 1 000 ₽ BLEF BET Измайловское ш., д. 73Ж",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2659,7 +2753,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Men vs Girl Варфоломееf 18:00 1 000 ₽ BLEF BET Измайловское ш., д. 73Ж",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2682,7 +2776,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Mystery Bounty Mystery Bounty Tournament 18:00 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2705,7 +2799,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Классика Воскресный классик 18:00 1 200 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2728,7 +2822,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "DOUBLE RATING x2 18:00 1 000 ₽ COOLER POKER CLUB♠️ ул. Грузинский Вал, 11",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2751,7 +2845,30 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Дип-стек OLD SCHOOL 18:00 1 000 ₽ Magnum Club Большая Новодмитровская ул., д. 36с13",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "3bbdf340",
+      "date": "2026-09-06",
+      "time": "18:00",
+      "club": "Pocket Rockets Club",
+      "tournament": "Lucky Sevens",
+      "fee_rub": 1000,
+      "type": "",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/13468",
+      "address": "Шелепихинская наб., 34к2зд1",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "late_reg_source": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "Lucky Sevens 18:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2774,7 +2891,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "PRESTIGE TOURNAMENT 18:00 1 500 ₽ PRIDE ул. Ладожская, д. 11",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2797,7 +2914,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Турбо TURBO HIGHROLLER TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2820,7 +2937,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Дип-стек DEEP STACK 18:00 1 500 ₽ Quantum Новая Басманная улица, 19 ст7",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2843,7 +2960,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Классика Классический Холдем 18:00 1 000 ₽ River Room Сретенский бульвар, д. 6 с. 1/1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2851,7 +2968,7 @@
       "date": "2026-09-06",
       "time": "18:00",
       "club": "River Room",
-      "tournament": "Sunday River",
+      "tournament": "Классика Classic Texas",
       "fee_rub": 1000,
       "type": "",
       "game": null,
@@ -2865,8 +2982,8 @@
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "Sunday River 18:00 1 000 ₽ вход до 22:20 River Room Сретенский бульвар, д. 6 с. 1/1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "Классика Classic Texas 18:00 1 000 ₽ вход до 22:20 River Room Сретенский бульвар, д. 6 с. 1/1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2889,7 +3006,30 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Классика DEEP CLASSIC TOURNAMENT POKER 18:00 1 000 ₽ вход до 21:30 SRP EQUITY Новолесная улица, д. 8/12",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "e72206f5",
+      "date": "2026-09-06",
+      "time": "18:00",
+      "club": "YAKUDZA POKER COMMUNITY",
+      "tournament": "Обучение до старта игры",
+      "fee_rub": 1000,
+      "type": "Обучающий",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/14463",
+      "address": "ЗИЛАРТ, набережная Марка Шагала 1к1",
+      "late_reg_until": "23:00",
+      "late_reg_minutes": 300,
+      "late_reg_source": "homepage_text",
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "Обучающий Обучение до старта игры 18:00 1 000 ₽ вход до 23:00 YAKUDZA POKER COMMUNITY ЗИЛАРТ, набережная Марка Шагала 1к1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2912,7 +3052,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Классика CLASSIC ONE 18:00 1 000 ₽ БЛЕФ? Проспект Мира, 102с12, подъезд 6",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2935,7 +3075,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "ФИНАЛ X ПОКЕРНОГО СЕЗОНА 18:00 Комьюнити Компас Дмитровское ш., 81",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2958,7 +3098,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Evening at the Maximum 18:00 1 200 ₽ вход до 22:10 МАКСИМУМ Большая Никитская 43",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2981,7 +3121,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Mystery Bounty МИСТЕРИ ХРОНИКИ / Отбор на Вечерний Покер 18:00 1 200 ₽ ХРОНИКИ Садовая-Кудринская улица, 3А, Москва",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3004,7 +3144,30 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Month Grand Final 18:05 Бесплатно Check-Check Club Нижний Сусальный пер., д. 5с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "14bb71b9",
+      "date": "2026-09-06",
+      "time": "18:10",
+      "club": "Check-Check Club",
+      "tournament": "DEEP Limited",
+      "fee_rub": 1000,
+      "type": "",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/14441",
+      "address": "Нижний Сусальный пер., д. 5с1",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "late_reg_source": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "DEEP Limited 18:10 1 000 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3027,30 +3190,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "CARTEL едет в Питер 19:00 CARTEL POKER CLUB Волоколамское шоссе, 124",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
-      "source": "https://pokernomoney.ru"
-    },
-    {
-      "_id": "14bb71b9",
-      "date": "2026-09-06",
-      "time": "19:00",
-      "club": "Check-Check Club",
-      "tournament": "DEEP Limited",
-      "fee_rub": 1000,
-      "type": "",
-      "game": null,
-      "district": null,
-      "source_url": "https://pokernomoney.ru/tournaments/14441",
-      "address": "Нижний Сусальный пер., д. 5с1",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "late_reg_source": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "addon_allowed": null,
-      "duration_minutes": null,
-      "source_card_text": "DEEP Limited 19:00 1 000 ₽ Check-Check Club Нижний Сусальный пер., д. 5с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3073,30 +3213,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Гранд-финал 19:00 1 500 ₽ EMPIRE POKER CLUB Шелепихинская набережная, 34к3зд6",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
-      "source": "https://pokernomoney.ru"
-    },
-    {
-      "_id": "55238290",
-      "date": "2026-09-06",
-      "time": "19:00",
-      "club": "GARAGE Game Club",
-      "tournament": "ONE DOG FREEZEOUT",
-      "fee_rub": 1500,
-      "type": "Freezeout",
-      "game": null,
-      "district": null,
-      "source_url": "https://pokernomoney.ru/tournaments/13369",
-      "address": "пр. Аэропорта, 8, стр. 7",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "late_reg_source": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "addon_allowed": null,
-      "duration_minutes": null,
-      "source_card_text": "Freezeout ONE DOG FREEZEOUT 19:00 1 500 ₽ GARAGE Game Club пр. Аэропорта, 8, стр. 7",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3119,7 +3236,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Double Life DOUBLE CHANCE 19:00 1 000 ₽ HEADS UP проспект Мира, 26с2",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3141,8 +3258,8 @@
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "Secret TV Final 19:00 Magnum Club Большая Новодмитровская ул., д. 36с13",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "Secret TV Final 19:00 Бесплатно Magnum Club Большая Новодмитровская ул., д. 36с13",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3165,7 +3282,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "ALL INCLUSIVE FINAL OF AUGUST POKER SEASON 19:00 1 500 ₽ вход до 21:30 MASK OFF POKER Сущевский вал, д.16с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3188,7 +3305,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Team Play Tournament Poker 19:00 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3211,30 +3328,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Омаха DEALER CHOISE TOURNAMENT 19:00 1 900 ₽ PLAYWAY Москва, Винницкая, 8, корпус 2.",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
-      "source": "https://pokernomoney.ru"
-    },
-    {
-      "_id": "3bbdf340",
-      "date": "2026-09-06",
-      "time": "19:00",
-      "club": "Pocket Rockets Club",
-      "tournament": "Lucky Sevens",
-      "fee_rub": 1000,
-      "type": "",
-      "game": null,
-      "district": null,
-      "source_url": "https://pokernomoney.ru/tournaments/13468",
-      "address": "Шелепихинская наб., 34к2зд1",
-      "late_reg_until": null,
-      "late_reg_minutes": null,
-      "late_reg_source": null,
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "addon_allowed": null,
-      "duration_minutes": null,
-      "source_card_text": "Lucky Sevens 19:00 1 000 ₽ Pocket Rockets Club Шелепихинская наб., 34к2зд1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3257,7 +3351,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Обучающий Бесплатное обучение покеру 19:00 Бесплатно Showdown Новый Арбат, 19",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3280,7 +3374,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "BOSS HUNTER 19:00 1 000 ₽ SNAP CALL CLUB Проспект Андропова 48с2",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3303,7 +3397,53 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Финал Второго Сезона 19:00 Straddle poker club Валовая улица, 32/75с2 (2 этаж)",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "d7e7618e",
+      "date": "2026-09-06",
+      "time": "19:00",
+      "club": "TROYA покер",
+      "tournament": "Классика TROYA CLASSIC",
+      "fee_rub": 1000,
+      "type": "",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/14453",
+      "address": "ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+      "late_reg_until": null,
+      "late_reg_minutes": null,
+      "late_reg_source": null,
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "Классика TROYA CLASSIC 19:00 1 000 ₽ TROYA покер ул. Поречная, д.10 (ТРК MARI), 3 этаж",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "00cb2935",
+      "date": "2026-09-06",
+      "time": "19:00",
+      "club": "YAKUDZA POKER COMMUNITY",
+      "tournament": "CHILL & PLAY TOURNAMENT",
+      "fee_rub": 1000,
+      "type": "",
+      "game": null,
+      "district": null,
+      "source_url": "https://pokernomoney.ru/tournaments/14462",
+      "address": "ЗИЛАРТ, набережная Марка Шагала 1к1",
+      "late_reg_until": "23:00",
+      "late_reg_minutes": 240,
+      "late_reg_source": "homepage_text",
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "CHILL & PLAY TOURNAMENT 19:00 1 000 ₽ вход до 23:00 YAKUDZA POKER COMMUNITY ЗИЛАРТ, набережная Марка Шагала 1к1",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3326,7 +3466,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут 🔥ВОСКРЕСЕНЬЕ 6.09🔥 BOUNTY TOURNAMENT 19:00 1 000 ₽ БАРРЕЛЬ ЗИЛ ЖК Зиларт, ул. Архитектора Щусева, 2к3",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3349,7 +3489,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Freezeout ONE SHOT 19:00 500 ₽ НУАР ул. Краснопрудная 24с1",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3372,7 +3512,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Parliament Турнир 19:30 1 000 ₽ PARLIAMENT Вешняковская ул., д. 22А",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3381,7 +3521,7 @@
       "time": "20:00",
       "club": "BlackWood",
       "tournament": "Golden Card",
-      "fee_rub": 500,
+      "fee_rub": 1500,
       "type": "",
       "game": null,
       "district": null,
@@ -3394,8 +3534,8 @@
       "reentry_cost_rub": null,
       "addon_allowed": null,
       "duration_minutes": null,
-      "source_card_text": "Golden Card 20:00 500 ₽ BlackWood Олимпийский проспект, 12",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "source_card_text": "Golden Card 20:00 1 500 ₽ BlackWood Олимпийский проспект, 12",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3418,7 +3558,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "MIDNIGHT SWITCH WOMAN DAY 20:00 1 500 ₽ вход до 23:00 Poker Room GTO Даев пер., д. 2",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3441,7 +3581,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Воскресный Showdown. XL Texas Hold'em 20:00 1 000 ₽ Showdown Новый Арбат, 19",
-      "fetched_at": "2026-09-06T11:46:32+03:00",
+      "fetched_at": "2026-09-06T15:21:16+03:00",
       "source": "https://pokernomoney.ru"
     }
   ]
