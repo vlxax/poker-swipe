@@ -1082,6 +1082,15 @@
 
     hideBootLayer();
 
+    // TEMPORARY AUTH BYPASS — remove when auth is fully operational
+    const AUTH_REQUIRED = false;
+    if (!AUTH_REQUIRED) {
+      log('AUTH_REQUIRED=false, bypassing auth and showing app directly');
+      showHome();
+      return;
+    }
+    log('AUTH_REQUIRED=true, proceeding with normal auth flow');
+
     if (!window.PokerSwipeAuth) {
       showEmailEntry('Модуль входа не загрузился. Обнови страницу.');
       return;
