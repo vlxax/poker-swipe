@@ -5,6 +5,8 @@
 (function () {
   'use strict';
 
+  const isAuthRequired = () => window.PokerSwipeConfig?.AUTH_REQUIRED !== false;
+
   let authState = 'INITIALIZING';
   let currentEmail = '';
 
@@ -502,6 +504,11 @@
   };
 
   const showEmailEntry = (message = '') => {
+    if (!isAuthRequired()) {
+      void enterAppWithoutAuth();
+      return;
+    }
+
     authState = 'EMAIL';
     currentEmail = '';
     ensureEmailScreen();
@@ -563,6 +570,29 @@
     if (typeof window.renderStory === 'function') {
       window.renderStory('home');
     }
+  };
+
+  const hydrateSessionSilently = async () => {
+    if (!window.PokerSwipeAuth?.init) return null;
+
+    try {
+      return await withTimeout(
+        window.PokerSwipeAuth.init(),
+        10000,
+        'Проверка сессии'
+      );
+    } catch (e) {
+      log('Session hydrate skipped in auth bypass', e);
+      return null;
+    }
+  };
+
+  const enterAppWithoutAuth = async () => {
+    authState = 'HOME';
+    hideAuthScreens();
+    hideBootLayer();
+    await hydrateSessionSilently();
+    showHome();
   };
 
   let assessmentCompletionObserver = null;
@@ -672,6 +702,11 @@
   };
 
   const showAssessment = () => {
+    if (!isAuthRequired()) {
+      showHome();
+      return;
+    }
+
     authState = 'ASSESSMENT';
     hideAuthScreens();
     hideBootLayer();
@@ -697,6 +732,12 @@
   };
 
   const completeAuth = async authResult => {
+    if (!isAuthRequired()) {
+      await hydrateSessionSilently();
+      showHome();
+      return;
+    }
+
     if (!authResult?.user?.id) {
       showEmailEntry('Не удалось сохранить вход. Введи почту ещё раз.');
       return;
@@ -1074,6 +1115,38 @@
   };
 
   const bootstrap = async () => {
+    if (!isAuthRequired()) {
+      hideBootLayer();
+      hideAuthScreens();
+
+      if (!window.PokerSwipeAuth) {
+        await enterAppWithoutAuth();
+        return;
+      }
+
+      const params = getAuthParams();
+
+      if (params.access_token) {
+        try {
+          await processLegacyMagicLink(params);
+        } catch (e) {
+          console.error('[AuthBootstrap] Legacy callback failed in bypass mode', e);
+          cleanCallbackUrl();
+          await enterAppWithoutAuth();
+        }
+        return;
+      }
+
+      if (params.error || params.error_code || params.error_description) {
+        cleanCallbackUrl();
+        await enterAppWithoutAuth();
+        return;
+      }
+
+      await enterAppWithoutAuth();
+      return;
+    }
+
     injectStyles();
     ensureEmailScreen();
     ensureOtpScreen();
@@ -1133,6 +1206,8 @@
     showOtpEntry,
     showHome,
     showAssessment,
+    enterAppWithoutAuth,
+    isAuthRequired,
     getState: () => authState,
     getEmail: () => currentEmail
   };
