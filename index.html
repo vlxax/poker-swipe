@@ -1297,6 +1297,161 @@ window.PokerBrain={version:P.version,truth:P.truth,stats,gradeDecision,reviewLin
   });
 })();
 </script>
+
+<!-- Hand Validation & Import System -->
+<script>
+(function(){
+  'use strict';
+
+  const SUITS = ['s','h','d','c'];
+  const RANKS = 'AKQJT98765432';
+
+  // Parse card string (e.g., "As" -> ['As']) or handle arrays
+  function parseCards(input) {
+    if (Array.isArray(input)) return input;
+    if (!input) return [];
+    const str = String(input).trim();
+    if (!str) return [];
+    let cards = [], i = 0;
+    while (i < str.length) {
+      if (i+1 < str.length && RANKS.includes(str[i]) && SUITS.includes(str[i+1].toLowerCase())) {
+        cards.push(str[i] + str[i+1].toLowerCase());
+        i += 2;
+      } else if (RANKS.includes(str[i])) {
+        const suit = SUITS[cards.length % 4];
+        cards.push(str[i] + suit);
+        i++;
+      } else {
+        i++;
+      }
+    }
+    return cards;
+  }
+
+  window.HandValidation = {
+    validateHand: function(hand, strict) {
+      if (!hand || typeof hand !== 'object') {
+        return { valid: false, error: 'Hand must be an object' };
+      }
+
+      // Check required fields
+      if (!hand.hero || !Array.isArray(hand.hero) && typeof hand.hero !== 'string') {
+        return { valid: false, error: 'Missing or invalid hero cards' };
+      }
+
+      try {
+        const heroCards = parseCards(hand.hero);
+        if (heroCards.length !== 2) {
+          return { valid: false, error: 'Hero must have exactly 2 cards' };
+        }
+
+        const boardCards = hand.board ? parseCards(hand.board) : [];
+        if (boardCards.length > 5) {
+          return { valid: false, error: 'Board cannot have more than 5 cards' };
+        }
+
+        // Validate actions if present
+        if (hand.actions && Array.isArray(hand.actions)) {
+          for (const action of hand.actions) {
+            if (!action.action) {
+              return { valid: false, error: 'Action missing action field' };
+            }
+            if (action.actor !== 'HERO' && action.actor !== 'VILLAIN' && action.actor !== 'OTHER') {
+              return { valid: false, error: 'Invalid actor: ' + action.actor };
+            }
+          }
+        }
+
+        return { valid: true };
+      } catch (e) {
+        return { valid: false, error: 'Error parsing cards: ' + e.message };
+      }
+    },
+
+    safeLoadHands: function(oldHands) {
+      const hands = [];
+      const invalid = [];
+      let recoveredCount = 0;
+
+      if (!Array.isArray(oldHands)) {
+        return { hands: [], valid: true, invalidCount: 0, recoveredCount: 0, invalid: [] };
+      }
+
+      for (let i = 0; i < oldHands.length; i++) {
+        const h = oldHands[i];
+        const validation = this.validateHand(h, false);
+
+        if (validation.valid) {
+          hands.push(h);
+        } else {
+          invalid.push({ index: i, hand: h, error: validation.error });
+        }
+      }
+
+      return {
+        hands,
+        valid: invalid.length === 0,
+        invalidCount: invalid.length,
+        recoveredCount,
+        invalid
+      };
+    }
+  };
+
+  window.HandImportSystem = {
+    detectRoom: function(handText) {
+      const text = String(handText || '').toLowerCase();
+      if (/покеок|id раздачи|game #\d+|PokerOK/i.test(handText)) {
+        return 'PokerOK';
+      }
+      if (/gg poker|tournament #|game #.*gg/i.test(handText)) {
+        return 'GGPoker';
+      }
+      return 'AUTO';
+    },
+
+    parseHandHistory: function(handText, room) {
+      // Basic parser - returns normalized hand object
+      // This is a minimal implementation; full parser would extract all fields
+      try {
+        const text = String(handText || '');
+        if (!text.trim()) return null;
+
+        // Minimal extraction - in real app would parse all fields
+        return {
+          format: room,
+          hero: [],
+          board: [],
+          actions: [],
+          sourceRoom: room,
+          importedAt: new Date().toISOString()
+        };
+      } catch (e) {
+        return null;
+      }
+    },
+
+    isDuplicateHand: function(newHand, allHands) {
+      if (!Array.isArray(allHands)) return false;
+
+      // Check if hand already exists based on hero cards and board
+      const newHeroStr = (newHand.hero || []).sort().join('|');
+      const newBoardStr = (newHand.board || []).sort().join('|');
+
+      for (const existing of allHands) {
+        const existingHeroStr = (existing.hero || []).sort().join('|');
+        const existingBoardStr = (existing.board || []).sort().join('|');
+
+        if (newHeroStr === existingHeroStr && newBoardStr === existingBoardStr) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+})();
+</script>
+
 <script>
 (()=>{
 'use strict';
