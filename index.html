@@ -1667,8 +1667,6 @@ window.editNickname=editNickname;
 function card(c,small=false){return `<span class="pc ${/[♥♦]/.test(c)?'suit-red':''}" style="${small?'width:42px;height:58px;font-size:17px':''}">${c}</span>`};function hand(a){return `<div class="cards holeCards">${a.map(x=>card(x)).join('')}</div>`};function board(a){return `<div class="dailyBoard cards">${a.map(x=>card(x,true)).join('')}</div>`};
 function sampleText(n,score){if(n<5)return'МАЛО ДАННЫХ';if(n<15)return`${score} · мало данных`;return String(score)}
 function refBadge(){return ''}
-function board(boardCards=[]){if(!boardCards||!boardCards.length)return'<div class="boardCards"></div>';return'<div class="boardCards">'+boardCards.map((c,i)=>'<span class="card" data-card="'+esc(c)+'">'+esc(c)+'</span>').join('')+'</div>'}
-function hand(heroCards=[]){if(!heroCards||!heroCards.length)return'<div class="heroCards"></div>';return'<div class="heroCards">'+heroCards.map(c=>'<span class="card hero" data-card="'+esc(c)+'">'+esc(c)+'</span>').join('')+'</div>'}
 function quickBanner(mode){if(!quick.active)return'';return'<div class="quickBanner"><span class="ey">5 МИНУТ ФРИК-СЕСС</span></div>'}
 function d25SpotObj(d){return{...d,spotId:d.id,street:d.street||'FLOP',pos:d.pos||'BTN',hero:d.hero||[],board:d.board||[],stack:d.stack||30,pot:d.pot||5,ctx:d.ctx||''}}
 
