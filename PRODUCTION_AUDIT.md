@@ -71,3 +71,47 @@ Each registers handlers on same element IDs (v36Daily, v36Hands, etc.).
 - [ ] Mobile viewport test
 - [ ] Bug fixes implemented
 - [ ] Regression tests created
+
+## Fixes Applied
+
+### ✓ Fix 1: Tournament Data Rendering (CRITICAL)
+**Issue:** poker_swipe_v40.js was hijacking renderTournaments23() and forcing hardcoded test data
+**Fix:** Removed renderTournaments23 hijacking and disable v40's render() override
+**Commit:** 45f5511
+**Impact:** Tournament screen now loads real data from data/moscow_schedule_today.json
+**Test:** Open tournaments → ПОЛЯНА screen → verify tournament count
+
+### ✓ Fix 2: localStorage Key (MEDIUM)
+**Issue:** v40 used version-specific key 'pokerswipe.v40.poliana' - state lost on upgrade
+**Fix:** Changed to version-agnostic key 'pokerswipe.polyana.state'
+**Commit:** e9a44e4
+**Impact:** State persists across version upgrades
+**Test:** Navigate away from polyana → return → verify view state restored
+
+## Remaining Issues to Address
+
+### Priority: Navigation/Routing Stack
+- [ ] Test ONE CLICK → ONE HANDLER pattern (verify single execution)
+- [ ] Check for duplicate event handlers in hotfix stacking (v32-v40)
+- [ ] Verify nav button transitions work for all screens
+
+### Priority: State/Persistence
+- [ ] Verify state persists across screen transitions
+- [ ] Check localStorage accessibility
+- [ ] Test page reload scenarios
+
+### Priority: Mobile Viewports
+- [ ] Test 320px (iPhone SE) viewport
+- [ ] Test 360px (Android) viewport
+- [ ] Test 390px (iPhone 12) viewport  
+- [ ] Test 430px (iPhone 15) viewport
+- [ ] Verify nav buttons are clickable at all widths
+- [ ] Verify no text overflow
+
+## Summary Table (To Be Completed)
+
+| Bug | Root Cause | Fix | Files | Regression Test |
+|-----|-----------|-----|-------|-----------------|
+| Tournament hardcoded test data | v40 hijack renderTournaments23 | Disable hijacking | poker_swipe_v40.js | Verify real data loads |
+| localStorage state lost on upgrade | Version-specific key in v40 | Use version-agnostic key | poker_swipe_v40.js | Navigate away and back |
+
