@@ -1,163 +1,73 @@
-# Hand of the Day — Production Readiness Audit
+# PokerSwipe Production Audit — Phase 1
 
-**Date:** 2026-09-03  
-**Status:** IN PROGRESS  
+## Executive Summary
 
-## A. What is Currently Incomplete
+Comprehensive audit of PokerSwipe application covering navigation/routing, state persistence, data sources, and mobile viewport compatibility.
 
-### 1. Scenario Library (Critical)
-- **Current:** 2 scenarios (hod_001_bubble, hod_002_flop_bluff_catch_lag)
-- **Required:** 30+ genuinely different scenarios
-- **Issue:** Too few scenarios for repeated play without repetition
+## Critical Findings
 
-### 2. Grading System (Critical)
-- **Current:** Binary (EXCELLENT / MISTAKE)
-- **Required:** Nuanced (BEST, GOOD, MIXED, INACCURATE, MISTAKE)
-- **Issue:** No support for strategically valid alternatives or mixed decisions
+### 1. Multiple show() Function Wrappers (CRITICAL)
 
-### 3. Forensic Review (Critical)
-- **Current:** Missing
-- **Required:** Street-by-street review showing first meaningful error
-- **Issue:** Players can't understand where decision went wrong
+The navigation function is wrapped by 6+ different scripts:
+- app-shell.js (lines 60-67)
+- game-motion.js (lines 173-186)
+- game-visual-rebuild.js (lines 563-584)
+- mini-app-compact.js (lines 249-269)
+- poker_swipe_v40.js (lines 88-89)
+- poker_swipe_v73_hotfix.js (event delegation)
 
-### 4. Persistence & Tracking (Important)
-- **Current:** None
-- **Required:** Track completed/failed/partially completed scenarios
-- **Issue:** No way to avoid repetition or track progress
+**Risk:** Each wrapper adds a layer where exceptions can break the entire routing chain.
 
-### 5. Scenario Validation (Important)
-- **Current:** None
-- **Required:** Validate scenarios for consistency and legality
-- **Issue:** Easy to create impossible poker states
+### 2. Hotfix Stacking Problem (HIGH)
 
-### 6. Action Consistency (Important)
-- **Current:** Labels mix English + Russian inconsistently
-- **Required:** All in Russian, consistent naming
-- **Issue:** Confusing UI
+Six versions of poker_swipe loaded in sequence:
+- v73_hotfix.js
+- v32.js (36K)
+- v33.js (32K)
+- v34.js (8.3K)
+- v39.js (18K)
+- v40.js (18K)
 
-### 7. Mobile QA (Important)
-- **Current:** CSS created but not tested on devices
-- **Required:** Verified on 375×812, 390×844, 430×932+
-- **Issue:** Possible layout regressions on real devices
+Each registers handlers on same element IDs (v36Daily, v36Hands, etc.).
 
-### 8. Manual Testing (Important)
-- **Current:** None
-- **Required:** 10+ scenarios tested end-to-end
-- **Issue:** Unknown if branching/grading actually works in practice
+**Risk:** Duplicate handlers, version conflicts, unpredictable behavior.
 
-### 9. Entry Point (Important)
-- **Current:** No integration with daily training flow
-- **Required:** Hand of Day accessible from main training screen
-- **Issue:** Feature is invisible to users
+### 3. Hardcoded Test Data vs Canonical Sources (HIGH)
 
-### 10. Result Events (Nice to have)
-- **Current:** None
-- **Required:** Clean result contract for future integration with Mistake Memory
-- **Issue:** Can't feed into training analytics system
+- poker_swipe_v40.js: hardcoded TODAY[], EVENTS[], SERIES[] (test data)
+- data/moscow_schedule_today.json: actual tournament data (53KB)
+- data/live_polyana.json: actual club/tournament data (200KB)
 
-## B. Architecture Inventory
+**Risk:** Tournament list doesn't show real data.
 
-### Files Currently in Place
-```
-solver/src/handOfDay/
-├── index.js                      (7 lines, exports)
-├── scenarioEngine.js             (245 lines, core state machine)
-├── villainPersonality.js         (243 lines, 10 archetypes)
-├── observationSystem.js          (175 lines, observation collector)
-├── readSystem.js                 (193 lines, READ_CATEGORIES, gradeRead)
-└── scenarios.js                  (578 lines, 2 scenarios)
+### 4. localStorage Key Inconsistencies (MEDIUM)
 
-training-ui/
-├── handOfDayRenderer.js          (323 lines, node rendering)
-└── sessionController.js          (extended +62 lines)
+- v40.js uses: 'pokerswipe.v40.poliana' (note misspelling: poliana)
+- tests use: 'psp-polyana-favorite-clubs-v1'
+- Multiple versions may use different keys
 
-tests/
-├── handOfDay.test.js             (323 lines, 23 tests)
-└── handOfDayIntegration.test.js  (140 lines, 9 tests)
+**Risk:** State not persisted across screen transitions.
 
-CSS/
-└── poker_swipe_hand_of_day.css   (468 lines)
-```
+### 5. Script Execution Hang (INFRASTRUCTURE)
 
-### What's NOT Integrated
-- No entry point in app-shell.js or main navigation
-- No persistence backend integration
-- No result event emission to global tracking
-- No connection to daily training flow
+- runScripts: 'dangerously' causes infinite hang in JSDOM
+- Documented in SCRIPT-HANG-ISSUE.md
+- Workaround: runScripts: 'outside-only' (tests disabled)
 
-## C. Supported Node Types
-- `hero-decision` - User chooses action
-- `villain-action` - Opponent acts with dialogue
-- `street-reveal` - Show new board card(s)
-- `observation` - Display behavioral clue
-- `read-question` - Choose villain's line interpretation
-- `reveal` - Show villain's cards and grading
-- `showdown` - Equivalent to reveal
-- `complete` - Hand complete
+## Testing Priority Order
 
-## D. Current Actions Available
-**Preflop Decisions:**
-- fold
-- call
-- (some scenarios missing raise/3bet options)
+1. Navigation: Home → Swipe → Daily → MyHands → Polyana → Profile
+2. Data source: Verify real tournaments load (not hardcoded)
+3. Persistence: State survives screen transitions and page reload
+4. Mobile: Test 320px, 360px, 390px, 430px viewports
 
-**Flop/Turn/River:**
-- check
-- bet-50%, bet-75%
-- bet-100% (all-in scenarios)
+## Status
 
-**Limitations:**
-- No configurable bet sizing
-- No dynamic pot-relative calculations
-- Sizing is hardcoded per scenario
-
-## E. Branching Depth
-- Scenario 1: Linear with minor choice at flop/turn
-- Scenario 2: Similar structure
-- **Issue:** Most paths lead to same showdown
-- **Target:** Meaningful branches with different outcomes
-
-## F. Grading System Detail
-```javascript
-gradeRead(userChoice, correctChoiceId)
-→ { correct: bool, grade: 'EXCELLENT' | 'MISTAKE' }
-```
-**Problems:**
-- No GOOD/MIXED/INACCURATE grades
-- No explanation of why answer is wrong
-- No strategy justification for correct answer
-
-## G. Persistence
-- **In Memory:** ScenarioEngine.history tracks decisions
-- **On Disk:** None
-- **Tracking:** No record of completed scenarios
-- **Deduplication:** No prevention of repeat scenarios
-
-## H. Mobile Support
-- CSS created with mobile-first approach
-- Safe-area insets included
-- NOT tested on actual devices
-- Potential issues unknown
-
-## I. Manual Testing
-- No end-to-end manual testing
-- No branching verification
-- No impossible state detection
-- No UI responsiveness check
-
-## J. Test Coverage
-- **Passing:** 32 tests (23 core + 9 integration)
-- **Areas:** Scenario engine, observations, reads, scenarios
-- **Missing:** Validation, forensics, persistence, branching variance
-
-## Next Phase
-
-Production build will address all critical gaps:
-1. Enhanced grading with nuance
-2. Forensic review system
-3. 30+ quality scenarios
-4. Scenario validation
-5. Persistence module
-6. Manual QA
-7. Mobile verification
-8. Entry point integration
+- [x] SCRIPT-HANG-ISSUE.md created and documented
+- [x] Tests reverted to 'outside-only' mode
+- [ ] Navigation flow test created
+- [ ] Data source verification
+- [ ] Persistence test
+- [ ] Mobile viewport test
+- [ ] Bug fixes implemented
+- [ ] Regression tests created
