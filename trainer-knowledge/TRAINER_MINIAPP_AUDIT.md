@@ -1,0 +1,50 @@
+# TRAINER MINI-APP AUDIT (Stage 3C)
+
+Generated: 2026-08-25T14:11:26.742Z
+
+## Summary
+
+- MINI-APPS AUDITED: swipe, memory, sizing, review, xray
+- MINI-APPS CONNECTED (preflop grading via Poker Brain bridge): swipe, memory
+- TRAINER-GRADED TASKS: 2
+- FALLBACK TASKS: 178
+- TASKS BLOCKED BY UNKNOWN SEMANTICS: 88
+- DUPLICATE TASK GENERATION: NO (library ids only, 180 tasks)
+- PERSONALIZATION COMPATIBILITY: YES (trainer enriches spots; library fallback preserved)
+
+## By scenario group
+
+| Scenario group | Total | Trainer-graded | Fallback |
+|----------------|------:|---------------:|---------:|
+| none | 109 | 0 | 109 |
+| uo_open | 25 | 0 | 25 |
+| bb_defence | 14 | 0 | 14 |
+| vs_3bet | 13 | 1 | 12 |
+| preflop_facing | 7 | 0 | 7 |
+| vs_4bet | 7 | 0 | 7 |
+| vs_limp | 2 | 0 | 2 |
+| sb_vs_bb | 2 | 1 | 1 |
+| vs_squeeze | 1 | 0 | 1 |
+
+## Sample trainer-graded preflop tasks
+
+- **TOUR_ITM_FOLD_AJO** → vs_3bet | trainer `UNSELECTED` → `ФОЛД` (library `ФОЛД`)
+- **ADV9B5_SHORT_COVER_SHOVE** → sb_vs_bb | trainer `AI` → `ОЛЛ-ИН` (library `ОЛЛ-ИН`)
+
+## Sample blocked / partial tasks
+
+- **PRE_RFI_BTN_A8S** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_RFI_CO_KTS** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_RFI_HJ_77** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_RFI_UTG_AJO** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_RFI_SB_22** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_RFI_BTN_22_SHORT** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_RFI_BTN_A5S_15** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_BB_K8S** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_BB_76S** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_BB_T6O** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_BB_A2S** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_BB_55_3X** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_3B_SB_A5S** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH
+- **PRE_3B_BB_KK** | TRAINER_DATA_NEEDS_CLARIFICATION | TRAINER_DATA_NEEDS_CLARIFICATION
+- **PRE_3B_BTN_AQO** | PARTIAL_TRAINER_MATCH | PARTIAL_TRAINER_MATCH

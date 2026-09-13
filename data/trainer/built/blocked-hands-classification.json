@@ -1,0 +1,42 @@
+{
+  "totalCells": 286962,
+  "gradableHands": 224333,
+  "blockedHands": 62629,
+  "blockedByReason": {
+    "mixed_cell": 34777,
+    "not_gradable:ORANGE_208_160_32": 19709,
+    "not_gradable:YELLOW_240_240_48": 476,
+    "unsupported_nAI": 3091,
+    "not_gradable:COLOR_128_32_48": 114,
+    "not_gradable:COLOR_128_32_32": 1,
+    "not_gradable:COLOR_128_96_192": 11,
+    "not_gradable:COLOR_112_224_160": 1,
+    "unsupported_LOW_PLAYABILITY": 4266,
+    "not_gradable:COLOR_144_112_64": 52,
+    "not_gradable:COLOR_128_112_64": 2,
+    "not_gradable:COLOR_224_176_80": 10,
+    "not_gradable:COLOR_144_64_112": 10,
+    "not_gradable:COLOR_208_208_96": 4,
+    "not_gradable:COLOR_144_112_192": 79,
+    "not_gradable:COLOR_208_192_96": 1,
+    "not_gradable:COLOR_192_224_96": 13,
+    "not_gradable:COLOR_128_160_80": 4,
+    "not_gradable:COLOR_240_240_112": 7,
+    "not_gradable:COLOR_240_240_96": 1
+  },
+  "blockedRolledUp": {
+    "mixed_cell": 34777,
+    "unparsed_color_or_raw": 20495,
+    "unsupported_nAI": 3091,
+    "unsupported_LOW_PLAYABILITY": 4266
+  },
+  "semantics": {
+    "mixed_cell": "Multiple trainer strategies on one cell; production gradingAllowed=false; no invented frequencies",
+    "unsupported_nAI": "nAI is not a confirmed strategy action",
+    "unsupported_LOW_PLAYABILITY": "LOW_PLAYABILITY is context-dependent, not graded",
+    "unsupported_UO": "UO label on a cell is not a confirmed open/fold action",
+    "missing_action": "No actionRaw",
+    "unparsed_color_or_raw": "Parser left a color token instead of a confirmed action; not gradable",
+    "not_gradable:*": "gradingAllowed flag off for a discrete action"
+  }
+}

@@ -3,6 +3,7 @@
 import { inventoryAtlas, ATLAS_STACKS } from './preflopAtlas.js';
 import { PUSH_STACKS } from './pushFold.js';
 import { inventoryReference, REFERENCE_SITUATIONS } from './referenceRanges.js';
+import { inventoryTrainerSync, TRAINER_SITUATIONS } from './trainerRanges.js';
 import { DATA_SOURCES } from './rangeSources.js';
 
 export const FORMATS = [
@@ -31,31 +32,48 @@ function activeSituations(dataSource = 'verified') {
   return SITUATIONS;
 }
 
+function isTrainerSource(dataSource) {
+  return dataSource === 'trainer';
+}
+
 function isReferenceSource(dataSource) {
   return dataSource === 'reference';
 }
 
-export function getCatalog(pack, format = '6max', dataSource = 'verified') {
+export function getCatalog(pack, format = '6max', dataSource = 'verified', trainerCharts = null) {
   const ref = isReferenceSource(dataSource);
-  const inv = ref ? inventoryReference() : inventoryAtlas(pack, format);
-  const formats = ref ? [{ id: '6max', label: '6-max' }] : FORMATS;
+  const trainer = isTrainerSource(dataSource);
+  const inv = trainer
+    ? inventoryTrainerSync(trainerCharts || [])
+    : ref
+      ? inventoryReference()
+      : inventoryAtlas(pack, format);
+  const formats = trainer
+    ? [{ id: 'trainer', label: 'Тренер' }]
+    : ref
+      ? [{ id: '6max', label: '6-max' }]
+      : FORMATS;
   return {
     formats,
     dataSources: DATA_SOURCES,
-    situations: activeSituations(dataSource),
-    allSituations: activeSituations(dataSource),
+    situations: trainer ? TRAINER_SITUATIONS : activeSituations(dataSource),
+    allSituations: trainer ? TRAINER_SITUATIONS : activeSituations(dataSource),
     atlasStacks: ATLAS_STACKS,
     pushStacks: PUSH_STACKS,
-    format: ref ? '6max' : format,
+    format: trainer ? 'trainer' : ref ? '6max' : format,
     dataSource,
-    positions: positionsForFormat(format, dataSource),
-    vsOpenPairs: inv.vsOpenPairs,
+    positions: trainer ? inv.positions : positionsForFormat(format, dataSource),
+    uoPositions: inv.uoPositions || [],
+    uoStacks: inv.uoStacks || [],
+    modeInventory: inv.modeInventory || {},
+    trainerChartCount: trainer ? inv.chartCount : 0,
+    vsOpenPairs: inv.vsOpenPairs || {},
     vs3betPairs: inv.vs3betPairs || {},
     vs4betPairs: inv.vs4betPairs || {},
-    rfiPositions: inv.rfiPositions,
-    vs3betPositions: inv.vs3betPositions,
+    rfiPositions: inv.rfiPositions || inv.uoPositions || [],
+    vs3betPositions: inv.vs3betPositions || [],
     vs4betPositions: inv.vs4betPositions || [],
-    bbDefendOpeners: inv.bbDefendOpeners,
+    bbDefendOpeners: inv.bbDefendOpeners || [],
     atlasOnlyPositions: inv.atlasOnlyPositions || [],
     referenceRangeCount: ref ? inv.rangeCount : 0
   };
@@ -120,8 +138,13 @@ export function needsOpenerForSelection(sel, catalog) {
   return false;
 }
 
-export function isSelectionComplete(sel) {
+export function isSelectionComplete(sel, catalog) {
   const dataSource = sel.dataSource || 'verified';
+  if (isTrainerSource(dataSource)) {
+    if (!sel.situation || !sel.position) return false;
+    if (!sel.stack && !sel.stackBand) return false;
+    return true;
+  }
   const ref = isReferenceSource(dataSource);
   if (!sel.format || !sel.position || !sel.situation) return false;
   if (!ref && !sel.stack) return false;
@@ -137,7 +160,13 @@ export function isSelectionComplete(sel) {
   return true;
 }
 
-export function nextCtaLabel(sel) {
+export function nextCtaLabel(sel, catalog) {
+  if (isTrainerSource(sel.dataSource)) {
+    if (!sel.situation) return 'ВЫБЕРИ СИТУАЦИЮ';
+    if (!sel.position) return 'ВЫБЕРИ ПОЗИЦИЮ';
+    if (!sel.stack && !sel.stackBand) return 'ВЫБЕРИ СТЕК';
+    return 'ПОКАЗАТЬ РЕНДЖ';
+  }
   if (!sel.position) return 'ВЫБЕРИ ПОЗИЦИЮ';
   if (!sel.situation) return 'ВЫБЕРИ СИТУАЦИЮ';
   const sit = situationMeta(sel.situation, sel.dataSource);
@@ -152,6 +181,9 @@ export function nextCtaLabel(sel) {
 }
 
 export function situationLabel(id, dataSource = 'verified') {
+  if (isTrainerSource(dataSource)) {
+    return (TRAINER_SITUATIONS.find((s) => s.id === id) || {}).label || id;
+  }
   return (situationMeta(id, dataSource) || {}).label || id;
 }
 
@@ -179,6 +211,20 @@ export function suggestNearby(sel, catalog) {
 
 export function sanitizeSelection(sel, catalog) {
   const next = { ...sel, dataSource: sel.dataSource || catalog.dataSource || 'reference' };
+  if (isTrainerSource(next.dataSource)) {
+    next.format = 'trainer';
+    if (!next.trainerSourceMode && next.situation) {
+      const sit = TRAINER_SITUATIONS.find((s) => s.id === next.situation);
+      if (sit) {
+        next.trainerSourceMode = sit.sourceMode;
+        next.trainerSpot = sit.rawSpot || null;
+        if (sit.heroFixed) next.position = sit.heroFixed;
+      }
+    }
+    if (next.stack && !next.stackBand) next.stackBand = String(next.stack).replace(/bb$/i, '') || next.stack;
+    if (next.stackBand && !next.stack) next.stack = next.stackBand;
+    return next;
+  }
   if (isReferenceSource(next.dataSource)) {
     next.format = '6max';
     next.stack = null;

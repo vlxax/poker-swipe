@@ -1,0 +1,304 @@
+/**
+ * PokerSwipe — Freak Lady character composition layouts
+ * Character integrated into game composition, not small avatar boxes.
+ */
+
+.psCharCompose {
+  --ps-char-accent: #c8ff3d;
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 12px 0 8px;
+  min-height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 0.5, 0.6, 1);
+}
+
+.psCharCompose--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.psCharCompose.mood-correct,
+.psCharCompose.mood-streak { --ps-char-accent: #42e786; }
+.psCharCompose.mood-skeptical { --ps-char-accent: #ffd257; }
+.psCharCompose.mood-wrong { --ps-char-accent: #ff4b68; }
+.psCharCompose.mood-thinking { --ps-char-accent: #c8ff3d; }
+
+/* ── Scene: immersive character overlapping analysis ── */
+.psCharCompose--scene {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: clamp(300px, 50vh, 420px);
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.psCharCompose--scene .psCharCompose__art {
+  position: absolute;
+  left: 18%;
+  right: auto;
+  bottom: -80px;
+  z-index: 11;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 82%;
+  max-width: 360px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.psCharCompose--scene.psCharCompose--left .psCharCompose__art {
+  left: auto;
+  right: 12%;
+}
+
+.psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+  width: 100%;
+  height: clamp(380px, 88vw, 520px);
+  max-width: none;
+  object-fit: contain;
+  object-position: bottom center;
+  filter:
+    drop-shadow(0 0 28px color-mix(in srgb, var(--ps-char-accent) 28%, transparent))
+    drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
+}
+
+.psCharCompose--scene .psCharCompose__bubble {
+  position: absolute;
+  z-index: 12;
+  left: 6px;
+  top: 4px;
+  bottom: auto;
+  width: min(58%, 220px);
+  padding: 10px 12px 11px;
+  border-radius: 16px 16px 16px 6px;
+  border: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  background: rgba(8, 10, 8, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+}
+
+.psCharCompose--scene .psCharCompose__ey {
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  margin-bottom: 4px;
+}
+
+.psCharCompose--scene .psCharCompose__text {
+  font-size: 14px;
+  line-height: 1.24;
+  font-weight: 900;
+}
+
+.psCharCompose--scene.psCharCompose--right .psCharCompose__bubble::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(8, 10, 8, 0.72);
+  border-right: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  transform: rotate(45deg);
+}
+
+.psCharCompose--scene.psCharCompose--left .psCharCompose__bubble {
+  left: auto;
+  right: 6px;
+  border-radius: 16px 16px 6px 16px;
+}
+
+.psCharCompose--scene.psCharCompose--left .psCharCompose__bubble::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: rgba(8, 10, 8, 0.72);
+  border-left: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ps-char-accent) 22%, transparent);
+  transform: rotate(45deg);
+}
+
+.psCharCompose--scene .psCharCompose__headline {
+  font-size: clamp(22px, 6vw, 32px);
+  font-weight: 1000;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.psCharCompose--scene .psCharCompose__headline .accent {
+  color: var(--ps-char-accent);
+}
+
+/* ── Coach: character edge + recommendation panel ── */
+.psCharCompose--coach {
+  grid-template-columns: minmax(0, 1fr) min(42%, 168px);
+  align-items: end;
+  padding: 0;
+  margin-top: 14px;
+}
+
+.psCharCompose--coach.psCharCompose--left {
+  grid-template-columns: min(42%, 168px) minmax(0, 1fr);
+}
+
+.psCharCompose__panel {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--ps-char-accent) 28%, #2a2a32);
+  background:
+    radial-gradient(circle at 0% 50%, color-mix(in srgb, var(--ps-char-accent) 8%, transparent), transparent 58%),
+    linear-gradient(155deg, rgba(14, 16, 14, 0.96), rgba(7, 8, 10, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.psCharCompose__ey {
+  display: block;
+  margin-bottom: 5px;
+  color: color-mix(in srgb, var(--ps-char-accent) 76%, #aaa);
+}
+
+.psCharCompose__text {
+  display: block;
+  font-size: 13px;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: #f5f7f0;
+  font-weight: 800;
+}
+
+.psCharCompose__headline {
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 1000;
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.psCharCompose__art {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 0;
+  margin-bottom: -8px;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.psCharCompose__art .freakCoachAvatar {
+  width: auto;
+  height: clamp(148px, 38vw, 220px);
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  display: block;
+  background: transparent !important;
+  filter:
+    drop-shadow(0 0 18px color-mix(in srgb, var(--ps-char-accent) 22%, transparent))
+    drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
+}
+
+/* ── Edge peek: partial body entering frame ── */
+.psCharCompose--edgePeek {
+  grid-template-columns: 1fr;
+  justify-items: flex-end;
+  overflow: visible;
+  min-height: clamp(180px, 38vw, 260px);
+}
+
+.psCharCompose--edgePeek .psCharCompose__art {
+  margin-right: -12%;
+  margin-bottom: -20px;
+}
+
+.psCharCompose--edgePeek .psCharCompose__art .freakCoachAvatar {
+  height: clamp(200px, 48vw, 280px);
+}
+
+.psCharCompose--edgePeek .psCharCompose__panel {
+  position: absolute;
+  left: 0;
+  bottom: 24px;
+  width: min(72%, 280px);
+}
+
+.freakCoachAvatarWrap,
+.psCharCompose__art {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.freakCoachReaction .freakCoachAvatarWrap {
+  background: radial-gradient(circle at 50% 45%, rgba(36, 49, 40, 0.5), transparent 72%) !important;
+  border: 1px solid color-mix(in srgb, var(--freak-accent, #c8ff3d) 24%, transparent) !important;
+  box-shadow: none !important;
+}
+
+.freakCoachReaction .freakCoachAvatar {
+  object-fit: contain;
+  object-position: bottom center;
+  background: transparent !important;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--freak-accent, #c8ff3d) 16%, transparent));
+}
+
+@media (max-width: 390px) {
+  .psCharCompose--scene {
+    min-height: clamp(280px, 48vh, 380px);
+  }
+
+  .psCharCompose--scene .psCharCompose__art {
+    left: 14%;
+    width: 86%;
+    bottom: -64px;
+  }
+
+  .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+    height: clamp(340px, 92vw, 460px);
+  }
+
+  .psCharCompose--scene .psCharCompose__bubble {
+    width: min(62%, 210px);
+    top: 0;
+  }
+
+  .psCharCompose--coach {
+    grid-template-columns: minmax(0, 1fr) min(40%, 140px);
+  }
+
+  .psCharCompose__text {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psCharCompose {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}

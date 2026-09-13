@@ -15,10 +15,10 @@
   flex-direction:column!important;
   align-items:center!important;
   justify-content:center!important;
-  gap:4px!important;
+  gap:2px!important;
   min-width:0!important;
-  min-height:76px!important;
-  padding:8px 2px calc(10px + env(safe-area-inset-bottom))!important;
+  min-height:44px!important;
+  padding:2px 2px 0!important;
   border:0!important;
   background:transparent!important;
   outline:0!important;
@@ -49,8 +49,8 @@
 .nav[data-ps3d-build] .ps3d-icon{
   position:relative;
   z-index:1;
-  width:34px;
-  height:34px;
+  width:26px;
+  height:26px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -68,8 +68,8 @@
 }
 
 .nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon{
-  width:37px;
-  height:37px;
+  width:28px;
+  height:28px;
 }
 
 .nav[data-ps3d-build] [data-nav].on .ps3d-icon,
@@ -90,8 +90,8 @@
   max-width:100%;
   color:#4a4a50;
   font-family:"Barlow Condensed",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  font-size:9px;
-  line-height:1.05;
+  font-size:7px;
+  line-height:1;
   font-weight:800;
   letter-spacing:.075em;
   text-align:center;
@@ -110,11 +110,11 @@
 
 @media(max-width:380px){
   .nav[data-ps3d-build] [data-nav]{
-    min-height:70px!important;
+    min-height:42px!important;
     padding-left:1px!important;
     padding-right:1px!important;
   }
-  .nav[data-ps3d-build] .ps3d-icon{width:31px;height:31px}
-  .nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon{width:34px;height:34px}
-  .nav[data-ps3d-build] .ps3d-label{font-size:8px;letter-spacing:.055em}
+  .nav[data-ps3d-build] .ps3d-icon{width:24px;height:24px}
+  .nav[data-ps3d-build] [data-ps3d-type="meadow"] .ps3d-icon{width:26px;height:26px}
+  .nav[data-ps3d-build] .ps3d-label{font-size:6.5px;letter-spacing:.04em}
 }

@@ -10,6 +10,7 @@
   const RANKS='23456789TJQKA';
   const MATRIX_RANKS=[...'AKQJT98765432'];
   const SUITS=['s','h','d','c'];
+  function parseCards(input=[]){if(Array.isArray(input))return input;const str=String(input).trim();if(!str)return[];const suits=['s','h','d','c'];let cards=[],i=0;while(i<str.length){if(i+1<str.length&&MATRIX_RANKS.includes(str[i])&&suits.includes(str[i+1].toLowerCase())){cards.push(str[i]+str[i+1].toLowerCase());i+=2}else if(MATRIX_RANKS.includes(str[i])){const suit=suits[(cards.length%4)];cards.push(str[i]+suit);i++}else{i++}}return cards}
   const STREET_RU={PREFLOP:'префлоп',FLOP:'флоп',TURN:'тёрн',RIVER:'ривер'};
   const SOURCE_MAP={
     EXACT_REFERENCE_NODE:'CURATED_SCENARIO',
@@ -80,8 +81,10 @@
     const street=normStreet(spot.street);
     const pos=positions(spot);
     const pre=inferredPreflopLine(spot,pos,street);
-    const hero=(spot.hero||spot.heroCards||[]).map(cardCode).filter(Boolean);
-    const board=(spot.board||[]).map(cardCode).filter(Boolean);
+    const heroCards=parseCards(spot.hero||spot.heroCards||[]);
+    const boardCards=parseCards(spot.board||[]);
+    const hero=heroCards.map(cardCode).filter(Boolean);
+    const board=boardCards.map(cardCode).filter(Boolean);
     const stack=num(spot.stack??spot.effStack??spot.effectiveStackBB);
     const pot=num(spot.pot??spot.potBB);
     const current=String(spot.currentLine||spot.ctx||spot.context||'').trim();
@@ -212,7 +215,8 @@
   }
 
   function gradeDecision(spot={},action,size=null){
-    let result=previous.gradeDecision(spot,action,size);
+    const parsed={...spot,hero:parseCards(spot.hero||[]),board:parseCards(spot.board||[])};
+    let result=previous.gradeDecision(parsed,action,size);
     result=recomputeSpecial(result,spot,action,size);
     const context=contextForSpot(spot),story=streetStory(context),special=baseId(spot.spotId||spot.id)==='T_JT85_KQ';
     const reason=special

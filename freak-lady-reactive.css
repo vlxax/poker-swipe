@@ -1,0 +1,59 @@
+/* Freak Lady reactive coach — contextual feedback only. */
+.freakCoachReaction{
+  --freak-accent:var(--pink,#c8ff3d);
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  margin:12px 0 4px;
+  padding:9px 12px 9px 7px;
+  border:1px solid color-mix(in srgb,var(--freak-accent) 32%,#30303a);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 9% 48%,color-mix(in srgb,var(--freak-accent) 16%,transparent),transparent 58%),
+    linear-gradient(145deg,#12151a,#0c0d11 72%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 10px 30px rgba(0,0,0,.22);
+  pointer-events:none;
+}
+.freakCoachReaction::after{
+  content:"";
+  position:absolute;
+  inset:auto 10px 0 96px;
+  height:1px;
+  background:linear-gradient(90deg,var(--freak-accent),transparent);
+  opacity:.34;
+}
+.freakCoachReaction[data-mood="g"],.freakCoachReaction[data-mood="correct"],.freakCoachReaction[data-mood="streak"]{--freak-accent:var(--g,#42e786)}
+.freakCoachReaction[data-mood="y"],.freakCoachReaction[data-mood="skeptical"]{--freak-accent:var(--y,#ffd257)}
+.freakCoachReaction[data-mood="r"],.freakCoachReaction[data-mood="wrong"]{--freak-accent:var(--r,#ff4b68)}
+.freakCoachReaction[data-mood="thinking"]{--freak-accent:var(--pink,#c8ff3d)}
+.freakCoachAvatarWrap{
+  width:76px;height:76px;border-radius:17px;overflow:hidden;position:relative;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 45%,#243128,#0b0d0d 72%);
+  border:1px solid color-mix(in srgb,var(--freak-accent) 36%,#2d3330);
+  box-shadow:0 0 24px color-mix(in srgb,var(--freak-accent) 10%,transparent);
+}
+.freakCoachAvatarWrap::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  box-shadow:inset 0 0 18px rgba(0,0,0,.28);pointer-events:none
+}
+.freakCoachAvatar{width:100%;height:100%;display:block}
+.freakCoachCopy{min-width:0}
+.freakCoachCopy .ey{display:block;margin-bottom:4px;color:color-mix(in srgb,var(--freak-accent) 76%,#aaa)}
+.freakCoachCopy strong{display:block;font-size:13px;line-height:1.18;letter-spacing:-.015em;color:#f7f7f5}
+.freakCoachCopy p{margin:5px 0 0!important;font-size:10px;line-height:1.32;color:#9f9da5}
+.freakCoachReaction.freakCoachWide{grid-template-columns:86px minmax(0,1fr);padding:10px 13px 10px 8px}
+.freakCoachReaction.freakCoachWide .freakCoachAvatarWrap{width:86px;height:86px}
+.freakCoachReaction.freakCoachThinking .freakCoachAvatarWrap{animation:freakThinkingGlow 1.8s ease-in-out infinite}
+@keyframes freakThinkingGlow{50%{box-shadow:0 0 30px color-mix(in srgb,var(--freak-accent) 20%,transparent)}}
+@media(max-width:370px){
+  .freakCoachReaction{grid-template-columns:66px minmax(0,1fr);gap:9px;padding:8px 9px 8px 6px}
+  .freakCoachAvatarWrap{width:66px;height:66px;border-radius:15px}
+  .freakCoachReaction.freakCoachWide{grid-template-columns:72px minmax(0,1fr)}
+  .freakCoachReaction.freakCoachWide .freakCoachAvatarWrap{width:72px;height:72px}
+  .freakCoachCopy strong{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.freakCoachReaction.freakCoachThinking .freakCoachAvatarWrap{animation:none}}

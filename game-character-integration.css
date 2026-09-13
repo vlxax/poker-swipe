@@ -1,0 +1,143 @@
+/**
+ * PokerSwipe — Character Integration System
+ * Global rules for Freak Lady + companion in game UI
+ */
+
+body.psGameVisualV2 {
+  --ps-char-safe-bottom: var(--ps-content-safe-bottom);
+  --ps-char-bleed-reserve: clamp(48px, 12vw, 72px);
+  --ps-char-max-overlap: 45%;
+}
+
+/* ── Safe visual zones ── */
+body.psGameVisualV2 .psCharZone {
+  position: relative;
+  overflow: visible;
+  padding-bottom: var(--ps-char-bleed-reserve);
+}
+
+body.psGameVisualV2 .psCharZone--coach {
+  min-height: clamp(220px, 40vh, 320px);
+  padding-bottom: calc(var(--ps-char-safe-bottom) * 0.5);
+}
+
+/* ── Character frame rules ── */
+body.psGameVisualV2 .psCharCompose {
+  pointer-events: none;
+  z-index: 10;
+}
+
+body.psGameVisualV2 .psCharCompose__art {
+  pointer-events: none;
+}
+
+body.psGameVisualV2 .psCharCompose__bubble {
+  border: 1px solid var(--ps-game-rim-strong) !important;
+  background: rgba(6, 8, 6, 0.92) !important;
+  box-shadow: var(--ps-game-shadow), 0 0 20px rgba(200, 255, 61, 0.06) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.psGameVisualV2 .psCharCompose__text {
+  color: #eef2e8 !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  font-weight: 700 !important;
+}
+
+body.psGameVisualV2 .psCharCompose__eyeline {
+  display: none !important;
+}
+
+/* ── Edge peek (home leak card) ── */
+body.psGameVisualV2 .psHomeCoachHost {
+  position: absolute;
+  right: -8px;
+  bottom: -4px;
+  width: 42%;
+  min-height: 120px;
+  z-index: 8;
+  pointer-events: none;
+  overflow: visible;
+}
+
+body.psGameVisualV2 .v30Leak,
+body.psGameVisualV2 .v31Insight {
+  position: relative;
+  overflow: visible !important;
+  padding-right: 38% !important;
+}
+
+/* ── Coach hosts: document-flow bleed reserve ── */
+body.psGameVisualV2 .psDailyCoachHost,
+body.psGameVisualV2 .psReviewCoachHost,
+body.psGameVisualV2 .psVerdictCoachLayer,
+body.psGameVisualV2 .psSizingCoachHost {
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* ── Bottom safe: character never clipped by nav ── */
+body.psGameVisualV2 .psCharCompose--scene .psCharCompose__art .freakCoachAvatar {
+  max-height: calc(100vh - var(--ps-char-safe-bottom) - 80px);
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+/* ── Speech bubble unified style ── */
+body.psGameVisualV2 .psCharBubble,
+body.psGameVisualV2 .freakCoachBubble {
+  border: 1px solid var(--ps-game-rim-strong) !important;
+  background: rgba(6, 8, 6, 0.94) !important;
+  border-radius: 16px 16px 16px 6px !important;
+  box-shadow: var(--ps-game-shadow) !important;
+  color: #eef2e8 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+/* ── Coach card (reaction wrapper) ── */
+body.psGameVisualV2 .freakCoachReaction {
+  border: 1px solid var(--ps-game-rim) !important;
+  border-radius: var(--ps-game-radius-sm) !important;
+  background: rgba(8, 10, 8, 0.85) !important;
+}
+
+/* ── No overlap with CTA zone ── */
+body.psGameVisualV2 .verdictCTA,
+body.psGameVisualV2 #dailyArea .panel > .primary,
+body.psGameVisualV2 #reviewArea .primary {
+  margin-top: 12px;
+  z-index: 24;
+}
+
+/* ── Demon peek companion ── */
+body.psGameVisualV2 .psDemonPeek {
+  z-index: 18 !important;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* ── Glow pulse on active coach ── */
+body.psGameVisualV2 .psCharCompose--in .psCharCompose__art .freakCoachAvatar {
+  animation: psCharGlowPulse 3s ease-in-out infinite;
+}
+
+@keyframes psCharGlowPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 20px rgba(200, 255, 61, 0.2))
+      drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 32px rgba(200, 255, 61, 0.32))
+      drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.psGameVisualV2 .psCharCompose--in .psCharCompose__art .freakCoachAvatar {
+    animation: none !important;
+  }
+}

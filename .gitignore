@@ -4,5 +4,18 @@ node_modules/
 # Logs
 *.log
 
-# SourceCraft assistant workspace
-.codeassistant/
+# Wrangler build artifacts
+.wrangler/
+
+# Trainer build artifacts — regenerate via buildTrainerKnowledge.mjs
+data/trainer/built/strategy-map-index-cache.json
+data/trainer/built/chart-images/
+data/trainer/built/batch2-parsed-hands.json
+data/trainer/built/batch2-hand-records.json
+data/trainer/built/batch2-shards/
+test-results/
+
+# Polyana sync artifacts (temporary backups and logs only, not state)
+data/.backup_*.json
+data/.polyana_sync.log
+__pycache__/

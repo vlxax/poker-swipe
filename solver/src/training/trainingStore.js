@@ -5,6 +5,7 @@
 
 import { candidateIdentity } from './candidateNormalizer.js';
 import { createPersonalizationSeed } from './personalizationSeed.js';
+import { createDiagnosticSessionSeed } from './diagnosticSelection.js';
 
 const STORE_VERSION = 2;
 
@@ -182,6 +183,23 @@ export function createTrainingStore({
     return seed;
   }
 
+  // ---- diagnostic session seed (initial placement test only) ----------------
+  function loadDiagnosticSessionSeed() {
+    const data = loadJSON('diagnosticSessionSeed', null);
+    return data && data.seed ? data.seed : null;
+  }
+  function saveDiagnosticSessionSeed(seed) {
+    if (!seed) return;
+    saveJSON('diagnosticSessionSeed', { seed: String(seed), savedAt: now() });
+  }
+  function getOrCreateDiagnosticSessionSeed() {
+    const existing = loadDiagnosticSessionSeed();
+    if (existing) return existing;
+    const seed = createDiagnosticSessionSeed();
+    saveDiagnosticSessionSeed(seed);
+    return seed;
+  }
+
   // ---- per-skill evidence (accumulated training + assessment) -------------
   function loadSkillEvidence() {
     return loadJSON('skillEvidence', {});
@@ -196,6 +214,13 @@ export function createTrainingStore({
   }
   function saveSkillMastery(mastery) {
     saveJSON('skillMastery', mastery || {});
+  }
+
+  function loadSpacedReviews() {
+    return loadJSON('spacedReviews', []);
+  }
+  function saveSpacedReviews(list) {
+    saveJSON('spacedReviews', list || []);
   }
 
   // ---- analytics events (append-only, capped) ------------------------------
@@ -231,10 +256,15 @@ export function createTrainingStore({
     loadPersonalizationSeed,
     savePersonalizationSeed,
     getOrCreatePersonalizationSeed,
+    loadDiagnosticSessionSeed,
+    saveDiagnosticSessionSeed,
+    getOrCreateDiagnosticSessionSeed,
     loadSkillEvidence,
     saveSkillEvidence,
     loadSkillMastery,
     saveSkillMastery,
+    loadSpacedReviews,
+    saveSpacedReviews,
     addAnalyticsEvent,
     loadAnalyticsEvents,
     reset

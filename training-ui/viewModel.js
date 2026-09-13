@@ -7,6 +7,9 @@ import { skillScoresForHome } from '../solver/src/training/taskFeedback.js';
 import {
   focusItemsFromProfile, whyTextForTraining, trainingSubtitle
 } from './trainingHomeCopy.js';
+import {
+  skillSummaryVm, trackRowVm, whyTextFromDynamicProfile, focusTracksFromProfile
+} from './playerProfileCopy.js';
 
 export const STREET_RU = { preflop: 'ПРЕФЛОП', flop: 'ФЛОП', turn: 'ТЁРН', river: 'РИВЕР' };
 export const ASSESSMENT_STREET_RU = { 'ПРЕФЛОП': 'ПРЕФЛОП', 'ФЛОП': 'ФЛОП', 'ТЁРН': 'ТЁРН', 'РИВЕР': 'РИВЕР' };
@@ -16,6 +19,31 @@ export function gradeClass(grade) {
   if (grade === 'EXCELLENT' || grade === 'GOOD') return 'g';
   if (grade === 'INACCURACY') return 'y';
   return 'r';
+}
+
+// ---- Player profile (dynamic) -----------------------------------------------
+
+export function playerProfileViewModel(skillProfile) {
+  const tracks = skillProfile?.tracks || skillProfile?.dynamic?.tracks;
+  if (!tracks || !Object.keys(tracks).length) return null;
+
+  const trackRows = Object.values(tracks)
+    .filter((t) => t && t.score != null)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .map(trackRowVm);
+
+  const weakest = skillProfile.weakest || skillProfile.dynamic?.weakest;
+  const strongest = skillProfile.strongest || skillProfile.dynamic?.strongest;
+  const focusTracks = focusTracksFromProfile(skillProfile, 3).map(trackRowVm);
+
+  return {
+    strongest: skillSummaryVm(strongest),
+    weakest: skillSummaryVm(weakest),
+    tracks: trackRows,
+    focusTracks,
+    overall: skillProfile.overall ?? skillProfile.dynamic?.overall ?? null,
+    overallLabel: skillProfile.overallLabel ?? skillProfile.dynamic?.overallLabel ?? null
+  };
 }
 
 // ---- Home -------------------------------------------------------------------
@@ -38,8 +66,10 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     };
   }
 
+  const playerProfile = playerProfileViewModel(skillProfile);
   const focusItems = focusItemsFromProfile({ skillProfile, leaks: leaksList, plan, limit: 3 });
-  const whyText = whyTextForTraining({ skillProfile, leaks: leaksList, focusItems, plan });
+  const dynamicWhy = whyTextFromDynamicProfile(skillProfile);
+  const whyText = dynamicWhy || whyTextForTraining({ skillProfile, leaks: leaksList, focusItems, plan });
   const skillScores = hasSkill ? skillScoresForHome(skillProfile) : [];
 
   return {
@@ -48,6 +78,14 @@ export function homeViewModel({ leaks = [], plan = null, skillProfile = null } =
     subtitle: trainingSubtitle(total),
     levelHeading: 'ТВОЙ УРОВЕНЬ',
     skillScores,
+    playerProfile,
+    profileHeading: 'ТВОЙ ПРОФИЛЬ',
+    strongestHeading: 'Сильный навык',
+    weakestHeading: 'Слабый навык',
+    tracksHeading: 'НАВЫКИ',
+    masteryHeading: 'мастерство',
+    trendHeading: 'тренд',
+    mistakesHeading: 'ошибки',
     focusHeading: 'СЕГОДНЯ В ФОКУСЕ',
     focusItems,
     whyHeading: 'ПОЧЕМУ',
@@ -118,6 +156,9 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
       structured: true,
       verdict: fb.verdict,
       correctLine: fb.correctLine,
+      chosenAction: fb.chosenLabelRu || null,
+      correctAction: fb.correctLine || fb.recLabelRu || null,
+      keyTakeaway: fb.concept || fb.remember || null,
       why: fb.why,
       userMistake: fb.userMistake,
       remember: fb.concept,
@@ -138,12 +179,17 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
     };
   }
 
+  const fbLoose = result && result.feedbackRu;
   return {
     grade: result && result.grade,
-    gradeTitle: result && result.feedbackRu && result.feedbackRu.title,
-    summary: result && result.feedbackRu && result.feedbackRu.summary,
-    tip: result && result.feedbackRu && result.feedbackRu.tip,
-    concept: result && result.feedbackRu && result.feedbackRu.concept,
+    gradeTitle: fbLoose && fbLoose.title,
+    chosenAction: fbLoose && fbLoose.chosenLabelRu,
+    correctAction: fbLoose && (fbLoose.correctLine || fbLoose.recLabelRu),
+    keyTakeaway: fbLoose && (fbLoose.concept || fbLoose.remember),
+    summary: fbLoose && fbLoose.summary,
+    tip: fbLoose && fbLoose.tip,
+    concept: fbLoose && fbLoose.concept,
+    why: fbLoose && fbLoose.why,
     evLossBb: result && result.evLossBb,
     nearOptimal: !!(result && result.nearOptimal),
     mixedStrategy: !!(result && result.mixedStrategy),
@@ -152,6 +198,21 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
       recommendedActionLabel: rec ? actionLabelRu(rec) : null,
       recommendedFrequency: sol.recommendedFrequency != null ? sol.recommendedFrequency : null
     }
+  };
+}
+
+/** Session HUD: progress + score from existing results (no new scoring). */
+export function sessionProgressViewModel({ index = 0, total = 0, results = [] } = {}) {
+  const safeTotal = total > 0 ? total : 0;
+  const safeIndex = safeTotal ? Math.min(Math.max(1, index), safeTotal) : 0;
+  const correct = (results || []).filter((r) => r && (r.grade === 'EXCELLENT' || r.grade === 'GOOD')).length;
+  const remaining = safeTotal ? Math.max(0, safeTotal - safeIndex + 1) : 0;
+  return {
+    index: safeIndex,
+    total: safeTotal,
+    correct,
+    remaining,
+    answered: (results || []).length
   };
 }
 
@@ -200,21 +261,71 @@ export function summaryViewModel({ session = null, results = [], baselineLosses 
   };
 }
 
-// ---- Primary assessment (P0) --------------------------------------------------
+// ---- Primary assessment / Placement Test V2 -----------------------------------
 
-// A single question from the 12-item primary diagnostic. Choices are plain
-// strings (e.g. 'ФОЛД'/'РЕЙЗ'), exposed as { id, labelRu } pairs for the renderer.
-export function assessmentViewModel({ item = null, index = 1, total = 1 } = {}) {
-  if (!item) return { q: null, choices: [], progress: { index: 0, total: 0 } };
+const MODE_LABELS = {
+  swipe: 'SWIPE',
+  sizing: 'SIZING',
+  review: 'LINE REVIEW',
+  xray: 'X-RAY',
+  quick: 'QUICK'
+};
+
+const MODE_HEADINGS = {
+  swipe: 'ЧТО СДЕЛАЕШЬ?',
+  sizing: 'КАКОЙ РАЗМЕР?',
+  review: 'ГДЕ ЛИНИЯ СЛОМАЛАСЬ?',
+  xray: 'КТО ВПЕРЕДИ?',
+  quick: 'БЫСТРОЕ РЕШЕНИЕ'
+};
+
+export function placementViewModel({ item = null, index = 1, total = 1 } = {}) {
+  if (!item) {
+    return { mode: 'swipe', choices: [], progress: { index: 0, total: 0 }, context: null };
+  }
+
+  const ctx = item.context || {};
+  const mode = item.miniAppMode || 'swipe';
+
   return {
+    version: item.version || 2,
     id: item.id,
-    q: item.q,
+    mode,
+    modeLabel: MODE_LABELS[mode] || 'PLACEMENT',
+    heading: MODE_HEADINGS[mode] || 'ЧТО СДЕЛАЕШЬ?',
+    prompt: item.prompt || item.q || 'Твоё решение?',
     street: item.street,
     streetRu: ASSESSMENT_STREET_RU[item.street] || String(item.street || '').toUpperCase(),
     skillTag: item.skillTag,
     concept: item.concept,
     progress: { index, total },
-    choices: (item.choices || []).map((c) => ({ id: c, labelRu: c }))
+    choices: (item.choices || []).map((c) => ({ id: c, labelRu: c })),
+    context: {
+      formatLine: ctx.formatLine || 'MTT',
+      stageLine: ctx.stageLine || '',
+      tableLine: ctx.tableLine || '',
+      stacksLine: ctx.stacksLine || '',
+      heroPosition: ctx.heroPosition || '',
+      villainPosition: ctx.villainPosition || '',
+      heroCards: ctx.heroCards || [],
+      board: ctx.board || [],
+      potBb: ctx.potBb,
+      effStackBb: ctx.effStackBb,
+      actionHistory: ctx.actionHistory || [],
+      opponent: ctx.opponent || null
+    },
+    reviewNodes: item.reviewNodes || null,
+    sizingTargetPct: item.sizingTargetPct
+  };
+}
+
+// Backward-compatible wrapper — delegates to placement V2 view model.
+export function assessmentViewModel({ item = null, index = 1, total = 1 } = {}) {
+  if (!item) return { q: null, choices: [], progress: { index: 0, total: 0 } };
+  const vm = placementViewModel({ item, index, total });
+  return {
+    ...vm,
+    q: vm.prompt
   };
 }
 

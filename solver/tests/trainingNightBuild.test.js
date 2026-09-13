@@ -106,9 +106,9 @@ test('error cause labels and tips exist for every cause', () => {
 
 // ---- assessment --------------------------------------------------------------
 
-test('buildAssessmentSet returns ≤ count unique items', () => {
-  const set = buildAssessmentSet({ rng: () => 0.5, count: 12 });
-  assert.ok(set.length <= 12);
+test('buildAssessmentSet returns requested count of unique items', () => {
+  const set = buildAssessmentSet({ rng: () => 0.5, count: 12, answerFn: (item) => item.correct });
+  assert.equal(set.length, 12);
   const ids = new Set(set.map((s) => s.id));
   assert.equal(ids.size, set.length);
 });

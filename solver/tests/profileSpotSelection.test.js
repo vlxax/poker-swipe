@@ -28,7 +28,12 @@ function bluffCatchSpotCount(plan) {
 
 function skillProfileWithScores(scores, now = 1000) {
   const leakProfiles = Object.entries(scores).map(([skill, score]) => {
-    const evLoss = score < 50 ? 0.6 : score < 70 ? 0.3 : 0.05;
+    const evLoss = score >= 85 ? 0.02
+      : score >= 80 ? 0.08
+      : score >= 75 ? 0.15
+      : score < 50 ? 0.6
+      : score < 70 ? 0.3
+      : 0.05;
     const concept = skill === 'icm' ? 'icm_pressure'
       : skill === 'bluffCatch' ? 'bluff_catch'
       : skill === 'preflop' ? 'open_range'
@@ -46,8 +51,8 @@ function skillProfileWithScores(scores, now = 1000) {
 
 test('metadata audit: most library tasks have usable personalization fields', () => {
   const audit = auditTaskMetadata();
-  assert.equal(audit.total, 107);
-  assert.ok(audit.fullyUsable >= 100, `expected >=100 fully usable, got ${audit.fullyUsable}`);
+  assert.equal(audit.total, 180);
+  assert.ok(audit.fullyUsable >= 173, `expected >=173 fully usable, got ${audit.fullyUsable}`);
   assert.ok(audit.withSkillTags >= 100);
 });
 
@@ -91,7 +96,7 @@ test('2: river bluff-catch leak prioritizes river defense spots', () => {
 
   assert.ok(bluffCatchSpotCount(plan) >= 2, `expected >=2 bluff-catch spots, got ${bluffCatchSpotCount(plan)}`);
   assert.ok(
-    plan.sessionPlan.primaryTargets.some((t) => /bluff|price|fold|catch/i.test(t)),
+    plan.sessionPlan.primaryTargets.some((t) => /bluff|price|fold|catch|блеф|кетч|цена|фолд|ривер/i.test(t)),
     'primary targets should mention river defense'
   );
 });

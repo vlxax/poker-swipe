@@ -1,5 +1,11 @@
 // Session diversity helpers — avoid repeating tasks and near-duplicate spots.
 
+export function variantFamilyId(taskId) {
+  return String(taskId || '')
+    .replace(/_V\d+$/i, '')
+    .replace(/_V\d+_[A-Za-z0-9]+$/i, '');
+}
+
 export function normalizeCards(cards) {
   if (!Array.isArray(cards)) return '';
   return cards.map((c) => String(c || '')
@@ -87,6 +93,9 @@ export function sessionRepetitionPenalty(spot, picked = []) {
     if (s.stackDepth && spot.stackDepth && s.stackDepth === spot.stackDepth) penalty += 1;
     if (s.decisionType && spot.decisionType && s.decisionType === spot.decisionType) penalty += 0.5;
     if (contentFingerprint(s) === contentFingerprint(spot) && s.id !== spot.id) penalty += 10;
+    const famA = String(s.id || '').replace(/_V\d+$/i, '');
+    const famB = String(spot.id || '').replace(/_V\d+$/i, '');
+    if (famA && famB && famA === famB && s.id !== spot.id) penalty += 25;
   }
   return penalty;
 }

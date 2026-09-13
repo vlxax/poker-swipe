@@ -286,11 +286,6 @@
     };
   }
 
-  // Мини-апки первого раздела.
-  wrap('renderSwipe', '#swipeCard', 'swipe');
-  wrap('renderSizing', '#sizingArea', 'sizing');
-  wrap('renderReview', '#reviewArea', 'review');
-  wrap('renderDaily', '#dailyArea', 'daily');
+  // Swipe / sizing / review / daily / xray — compact layout in mini-app-compact.js
   wrap('renderHeal', '#healArea', 'heal');
-  wrap('renderXray', '#xrayArea', 'xray');
 })();

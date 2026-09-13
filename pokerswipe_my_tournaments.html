@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokerSwipe Pro · MTT Performance Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07080a; --surf-1:#131512; --surf-2:#191c17; --surf-3:#0e100d;
+    --surf-glass: rgba(255,255,255,0.035);
+    --border: rgba(255,255,255,0.08); --border-soft: rgba(255,255,255,0.05);
+    --lime:#D8FF3E; --lime-dim: rgba(216,255,62,0.14);
+    --white:#F3F5EF; --muted:#888F84; --muted-2:#5C6259;
+    --coral:#FF6B5B; --coral-dim: rgba(255,107,91,0.12);
+    --purple:#B9A6FF; --purple-dim: rgba(185,166,255,0.12);
+    --gold:#F5C84C; --gold-dim: rgba(245,200,76,0.14);
+    --radius-lg:24px; --radius-md:16px; --radius-sm:11px;
+    --error:#FF3B30; --success:#34C759;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; background:#000; font-family:'Manrope',sans-serif; color:var(--white);}
+  body{display:flex; flex-direction:column; align-items:center; gap:22px; padding:36px 12px 60px; min-height:100vh;}
+  .page-label{color:#555; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;}
+
+  .frame{
+    width:390px; min-height:844px;
+    background: radial-gradient(120% 90% at 50% -10%, #10130f 0%, var(--bg) 45%, #050505 100%);
+    border-radius:46px; position:relative; overflow:hidden;
+    box-shadow: 0 0 0 10px #000, 0 0 0 11px #232323, 0 40px 90px rgba(0,0,0,0.7), 0 0 120px rgba(216,255,62,0.05);
+    display:flex; flex-direction:column; padding-bottom:10px;
+  }
+  .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:26px; background:#000; border-radius:0 0 18px 18px; z-index:50;}
+  .scroll{flex:1; overflow-y:auto; overflow-x:hidden; -ms-overflow-style:none; scrollbar-width:none; padding-bottom:100px; max-height:750px;}
+  .scroll::-webkit-scrollbar{display:none;}
+  .glow-a{position:absolute; top:-120px; right:-100px; width:320px; height:320px; background: radial-gradient(circle, rgba(216,255,62,0.14) 0%, rgba(216,255,62,0) 70%); pointer-events:none; z-index:0;}
+
+  header{position:relative; z-index:2; padding:40px 18px 4px; display:flex; align-items:center; justify-content:space-between;}
+  .h1{ font-family:'Unbounded',sans-serif; font-weight:900; font-size:26px; line-height:1; letter-spacing:-0.01em; text-transform:uppercase;}
+  .h1 .dotend{color:var(--lime);}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; color:var(--muted-2); text-transform:uppercase; margin-top:4px; display:flex; align-items:center; gap:6px;}
+  .eyebrow .dot{width:5px;height:5px;border-radius:50%;background:var(--lime); box-shadow:0 0 8px var(--lime);}
+  .header-actions{display:flex; gap:8px; align-items:center;}
+  .addbtn{
+    display:flex; align-items:center; gap:6px; background:var(--lime); color:#0A0B08; border:none; border-radius:100px;
+    padding:11px 16px; font-family:'Unbounded',sans-serif; font-weight:700; font-size:12px; text-transform:uppercase;
+    box-shadow:0 8px 20px rgba(216,255,62,0.3); cursor:pointer; flex-shrink:0;
+  }
+  .addbtn svg{width:14px;height:14px;}
+  .exportbtn{
+    display:flex; align-items:center; gap:4px; background:var(--surf-1); border:1px solid var(--border); color:var(--muted);
+    border-radius:100px; padding:9px 12px; font-family:'JetBrains Mono',monospace; font-size:9px; cursor:pointer;
+    transition:all .2s ease; flex-shrink:0;
+  }
+  .exportbtn:hover{ border-color:var(--lime); color:var(--lime); }
+
+  .filters{ padding:14px 18px 0; position:relative; z-index:2; display:flex; flex-direction:column; gap:8px;}
+  .filter-row{ display:flex; gap:7px; overflow-x:auto; -ms-overflow-style:none; scrollbar-width:none; padding-bottom:2px;}
+  .filter-row::-webkit-scrollbar{display:none;}
+  .fchip{
+    flex-shrink:0; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.03em; color:var(--muted);
+    background:var(--surf-1); border:1px solid var(--border-soft); padding:6px 12px; border-radius:100px; cursor:pointer; transition:all .2s ease;
+    white-space:nowrap;
+  }
+  .fchip.active{ color:#0A0B08; background:var(--lime); border-color:var(--lime); font-weight:700;}
+  .fchip.type-active-online{ color:var(--purple); background:var(--purple-dim); border-color:rgba(185,166,255,0.4);}
+  .fchip.type-active-sport{ color:var(--gold); background:var(--gold-dim); border-color:rgba(245,200,76,0.4);}
+
+  .dash-wrap{ padding:16px 18px 0; position:relative; z-index:2;}
+  .dash-title{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.14em; color:var(--muted-2); text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between;}
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .stat{
+    background:var(--surf-1); border:1px solid var(--border-soft); border-radius:var(--radius-md); padding:12px 13px;
+  }
+  .stat .label{ font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase; margin-bottom:4px;}
+  .stat .value{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:18px; letter-spacing:-0.01em;}
+  .stat .value.pos{color:var(--lime);} .stat .value.neg{color:var(--coral);}
+  .stat .value.neutral{color:var(--muted);}
+  .stat .sub{ font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted-2); margin-top:2px;}
+  .sample-note{
+    margin-top:8px; display:flex; align-items:center; gap:7px; font-family:'JetBrains Mono',monospace; font-size:10px;
+    color:var(--gold); background:var(--gold-dim); border:1px solid rgba(245,200,76,0.25); border-radius:var(--radius-sm); padding:9px 12px;
+  }
+
+  .chart-wrap{ padding:16px 18px 0; position:relative; z-index:2;}
+  .chart-card{ background:var(--surf-1); border:1px solid var(--border-soft); border-radius:var(--radius-lg); padding:16px 14px 12px; position:relative;}
+  .chart-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:0 4px; flex-wrap:wrap; gap:4px;}
+  .chart-title{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.01em;}
+  .chart-end{ font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;}
+  .chart-end.pos{color:var(--lime);} .chart-end.neg{color:var(--coral);}
+  svg.chart{ width:100%; height:140px; display:block; cursor:pointer;}
+  .chart-tooltip{ position:absolute; background:var(--surf-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--white); pointer-events:none; opacity:0; transition:opacity .2s ease; z-index:50; max-width:200px;}
+
+  .section{ padding:18px 18px 0; position:relative; z-index:2;}
+  .section-title{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:0.01em; margin-bottom:10px; display:flex; align-items:center; gap:7px; flex-wrap:wrap;}
+  .section-title .n{color:var(--muted-2); font-weight:400; font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .section-title .badge-count{ background:var(--lime-dim); color:var(--lime); padding:2px 8px; border-radius:100px; font-size:9px; font-family:'JetBrains Mono',monospace;}
+
+  .insight-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;
+  }
+  .insight-card{
+    background:var(--surf-1); border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:11px 13px;
+    transition:all .15s ease;
+  }
+  .insight-card .label{ font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:0.06em; color:var(--muted-2); text-transform:uppercase; margin-bottom:4px;}
+  .insight-card .value{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:14px;}
+  .insight-card .value.pos{color:var(--lime);} .insight-card .value.neg{color:var(--coral);}
+  .insight-card .sub{ font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--muted-2); margin-top:2px;}
+  .insight-card .sub .highlight{color:var(--white);}
+  .insight-card.clickable{ cursor:pointer; }
+  .insight-card.clickable:hover{ background:var(--surf-2); border-color:rgba(216,255,62,0.2); }
+  .insight-card.clickable .sub::after{ content: ' 👆'; font-size:9px; opacity:0.5; }
+  .insight-card.span2{ grid-column:span 2; }
+
+  .insight-warning{
+    background:linear-gradient(120deg, rgba(216,255,62,0.07), rgba(216,255,62,0.015));
+    border:1px solid rgba(216,255,62,0.18); border-radius:var(--radius-md); padding:11px 14px;
+    display:flex; gap:10px; align-items:flex-start; margin-top:10px;
+  }
+  .insight-warning .ico{ font-size:16px; flex-shrink:0; margin-top:1px; }
+  .insight-warning p{ margin:0; font-size:11px; line-height:1.4; color:var(--white); font-weight:500; font-family:'JetBrains Mono',monospace;}
+
+  .buckets-grid{ display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;}
+  .bucket-item{ background:var(--surf-3); border-radius:var(--radius-sm); padding:8px 10px; border:1px solid var(--border-soft);}
+  .bucket-item .lbl{ font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--muted-2);}
+  .bucket-item .val{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:13px;}
+  .bucket-item .val.pos{color:var(--lime);} .bucket-item .val.neg{color:var(--coral);}
+  .bucket-item .sub{ font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--muted-2);}
+
+  .rolling-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-top:6px;}
+  .rolling-item{ background:var(--surf-3); border-radius:var(--radius-sm); padding:6px 8px; text-align:center;}
+  .rolling-item .lbl{ font-family:'JetBrains Mono',monospace; font-size:7px; color:var(--muted-2);}
+  .rolling-item .val{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:12px;}
+  .rolling-item .val.pos{color:var(--lime);} .rolling-item .val.neg{color:var(--coral);}
+
+  .bar-list{ display:flex; flex-direction:column; gap:7px;}
+  .bar-row{ background:var(--surf-1); border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:10px 12px; cursor:pointer; transition:all .15s ease;}
+  .bar-row:active{ transform:scale(0.98); background:var(--surf-2); }
+  .bar-row:hover{ border-color:rgba(216,255,62,0.2); }
+  .bar-row-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .bar-row-name{ font-family:'Manrope',sans-serif; font-weight:700; font-size:12px;}
+  .bar-row-roi{ font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;}
+  .bar-row-roi.pos{color:var(--lime);} .bar-row-roi.neg{color:var(--coral);}
+  .bar-track{ height:5px; background:var(--border-soft); border-radius:4px; overflow:hidden; position:relative;}
+  .bar-fill{ height:100%; border-radius:4px; position:absolute; top:0;}
+  .bar-fill.pos{ background:var(--lime); left:50%;}
+  .bar-fill.neg{ background:var(--coral); right:50%;}
+  .bar-mid{ position:absolute; left:50%; top:-2px; width:1px; height:9px; background:var(--muted-2);}
+  .bar-row-foot{ display:flex; justify-content:space-between; margin-top:5px; font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--muted-2);}
+
+  .list-head{ padding:20px 18px 10px; display:flex; align-items:center; justify-content:space-between; position:relative; z-index:2;}
+  .list-title{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:13px; letter-spacing:0.01em; text-transform:uppercase; display:flex; align-items:center; gap:7px;}
+  .list-title .count{color:var(--muted-2); font-weight:400; font-family:'JetBrains Mono',monospace;}
+  .list{ padding:0 18px; display:flex; flex-direction:column; gap:8px; position:relative; z-index:2;}
+  .tcard{ background:var(--surf-1); border:1px solid var(--border-soft); border-radius:var(--radius-md); padding:12px 13px; position:relative; overflow:hidden; cursor:pointer;}
+  .tcard.win{ border-color:rgba(216,255,62,0.22); }
+  .tcard.win::after{ content:''; position:absolute; top:-30%; right:-15%; width:110px; height:110px; background:radial-gradient(circle, rgba(216,255,62,0.09), transparent 70%); pointer-events:none;}
+  .tcard-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .tcard-badges{ display:flex; align-items:center; gap:4px; flex-wrap:wrap;}
+  .badge{ font-family:'JetBrains Mono',monospace; font-size:7.5px; letter-spacing:0.06em; padding:2px 5px; border-radius:4px; text-transform:uppercase; font-weight:700;}
+  .badge.offline{ background:var(--lime-dim); color:var(--lime);}
+  .badge.online{ background:var(--purple-dim); color:var(--purple);}
+  .badge.sport{ background:var(--gold-dim); color:var(--gold);}
+  .badge.pko{ background:var(--coral-dim); color:var(--coral);}
+  .badge.reentry{ background:var(--purple-dim); color:var(--purple);}
+  .badge.bucket{ background:var(--surf-2); color:var(--muted);}
+  .tcard-venue{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:11px; letter-spacing:0.01em; text-transform:uppercase; color:var(--white);}
+  .tcard-date{ font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted-2);}
+  .tcard-name{ font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-bottom:7px;}
+  .tcard-mid{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:6px;}
+  .tcard-place{ font-family:'Unbounded',sans-serif; font-weight:900; font-size:18px; color:var(--white); line-height:1;}
+  .tcard-place span{font-size:11px; color:var(--muted-2); font-weight:500; font-family:'JetBrains Mono',monospace;}
+  .tcard-profit{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:14px;}
+  .tcard-profit.pos{color:var(--lime);} .tcard-profit.neg{color:var(--coral);} .tcard-profit.pts{color:var(--gold);}
+  .trophy{font-size:13px; margin-left:4px;}
+  .tcard-foot{ font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--muted-2); padding-top:6px; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; flex-wrap:wrap;}
+  .tcard-actions{ display:flex; gap:6px; margin-top:6px; border-top:1px solid var(--border-soft); padding-top:6px;}
+  .tcard-actions button{ background:var(--surf-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:4px 10px; color:var(--muted-2); font-family:'JetBrains Mono',monospace; font-size:8px; cursor:pointer; transition:all .2s ease;}
+  .tcard-actions button:hover{ border-color:var(--lime); color:var(--lime);}
+  .tcard-actions button.danger:hover{ border-color:var(--coral); color:var(--coral);}
+
+  .empty{ padding:30px 18px 10px; position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center;}
+  .empty h3{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:16px; text-transform:uppercase; margin:4px 0 8px;}
+  .empty p{ font-size:13px; color:var(--muted); line-height:1.5; margin:0 0 18px; max-width:250px;}
+  .empty .cta{ font-family:'Unbounded',sans-serif; font-weight:700; font-size:12.5px; background:var(--lime); color:#0A0B08; border:none; border-radius:100px; padding:13px 24px; box-shadow:0 8px 22px rgba(216,255,62,0.3); cursor:pointer;}
+
+  .tabbar{ position:sticky; bottom:0; z-index:30; background:rgba(10,11,9,0.92); backdrop-filter:blur(14px); border-top:1px solid var(--border-soft); display:flex; align-items:flex-start; justify-content:space-around; padding-top:10px; padding-bottom:8px; margin-top:10px;}
+  .tabbar .tab{ display:flex; flex-direction:column; align-items:center; gap:3px; font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; transition:all .2s ease;}
+  .tabbar .tab.active{ color:var(--lime);}
+  .tabbar .tab svg{width:16px;height:16px;}
+
+  .overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.6); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .overlay.show{ opacity:1; pointer-events:auto;}
+  .sheet{ position:absolute; left:0; right:0; bottom:0; z-index:101; max-height:92%; overflow-y:auto;
+    background: linear-gradient(180deg, #14160f 0%, #0c0d0a 100%); border:1px solid var(--border); border-bottom:none;
+    border-radius:26px 26px 0 0; padding:14px 18px 30px; transform:translateY(100%); transition:transform .32s cubic-bezier(.2,.9,.25,1);
+    box-shadow:0 -20px 60px rgba(0,0,0,0.6);}
+  .sheet.show{ transform:translateY(0);}
+  .sheet-handle{ width:36px; height:4px; background:var(--border); border-radius:10px; margin:0 auto 14px;}
+  .sheet-title{ font-family:'Unbounded',sans-serif; font-weight:800; font-size:15px; text-transform:uppercase; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;}
+  .sheet-title .close{ background:var(--surf-1); border:1px solid var(--border); border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); font-size:14px;}
+  .sheet-choice{ display:flex; gap:8px; margin-bottom:4px;}
+  .sheet-choice button{ flex:1; padding:11px 6px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surf-1); color:var(--white); font-family:'Unbounded',sans-serif; font-weight:700; font-size:10px; text-transform:uppercase; cursor:pointer; transition:all .2s ease;}
+  .sheet-choice button.sel.offline{ background:var(--lime-dim); border-color:rgba(216,255,62,0.4); color:var(--lime);}
+  .sheet-choice button.sel.online{ background:var(--purple-dim); border-color:rgba(185,166,255,0.4); color:var(--purple);}
+  .sheet-choice button.sel.sport{ background:var(--gold-dim); border-color:rgba(245,200,76,0.4); color:var(--gold);}
+  .sheet-fields{ max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .sheet-fields.open{ max-height:1200px; margin-top:14px;}
+  .field{ margin-bottom:10px;}
+  .field label{ display:block; font-family:'JetBrains Mono',monospace; font-size:8.5px; letter-spacing:0.1em; color:var(--muted-2); text-transform:uppercase; margin-bottom:4px;}
+  .field input, .field select{ width:100%; background:var(--surf-1); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; color:var(--white); font-family:'Manrope',sans-serif; font-size:13px; outline:none;}
+  .field input:focus, .field select:focus{ border-color:var(--lime);}
+  .field input.error{ border-color:var(--error);}
+  .field .error-text{ color:var(--error); font-family:'JetBrains Mono',monospace; font-size:8px; margin-top:3px; display:none;}
+  .field .error-text.show{ display:block;}
+  .field-row{ display:flex; gap:8px;}
+  .field-row .field{ flex:1;}
+  .curr-row{ display:flex; gap:5px;}
+  .curr-btn{ flex:1; padding:9px 5px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--surf-1); color:var(--muted); font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px; cursor:pointer;}
+  .curr-btn.sel{ background:var(--lime-dim); border-color:rgba(216,255,62,0.4); color:var(--lime);}
+  .sheet-save{ width:100%; margin-top:4px; padding:13px; border:none; border-radius:100px; background:var(--lime); color:#0A0B08; font-family:'Unbounded',sans-serif; font-weight:700; font-size:13px; text-transform:uppercase; cursor:pointer;}
+  .sheet-save:disabled{ opacity:0.4; cursor:not-allowed;}
+
+  .toast{ position:fixed; top:50px; left:50%; transform:translateX(-50%) translateY(-20px); background:var(--white); color:#0A0B08; font-family:'Unbounded',sans-serif; font-weight:700; font-size:12px; padding:11px 18px; border-radius:100px; z-index:200; opacity:0; transition:all .3s ease; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0);}
+  .toast.error{ background:var(--error); color:var(--white);}
+
+  .detail-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:110; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .detail-overlay.show{ opacity:1; pointer-events:auto;}
+  .detail-sheet{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%) scale(0.95); z-index:111; background:var(--surf-2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px; max-height:80vh; overflow-y:auto; width:360px; opacity:0; transition:all .28s cubic-bezier(.2,.9,.25,1);}
+  .detail-sheet.show{ transform:translate(-50%,-50%) scale(1); opacity:1;}
+  .detail-close{ position:sticky; top:0; float:right; width:28px; height:28px; border-radius:50%; background:var(--surf-1); border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; z-index:5;}
+  .detail-row{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-soft); font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .detail-row .k{ color:var(--muted);} .detail-row .v{ color:var(--white); font-weight:600;}
+
+  .dev{ width:390px; background:#101010; border:1px solid #222; border-radius:16px; padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:11px; color:#888;}
+  .dev-title{ letter-spacing:0.1em; text-transform:uppercase; color:#555; margin-bottom:10px; font-size:10px;}
+  .dev-row{ display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-top:1px solid #1c1c1c;}
+  .dev-row:first-of-type{ border-top:none;}
+  .dev-row .toggle-label{ color:var(--muted); font-size:10px;}
+  .dev-row .toggle{ width:32px; height:18px; background:var(--border); border-radius:100px; cursor:pointer; position:relative; transition:all .2s ease;}
+  .dev-row .toggle.on{ background:rgba(216,255,62,0.3);}
+  .dev-row .toggle .knob{ position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:var(--muted); transition:all .2s ease;}
+  .dev-row .toggle.on .knob{ left:16px; background:var(--lime);}
+
+  @media(max-width:400px){ .frame{width:100%; border-radius:0; min-height:100vh;} .notch{display:none;} .detail-sheet{width:92%;} }
+
+  /* Стили для фильтра "Профи-режим" */
+  .pro-toggle{ display:flex; align-items:center; gap:8px; margin-left:auto; }
+  .pro-toggle .lbl{ font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--muted-2); text-transform:uppercase;}
+  .pro-toggle .switch{ width:30px; height:16px; background:var(--border); border-radius:100px; cursor:pointer; position:relative; transition:all .2s ease;}
+  .pro-toggle .switch.on{ background:rgba(216,255,62,0.3);}
+  .pro-toggle .switch .knob{ position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%; background:var(--muted); transition:all .2s ease;}
+  .pro-toggle .switch.on .knob{ left:16px; background:var(--lime);}
+</style>
+</head>
+<body>
+
+<div class="page-label">POKERSWIPE PRO · MTT PERFORMANCE TRACKER</div>
+
+<div class="frame" id="app">
+  <div class="notch"></div>
+  <div class="glow-a"></div>
+
+  <div class="scroll" id="scroll">
+    <header>
+      <div>
+        <div class="h1">ТУРНИРЫ<span class="dotend">.</span></div>
+        <div class="eyebrow"><span class="dot"></span>PROFESSIONAL TRACKER</div>
+      </div>
+      <div class="header-actions">
+        <button class="exportbtn" onclick="exportCSV()">📥 CSV</button>
+        <button class="addbtn" onclick="openSheet()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#0A0B08" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Добавить
+        </button>
+      </div>
+    </header>
+
+    <div class="filters">
+      <div class="filter-row" id="periodRow"></div>
+      <div class="filter-row" id="typeRow"></div>
+      <div class="filter-row" id="bucketRow" style="display:none;"></div>
+    </div>
+
+    <div class="dash-wrap">
+      <div class="dash-title">
+        <span>МОЯ ИГРА</span>
+        <div class="pro-toggle" onclick="toggleProMode()">
+          <span class="lbl">🔬 Профи-режим</span>
+          <div class="switch" id="proSwitch"><div class="knob"></div></div>
+        </div>
+      </div>
+      <div class="stat-grid" id="statGrid"></div>
+      <div id="sampleNote"></div>
+      <div id="additionalStats" style="margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted-2);"></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-card">
+        <div class="chart-head">
+          <div class="chart-title" id="chartTitle">ГРАФИК РЕЗУЛЬТАТА</div>
+          <div class="chart-end" id="chartEnd"></div>
+        </div>
+        <svg class="chart" id="chartSvg" viewBox="0 0 340 140" preserveAspectRatio="none"></svg>
+        <div class="chart-tooltip" id="chartTooltip"></div>
+      </div>
+    </div>
+
+    <!-- ===== ПРОФИ-БЛОК: РАЗБИВКА ПО БАЙ-ИНАМ ===== -->
+    <div class="section" id="bucketsSection" style="display:none;">
+      <div class="section-title">💰 ROI ПО БАЙ-ИН ДИАПАЗОНАМ <span class="badge-count" id="bucketsCount"></span></div>
+      <div class="buckets-grid" id="bucketsGrid"></div>
+    </div>
+
+    <!-- ===== ПРОФИ-БЛОК: СКОЛЬЗЯЩИЙ ROI ===== -->
+    <div class="section" id="rollingSection" style="display:none;">
+      <div class="section-title">📈 ROI СКОЛЬЗЯЩИМ ОКНОМ</div>
+      <div class="rolling-grid" id="rollingGrid"></div>
+    </div>
+
+    <!-- ===== ОСНОВНЫЕ ИНСАЙТЫ (7 ФИШЕК) ===== -->
+    <div class="section" id="insightsSection">
+      <div class="section-title">📊 КЛЮЧЕВЫЕ ИНСАЙТЫ</div>
+      <div id="insightsGrid" class="insight-grid"></div>
+      <div id="insightWarning" class="insight-warning" style="display:none;">
+        <div class="ico">⚠️</div>
+        <p id="warningText"></p>
+      </div>
+    </div>
+
+    <div class="section" id="splitSection">
+      <div class="section-title">🌍 ОФЛАЙН VS ОНЛАЙН</div>
+      <div class="split-card" id="splitCard"></div>
+    </div>
+
+    <div class="section" id="formatSection">
+      <div class="section-title">🏷️ ПО ТИПАМ ТУРНИРОВ <span class="n" id="formatN"></span></div>
+      <div class="bar-list" id="formatList"></div>
+    </div>
+
+    <div class="section" id="venueSection">
+      <div class="section-title" id="venueTitle">🏢 ПО РУМАМ / КЛУБАМ</div>
+      <div class="bar-list" id="venueList"></div>
+    </div>
+
+    <div class="list-head">
+      <div class="list-title">📋 ИСТОРИЯ <span class="count" id="listCount">(0)</span></div>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="empty" id="emptyState" style="display:none;">
+      <h3>Ещё нет турниров в этом фильтре</h3>
+      <p>Добавь результат — и здесь появится аналитика по нему.</p>
+      <button class="cta" onclick="openSheet()">+ ДОБАВИТЬ ТУРНИР</button>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l8-8 8 8M6 10v10h12V10"/></svg>ГЛАВНАЯ</div>
+    <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>РАЗДАЧИ</div>
+    <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20l6-8 4 4 6-9"/></svg>ПОЛЯНА</div>
+    <div class="tab active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h12M12 17v4M6 3h12l-1 8a5 5 0 0 1-10 0L6 3z"/></svg>ТУРНИРЫ</div>
+    <div class="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>ТЫ</div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">
+      <span id="sheetTitle">Добавить турнир</span>
+      <span class="close" onclick="closeSheet()">✕</span>
+    </div>
+    <div class="sheet-choice">
+      <button id="choiceOffline" onclick="selectAddType('offline')">Офлайн</button>
+      <button id="choiceOnline" onclick="selectAddType('online')">Онлайн</button>
+      <button id="choiceSport" onclick="selectAddType('sport')">Спорт</button>
+    </div>
+    <div class="sheet-fields" id="sheetFields"></div>
+  </div>
+
+  <div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+  <div class="detail-sheet" id="detailSheet">
+    <div class="detail-close" onclick="closeDetail()">✕</div>
+    <div id="detailBody"></div>
+  </div>
+
+  <div class="toast" id="toast">Турнир добавлен ✓</div>
+</div>
+
+<div class="dev">
+  <div class="dev-title">Управление данными</div>
+  <div class="dev-row"><span>Вернуть исходный набор</span><span style="color:var(--lime); cursor:pointer;" onclick="resetData()">Сбросить ↺</span></div>
+  <div class="dev-row"><span>Профи-режим</span>
+    <div class="toggle" id="devProToggle" onclick="toggleProMode()"><div class="knob"></div></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 1. ДАННЫЕ
+// ============================================================
+const RATE = 90;
+const BUCKETS = [
+  {label: 'Micro', max: 1000, icon: '🟢'},    // до $10
+  {label: 'Low', max: 5000, icon: '🔵'},      // $11-55
+  {label: 'Mid', max: 25000, icon: '🟡'},     // $55-250
+  {label: 'High', max: Infinity, icon: '🔴'}  // $250+
+];
+const WINDOWS = [50, 100, 200];
+
+let tournaments = [
+  {id:1, cat:'offline', date:'2026-08-22', ts:22, venue:'HEADSUP CLUB', name:'Weekly Deep', fmt:'MTT', buyin:1500, curr:'RUB', reentry:2, reentryCost:1500, place:3, field:42, cash:9000, bounty:0, isBounty:false, note:''},
+  {id:2, cat:'online', date:'2026-08-21', ts:21, venue:'GG / POKEROK', name:'Bounty Hunters', fmt:'PKO', buyin:1200, curr:'RUB', reentry:0, reentryCost:1200, place:17, field:284, cash:0, bounty:300, isBounty:true, note:''},
+  {id:3, cat:'offline', date:'2026-08-19', ts:19, venue:'POKER PALACE', name:'Sunday Main', fmt:'MTT', buyin:2000, curr:'RUB', reentry:0, reentryCost:2000, place:12, field:86, cash:4100, bounty:0, isBounty:false, note:''},
+  {id:4, cat:'online', date:'2026-08-20', ts:20, venue:'POKERSTARS', name:'Daily Main Event', fmt:'MTT', buyin:800, curr:'USD', reentry:1, reentryCost:800, place:4, field:156, cash:1620, bounty:0, isBounty:false, note:''},
+  {id:5, cat:'offline', date:'2026-08-15', ts:15, venue:'CHIPS CLUB', name:'Turbo Freeze', fmt:'MTT', buyin:1500, curr:'RUB', reentry:1, reentryCost:1200, place:28, field:34, cash:0, bounty:0, isBounty:false, note:''},
+  {id:6, cat:'online', date:'2026-08-14', ts:14, venue:'888POKER', name:'Sit&Go Express', fmt:'SNG', buyin:150, curr:'USD', reentry:0, reentryCost:150, place:2, field:9, cash:60, bounty:0, isBounty:false, note:''},
+  {id:7, cat:'offline', date:'2026-08-11', ts:11, venue:'ROYAL FLUSH', name:'Big Stack', fmt:'MTT', buyin:1000, curr:'RUB', reentry:3, reentryCost:1000, place:6, field:58, cash:7200, bounty:0, isBounty:false, note:''},
+  {id:8, cat:'sport', date:'2026-08-10', ts:10, venue:'FEDERATION CLUB', name:'Ranking Cup #4', fmt:'MTT', buyin:1000, curr:'RUB', reentry:0, reentryCost:1000, place:2, field:64, points:180, note:''},
+  {id:9, cat:'online', date:'2026-08-07', ts:7, venue:'GG / POKEROK', name:'Mini Bounty', fmt:'PKO', buyin:600, curr:'RUB', reentry:0, reentryCost:600, place:41, field:210, cash:0, bounty:150, isBounty:true, note:''},
+  {id:10, cat:'offline', date:'2026-08-05', ts:5, venue:'CHIPS CLUB', name:'Midweek MTT', fmt:'MTT', buyin:1500, curr:'RUB', reentry:0, reentryCost:1500, place:9, field:34, cash:600, bounty:0, isBounty:false, note:''},
+  {id:11, cat:'offline', date:'2026-08-02', ts:2, venue:'POKER PALACE', name:'Weekend Deep', fmt:'MTT', buyin:1500, curr:'RUB', reentry:1, reentryCost:1300, place:2, field:70, cash:5400, bounty:0, isBounty:false, note:''},
+  {id:12, cat:'sport', date:'2026-08-01', ts:1, venue:'FEDERATION CLUB', name:'Ranking Cup #3', fmt:'MTT', buyin:800, curr:'RUB', reentry:1, reentryCost:800, place:9, field:70, points:65, note:''},
+  {id:13, cat:'online', date:'2026-07-28', ts:-2, venue:'POKERDOM', name:'Hot Bounty', fmt:'PKO', buyin:400, curr:'RUB', reentry:0, reentryCost:400, place:53, field:180, cash:0, bounty:80, isBounty:true, note:''},
+  {id:14, cat:'offline', date:'2026-07-25', ts:-5, venue:'ROYAL FLUSH', name:'Freezeout', fmt:'MTT', buyin:1000, curr:'RUB', reentry:0, reentryCost:1000, place:31, field:52, cash:0, bounty:0, isBounty:false, note:''},
+];
+const ORIGINAL = JSON.parse(JSON.stringify(tournaments));
+
+let periodFilter = 'all';
+let typeFilter = 'all';
+let bucketFilter = 'all';
+let proMode = false;
+let addType = null;
+let editingId = null;
+let nextId = 100;
+
+// --- Утилиты ---
+const toRub = (t, amount) => t.curr === 'USD' ? Math.round(amount * RATE) : amount;
+const buyinRub = t => toRub(t, t.buyin);
+const reentryCostRub = t => toRub(t, t.reentryCost ?? t.buyin);
+const invested = t => buyinRub(t) + reentryCostRub(t) * (t.reentry || 0);
+const totalCashRub = t => toRub(t, t.cash || 0);
+const totalBountyRub = t => toRub(t, t.bounty || 0);
+const totalReturnedRub = t => totalCashRub(t) + totalBountyRub(t);
+const profitRub = t => totalReturnedRub(t) - invested(t);
+const profitUSD = t => t.curr === 'USD' ? (t.cash||0)+(t.bounty||0)-t.buyin-(t.reentryCost??t.buyin)*(t.reentry||0) : Math.round(profitRub(t)/RATE);
+const isITM = t => t.cat !== 'sport' && (t.cash || 0) > 0;
+const isFT = t => { if(t.cat==='sport'||!t.field||t.field<9)return false; return t.field>=100 ? t.place<=9 : t.place<=Math.round(t.field*0.1); };
+const isTop3 = t => t.place <= 3;
+const getBucket = buyin => BUCKETS.find(b => buyin <= b.max) || BUCKETS[BUCKETS.length-1];
+
+const fmtMoney = n => { if(n===null||n===undefined||!isFinite(n))return '—'; return (n>0?'+':n<0?'−':'')+Math.abs(Math.round(n)).toLocaleString('ru-RU')+' ₽'; };
+const fmtMoneyUSD = n => { if(n===null||n===undefined||!isFinite(n))return '—'; return (n>0?'+':n<0?'−':'')+'$'+Math.abs(Math.round(n)).toLocaleString('en-US'); };
+const fmtPts = n => (n>0?'+':'')+n+' pts';
+const fmtDate = d => { const p=d.split('-'); if(p.length===3)return `${parseInt(p[2])} ${['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'][parseInt(p[1])-1]}`; return d; };
+const plural = n => { if(n===1)return ''; if(n>=2&&n<=4)return 'а'; return 'ов'; };
+
+function inPeriod(t){
+  if(periodFilter==='all') return true;
+  const days = {'7':7,'30':30,'90':90,'365':365}[periodFilter];
+  return t.ts >= (22 - days);
+}
+function filtered(){
+  let list = tournaments.filter(t => inPeriod(t) && (typeFilter==='all' || t.cat===typeFilter));
+  if(bucketFilter !== 'all' && proMode){
+    const bucket = BUCKETS.find(b => b.label === bucketFilter);
+    if(bucket) list = list.filter(t => t.cat!=='sport' && buyinRub(t) <= bucket.max && (bucket.prevMax === undefined || buyinRub(t) > bucket.prevMax));
+  }
+  return list.sort((a,b)=>b.ts-a.ts);
+}
+const money = list => list.filter(t=>t.cat!=='sport');
+const sportList = list => list.filter(t=>t.cat==='sport');
+
+// ============================================================
+// 2. РЕНДЕРИНГ
+// ============================================================
+const PERIODS = [['7','7Д'],['30','30Д'],['90','3М'],['365','ГОД'],['all','ВСЁ']];
+const TYPES = [['all','ВСЕ'],['offline','ОФЛ'],['online','ОНЛ'],['sport','СПОРТ']];
+
+function renderFilters(){
+  document.getElementById('periodRow').innerHTML = PERIODS.map(([k,l])=>
+    `<div class="fchip ${periodFilter===k?'active':''}" onclick="setPeriod('${k}')">${l}</div>`).join('');
+  document.getElementById('typeRow').innerHTML = TYPES.map(([k,l])=>{
+    let ec=''; if(typeFilter===k&&k==='online')ec='type-active-online'; else if(typeFilter===k&&k==='sport')ec='type-active-sport'; else if(typeFilter===k)ec='active';
+    return `<div class="fchip ${ec}" onclick="setType('${k}')">${l}</div>`;
+  }).join('');
+  
+  // Bucket filters
+  const bucketRow = document.getElementById('bucketRow');
+  if(proMode){
+    bucketRow.style.display='flex';
+    bucketRow.innerHTML = `<div class="fchip ${bucketFilter==='all'?'active':''}" onclick="setBucket('all')">ВСЕ</div>` +
+      BUCKETS.map(b => `<div class="fchip ${bucketFilter===b.label?'active':''}" onclick="setBucket('${b.label}')">${b.icon} ${b.label}</div>`).join('');
+  } else {
+    bucketRow.style.display='none';
+  }
+}
+function setPeriod(p){ periodFilter=p; render(); }
+function setType(t){ typeFilter=t; render(); }
+function setBucket(b){ bucketFilter=b; render(); }
+
+function toggleProMode(){
+  proMode = !proMode;
+  document.getElementById('proSwitch').classList.toggle('on', proMode);
+  document.getElementById('devProToggle').classList.toggle('on', proMode);
+  document.getElementById('bucketsSection').style.display = proMode ? '' : 'none';
+  document.getElementById('rollingSection').style.display = proMode ? '' : 'none';
+  render();
+}
+
+function render(){
+  document.getElementById('chartTooltip').style.opacity = 0;
+  renderFilters();
+  const list = filtered();
+  const isSportOnly = typeFilter === 'sport';
+  
+  document.getElementById('splitSection').style.display = isSportOnly ? 'none' : '';
+  document.getElementById('formatSection').style.display = '';
+  document.getElementById('venueSection').style.display = '';
+  document.getElementById('venueTitle').textContent = isSportOnly ? '🏢 ПО КЛУБАМ' : '🏢 ПО РУМАМ / КЛУБАМ';
+  document.getElementById('insightsSection').style.display = isSportOnly ? 'none' : '';
+
+  renderStats(list, isSportOnly);
+  renderChart(list, isSportOnly);
+  if(proMode && !isSportOnly) {
+    renderBuckets(list);
+    renderRollingROI(list);
+  }
+  if(!isSportOnly) renderInsights(list);
+  if(!isSportOnly) renderSplit(list); else document.getElementById('splitCard').innerHTML='';
+  renderFormatBreakdown(list, isSportOnly);
+  renderVenueBreakdown(list, isSportOnly);
+  renderHistory(list);
+}
+
+// ============================================================
+// 3. СТАТИСТИКА
+// ============================================================
+function renderStats(list, isSportOnly){
+  const grid = document.getElementById('statGrid');
+  const addStats = document.getElementById('additionalStats');
+  const note = document.getElementById('sampleNote');
+
+  if(isSportOnly){
+    const sp = sportList(list);
+    const totalPts = sp.reduce((s,t)=>s+(t.points||0),0);
+    const avg = sp.length ? Math.round(totalPts/sp.length) : 0;
+    const best = sp.length ? Math.max(...sp.map(t=>t.points||0)) : 0;
+    grid.innerHTML = `
+      <div class="stat"><div class="label">Турниров</div><div class="value">${sp.length}</div></div>
+      <div class="stat"><div class="label">Всего points</div><div class="value pos">${totalPts}</div></div>
+      <div class="stat"><div class="label">Средние points</div><div class="value">${avg}</div><div class="sub">за турнир</div></div>
+      <div class="stat"><div class="label">Лучший результат</div><div class="value pos">${best}</div><div class="sub">pts за турнир</div></div>
+    `;
+    note.style.display='none'; addStats.textContent=''; return;
+  }
+
+  const m = money(list);
+  const n = m.length;
+  if(n===0){ grid.innerHTML=`<div class="stat" style="grid-column:span2;text-align:center;color:var(--muted);">Нет турниров</div>`; note.style.display='none'; addStats.textContent=''; return; }
+
+  const totalInv = m.reduce((s,t)=>s+invested(t),0);
+  const totalRet = m.reduce((s,t)=>s+totalReturnedRub(t),0);
+  const net = totalRet - totalInv;
+  const roi = totalInv ? Math.round((net/totalInv)*1000)/10 : null;
+  const itmCount = m.filter(isITM).length;
+  const itmPct = Math.round((itmCount/n)*100);
+  const abi = Math.round(m.reduce((s,t)=>s+buyinRub(t),0)/n);
+  const ftCount = m.filter(isFT).length;
+  const ftPct = Math.round((ftCount/n)*100);
+  const top3Count = m.filter(isTop3).length;
+  const top3Pct = Math.round((top3Count/n)*100);
+  const totalEntries = m.reduce((s,t)=>s+1+(t.reentry||0),0);
+  const avgEntries = (totalEntries/n).toFixed(2);
+
+  // Drawdown
+  const sorted = m.slice().sort((a,b)=>a.ts-b.ts);
+  let cum=0, peak=-Infinity, maxDD=0, curDD=0, curDDLen=0, maxDDLen=0, lastPeakIdx=0;
+  sorted.forEach((t,i)=>{ cum+=profitRub(t); if(cum>peak){peak=cum; lastPeakIdx=i;} const dd=peak-cum; if(dd>maxDD){maxDD=dd; maxDDLen=i-lastPeakIdx;} if(i===sorted.length-1){curDD=dd; curDDLen=i-lastPeakIdx;} });
+  const isAtHigh = curDD === 0;
+
+  addStats.textContent = `${n} тур. · ITM ${itmPct}% · FT ${ftPct}% · Top3 ${top3Pct}% · ${totalEntries} входов · ${avgEntries} входа/тур`;
+
+  grid.innerHTML = `
+    <div class="stat"><div class="label">ROI</div><div class="value ${roi===null?'neutral':roi>=0?'pos':'neg'}">${roi===null?'—':(roi>=0?'+':'')+roi+'%'}</div></div>
+    <div class="stat"><div class="label">Профит</div><div class="value ${net>=0?'pos':'neg'}">${proMode ? fmtMoneyUSD(net/RATE) : fmtMoney(net)}</div><div class="sub">${proMode ? '' : 'USD: '+fmtMoneyUSD(net/RATE)}</div></div>
+    <div class="stat"><div class="label">ABI</div><div class="value">${proMode ? '$'+(abi/RATE).toFixed(0) : abi.toLocaleString('ru-RU')+' ₽'}</div></div>
+    <div class="stat"><div class="label">Просадка</div><div class="value ${curDD>0?'neg':'pos'}">${isAtHigh?'0':proMode?fmtMoneyUSD(-curDD/RATE):fmtMoney(-curDD)}</div><div class="sub">${isAtHigh?'Новый максимум':curDDLen>0?curDDLen+' тур.':''}</div></div>
+  `;
+
+  if(n<15&&n>0){ note.innerHTML=`⚠ ${n} тур. — ОЧЕНЬ МАЛО ДАННЫХ`; note.style.display='flex'; }
+  else if(n>=15&&n<100){ note.innerHTML=`📊 ${n} тур. — РАННЯЯ ВЫБОРКА`; note.style.display='flex'; }
+  else if(n>=100&&n<300){ note.innerHTML=`📈 ${n} тур. — ТЕНДЕНЦИЯ ВИДНА`; note.style.display='flex'; }
+  else if(n>=300){ note.innerHTML=`📈 ${n} тур. — ИНФОРМАТИВНАЯ ДИСТАНЦИЯ`; note.style.display='flex'; }
+  else note.style.display='none';
+}
+
+// ============================================================
+// 4. ГРАФИК
+// ============================================================
+function renderChart(list, isSportOnly){
+  const svg = document.getElementById('chartSvg');
+  const title = document.getElementById('chartTitle');
+  const endEl = document.getElementById('chartEnd');
+  const tooltip = document.getElementById('chartTooltip');
+  title.textContent = isSportOnly ? 'ДИНАМИКА POINTS' : 'ГРАФИК РЕЗУЛЬТАТА';
+
+  const src = (isSportOnly ? sportList(list) : money(list)).slice().sort((a,b)=>a.ts-b.ts);
+  if(src.length===0){ svg.innerHTML=''; endEl.textContent=''; tooltip.style.opacity=0; return; }
+
+  let cum=0;
+  const data = src.map(t=>{ const val=isSportOnly?(t.points||0):profitRub(t); cum+=val; return {...t,cum,val}; });
+  const pts = data.map(d=>d.cum);
+  const min=Math.min(0,...pts), max=Math.max(0,...pts), range=(max-min)||1;
+  const W=340,H=130,PAD=8;
+  const x=i=>pts.length===1?W/2:(i/(pts.length-1))*W;
+  const y=v=>PAD+(1-(v-min)/range)*(H-PAD*2);
+  const zeroY=y(0);
+  const endVal=pts[pts.length-1];
+  const color=endVal>=0?'var(--lime)':'var(--coral)';
+
+  // Находим максимум для отметки
+  let peakIdx=0, peakVal=-Infinity;
+  data.forEach((d,i)=>{ if(d.cum>peakVal){peakVal=d.cum; peakIdx=i;} });
+  const peakX=x(peakIdx), peakY=y(peakVal);
+  const curX=x(data.length-1), curY=y(endVal);
+
+  const path=pts.map((v,i)=>`${i===0?'M':'L'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const areaPath=`${path} L${x(pts.length-1).toFixed(1)},${zeroY} L${x(0).toFixed(1)},${zeroY} Z`;
+
+  let ddArea='';
+  if(peakIdx<data.length-1 && endVal<peakVal){
+    ddArea=`
+      <rect x="${(peakX+2).toFixed(1)}" y="${(peakY-2).toFixed(1)}" 
+            width="${(curX-peakX-4).toFixed(1)}" height="${(curY-peakY+4).toFixed(1)}"
+            fill="var(--coral)" opacity="0.12" rx="3"/>
+      <line x1="${peakX.toFixed(1)}" y1="${(peakY-4).toFixed(1)}" x2="${peakX.toFixed(1)}" y2="${(peakY+4).toFixed(1)}" stroke="var(--gold)" stroke-width="2"/>
+    `;
+  }
+
+  // Оси X с датами
+  let axisLabels = '';
+  if(data.length > 1){
+    const step = Math.max(1, Math.floor(data.length / 5));
+    for(let i=0; i<data.length; i+=step){
+      const d = data[i];
+      const label = d.date.slice(5);
+      axisLabels += `<text x="${x(i).toFixed(1)}" y="${H+10}" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="7" fill="var(--muted-2)">${label}</text>`;
+    }
+  }
+
+  const points = data.map((d,i)=>{
+    const cx=x(i), cy=y(d.cum);
+    return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="2.5" fill="${color}" opacity="0.5" 
+                    data-index="${i}" onclick="showTooltip(${i})" style="cursor:pointer;"/>`;
+  }).join('');
+
+  svg.innerHTML = `
+    <line x1="0" y1="${zeroY.toFixed(1)}" x2="340" y2="${zeroY.toFixed(1)}" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3,4"/>
+    <path d="${areaPath}" fill="${color}" opacity="0.06"/>
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${ddArea}
+    ${points}
+    <circle cx="${curX.toFixed(1)}" cy="${curY.toFixed(1)}" r="4.5" fill="${color}" stroke="var(--bg)" stroke-width="2"/>
+    ${axisLabels}
+  `;
+  svg.dataset.data = JSON.stringify(data.map(d=>({date:fmtDate(d.date),name:d.name,venue:d.venue,place:d.place,field:d.field,cum:d.cum,val:d.val,isSport:isSportOnly})));
+
+  endEl.textContent = isSportOnly ? `${endVal>0?'+':''}${endVal} pts` : (proMode ? fmtMoneyUSD(endVal/RATE) : fmtMoney(endVal));
+  endEl.className = 'chart-end ' + (endVal>=0?'pos':'neg');
+}
+
+function showTooltip(idx){
+  const svg=document.getElementById('chartSvg');
+  const data=JSON.parse(svg.dataset.data||'[]');
+  const tt=document.getElementById('chartTooltip');
+  if(!data[idx]){tt.style.opacity=0;return;}
+  const d=data[idx];
+  const rect=svg.getBoundingClientRect();
+  const pts=svg.querySelectorAll('circle[data-index]');
+  if(!pts[idx])return;
+  const cx=parseFloat(pts[idx].getAttribute('cx')), cy=parseFloat(pts[idx].getAttribute('cy'));
+  const xPos=(cx/340)*rect.width, yPos=(cy/140)*rect.height;
+  const maxLeft = rect.width - 180;
+  const leftPos = Math.min(xPos + 20, maxLeft);
+  tt.innerHTML=`
+    <div style="font-weight:700;margin-bottom:2px;">${d.date}</div>
+    <div style="color:var(--muted);font-size:8px;">${d.venue} · ${d.name}</div>
+    <div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px;font-size:9px;">
+      <span>${d.isSport?'Points':'Результат'}: <strong>${d.isSport?d.val+' pts':proMode?fmtMoneyUSD(d.val/RATE):fmtMoney(d.val)}</strong></span>
+      <span>Место: <strong>${d.place}${d.field?'/'+d.field:''}</strong></span>
+    </div>
+    <div style="border-top:1px solid var(--border);margin-top:3px;padding-top:3px;font-size:8px;color:var(--muted-2);">
+      Кумулятивно: ${d.isSport?d.cum+' pts':proMode?fmtMoneyUSD(d.cum/RATE):fmtMoney(d.cum)}
+    </div>
+  `;
+  tt.style.opacity=1;
+  tt.style.left=Math.max(10, leftPos)+'px';
+  tt.style.top=Math.max(yPos-35, 10)+'px';
+}
+
+// ============================================================
+// 5. ПРОФИ-ФИШКИ: РАЗБИВКА ПО БАЙ-ИНАМ
+// ============================================================
+function renderBuckets(list){
+  const m = money(list);
+  const grid = document.getElementById('bucketsGrid');
+  document.getElementById('bucketsCount').textContent = `(${m.length} тур.)`;
+  
+  let prevMax = 0;
+  const bucketData = BUCKETS.map((b, idx) => {
+    const prev = idx > 0 ? BUCKETS[idx-1].max : 0;
+    const filtered = m.filter(t => buyinRub(t) > prev && buyinRub(t) <= b.max);
+    const inv = filtered.reduce((s,t)=>s+invested(t),0);
+    const ret = filtered.reduce((s,t)=>s+totalReturnedRub(t),0);
+    const net = ret-inv;
+    const roi = inv ? Math.round((net/inv)*1000)/10 : null;
+    return { ...b, filtered, inv, ret, net, roi, n: filtered.length };
+  });
+
+  grid.innerHTML = bucketData.map(b => `
+    <div class="bucket-item" onclick="showDetailList(${JSON.stringify(b.filtered)}, '${b.icon} ${b.label}')" style="cursor:pointer;">
+      <div class="lbl">${b.icon} ${b.label}</div>
+      <div class="val ${b.roi===null?'neutral':b.roi>=0?'pos':'neg'}">${b.roi===null?'—':(b.roi>=0?'+':'')+b.roi+'%'}</div>
+      <div class="sub">${b.n} тур. · ${proMode?fmtMoneyUSD(b.net/RATE):fmtMoney(b.net)}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// 6. ПРОФИ-ФИШКИ: СКОЛЬЗЯЩИЙ ROI
+// ============================================================
+function renderRollingROI(list){
+  const m = money(list).slice().sort((a,b)=>b.ts-a.ts);
+  const grid = document.getElementById('rollingGrid');
+  
+  grid.innerHTML = WINDOWS.map(w => {
+    const slice = m.slice(0, Math.min(w, m.length));
+    const inv = slice.reduce((s,t)=>s+invested(t),0);
+    const ret = slice.reduce((s,t)=>s+totalReturnedRub(t),0);
+    const roi = inv ? Math.round(((ret-inv)/inv)*1000)/10 : null;
+    const net = ret-inv;
+    return `
+      <div class="rolling-item">
+        <div class="lbl">последние ${Math.min(w, m.length)}</div>
+        <div class="val ${roi===null?'neutral':roi>=0?'pos':'neg'}">${roi===null?'—':(roi>=0?'+':'')+roi+'%'}</div>
+        <div class="lbl">${proMode?fmtMoneyUSD(net/RATE):fmtMoney(net)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// 7. ИНСАЙТЫ (7 ФИШЕК ДЛЯ СРЕДНЕГО ИГРОКА)
+// ============================================================
+function renderInsights(list){
+  const grid = document.getElementById('insightsGrid');
+  const warning = document.getElementById('insightWarning');
+  const warnText = document.getElementById('warningText');
+  const m = money(list);
+  const n = m.length;
+
+  if(n === 0){ grid.innerHTML=''; warning.style.display='none'; return; }
+
+  // ROI по типам
+  const groups = groupBy(m, 'fmt');
+  let typeHtml = '';
+  const typeEntries = Object.entries(groups).sort((a,b)=>b[1].length-a[1].length);
+  typeEntries.forEach(([fmt, arr])=>{
+    const inv = arr.reduce((s,t)=>s+invested(t),0);
+    const ret = arr.reduce((s,t)=>s+totalReturnedRub(t),0);
+    const roi = inv ? Math.round(((ret-inv)/inv)*1000)/10 : null;
+    if(roi !== null){
+      typeHtml += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;border-bottom:1px solid var(--border-soft);">
+        <span>${fmt}</span>
+        <span style="color:${roi>=0?'var(--lime)':'var(--coral)'};font-weight:700;">${roi>=0?'+':''}${roi}%</span>
+        <span style="color:var(--muted-2);font-size:8px;">${arr.length} тур.</span>
+      </div>`;
+    }
+  });
+
+  // ROI за последние N
+  const sorted = m.slice().sort((a,b)=>b.ts-a.ts);
+  const lastN = sorted.slice(0, Math.min(100, sorted.length));
+  const invN = lastN.reduce((s,t)=>s+invested(t),0);
+  const retN = lastN.reduce((s,t)=>s+totalReturnedRub(t),0);
+  const roiN = invN ? Math.round(((retN-invN)/invN)*1000)/10 : null;
+  const totalInv = m.reduce((s,t)=>s+invested(t),0);
+  const totalRet = m.reduce((s,t)=>s+totalReturnedRub(t),0);
+  const totalRoi = totalInv ? Math.round(((totalRet-totalInv)/totalInv)*1000)/10 : null;
+
+  // Призы vs Баунти
+  const totalCash = m.reduce((s,t)=>s+totalCashRub(t),0);
+  const totalBounty = m.reduce((s,t)=>s+totalBountyRub(t),0);
+
+  // Ре-энтри
+  const withReentry = m.filter(t => (t.reentry||0) > 0);
+  const reentryRate = n ? Math.round((withReentry.length/n)*100) : 0;
+  const profitPerReentry = withReentry.length ? Math.round(withReentry.reduce((s,t)=>s+profitRub(t),0)/withReentry.length) : 0;
+
+  // Месяца
+  const byMonth = {};
+  m.forEach(t => { const mth=t.date.slice(0,7); if(!byMonth[mth])byMonth[mth]=[]; byMonth[mth].push(t); });
+  const monthStats = Object.entries(byMonth).map(([mth, arr]) => {
+    const inv = arr.reduce((s,t)=>s+invested(t),0);
+    const ret = arr.reduce((s,t)=>s+totalReturnedRub(t),0);
+    return { mth, profit: ret-inv, n: arr.length };
+  });
+  const bestMonth = monthStats.length ? monthStats.reduce((a,b)=>a.profit>b.profit?a:b) : null;
+  const worstMonth = monthStats.length ? monthStats.reduce((a,b)=>a.profit<b.profit?a:b) : null;
+
+  let monthHtml = '';
+  if(bestMonth && worstMonth && bestMonth.mth !== worstMonth.mth){
+    monthHtml = `<div style="display:flex;justify-content:space-between;font-size:10px;">
+      <div><span style="color:var(--lime);font-weight:700;">${bestMonth.mth}</span> ${proMode?fmtMoneyUSD(bestMonth.profit/RATE):fmtMoney(bestMonth.profit)}</div>
+      <div><span style="color:var(--coral);font-weight:700;">${worstMonth.mth}</span> ${proMode?fmtMoneyUSD(worstMonth.profit/RATE):fmtMoney(worstMonth.profit)}</div>
+    </div>`;
+  } else if(bestMonth){
+    monthHtml = `<div style="font-size:10px;"><span style="color:var(--lime);font-weight:700;">${bestMonth.mth}</span> ${proMode?fmtMoneyUSD(bestMonth.profit/RATE):fmtMoney(bestMonth.profit)}</div>`;
+  } else { monthHtml = `<div class="sub">Нет данных</div>`; }
+
+  // Предупреждение о дистанции
+  let distanceWarning = '';
+  if(totalRoi !== null && totalRoi > 10 && n < 200 && n > 0){
+    const needed = Math.round(350 * (1 - n/350));
+    distanceWarning = `⚠️ ROI ${totalRoi>0?'+':''}${totalRoi}% — сыграно ${n} тур. Для достоверности нужно ~${Math.max(0, needed)} тур.`;
+  }
+
+  grid.innerHTML = `
+    <div class="insight-card clickable" onclick="showTypeList()">
+      <div class="label">📊 По типам</div>
+      <div style="font-size:10px;">${typeHtml || 'Нет данных'}</div>
+      <div class="sub">Кликни → список</div>
+    </div>
+    <div class="insight-card">
+      <div class="label">📈 ROI за последние ${lastN.length} тур.</div>
+      <div class="value ${roiN===null?'neutral':roiN>=0?'pos':'neg'}">${roiN===null?'—':(roiN>=0?'+':'')+roiN+'%'}</div>
+      <div class="sub">Всего: ${totalRoi===null?'—':(totalRoi>=0?'+':'')+totalRoi+'%'}</div>
+    </div>
+    <div class="insight-card">
+      <div class="label">💰 Призы vs Баунти</div>
+      <div class="value pos">${proMode?fmtMoneyUSD(totalCash/RATE):fmtMoney(totalCash)}</div>
+      <div class="sub">Баунти: ${proMode?fmtMoneyUSD(totalBounty/RATE):fmtMoney(totalBounty)}</div>
+    </div>
+    <div class="insight-card">
+      <div class="label">🔄 Ре-энтри</div>
+      <div class="value ${reentryRate>30?'pos':'neutral'}">${reentryRate}%</div>
+      <div class="sub">${withReentry.length} тур. · ${proMode?fmtMoneyUSD(profitPerReentry/RATE):fmtMoney(profitPerReentry)} / тур.</div>
+    </div>
+    <div class="insight-card span2">
+      <div class="label">📅 Лучший / Худший месяц</div>
+      ${monthHtml}
+    </div>
+  `;
+
+  if(distanceWarning){
+    warning.style.display='flex';
+    warnText.textContent = distanceWarning;
+  } else {
+    warning.style.display='none';
+  }
+  window._typeData = typeEntries;
+}
+
+function showTypeList(){
+  const data = window._typeData || [];
+  if(!data.length) return;
+  let html = `<div style="font-weight:700;margin-bottom:10px;">📊 Все турниры по типам</div>`;
+  data.forEach(([fmt, arr]) => {
+    html += `<div style="margin-bottom:10px;">
+      <div style="font-weight:700;font-size:12px;color:var(--white);">${fmt} <span style="color:var(--muted-2);font-weight:400;font-size:10px;">${arr.length} тур.</span></div>`;
+    arr.slice(0,8).forEach(t => {
+      const p = profitRub(t);
+      html += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;border-bottom:1px solid var(--border-soft);">
+        <span style="color:var(--muted);">${t.venue} · ${t.name}</span>
+        <span style="color:${p>=0?'var(--lime)':'var(--coral)'};font-weight:700;">${proMode?fmtMoneyUSD(p/RATE):fmtMoney(p)}</span>
+      </div>`;
+    });
+    if(arr.length > 8) html += `<div style="color:var(--muted-2);font-size:8px;padding:3px 0;">+ ещё ${arr.length-8} турниров</div>`;
+    html += `</div>`;
+  });
+  document.getElementById('detailBody').innerHTML = html;
+  document.getElementById('detailOverlay').classList.add('show');
+  document.getElementById('detailSheet').classList.add('show');
+}
+
+// ============================================================
+// 8. РАЗБИВКИ
+// ============================================================
+function groupBy(arr, key){
+  const map={};
+  arr.forEach(t=>{ const k=t[key]; (map[k]=map[k]||[]).push(t); });
+  return map;
+}
+
+function renderSplit(list){
+  const off=money(list).filter(t=>t.cat==='offline');
+  const on=money(list).filter(t=>t.cat==='online');
+  const calc=arr=>{ const inv=arr.reduce((s,t)=>s+invested(t),0); const ret=arr.reduce((s,t)=>s+totalReturnedRub(t),0); const roi=inv?Math.round(((ret-inv)/inv)*1000)/10:null; return {roi,n:arr.length}; };
+  const o=calc(off), n=calc(on);
+  document.getElementById('splitCard').innerHTML=`
+    <div class="split-item"><div class="lbl">Офлайн</div><div class="roi ${o.roi===null?'':o.roi>=0?'pos':'neg'}">${o.roi===null?'—':(o.roi>=0?'+':'')+o.roi+'%'}</div><div class="meta">${o.n} тур.</div></div>
+    <div class="split-div"></div>
+    <div class="split-item"><div class="lbl">Онлайн</div><div class="roi ${n.roi===null?'':n.roi>=0?'pos':'neg'}">${n.roi===null?'—':(n.roi>=0?'+':'')+n.roi+'%'}</div><div class="meta">${n.n} тур.</div></div>
+  `;
+}
+
+function renderFormatBreakdown(list, isSportOnly){
+  const src=isSportOnly?sportList(list):money(list);
+  const groups=groupBy(src,'fmt');
+  const el=document.getElementById('formatList');
+  document.getElementById('formatN').textContent=`(${Object.keys(groups).length})`;
+  const entries=Object.entries(groups);
+  if(entries.length===0){ el.innerHTML='<div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--muted-2);padding:6px 2px;">Нет данных</div>'; return; }
+
+  el.innerHTML = entries.map(([fmt, arr])=>{
+    if(isSportOnly){
+      const total=arr.reduce((s,t)=>s+(t.points||0),0);
+      const avg=Math.round(total/arr.length);
+      return `<div class="bar-row"><div class="bar-row-top"><div class="bar-row-name">${fmt}</div><div class="bar-row-roi pos">${total} pts</div></div><div class="bar-row-foot"><span>${arr.length} тур.</span><span>ср. ${avg} pts</span></div></div>`;
+    }
+    const inv=arr.reduce((s,t)=>s+invested(t),0);
+    const ret=arr.reduce((s,t)=>s+totalReturnedRub(t),0);
+    const roi=inv?Math.round(((ret-inv)/inv)*1000)/10:0;
+    const pct=Math.min(50,Math.abs(roi));
+    return `<div class="bar-row" onclick="showDetailList(${JSON.stringify(arr)}, '${fmt}')">
+      <div class="bar-row-top"><div class="bar-row-name">${fmt}</div><div class="bar-row-roi ${roi>=0?'pos':'neg'}">${roi>=0?'+':''}${roi}%</div></div>
+      <div class="bar-track"><div class="bar-mid"></div><div class="bar-fill ${roi>=0?'pos':'neg'}" style="width:${pct}%;"></div></div>
+      <div class="bar-row-foot"><span>${arr.length} тур.</span><span>${proMode?fmtMoneyUSD((ret-inv)/RATE):fmtMoney(ret-inv)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderVenueBreakdown(list, isSportOnly){
+  const src=isSportOnly?sportList(list):money(list);
+  const groups=groupBy(src,'venue');
+  const el=document.getElementById('venueList');
+  const entries=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length).slice(0,4);
+  if(entries.length===0){ el.innerHTML=''; return; }
+  el.innerHTML=entries.map(([venue, arr])=>{
+    if(isSportOnly){
+      const total=arr.reduce((s,t)=>s+(t.points||0),0);
+      return `<div class="bar-row"><div class="bar-row-top"><div class="bar-row-name">${venue}</div><div class="bar-row-roi pos">${total} pts</div></div><div class="bar-row-foot"><span>${arr.length} тур.</span></div></div>`;
+    }
+    const inv=arr.reduce((s,t)=>s+invested(t),0);
+    const ret=arr.reduce((s,t)=>s+totalReturnedRub(t),0);
+    const roi=inv?Math.round(((ret-inv)/inv)*1000)/10:0;
+    const pct=Math.min(50,Math.abs(roi));
+    return `<div class="bar-row" onclick="showDetailList(${JSON.stringify(arr)}, '${venue}')">
+      <div class="bar-row-top"><div class="bar-row-name">${venue}</div><div class="bar-row-roi ${roi>=0?'pos':'neg'}">${roi>=0?'+':''}${roi}%</div></div>
+      <div class="bar-track"><div class="bar-mid"></div><div class="bar-fill ${roi>=0?'pos':'neg'}" style="width:${pct}%;"></div></div>
+      <div class="bar-row-foot"><span>${arr.length} тур.</span><span>${proMode?fmtMoneyUSD((ret-inv)/RATE):fmtMoney(ret-inv)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// 9. ДЕТАЛЬНЫЕ СПИСКИ
+// ============================================================
+function showDetailList(arr, title){
+  if(!arr || !arr.length) return;
+  let html = `<div style="font-weight:700;margin-bottom:10px;font-size:13px;">📋 ${title} · ${arr.length} тур.</div>`;
+  arr.slice(0,20).forEach(t => {
+    const p = profitRub(t);
+    html += `<div style="display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid var(--border-soft);">
+      <span style="color:var(--muted);">${t.date.slice(5)} · ${t.name}</span>
+      <span style="color:${p>=0?'var(--lime)':'var(--coral)'};font-weight:700;">${proMode?fmtMoneyUSD(p/RATE):fmtMoney(p)}</span>
+    </div>`;
+  });
+  if(arr.length > 20) html += `<div style="color:var(--muted-2);font-size:8px;padding:4px 0;">+ ещё ${arr.length-20} турниров</div>`;
+  document.getElementById('detailBody').innerHTML = html;
+  document.getElementById('detailOverlay').classList.add('show');
+  document.getElementById('detailSheet').classList.add('show');
+}
+
+// ============================================================
+// 10. ИСТОРИЯ С РЕДАКТИРОВАНИЕМ
+// ============================================================
+function renderHistory(list){
+  const el=document.getElementById('list');
+  const empty=document.getElementById('emptyState');
+  document.getElementById('listCount').textContent=`(${list.length})`;
+  if(list.length===0){ el.style.display='none'; empty.style.display='flex'; return; }
+  el.style.display='flex'; empty.style.display='none';
+
+  el.innerHTML=list.map(t=>{
+    const isSport=t.cat==='sport';
+    const win=isSport||profitRub(t)>0;
+    const badgeClass=t.cat;
+    const badgeLabel=t.cat==='offline'?'ОФЛ':t.cat==='online'?'ОНЛ':'СПОРТ';
+    const pkoBadge=t.isBounty?'<span class="badge pko">PKO</span>':'';
+    const reentryBadge = (t.reentry||0) > 0 ? `<span class="badge reentry">×${t.reentry+1}</span>` : '';
+    const bucket = t.cat!=='sport' ? getBucket(buyinRub(t)) : null;
+    const bucketBadge = bucket ? `<span class="badge bucket">${bucket.icon}</span>` : '';
+    const resHtml=isSport?`<div class="tcard-profit pts">${fmtPts(t.points||0)}</div>`:
+      `<div class="tcard-profit ${profitRub(t)>=0?'pos':'neg'}">${proMode?fmtMoneyUSD(profitRub(t)/RATE):fmtMoney(profitRub(t))}</div>`;
+    
+    let foot = isSport 
+      ? `Вход ${t.buyin} ${t.curr} · ${t.reentry} ре-энтри${t.field?' · '+t.field+' уч.':''}`
+      : `Инв. ${proMode?'$'+(invested(t)/RATE).toFixed(0):invested(t).toLocaleString()+' ₽'} · Возвр. ${proMode?'$'+(totalReturnedRub(t)/RATE).toFixed(0):totalReturnedRub(t).toLocaleString()+' ₽'}`;
+
+    return `<div class="tcard ${win?'win':''}">
+      <div class="tcard-top">
+        <div class="tcard-badges"><span class="badge ${badgeClass}">${badgeLabel}</span>${pkoBadge}${reentryBadge}${bucketBadge}<span class="tcard-venue">${t.venue}</span></div>
+        <div class="tcard-date">${fmtDate(t.date)}</div>
+      </div>
+      <div class="tcard-name">${t.name} · ${t.fmt}</div>
+      <div class="tcard-mid">
+        <div class="tcard-place">${t.place}${t.field?` <span>/ ${t.field}</span>`:''}</div>
+        <div style="display:flex;align-items:center;">${resHtml}${t.place<=3?'<span class="trophy">🏆</span>':''}</div>
+      </div>
+      <div class="tcard-foot">${foot}</div>
+      <div class="tcard-actions">
+        <button onclick="event.stopPropagation();editTournament(${t.id})">✎ Редактировать</button>
+        <button class="danger" onclick="event.stopPropagation();deleteTournament(${t.id})">✕ Удалить</button>
+        ${t.note ? `<span style="color:var(--muted-2);font-size:7px;margin-left:auto;">📝 ${t.note}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// 11. РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ
+// ============================================================
+function editTournament(id){
+  const t = tournaments.find(x=>x.id===id);
+  if(!t) return;
+  editingId = id;
+  selectAddType(t.cat, true);
+  // Заполняем поля
+  setTimeout(() => {
+    document.getElementById('fDate').value = t.date;
+    document.getElementById('fVenue').value = t.venue;
+    document.getElementById('fName').value = t.name;
+    document.getElementById('fFmt').value = t.fmt;
+    document.getElementById('fBuyin').value = t.buyin;
+    document.getElementById('fReentry').value = t.reentry;
+    document.getElementById('fReentryCost').value = t.reentryCost;
+    document.getElementById('fPlace').value = t.place;
+    document.getElementById('fField').value = t.field || '';
+    if(t.cat!=='sport'){
+      document.getElementById('fCash').value = t.cash;
+      if(document.getElementById('fBounty')) document.getElementById('fBounty').value = t.bounty || 0;
+    }
+    if(t.cat==='sport' && document.getElementById('fPoints')){
+      document.getElementById('fPoints').value = t.points || 0;
+    }
+    document.getElementById('sheetTitle').textContent = '✎ Редактировать турнир';
+    // Установить валюту
+    window.selCurr = t.curr;
+    document.getElementById('currRub').classList.toggle('sel', t.curr==='RUB');
+    document.getElementById('currUsd').classList.toggle('sel', t.curr==='USD');
+  }, 50);
+}
+
+function deleteTournament(id){
+  if(!confirm('Удалить турнир?')) return;
+  tournaments = tournaments.filter(t => t.id !== id);
+  render();
+  showToast('Турнир удалён');
+}
+
+// ============================================================
+// 12. ФОРМА ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ
+// ============================================================
+function openSheet(){
+  editingId = null;
+  document.getElementById('sheetTitle').textContent = 'Добавить турнир';
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('sheet').classList.add('show');
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('sheet').classList.remove('show');
+  addType=null; editingId=null;
+  document.getElementById('choiceOffline').className='';
+  document.getElementById('choiceOnline').className='';
+  document.getElementById('choiceSport').className='';
+  document.getElementById('sheetFields').classList.remove('open');
+  document.getElementById('sheetFields').innerHTML='';
+}
+
+function selectAddType(t, isEdit=false){
+  addType=t;
+  document.getElementById('choiceOffline').className=t==='offline'?'sel offline':'';
+  document.getElementById('choiceOnline').className=t==='online'?'sel online':'';
+  document.getElementById('choiceSport').className=t==='sport'?'sel sport':'';
+  const fields=document.getElementById('sheetFields');
+  fields.classList.add('open');
+
+  const vLabel=t==='offline'?'Клуб':t==='online'?'Рум':'Клуб';
+  const vPh=t==='offline'?'Название клуба':t==='online'?'PokerOK, PokerDom...':'Название клуба';
+
+  const bountyField = t !== 'sport' ? `
+    <div class="field"><label>Получено bounty</label><input type="number" id="fBounty" placeholder="0" min="0" value="0"></div>
+  ` : '';
+
+  const pointsField = t === 'sport' ? `
+    <div class="field"><label>Получено points</label><input type="number" id="fPoints" placeholder="180" min="0"></div>
+  ` : '';
+
+  const cashField = t !== 'sport' ? `
+    <div class="field"><label>Призовые / Cash</label><input type="number" id="fCash" placeholder="9000" min="0"></div>
+  ` : '';
+
+  fields.innerHTML=`
+    <div class="field"><label>Дата</label><input type="date" id="fDate" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="field"><label>Валюта</label><div class="curr-row"><div class="curr-btn sel" id="currRub" onclick="setCurr('RUB')">₽ RUB</div><div class="curr-btn" id="currUsd" onclick="setCurr('USD')">$ USD</div></div></div>
+    <div class="field"><label>${vLabel}</label><input type="text" id="fVenue" placeholder="${vPh}"></div>
+    <div class="field"><label>Название турнира</label><input type="text" id="fName" placeholder="Daily Main Event"></div>
+    <div class="field"><label>Тип турнира</label><select id="fFmt"><option value="MTT">Regular (MTT)</option><option value="PKO">PKO / Bounty</option><option value="Mystery Bounty">Mystery Bounty</option><option value="SNG">SNG</option></select></div>
+    <div class="field-row"><div class="field"><label>Buy-in</label><input type="number" id="fBuyin" placeholder="1500" min="0"></div><div class="field"><label>Re-entry, шт</label><input type="number" id="fReentry" placeholder="0" value="0" min="0"></div></div>
+    <div class="field" id="reentryCostWrap"><label>Стоимость re-entry</label><input type="number" id="fReentryCost" placeholder="= buy-in" min="0"></div>
+    <div class="field-row"><div class="field"><label>Место</label><input type="number" id="fPlace" placeholder="3" min="1"></div><div class="field"><label>Участников</label><input type="number" id="fField" placeholder="необязательно" min="0"></div></div>
+    ${cashField}
+    ${bountyField}
+    ${pointsField}
+    <div class="field"><label>Заметка</label><input type="text" id="fNote" placeholder="Баббл-колл, ошибка..." maxlength="100"></div>
+    <div id="formErrors" style="color:var(--error);font-family:'JetBrains Mono',monospace;font-size:9px;margin-bottom:8px;"></div>
+    <button class="sheet-save" onclick="saveTournament()">${editingId ? '✎ Сохранить изменения' : '+ Добавить турнир'}</button>
+  `;
+  window.selCurr='RUB';
+}
+
+function setCurr(c){ window.selCurr=c; document.getElementById('currRub').classList.toggle('sel',c==='RUB'); document.getElementById('currUsd').classList.toggle('sel',c==='USD'); }
+
+function validateForm(){
+  const errs=[];
+  const place=parseInt(document.getElementById('fPlace')?.value);
+  const field=parseInt(document.getElementById('fField')?.value);
+  const reentry=parseInt(document.getElementById('fReentry')?.value)||0;
+  const buyin=parseInt(document.getElementById('fBuyin')?.value)||0;
+  const cash=parseInt(document.getElementById('fCash')?.value)||0;
+  const bounty=parseInt(document.getElementById('fBounty')?.value)||0;
+  if(place<1) errs.push('Место >= 1');
+  if(field>0&&place>field) errs.push('Место ≤ поле');
+  if(reentry<0) errs.push('Re-entry ≥ 0');
+  if(buyin<0) errs.push('Buy-in ≥ 0');
+  if(cash<0) errs.push('Призовые ≥ 0');
+  if(bounty<0) errs.push('Bounty ≥ 0');
+  document.querySelectorAll('.field input').forEach(el=>el.classList.remove('error'));
+  document.getElementById('formErrors').textContent=errs.join(' · ');
+  return errs.length===0;
+}
+
+function saveTournament(){
+  if(!addType){ selectAddType('offline'); return; }
+  if(!validateForm()) return;
+  const g=id=>document.getElementById(id);
+  const date=g('fDate')?.value||new Date().toISOString().slice(0,10);
+  const venue=(g('fVenue')?.value.trim()||'НОВОЕ МЕСТО').toUpperCase();
+  const name=g('fName')?.value.trim()||'Без названия';
+  const fmt=g('fFmt')?.value||'MTT';
+  const place=parseInt(g('fPlace')?.value)||1;
+  const field=parseInt(g('fField')?.value)||null;
+  const buyin=parseInt(g('fBuyin')?.value)||1000;
+  const reentry=parseInt(g('fReentry')?.value)||0;
+  const reentryCost=parseInt(g('fReentryCost')?.value)||buyin;
+  const curr=window.selCurr||'RUB';
+  const note=g('fNote')?.value.trim()||'';
+  const ts=Math.floor((new Date(date).getTime()-new Date(2026,7,22).getTime())/(1000*60*60*24))+22;
+
+  const obj = {
+    id: editingId || nextId++,
+    cat: addType,
+    date, ts, venue, name, fmt,
+    buyin, curr, reentry, reentryCost,
+    place, field, note
+  };
+
+  if(addType==='sport'){
+    obj.points = parseInt(g('fPoints')?.value)||0;
+  } else {
+    const isBounty = fmt==='PKO'||fmt==='Mystery Bounty';
+    obj.cash = parseInt(g('fCash')?.value)||0;
+    obj.bounty = isBounty ? (parseInt(g('fBounty')?.value)||0) : 0;
+    obj.isBounty = isBounty;
+  }
+
+  if(editingId){
+    const idx = tournaments.findIndex(t => t.id === editingId);
+    if(idx !== -1) tournaments[idx] = obj;
+    showToast('Турнир обновлён ✓');
+  } else {
+    tournaments.unshift(obj);
+    showToast('Турнир добавлен ✓');
+  }
+
+  closeSheet();
+  render();
+}
+
+// ============================================================
+// 13. ЭКСПОРТ CSV
+// ============================================================
+function exportCSV(){
+  const headers = ['Дата','Категория','Рум/Клуб','Название','Формат','Валюта','Buy-in','Re-entry','Re-entry Cost','Место','Поле','Призовые','Баунти','Profit (RUB)','Profit (USD)','ITM','Заметка'];
+  const rows = tournaments.filter(t => inPeriod(t) && (typeFilter==='all' || t.cat===typeFilter)).map(t => {
+    const p = profitRub(t);
+    return [
+      t.date, t.cat, t.venue, t.name, t.fmt, t.curr,
+      t.buyin, t.reentry, t.reentryCost, t.place, t.field || '',
+      t.cash || 0, t.bounty || 0,
+      p, Math.round(p/RATE),
+      isITM(t) ? 'Да' : 'Нет',
+      t.note || ''
+    ];
+  });
+  
+  let csv = headers.join(',') + '\n';
+  rows.forEach(row => {
+    csv += row.map(v => typeof v === 'string' && v.includes(',') ? `"${v}"` : v).join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `poker_export_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showToast('📥 CSV выгружен');
+}
+
+// ============================================================
+// 14. TOAST И СБРОС
+// ============================================================
+function showToast(msg,isErr=false){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast'+(isErr?' error':''); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+function resetData(){ tournaments=JSON.parse(JSON.stringify(ORIGINAL)); periodFilter='all'; typeFilter='all'; bucketFilter='all'; proMode=false; document.getElementById('proSwitch').classList.remove('on'); document.getElementById('devProToggle').classList.remove('on'); document.getElementById('bucketsSection').style.display='none'; document.getElementById('rollingSection').style.display='none'; render(); showToast('Данные сброшены'); }
+
+render();
+</script>
+</body>
+</html>

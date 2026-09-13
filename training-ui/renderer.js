@@ -1,9 +1,16 @@
 // DOM renderer for the personalised training UI. Renders view models into the
-// existing #dailyArea container, reusing the product's daily CSS classes and
-// visual identity (dark, `.panel.dailyStage`, `.streetDots`, `.dailyPot`,
-// `.dualGrade`, `.gradeBox`, `.verdict`). No logic — pure markup + handler wiring.
+// existing #dailyArea container. When game layout is active, uses HUD + felt
+// shell (same philosophy as Review/Sizing).
 
 import { gradeClass, STREET_RU } from './viewModel.js';
+import {
+  renderGameLobby, renderGameDrill, renderGameFeedback, renderGameLoading
+} from './gameShell.js';
+import {
+  sessionProgressHtml, feedbackSectionsHtml, choiceClass, wireFeedbackNext
+} from './sessionChrome.js';
+
+const useGameDaily = () => window.__maGameLayout === true;
 
 function el(sel) { return typeof window.$ === 'function' ? window.$(sel) : document.querySelector(sel); }
 function esc(s) { return typeof window.esc === 'function' ? window.esc(s) : String(s == null ? '' : s); }
@@ -20,9 +27,23 @@ function streetDots(street) {
 
 export const renderHome = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily() && vm.type === 'training') {
+    renderGameLobby(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   if (vm.type === 'training') {
-    const scoresHtml = (vm.skillScores || []).length
+    const pp = vm.playerProfile;
+    const profileHtml = pp ? `<div class="rangesField" style="margin-top:12px">
+      <span class="ey">${esc(vm.profileHeading || 'ТВОЙ ПРОФИЛЬ')}</span>
+      ${pp.strongest ? `<div class="row"><span>${esc(vm.strongestHeading || 'Сильный навык')}</span><b>${esc(pp.strongest.label)} · ${esc(pp.strongest.score)}</b></div>` : ''}
+      ${pp.weakest ? `<div class="row"><span>${esc(vm.weakestHeading || 'Слабый навык')}</span><b>${esc(pp.weakest.label)} · ${esc(pp.weakest.score)}</b></div>` : ''}
+      <span class="ey" style="margin-top:10px;display:block">${esc(vm.tracksHeading || 'НАВЫКИ')}</span>
+      ${(pp.tracks || []).map((t) =>
+        `<div class="row"><span>${esc(t.label)}</span><b>${esc(t.score)} · ${esc(t.masteryState)} · ${esc(t.trendArrow)} ${esc(t.trend)} · ${esc(vm.mistakesHeading || 'ошибки')} ${esc(t.mistakeFrequency)}</b></div>`
+      ).join('')}
+    </div>` : '';
+    const scoresHtml = !pp && (vm.skillScores || []).length
       ? `<div class="rangesField" style="margin-top:12px"><span class="ey">${esc(vm.levelHeading || 'ТВОЙ УРОВЕНЬ')}</span>${(vm.skillScores || []).map((s) =>
         `<div class="row"><span>${esc(s.label)}</span><b>${esc(s.score)}</b></div>`).join('')}</div>`
       : '';
@@ -31,6 +52,7 @@ export const renderHome = (root, vm, handlers = {}) => {
       <span class="ey">ТРЕНИРОВКА</span>
       <h1 class="impact">${esc(vm.title)}</h1>
       <p class="mut">${esc(vm.subtitle)}</p>
+      ${profileHtml}
       ${scoresHtml}
       <p class="ey" style="margin-top:16px">${esc(vm.focusHeading)}</p>
       ${focusHtml}
@@ -54,6 +76,10 @@ export const renderHome = (root, vm, handlers = {}) => {
 
 export const renderLoading = (root, vm = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameLoading(root, vm);
+    return;
+  }
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">ТРЕНИРОВКА · ПОДГОТОВКА</span>
     <h1 class="impact">ПОДБИРАЕМ<br><span class="pink">РАЗДАЧИ.</span></h1>
@@ -66,12 +92,18 @@ export const renderLoading = (root, vm = {}) => {
 
 export const renderDrill = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameDrill(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   const sc = vm.scenario || {};
   const board = (sc.board || []).map(cardHtml).join('');
   const hero = (sc.heroCards || []).map((c) => cardHtml(c)).join('');
+  const gridBusy = vm.isAnswering ? ' is-answering' : '';
   root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">${esc(vm.streetRu)} · РАЗДАЧА ${vm.progress.index} / ${vm.progress.total}</span>
+    ${sessionProgressHtml(vm.sessionProgress || vm.progress)}
+    <span class="ey">${esc(vm.streetRu)}</span>
     ${streetDots(vm.street)}
     <div class="dailyPot">
       <div><span class="ey">POT</span><b>${sc.potBb != null ? Number(sc.potBb).toFixed(1) : '—'} BB</b></div>
@@ -81,20 +113,27 @@ export const renderDrill = (root, vm, handlers = {}) => {
     ${vm.contextLine ? `<p class="mut small">${esc(vm.contextLine)}</p>` : ''}
     ${vm.historyLine ? `<p class="mut small">${esc(vm.historyLine)}</p>` : ''}
     <div class="dailyBoard">${board || ''}</div>
-    ${hero ? `<div class="cards">${hero}</div>` : ''}
+    ${hero ? `<div class="cards holeCards">${hero}</div>` : ''}
     ${vm.confidence && vm.confidence.available
       ? `<p class="mut small">УВЕРЕННОСТЬ В РАЗБОРЕ ${vm.confidence.score}%${vm.confidence.note ? ' — ' + esc(vm.confidence.note) : ''}</p>` : ''}
-    <h2>${esc(vm.prompt)}</h2>
-    <div class="grid2">${vm.options.map((o) =>
-      `<button class="choice" data-option="${esc(o.id)}">${esc(o.labelRu)}</button>`).join('')}</div>
+    <h2 id="trPrompt">${esc(vm.prompt)}</h2>
+    <div class="grid2 trChoiceGrid${gridBusy}" role="group" aria-labelledby="trPrompt">${vm.options.map((o) =>
+      `<button type="button" class="${choiceClass(o, vm)}" data-option="${esc(o.id)}"${vm.isAnswering ? ' disabled' : ''}>${esc(o.labelRu)}</button>`).join('')}</div>
   </div>`;
   root.querySelectorAll('[data-option]').forEach((b) => {
-    b.onclick = () => { if (typeof h.answer === 'function') h.answer(b.dataset.option); };
+    b.onclick = () => {
+      if (vm.isAnswering || b.disabled) return;
+      if (typeof h.answer === 'function') h.answer(b.dataset.option);
+    };
   });
 };
 
 export const renderFeedback = (root, vm, handlers = {}) => {
   if (!root) return;
+  if (useGameDaily()) {
+    renderGameFeedback(root, vm, handlers);
+    return;
+  }
   const h = handlers;
   const cls = gradeClass(vm.grade);
 
@@ -115,21 +154,20 @@ export const renderFeedback = (root, vm, handlers = {}) => {
       ${detail.alternativeLine ? `<p class="mut small">${esc(detail.alternativeLine)}</p>` : ''}
     </details>`;
     root.innerHTML = `<div class="panel dailyStage">
+      ${sessionProgressHtml(vm.sessionProgress)}
       <span class="ey">ВСКРЫТИЕ · РАЗБОР</span>
       <h1 class="impact">${esc(vm.verdict || vm.gradeTitle || 'Результат')}</h1>
       <div class="dualGrade">
-        <div class="gradeBox ${cls}"><span class="ey">РЕШЕНИЕ</span><b>${esc(vm.correctLine || '—')}</b></div>
+        <div class="gradeBox ${cls}"><span class="ey">ОЦЕНКА</span><b>${esc(vm.grade || vm.verdict || '—')}</b></div>
         <div class="gradeBox ${cls}"><span class="ey">ПОТЕРЯ EV</span><b>${vm.evLossBb != null ? Number(vm.evLossBb).toFixed(2) : '—'} BB</b></div>
       </div>
-      <div class="verdict"><span class="ey">ПОЧЕМУ</span><p class="mut small">${esc(vm.why || '')}</p></div>
-      <div class="verdict"><span class="ey">${vm.chosenRecommended ? 'ПОЧЕМУ ТЫ ПРАВ' : 'ТВОЯ ОШИБКА'}</span><p>${esc(vm.userMistake || '')}</p></div>
-      <div class="verdict"><span class="ey">ЧТО ЗАПОМНИТЬ</span><p><b>${esc(vm.remember || '—')}</b>${vm.alternative ? `<br><span class="mut small">${esc(vm.alternative)}</span>` : ''}</p></div>
+      ${feedbackSectionsHtml(vm, cls)}
       ${vm.tip ? `<p class="mut small">${esc(vm.tip)}</p>` : ''}
       ${detailHtml}
-      <button class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
+      <p class="trNextHint">Нажми «Далее» или Enter, чтобы продолжить</p>
+      <button type="button" class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
     </div>`;
-    const b = root.querySelector('#trNext');
-    if (b && typeof h.next === 'function') b.onclick = () => h.next();
+    wireFeedbackNext(root, h);
     return;
   }
 
@@ -138,19 +176,23 @@ export const renderFeedback = (root, vm, handlers = {}) => {
     : '—';
   const rec = vm.strategy && vm.strategy.recommendedActionLabel ? vm.strategy.recommendedActionLabel : '—';
   root.innerHTML = `<div class="panel dailyStage">
+    ${sessionProgressHtml(vm.sessionProgress)}
     <span class="ey">ВСКРЫТИЕ · ОЦЕНКА</span>
     <h1 class="impact">${esc(vm.gradeTitle || 'Результат')}</h1>
     <div class="dualGrade">
       <div class="gradeBox ${cls}"><span class="ey">ОЦЕНКА</span><b>${esc(vm.grade)}</b></div>
       <div class="gradeBox ${cls}"><span class="ey">ПОТЕРЯ EV</span><b>${vm.evLossBb != null ? Number(vm.evLossBb).toFixed(2) : '—'} BB</b></div>
     </div>
-    <div class="regReport"><span class="ey">СТРАТЕГИЯ</span><p>Рекомендация: ${esc(rec)} · частота ${freq}${vm.mixedStrategy ? ' · можно миксовать линии' : ''}</p></div>
-    <div class="verdict"><span class="ey">ПОЧЕМУ</span><p class="mut small">${esc(vm.summary || '')}</p><p>${esc(vm.tip || '')}</p></div>
+    ${feedbackSectionsHtml({
+      ...vm,
+      correctAction: vm.correctAction || rec,
+      strategy: { ...vm.strategy, recommendedFrequency: vm.strategy?.recommendedFrequency, recommendedActionLabel: rec }
+    }, cls)}
     <p class="mut small">ТРЕНИРУЕМ: ${esc(vm.concept || '—')}</p>
-    <button class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
+    <p class="trNextHint">Нажми «Далее» или Enter, чтобы продолжить</p>
+    <button type="button" class="primary" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
   </div>`;
-  const b = root.querySelector('#trNext');
-  if (b && typeof h.next === 'function') b.onclick = () => h.next();
+  wireFeedbackNext(root, h);
 };
 
 export const renderSummary = (root, vm, handlers = {}) => {
@@ -162,6 +204,7 @@ export const renderSummary = (root, vm, handlers = {}) => {
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">СЕССИЯ ЗАВЕРШЕНА</span>
     <h1 class="impact">${vm.solved} РЕШЕНИЙ.<br><span class="pink">ГОТОВО.</span></h1>
+    <p class="mut small">Верных оценок (хорошо/отлично): <b>${vm.nearOptimalCount != null ? vm.nearOptimalCount : '—'}</b> из ${vm.solved}</p>
     <div class="dualGrade">
       <div class="gradeBox"><span class="ey">СРЕДНЯЯ ПОТЕРЯ EV</span><b>${vm.avgLossBb != null ? Number(vm.avgLossBb).toFixed(2) : '—'} BB</b></div>
       <div class="gradeBox"><span class="ey">ОКОЛО ОПТИМАЛЬНЫХ</span><b>${vm.nearOptimalCount} / ${vm.solved}</b></div>
@@ -185,10 +228,15 @@ export const renderError = (root, vm = {}) => {
     <span class="ey">ТРЕНИРОВКА · ОШИБКА</span>
     <h1 class="impact">НЕ<br><span class="pink">ПОЛУЧИЛОСЬ.</span></h1>
     <p class="mut">${esc(vm.message || 'Не удалось подготовить раздачи. Попробуй ещё раз.')}</p>
-    <button class="primary" id="trRetry">ЕЩЁ РАЗ →</button>
+    <div class="grid2">
+      <button type="button" class="secondary" id="trErrBack">НА ГЛАВНУЮ</button>
+      <button type="button" class="primary" id="trRetry">ЕЩЁ РАЗ →</button>
+    </div>
   </div>`;
   const b = root.querySelector('#trRetry');
   if (b && typeof vm.retry === 'function') b.onclick = () => vm.retry();
+  const back = root.querySelector('#trErrBack');
+  if (back && typeof vm.back === 'function') back.onclick = () => vm.back();
 };
 
 export const renderCancelled = (root, vm = {}) => {
@@ -202,10 +250,69 @@ export const renderCancelled = (root, vm = {}) => {
   if (b && typeof vm.back === 'function') b.onclick = () => vm.back();
 };
 
-// ---- Primary assessment (P0) -------------------------------------------------
+// ---- Placement Test V2 (structured MTT context per mini-app mode) ------------
+
+function placementContextHtml(vm) {
+  const ctx = vm.context || {};
+  const board = (ctx.board || []).map(cardHtml).join('');
+  const hero = (ctx.heroCards || []).map((c) => cardHtml(c)).join('');
+  const hist = (ctx.actionHistory || []).map((h) =>
+    `<div class="row"><span class="mut small">${esc(h.street)}</span><b>${esc(h.text)}</b></div>`
+  ).join('');
+
+  return `<div class="dailyPot">
+      <div><span class="ey">MTT</span><b>${esc(ctx.formatLine || 'MTT')}</b></div>
+      <div><span class="ey">СТАДИЯ</span><b>${esc(ctx.stageLine || '—')}</b></div>
+    </div>
+    <div class="row"><span class="mut small">${esc(ctx.stacksLine || '')}</span></div>
+    ${ctx.opponent ? `<div class="row"><span class="mut small">Соперник</span><b>${esc(ctx.opponent)}</b></div>` : ''}
+    ${hist ? `<div class="rangesField" style="margin-top:8px"><span class="ey">ИСТОРИЯ</span>${hist}</div>` : ''}
+    ${board ? `<div class="dailyBoard">${board}</div>` : ''}
+    ${hero ? `<div class="cards holeCards">${hero}</div>` : ''}`;
+}
+
+function placementReviewHtml(vm) {
+  const nodes = vm.reviewNodes || [];
+  if (!nodes.length) return '';
+  return `<div class="timeline">${nodes.map((n) =>
+    `<div class="node"><span class="ey">${esc(n.street)}</span><b>${esc(n.text)}</b></div>`
+  ).join('')}</div>`;
+}
+
+export const renderPlacementTask = (root, vm = {}, handlers = {}) => {
+  if (!root || !vm) return;
+  const p = vm.progress || {};
+  const mode = vm.mode || 'swipe';
+  const ctxBlock = placementContextHtml(vm);
+  const reviewBlock = mode === 'review' ? placementReviewHtml(vm) : '';
+  const sizingHint = mode === 'sizing' && vm.sizingTargetPct != null
+    ? `<p class="mut small">Выбери размер относительно банка ${vm.context?.potBb != null ? vm.context.potBb + ' BB' : ''}</p>`
+    : '';
+
+  root.innerHTML = `<div class="panel dailyStage placement-${esc(mode)}">
+    <span class="ey">${esc(vm.modeLabel || 'PLACEMENT')} · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>
+    <h1 class="impact">${esc(vm.heading || 'ЧТО СДЕЛАЕШЬ?')}</h1>
+    ${ctxBlock}
+    ${reviewBlock}
+    ${sizingHint}
+    <h2>${esc(vm.prompt || '')}</h2>
+    <div class="grid2">${(vm.choices || []).map((c) =>
+      `<button class="choice" data-achoice="${esc(c.id)}">${esc(c.labelRu)}</button>`).join('')}</div>
+  </div>`;
+  root.querySelectorAll('[data-achoice]').forEach((b) => {
+    b.onclick = () => { if (typeof handlers.answer === 'function') handlers.answer(b.dataset.achoice); };
+  });
+};
+
+// ---- Primary assessment (P0) — delegates to placement V2 renderer ------------
 
 export const renderAssessment = (root, vm = {}, handlers = {}) => {
-  if (!root || !vm || !vm.q) return;
+  if (!root || !vm) return;
+  if (vm.context || vm.mode) {
+    renderPlacementTask(root, vm, handlers);
+    return;
+  }
+  if (!vm.q) return;
   const p = vm.progress || {};
   root.innerHTML = `<div class="panel dailyStage">
     <span class="ey">УРОВЕНЬ · ${esc(vm.streetRu || '')} · ${p.index} / ${p.total}</span>

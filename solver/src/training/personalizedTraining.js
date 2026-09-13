@@ -14,6 +14,11 @@ import { skillsForConcept, updateSkillProfileInStore } from './skillProfile.js';
 import { contentFingerprint } from './sessionDiversity.js';
 import { seededRng } from './personalizationSeed.js';
 import { updateSkillMasteryAfterTraining, buildSkillMasteryStates } from './skillMastery.js';
+import {
+  buildDynamicPlayerProfile,
+  attachDynamicProfile,
+  rebuildSkillProfileFromStore
+} from './dynamicPlayerProfile.js';
 
 export function getTopLeaks(store, { now = Date.now(), limit = 5 } = {}) {
   const profiles = (store.listProfiles() || [])
@@ -84,14 +89,19 @@ export function recordTrainingResult(store, { drill, grade, evLossBb, now = Date
     now
   });
 
+  const dynamicProfile = rebuildSkillProfileFromStore(store, { now, history: store.loadHistory() });
+  if (dynamicProfile && typeof store.saveSkillProfile === 'function') {
+    store.saveSkillProfile(dynamicProfile);
+  }
+
   updateSkillMasteryAfterTraining(store, {
     skillTags,
-    skillProfile,
+    skillProfile: dynamicProfile || skillProfile,
     grade,
     now
   });
 
-  return { recorded: true, concept, progress, skillProfile, skillTags };
+  return { recorded: true, concept, progress, skillProfile: dynamicProfile || skillProfile, skillTags };
 }
 
 function buildProgressMap(store) {
@@ -130,8 +140,10 @@ export function buildProfileDailyPlan({
   const seeded = seed != null ? seededRng(`${seed}|plan|${now}`) : rng;
   const recentResults = buildRecentResults(hist);
   const masteryStore = typeof store.loadSkillMastery === 'function' ? store.loadSkillMastery() : {};
+  const dynamicProfile = rebuildSkillProfileFromStore(store, { now, history: hist });
+  const resolvedProfile = dynamicProfile || skillProfile;
   const skillMasteryStates = buildSkillMasteryStates({
-    skillProfile,
+    skillProfile: resolvedProfile,
     masteryStore,
     recentResults,
     now
@@ -146,7 +158,8 @@ export function buildProfileDailyPlan({
     progressByConcept: buildProgressMap(store),
     history: hist,
     recentResults,
-    skillProfile,
+    skillProfile: resolvedProfile,
+    dynamicProfile,
     leakProfiles,
     skillMasteryStates,
     count,

@@ -1,0 +1,884 @@
+[
+  {
+    "id": "conflict_UO_40+_EP_T9o",
+    "chartId": "UO_40+_EP",
+    "hand": "T9o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.624,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|T9o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_98o",
+    "chartId": "UO_40+_EP",
+    "hand": "98o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.791,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|98o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_87o",
+    "chartId": "UO_40+_EP",
+    "hand": "87o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.897,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|87o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_77",
+    "chartId": "UO_40+_EP",
+    "hand": "77",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.566,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|77"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_76o",
+    "chartId": "UO_40+_EP",
+    "hand": "76o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.952,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|76o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_66",
+    "chartId": "UO_40+_EP",
+    "hand": "66",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.718,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|66"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_65o",
+    "chartId": "UO_40+_EP",
+    "hand": "65o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.978,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|65o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_55",
+    "chartId": "UO_40+_EP",
+    "hand": "55",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.832,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|55"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_54o",
+    "chartId": "UO_40+_EP",
+    "hand": "54o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.99,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|54o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_44",
+    "chartId": "UO_40+_EP",
+    "hand": "44",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.906,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|44"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_EP_43o",
+    "chartId": "UO_40+_EP",
+    "hand": "43o",
+    "position": "EP",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.996,
+      "mixed": true,
+      "atlasKey": "RFI|UTG|50|43o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_98o",
+    "chartId": "UO_40+_LJ",
+    "hand": "98o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.592,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|98o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_87o",
+    "chartId": "UO_40+_LJ",
+    "hand": "87o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.769,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|87o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_76o",
+    "chartId": "UO_40+_LJ",
+    "hand": "76o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.884,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|76o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_65o",
+    "chartId": "UO_40+_LJ",
+    "hand": "65o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.945,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|65o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_55",
+    "chartId": "UO_40+_LJ",
+    "hand": "55",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.655,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|55"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_54o",
+    "chartId": "UO_40+_LJ",
+    "hand": "54o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.975,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|54o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_44",
+    "chartId": "UO_40+_LJ",
+    "hand": "44",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.787,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|44"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_43o",
+    "chartId": "UO_40+_LJ",
+    "hand": "43o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.989,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|43o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_33",
+    "chartId": "UO_40+_LJ",
+    "hand": "33",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.878,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|33"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_32o",
+    "chartId": "UO_40+_LJ",
+    "hand": "32o",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.995,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|32o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_LJ_22",
+    "chartId": "UO_40+_LJ",
+    "hand": "22",
+    "position": "LJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.933,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|22"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_98o",
+    "chartId": "UO_40+_HJ",
+    "hand": "98o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.592,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|98o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_87o",
+    "chartId": "UO_40+_HJ",
+    "hand": "87o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.769,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|87o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_76o",
+    "chartId": "UO_40+_HJ",
+    "hand": "76o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.884,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|76o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_65o",
+    "chartId": "UO_40+_HJ",
+    "hand": "65o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.945,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|65o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_55",
+    "chartId": "UO_40+_HJ",
+    "hand": "55",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.655,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|55"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_54o",
+    "chartId": "UO_40+_HJ",
+    "hand": "54o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.975,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|54o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_44",
+    "chartId": "UO_40+_HJ",
+    "hand": "44",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.787,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|44"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_43o",
+    "chartId": "UO_40+_HJ",
+    "hand": "43o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.989,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|43o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_33",
+    "chartId": "UO_40+_HJ",
+    "hand": "33",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.878,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|33"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_32o",
+    "chartId": "UO_40+_HJ",
+    "hand": "32o",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.995,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|32o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_HJ_22",
+    "chartId": "UO_40+_HJ",
+    "hand": "22",
+    "position": "HJ",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.933,
+      "mixed": true,
+      "atlasKey": "RFI|HJ|50|22"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_75s",
+    "chartId": "UO_40+_CO",
+    "hand": "75s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.507,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|75s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_65s",
+    "chartId": "UO_40+_CO",
+    "hand": "65s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.533,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|65s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_64s",
+    "chartId": "UO_40+_CO",
+    "hand": "64s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.701,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|64s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_54s",
+    "chartId": "UO_40+_CO",
+    "hand": "54s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.723,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|54s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_53s",
+    "chartId": "UO_40+_CO",
+    "hand": "53s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.843,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|53s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_54o",
+    "chartId": "UO_40+_CO",
+    "hand": "54o",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.904,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|54o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_43s",
+    "chartId": "UO_40+_CO",
+    "hand": "43s",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.857,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|43s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_43o",
+    "chartId": "UO_40+_CO",
+    "hand": "43o",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.955,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|43o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_33",
+    "chartId": "UO_40+_CO",
+    "hand": "33",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.63,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|33"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_32o",
+    "chartId": "UO_40+_CO",
+    "hand": "32o",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.98,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|32o"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_CO_22",
+    "chartId": "UO_40+_CO",
+    "hand": "22",
+    "position": "CO",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.769,
+      "mixed": true,
+      "atlasKey": "RFI|CO|50|22"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_BTN_62s",
+    "chartId": "UO_40+_BTN",
+    "hand": "62s",
+    "position": "BTN",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.573,
+      "mixed": true,
+      "atlasKey": "RFI|BTN|50|62s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_BTN_52s",
+    "chartId": "UO_40+_BTN",
+    "hand": "52s",
+    "position": "BTN",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.655,
+      "mixed": true,
+      "atlasKey": "RFI|BTN|50|52s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_BTN_43s",
+    "chartId": "UO_40+_BTN",
+    "hand": "43s",
+    "position": "BTN",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.507,
+      "mixed": true,
+      "atlasKey": "RFI|BTN|50|43s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_BTN_42s",
+    "chartId": "UO_40+_BTN",
+    "hand": "42s",
+    "position": "BTN",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.678,
+      "mixed": true,
+      "atlasKey": "RFI|BTN|50|42s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  },
+  {
+    "id": "conflict_UO_40+_BTN_32s",
+    "chartId": "UO_40+_BTN",
+    "hand": "32s",
+    "position": "BTN",
+    "stackBand": "40+",
+    "trainer": {
+      "action": "RAISE",
+      "source": "TRAINER"
+    },
+    "pokerBrain": {
+      "action": "FOLD",
+      "freq": 0.701,
+      "mixed": true,
+      "atlasKey": "RFI|BTN|50|32s"
+    },
+    "note": "Position mapped EP→UTG, stack band→midpoint for comparison only"
+  }
+]

@@ -11,11 +11,20 @@
 import {
   createTrainingStore, recordCandidate, normalizeCandidate, handContentKey
 } from '../solver/src/index.js';
+import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';
 import { SessionController } from './sessionController.js';
 import { AssessmentController } from './assessmentController.js';
 import { installMiniAppHooks } from './miniAppHooks.js';
+import { installOnboardingHooks } from './onboardingHooks.js';
+import { installHomeRecommendation } from './homeRecommendation.js';
+import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
+import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
+import { drillViewModel, sessionProgressViewModel } from './viewModel.js';
 import * as R from './renderer.js';
+import { installGradingGateway } from './gradingGateway.js';
+
+if (typeof window !== 'undefined') installGradingGateway(window);
 
 const storage = (() => {
   try {
@@ -27,7 +36,16 @@ const storage = (() => {
 })();
 
 const store = createTrainingStore({ storage });
-const miniApps = installMiniAppHooks(store);
+if (typeof window !== 'undefined') {
+  window.TaskContextCanonical = { buildCanonicalSpot };
+}
+loadTrainerCandidateIndex().catch(() => {});
+const miniApps = installMiniAppHooks(store, { appWindow: typeof window !== 'undefined' ? window : undefined });
+installHomeRecommendation(typeof window !== 'undefined' ? window : undefined);
+
+if (typeof window !== 'undefined' && document.getElementById('home')?.classList.contains('active')) {
+  try { window.renderHome?.(); } catch (e) { /* ignore */ }
+}
 
 const SESSION_CONFIG = {
   count: 7,
@@ -60,7 +78,9 @@ const ctl = new SessionController({
   solve,
   solveOpts: SOLVE_OPTS,
   config: SESSION_CONFIG,
-  onStateChange: () => paint()
+  onStateChange: () => {
+    if (!suppressControllerPaint) paint();
+  }
 });
 
 // Primary 12-question diagnostic (P0). Run before the first personalised session
@@ -71,26 +91,90 @@ const assessment = new AssessmentController({
   onStateChange: () => paint()
 });
 
+  const onboarding = installOnboardingHooks({ store, assessment, appWindow: typeof window !== 'undefined' ? window : undefined });
+
 const goHome = () => {
   if (typeof window.show === 'function') window.show('home');
   else if (legacyRenderDaily) legacyRenderDaily();
 };
 
-function legacyFallback() { if (legacyRenderDaily) legacyRenderDaily(); }
+function legacyFallback() {
+  if (typeof window.__legacyDailyIntro === 'function') window.__legacyDailyIntro();
+  else if (legacyRenderDaily) legacyRenderDaily();
+}
+
+function previewScenarioFromPlan(preparedDaily) {
+  const ref = preparedDaily?.plan?.spots?.[0] || preparedDaily?.plan?.drills?.[0];
+  if (!ref) return null;
+  const spot = ref.hero ? ref : getTaskById(ref.id || ref.spotId);
+  if (!spot) return null;
+  return {
+    heroCards: spot.hero,
+    board: spot.board || [],
+    heroPosition: spot.position,
+    villainPosition: spot.villain,
+    potBb: spot.pot,
+    effectiveStackBb: spot.heroStack != null ? spot.heroStack : spot.effStack,
+    street: spot.street,
+    format: spot.format,
+    stage: spot.stage,
+    table: spot.table
+  };
+}
+
+let pendingOptionId = null;
+let suppressControllerPaint = false;
+let lastDrillScrollIndex = null;
 
 const handlers = {
   start() {
     const r = ctl.start();
     if (r.reason === 'no_profile') { legacyFallback(); return; }
-    if (r.started) paint();
+    if (r.started) {
+      window.MiniAppNav?.reset('daily');
+      pushDailyNav({ phase: 'lobby' });
+      if (ctl.state === 'ready' || ctl.state === 'limited') {
+        pushDailyNav({ phase: 'drill', index: 0 });
+      }
+    }
+    paint();
   },
   answer(optionId) {
+    if (pendingOptionId || ctl.answering || ctl.showingFeedback) return;
+    pendingOptionId = optionId;
+    suppressControllerPaint = true;
+    paint();
     const res = ctl.answer(optionId);
-    if (res) paint();
+    pendingOptionId = null;
+    suppressControllerPaint = false;
+    if (res) {
+      pushDailyNav({ phase: 'feedback', index: ctl.index });
+      paint();
+    } else {
+      paint();
+    }
   },
-  next() { ctl.next(); paint(); },
-  more() { moreSpots(); },
-  back() { goHome(); }
+  next() {
+    const prevIndex = ctl.index;
+    ctl.next();
+    if (!ctl.showingFeedback && ctl.state !== 'done' && ctl.index !== prevIndex) {
+      pushDailyNav({ phase: 'drill', index: ctl.index });
+    }
+    paint();
+  },
+  back() {
+    if (ctl.state === 'idle') {
+      goHome();
+      return;
+    }
+    const result = ctl.back();
+    const nav = window.MiniAppNav;
+    if (nav && result && result.action !== 'noop') {
+      nav.pop('daily');
+    }
+    paint();
+  },
+  more() { moreSpots(); }
 };
 
 const assessmentHandlers = {
@@ -108,10 +192,50 @@ function moreSpots() {
   paint();
 }
 
+function sessionMetaVM() {
+  const prog = ctl.progress();
+  return sessionProgressViewModel({
+    index: prog.index,
+    total: prog.total,
+    results: ctl.results
+  });
+}
+
 function drillVM() {
   const drill = ctl.current();
   const prog = ctl.progress();
-  return drillViewModel({ drill, index: prog.index, total: prog.total });
+  const snap = ctl.taskStates[ctl.index];
+  const vm = drillViewModel({ drill, index: prog.index, total: prog.total });
+  vm.sessionProgress = sessionMetaVM();
+  vm.isAnswering = ctl.answering || !!pendingOptionId;
+  vm.pendingOptionId = pendingOptionId;
+  if (snap && snap.optionId) vm.selectedOptionId = snap.optionId;
+  if (snap && snap.lastAnswer && !ctl.showingFeedback) {
+    vm.reviewChoiceId = snap.optionId;
+    const g = snap.lastAnswer.grade;
+    vm.reviewChoiceCorrect = !!(snap.lastAnswer.chosenRecommended || g === 'EXCELLENT' || g === 'GOOD');
+  }
+  return vm;
+}
+
+function feedbackVM() {
+  const vm = ctl.feedbackVM();
+  vm.sessionProgress = sessionMetaVM();
+  return vm;
+}
+
+function syncDailyNav() {
+  const nav = window.MiniAppNav;
+  if (!nav || assessment.state === 'answering') return;
+  const st = ctl.state;
+  if (st === 'idle' && nav.depth('daily') === 0) {
+    nav.reset('daily');
+    nav.push('daily', { phase: 'lobby' });
+  }
+}
+
+function pushDailyNav(snap) {
+  window.MiniAppNav?.push('daily', snap);
 }
 
 function paint() {
@@ -139,7 +263,7 @@ function paint() {
 
   if (st === 'ready' || st === 'limited') {
     if (ctl.showingFeedback && ctl.lastAnswer) {
-      R.renderFeedback(el, ctl.feedbackVM(), handlers);
+      R.renderFeedback(el, feedbackVM(), handlers);
     } else {
       R.renderDrill(el, drillVM(), handlers);
     }
@@ -148,13 +272,18 @@ function paint() {
   } else if (st === 'loading') {
     R.renderLoading(el, { cancel: () => { ctl.cancel(); paint(); } });
   } else if (st === 'error') {
-    R.renderError(el, { retry: () => { ctl._resetRun(); handlers.start(); } });
+    R.renderError(el, {
+      retry: () => { ctl._resetRun(); handlers.start(); },
+      back: goHome
+    });
   } else if (st === 'cancelled') {
     R.renderCancelled(el, { back: goHome });
   } else {
     // idle / fallback → show home; if not personalised, use legacy validated daily.
+    syncDailyNav();
     const vm = ctl.home();
     if (vm.type === 'training') {
+      vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);
       R.renderHome(el, vm, { start: handlers.start });
     } else {
       // No leak or skill profile yet → offer the primary diagnostic as the entry
@@ -164,6 +293,14 @@ function paint() {
         legacy: legacyFallback
       });
     }
+  }
+
+  const inDrill = (st === 'ready' || st === 'limited') && !ctl.showingFeedback && !pendingOptionId;
+  if (inDrill && lastDrillScrollIndex !== ctl.index) {
+    lastDrillScrollIndex = ctl.index;
+    try { el.scrollTop = 0; } catch (e) { /* ignore */ }
+  } else if (!inDrill && st !== 'ready' && st !== 'limited') {
+    lastDrillScrollIndex = null;
   }
 }
 
@@ -176,6 +313,7 @@ window.PersonalizedTrainingUi = {
   store,
   controller: ctl,
   assessment,
+  onboarding,
   paint,
   beginAssessment: () => { assessment.begin(); paint(); },
   miniApps

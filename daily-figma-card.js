@@ -1,32 +1,109 @@
 (() => {
 'use strict';
 
-/*
-  PokerSwipe · Раздача дня · Figma Make card port
-  Safe visual patch over the existing #v36Daily card.
-  No React/Vite files are added to PokerSwipe.
-*/
+const BUILD = 'pokerswipe-visual-assets-v4';
 
-const BUILD='daily-figma-card-v1';
+const ASSETS = {
+  bg: 'assets/app-background/pokerswipe-global-bg-v4.jpg',
+  tournaments: 'assets/my-tournaments/winner-demon-v3.png',
+  hands: 'assets/my-hands/lounge-demon-v3.png',
+  chips: 'assets/bet-sizing/neon-chips-v3.png',
+  dailyWebp: 'assets/daily-hand/demon-cards-v2.webp',
+  dailyPng: 'assets/daily-hand/demon-cards-v2.png'
+};
 
-function enhance(){
-  const card=document.querySelector('#home #v36Daily, #home .v36Daily');
-  if(!card)return false;
+function makeImg(cls, src, alt=''){
+  const img=document.createElement('img');
+  img.className=cls;
+  img.src=src;
+  img.alt=alt;
+  img.draggable=false;
+  img.setAttribute('aria-hidden', alt ? 'false' : 'true');
+  return img;
+}
 
-  card.classList.add('v36DailyFigma');
-  card.dataset.dailyFigmaBuild=BUILD;
+function mountGlobalBackground(){
+  document.documentElement.classList.add('psVisualV3');
+  document.body.classList.add('psVisualV3Body');
 
-  const copy=card.querySelector('.v36DailyCopy');
-  if(copy && !copy.querySelector('.dailyFigmaCta')){
-    const btn=document.createElement('button');
+  let probe=document.getElementById('psVisualV3BgPreload');
+  if(!probe){
+    probe=makeImg('psVisualV3BgPreload',ASSETS.bg);
+    probe.id='psVisualV3BgPreload';
+    probe.style.display='none';
+    document.body.appendChild(probe);
+  }
+}
+
+/* Primary lime CTA — uses canonical PokerSwipe bubble classes (not unstyled dailyFigmaCta). */
+function addDailyCta(card){
+  const copy=card?.querySelector('.v36DailyCopy');
+  if(!copy) return;
+  let btn=copy.querySelector('.dailyFigmaCta');
+  if(!btn){
+    btn=document.createElement('button');
     btn.type='button';
-    btn.className='dailyFigmaCta';
-    btn.setAttribute('aria-label','Разобрать раздачу дня');
-    btn.innerHTML='<span>Разобрать</span><b>→</b>';
     copy.appendChild(btn);
   }
+  btn.className='primary pgCta pgBubblePress dailyFigmaCta';
+  btn.setAttribute('aria-label','Перейти к раздаче дня');
+  btn.textContent='ПЕРЕЙТИ К РАЗДАЧЕ ДНЯ';
+  if(!btn.dataset.wired){
+    btn.dataset.wired='1';
+    btn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      if(typeof window.show==='function') window.show('daily');
+    });
+  }
+}
 
-  return true;
+function mountDailyDemon(){
+  const card=document.querySelector('#home #v36Daily, #home .v36Daily');
+  if(!card)return;
+  card.classList.add('v36DailyFigma');
+  card.dataset.dailyFigmaBuild=BUILD;
+  addDailyCta(card);
+  const art=card.querySelector('.v36Cards');
+  if(!art)return;
+  art.classList.remove('dailyDemonVisual');
+  art.querySelectorAll('i,.dailyPokerChip,.dailyDemonAsset').forEach(el=>el.remove());
+}
+
+function mountSizingChips(){
+  const candidates=[
+    document.querySelector('#home #v36Sizing'),
+    document.querySelector('#home .v36Sizing'),
+    document.querySelector('#home .sizingTile')
+  ].filter(Boolean);
+  const sizing=candidates[0];
+  if(!sizing)return;
+
+  let holder=sizing.querySelector('.v36Chips,.chipsPreview');
+  if(!holder){
+    holder=document.createElement('div');
+    holder.className='v36Chips psSizingAssetHolder';
+    sizing.appendChild(holder);
+  }
+  holder.classList.add('psSizingAssetHolder');
+  holder.querySelectorAll('i,.v36ChipAsset,.psSizingChipsAsset').forEach(el=>el.remove());
+  holder.appendChild(makeImg('psSizingChipsAsset',ASSETS.chips));
+}
+
+function mountMyTournaments(){
+  // Giant decorative demons removed — Mt Pro uses small empty-state companion only.
+}
+
+function mountMyHands(){
+  // Giant decorative demons removed from My Hands hero.
+}
+
+function enhance(){
+  mountGlobalBackground();
+  mountDailyDemon();
+  mountSizingChips();
+  mountMyTournaments();
+  mountMyHands();
 }
 
 let queued=false;
@@ -42,13 +119,14 @@ function schedule(){
 function start(){
   enhance();
 
-  const home=document.getElementById('home');
-  if(home){
-    new MutationObserver(schedule).observe(home,{subtree:true,childList:true});
-  }
+  new MutationObserver(schedule).observe(document.body,{
+    subtree:true,
+    childList:true
+  });
 
-  document.addEventListener('click',e=>{
-    if(e.target.closest?.('[data-nav="home"]'))setTimeout(schedule,0);
+  document.addEventListener('click',()=>{
+    setTimeout(schedule,0);
+    setTimeout(schedule,120);
   },true);
 
   window.addEventListener('pageshow',schedule);
@@ -56,9 +134,17 @@ function start(){
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',start,{once:true});
-}else{
-  start();
-}
+}else start();
 
-window.PokerSwipeDailyFigma={build:BUILD,refresh:enhance};
+window.PokerSwipeVisualAssetsV4={build:BUILD,refresh:enhance,assets:ASSETS};
+})();
+
+/* Hand of the Day — load bridge (iframe mount for modules/hand-of-the-day.html) */
+(function loadHandDayBridge(){
+  if (window.PsHandDayBridge) return;
+  var s = document.createElement('script');
+  s.src = 'hand-day-bridge.js';
+  s.defer = true;
+  s.onerror = function(){ console.warn('[PokerSwipe] hand-day-bridge.js failed to load'); };
+  document.head.appendChild(s);
 })();

@@ -77,8 +77,31 @@ export {
 } from './training/errorCause.js';
 export {
   ASSESSMENT_POOL, REQUIRED_SKILLS, buildAssessmentSet, buildAssessmentEligiblePool,
-  getAssessmentEligiblePool, gradeAssessmentItem, runAssessment
+  getAssessmentEligiblePool, getDiagnosticEligiblePool, getPlacementEligiblePool,
+  gradeAssessmentItem, runAssessment,
+  createDiagnosticSession, createDiagnosticSessionSeed, selectNextDiagnosticItem,
+  submitDiagnosticAnswer, simulateDiagnosticRun, validateDiagnosticItem, validateDiagnosticPool,
+  getDiagnosticPoolSize, DIAGNOSTIC_COUNT_DEFAULT, DIAGNOSTIC_COUNT_MIN, DIAGNOSTIC_COUNT_MAX,
+  PLACEMENT_TEST_V2, PLACEMENT_COUNT_DEFAULT, PLACEMENT_COUNT_MIN, PLACEMENT_COUNT_MAX,
+  createPlacementSession, createPlacementSessionSeed, selectNextPlacementItem,
+  submitPlacementAnswer, simulatePlacementRun, placementSessionSummary, placementEvidenceWeight,
+  getPlacementPoolStats
 } from './training/assessment.js';
+export {
+  PLACEMENT_MODES, getValidatedMttTasks, libraryTaskToPlacementItem,
+  assignMiniAppMode, formatPlacementContext
+} from './training/placementTaskAdapter.js';
+export {
+  PLACEMENT_SKILLS, CALIBRATION_TIERS
+} from './training/placementTestV2.js';
+export {
+  DIAGNOSTIC_CATEGORIES, DIAGNOSTIC_CATEGORY_IDS, getDiagnosticPool,
+  getDiagnosticPoolByCategory, formatDiagnosticQuestion
+} from './training/diagnosticPool.js';
+export {
+  recommendedStartingDifficulty, diagnosticSessionSummary, evidenceWeight,
+  getDiagnosticCategoryCoverage, getDiagnosticDifficultyCoverage, getDiagnosticSkillCoverage
+} from './training/diagnosticSelection.js';
 export {
   SPOT_KINDS, normalizeSpot, masteryOf, isMastered, recentAccuracy, adaptiveDifficulty,
   spacedInterval, conceptDue, spotEligible, sessionGoal, earliestMeaningful, selectSpots,
@@ -103,12 +126,27 @@ export {
   classifyTrainingBucket, PLAYER_PROFILE_SEEDS, DIFFERENTIATION_PLAN_COUNT,
   DIFFERENTIATION_PLAN_NOW
 } from './training/playerDifferentiationFixtures.js';
-export { getTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
-export { drillFromLibraryTask } from './training/libraryDrill.js';
+export { getTaskPool, getMttTaskPool, loadTaskLibrary, auditTaskMetadata, hasUsablePlayerProfile } from './training/taskLibraryBridge.js';
+export {
+  drillFromLibraryTask,
+  libraryTaskToBrainSpot,
+  choiceToActionType,
+  explanationMatchesTask
+} from './training/libraryDrill.js';
 export { buildTaskFeedback, skillScoresForHome } from './training/taskFeedback.js';
 export { spotFingerprint, contentFingerprint, diversityPenalty, isTooSimilar, sessionRepetitionPenalty, recentFingerprints } from './training/sessionDiversity.js';
 export { createPersonalizationSeed, seededRng, seedToNumber } from './training/personalizationSeed.js';
 export { leakBoostForSpot, spotMatchesLeakConcept, LEAK_SPOT_MATCHERS } from './training/leakSpotMapping.js';
 export { createAnalytics, isKnownEvent } from './training/analytics.js';
+// Hand of the Day brain integration
+export {
+  getConceptForScenario, isScenarioMapped, getMappedScenarios, getUnmappedScenarios, MAPPING_REPORT
+} from './handOfDay/scenarioConceptMapping.js';
+export {
+  adaptHodGradeToCanonical, buildMistakeMemoryAttempt, areHodAttemptsIdentical
+} from './handOfDay/gradingAdapter.js';
+export {
+  HandOfDayBrainIntegration, initHandOfDayIntegration, getHandOfDayIntegration, resetHandOfDayIntegration
+} from './handOfDay/brainIntegration.js';
 
 export default PokerSwipeSolver;

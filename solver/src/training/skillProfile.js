@@ -7,6 +7,9 @@
 // hand results. Unknown evidence stays null (never invent a number).
 
 import { stableHash } from '../integration/pokerSwipeHandAdapter.js';
+import {
+  assessmentSkillWeights, assessmentEvLossBb, compressSkillScore, assessmentOverallScore
+} from './placementSkillAttribution.js';
 
 // Skill → the concept families (leak keys) that are evidence for that skill.
 const SKILL_TO_CONCEPTS = {
@@ -109,6 +112,7 @@ export function createSkillEvidence({ skill, now = Date.now() } = {}) {
 }
 
 const SCORE_MIN_SAMPLE = 3;
+const ASSESSMENT_SCORE_PRIOR = 45;
 
 // Score = 100 - normalized EV loss, blended with the answer quality rate. Mirrors
 // the mastery formula in progress.js so the two stay consistent.
@@ -118,16 +122,15 @@ export function scoreFromEvidence(ev) {
   const evQuality = clamp(1 - (ev.avgEvLossBb || 0) / 1.0, 0, 1);
   const nearOptimal = attempts.filter((a) => a.evLossBb != null && a.evLossBb <= 0.05).length;
   const decisionQuality = nearOptimal / attempts.length;
-  const score = 100 * clamp(0.6 * evQuality + 0.4 * decisionQuality, 0, 1);
-  return Math.round(score);
+  const score = compressSkillScore(100 * clamp(0.6 * evQuality + 0.4 * decisionQuality, 0, 1));
+  return score;
 }
 
-export function scoredSkillFromEvidence(ev) {
+export function scoredSkillFromEvidence(ev, { prior = 55 } = {}) {
   if (!ev || !ev.sampleSize) return null;
   const raw = scoreFromEvidence(ev);
   if (raw == null) return null;
   if (ev.sampleSize < SCORE_MIN_SAMPLE) {
-    const prior = 55;
     const weight = ev.sampleSize / SCORE_MIN_SAMPLE;
     return Math.round(prior * (1 - weight) + raw * weight);
   }
@@ -191,7 +194,7 @@ export function evidenceToSkillEntry(ev, skill) {
   };
 }
 
-export function finalizeSkillProfile(bySkill, now = Date.now()) {
+export function finalizeSkillProfile(bySkill, now = Date.now(), { overallOverride = null } = {}) {
   const skills = {};
   for (const s of SKILLS) {
     if (!bySkill[s]) continue;
@@ -200,9 +203,16 @@ export function finalizeSkillProfile(bySkill, now = Date.now()) {
 
   const present = Object.values(skills).filter((s) => s.sampleSize > 0);
   const scored = present.filter((s) => s.score != null);
-  const overall = scored.length
-    ? Math.round(scored.reduce((sum, x) => sum + x.score, 0) / scored.length)
-    : null;
+  const overallRaw = overallOverride != null
+    ? overallOverride
+    : (scored.length
+      ? scored.reduce((sum, x) => sum + x.score * Math.max(1, x.sampleSize), 0)
+        / scored.reduce((sum, x) => sum + Math.max(1, x.sampleSize), 0)
+      : null);
+  const overall = overallRaw != null ? compressSkillScore(overallRaw) : null;
+
+  const rankPool = scored.filter((s) => s.sampleSize >= 2);
+  const rankFrom = rankPool.length >= 2 ? rankPool : scored;
 
   return {
     version: 1,
@@ -212,8 +222,8 @@ export function finalizeSkillProfile(bySkill, now = Date.now()) {
     sampleSize: present.reduce((sum, x) => sum + x.sampleSize, 0),
     confidence: present.length ? round(present.reduce((sum, x) => sum + x.confidence, 0) / present.length, 3) : 0,
     updatedAt: now,
-    weakest: [...Object.values(skills)].sort((a, b) => (a.score ?? 999) - (b.score ?? 999))[0] || null,
-    strongest: [...Object.values(skills)].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0] || null
+    weakest: [...rankFrom].sort((a, b) => (a.score ?? 999) - (b.score ?? 999))[0] || null,
+    strongest: [...rankFrom].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0] || null
   };
 }
 
@@ -222,6 +232,31 @@ export function recordSkillEvidenceForTags(bySkill, skillTags, payload, now = Da
   for (const skill of tags) {
     if (!bySkill[skill]) bySkill[skill] = createSkillEvidence({ skill, now });
     recordSkillEvidence(bySkill[skill], { ...payload, at: payload.at != null ? payload.at : now });
+  }
+  return bySkill;
+}
+
+export function recordAssessmentEvidence(bySkill, result, now = Date.now()) {
+  if (!result) return bySkill;
+  const weights = result.skillWeights && result.skillWeights.length
+    ? result.skillWeights
+    : assessmentSkillWeights(result);
+  const loss = assessmentEvLossBb(result);
+  const grade = result.correct ? 'GOOD' : result.nearOptimal ? 'INACCURACY' : 'MISTAKE';
+  const at = result.at != null ? result.at : now;
+  const confidenceScore = result.confidence != null ? result.confidence / 100 : null;
+  const prior = result.assessmentPrior != null ? result.assessmentPrior : ASSESSMENT_SCORE_PRIOR;
+
+  for (const { skill, weight } of weights) {
+    if (!skill || !SKILLS.includes(skill)) continue;
+    if (!bySkill[skill]) bySkill[skill] = createSkillEvidence({ skill, now });
+    recordSkillEvidence(bySkill[skill], {
+      evLossBb: loss * weight,
+      grade,
+      confidenceScore,
+      at
+    });
+    bySkill[skill].score = scoredSkillFromEvidence(bySkill[skill], { prior });
   }
   return bySkill;
 }
@@ -292,21 +327,16 @@ export function buildSkillProfile({ leakProfiles = [], assessment = null, stored
 
     if (assessment && assessment.results) {
       for (const item of assessment.results) {
-        const tags = item.skillTags && item.skillTags.length
-          ? item.skillTags
-          : [normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0]].filter(Boolean);
-        const loss = (item.evLossBb != null) ? item.evLossBb : (item.correct === true ? 0 : 0.35);
-        recordSkillEvidenceForTags(bySkill, tags, {
-          evLossBb: loss,
-          grade: item.grade || null,
-          confidenceScore: item.confidence != null ? item.confidence / 100 : null,
-          at: item.at != null ? item.at : now
-        }, now);
+        recordAssessmentEvidence(bySkill, item, item.at != null ? item.at : now);
       }
     }
   }
 
-  return finalizeSkillProfile(bySkill, now);
+  const overallOverride = assessment?.results?.length
+    ? assessmentOverallScore(assessment.results)
+    : null;
+
+  return finalizeSkillProfile(bySkill, now, { overallOverride });
 }
 
 export function seedSkillEvidenceFromAssessment(store, assessmentResult, now = Date.now()) {
@@ -315,16 +345,7 @@ export function seedSkillEvidenceFromAssessment(store, assessmentResult, now = D
   const bySkill = {};
   mergeStoredSkillEvidence(bySkill, stored, now);
   for (const item of assessmentResult.results) {
-    const tags = item.skillTags && item.skillTags.length
-      ? item.skillTags
-      : [normalizeSkill(item.skillTag) || skillsForConcept(item.concept)[0]].filter(Boolean);
-    const loss = (item.evLossBb != null) ? item.evLossBb : (item.correct === true ? 0 : 0.35);
-    recordSkillEvidenceForTags(bySkill, tags, {
-      evLossBb: loss,
-      grade: item.correct ? 'GOOD' : 'MISTAKE',
-      confidenceScore: item.confidence != null ? item.confidence / 100 : null,
-      at: item.at != null ? item.at : now
-    }, now);
+    recordAssessmentEvidence(bySkill, item, item.at != null ? item.at : now);
   }
   if (typeof store.saveSkillEvidence === 'function') store.saveSkillEvidence(bySkill);
   return bySkill;

@@ -1,15 +1,25 @@
 // Shared personalization bridge for all home-section mini-apps.
 
 import {
-  getTaskPool, hasUsablePlayerProfile, recordTrainingResult,
-  updateSkillProfileInStore, deriveSkillTags, drillFromLibraryTask
+  getMttTaskPool, hasUsablePlayerProfile, recordTrainingResult,
+  updateSkillProfileInStore, deriveSkillTags, drillFromLibraryTask,
+  libraryTaskToBrainSpot
 } from '../solver/src/index.js';
+import { buildTrainerSwipeSession } from '../solver/src/training/trainerCandidatePool.js';
+import { recordTrainerOutcome } from '../solver/src/training/trainerPersonalization.js';
+import { buildGradingProvenanceRecord } from '../solver/src/training/gradingProvenance.js';
 import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';
+import { isActiveForTraining } from '../solver/src/training/decisionQualityGate.js';
 import { buildMiniAppPlan, MINI_APP_SPECS } from '../solver/src/training/miniAppPlanner.js';
 import { contentFingerprint } from '../solver/src/training/sessionDiversity.js';
 import {
   buildLegacyPool, legacySizingToSpot, legacyReviewToSpot, legacySwipeToSpot, legacyXrayToSpot
 } from './legacyPoolAdapter.js';
+import {
+  libraryTaskToMiniAppSpot, libraryTaskToSizingSpot,
+  libraryTaskToReviewSpot, libraryTaskToXraySpot, isMttTask, taskEligibleForMiniApp
+} from './miniAppSpotAdapter.js';
+import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 
 const GRADE_MAP = { g: 'EXCELLENT', y: 'GOOD', r: 'MISTAKE' };
 const EV_MAP = { g: 0, y: 0.08, r: 0.65 };
@@ -23,47 +33,62 @@ export function letterGradeToEvLoss(letter) {
 }
 
 function libraryTaskToSwipe(task) {
-  const gen = drillFromLibraryTask(task);
-  return {
-    id: task.id,
-    street: task.street,
-    pos: [task.position, task.villain ? `vs ${task.villain}` : ''].filter(Boolean).join(' '),
-    hero: task.hero || [],
-    board: task.board || [],
-    ctx: (task.history && task.history[0] && task.history[0].text) || task.question || '',
-    stack: task.heroStack != null ? task.heroStack : 30,
-    pot: task.pot != null ? task.pot : 5,
-    actions: task.options || [],
-    preferred: [task.correct],
-    live: task.alsoOk || [],
-    concept: task.concept,
-    why: task.explain || '',
-    sizeZone: null,
-    _drill: gen.ok ? gen.drill : null,
-    _library: true
+  const enriched = {
+    ...task,
+    _canonical: task._canonical || buildCanonicalSpot({ ...task, _legacy: !task._library })
   };
+  const spot = libraryTaskToBrainSpot(enriched);
+  if (!spot) return null;
+  spot._canonical = enriched._canonical;
+  spot.position = enriched._canonical.position;
+  spot.villain = enriched._canonical.villain;
+  spot.heroStack = enriched._canonical.heroStack;
+  spot.stack = enriched._canonical.heroStack;
+  if (String(task.street || '') === 'ПРЕФЛОП') {
+    spot._trainerGradePath = task._trainerNative ? 'trainer_exact' : 'poker_brain_trainer_bridge';
+    if (task.trainerMeta) spot.trainerMeta = task.trainerMeta;
+  }
+  return spot;
 }
 
-function spotToLegacyItem(spot) {
+function spotToModeItem(spot, appId) {
   if (spot._legacy) return spot._legacy.item;
   const task = getTaskById(spot.id);
-  if (task) return libraryTaskToSwipe(task);
+  if (task && isMttTask(task)) {
+    const converted = libraryTaskToMiniAppSpot(task, appId);
+    if (converted) return converted;
+    if (appId === 'swipe' || appId === 'memory') return libraryTaskToSwipe(task);
+  }
+  if (appId === 'swipe' || appId === 'memory') {
+    const task = getTaskById(spot.id);
+    if (task) return libraryTaskToSwipe(task);
+  }
   return null;
 }
 
 export function createMiniAppBridge(store) {
+  const recentIds = new Set();
+
   function hasProfile() {
     return hasUsablePlayerProfile(store);
   }
 
-  function combinedPool(legacy = {}) {
-    const lib = getTaskPool();
-    const leg = buildLegacyPool(legacy);
-    const byId = new Map();
-    for (const s of [...lib, ...leg]) {
-      if (s && s.id) byId.set(s.id, s);
-    }
-    return [...byId.values()];
+  function combinedPool(legacy = {}, appId = 'swipe') {
+    const lib = getMttTaskPool().filter((t) => isActiveForTraining(t, appId));
+    if (hasProfile()) return lib;
+    // Legacy heuristic pools are never mixed into active curriculum.
+    return lib;
+  }
+
+  function eligiblePool(legacy = {}, appId = 'swipe') {
+    return combinedPool(legacy, appId).filter((spot) => {
+      if (recentIds.has(spot.id)) return false;
+      const task = getTaskById(spot.id);
+      if (task && !isActiveForTraining(task, appId)) return false;
+      if (spot?._legacy) return false;
+      if (!task) return false;
+      return taskEligibleForMiniApp(task, appId);
+    });
   }
 
   function selectIds(plan) {
@@ -71,21 +96,56 @@ export function createMiniAppBridge(store) {
   }
 
   function prepareSession(appId, { legacy = {}, count = null, history = null, now = Date.now() } = {}) {
-    if (!hasProfile()) return null;
-    const pool = combinedPool(legacy);
-    const plan = buildMiniAppPlan(store, appId, { pool, history: history || store.loadHistory(), count, now });
-    if (!plan || !plan.filled) return null;
-    const items = selectIds(plan)
-      .map((id) => {
-        const spot = pool.find((p) => p.id === id);
-        return spot ? spotToLegacyItem(spot) : getTaskById(id) ? libraryTaskToSwipe(getTaskById(id)) : null;
-      })
-      .filter(Boolean);
-    return { plan, items, spotIds: selectIds(plan) };
+    const pool = eligiblePool(legacy, appId);
+    if (!pool.length) return null;
+    const hist = history || (store?.loadHistory?.() || []);
+    const plan = hasProfile()
+      ? buildMiniAppPlan(store, appId, { pool, history: hist, count, now })
+      : null;
+    if (plan && plan.filled) {
+      const items = selectIds(plan)
+        .map((id) => {
+          const spot = pool.find((p) => p.id === id);
+          if (spot) return spotToModeItem(spot, appId);
+          const task = getTaskById(id);
+          if (task && isMttTask(task)) {
+            return libraryTaskToMiniAppSpot(task, appId) || libraryTaskToSwipe(task);
+          }
+          return null;
+        })
+        .filter(Boolean);
+      if (items.length) {
+        for (const item of items) {
+          if (item?.id) recentIds.add(item.id);
+        }
+        return { plan, items, spotIds: selectIds(plan) };
+      }
+    }
+    // Profile-less fallback: rotate curated library tasks only (no heuristic legacy).
+    const libTasks = getMttTaskPool().filter((t) => isActiveForTraining(t, appId));
+    if (!libTasks.length) return null;
+    const n = count || 1;
+    const picked = libTasks.slice(0, n);
+    const items = picked.map((t) => libraryTaskToMiniAppSpot(t, appId) || libraryTaskToSwipe(t)).filter(Boolean);
+    if (!items.length) return null;
+    return { plan: { spotIds: picked.map((t) => t.id), filled: items.length }, items, spotIds: picked.map((t) => t.id) };
   }
 
   function prepareSwipeSession(count = 10, legacySwipe = []) {
-    return prepareSession('swipe', { legacy: { swipe: legacySwipe }, count });
+    const trainerSession = buildTrainerSwipeSession(store, { count });
+    if (trainerSession.items.length >= Math.min(5, count)) {
+      const items = trainerSession.items.map((t) => libraryTaskToSwipe(t)).filter(Boolean);
+      if (items.length) {
+        for (const item of items) {
+          if (item?.id) recentIds.add(item.id);
+        }
+        return { plan: trainerSession.plan, items, spotIds: trainerSession.plan.spotIds };
+      }
+    }
+    if (hasProfile()) {
+      return prepareSession('swipe', { legacy: { swipe: legacySwipe }, count });
+    }
+    return null;
   }
 
   function prepareSizingSpot(legacySizing = []) {
@@ -98,13 +158,17 @@ export function createMiniAppBridge(store) {
     return session && session.items[0] ? session.items[0] : null;
   }
 
+  function prepareXraySpot(legacyXray = []) {
+    const session = prepareSession('xray', { legacy: { xray: legacyXray }, count: 1 });
+    return session && session.items[0] ? session.items[0] : null;
+  }
+
+  /** @deprecated use prepareXraySpot — returns library spot, not legacy index */
   function prepareXrayIndex(legacyXray = []) {
-    if (!hasProfile()) return null;
-    const pool = legacyXray.map((x, i) => legacyXrayToSpot(x, i));
-    const plan = buildMiniAppPlan(store, 'xray', { pool, count: 1 });
-    const id = selectIds(plan)[0];
-    const spot = pool.find((p) => p.id === id);
-    return spot && spot._legacy ? spot._legacy.index : 0;
+    const spot = prepareXraySpot(legacyXray);
+    if (!spot) return null;
+    if (spot._legacy && spot._legacy.index != null) return spot._legacy.index;
+    return spot;
   }
 
   function prepareQuick5(legacy = {}) {
@@ -144,12 +208,21 @@ export function createMiniAppBridge(store) {
     });
   }
 
-  function recordLegacyOutcome({ item, mode, gradeLetter, grade, evLossBb, spacedReview = false } = {}) {
+  function recordLegacyOutcome({ item, mode, gradeLetter, grade, evLossBb, spacedReview = false, trainerMeta = null } = {}) {
     if (!item || !hasProfile()) return null;
     const drill = makeDrillFromLegacy(item, mode);
     const trainingGrade = grade || letterGradeToTraining(gradeLetter);
     const loss = evLossBb != null ? evLossBb : letterGradeToEvLoss(gradeLetter);
     const skillTags = skillTagsForLegacy(item, mode);
+    const meta = trainerMeta || item.trainerMeta;
+    if (meta?.gradingSource?.startsWith('TRAINER') || item._trainerNative) {
+      recordTrainerOutcome(store, {
+        task: item,
+        grade: trainingGrade,
+        gradingSource: meta?.gradingSource || 'TRAINER_EXACT',
+        trainerMeta: meta
+      });
+    }
     const result = recordTrainingResult(store, { drill, grade: trainingGrade, evLossBb: loss });
     if (spacedReview) {
       const hist = store.loadHistory() || [];
@@ -175,6 +248,13 @@ export function createMiniAppBridge(store) {
       const m = /^XR_(\d+)$/.exec(spotId);
       const idx = m ? Number(m[1]) : -1;
       return pool[idx] || null;
+    }
+    const task = getTaskById(spotId);
+    if (task) {
+      if (mode === 'sizing') return libraryTaskToSizingSpot(task);
+      if (mode === 'review') return libraryTaskToReviewSpot(task);
+      if (mode === 'xray') return libraryTaskToXraySpot(task);
+      return libraryTaskToSwipe(task);
     }
     return null;
   }
@@ -207,6 +287,7 @@ export function createMiniAppBridge(store) {
     prepareSwipeSession,
     prepareSizingSpot,
     prepareReviewSpot,
+    prepareXraySpot,
     prepareXrayIndex,
     prepareQuick5,
     prepareMemorySpot,

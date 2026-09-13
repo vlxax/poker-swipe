@@ -2,49 +2,113 @@
 
 import { createMiniAppBridge } from './miniAppBridge.js';
 
-function legacyPools() {
-  return {
-    sizing: typeof window.SIZING !== 'undefined' ? window.SIZING : [],
-    reviews: typeof window.REVIEWS !== 'undefined' ? window.REVIEWS : [],
-    swipe: typeof window.SWIPE !== 'undefined' ? window.SWIPE : [],
-    xray: typeof window.XR !== 'undefined' ? window.XR : []
-  };
-}
-
-function indexOfItem(pool, item) {
-  if (!item || !pool || !pool.length) return -1;
-  const byId = pool.findIndex((x) => x && x.id === item.id);
-  return byId >= 0 ? byId : 0;
-}
-
-export function installMiniAppHooks(store) {
+export function installMiniAppHooks(store, { appWindow = null } = {}) {
+  const root = appWindow || (typeof window !== 'undefined' ? window : globalThis.window);
   const bridge = createMiniAppBridge(store);
-  const state = { xrayIndex: null };
+  const state = {
+    xraySpot: null, reviewSpot: null, sizingSpot: null,
+    xrayPinned: null, reviewPinned: null, sizingPinned: null
+  };
 
-  function pickSizingIndex() {
-    const legacy = legacyPools();
-    const item = bridge.prepareSizingSpot(legacy.sizing);
-    return item ? indexOfItem(legacy.sizing, item) : null;
+  function legacyPools() {
+    return {
+      sizing: typeof root.SIZING !== 'undefined' ? root.SIZING : [],
+      reviews: typeof root.REVIEWS !== 'undefined' ? root.REVIEWS : [],
+      swipe: typeof root.SWIPE !== 'undefined' ? root.SWIPE : [],
+      xray: typeof root.XR !== 'undefined' ? root.XR : []
+    };
   }
 
-  function pickReviewIndex() {
-    const legacy = legacyPools();
-    const item = bridge.prepareReviewSpot(legacy.reviews);
-    return item ? indexOfItem(legacy.reviews, item) : null;
-  }
-
-  function pickXrayIndex() {
-    const legacy = legacyPools();
-    const idx = bridge.prepareXrayIndex(legacy.xray);
-    return idx != null ? idx : null;
+  function assignGlobal(name, value) {
+    root[name] = value;
+    return true;
   }
 
   function wrap(name, fn) {
-    if (typeof window[name] !== 'function') return;
-    const orig = window[name];
-    window[name] = function (...args) {
-      return fn(orig, ...args);
-    };
+    if (typeof root[name] !== 'function') return;
+    const orig = root[name];
+    assignGlobal(name, (...args) => fn(orig, ...args));
+  }
+
+  /** Legacy SIZING/REVIEWS/XR are read-only getters — mutate slot instead of replacing array. */
+  function resolveInjectIndex(arr, spot) {
+    if (!arr || !arr.length) return 0;
+    const byId = arr.findIndex((x) => x && spot?.id && x.id === spot.id);
+    return byId >= 0 ? byId : 0;
+  }
+
+  function withInjectedSpot(arrayName, indexName, spot, renderFn, { index = null } = {}) {
+    const arr = root[arrayName];
+    if (!arr || !arr.length || !spot) return renderFn();
+    const idx = index != null ? index % arr.length : resolveInjectIndex(arr, spot);
+    const savedSpot = arr[idx];
+    const savedIndex = root[indexName];
+    arr[idx] = spot;
+    assignGlobal(indexName, idx);
+    try {
+      return renderFn();
+    } finally {
+      arr[idx] = savedSpot;
+      if (savedIndex != null) assignGlobal(indexName, savedIndex);
+    }
+  }
+
+  function xrayInjectIndex() {
+    const arr = root.XR;
+    const runs = root.S?.xray?.runs || 0;
+    return arr && arr.length ? runs % arr.length : 0;
+  }
+
+  function pinXraySpot(spot) {
+    const arr = root.XR;
+    if (!arr || !arr.length || !spot) return;
+    const idx = xrayInjectIndex();
+    if (state.xrayPinned == null) {
+      state.xrayPinned = { index: idx, saved: arr[idx] };
+    }
+    arr[idx] = spot;
+    assignGlobal('xrI', idx);
+  }
+
+  function unpinXraySpot() {
+    if (state.xrayPinned == null) return;
+    const { index, saved } = state.xrayPinned;
+    if (root.XR && index != null) root.XR[index] = saved;
+    state.xrayPinned = null;
+  }
+
+  function pinReviewSpot(spot) {
+    const arr = root.REVIEWS;
+    if (!arr || !arr.length || !spot) return;
+    unpinReviewSpot();
+    const idx = resolveInjectIndex(arr, spot);
+    state.reviewPinned = { index: idx, saved: arr[idx] };
+    arr[idx] = spot;
+    assignGlobal('rv', idx);
+  }
+
+  function unpinReviewSpot() {
+    if (state.reviewPinned == null) return;
+    const { index, saved } = state.reviewPinned;
+    if (root.REVIEWS && index != null) root.REVIEWS[index] = saved;
+    state.reviewPinned = null;
+  }
+
+  function pinSizingSpot(spot) {
+    const arr = root.SIZING;
+    if (!arr || !arr.length || !spot) return;
+    unpinSizingSpot();
+    const idx = resolveInjectIndex(arr, spot);
+    state.sizingPinned = { index: idx, saved: arr[idx] };
+    arr[idx] = spot;
+    assignGlobal('sz', idx);
+  }
+
+  function unpinSizingSpot() {
+    if (state.sizingPinned == null) return;
+    const { index, saved } = state.sizingPinned;
+    if (root.SIZING && index != null) root.SIZING[index] = saved;
+    state.sizingPinned = null;
   }
 
   wrap('recordEvent', (orig, event) => {
@@ -56,87 +120,137 @@ export function installMiniAppHooks(store) {
   });
 
   wrap('newSwipeSession', (orig) => {
-    if (bridge.hasProfile()) {
-      const legacy = legacyPools();
-      const session = bridge.prepareSwipeSession(10, legacy.swipe);
-      if (session && session.items.length) {
-        window.swSession = session.items;
-        window.swIndex = 0;
-        window.swSessionGrades = [];
-        return;
-      }
+    const legacy = legacyPools();
+    const session = bridge.prepareSwipeSession(10, legacy.swipe);
+    if (session && session.items.length) {
+      assignGlobal('swSession', session.items);
+      assignGlobal('swIndex', 0);
+      assignGlobal('swSessionGrades', []);
+      const swipeActive = root.document?.getElementById?.('swipe')?.classList.contains('active')
+        || (typeof document !== 'undefined' && document.getElementById('swipe')?.classList.contains('active'));
+      if (swipeActive && typeof root.renderSwipe === 'function') root.renderSwipe();
+      return;
     }
     return orig();
   });
 
   wrap('renderSizing', (orig) => {
-    if (bridge.hasProfile()) {
-      const idx = pickSizingIndex();
-      if (idx != null) window.sz = idx;
+    const spot = bridge.prepareSizingSpot(legacyPools().sizing);
+    if (spot && spot._library) {
+      state.sizingSpot = spot;
+      pinSizingSpot(spot);
+      return orig();
     }
+    unpinSizingSpot();
+    state.sizingSpot = null;
     return orig();
   });
 
   wrap('renderReview', (orig) => {
-    if (bridge.hasProfile()) {
-      const idx = pickReviewIndex();
-      if (idx != null) window.rv = idx;
+    const spot = bridge.prepareReviewSpot(legacyPools().reviews);
+    if (spot && spot._library) {
+      state.reviewSpot = spot;
+      pinReviewSpot(spot);
+      return orig();
     }
+    unpinReviewSpot();
+    state.reviewSpot = null;
     return orig();
   });
 
-  wrap('reviewReveal', (orig) => orig());
+  wrap('reviewReveal', (orig) => {
+    if (state.reviewSpot?._library) pinReviewSpot(state.reviewSpot);
+    return orig();
+  });
 
-  wrap('reviewRepair', (orig, pointOk, reasonOk) => orig(pointOk, reasonOk));
+  wrap('reviewRepair', (orig, pointOk, reasonOk) => {
+    if (state.reviewSpot?._library) pinReviewSpot(state.reviewSpot);
+    return orig(pointOk, reasonOk);
+  });
 
   wrap('renderXray', (orig) => {
-    let savedRuns = null;
+    if (!root.S?.xray?.onboarded) return orig();
     if (bridge.hasProfile()) {
-      state.xrayIndex = pickXrayIndex();
-      if (state.xrayIndex != null) {
-        savedRuns = window.S.xray.runs;
-        window.S.xray.runs = state.xrayIndex;
+      const spot = bridge.prepareXraySpot(legacyPools().xray);
+      if (spot && spot._library) {
+        state.xraySpot = spot;
+        return withInjectedSpot('XR', 'xrI', spot, orig, { index: xrayInjectIndex() });
       }
-    } else {
-      state.xrayIndex = null;
     }
-    try {
-      return orig();
-    } finally {
-      if (savedRuns != null) window.S.xray.runs = savedRuns;
-    }
+    state.xraySpot = null;
+    return orig();
   });
 
   wrap('xrBegin', (orig, st) => {
-    const picked = bridge.hasProfile()
-      ? (state.xrayIndex != null ? state.xrayIndex : pickXrayIndex())
-      : null;
-    const result = orig(st);
-    if (picked != null && window.XR && window.XR[picked]) {
-      window.xrI = picked;
-      state.xrayIndex = picked;
-      const ref = window.XR[picked].ref[st === 0 ? 0 : st - 1];
-      window.xrCurrent = new Set(ref);
-      window.xrCandidate = new Set(window.xrCurrent);
+    if (bridge.hasProfile()) {
+      if (!state.xraySpot?._library) {
+        const spot = bridge.prepareXraySpot(legacyPools().xray);
+        if (spot?._library) state.xraySpot = spot;
+      }
+      if (state.xraySpot?._library) {
+        pinXraySpot(state.xraySpot);
+        return orig(st);
+      }
     }
-    return result;
+    return orig(st);
   });
 
-  wrap('xrReport', (orig) => {
-    const idx = typeof window.xrI === 'number' ? window.xrI : state.xrayIndex;
-    const prevRecord = window.recordEvent;
-    window.recordEvent = function (e) {
-      return prevRecord({ ...e, spotId: e.spotId || (idx != null ? `XR_${idx}` : null) });
-    };
+  wrap('xrReveal', (orig, score) => {
+    if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    try {
+      return orig(score);
+    } finally {
+      if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    }
+  });
+
+  wrap('xrRiver', (orig) => {
+    if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
     try {
       return orig();
     } finally {
-      window.recordEvent = prevRecord;
+      if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    }
+  });
+
+  wrap('xrBlocker', (orig) => {
+    if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    try {
+      return orig();
+    } finally {
+      if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    }
+  });
+
+  wrap('xrReport', (orig) => {
+    const spotId = state.xraySpot?.id
+      || (typeof root.xrI === 'number' ? `XR_${root.xrI}` : null);
+    const prevRecord = root.recordEvent;
+    assignGlobal('recordEvent', (e) => prevRecord({
+      ...e,
+      spotId: e.spotId || spotId
+    }));
+    if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    try {
+      return orig();
+    } finally {
+      assignGlobal('recordEvent', prevRecord);
+      unpinXraySpot();
+      state.xraySpot = null;
+    }
+  });
+
+  wrap('renderXrayStage', (orig) => {
+    if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
+    try {
+      return orig();
+    } finally {
+      if (state.xraySpot?._library) pinXraySpot(state.xraySpot);
     }
   });
 
   wrap('quickAdvance', (orig) => {
-    const quick = window.quick;
+    const quick = root.quick;
     quick.index++;
     if (quick.index >= quick.flow.length) {
       quick.index--;
@@ -148,11 +262,11 @@ export function installMiniAppHooks(store) {
       if (bridge.hasProfile()) {
         const item = bridge.prepareMemorySpot(legacyPools().swipe);
         if (item) {
-          window.memorySpotId = item.id;
-          window.swSession = [item];
-          window.swIndex = 0;
-          window.swSessionGrades = [];
-          window.show('swipe');
+          assignGlobal('memorySpotId', item.id);
+          assignGlobal('swSession', [item]);
+          assignGlobal('swIndex', 0);
+          assignGlobal('swSessionGrades', []);
+          root.show('swipe');
           return;
         }
       }
@@ -161,24 +275,18 @@ export function installMiniAppHooks(store) {
     }
 
     if (next === 'review') {
-      if (bridge.hasProfile()) {
-        const idx = pickReviewIndex();
-        if (idx != null) window.rv = idx;
-      } else {
-        window.rv = (window.rv + 1) % window.REVIEWS.length;
-      }
-      window.show('review');
+      root.show('review');
       return;
     }
 
     if (next === 'xray') {
-      if (bridge.hasProfile()) state.xrayIndex = pickXrayIndex();
-      window.show('xray');
-      setTimeout(() => window.xrBegin(2), 0);
+      state.xraySpot = null;
+      root.show('xray');
+      setTimeout(() => root.xrBegin(2), 0);
       return;
     }
 
-    window.show(next);
+    root.show(next);
   });
 
   return { bridge, state };

@@ -3,7 +3,7 @@ name: Update Polyana live data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/10 * * * *"
 
 permissions:
   contents: write
@@ -27,7 +27,15 @@ jobs:
           pip install requests beautifulsoup4
 
       - name: Update Polyana data
-        run: python scripts/update_polyana.py
+        run: python scripts/update_polyana_v2.py
+
+      - name: Check sync result
+        if: always()
+        run: |
+          if [ -f data/.polyana_sync_state.json ]; then
+            echo "=== Polyana Sync State ==="
+            cat data/.polyana_sync_state.json
+          fi
 
       - name: Commit updated data
         run: |
@@ -37,11 +45,12 @@ jobs:
           git add data/live_polyana.json
           git add data/moscow_clubs_pokernomoney.json
           git add data/moscow_schedule_today.json
+          git add data/.polyana_sync_state.json
 
           if git diff --cached --quiet; then
             echo "No Polyana changes"
             exit 0
           fi
 
-          git commit -m "Update Polyana live data"
+          git commit -m "Update Polyana live data [skip ci]"
           git push

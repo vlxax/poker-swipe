@@ -1,0 +1,758 @@
+{
+  "generatedAt": "2026-08-25T10:52:06.572Z",
+  "trainerConfirmation": "HUMAN_CONFIRMATION_1",
+  "semanticLegendVersion": 2,
+  "imageReparseRequired": false,
+  "preHumanConfirmationBaseline": {
+    "verified": 14358,
+    "grading": 14358,
+    "needsClarification": 252324
+  },
+  "postHumanConfirmation": {
+    "total": 266682,
+    "verified": 210642,
+    "grading": 210642,
+    "needsClarification": 56040,
+    "fold": 194700,
+    "ai": 17483,
+    "naiRaw": 3015,
+    "naiContextuallyResolved": 1584,
+    "naiBlocked": 1431,
+    "naiGradingAllowed": 1584,
+    "naiGradingBlocked": 1431,
+    "unselectedRaw": 203978,
+    "unselectedNonMixed": 194700,
+    "unselectedMixedPrimary": 9278,
+    "unselectedMixedStrategyComponents": 18280,
+    "unselectedNonMixedFold": 194700,
+    "mixed": 30677,
+    "mixedGradable": 0,
+    "mixedWithUnselected": 18280,
+    "mixedWithNai": 5626,
+    "mixedWithOrange": 14902,
+    "mixedWithYellow": 2762,
+    "mixedOther": 2589,
+    "raise": 3558,
+    "orangeRaw": 29232,
+    "orangeGrading": 0,
+    "yellowRaw": 1508,
+    "yellowGrading": 0,
+    "otherUnknown": 0,
+    "gradingByProvenance": {
+      "TRAINER_CONFIRMED": 196284,
+      "VERIFIED": 14358
+    },
+    "gradingBySemanticId": {
+      "UNSELECTED": 194700,
+      "AI": 12064,
+      "RAISE": 2294,
+      "nAI": 1584
+    },
+    "naiByMode": {
+      "vs1rshort": 112,
+      "vs1r": 8,
+      "huante": 907,
+      "vslimp": 154,
+      "sbvsbb": 173,
+      "callpush": 1661
+    },
+    "naiResolvedByMode": {
+      "vs1r": 4,
+      "huante": 497,
+      "sbvsbb": 136,
+      "callpush": 947
+    },
+    "naiBlockedByMode": {
+      "vs1rshort": 112,
+      "vs1r": 4,
+      "huante": 410,
+      "vslimp": 154,
+      "sbvsbb": 37,
+      "callpush": 714
+    }
+  },
+  "delta": {
+    "verified": 196284,
+    "grading": 196284,
+    "needsClarification": -196284
+  },
+  "unselectedReconciliation": {
+    "rawTotal": 203978,
+    "nonMixedPrimary": 194700,
+    "mixedPrimary": 9278,
+    "mixedStrategyComponents": 18280,
+    "nonMixedConvertedToFold": 194700,
+    "arithmeticCheckPrimary": true,
+    "newGradingAllowed": 194700
+  },
+  "naiReconciliation": {
+    "rawTotal": 3015,
+    "contextuallyResolved": 1584,
+    "stillBlocked": 1431,
+    "gradingAllowed": 1584,
+    "gradingBlocked": 1431,
+    "byMode": {
+      "vs1rshort": 112,
+      "vs1r": 8,
+      "huante": 907,
+      "vslimp": 154,
+      "sbvsbb": 173,
+      "callpush": 1661
+    },
+    "resolvedByMode": {
+      "vs1r": 4,
+      "huante": 497,
+      "sbvsbb": 136,
+      "callpush": 947
+    },
+    "blockedByMode": {
+      "vs1rshort": 112,
+      "vs1r": 4,
+      "huante": 410,
+      "vslimp": 154,
+      "sbvsbb": 37,
+      "callpush": 714
+    },
+    "newGradingAllowed": 1584
+  },
+  "mixedSafety": {
+    "total": 30677,
+    "gradable": 0,
+    "expectedGradable": 0,
+    "pass": true,
+    "withUnselectedComponent": 18280,
+    "withNaiComponent": 5626,
+    "withOrange": 14902,
+    "withYellow": 2762,
+    "other": 2589
+  },
+  "orangeYellowSafety": {
+    "orangeRaw": 29232,
+    "orangeNewGrading": 0,
+    "yellowRaw": 1508,
+    "yellowNewGrading": 0,
+    "pass": true
+  },
+  "gradingBreakdown": {
+    "newFromUnselectedFold": 194700,
+    "newFromContextualNai": 1584,
+    "newFromOtherConfirmed": 0,
+    "blockedMixed": 30677,
+    "blockedOrange": 29232,
+    "blockedYellow": 1508
+  },
+  "gradingByProvenance": {
+    "TRAINER_CONFIRMED": 196284,
+    "VERIFIED": 14358
+  },
+  "gradingBySemanticId": {
+    "UNSELECTED": 194700,
+    "AI": 12064,
+    "RAISE": 2294,
+    "nAI": 1584
+  },
+  "provenanceAudit": {
+    "pass": true,
+    "unknownHeuristic": 0,
+    "samples": []
+  },
+  "idempotentReapply": {
+    "before": {
+      "total": 266682,
+      "verified": 210642,
+      "grading": 210642,
+      "needsClarification": 56040,
+      "fold": 194700,
+      "ai": 17483,
+      "naiRaw": 3015,
+      "naiContextuallyResolved": 1584,
+      "naiBlocked": 1431,
+      "naiGradingAllowed": 1584,
+      "naiGradingBlocked": 1431,
+      "unselectedRaw": 203978,
+      "unselectedNonMixed": 194700,
+      "unselectedMixedPrimary": 9278,
+      "unselectedMixedStrategyComponents": 18280,
+      "unselectedNonMixedFold": 194700,
+      "mixed": 30677,
+      "mixedGradable": 0,
+      "mixedWithUnselected": 18280,
+      "mixedWithNai": 5626,
+      "mixedWithOrange": 14902,
+      "mixedWithYellow": 2762,
+      "mixedOther": 2589,
+      "raise": 3558,
+      "orangeRaw": 29232,
+      "orangeGrading": 0,
+      "yellowRaw": 1508,
+      "yellowGrading": 0,
+      "otherUnknown": 0,
+      "gradingByProvenance": {
+        "TRAINER_CONFIRMED": 196284,
+        "VERIFIED": 14358
+      },
+      "gradingBySemanticId": {
+        "UNSELECTED": 194700,
+        "AI": 12064,
+        "RAISE": 2294,
+        "nAI": 1584
+      },
+      "naiByMode": {
+        "vs1rshort": 112,
+        "vs1r": 8,
+        "huante": 907,
+        "vslimp": 154,
+        "sbvsbb": 173,
+        "callpush": 1661
+      },
+      "naiResolvedByMode": {
+        "vs1r": 4,
+        "huante": 497,
+        "sbvsbb": 136,
+        "callpush": 947
+      },
+      "naiBlockedByMode": {
+        "vs1rshort": 112,
+        "vs1r": 4,
+        "huante": 410,
+        "vslimp": 154,
+        "sbvsbb": 37,
+        "callpush": 714
+      }
+    },
+    "after": {
+      "total": 266682,
+      "verified": 210642,
+      "grading": 210642,
+      "needsClarification": 56040,
+      "fold": 194700,
+      "ai": 17483,
+      "naiRaw": 3015,
+      "naiContextuallyResolved": 1584,
+      "naiBlocked": 1431,
+      "naiGradingAllowed": 1584,
+      "naiGradingBlocked": 1431,
+      "unselectedRaw": 203978,
+      "unselectedNonMixed": 194700,
+      "unselectedMixedPrimary": 9278,
+      "unselectedMixedStrategyComponents": 18280,
+      "unselectedNonMixedFold": 194700,
+      "mixed": 30677,
+      "mixedGradable": 0,
+      "mixedWithUnselected": 18280,
+      "mixedWithNai": 5626,
+      "mixedWithOrange": 14902,
+      "mixedWithYellow": 2762,
+      "mixedOther": 2589,
+      "raise": 3558,
+      "orangeRaw": 29232,
+      "orangeGrading": 0,
+      "yellowRaw": 1508,
+      "yellowGrading": 0,
+      "otherUnknown": 0,
+      "gradingByProvenance": {
+        "TRAINER_CONFIRMED": 196284,
+        "VERIFIED": 14358
+      },
+      "gradingBySemanticId": {
+        "UNSELECTED": 194700,
+        "AI": 12064,
+        "RAISE": 2294,
+        "nAI": 1584
+      },
+      "naiByMode": {
+        "vs1rshort": 112,
+        "vs1r": 8,
+        "huante": 907,
+        "vslimp": 154,
+        "sbvsbb": 173,
+        "callpush": 1661
+      },
+      "naiResolvedByMode": {
+        "vs1r": 4,
+        "huante": 497,
+        "sbvsbb": 136,
+        "callpush": 947
+      },
+      "naiBlockedByMode": {
+        "vs1rshort": 112,
+        "vs1r": 4,
+        "huante": 410,
+        "vslimp": 154,
+        "sbvsbb": 37,
+        "callpush": 714
+      }
+    },
+    "delta": {
+      "grading": 0,
+      "verified": 0,
+      "fold": 0,
+      "naiGradingAllowed": 0,
+      "mixedGradable": 0
+    },
+    "pass": true
+  },
+  "spotChecks": {
+    "unselectedToFold": [
+      {
+        "chartId": "B2_0001",
+        "hand": "22",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "FOLD",
+        "contextualAction": null,
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "UNSELECTED"
+        ],
+        "reason": "Trainer-confirmed gray = FOLD (non-mixed)"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "33",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "FOLD",
+        "contextualAction": null,
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "UNSELECTED"
+        ],
+        "reason": "Trainer-confirmed gray = FOLD (non-mixed)"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "44",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "FOLD",
+        "contextualAction": null,
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "UNSELECTED"
+        ],
+        "reason": "Trainer-confirmed gray = FOLD (non-mixed)"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "55",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "FOLD",
+        "contextualAction": null,
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "UNSELECTED"
+        ],
+        "reason": "Trainer-confirmed gray = FOLD (non-mixed)"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "66",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "FOLD",
+        "contextualAction": null,
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "UNSELECTED"
+        ],
+        "reason": "Trainer-confirmed gray = FOLD (non-mixed)"
+      }
+    ],
+    "naiResolved": [
+      {
+        "chartId": "B2_0486",
+        "hand": "KJs",
+        "sourceMode": "vs1r",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": "NON_ALL_IN",
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Contextual NON_ALL_IN via sourceMode=vs1r + chartHasAI"
+      },
+      {
+        "chartId": "B2_0486",
+        "hand": "QTs",
+        "sourceMode": "vs1r",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": "NON_ALL_IN",
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Contextual NON_ALL_IN via sourceMode=vs1r + chartHasAI"
+      },
+      {
+        "chartId": "B2_0594",
+        "hand": "KJs",
+        "sourceMode": "vs1r",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": "NON_ALL_IN",
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Contextual NON_ALL_IN via sourceMode=vs1r + chartHasAI"
+      },
+      {
+        "chartId": "B2_0594",
+        "hand": "QTs",
+        "sourceMode": "vs1r",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": "NON_ALL_IN",
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Contextual NON_ALL_IN via sourceMode=vs1r + chartHasAI"
+      },
+      {
+        "chartId": "B2_0751",
+        "hand": "KJs",
+        "sourceMode": "huante",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": "NON_ALL_IN_OPEN",
+        "gradingAllowed": true,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Contextual NON_ALL_IN_OPEN via sourceMode=huante + chartHasAI"
+      }
+    ],
+    "naiBlocked": [
+      {
+        "chartId": "B2_0272",
+        "hand": "AKs",
+        "sourceMode": "vs1rshort",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "nAI",
+          "UNSELECTED"
+        ],
+        "reason": "Insufficient chart context for actionable nAI"
+      },
+      {
+        "chartId": "B2_0272",
+        "hand": "AQs",
+        "sourceMode": "vs1rshort",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Insufficient chart context for actionable nAI"
+      },
+      {
+        "chartId": "B2_0272",
+        "hand": "AJs",
+        "sourceMode": "vs1rshort",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Insufficient chart context for actionable nAI"
+      },
+      {
+        "chartId": "B2_0272",
+        "hand": "KJs",
+        "sourceMode": "vs1rshort",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Insufficient chart context for actionable nAI"
+      },
+      {
+        "chartId": "B2_0272",
+        "hand": "QTs",
+        "sourceMode": "vs1rshort",
+        "stack": null,
+        "position": null,
+        "actionRaw": "nAI",
+        "normalizedAction": "NON_ALL_IN",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED",
+        "isMixed": false,
+        "components": [
+          "nAI"
+        ],
+        "reason": "Insufficient chart context for actionable nAI"
+      }
+    ],
+    "mixedBlocked": [
+      {
+        "chartId": "B2_0001",
+        "hand": "AKs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "AI",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "AI",
+          "UNSELECTED"
+        ],
+        "reason": "MIXED policy — frequencySemantics UNKNOWN_OR_CONDITIONAL"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "AQs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "AI",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "AI",
+          "UNSELECTED"
+        ],
+        "reason": "MIXED policy — frequencySemantics UNKNOWN_OR_CONDITIONAL"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "KQs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "UNSELECTED",
+          "AI"
+        ],
+        "reason": "MIXED policy — frequencySemantics UNKNOWN_OR_CONDITIONAL"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "JTs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "UNSELECTED",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "UNSELECTED",
+          "AI"
+        ],
+        "reason": "MIXED policy — frequencySemantics UNKNOWN_OR_CONDITIONAL"
+      },
+      {
+        "chartId": "B2_0001",
+        "hand": "J9s",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "AI",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "AI",
+          "UNSELECTED"
+        ],
+        "reason": "MIXED policy — frequencySemantics UNKNOWN_OR_CONDITIONAL"
+      }
+    ],
+    "orangeYellowSafe": [
+      {
+        "chartId": "B2_0005",
+        "hand": "AA",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": null,
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": null,
+        "isMixed": false,
+        "components": [
+          "ORANGE_208_160_32"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      },
+      {
+        "chartId": "B2_0005",
+        "hand": "AKs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": null,
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": null,
+        "isMixed": false,
+        "components": [
+          "ORANGE_208_160_32"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      },
+      {
+        "chartId": "B2_0005",
+        "hand": "AQs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": null,
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": null,
+        "isMixed": false,
+        "components": [
+          "ORANGE_208_160_32"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      },
+      {
+        "chartId": "B2_0005",
+        "hand": "AJs",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": null,
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": null,
+        "isMixed": false,
+        "components": [
+          "ORANGE_208_160_32"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      },
+      {
+        "chartId": "B2_0005",
+        "hand": "J9s",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "ORANGE_208_160_32",
+          "LOW_PLAYABILITY"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      },
+      {
+        "chartId": "B2_0005",
+        "hand": "T9s",
+        "sourceMode": "vssqueeze",
+        "stack": null,
+        "position": null,
+        "actionRaw": "ORANGE_208_160_32",
+        "normalizedAction": "MIXED",
+        "contextualAction": null,
+        "gradingAllowed": false,
+        "provenance": "TRAINER_CONFIRMED_FOR_MIX_EXISTENCE_ONLY",
+        "isMixed": true,
+        "components": [
+          "ORANGE_208_160_32",
+          "UNSELECTED"
+        ],
+        "reason": "Orange/yellow not guessed — grading blocked"
+      }
+    ]
+  },
+  "safeToMerge": false
+}

@@ -98,17 +98,25 @@ function normalize(e,i){
     reentryCount=0;
   }
 
+  // New fields from v2 parser: prefer JSON data over parsing
+  const gameFromData=e.game?String(e.game).toUpperCase():'';
+  const districtFromData=e.district||null;
+  const lateRegSource=e.late_reg_source||null; // Track source of late reg data
+
   return {
     ...e,
     _id:i,
     _title:title,
-    _game:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
+    _game:['NLH','PLO','PLO5'].includes(gameFromData)?gameFromData:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
     _type:type||typeOf(title),
     _isFreezeout:isFreezeout,
     _isBounty:isBounty,
     _isFreeroll:isFreeroll,
     _reentryCount:reentryCount,
-    _reentryUnlimited:reentryUnlimited
+    _reentryUnlimited:reentryUnlimited,
+    _district:districtFromData,
+    _lateRegSource:lateRegSource,
+    _fetchedAt:e.fetched_at||null
   };
 }
 
@@ -307,8 +315,7 @@ function filterSheet(){
 }
 
 function shell(){
-  return `<div class="pspTop"><div class="pspLogo">POKER <i>SWIPE</i></div><div class="pspBy">by ФРИКОВАЯ ДАМА 💋</div></div>
-  <div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
+  return `<div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
   <div class="pspTabs"><button type="button" class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button type="button" class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button type="button" class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
   <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
   <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>

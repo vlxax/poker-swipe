@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-08-26T15:57:56.521Z",
+  "summary": {
+    "total": 10,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 2
+  },
+  "tests": {
+    "passed": [
+      "App Initialization",
+      "Sizing Mini-App",
+      "Review Mini-App",
+      "SWIPE Mini-App",
+      "SWIPE No Auto-Advance",
+      "Profile Navigation",
+      "My Results Section",
+      "Data Storage"
+    ],
+    "failed": [],
+    "skipped": [
+      "Daily Hand Mini-App",
+      "Xray Mini-App"
+    ]
+  },
+  "evidence": {
+    "screenshots": [
+      "01-home-screen.png",
+      "20-sizing-loaded.png",
+      "30-review-loaded.png",
+      "50-swipe-loaded.png",
+      "51-swipe-no-auto-advance.png",
+      "60-profile-screen.png"
+    ],
+    "consoleLogs": [
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Refused to load the stylesheet 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' because it violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback.\n",
+      "[log] [PokerPWA] Mode: BROWSER",
+      "[error] [LOAD ERROR] ReferenceError: HandValidation is not defined\n    at load (http://localhost:3000/:1275:24)\n    at http://localhost:3000/:1287:7\n    at http://localhost:3000/:3056:3",
+      "[error] Refused to load the script 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js' because it violates the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline' https://telegram.org\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.\n",
+      "[log] [CharacterSystem] Initialized with FreakLady integration",
+      "[log] [CharacterIntegration] Loaded and ready",
+      "[log] [CharacterIntegration] SWIPE verdicts enhanced",
+      "[log] [CharacterIntegration] SIZING results enhanced",
+      "[log] [CharacterIntegration] DAILY results enhanced",
+      "[log] [CharacterIntegration] REVIEW results enhanced",
+      "[log] [CharacterIntegration] All integrations initialized",
+      "[log] [GameVisualV2] Premium game polish active",
+      "[error] Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+      "[error] Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ]
+  }
+}

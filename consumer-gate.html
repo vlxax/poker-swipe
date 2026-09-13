@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Consumer Runtime Gate</title>
+  <link rel="stylesheet" href="ranges-ui/battleship/battleship.css" />
+  <style>
+    body { margin: 0; font-family: ui-monospace, Menlo, monospace; background: #0b0b0b; color: #eee; }
+    #app { min-height: 70vh; padding: 12px; }
+    #log { padding: 12px; font-size: 12px; white-space: pre-wrap; }
+    .ok { color: #6f6; } .bad { color: #f66; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="log"></div>
+  <script type="module">
+    const logEl = document.getElementById('log');
+    const app = document.getElementById('app');
+    const lines = [];
+    function log(m, cls='ok') {
+      lines.push(m);
+      const d = document.createElement('div');
+      d.className = cls;
+      d.textContent = m;
+      logEl.appendChild(d);
+      console.log(m);
+    }
+    window.__errs = [];
+    window.addEventListener('error', (e) => window.__errs.push(String(e.message || e.error)));
+    window.addEventListener('unhandledrejection', (e) => window.__errs.push(String(e.reason)));
+
+    try {
+      const { initBrowserTrainerLookup } = await import('./trainer-knowledge/browserLookup.js');
+      const { buildTrainerMatrix, selectionToTrainerQuery } = await import('./trainer-knowledge/adapters/rangesAdapter.js');
+      const { BattleshipController } = await import('./ranges-ui/battleship/controller.js');
+      const { TrainerBrowserController } = await import('./ranges-ui/trainerBrowserController.js');
+
+      const lookup = await initBrowserTrainerLookup('data/trainer/built');
+      log('trainer init charts=' + lookup.charts.length);
+
+      const trainerCtl = new TrainerBrowserController({ lookup, root: app });
+      if (typeof trainerCtl.render === 'function') await trainerCtl.render();
+      else if (typeof trainerCtl.mount === 'function') await trainerCtl.mount(app);
+      log('trainer controller constructed');
+
+      const sel = {
+        dataSource: 'trainer',
+        position: 'EP',
+        stackBand: '2-4',
+        trainerSourceMode: 'uo',
+        sourceGroup: 'UO',
+        situation: 'uo_open'
+      };
+      const matrix = await buildTrainerMatrix(lookup, sel);
+      log(`trainer matrix supported=${matrix.supported} cells=${Object.keys(matrix.cells||{}).length} rangeId=${matrix.rangeId}`);
+
+      const battle = new BattleshipController({ lookup, root: app });
+      if (typeof battle.renderCatalog === 'function') await battle.renderCatalog();
+      else if (typeof battle.mount === 'function') await battle.mount(app);
+      else if (typeof battle.render === 'function') await battle.render();
+      log('battleship controller constructed');
+
+      // second matrix / navigation-ish
+      const sel2 = { ...sel, position: 'BTN' };
+      const matrix2 = await buildTrainerMatrix(lookup, sel2);
+      log(`second matrix rangeId=${matrix2.rangeId} cells=${Object.keys(matrix2.cells||{}).length}`);
+
+      // refresh simulation: re-init lookup should use cache path in module state — reset then reload
+      const { resetBrowserTrainerLookup } = await import('./trainer-knowledge/browserLookup.js');
+      resetBrowserTrainerLookup();
+      const lookup2 = await initBrowserTrainerLookup('data/trainer/built');
+      const matrix3 = await buildTrainerMatrix(lookup2, sel);
+      log(`after reset matrix rangeId=${matrix3.rangeId}`);
+
+      const ok = window.__errs.length === 0 && matrix.supported && Object.keys(matrix.cells).length === 169;
+      window.__CONSUMER__ = {
+        ok,
+        errors: window.__errs,
+        matrixRangeId: matrix.rangeId,
+        matrix2RangeId: matrix2.rangeId,
+        charts: lookup.charts.length
+      };
+      log(ok ? 'CONSUMER PASS' : 'CONSUMER FAIL', ok ? 'ok' : 'bad');
+      document.title = ok ? 'Consumer PASS' : 'Consumer FAIL';
+    } catch (e) {
+      console.error(e);
+      log(String(e), 'bad');
+      window.__CONSUMER__ = { ok: false, error: String(e), errors: window.__errs };
+      document.title = 'Consumer FAIL';
+    }
+  </script>
+</body>
+</html>

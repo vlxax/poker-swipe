@@ -30,7 +30,9 @@ function v35Focus(leak){
 window.renderHome=function(){
   const h=document.getElementById('home'); if(!h)return;
   const m=typeof m30==='function'?m30():{sample:(window.S?.events||[]).length};
-  const leak=typeof topLeak==='function'?topLeak():null;
+  const leak=typeof window.HomeRecommendation?.getActionableTopLeak==='function'
+    ?window.HomeRecommendation.getActionableTopLeak()
+    :(typeof topLeak==='function'?topLeak():null);
   const form=typeof formScore==='function'?formScore():50;
   const sample=Number(m?.sample||0);
   const leakName=v35LeakName(leak);
@@ -61,10 +63,10 @@ window.renderHome=function(){
       <button class="v36Tile" id="v36Review"><span>РАЗБОР ЛИНИИ</span><h3>ГДЕ<br>СЛОМАЛОСЬ?</h3><p>Найди первую реальную ошибку.</p><div class="v36Streets">PRE ●<br>FLOP ●<br>TURN △<br>RIVER ?</div><strong>→</strong></button>
       <button class="v36Tile" id="v36Swipe"><span>10 РУК</span><h3>POKER<br>SWIPE</h3><p>Решение + размер. Быстро, но не тупо.</p><div class="v36SwipeMark">← <i>J♠</i> →</div><strong>→</strong></button>
       <button class="v36Tile" id="v36Xray"><span>РЕНДЖИ</span><h3>◎ РЕНДЖИ</h3><p>Выбери позицию, стек и ситуацию — покажем с чем играть.</p><div class="v36Matrix">${'<i></i>'.repeat(28)}</div><strong>→</strong></button>
+      <button class="v36Tile v36Exploit v36ExploitWide" id="v36Exploit"><span>ЭКСПЛОЙТ</span><h3>ЧИТАЙ<br>СОПЕРНИКА</h3><p>Замечай паттерны и меняй стратегию.</p><div class="v36ExploitMark">VPIP · PFR · ЛИНИЯ</div><strong>→</strong></button>
     </div>
 
     <button class="v36Quick" id="v36Quick"><div><span>⚡ 5 МИНУТ</span><h3>БЫСТРАЯ ТРЕНИРОВКА</h3><p>Смешанная сессия без выбора режима.</p></div><b>05:00</b></button>
-    <button class="v36Hand" id="v36Hands"><div class="v36HandCard">A♠</div><div><span>СВОЯ РАЗДАЧА</span><b>Добавить руку</b><small>Найдём первую ошибку в линии.</small></div><strong>→</strong></button>
   </div>`;
 
   const goSwipe=()=>{try{swSession=[]}catch(e){};show('swipe')};
@@ -72,10 +74,14 @@ window.renderHome=function(){
   document.getElementById('v36Sizing').onclick=()=>show('sizing');
   document.getElementById('v36Review').onclick=()=>show('review');
   document.getElementById('v36Swipe').onclick=goSwipe;
-  document.getElementById('v36Xray').onclick=()=>show('xray');
+  document.getElementById('v36Xray').onclick=()=>show('ranges');
+  document.getElementById('v36Exploit')?.addEventListener('click',()=>show('exploit'));
   document.getElementById('v36Quick').onclick=goSwipe;
-  document.getElementById('v36Hands').onclick=()=>show('myhands');
-  document.getElementById('v36Personal').onclick=()=>{if(leak&&typeof renderHeal==='function')show('heal');else goSwipe()};
+  document.getElementById('v36Personal').onclick=()=>{
+    if(leak&&typeof window.HomeRecommendation?.launchHomeRecommendation==='function'){
+      window.HomeRecommendation.launchHomeRecommendation(leak);
+    }else goSwipe();
+  };
   document.getElementById('v36Player').onclick=()=>show('profile');
   document.getElementById('v36Form').onclick=goSwipe;
   document.getElementById('v36Sample').onclick=()=>show('profile');
@@ -83,13 +89,6 @@ window.renderHome=function(){
   document.body.classList.add('home-context');
 };
 function v35Chrome(){
-  const labels={home:'ГЛАВНАЯ',myhands:'РАЗДАЧИ',tournaments:'ТУРНИРЫ',profile:'ТЫ'};
-  document.querySelectorAll('.nav button').forEach(b=>{
-    const key=b.dataset.nav;
-    if(!labels[key])return;
-    const nodes=[...b.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE);
-    if(nodes.length)nodes[nodes.length-1].textContent=' '+labels[key];
-  });
   const level=document.getElementById('levelChip');
   if(level)level.textContent=`НАВЫК ${S.skill}`;
 }

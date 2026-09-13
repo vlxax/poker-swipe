@@ -21,6 +21,7 @@ window.esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 }[c]));
 window.card = (c) => `<span class="pc">${c}</span>`;
+window.__maGameLayout = true;
 
 const R = await import('../../training-ui/renderer.js');
 const VM = await import('../../training-ui/viewModel.js');
@@ -82,7 +83,7 @@ test('renderAssessmentSummary reports level + weakest/strongest and wires back',
   assert.equal(went, true);
 });
 
-test('renderHome renders personal training CTA with start handler', () => {
+test('renderHome renders personal training CTA with start handler', async () => {
   const root = freshRoot();
   const vm = {
     type: 'training',
@@ -90,21 +91,79 @@ test('renderHome renders personal training CTA with start handler', () => {
     subtitle: '7 раздач · около 5 минут',
     levelLabel: 'КЛУБНЫЙ РЕГ',
     levelScore: 61,
+    playerProfile: {
+      strongest: { label: 'Ривер', score: 78, diagnosis: 'освоено' },
+      weakest: { label: 'ICM', score: 42, diagnosis: 'слабое место' },
+      tracks: [
+        {
+          skill: 'icm', label: 'ICM', score: 42,
+          masteryState: 'в работе', trend: 'падает', trendArrow: '↓',
+          mistakeFrequency: '38%', diagnosis: 'слабое место'
+        }
+      ]
+    },
+    profileHeading: 'ТВОЙ ПРОФИЛЬ',
+    strongestHeading: 'Сильный навык',
+    weakestHeading: 'Слабый навык',
+    tracksHeading: 'НАВЫКИ',
+    mistakesHeading: 'ошибки',
     focusHeading: 'Сегодня тренируем:',
     focusItems: ['решения на баббле', 'блеф-кетчи на ривере'],
     whyHeading: 'Почему:',
-    whyText: 'Именно здесь ты сейчас чаще всего теряешь фишки.',
+    whyText: 'Раздачи подобраны под слабые зоны: icm и ривер.',
     cta: 'НАЧАТЬ ТРЕНИРОВКУ',
     total: 7
   };
   let started = 0;
   R.renderHome(root, vm, { start: () => started++ });
-  assert.ok(root.innerHTML.includes('ТВОЯ ТРЕНИРОВКА'));
-  assert.ok(root.innerHTML.includes('7 раздач'));
-  assert.ok(root.innerHTML.includes('Сегодня тренируем'));
-  assert.ok(root.innerHTML.includes('баббле'));
-  root.querySelector('#trStart').onclick();
+  assert.ok(root.innerHTML.includes('pgDailyLobby'));
+  assert.ok(root.querySelector('.pgFelt'));
+  assert.ok(root.innerHTML.includes('РАЗДАЧА'));
+  assert.ok(!root.querySelector('.rangesField'));
+  await new Promise((r) => {
+    root.querySelector('#trStart').onclick();
+    setTimeout(r, 150);
+  });
   assert.equal(started, 1);
+});
+
+test('renderFeedback shows structured YOUR/CORRECT/WHY blocks', () => {
+  const root = freshRoot();
+  const vm = {
+    grade: 'MISTAKE',
+    structured: true,
+    verdict: 'Ошибка',
+    chosenAction: 'Фолд',
+    correctAction: 'Колл',
+    why: 'Пот-оддсы хорошие.',
+    keyTakeaway: 'Защита BB',
+    userMistake: 'Фолд слишком тайтовый.',
+    sessionProgress: { index: 2, total: 7, correct: 1, answered: 1, remaining: 6 },
+    evLossBb: 0.4,
+    chosenRecommended: false
+  };
+  let next = 0;
+  R.renderFeedback(root, vm, { next: () => next++ });
+  assert.ok(root.innerHTML.includes('ТВОЙ ХОД'));
+  assert.ok(root.innerHTML.includes('ВЕРНАЯ ЛИНИЯ'));
+  assert.ok(root.innerHTML.includes('ПОЧЕМУ'));
+  assert.ok(root.innerHTML.includes('ЗАПОМНИ'));
+  assert.ok(root.querySelector('.trSessionProgress'));
+  root.querySelector('#trNext').onclick();
+  assert.equal(next, 1);
+});
+
+test('sessionProgressViewModel uses results length and does not inflate index', () => {
+  const sp = VM.sessionProgressViewModel({ index: 3, total: 7, results: [
+    { grade: 'EXCELLENT' },
+    { grade: 'MISTAKE' },
+    { grade: 'GOOD' }
+  ] });
+  assert.equal(sp.index, 3);
+  assert.equal(sp.total, 7);
+  assert.equal(sp.answered, 3);
+  assert.equal(sp.correct, 2);
+  assert.equal(sp.remaining, 5);
 });
 
 test('viewModel builds a full per-question assessment view', () => {

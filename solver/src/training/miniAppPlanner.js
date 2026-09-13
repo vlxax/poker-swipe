@@ -1,7 +1,7 @@
 // Per mini-app personalization specs — reuse Phase 2 planner/selector.
 
 import { buildDailyPlan } from './planner.js';
-import { getTaskPool } from './taskLibraryBridge.js';
+import { getMttTaskPool } from './taskLibraryBridge.js';
 import { seededRng } from './personalizationSeed.js';
 
 export const MINI_APP_SPECS = {
@@ -38,7 +38,7 @@ export function buildMiniAppPlan(store, appId, {
   const spec = MINI_APP_SPECS[appId] || MINI_APP_SPECS.daily;
   const skillProfile = typeof store.loadSkillProfile === 'function' ? store.loadSkillProfile() : null;
   const hist = history || store.loadHistory() || [];
-  const taskPool = pool || getTaskPool();
+  const taskPool = pool || getMttTaskPool();
   const seed = typeof store.getOrCreatePersonalizationSeed === 'function'
     ? store.getOrCreatePersonalizationSeed()
     : null;

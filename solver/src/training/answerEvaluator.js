@@ -142,7 +142,8 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
 
 function sameAction(a, b) {
   if (!a || !b || a.type !== b.type) return false;
-  if (a.type === 'bet' || a.type === 'raise') {
+  const sized = ['bet', 'raise', '3bet', '4bet', 'all_in'];
+  if (sized.includes(a.type) || String(a.type).startsWith('bet_')) {
     return Math.abs((a.sizePot || 0) - (b.sizePot || 0)) < 0.051;
   }
   return true;
@@ -152,6 +153,8 @@ function actionLabel(action) {
   if (!action) return '—';
   if (action.type === 'bet') return `Ставка ${Math.round((action.sizePot || 0) * 100)}% пота`;
   if (action.type === 'raise') return `Рейз ${Math.round((action.sizePot || 0) * 100)}%`;
+  if (action.type === '3bet') return '3-бет';
+  if (action.type === '4bet') return '4-бет';
   if (action.type === 'check') return 'Чек';
   if (action.type === 'call') return 'Колл';
   if (action.type === 'fold') return 'Фолд';

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Bubble UI test bootstrap</title>
+  <script>
+    (function () {
+      const deviceId = 'dev_bubble_test';
+      localStorage.setItem('pokerSwipeDeviceId', deviceId);
+      const storageKey = 'pokerSwipeV32_user_' + deviceId;
+      localStorage.setItem(storageKey, JSON.stringify({
+        version: '32.0',
+        schemaVersion: 32,
+        nick: 'BUBBLE',
+        onboarded: true,
+        diagDone: true,
+        skill: 72,
+        streak: 3,
+        lastDay: '2026-08-23',
+        events: [],
+        hands: [],
+        myHands18: [],
+        tournaments: [],
+        dailyArchive: [],
+        snapshots: [],
+        xray: { runs: 0, pre: 0, narrow: 0, river: 0, blockers: 0, best: 0, history: [], counts: { pre: 0, narrow: 0, river: 0, blockers: 0 }, onboarded: true },
+        healCourses: {},
+        seenSwipe: [],
+        diagnostic: []
+      }));
+      location.replace('/index.html');
+    })();
+  </script>
+</head>
+<body>Loading…</body>
+</html>

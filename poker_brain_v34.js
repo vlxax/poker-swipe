@@ -10,6 +10,8 @@
   const RANK_VALUE={2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,T:10,J:11,Q:12,K:13,A:14};
   const STREET_RU={PREFLOP:'Префлоп',FLOP:'Флоп',TURN:'Тёрн',RIVER:'Ривер'};
   const ACTION_RU={FOLD:'фолд',CALL:'колл',CHECK:'чек',BET:'ставка',RAISE:'рейз',PUSH:'пуш'};
+  const RANKS='AKQJT98765432';
+  function parseCards(input=[]){if(Array.isArray(input))return input;const str=String(input).trim();if(!str)return[];const suits=['s','h','d','c'];let cards=[],i=0;while(i<str.length){if(i+1<str.length&&RANKS.includes(str[i])&&suits.includes(str[i+1].toLowerCase())){cards.push(str[i]+str[i+1].toLowerCase());i+=2}else if(RANKS.includes(str[i])){const suit=suits[(cards.length%4)];cards.push(str[i]+suit);i++}else{i++}}return cards}
   const baseId=id=>String(id||'').replace(/_V\d+$/,'');
   const num=v=>{const n=Number(String(v??'').replace(',','.'));return Number.isFinite(n)?n:null};
   const normAction=a=>{
@@ -135,7 +137,8 @@
   }
 
   function gradeDecision(spot={},action,size=null){
-    let result=previous.gradeDecision(spot,action,size);
+    const parsed={...spot,hero:parseCards(spot.hero||[]),board:parseCards(spot.board||[])};
+    let result=previous.gradeDecision(parsed,action,size);
     const context=V33.contextForSpot(spot), chosen=normAction(action);
     result=specialKQ(result,spot,action,size,context);
     const sections=buildSections(spot,result,context,chosen);

@@ -1,0 +1,309 @@
+/**
+ * PokerSwipe PWA - Install Helper Styles
+ * Стили для подсказок установки приложения
+ */
+
+:root {
+  --pwa-bg: #08080c;
+  --pwa-panel: #121219;
+  --pwa-text: #faf8fa;
+  --pwa-text-muted: #98939f;
+  --pwa-accent: #c8ff3d;
+  --pwa-accent-hover: #e2ff87;
+  --pwa-green: #42e786;
+  --pwa-border: #30303a;
+  --pwa-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --pwa-radius: 20px;
+  --pwa-spacing: 16px;
+  --safe: env(safe-area-inset-bottom, 0px);
+}
+
+.poker-pwa-prompt {
+  position: fixed;
+  bottom: calc(95px + var(--safe));
+  left: 16px;
+  right: 16px;
+  z-index: 9999;
+  max-width: 400px;
+  margin: 0 auto;
+  animation: pwaSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.poker-pwa-prompt-inner {
+  background: linear-gradient(160deg, var(--pwa-panel), #0f0f14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--pwa-radius);
+  padding: var(--pwa-spacing);
+  box-shadow: var(--pwa-shadow);
+  border: 1px solid var(--pwa-border);
+  radial-gradient: circle at 80% 0, #c8ff3d18, transparent 34%;
+}
+
+.poker-pwa-prompt-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.poker-pwa-prompt-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.poker-pwa-prompt-title {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 950;
+  color: var(--pwa-text);
+  letter-spacing: -0.04em;
+}
+
+.poker-pwa-prompt-close {
+  background: none;
+  border: none;
+  color: var(--pwa-text-muted);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.poker-pwa-prompt-close:hover,
+.poker-pwa-prompt-close:active {
+  opacity: 0.7;
+}
+
+.poker-pwa-prompt-text {
+  margin: 0 0 14px 0;
+  font-size: 14px;
+  color: var(--pwa-text-muted);
+  line-height: 1.4;
+}
+
+.poker-pwa-prompt-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, var(--pwa-accent), var(--pwa-accent-hover));
+  color: #111;
+  border: 0;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 950;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 10px 28px #c8ff3d28;
+}
+
+.poker-pwa-prompt-button:active {
+  transform: scale(0.96);
+}
+
+.poker-pwa-prompt-hidden {
+  animation: pwaSlideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes pwaSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pwaSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+.poker-pwa-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: pwaFadeIn 0.3s ease;
+}
+
+.poker-pwa-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.poker-pwa-modal-content {
+  position: relative;
+  background: linear-gradient(160deg, var(--pwa-panel), #0f0f14);
+  border-radius: 26px;
+  padding: 32px 24px 28px;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--pwa-border);
+  animation: pwaModalSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.poker-pwa-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--pwa-text-muted);
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.poker-pwa-modal-close:hover,
+.poker-pwa-modal-close:active {
+  opacity: 0.7;
+}
+
+.poker-pwa-modal-icon {
+  font-size: 56px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.poker-pwa-modal-title {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 950;
+  color: var(--pwa-text);
+  text-align: center;
+  letter-spacing: -0.04em;
+}
+
+.poker-pwa-modal-steps {
+  margin: 0 0 20px 0;
+  padding: 0 0 0 24px;
+  color: var(--pwa-text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.poker-pwa-modal-steps li {
+  margin-bottom: 10px;
+}
+
+.poker-pwa-modal-steps li strong {
+  color: var(--pwa-accent);
+  font-weight: 950;
+}
+
+.poker-pwa-modal-note {
+  margin: 0 0 24px 0;
+  font-size: 13px;
+  color: var(--pwa-text-muted);
+  text-align: center;
+}
+
+.poker-pwa-modal-done {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg, var(--pwa-accent), var(--pwa-accent-hover));
+  color: #111;
+  border: 0;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 950;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 10px 28px #c8ff3d28;
+}
+
+.poker-pwa-modal-done:active {
+  transform: scale(0.96);
+}
+
+.poker-pwa-modal-hidden {
+  animation: pwaModalFadeOut 0.3s ease forwards;
+}
+
+@keyframes pwaFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pwaModalSlide {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pwaModalFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Скрывать prompt на больших экранах */
+@media (min-width: 768px) {
+  .poker-pwa-prompt {
+    display: none;
+  }
+}
+
+/* Адаптация для малых экранов */
+@media (max-width: 380px) {
+  .poker-pwa-prompt-inner {
+    padding: 12px;
+  }
+
+  .poker-pwa-prompt-title {
+    font-size: 16px;
+  }
+
+  .poker-pwa-prompt-text {
+    font-size: 13px;
+  }
+
+  .poker-pwa-modal-content {
+    padding: 24px 16px 20px;
+  }
+
+  .poker-pwa-modal-title {
+    font-size: 19px;
+  }
+}

@@ -1,4 +1,4 @@
-// DOM renderer for range narrowing trainer.
+// DOM renderer for range narrowing trainer — game interface: HUD + matrix arena.
 
 import { MATRIX_RANKS_EXPORT as RANKS, policySegments } from './matrix.js';
 
@@ -62,37 +62,46 @@ function reviewLegendHtml() {
   </div>`;
 }
 
-function situationCard(vm) {
-  const rows = [
-    vm.formatLabel ? `<div class="rangesSitRow"><span>Формат</span><b>${esc(vm.formatLabel)}</b></div>` : '',
-    vm.heroLabel ? `<div class="rangesSitRow"><span>Ты</span><b>${esc(vm.heroLabel)}</b></div>` : '',
-    vm.villainLabel ? `<div class="rangesSitRow"><span>Оппонент</span><b>${esc(vm.villainLabel)}</b></div>` : '',
-    vm.potLabel ? `<div class="rangesSitRow"><span>Банк</span><b>${esc(vm.potLabel)}</b></div>` : ''
+function headWithBack(titleHtml, app) {
+  const nav = window.MiniAppNav;
+  if (!nav) return titleHtml;
+  const disabled = !nav.canBack(app);
+  return nav.headRow(app, titleHtml, { disabled });
+}
+
+function wireRangesBack(root, handlers) {
+  window.MiniAppNav?.wire(root, 'ranges', () => handlers.back?.());
+}
+
+/** Compact HUD strip — no timeline, no paragraphs */
+function hudStrip(vm) {
+  const chips = [vm.formatLabel, vm.stageLabel, vm.tableLabel].filter(Boolean)
+    .map((t) => `<span class="pgChip">${esc(t)}</span>`).join('');
+  const stats = [
+    vm.heroLabel ? `<div class="pgStat"><span>ТЫ</span><b>${esc(vm.heroLabel)}</b></div>` : '',
+    vm.villainLabel ? `<div class="pgStat"><span>VILL</span><b>${esc(vm.villainLabel)}</b></div>` : '',
+    vm.potLabel ? `<div class="pgStat"><span>БАНК</span><b>${esc(vm.potLabel)}</b></div>` : '',
+    vm.stackLabel ? `<div class="pgStat"><span>ЭФФ.</span><b>${esc(vm.stackLabel)}</b></div>` : ''
   ].filter(Boolean).join('');
-
-  const timeline = (vm.steps || []).map((s) =>
-    `<li><b>${esc(s.actionLabel)}</b><span>${esc(s.actionLine)}</span></li>`
-  ).join('');
-
-  return `<div class="rangesSitCard">${rows}
-    ${timeline ? `<ol class="rangesTimeline">${timeline}</ol>` : ''}
-  </div>`;
+  return `<div class="pgHud">${chips}${stats}</div>`;
 }
 
 export function renderIntro(root, vm, handlers = {}) {
   if (!root) return;
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">ТРЕНАЖЁР</span>
-    <h1 class="impact">${esc(vm.title)}</h1>
-    <p class="rangesLead">${esc(vm.headline)}</p>
-    <p class="mut">${esc(vm.subtitle)}</p>
-    ${hintsHtml(vm.hints)}
-    ${situationCard(vm)}
-    <p class="rangesStepMeta">${vm.stepCount} шаг${vm.stepCount > 1 ? 'а' : ''} · hand reading</p>
-    <button type="button" class="primary rangesCta" id="rangesStart">${esc(vm.cta)}</button>
-    <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
+  root.innerHTML = `<div class="panel pgShell pgRanges">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">ТРЕНАЖЁР</span></div>`, 'ranges')}</div>
+    ${hudStrip(vm)}
+    <div class="pgXrayArena" style="flex:1;padding:12px">
+      <p class="rangesLead" style="font-size:11px;margin:0 0 8px">${esc(vm.headline)}</p>
+      ${hintsHtml(vm.hints)}
+    </div>
+    <div class="pgControls">
+      <button type="button" class="primary pgCta pgBubblePress" id="rangesStart">${esc(vm.cta)}</button>
+      <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
+    </div>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelector('#rangesStart').onclick = () => handlers.begin?.();
   const help = root.querySelector('#rangesHelp');
   if (help) help.onclick = () => handlers.help?.();
@@ -100,23 +109,25 @@ export function renderIntro(root, vm, handlers = {}) {
 
 export function renderPlay(root, vm, handlers = {}) {
   if (!root) return;
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <div class="rangesPlayTop">
-      <span class="ey">${esc(vm.stepLabel)}</span>
-      <span class="rangesCounter">${vm.keptCount}/${vm.candidateCount}</span>
+  root.innerHTML = `<div class="panel pgRangesPlay pgShell">
+    <div class="pgHud">
+      ${headWithBack(`<div class="pgHudTitle"><h2>${esc(vm.question)}</h2><span class="ey">${esc(vm.stepLabel)} · ${vm.keptCount}/${vm.candidateCount}</span></div>`, 'ranges')}
     </div>
-    <h2 class="rangesQuestion">${esc(vm.question)}</h2>
+    ${hudStrip(vm)}
     <div class="rangesActionChip">${esc(vm.actionLine)}</div>
-    <p class="mut rangesNarrative">${esc(vm.narrative)}</p>
-    ${hintsHtml(vm.hints)}
     ${legendHtml()}
     ${matrixGrid(vm.matrix, { interactive: true })}
-    <button type="button" class="primary rangesCta" id="rangesConfirm">${esc(vm.cta)}</button>
+    ${hintsHtml(vm.hints)}
+    <button type="button" class="primary rangesCta pgCta pgBubblePress" id="rangesConfirm">${esc(vm.cta)}</button>
     <button type="button" class="rangesHelpBtn" id="rangesHelp">Как проходить?</button>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelectorAll('[data-rhand]').forEach((b) => {
-    b.onclick = () => handlers.toggle?.(b.dataset.rhand);
+    b.onclick = () => {
+      window.PsMotion?.rangesCellFlash(b);
+      handlers.toggle?.(b.dataset.rhand);
+    };
   });
   root.querySelector('#rangesConfirm').onclick = () => handlers.confirm?.();
   const help = root.querySelector('#rangesHelp');
@@ -133,7 +144,6 @@ export function renderSummary(root, vm, handlers = {}) {
     ].filter(Boolean).join('');
     return `<section class="rangesReviewStep">
       <div class="rangesReviewHead"><b>Шаг ${step.index}: ${esc(step.actionLabel)}</b><span>${step.accuracy}%</span></div>
-      <p class="mut">${esc(step.question)}</p>
       ${reviewLegendHtml()}
       ${matrixGrid(step.matrix, { interactive: false })}
       ${wrong}
@@ -143,16 +153,16 @@ export function renderSummary(root, vm, handlers = {}) {
 
   const summaryLines = (vm.summaryLines || []).map((line) => `<p class="rangesSummaryLine">${esc(line)}</p>`).join('');
 
-  root.innerHTML = `<div class="panel rangesStage dailyStage">
-    <span class="ey">РАЗБОР</span>
-    <h1 class="impact">${esc(vm.title)}</h1>
+  root.innerHTML = `<div class="panel rangesStage pgShell">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">РАЗБОР</span></div>`, 'ranges')}</div>
     <div class="rangesScoreBadge">${vm.avgAccuracy}%</div>
     <p class="rangesLead">${esc(vm.headline)}</p>
     ${summaryLines}
     ${stepsHtml}
-    <button type="button" class="primary rangesCta" id="rangesNext">${esc(vm.cta)}</button>
+    <div class="pgControls"><button type="button" class="primary pgCta pgBubblePress" id="rangesNext">${esc(vm.cta)}</button></div>
   </div>`;
 
+  wireRangesBack(root, handlers);
   root.querySelector('#rangesNext').onclick = () => handlers.next?.();
 }
 
@@ -173,9 +183,141 @@ export function renderHelpOverlay(root, vm, handlers = {}) {
   root.appendChild(host);
 }
 
-// Legacy no-op exports for older test imports.
 export function renderSelector(root, vm, handlers) {
   renderIntro(root, vm, { begin: handlers.show, help: handlers.help });
+}
+
+function chipRow(label, options, field, current, handlerKey) {
+  if (!options?.length) return '';
+  return `<div class="rangesField"><span class="rangesFieldLabel">${esc(label)}</span><div class="rangesChips">${options.map((o) => {
+    const val = typeof o === 'object' ? o.id : o;
+    const lbl = typeof o === 'object' ? o.label : o;
+    const on = String(current) === String(val) ? ' on' : '';
+    return `<button type="button" class="rangesChip${on}" data-field="${esc(field)}" data-value="${esc(val)}">${esc(lbl)}</button>`;
+  }).join('')}</div></div>`;
+}
+
+function trainerMatrixCellClass(cell) {
+  if (!cell?.supported) return 'dead';
+  if (cell.trainerActionRaw === 'AI') return 'trainer-ai';
+  if (cell.trainerActionRaw === 'RAISE') return 'trainer-raise';
+  if (cell.trainerActionRaw === 'UNSELECTED') return 'trainer-unselected';
+  if (cell.dataStatus === 'NEEDS_CLARIFICATION') return 'trainer-unknown';
+  return 'trainer-partial';
+}
+
+function trainerMatrixGrid(cells, { selectedHand = null } = {}) {
+  const rows = [];
+  for (let r = 0; r < 13; r++) {
+    for (let c = 0; c < 13; c++) {
+      let hand;
+      if (r === c) hand = RANKS[r] + RANKS[c];
+      else if (r < c) hand = RANKS[r] + RANKS[c] + 's';
+      else hand = RANKS[c] + RANKS[r] + 'o';
+      const cell = cells[hand] || { hand, supported: false };
+      const cls = trainerMatrixCellClass(cell);
+      const sel = selectedHand === hand ? ' selected' : '';
+      const label = cell.actionLabel || cell.trainerActionRaw || '—';
+      rows.push(`<button type="button" class="rangesCell ${cls}${sel}" data-thand="${esc(hand)}" aria-label="${esc(hand)} ${esc(label)}"><span class="rangesCellLabel">${esc(hand)}</span></button>`);
+    }
+  }
+  return `<div class="rangesMatrixWrap"><div class="rangesMatrix">${rows.join('')}</div></div>`;
+}
+
+function trainerLegendHtml() {
+  return `<div class="rangesLegendBar">
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-ai"></i>Олл-ин</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-raise"></i>Рейз</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unselected"></i>Вне диапазона</span>
+    <span class="rangesLegendItem"><i class="rangesLegendSwatch trainer-unknown"></i>Не определено</span>
+  </div>`;
+}
+
+export function renderTrainerHub(root, vm, handlers = {}) {
+  if (!root) return;
+  root.innerHTML = `<div class="panel pgShell pgRanges">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">ТРЕНЕР</span></div>`, 'ranges')}</div>
+    <p class="rangesLead">${esc(vm.subtitle || '')}</p>
+    <div class="pgControls" style="gap:10px">
+      <button type="button" class="primary pgCta pgBubblePress" id="rangesTrainerBtn">ТРЕНЕРСКИЕ РЕНДЖИ</button>
+      <button type="button" class="rangesHelpBtn" id="rangesNarrowBtn">Сужение диапазона →</button>
+    </div>
+  </div>`;
+  wireRangesBack(root, handlers);
+  root.querySelector('#rangesTrainerBtn').onclick = () => handlers.openTrainer?.();
+  root.querySelector('#rangesNarrowBtn').onclick = () => handlers.openNarrowing?.();
+}
+
+export function renderTrainerSelector(root, vm, handlers = {}) {
+  if (!root) return;
+  const sel = vm.selection || {};
+  root.innerHTML = `<div class="panel pgShell pgRanges">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h1 class="impact">${esc(vm.title)}</h1><span class="ey">${esc(vm.subtitle)}</span></div>`, 'ranges')}</div>
+    <p class="rangesDisclaimer">${esc(vm.disclaimer || '')}</p>
+    ${chipRow('Ситуация', vm.situations, 'situation', sel.situation)}
+    ${chipRow('Позиция', vm.positions, 'position', sel.position)}
+    ${vm.showStack ? chipRow('Стек', vm.stacks, 'stackBand', sel.stackBand || sel.stack) : ''}
+    ${vm.showSpot ? chipRow('Спот', vm.spots, 'trainerSpot', sel.trainerSpot) : ''}
+    <div class="pgControls">
+      <button type="button" class="primary pgCta pgBubblePress" id="rangesShow" ${vm.complete ? '' : 'disabled'}>${esc(vm.cta)}</button>
+    </div>
+  </div>`;
+  wireRangesBack(root, handlers);
+  root.querySelectorAll('[data-field]').forEach((btn) => {
+    btn.onclick = () => handlers.setField?.(btn.dataset.field, btn.dataset.value);
+  });
+  const show = root.querySelector('#rangesShow');
+  if (show) show.onclick = () => handlers.showRange?.();
+}
+
+export function renderTrainerMatrix(root, vm, handlers = {}) {
+  if (!root) return;
+  const meta = vm.chartMeta || {};
+  const header = vm.subtitle || 'РЕНДЖ';
+  const posLabel = meta.heroPosition?.display || '';
+  const stackLabel = meta.stack ? `${meta.stack} BB` : '';
+  const contextLabel = [posLabel, stackLabel].filter(Boolean).join(' · ');
+
+  root.innerHTML = `<div class="panel pgRangesPlay pgShell">
+    <div class="pgHud">${headWithBack(`<div class="pgHudTitle"><h2>${esc(header)}</h2></div>`, 'ranges')}</div>
+    ${contextLabel ? `<div class="rangesContextChip">${esc(contextLabel)}</div>` : ''}
+    ${trainerLegendHtml()}
+    ${trainerMatrixGrid(vm.cells || {}, { selectedHand: vm.selectedHand })}
+    <div id="rangesHandDetail"></div>
+    <button type="button" class="rangesHelpBtn" id="rangesBackSel">${esc(vm.cta)}</button>
+  </div>`;
+  wireRangesBack(root, handlers);
+  root.querySelectorAll('[data-thand]').forEach((btn) => {
+    btn.onclick = () => handlers.selectHand?.(btn.dataset.thand);
+  });
+  root.querySelector('#rangesBackSel').onclick = () => handlers.back?.();
+  if (vm.handDetail) {
+    const d = vm.handDetail;
+    let actionText = '';
+    if (d.trainerActionRaw === 'UNSELECTED' || !d.trainerActionRaw || d.trainerActionRaw === 'UO') {
+      actionText = 'Не в диапазоне';
+    } else if (d.trainerActionRaw === 'AI') {
+      actionText = 'ОЛЛ-ИН';
+    } else if (d.trainerActionRaw === 'RAISE') {
+      actionText = 'РЕЙЗ';
+    } else if (d.trainerActionRaw === 'CALL') {
+      actionText = 'КОЛЛ';
+    } else if (d.trainerActionRaw === 'FOLD') {
+      actionText = 'ФОЛД';
+    } else {
+      actionText = esc(d.actionLabel || '—');
+    }
+
+    root.querySelector('#rangesHandDetail').innerHTML = `<div class="rangesHandPanel">
+      <b>${esc(d.hand)}</b>
+      <div class="rangesHandAction">${actionText}</div>
+    </div>`;
+  }
+}
+
+export function renderTrainerLoading(root, vm) {
+  if (!root) return;
+  root.innerHTML = `<div class="panel rangesStage"><p>${esc(vm.message || 'Загрузка…')}</p></div>`;
 }
 
 export function renderResult(root, vm, handlers) {
@@ -195,7 +337,15 @@ export function paint(root, vm, handlers) {
   }
   document.querySelectorAll('.rangesOverlay').forEach((el) => el.remove());
 
-  if (vm.phase === 'intro') renderIntro(root, vm, handlers);
+  if (vm.phase === 'hub') renderTrainerHub(root, vm, handlers);
+  else if (vm.phase === 'selector') renderTrainerSelector(root, vm, handlers);
+  else if (vm.phase === 'matrix') renderTrainerMatrix(root, vm, handlers);
+  else if (vm.phase === 'loading') renderTrainerLoading(root, vm);
+  else if (vm.phase === 'error') {
+    root.innerHTML = `<div class="panel rangesStage"><p>${esc(vm.message)}</p><button type="button" class="primary" id="rangesErrBack">НАЗАД</button></div>`;
+    root.querySelector('#rangesErrBack').onclick = () => handlers.back?.();
+  }
+  else if (vm.phase === 'intro') renderIntro(root, vm, handlers);
   else if (vm.phase === 'play') renderPlay(root, vm, handlers);
   else if (vm.phase === 'summary') renderSummary(root, vm, handlers);
   else renderIntro(root, vm, handlers);

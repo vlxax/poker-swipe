@@ -13,11 +13,18 @@ import {
 export const SOURCE_TYPES = {
   VERIFIED: 'verified',
   REFERENCE: 'reference',
+  TRAINER: 'trainer',
   HEURISTIC: 'heuristic',
   DERIVED: 'derived'
 };
 
 export const DATA_SOURCES = [
+  {
+    id: 'trainer',
+    label: 'Тренерская база',
+    sourceType: SOURCE_TYPES.TRAINER,
+    help: 'Диапазоны из тренерской базы PokerSwipe. Неподтверждённые метки сохраняются как есть.'
+  },
   {
     id: 'verified',
     label: 'Модель турнира',
@@ -87,6 +94,7 @@ export function hasExactRange(pack, sel) {
 
 export function sourcePriority(sourceType) {
   const order = {
+    [SOURCE_TYPES.TRAINER]: 0,
     [SOURCE_TYPES.VERIFIED]: 1,
     [SOURCE_TYPES.REFERENCE]: 2,
     [SOURCE_TYPES.DERIVED]: 3,

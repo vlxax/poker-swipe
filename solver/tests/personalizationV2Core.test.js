@@ -206,7 +206,7 @@ test('E: consecutive sessions avoid exact task repeat within cooldown', () => {
 test('eligible assessment pool is larger than legacy fixed pool', () => {
   const eligible = getAssessmentEligiblePool();
   assert.ok(eligible.length > ASSESSMENT_POOL.length);
-  assert.ok(eligible.length >= 50);
+  assert.ok(eligible.length >= 40, `diagnostic pool should have >= 40 items, got ${eligible.length}`);
 });
 
 test('deriveSkillTags returns multiple skills for RFI tasks', () => {

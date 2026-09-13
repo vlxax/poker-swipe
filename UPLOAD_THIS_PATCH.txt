@@ -1,0 +1,31 @@
+POKERSWIPE — CODE PATCH: DEMON + GREEN CHIPS
+
+ВАЖНО:
+Ассеты повторно загружать НЕ НУЖНО.
+Этот ZIP содержит только код.
+
+В репозитории уже должны лежать:
+- assets/daily-hand/dino-chaos.webp
+- assets/daily-hand/dino-poster.png
+- assets/bet-sizing/poker-chip-green.webp
+- assets/bet-sizing/poker-chip-green.png
+
+ЧТО МЕНЯЕТСЯ:
+1. «РАЗДАЧА ДНЯ / ОДНА РУКА»
+   Старые карты/старая фишка убираются.
+   Вместо них выводится анимированный Демон:
+   assets/daily-hand/dino-chaos.webp
+
+2. «САЙЗИНГ / СКОЛЬКО СТАВИМ?»
+   Старые CSS-фишки убираются.
+   Вместо них выводятся 3 экземпляра новой зелёной фишки:
+   assets/bet-sizing/poker-chip-green.webp
+
+КАК ЗАГРУЗИТЬ:
+- daily-figma-card.js -> заменить одноимённый файл в КОРНЕ репозитория.
+- daily-figma-card.css -> заменить одноимённый файл в КОРНЕ репозитория.
+
+Больше ничего не удалять.
+Папку assets не трогать.
+
+После загрузки обновить GitHub Pages с жёстким refresh / очисткой кэша.
