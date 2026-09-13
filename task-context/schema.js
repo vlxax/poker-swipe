@@ -127,12 +127,6 @@ const COPY_PHRASES = [
   [/push-fold/gi, 'пуш-фолд'],
   [/bluffcatch/gi, 'блеф-кетч'],
   [/bluff-catch/gi, 'блеф-кетч'],
-  [/two pair/gi, 'две пары'],
-  [/steal/gi, 'стил'],
-  [/overlay/gi, 'оверлей'],
-  [/shove/gi, 'пуш'],
-  [/iso-raise/gi, 'изолейт-рейз'],
-  [/iso\b/gi, 'изолейт'],
   [/check-raise/gi, 'чек-рейз'],
   [/fold equity/gi, 'фолд-эквити'],
   [/fold-equity/gi, 'фолд-эквити'],
@@ -250,7 +244,6 @@ function normalizeConceptLabel(concept) {
   let out = String(concept).trim();
   for (const [re, rep] of CONCEPT_PREFIX) out = out.replace(re, rep);
   out = applyCopyPhrases(out);
-  out = normalizeHandShorthand(out);
   return out.replace(/\s+/g, ' ').trim();
 }
 
