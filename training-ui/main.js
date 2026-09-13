@@ -92,6 +92,7 @@ const assessment = new AssessmentController({
   const onboarding = installOnboardingHooks({ store, assessment, appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const goHome = () => {
+  window.__calendarDailyOpen = false;
   if (typeof window.show === 'function') window.show('home');
   else if (legacyRenderDaily) legacyRenderDaily();
 };
@@ -100,6 +101,12 @@ function legacyFallback() {
   if (typeof window.__legacyDailyIntro === 'function') window.__legacyDailyIntro();
   else if (legacyRenderDaily) legacyRenderDaily();
 }
+
+window.openCalendarDaily = function () {
+  window.__calendarDailyOpen = true;
+  if (typeof window.show === 'function') window.show('daily');
+  legacyFallback();
+};
 
 function previewScenarioFromPlan(preparedDaily) {
   const ref = preparedDaily?.plan?.spots?.[0] || preparedDaily?.plan?.drills?.[0];
@@ -202,6 +209,7 @@ function pushDailyNav(snap) {
 }
 
 function paint() {
+  if (window.__calendarDailyOpen) return;
   const el = root();
   if (!el) return;
 
@@ -257,7 +265,14 @@ function paint() {
 }
 
 // Replace renderDaily (via the exposeV32 live accessor) so show('daily') hits us.
-window.renderDaily = function () { paint(); };
+window.renderDaily = function () {
+  if (window.__calendarDailyOpen) {
+    const area = document.getElementById('dailyArea');
+    if (!area || !area.querySelector('.pgDaily, .dailyStage')) legacyFallback();
+    return;
+  }
+  paint();
+};
 
 // Entry point for the UI shell: run the primary diagnostic (first-run), or jump
 // straight to training when a skill profile already exists.

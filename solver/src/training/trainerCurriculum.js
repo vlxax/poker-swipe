@@ -59,7 +59,7 @@ export function scoreTrainerCandidate(task, {
   const skills = trainerSkillsForTask(task);
   for (const sk of skills) {
     const w = weaknessSkills[sk];
-    if (w != null && w > 0) score *= (1 + w * 2);
+    if (w != null && w > 0) score *= (1 + w * 3.5);
   }
 
   const fp = task.trainerMeta?.chartId && task.trainerMeta?.hand
@@ -104,9 +104,20 @@ export function sampleTrainerSession(candidates, {
       const sm = task.trainerMeta?.sourceMode;
       const recentSameMode = modeLog.slice(-3).filter((m) => m === sm).length;
       const modeCountInSession = modeLog.filter((m) => m === sm).length;
-      if (recentSameMode >= 2) score *= 0.35;
-      if (modeCountInSession >= 2) score *= 0.25;
-      if (modeCountInSession >= 4) score *= 0.1;
+      const matchesWeakness = (task.trainerSkills || task.skillTags || []).some((sk) => weaknessSkills[sk] > 0)
+        || trainerSkillsForTask(task).some((sk) => weaknessSkills[sk] > 0);
+      const weakQuota = Math.ceil(count * 0.4);
+      const weakPicked = selected.filter((t) => trainerSkillsForTask(t).some((sk) => weaknessSkills[sk] > 0)).length;
+      if (matchesWeakness && weakPicked < weakQuota) {
+        score *= 2.4;
+      } else {
+        if (recentSameMode >= 2) score *= 0.35;
+        if (modeCountInSession >= 2) score *= 0.25;
+        if (modeCountInSession >= 4) score *= 0.1;
+      }
+      if (!matchesWeakness && weakPicked < weakQuota && Object.keys(weaknessSkills).length) {
+        score *= 0.55;
+      }
       return { task, ...base, score: Math.max(score, 0.001), family: fam, sourceMode: sm };
     });
 

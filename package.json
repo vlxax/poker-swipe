@@ -6,7 +6,7 @@
     "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail",
-    "test": "node tests/polyana_regression.js && node tests/polyana_map.js"
+    "test": "npm --prefix solver test && node tests/polyana_regression.js && node tests/polyana_map.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

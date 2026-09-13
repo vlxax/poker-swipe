@@ -149,4 +149,16 @@ export {
   HandOfDayBrainIntegration, initHandOfDayIntegration, getHandOfDayIntegration, resetHandOfDayIntegration
 } from './handOfDay/brainIntegration.js';
 
+export { STRATEGY_SOURCE, mapLegacySource, attachStrategySource } from './analysis/strategySource.js';
+export { classifyPostflopHand, postflopBucket } from './cards/postflopClassification.js';
+export { lookupStackAwarePreflop, stackBucket } from './preflop/stackAwarePolicy.js';
+export { gradeSizing } from './analysis/sizingGrade.js';
+export { validateIcmInputs } from './math/icmInputs.js';
+export { validatePkoInputs } from './math/pkoInputs.js';
+export { conditionRange } from './ranges/streetRangeConditioning.js';
+export { streetByStreetReview, firstMajorMistake } from './hand/streetReview.js';
+export { riverBluffCatchReport } from './analysis/riverBluffCatch.js';
+export { exploitRecommendation } from './exploit/exploitConfidence.js';
+export { isDisabledTask, disableReason } from './training/taskDisableRegistry.js';
+
 export default PokerSwipeSolver;

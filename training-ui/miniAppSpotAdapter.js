@@ -1,6 +1,7 @@
 // Convert validated MTT library tasks into legacy mini-app spot shapes.
 
 import { deriveSkillTags } from '../solver/src/training/planner.js';
+import { buildCanonicalSpot, canonicalToSwipeSpot } from '../task-context/canonicalSpot.js';
 
 const STREET_ABBR = {
   'ПРЕФЛОП': 'PRE', 'ФЛОП': 'FLOP', 'ТЁРН': 'TURN', 'РИВЕР': 'RIVER',
@@ -185,10 +186,20 @@ export function libraryTaskToXraySpot(task) {
   };
 }
 
+export function libraryTaskToSwipeSpot(task) {
+  if (!task) return null;
+  const canonical = buildCanonicalSpot(task);
+  if (!canonical) return null;
+  const spot = canonicalToSwipeSpot(canonical);
+  if (!spot) return null;
+  return { ...spot, _canonical: canonical, _library: true, _miniApp: 'swipe' };
+}
+
 export function libraryTaskToMiniAppSpot(task, appId) {
   if (!task || !taskEligibleForMiniApp(task, appId)) return null;
   if (appId === 'sizing') return libraryTaskToSizingSpot(task);
   if (appId === 'review') return libraryTaskToReviewSpot(task);
   if (appId === 'xray') return libraryTaskToXraySpot(task);
+  if (appId === 'swipe' || appId === 'memory') return libraryTaskToSwipeSpot(task);
   return null;
 }

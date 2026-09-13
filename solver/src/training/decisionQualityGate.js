@@ -3,6 +3,7 @@
 import { buildCanonicalSpot } from '../../../task-context/canonicalSpot.js';
 import { auditModeSpot } from './taskContextIntegrity.js';
 import { resolveGradingSource, GRADING_SOURCE } from './gradingProvenance.js';
+import { isDisabledTask } from './taskDisableRegistry.js';
 import { isMeaningfulTrainerDecision } from '../../../trainer-knowledge/legalPreflopUserOptions.js';
 
 /** Strip stack-variant suffixes for near-duplicate session dedup. */
@@ -52,6 +53,7 @@ export function passesIntegrity(task, mode, lookup = null) {
  */
 export function isActiveForTraining(task, mode = 'swipe', lookup = null) {
   if (!task?.id) return false;
+  if (isDisabledTask(task.id)) return false;
   if (task._legacy || isHeuristicTask(task)) return false;
   if (task._trainerNative && !isMeaningfulTrainerDecision(task)) return false;
   if (!passesIntegrity(task, mode, lookup)) return false;

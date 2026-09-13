@@ -88,9 +88,27 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
       return null;
     }
 
+    const meta = charts.find((c) => c.id === resolved) || {};
     const hands = {};
+    let hasAI = false;
     for (const [hand, cell] of Object.entries(compact.h)) {
-      hands[hand] = expandCompactHand(cell);
+      const expanded = expandCompactHand(cell);
+      if (expanded?.actionRaw === 'AI' || (expanded?.strategies || []).some((s) => s.rawAction === 'AI')) hasAI = true;
+      hands[hand] = expanded;
+    }
+    for (const [hand, rec] of Object.entries(hands)) {
+      if (rec.isMixed) continue;
+      if (rec.actionRaw === 'nAI' && hasAI && meta.sourceMode === 'callpush') {
+        rec.normalizedAction = 'CALL';
+        rec.contextualAction = 'NON_ALL_IN_CALL';
+        rec.gradingAllowed = true;
+        rec.dataStatus = TRAINER_STATUS.EXACT_TRAINER_DATA;
+      }
+      if (rec.actionRaw === 'ORANGE_208_160_32' && (meta.legendScheme === 'UO_STYLE' || meta.sourceMode === 'uo')) {
+        rec.normalizedAction = 'CALL';
+        rec.gradingAllowed = true;
+        rec.dataStatus = TRAINER_STATUS.EXACT_TRAINER_DATA;
+      }
     }
     const chart = { chartId: resolved, hands, parseStatus: compact.ps, parseStats: compact.st };
     chartHandsCache.set(resolved, chart);
@@ -256,11 +274,15 @@ export async function initBrowserTrainerLookup(base = BUILT_BASE) {
     const loaded = await loadChartFromShard(chartId);
     const rec = loaded?.hands?.[h];
     if (!rec) return null;
-    const gradingAllowed = rec.isMixed ? false : Boolean(rec.gradingAllowed ?? canGradeWithTrainerAction(rec.actionRaw));
+    const gradingAllowed = rec.isMixed
+      ? false
+      : Boolean(rec.gradingAllowed ?? canGradeWithTrainerAction(rec.actionRaw, rec.normalizedAction, rec.contextualAction));
     return {
       chartId,
       hand: h,
       actionRaw: rec.actionRaw,
+      normalizedAction: rec.normalizedAction || null,
+      contextualAction: rec.contextualAction || null,
       dataStatus: rec.dataStatus,
       gradingAllowed,
       strategies: rec.strategies || null,

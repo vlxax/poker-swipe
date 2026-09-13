@@ -101,8 +101,18 @@
   function onMessage(ev) {
     const data = ev && ev.data;
     if (!data || typeof data !== 'object') return;
-    if (data.type === 'HAND_DAY_BACK' || data.type === 'HAND_DAY_CLOSE') {
-      closeHandDay();
+    if (data.type === 'HAND_DAY_SAVE' && data.record) {
+      try {
+        window.S = window.S || {};
+        if (!Array.isArray(window.S.dailyArchive)) window.S.dailyArchive = [];
+        const rec = data.record;
+        window.S.dailyArchive = window.S.dailyArchive.filter((x) => x.date !== rec.date);
+        window.S.dailyArchive.push(rec);
+        if (typeof window.save === 'function') window.save();
+      } catch (err) {
+        console.error('HAND_DAY_SAVE', err);
+      }
+      return;
     }
   }
 

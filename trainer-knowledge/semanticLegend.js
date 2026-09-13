@@ -98,9 +98,14 @@ export function resolveNaiContextualAction(sourceMode, { chartHasAI = false } = 
     };
   }
 
+  const contextualAction = modeRule.contextualAction || null;
+  const normalizedFromContext = contextualAction === 'NON_ALL_IN_CALL'
+    ? 'CALL'
+    : base.normalizedAction;
   return {
     ...base,
-    contextualAction: modeRule.contextualAction || null,
+    normalizedAction: normalizedFromContext,
+    contextualAction,
     gradingAllowed: Boolean(modeRule.gradingAllowed),
     dataStatus: modeRule.dataStatus || 'EXACT_TRAINER_DATA'
   };

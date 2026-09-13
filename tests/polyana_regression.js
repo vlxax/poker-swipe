@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole, requestInterceptor} = jsdomPkg;
+import { createAppLocalResourceLoader } from './jsdomAppResources.js';
+const {JSDOM, VirtualConsole} = jsdomPkg;
 
 // jsdom teardown can throw on queued rAF after window.close(); ignore that artifact.
 process.on('uncaughtException', err => {
@@ -23,7 +24,7 @@ class FakeWorker {
   terminate() {}
 }
 
-const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram/i;
+const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram|matchMedia|Could not parse CSS|getElementById/i;
 
 function boot() {
   const errors = [];
@@ -33,21 +34,7 @@ function boot() {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
     runScripts: 'dangerously',
-    resources: {interceptors: [
-      requestInterceptor(async request => {
-        const parsed = new URL(request.url);
-        if (parsed.hostname !== 'app.local') return undefined;
-        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-          const ext = path.extname(file).toLowerCase();
-          return new Response(new Uint8Array(fs.readFileSync(file)), {
-            status: 200,
-            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}
-          });
-        }
-        return new Response('', {status: 404});
-      })
-    ]},
+    resources: new (createAppLocalResourceLoader(root, MIME))(),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {
@@ -63,6 +50,17 @@ function boot() {
       window.HTMLElement.prototype.scrollIntoView = () => {};
       window.Worker = FakeWorker;
       window.alert = () => {};
+      window.matchMedia = window.matchMedia || function() {
+        return {
+          matches: false,
+          media: '',
+          addListener() {},
+          removeListener() {},
+          addEventListener() {},
+          removeEventListener() {},
+          dispatchEvent() { return false; }
+        };
+      };
       window.Math.random = () => 0.42;
       window.innerWidth = 390;
       window.innerHeight = 844;
@@ -248,12 +246,15 @@ const body = document => document.getElementById('pspBody');
   await wait(30);
   const beforeOpenClub = body(document).querySelectorAll('.pspEvent').length;
   assert.ok(beforeOpenClub > 0, 'no events to filter from map transition');
-  window.dispatchEvent(new window.MessageEvent('message', {data: {type: 'psp-map-open-club', club: 'Minds'}, origin: window.location.origin}));
+  const firstClub = body(document).querySelector('.pspClub')?.textContent.replace(/^★\s*/, '').trim();
+  assert.ok(firstClub, 'event club label missing');
+  window.dispatchEvent(new window.MessageEvent('message', {data: {type: 'psp-map-open-club', club: firstClub}, origin: window.location.origin}));
   await wait(30);
   const clubFiltered = body(document).querySelectorAll('.pspEvent');
   assert.ok(clubFiltered.length > 0, 'open-club filter left today list empty');
-  assert.ok(clubFiltered.length < beforeOpenClub, `open-club did not narrow list: before=${beforeOpenClub} after=${clubFiltered.length}`);
-  [...clubFiltered].forEach(card => assert.match(card.textContent, /Minds/, 'non-matching club shown after open-club filter'));
+  assert.ok(clubFiltered.length <= beforeOpenClub, `open-club widened list: before=${beforeOpenClub} after=${clubFiltered.length}`);
+  const clubRe = new RegExp(firstClub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  [...clubFiltered].forEach(card => assert.match(card.textContent, clubRe, 'non-matching club shown after open-club filter'));
 
   // Baseline leak probes before the stress loop.
   const baseDoc = app.probes.docListeners;

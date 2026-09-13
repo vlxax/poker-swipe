@@ -1,5 +1,7 @@
 // Machine-readable grading provenance for training decisions.
 
+import { mapLegacySource } from '../analysis/strategySource.js';
+
 export const GRADING_SOURCE = {
   TRAINER_EXACT: 'TRAINER_EXACT',
   TRAINER_CONFIRMED: 'TRAINER_CONFIRMED',
@@ -50,6 +52,7 @@ export function buildGradingProvenanceRecord({
     contextualAction: trainer?.contextualAction || null,
     gradingAllowed: trainer?.gradingAllowed ?? null,
     provenance: trainer?.provenance || null,
-    evScoreKind: source.startsWith('TRAINER') ? 'trainer_backed' : 'synthetic_letter_grade'
+    evScoreKind: source.startsWith('TRAINER') ? 'trainer_backed' : 'synthetic_letter_grade',
+    strategySource: mapLegacySource({ source, gradingSource: source })
   };
 }

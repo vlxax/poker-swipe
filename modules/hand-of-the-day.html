@@ -4445,6 +4445,9 @@ document.addEventListener('click', function(e){
     html += '<b>+<span id="skillCount">0</span> SKILL</b>';
     html += '<span class="streak">🔥 Серия: '+VIS.streak+' дней</span>';
     html += '</div>';
+    html += '<button type="button" class="btn-primary primary" id="hdSave">СОХРАНИТЬ →</button>';
+    html += '<button type="button" class="btn-primary primary" id="hdHistory" style="margin-top:8px">ИСТОРИЯ →</button>';
+    html += '<div id="hdHistoryList" class="mut" style="margin-top:10px;font-size:12px"></div>';
 
     content.innerHTML = html;
 
@@ -4484,6 +4487,46 @@ document.addEventListener('click', function(e){
           }
         };
       })(btns[b]);
+    }
+
+    var saveBtn = document.getElementById('hdSave');
+    if(saveBtn){
+      saveBtn.onclick = function(){
+        var rec = {
+          date: new Date().toISOString().slice(0,10),
+          id: (state.scenario && (state.scenario.id || state.scenario.key)) || state.pendingScenarioKey || 'DAILY_HAND',
+          grade: isHeroWin ? 'g' : (isTie ? 'y' : 'r'),
+          confidence: readOk ? 90 : 60,
+          explanation: coachLine,
+          decisionsScore: decisionsScore,
+          sizingScore: sizingScore
+        };
+        try {
+          window.parent.postMessage({ type: 'HAND_DAY_SAVE', record: rec }, '*');
+          var p = window.parent;
+          if(p && p.S){
+            p.S.dailyArchive = (p.S.dailyArchive || []).filter(function(x){ return x.date !== rec.date; });
+            p.S.dailyArchive.push(rec);
+            if(typeof p.save === 'function') p.save();
+          }
+        } catch(err) {
+          console.error('Daily save failed:', err);
+        }
+        saveBtn.textContent = 'СОХРАНЕНО ✓';
+      };
+    }
+    var histBtn = document.getElementById('hdHistory');
+    if(histBtn){
+      histBtn.onclick = function(){
+        var list = [];
+        try { list = (window.parent.S && window.parent.S.dailyArchive) || []; } catch(e){ list = []; }
+        var box = document.getElementById('hdHistoryList');
+        if(!box) return;
+        if(!list.length){ box.textContent = 'Архив пуст.'; return; }
+        box.innerHTML = '<span class="ey">АРХИВ</span>' + list.slice(-8).reverse().map(function(x){
+          return '<div>'+ (x.date||'') + ' · ' + (x.grade==='g'?'ЧИСТО':x.grade==='y'?'ЖИВЁТ':'ОШИБКА') + '</div>';
+        }).join('');
+      };
     }
 
     // Next hand timer

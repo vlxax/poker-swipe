@@ -122,11 +122,13 @@
       "id": "ORANGE_UO",
       "match": { "rawAction": "ORANGE_208_160_32", "legendScheme": "UO_STYLE" },
       "rawLabel": "кол",
-      "normalizedAction": null,
-      "status": "NEEDS_CLARIFICATION",
-      "gradingAllowed": false,
-      "dataStatus": "NEEDS_CLARIFICATION",
-      "awaitingTrainerConfirmation": true
+      "normalizedAction": "CALL",
+      "status": "TRAINER_CONFIRMED",
+      "gradingAllowed": true,
+      "dataStatus": "EXACT_TRAINER_DATA",
+      "provenance": "TRAINER_CONFIRMED",
+      "awaitingTrainerConfirmation": false,
+      "trainerNote": "Chart legend crop: orange swatch labeled кол = CALL (HUMAN_CONFIRMATION_2 / poker-quality audit)"
     },
     {
       "id": "ORANGE_MARGIN",

@@ -46,7 +46,7 @@ const CONCEPT_TO_SKILLS = {
   'final table': ['icm'], 'финальный': ['icm'], exploit: ['exploit'], эксплойт: ['exploit'],
   nit: ['exploit'], station: ['exploit'], maniac: ['exploit'],
   position: ['positionAwareness'], spr: ['stackDepthAwareness'], stack: ['stackDepthAwareness'],
-  'короткий': ['shortStack'], pko: ['icm'], bounty: ['icm'], баунти: ['icm'],
+  'короткий': ['shortStack'], pko: ['pko'], bounty: ['pko'], баунти: ['pko'],
   range: ['rangeReading'], paired: ['postflop'], barrel: ['postflop'], баррел: ['postflop']
 };
 
@@ -424,7 +424,7 @@ export function deriveSkillTags(t) {
   const streetText = String(t.street || '').toLowerCase();
   const tournamentFmt = /MTT|PKO|SNG/i.test(fmt);
   const icmStage = /баббл|itm|финальн|bubble|финал|pko/.test(stageText);
-  if (/PKO/i.test(fmt)) tags.add('icm');
+  if (/PKO/i.test(fmt)) tags.add('pko');
   if (tournamentFmt && tags.has('shortStack')) tags.add('icm');
   if (tournamentFmt && icmStage) tags.add('icm');
   if (tournamentFmt && /префлоп|preflop/.test(streetText)

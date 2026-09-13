@@ -168,7 +168,7 @@ export function drillFromLibraryTask(task, { leakConcept = null } = {}) {
       options: options.map((o) => ({ id: o.id, action: o.action, labelRu: o.labelRu })),
       solution: {
         recommendedAction: recommended ? recommended.action : null,
-        recommendedFrequency: 1,
+        recommendedFrequency: (task.alsoOk && task.alsoOk.length) ? 0.6 : 1,
         bestEV,
         actionEVs,
         evSpreadBb: BEST_EV - WRONG_EV,

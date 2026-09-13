@@ -6,8 +6,9 @@ import { execSync } from 'node:child_process';
 import jsdomPkg from 'jsdom';
 import { createTrainingStore } from '../solver/src/training/trainingStore.js';
 import { installMiniAppHooks } from '../training-ui/miniAppHooks.js';
+import { createAppLocalResourceLoader } from './jsdomAppResources.js';
 
-const { JSDOM, VirtualConsole, requestInterceptor } = jsdomPkg;
+const { JSDOM, VirtualConsole } = jsdomPkg;
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -47,24 +48,7 @@ async function boot() {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
     runScripts: 'dangerously',
-    resources: {
-      interceptors: [
-        requestInterceptor(async (request) => {
-          if (request.url.startsWith('https://telegram.org/')) return new Response('', { status: 200 });
-          const parsed = new URL(request.url);
-          if (parsed.hostname !== 'app.local') return undefined;
-          const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-          if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-            const ext = path.extname(file).toLowerCase();
-            return new Response(new Uint8Array(fs.readFileSync(file)), {
-              status: 200,
-              headers: { 'Content-Type': MIME[ext] || 'application/octet-stream' }
-            });
-          }
-          return new Response('', { status: 404 });
-        })
-      ]
-    },
+    resources: new (createAppLocalResourceLoader(root, MIME))(),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {

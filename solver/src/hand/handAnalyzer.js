@@ -16,6 +16,9 @@ import { solveCFR } from '../cfr/cfrSolver.js';
 import { classifyMistake } from '../analysis/mistakeClassifier.js';
 import { solverConfidence } from '../analysis/confidence.js';
 import { SolverError, assert } from '../api/errors.js';
+import { streetByStreetReview } from './streetReview.js';
+import { STRATEGY_SOURCE } from '../analysis/strategySource.js';
+import { conditionRange } from '../ranges/streetRangeConditioning.js';
 
 const STREET_ORDER = ['flop', 'turn', 'river'];
 
@@ -98,6 +101,8 @@ export function analyzeHand(input = {}, options = {}) {
   }
 
   const interestingSpots = detectInterestingSpots(decisions);
+  const streetReview = streetByStreetReview(decisions);
+  const conditioned = conditionVillainPath(villainRange, replayed, board);
 
   return {
     hand: {
@@ -110,6 +115,10 @@ export function analyzeHand(input = {}, options = {}) {
     decisions,
     totalEvLossBB,
     biggestMistake,
+    firstMajorMistake: streetReview.firstMajorMistake,
+    firstMajorMistakeLabel: streetReview.label,
+    streetReview,
+    rangeConditioning: conditioned,
     interestingSpots,
     summary: summarize({ decisions: solved, totalEvLossBB, biggestMistake, decisionsCount: replayed.decisions.length }),
     terminal: replayed.terminal,
@@ -327,6 +336,9 @@ function solveDecision({ spot, heroRange, villainRange, heroPosition, villainPos
     exploitabilityBB: round(exploit.exploitabilityBB, 4),
     equity: null,
     explanation,
+    strategySource: conf.level === 'high' && r.convergence.converged
+      ? STRATEGY_SOURCE.SOLVER_VERIFIED
+      : STRATEGY_SOURCE.HEURISTIC,
     meta: {
       analysisMethod: r.algorithm,
       iterations: r.iterations,
@@ -427,6 +439,25 @@ function betAmountBB(action, potBB) {
     return round(action.sizePot * potBB, 4);
   }
   return null;
+}
+
+function conditionVillainPath(villainRange, replayed, board) {
+  const steps = [];
+  const actions = replayed?.actions || replayed?.history || [];
+  for (const a of actions) {
+    const player = String(a.player || a.actor || '').toLowerCase();
+    if (player !== 'villain') continue;
+    steps.push({
+      street: a.street || 'flop',
+      action: a.type || a.action,
+      board: (board || []).slice(0, a.street === 'flop' ? 3 : a.street === 'turn' ? 4 : 5),
+      sizingPct: a.sizePot != null ? a.sizePot * 100 : a.amountBB
+    });
+  }
+  if (!steps.length) {
+    return { range: villainRange, trail: [{ street: 'preflop', range: villainRange }] };
+  }
+  return conditionRange(villainRange, steps);
 }
 
 function bb(n) {

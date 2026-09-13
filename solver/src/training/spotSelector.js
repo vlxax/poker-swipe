@@ -666,8 +666,12 @@ function selectSpotsProfileAware({
       picked.push(choice);
     }
     if (picked.length < count) {
-      const lastResort = candidates
-        .filter((s) => !usedIds.has(s.id))
+      let lastPool = candidates.filter((s) => !usedIds.has(s.id));
+      if (prefersLowDifficulty(ctx)) {
+        const easyLast = lastPool.filter((s) => (s.difficulty || 1) <= 3);
+        if (easyLast.length) lastPool = easyLast;
+      }
+      const lastResort = lastPool
         .map((s) => ({
           spot: s,
           score: 0.2 + spotDifficultyFit(s, ctx, 'maintenance_medium') * 0.25
@@ -845,7 +849,11 @@ export function selectSpots({
     if (repeatAllow.has(s.id)) return true;
     return !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s));
   });
-  const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
+  let candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
+  if (skillProfile?.overall != null && skillProfile.overall < 35) {
+    const easy = candidates.filter((s) => (s.difficulty || 1) <= 3);
+    if (easy.length >= count) candidates = easy;
+  }
 
   let picked = [];
   let slotKinds = [];

@@ -105,7 +105,9 @@ function normalize(e,i){
 
   return {
     ...e,
-    _id:i,
+    id: e.id || e._id || `${e.date || ''}|${e.time || ''}|${e.club || ''}|${e.tournament || e.tournament_name || ''}`,
+    _id: e.id || e._id || `${e.date || ''}|${e.time || ''}|${e.club || ''}|${e.tournament || e.tournament_name || ''}`,
+    _index: i,
     _title:title,
     _game:['NLH','PLO','PLO5'].includes(gameFromData)?gameFromData:['NLH','PLO','PLO5'].includes(game)?game:gameOf(title),
     _type:type||typeOf(title),
@@ -419,7 +421,8 @@ function detail(id){
   d.innerHTML=`<h2>${esc(e._title)}</h2><div class="pspClub">${isFavorite(e.club)?'★ ':''}${esc(e.club||'')} · ${esc(e.time||'')}</div>
     ${rows.slice(0,5).map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}
     ${lateRow}
-    ${rows.slice(5).map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}`;
+    ${rows.slice(5).map(([a,b])=>`<div class="pspDetailRow"><span>${esc(a)}</span><b>${esc(b)}</b></div>`).join('')}
+    <button type="button" class="pspSaveToJournal" data-save-canonical="${esc(e._id)}">СОХРАНИТЬ В МОИ ТУРНИРЫ</button>`;
   openOverlay(document.getElementById('pspDetail'));
   updateLateRegCountdowns();
 }
@@ -444,8 +447,8 @@ function updateLateRegCountdowns(){
   let expiredOpenFilter=false;
 
   for(const node of nodes){
-    const id=Number(node.dataset.lateEvent);
-    const e=state.events.find(x=>x._id===id);
+    const id=node.dataset.lateEvent;
+    const e=state.events.find(x=>String(x._id)===String(id));
     const info=e?lateRegInfo(e,now):null;
     if(!info){node.textContent='';continue}
 
@@ -604,7 +607,19 @@ function handleRootClick(e){
 
   const event=t.closest?.('[data-event]');
   if(event){
-    detail(Number(event.dataset.event));
+    detail(event.dataset.event);
+    return;
+  }
+
+  const saveBtn=t.closest?.('[data-save-canonical]');
+  if(saveBtn){
+    const ev=state.events.find(x=>String(x._id)===String(saveBtn.dataset.saveCanonical));
+    if(ev && typeof window.PokerSwipeCanonicalTournament?.savePolyanaEventToJournal==='function'){
+      const rec=window.PokerSwipeCanonicalTournament.savePolyanaEventToJournal(ev);
+      saveBtn.textContent='СОХРАНЕНО ✓';
+      if(typeof window.MtProTournaments?.render==='function')window.MtProTournaments.render();
+      if(rec?.id)saveBtn.dataset.savedCanonical=rec.id;
+    }
     return;
   }
 
@@ -646,6 +661,7 @@ async function load(){
   state.events=(ed.events||[]).map(normalize);
   state.clubs=(cd.clubs||[]);
   state.loaded=true;
+  window.__pspPolyanaEvents=state.events;
   render();
 }
 function warmMapCache(){

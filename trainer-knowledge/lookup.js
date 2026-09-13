@@ -5,6 +5,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import { MATCH_STATUS, TRAINER_STATUS, canGradeWithTrainerAction } from './status.js';
+import { applySemanticsToCell, chartHasAiAction } from './semanticLegend.js';
 import { parseTrainerPosition, positionMatchKind } from './positionParser.js';
 import { mapTrainerSpot } from './spotMapper.js';
 import { trainerProvenance } from './provenance.js';
@@ -74,9 +75,18 @@ function loadChartFromShard(chartId) {
   }
   const compact = _shardCache.get(shardId)[resolved];
   if (!compact?.h) return null;
-  const hands = {};
+  const meta = getChartById(resolved) || getChartById(chartId) || {};
+  const rawHands = {};
   for (const [hand, cell] of Object.entries(compact.h)) {
-    hands[hand] = expandCompactHand(cell);
+    rawHands[hand] = expandCompactHand(cell);
+  }
+  const hasAI = chartHasAiAction({ hands: rawHands });
+  const hands = {};
+  for (const [hand, cell] of Object.entries(rawHands)) {
+    hands[hand] = applySemanticsToCell(cell, meta.legendScheme || null, {
+      sourceMode: meta.sourceMode || null,
+      chartHasAI: hasAI
+    });
   }
   const chart = { chartId: resolved, requestedId: chartId, hands, parseStatus: compact.ps, parseStats: compact.st };
   _chartHandsCache.set(resolved, chart);
@@ -267,6 +277,8 @@ export function lookupTrainerHand({ chartId, hand }) {
     chartId,
     hand: h,
     actionRaw: rec.actionRaw,
+    normalizedAction: rec.normalizedAction || null,
+    contextualAction: rec.contextualAction || null,
     dataStatus: rec.dataStatus,
     gradingAllowed: rec.isMixed ? false : Boolean(rec.gradingAllowed),
     strategies: rec.strategies || null,
@@ -358,11 +370,16 @@ export function lookupTrainerHandAction(query = {}) {
 
   const gradingAllowed = handRec.isMixed
     ? false
-    : Boolean(handRec.gradingAllowed ?? canGradeWithTrainerAction(handRec.actionRaw));
+    : Boolean(
+      handRec.gradingAllowed
+      ?? canGradeWithTrainerAction(handRec.actionRaw, handRec.normalizedAction, handRec.contextualAction)
+    );
   return {
     ...spot,
     hand: query.hand,
     action: handRec.actionRaw,
+    normalizedAction: handRec.normalizedAction || null,
+    contextualAction: handRec.contextualAction || null,
     actionStatus: handRec.dataStatus,
     dataStatus: handRec.dataStatus,
     gradingAllowed,

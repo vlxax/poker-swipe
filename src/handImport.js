@@ -133,11 +133,18 @@ const HandImportSystem = (() => {
     if (m) result.effStack = parseFloat(m[1]) / (result.bbSize || 1);
 
     // Extract hero hand
-    m = text.match(/(?:Hole|Dealt to)\s+cards?.*?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])/i);
+    m = text.match(/hole cards:\s*\[([^\]]+)\]/i) || text.match(/(?:Hole|Dealt to)\s+cards?.*?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])/i);
     if (m) {
-      const card1 = normalizeCard(m[1]);
-      const card2 = normalizeCard(m[2]);
-      if (card1 && card2) result.hero = [card1, card2];
+      if (m[1] && m[1].includes(' ')) {
+        const parts = m[1].trim().split(/\s+/);
+        const card1 = normalizeCard(parts[0]);
+        const card2 = normalizeCard(parts[1]);
+        if (card1 && card2) result.hero = [card1, card2];
+      } else {
+        const card1 = normalizeCard(m[1]);
+        const card2 = normalizeCard(m[2]);
+        if (card1 && card2) result.hero = [card1, card2];
+      }
     }
 
     // Extract board (flop, turn, river)
@@ -167,6 +174,26 @@ const HandImportSystem = (() => {
     // Extract final pot
     m = text.match(/(?:Final\s+)?[Pp]ot:\s+([.\d]+)/);
     if (m) result.pot = parseFloat(m[1]);
+
+    let street = 'PREFLOP';
+    for (const line of text.split(/\n/)) {
+      if (/\*\*\*\s*FLOP/i.test(line)) street = 'FLOP';
+      else if (/\*\*\*\s*TURN/i.test(line)) street = 'TURN';
+      else if (/\*\*\*\s*RIVER/i.test(line)) street = 'RIVER';
+      const hm = line.match(/^\s*Hero:\s+(folds?|calls?|checks?|bets?|raises?|all-?in)/i);
+      if (!hm) continue;
+      const verb = hm[1].toUpperCase();
+      const action = /^FOLD/.test(verb) ? 'FOLD'
+        : /^CALL/.test(verb) ? 'CALL'
+        : /^CHECK/.test(verb) ? 'CHECK'
+        : /ALL/.test(verb) ? 'PUSH'
+        : /^BET/.test(verb) ? 'BET'
+        : 'RAISE';
+      const nums = line.match(/([.\d]+)/g);
+      const size = nums && nums.length ? parseFloat(nums[nums.length - 1]) : undefined;
+      result.actions.push({ actor: 'HERO', street, action, size, potBefore: result.pot || 0 });
+    }
+    result.street = street;
 
     return result;
   }
