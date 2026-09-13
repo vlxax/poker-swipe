@@ -282,12 +282,9 @@ export function listTrainerGradableCells({ maxCharts = Infinity, maxPerChart = 8
   let disabledCandidates = 0;
   const callChartIds = new Set();
 
-  const sorted = [...builtCharts].sort((a, b) => {
-    const ac = a.sourceMode === 'callpush' ? 1 : 0;
-    const bc = b.sourceMode === 'callpush' ? 1 : 0;
-    if (bc !== ac) return bc - ac;
-    return (b.parseStats?.gradingAllowedCells || 0) - (a.parseStats?.gradingAllowedCells || 0);
-  });
+  const sorted = [...builtCharts].sort((a, b) =>
+    (b.parseStats?.gradingAllowedCells || 0) - (a.parseStats?.gradingAllowedCells || 0)
+  );
 
   for (const chart of sorted) {
     if (chartsScanned >= maxCharts) break;

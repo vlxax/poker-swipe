@@ -4,6 +4,7 @@ import { buildCanonicalSpot } from '../../../task-context/canonicalSpot.js';
 import { auditModeSpot } from './taskContextIntegrity.js';
 import { resolveGradingSource, GRADING_SOURCE } from './gradingProvenance.js';
 import { isDisabledTask } from './taskDisableRegistry.js';
+import { isMeaningfulTrainerDecision } from '../../../trainer-knowledge/legalPreflopUserOptions.js';
 
 /** Strip stack-variant suffixes for near-duplicate session dedup. */
 export { variantFamilyId } from './sessionDiversity.js';
