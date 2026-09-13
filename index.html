@@ -1954,7 +1954,7 @@ dailyReveal=function(){const D=dailyToday();let argGood=0;D.args.forEach((a,i)=>
 
 /* My Hands: add nearest-node software analysis */
 const _showHandV16=showHand;
-showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const html=a.result?`<div class="regReport"><span class="ey">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</span><h3>${brainSourceLabel(a.result.source)} · confidence ${a.result.confidence}%</h3>${brainPanel(a.result)}<p class="mut small">Если это POSTFLOP ATLAS, приложение нашло ближайшую структурную модель по улице, board texture, hand bucket, позиции и типу давления. Это не выдаётся за exact solver node.</p></div>`:`<div class="regReport"><span class="ey">◉ GTO BRAIN</span><p>${esc(a.summary||'Недостаточно данных.')}</p></div>`;if(back)back.insertAdjacentHTML('beforebegin',html)}
+showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const streets=(a.streetReview||[]).map(s=>`<div class="row"><span>${esc(String(s.street||'').toUpperCase())} · ${esc(s.action||'')}</span><b>${esc(s.grade||'')}${s.recommendedAction?` · ${esc(s.recommendedAction)}`:''}</b></div>`).join('');const html=a.result?`<div class="regReport"><span class="ey">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</span><h3>${brainSourceLabel(a.result.source)} · confidence ${a.result.confidence}%</h3>${streets?`<div class="section"><span class="ey">STREET REVIEW · ${a.streetReview.length} HERO SPOTS</span>${streets}</div>`:''}${brainPanel(a.result)}<p class="mut small">Production path: PokerBrain.analyzeHand (legacy). Если это POSTFLOP ATLAS, приложение нашло ближайшую структурную модель по улице, board texture, hand bucket, позиции и типу давления. Это не выдаётся за exact solver node.</p></div>`:`<div class="regReport"><span class="ey">◉ GTO BRAIN</span><p>${esc(a.summary||'Недостаточно данных.')}</p>${streets}</div>`;if(back)back.insertAdjacentHTML('beforebegin',html)}
 
 /* X-Ray: surface brain status because combo engine already computes exact card removal */
 const _xrRevealV16=xrReveal;
@@ -4999,6 +4999,16 @@ function pokerBudget(){return Math.round(V60_STATE.budget*.60)}
 function alloc(){
  const b=V60_STATE.budget;return {poker:Math.round(b*.60),road:Math.round(b*.16),stay:Math.round(b*.14),food:Math.round(b*.06),local:b-Math.round(b*.60)-Math.round(b*.16)-Math.round(b*.14)-Math.round(b*.06)}
 }
+function withCanonical(t){
+ const CT=window.PokerSwipeCanonicalTournament;
+ const live=(window.__pspPolyanaEvents||[]).find(e=>{
+  const title=e.tournament||e.tournament_name||e._title||'';
+  return String(e.date||'')===String(t.date||'') && (String(e.club||'')===String(t.club||'') || String(title)===String(t.name||''));
+ });
+ const src=live||{date:t.date,time:t.time,club:t.club,tournament:t.name,_id:t.id};
+ const id=CT&&typeof CT.canonicalTournamentId==='function'?CT.canonicalTournamentId(src):[t.date,t.time,t.club,t.name].join('|');
+ return Object.assign({},t,{id,tournamentId:id});
+}
 function eligible(){
  return V60_CATALOG.filter(t=>{
    if(t.city!==V60_STATE.city)return false;
@@ -5010,7 +5020,7 @@ function eligible(){
    if(V60_STATE.buyins.includes('10plus') && t.buyin<10000)return false;
    if(V60_STATE.reentries!=='any' && t.reentries>Number(V60_STATE.reentries))return false;
    return true;
- });
+ }).map(withCanonical);
 }
 function conflict(a,b){
  if(a.date!==b.date)return false;
@@ -5160,8 +5170,15 @@ function bindResults(plans){
  document.querySelectorAll('[data-v60plan]').forEach(b=>b.onclick=()=>{V60_PLAN=b.dataset.v60plan;renderResults()});
  document.getElementById('v60SaveTrip')?.addEventListener('click',()=>{
    const p=plans.find(x=>x.id===V60_PLAN)||plans[0];
+   const list=(p.list||[]).map(withCanonical);
+   const tournamentIds=list.map(t=>t.tournamentId).filter(Boolean);
+   let trip={id:'trip_'+Date.now(),createdAt:Date.now(),city:V60_STATE.city,from:V60_STATE.from,to:V60_STATE.to,budget:V60_STATE.budget,plan:p.id,label:p.label,tournaments:list,tournamentIds,total:p.total};
+   const CT=window.PokerSwipeCanonicalTournament;
+   if(CT&&typeof CT.attachToTrip==='function'){
+     for(const rec of list) trip=CT.attachToTrip(trip,rec);
+   }
    let a=[];try{a=JSON.parse(localStorage.getItem(V60_TRIP_KEY)||'[]')||[]}catch(e){}
-   a.unshift({id:'trip_'+Date.now(),createdAt:Date.now(),city:V60_STATE.city,from:V60_STATE.from,to:V60_STATE.to,budget:V60_STATE.budget,plan:p.id,label:p.label,tournaments:p.list,total:p.total});
+   a.unshift(trip);
    localStorage.setItem(V60_TRIP_KEY,JSON.stringify(a));
    if(typeof openModal==='function')openModal('<span class="ey">СОХРАНЕНО</span><h2>ПОЕЗДКА В «МОИХ ПОЕЗДКАХ».</h2><p>Сетка, бюджет и выбранные турниры сохранены на этом устройстве.</p>');
  });
@@ -5173,13 +5190,19 @@ function markTripsNav(){
 window.openTripBuilderV60=renderTripBuilder;
 
 /* Hook every trip-related CTA from Polyana to this exact new builder. */
-function wireTripCtas(){
- document.querySelectorAll('[data-top="trips"],#v48NewTrip,[data-v56trip],[data-v58trip],#v58Build').forEach(b=>{
-   b.onclick=e=>{e.preventDefault();e.stopPropagation();V60_VIEW='builder';renderTripBuilder()};
- });
+function isTripCta(el){
+ return el && el.closest && el.closest('[data-top="trips"],#v48NewTrip,[data-v56trip],[data-v58trip],#v58Build');
 }
-document.addEventListener('DOMContentLoaded',()=>{wireTripCtas();new MutationObserver(wireTripCtas).observe(document.body,{childList:true,subtree:true})});
-window.addEventListener('load',wireTripCtas);
+if(!window.__v60TripCtaBound){
+ window.__v60TripCtaBound=true;
+ document.addEventListener('click',e=>{
+  const b=isTripCta(e.target);
+  if(!b)return;
+  e.preventDefault();e.stopPropagation();
+  V60_VIEW='builder';
+  renderTripBuilder();
+ },true);
+}
 
 window.POKER_SWIPE_BUILD='V60 TRIP BUILDER';
 document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';

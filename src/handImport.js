@@ -168,6 +168,26 @@ const HandImportSystem = (() => {
     m = text.match(/(?:Final\s+)?[Pp]ot:\s+([.\d]+)/);
     if (m) result.pot = parseFloat(m[1]);
 
+    let street = 'PREFLOP';
+    for (const line of text.split(/\n/)) {
+      if (/\*\*\*\s*FLOP/i.test(line)) street = 'FLOP';
+      else if (/\*\*\*\s*TURN/i.test(line)) street = 'TURN';
+      else if (/\*\*\*\s*RIVER/i.test(line)) street = 'RIVER';
+      const hm = line.match(/^\s*Hero:\s+(folds?|calls?|checks?|bets?|raises?|all-?in)/i);
+      if (!hm) continue;
+      const verb = hm[1].toUpperCase();
+      const action = /^FOLD/.test(verb) ? 'FOLD'
+        : /^CALL/.test(verb) ? 'CALL'
+        : /^CHECK/.test(verb) ? 'CHECK'
+        : /ALL/.test(verb) ? 'PUSH'
+        : /^BET/.test(verb) ? 'BET'
+        : 'RAISE';
+      const nums = line.match(/([.\d]+)/g);
+      const size = nums && nums.length ? parseFloat(nums[nums.length - 1]) : undefined;
+      result.actions.push({ actor: 'HERO', street, action, size, potBefore: result.pot || 0 });
+    }
+    result.street = street;
+
     return result;
   }
 

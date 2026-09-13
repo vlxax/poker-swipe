@@ -145,4 +145,40 @@
   if (typeof window.dailyStreet === 'function') {
     window.dailyStreet = dailyStreetGame;
   }
+
+  const prevSize = window.dailySize;
+  if (typeof prevSize === 'function') {
+    window.dailySize = function () {
+      const area = document.getElementById('dailyArea');
+      if (area && !document.getElementById('dDecision')) {
+        const slot = document.createElement('div');
+        slot.id = 'dDecision';
+        (area.querySelector('.pgControls') || area).appendChild(slot);
+      }
+      prevSize();
+    };
+  }
+
+  const prevReveal = window.dailyReveal;
+  if (typeof prevReveal === 'function') {
+    window.dailyReveal = function () {
+      prevReveal();
+      const area = document.getElementById('dailyArea');
+      if (!area) return;
+      const home = area.querySelector('#dHome');
+      if (home && !area.querySelector('#dSave')) {
+        home.insertAdjacentHTML('beforebegin',
+          '<button type="button" class="primary" id="dSave">СОХРАНИТЬ →</button>' +
+          '<button type="button" class="secondary" id="dHistory">ИСТОРИЯ →</button>');
+      }
+      area.querySelector('#dSave')?.addEventListener('click', () => {
+        if (typeof window.save === 'function') window.save();
+        const b = area.querySelector('#dSave');
+        if (b) b.textContent = 'СОХРАНЕНО ✓';
+      });
+      area.querySelector('#dHistory')?.addEventListener('click', () => {
+        if (typeof window.__legacyDailyIntro === 'function') window.__legacyDailyIntro();
+      });
+    };
+  }
 })();

@@ -101,6 +101,11 @@ function legacyFallback() {
   else if (legacyRenderDaily) legacyRenderDaily();
 }
 
+window.openCalendarDaily = function () {
+  if (typeof window.show === 'function') window.show('daily');
+  legacyFallback();
+};
+
 function previewScenarioFromPlan(preparedDaily) {
   const ref = preparedDaily?.plan?.spots?.[0] || preparedDaily?.plan?.drills?.[0];
   if (!ref) return null;

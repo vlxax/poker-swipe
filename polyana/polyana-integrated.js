@@ -615,7 +615,10 @@ function handleRootClick(e){
   if(saveBtn){
     const ev=state.events.find(x=>String(x._id)===String(saveBtn.dataset.saveCanonical));
     if(ev && typeof window.PokerSwipeCanonicalTournament?.savePolyanaEventToJournal==='function'){
-      window.PokerSwipeCanonicalTournament.savePolyanaEventToJournal(ev);
+      const rec=window.PokerSwipeCanonicalTournament.savePolyanaEventToJournal(ev);
+      saveBtn.textContent='СОХРАНЕНО ✓';
+      if(typeof window.MtProTournaments?.render==='function')window.MtProTournaments.render();
+      if(rec?.id)saveBtn.dataset.savedCanonical=rec.id;
     }
     return;
   }
@@ -658,6 +661,7 @@ async function load(){
   state.events=(ed.events||[]).map(normalize);
   state.clubs=(cd.clubs||[]);
   state.loaded=true;
+  window.__pspPolyanaEvents=state.events;
   render();
 }
 function warmMapCache(){
