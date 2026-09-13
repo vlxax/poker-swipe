@@ -851,7 +851,11 @@ export function selectSpots({
     if (repeatAllow.has(s.id)) return true;
     return !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s));
   });
-  const candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
+  let candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
+  if (prefersLowDifficulty({ ...ctx, skillProfile, targetDiff }) || (skillProfile?.overall != null && skillProfile.overall <= 50)) {
+    const easy = candidates.filter((s) => (s.difficulty || 1) <= 3);
+    if (easy.length >= count) candidates = easy;
+  }
 
   let picked = [];
   let slotKinds = [];

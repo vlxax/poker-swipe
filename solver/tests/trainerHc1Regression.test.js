@@ -50,14 +50,16 @@ describe('human confirmation #1 regression', () => {
     assert.equal(cell.strategies[1].normalizedAction, 'FOLD');
   });
 
-  test('3. nAI raw preserved', () => {
+  test('3. nAI raw preserved; callpush grades as CALL', () => {
     const cell = applySemanticsToCell(
       { actionRaw: 'nAI', isMixed: false },
       'UO_STYLE',
       { sourceMode: 'callpush', chartHasAI: true }
     );
     assert.equal(cell.actionRaw, 'nAI');
-    assert.equal(cell.normalizedAction, 'NON_ALL_IN');
+    assert.equal(cell.normalizedAction, 'CALL');
+    assert.equal(cell.contextualAction, 'NON_ALL_IN_CALL');
+    assert.equal(cell.gradingAllowed, true);
   });
 
   test('4. nAI resolves only through approved context', () => {
