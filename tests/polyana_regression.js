@@ -56,7 +56,7 @@ async function boot() {
 
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
-    runScripts: 'outside-only',  // FIXME: 'dangerously' hangs during script execution
+    runScripts: 'outside-only',
     resources: new LocalResourceLoader(),
     pretendToBeVisual: true,
     virtualConsole,
