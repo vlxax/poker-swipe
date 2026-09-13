@@ -9,6 +9,7 @@ import {
 import {
   sessionProgressHtml, feedbackSectionsHtml, choiceClass, wireFeedbackNext
 } from './sessionChrome.js';
+import { mistakeReviewScreenViewModel } from './sessionReview.js';
 
 const useGameDaily = () => window.__maGameLayout === true;
 
@@ -68,6 +69,15 @@ export const renderHome = (root, vm, handlers = {}) => {
       ${focusHtml}
       <p class="ey" style="margin-top:14px">${esc(vm.whyHeading)}</p>
       <p class="mut small">${esc(vm.whyText)}</p>
+      ${vm.recentHistory && vm.recentHistory.length ? `<div class="trRecentHistory" style="margin-top:16px">
+        <span class="ey">НЕДАВНИЕ РЕШЕНИЯ</span>
+        <ul class="mut small" style="margin:8px 0 0;padding-left:18px">
+          ${vm.recentHistory.map((row) =>
+    `<li>${esc(row.when || '')}${row.when ? ' · ' : ''}${esc(row.concept)}${row.isMistake ? ' · ошибка' : ''}</li>`
+  ).join('')}
+        </ul>
+        <p class="mut small">Полный разбор по ходу доступен сразу после сессии.</p>
+      </div>` : ''}
       <button class="primary" id="trStart" style="margin-top:16px">${esc(vm.cta)} →</button>
     </div>`;
     const rc = root.querySelector('#trResumeContinue');
@@ -209,31 +219,114 @@ export const renderFeedback = (root, vm, handlers = {}) => {
   wireFeedbackNext(root, h);
 };
 
+function summaryScoreBlock(vm) {
+  const answered = vm.answered != null ? vm.answered : vm.solved;
+  const correct = vm.correctCount != null ? vm.correctCount : vm.nearOptimalCount;
+  const total = vm.total > 0 ? vm.total : answered;
+  const pct = vm.percentCorrect != null ? `${vm.percentCorrect}%` : '—';
+  const mistakes = vm.mistakeCount != null ? vm.mistakeCount : Math.max(0, answered - (correct || 0));
+  return `<div class="trSummaryHero" aria-live="polite">
+    <span class="ey">СЕССИЯ ЗАВЕРШЕНА</span>
+    <h1 class="impact trSummaryScore">${correct != null ? correct : '—'} / ${total}<br><span class="pink">ВЕРНО</span></h1>
+    <p class="mut small">${pct !== '—' ? `Точность: <b>${esc(pct)}</b> · ` : ''}Отвечено: <b>${answered}</b></p>
+  </div>
+  <div class="trSummaryMistakes">
+    <span class="ey">ОШИБКИ</span>
+    <p class="trSummaryMistakeCount"><b>${mistakes}</b> ${mistakes === 1 ? 'ошибка' : mistakes < 5 ? 'ошибки' : 'ошибок'}</p>
+    ${vm.mistakePreview && vm.mistakePreview.length
+    ? `<ul class="trMistakePreview mut small">${vm.mistakePreview.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
+    : (mistakes === 0 ? '<p class="mut small">Без ошибок в этой сессии.</p>' : '')}
+  </div>`;
+}
+
 export const renderSummary = (root, vm, handlers = {}) => {
   if (!root) return;
   const h = handlers;
   const trendHtml = vm.trend && vm.trend.available
     ? `<div class="verdict"><span class="ey">ПРОГРЕСС (${esc(vm.primaryLabel || '')})</span><p>До: ${vm.trend.beforeAvg.toFixed(2)} BB · После: ${vm.trend.afterAvg.toFixed(2)} BB · разница ${vm.trend.delta > 0 ? '+' : ''}${vm.trend.delta.toFixed(2)} BB</p></div>`
     : `<p class="mut small">Нужно больше решений для оценки прогресса.</p>`;
-  root.innerHTML = `<div class="panel dailyStage">
-    <span class="ey">СЕССИЯ ЗАВЕРШЕНА</span>
-    <h1 class="impact">${vm.solved} РЕШЕНИЙ.<br><span class="pink">ГОТОВО.</span></h1>
-    <p class="mut small">Верных оценок (хорошо/отлично): <b>${vm.nearOptimalCount != null ? vm.nearOptimalCount : '—'}</b> из ${vm.solved}</p>
-    <div class="dualGrade">
+  const reviewBtn = vm.canReviewMistakes
+    ? `<button type="button" class="primary" id="trReviewMistakes" style="margin-top:12px;width:100%">РАЗБОР ОШИБОК →</button>`
+    : `<p class="mut small" style="margin-top:12px">Нет ошибок для разбора.</p>`;
+  root.innerHTML = `<div class="panel dailyStage trSummary">
+    ${summaryScoreBlock(vm)}
+    <div class="dualGrade" style="margin-top:14px">
       <div class="gradeBox"><span class="ey">СРЕДНЯЯ ПОТЕРЯ EV</span><b>${vm.avgLossBb != null ? Number(vm.avgLossBb).toFixed(2) : '—'} BB</b></div>
-      <div class="gradeBox"><span class="ey">ОКОЛО ОПТИМАЛЬНЫХ</span><b>${vm.nearOptimalCount} / ${vm.solved}</b></div>
+      <div class="gradeBox"><span class="ey">ОКОЛО ОПТИМАЛЬНЫХ</span><b>${vm.nearOptimalCount != null ? vm.nearOptimalCount : '—'} / ${vm.solved}</b></div>
     </div>
     <p class="mut small">Главная тема: ${esc(vm.primaryLabel || '—')}</p>
     ${trendHtml}
-    <div class="grid2">
-      <button class="secondary" id="trMore">ЕЩЁ 5 РАЗДАЧ</button>
-      <button class="primary" id="trBack">НАЗАД</button>
+    ${reviewBtn}
+    <div class="grid2" style="margin-top:14px">
+      <button type="button" class="secondary" id="trMore">ЕЩЁ 5 РАЗДАЧ</button>
+      <button type="button" class="primary" id="trBack">НАЗАД</button>
     </div>
   </div>`;
   const more = root.querySelector('#trMore');
   const back = root.querySelector('#trBack');
+  const rev = root.querySelector('#trReviewMistakes');
   if (more && typeof h.more === 'function') more.onclick = () => h.more();
   if (back && typeof h.back === 'function') back.onclick = () => h.back();
+  if (rev && typeof h.reviewMistakes === 'function') rev.onclick = () => h.reviewMistakes();
+};
+
+export const renderMistakeReview = (root, { items = [], index = 0 }, handlers = {}) => {
+  if (!root) return;
+  const h = handlers;
+  const vm = mistakeReviewScreenViewModel({ items, index });
+  const m = vm.current;
+  if (!m) {
+    renderMistakeReviewEmpty(root, handlers);
+    return;
+  }
+  const cls = m.gradeClass || 'r';
+  root.innerHTML = `<div class="panel dailyStage trMistakeReview" aria-live="polite">
+    <span class="ey">РАЗБОР ОШИБОК · ${esc(vm.positionLabel)}</span>
+    <h2 class="trMistakeTitle" id="trMistakeFocus" tabindex="-1">${esc(m.title)}</h2>
+    ${m.streetRu ? `<p class="mut small">${esc(m.streetRu)}</p>` : ''}
+    <div class="gradeBox ${cls}" style="margin:10px 0"><span class="ey">ОЦЕНКА</span><b>${esc(m.grade || '—')}</b></div>
+    ${feedbackSectionsHtml({
+      chosenAction: m.chosenAction,
+      correctAction: m.correctAction,
+      why: m.why,
+      keyTakeaway: m.keyTakeaway,
+      userMistake: m.userMistake,
+      strategy: m.feedback && m.feedback.strategy
+    }, cls)}
+    <div class="trMistakeNav pgControls">
+      <button type="button" class="secondary" id="trReviewBack">К ИТОГАМ</button>
+      <button type="button" class="primary" id="trReviewNext">${vm.isLast ? 'ГОТОВО →' : 'СЛЕДУЮЩАЯ ОШИБКА →'}</button>
+    </div>
+  </div>`;
+  root.querySelector('#trReviewBack')?.addEventListener('click', () => h.backToSummary?.());
+  root.querySelector('#trReviewNext')?.addEventListener('click', () => {
+    if (vm.isLast) h.finishReview?.();
+    else h.nextMistake?.();
+  });
+  const focusEl = root.querySelector('#trMistakeFocus');
+  try { focusEl?.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+};
+
+export const renderMistakeReviewEmpty = (root, handlers = {}) => {
+  if (!root) return;
+  root.innerHTML = `<div class="panel dailyStage">
+    <span class="ey">РАЗБОР ОШИБОК</span>
+    <h1 class="impact">НЕТ<br><span class="pink">ОШИБОК.</span></h1>
+    <p class="mut">В этой сессии нечего разбирать — все решения в зелёной зоне.</p>
+    <button type="button" class="primary" id="trReviewBack">К ИТОГАМ →</button>
+  </div>`;
+  root.querySelector('#trReviewBack')?.addEventListener('click', () => handlers.backToSummary?.());
+};
+
+export const renderMistakeReviewDone = (root, handlers = {}) => {
+  if (!root) return;
+  root.innerHTML = `<div class="panel dailyStage">
+    <span class="ey">РАЗБОР ЗАВЕРШЁН</span>
+    <h1 class="impact">ОШИБКИ<br><span class="pink">ПРОСМОТРЕНЫ.</span></h1>
+    <p class="mut small">Вернись к итогам или начни новую сессию.</p>
+    <button type="button" class="primary" id="trReviewBack">К ИТОГАМ →</button>
+  </div>`;
+  root.querySelector('#trReviewBack')?.addEventListener('click', () => handlers.backToSummary?.());
 };
 
 export const renderError = (root, vm = {}) => {

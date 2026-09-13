@@ -143,3 +143,53 @@
     transition: none;
   }
 }
+
+.trSummaryHero {
+  margin-bottom: 4px;
+}
+
+.trSummaryScore {
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  line-height: 1.15;
+}
+
+.trSummaryMistakes {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trSummaryMistakeCount {
+  font-size: 1.25rem;
+  margin: 4px 0 8px;
+}
+
+.trMistakePreview {
+  margin: 0;
+  padding-left: 18px;
+  overflow-wrap: anywhere;
+}
+
+.trMistakeReview .trMistakeTitle {
+  font-size: 1.05rem;
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+.trMistakeNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.trMistakeNav .primary,
+.trMistakeNav .secondary {
+  flex: 1 1 140px;
+  min-height: 48px;
+}
+
+.trRecentHistory ul {
+  overflow-wrap: anywhere;
+}

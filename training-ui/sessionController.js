@@ -10,6 +10,7 @@ import {
 import { gradeDecision as gradeProductionDecision } from './gradingGateway.js';
 import { rebuildSkillProfileFromStore } from '../solver/src/training/dynamicPlayerProfile.js';
 import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
+import { enrichSummaryViewModel } from './sessionReview.js';
 import { ScenarioEngine, getScenarioById } from '../solver/src/handOfDay/index.js';
 
 export class SessionController {
@@ -316,11 +317,16 @@ export class SessionController {
 
   summary() {
     const primary = this.session && this.session.primaryConcept;
-    return summaryViewModel({
+    const base = summaryViewModel({
       session: this.session,
       results: this.results,
       baselineLosses: primary ? this.baselineLossByConcept[primary] || [] : [],
       minSamples: this.config.trendMinSamples || 5
+    });
+    return enrichSummaryViewModel(base, {
+      results: this.results,
+      drills: this.drills,
+      taskStates: this.taskStates
     });
   }
 

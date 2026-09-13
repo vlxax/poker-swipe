@@ -27,6 +27,7 @@ import {
   buildResumeSnapshot, loadResume, saveResume, clearResume,
   resumeCardViewModel, validateResumeSnapshot
 } from './sessionResume.js';
+import { buildMistakeReviewItems, historyEntriesViewModel } from './sessionReview.js';
 
 if (typeof window !== 'undefined') installGradingGateway(window);
 
@@ -116,6 +117,7 @@ const assessment = new AssessmentController({
   const onboarding = installOnboardingHooks({ store, assessment, appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const goHome = () => {
+  resetPostSessionUi();
   if (typeof window.show === 'function') window.show('home');
   else if (legacyRenderDaily) legacyRenderDaily();
 };
@@ -147,9 +149,25 @@ function previewScenarioFromPlan(preparedDaily) {
 let pendingOptionId = null;
 let suppressControllerPaint = false;
 let lastDrillScrollIndex = null;
+let postSessionView = 'summary';
+let mistakeReviewIndex = 0;
+
+function resetPostSessionUi() {
+  postSessionView = 'summary';
+  mistakeReviewIndex = 0;
+}
+
+function mistakeItemsForReview() {
+  return buildMistakeReviewItems({
+    results: ctl.results,
+    drills: ctl.drills,
+    taskStates: ctl.taskStates
+  });
+}
 
 const handlers = {
   start() {
+    resetPostSessionUi();
     clearResume(storage);
     cachedResume = null;
     const r = ctl.start();
@@ -164,6 +182,7 @@ const handlers = {
     paint();
   },
   startNew() {
+    resetPostSessionUi();
     clearResume(storage);
     cachedResume = null;
     ctl._resetRun();
@@ -229,7 +248,26 @@ const handlers = {
     }
     paint();
   },
-  more() { moreSpots(); }
+  more() { moreSpots(); },
+  reviewMistakes() {
+    postSessionView = 'review';
+    mistakeReviewIndex = 0;
+    paint();
+  },
+  backToSummary() {
+    postSessionView = 'summary';
+    paint();
+  },
+  nextMistake() {
+    const items = mistakeItemsForReview();
+    if (mistakeReviewIndex < items.length - 1) mistakeReviewIndex++;
+    else postSessionView = 'review_done';
+    paint();
+  },
+  finishReview() {
+    postSessionView = 'review_done';
+    paint();
+  }
 };
 
 const assessmentHandlers = {
@@ -240,6 +278,7 @@ const assessmentHandlers = {
 };
 
 function moreSpots() {
+  resetPostSessionUi();
   clearResume(storage);
   cachedResume = null;
   ctl._resetRun();
@@ -325,7 +364,16 @@ function paint() {
       R.renderDrill(el, drillVM(), handlers);
     }
   } else if (st === 'done') {
-    R.renderSummary(el, ctl.summary(), { ...handlers, back: goHome });
+    const doneHandlers = { ...handlers, back: goHome };
+    if (postSessionView === 'review') {
+      const items = mistakeItemsForReview();
+      if (!items.length) R.renderMistakeReviewEmpty(el, doneHandlers);
+      else R.renderMistakeReview(el, { items, index: mistakeReviewIndex }, doneHandlers);
+    } else if (postSessionView === 'review_done') {
+      R.renderMistakeReviewDone(el, doneHandlers);
+    } else {
+      R.renderSummary(el, ctl.summary(), doneHandlers);
+    }
   } else if (st === 'loading') {
     R.renderLoading(el, { cancel: () => { ctl.cancel(); paint(); } });
   } else if (st === 'error') {
@@ -343,6 +391,9 @@ function paint() {
       vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);
       if (cachedResume && validateResumeSnapshot(cachedResume).ok) {
         vm.resume = resumeCardViewModel(cachedResume);
+      }
+      if (typeof store.loadHistory === 'function') {
+        vm.recentHistory = historyEntriesViewModel(store.loadHistory(), { limit: 6 });
       }
       R.renderHome(el, vm, {
         start: handlers.start,
