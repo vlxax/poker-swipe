@@ -1534,7 +1534,7 @@ function load(){
   s.healCourses={...clone(DEFAULT.healCourses),...(old.healCourses||{})};return s;
  }catch(e){console.error('[LOAD ERROR]',e);return clone(DEFAULT)}
 }
-let S=load();
+let S=(()=>{try{return load()}catch(e){console.warn('[STATE INIT] load() failed:',e.message);return clone(DEFAULT)}})();
 
 /* ===== V32 · PUBLIC PLAYER DATABASE RELEASE BLOCKER =====
    The former client-only Supabase writer is intentionally disconnected.
