@@ -167,13 +167,23 @@ async function runE2ETests() {
     console.log('════════════════════════════════════════════════════════════════════\n');
 
     try {
-      // Navigate to Daily screen by calling show('daily') directly
-      // (UI button for Daily has been removed by external system)
-      await page.evaluate(() => {
-        window.show('daily');
+      // Navigate to Daily screen via REAL user click on Daily button
+      const dailyButtonExists = await page.evaluate(() => {
+        return !!document.getElementById('v36Daily');
       });
 
-      logTest('Navigate to Daily', 'PASS');
+      if (!dailyButtonExists) {
+        logTest('Daily button exists', 'FAIL', 'Button not in DOM');
+        results.daily_e2e = 'FAIL';
+        results.failures.push({ step: 'DAILY', error: 'Daily button not found in DOM', severity: 'P0' });
+        throw new Error('Daily button not found');
+      }
+
+      logTest('Daily button exists', 'PASS');
+
+      // Click the Daily button (real user action)
+      await page.click('#v36Daily', { timeout: 5000 });
+      logTest('Daily button click', 'PASS');
       await page.waitForTimeout(800);
 
       // Check if Daily screen loaded with content
