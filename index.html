@@ -3296,18 +3296,20 @@ window.PokerSwipeCore={
   modal:{open:html=>openModal(html),close:()=>closeModal()}
 };
 function selfCheck(){const ids=['home','swipe','sizing','review','daily','heal','myhands','xray','tournaments','profile'];const miss=ids.filter(x=>!document.getElementById(x));if(miss.length)throw new Error('Missing screens '+miss.join(','));if(typeof renderMy!=='function')throw new Error('My Cards module missing');if(!window.PokerSwipeCore)throw new Error('Core API missing')}
-try{
-  selfCheck();
-  if(typeof window.PokerBrain!=='object' || typeof window.PokerBrain.gradeDecision!=='function'){
-    throw new Error('GTO Brain не загрузился.');
+setTimeout(()=>{
+  try{
+    selfCheck();
+    if(typeof window.PokerBrain!=='object' || typeof window.PokerBrain.gradeDecision!=='function'){
+      throw new Error('GTO Brain не загрузился.');
+    }
+    ui();
+    renderStory();
+    window.__pokerBooted=true;
+  }catch(e){
+    console.error('POKER SWIPE BOOT FAILED',e);
+    if(window.__showPokerBootError) window.__showPokerBootError(e && e.message ? e.message : String(e));
   }
-  ui();
-  renderStory();
-  window.__pokerBooted=true;
-}catch(e){
-  console.error('POKER SWIPE BOOT FAILED',e);
-  if(window.__showPokerBootError) window.__showPokerBootError(e && e.message ? e.message : String(e));
-}
+},100)
 })();
 </script>
 
@@ -3437,7 +3439,7 @@ const prevProfile30=window.renderProfile;window.renderProfile=function(){prevPro
 // Ensure the new screen exists before self-navigation is used.
 ensureQG30();
 // refresh currently visible home after patch loads
-if(!document.getElementById('mainApp')?.classList.contains('hidden') && document.getElementById('home')?.classList.contains('active')){try{renderHome()}catch(e){console.error('V30 home patch',e)}}
+if(!document.getElementById('mainApp')?.classList.contains('hidden') && document.getElementById('home')?.classList.contains('active')){try{window.renderHome?.()}catch(e){console.error('V30 home patch',e)}}
 })();
 </script>
 
@@ -3536,8 +3538,8 @@ function v31PatternEvidence(results,p){
 }
 
 /* Enrich all 12 onboarding spots with full poker context. */
-if(Array.isArray(window.DIAG25||DIAG25)){
- DIAG25.forEach((d,i)=>{d.v31=v31ContextFor(d,i)});
+if(Array.isArray(window.DIAG25)){
+ window.DIAG25.forEach((d,i)=>{d.v31=v31ContextFor(d,i)});
 }
 
 /* Diagnostic UI: readable, Russian, full line before the decision. */
@@ -3757,7 +3759,7 @@ window.renderProfile=renderProfile=function(){
 document.documentElement.dataset.pokerSwipeVersion='31.0';
 const build=document.querySelector('.build');if(build)build.textContent='V31 УМНЫЙ МОЗГ';
 if(!document.getElementById('mainApp')?.classList.contains('hidden') && document.getElementById('home')?.classList.contains('active')){
- try{renderHome();ui()}catch(e){console.error('V31 patch',e)}
+ try{window.renderHome?.();window.ui?.()}catch(e){console.error('V31 patch',e)}
 }
 })();
 </script>
@@ -3847,7 +3849,7 @@ async function load(){try{const j=await(await fetch('data/moscow_clubs_pokernomo
 nav();load();
 
 /* Diagnostic BACK: real state rollback, not decorative button. */
-const obs=new MutationObserver(()=>{try{const story=document.getElementById('story');if(!story||!story.querySelector('.d25')||story.querySelector('.v48TestBack'))return;if(typeof D25==='undefined'||(!D25.pending&&D25.index<=0))return;story.style.position='relative';const b=document.createElement('button');b.className='v48TestBack';b.textContent='← НАЗАД';b.onclick=e=>{e.stopPropagation();if(D25.pending){D25.pending=null}else if(D25.index>0){D25.index--;if(D25.results&&D25.results.length)D25.results.pop()}D25.started=performance.now();renderDiagnostic()};story.appendChild(b)}catch(e){}});const story=document.getElementById('story');if(story)obs.observe(story,{childList:true,subtree:true});
+const obs=new MutationObserver(()=>{try{const story=document.getElementById('story');if(!story||!story.querySelector('.d25')||story.querySelector('.v48TestBack'))return;if(typeof window.D25==='undefined'||(!window.D25.pending&&window.D25.index<=0))return;story.style.position='relative';const b=document.createElement('button');b.className='v48TestBack';b.textContent='← НАЗАД';b.onclick=e=>{e.stopPropagation();if(window.D25.pending){window.D25.pending=null}else if(window.D25.index>0){window.D25.index--;if(window.D25.results&&window.D25.results.length)window.D25.results.pop()}window.D25.started=performance.now();window.renderDiagnostic?.()};story.appendChild(b)}catch(e){}});const story=document.getElementById('story');if(story)obs.observe(story,{childList:true,subtree:true});
 document.documentElement.dataset.pokerSwipeVersion='48-master';
 })();
 </script>
