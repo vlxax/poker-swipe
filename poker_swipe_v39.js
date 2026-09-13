@@ -41,7 +41,12 @@ window.renderHome=function(){
   const userName=v35Safe(window.S?.name||window.S?.nick||'VLXAX','VLXAX').toUpperCase();
 
   h.innerHTML=`<div class="v36Home">
-<div class="v36Stats">
+    <header class="v36Top">
+      <div><div class="v36Wordmark">POKER <span>SWIPE</span></div><h1>Привет, ${userName}</h1><div class="v36Creator">by <b>ФРИКОВАЯ ДАМА</b> ♠</div></div>
+      <div class="v36SkillChip">SKILL <b>${S.skill}</b></div>
+    </header>
+
+    <div class="v36Stats">
       <button class="v36Stat" id="v36Player"><span>SKILL</span><b>${S.skill}</b><small>общий уровень</small></button>
       <button class="v36Stat" id="v36Form"><span>FORM</span><b>${form}</b><small>последние 20</small></button>
       <button class="v36Stat" id="v36Sample"><span>БАЗА</span><b>${sample}</b><small>решений</small></button>

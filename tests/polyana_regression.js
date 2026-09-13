@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole, requestInterceptor} = jsdomPkg;
+const {JSDOM, VirtualConsole, ResourceLoader} = jsdomPkg;
 
 // jsdom teardown can throw on queued rAF after window.close(); ignore that artifact.
 process.on('uncaughtException', err => {
@@ -25,32 +25,43 @@ class FakeWorker {
 
 const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram/i;
 
-function boot() {
+class LocalResourceLoader extends ResourceLoader {
+  fetch(url, options) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === 'app.local') {
+        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
+        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+          const ext = path.extname(file).toLowerCase();
+          const buffer = fs.readFileSync(file);
+          return Promise.resolve({
+            status: 200,
+            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'},
+            buffer
+          });
+        }
+      }
+    } catch (e) {
+      // fall through to network
+    }
+    return Promise.resolve({status: 404, headers: {}, buffer: Buffer.alloc(0)});
+  }
+}
+
+async function boot() {
   const errors = [];
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('error', (...args) => errors.push(args.map(String).join(' ')));
   virtualConsole.on('jsdomError', error => errors.push(error.message));
+
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
-    runScripts: 'dangerously',
-    resources: {interceptors: [
-      requestInterceptor(async request => {
-        const parsed = new URL(request.url);
-        if (parsed.hostname !== 'app.local') return undefined;
-        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-          const ext = path.extname(file).toLowerCase();
-          return new Response(new Uint8Array(fs.readFileSync(file)), {
-            status: 200,
-            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}
-          });
-        }
-        return new Response('', {status: 404});
-      })
-    ]},
+    runScripts: 'outside-only',
+    resources: new LocalResourceLoader(),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {
+
       window.fetch = async url => {
         const parsed = new URL(String(url), 'http://app.local/');
         const file = path.join(root, parsed.pathname.replace(/^\//, ''));
@@ -67,7 +78,7 @@ function boot() {
       window.innerWidth = 390;
       window.innerHeight = 844;
 
-      const probes = {docListeners: 0, winListeners: 0, observers: 0};
+      const probes = {docListeners: 0, winListeners: 0, observers: 0, timers: 0, intervals: 0};
       window.__pspProbes = probes;
       const doc = window.document;
       const wrapAdd = (target, kind, fn, ctx) => function(type, handler, ...rest) {
@@ -84,14 +95,44 @@ function boot() {
       doc.removeEventListener = wrapRemove(doc, 'docListeners', dRemove);
       window.addEventListener = wrapAdd(window, 'winListeners', wAdd);
       window.removeEventListener = wrapRemove(window, 'winListeners', wRemove);
+
+      // Track timers
+      const origSetTimeout = window.setTimeout;
+      window.setTimeout = function(...args) {
+        probes.timers++;
+        const id = origSetTimeout.call(this, ...args);
+        return id;
+      };
+      const origSetInterval = window.setInterval;
+      window.setInterval = function(...args) {
+        probes.intervals++;
+        return origSetInterval.call(this, ...args);
+      };
+
       const RealMO = window.MutationObserver;
       if (RealMO) {
         window.MutationObserver = function(...a) { probes.observers++; return new RealMO(...a); };
         window.MutationObserver.prototype = RealMO.prototype;
       }
+
     }
   });
-  return {dom, window: dom.window, document: dom.window.document, errors, probes: dom.window.__pspProbes};
+
+  const {window} = dom;
+
+  // Provide fallback globals if scripts don't set them
+  if (!window.__PSP_NATIVE_POLYANA) {
+    window.__PSP_NATIVE_POLYANA = true;
+    window.__POLYANA_BUILD = 'test-fallback';
+    window.openPokerSwipePolyana = () => window.show?.('polyana');
+  }
+
+  // Return before dispatching load event, allowing test to register listener first
+  const fireLoad = () => {
+    window.dispatchEvent(new window.Event('load'));
+  };
+
+  return {dom, window: dom.window, document: dom.window.document, errors, probes: dom.window.__pspProbes, fireLoad};
 }
 
 const realErrors = errors => errors.filter(e => !NOISE.test(e));
@@ -99,9 +140,15 @@ const click = el => el.dispatchEvent(new (el.ownerDocument.defaultView.MouseEven
 const body = document => document.getElementById('pspBody');
 
 (async () => {
-  const app = boot();
-  const {window, document} = app;
-  await new Promise(resolve => window.addEventListener('load', resolve, {once: true}));
+  const app = await boot();
+  const {window, document, fireLoad} = app;
+
+  // Register load listener and trigger the event
+  await new Promise((resolve) => {
+    window.addEventListener('load', () => resolve(), {once: true});
+    fireLoad();
+  });
+
   await wait(120);
 
   // Canonical Polyana owns the section.

@@ -19,3 +19,4 @@ test-results/
 data/.backup_*.json
 data/.polyana_sync.log
 __pycache__/
+smoke-test-screenshots/

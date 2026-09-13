@@ -1,0 +1,45 @@
+{
+  "boot": "PASS",
+  "daily": {
+    "open": "FAIL",
+    "hand_open": "PENDING",
+    "grade": "PENDING",
+    "explanation": "PENDING",
+    "save": "PENDING",
+    "history": "PENDING",
+    "reload": "PENDING",
+    "error": "page.evaluate: SyntaxError: Failed to execute 'querySelector' on 'Document': '[data-hand], .hand-item, button:has-text(\"hand\")' is not a valid selector.\n    at eval (eval at evaluate (:311:30), <anonymous>:2:35)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  "my_hands": {
+    "import": "FAIL",
+    "parse": "CANNOT_VERIFY",
+    "validate": "CANNOT_VERIFY",
+    "duplicate": "FAIL",
+    "invalid": "CANNOT_VERIFY",
+    "analyze": "FAIL",
+    "reload": "NOT_VERIFIED"
+  },
+  "polyana": {
+    "open": "FAIL",
+    "details": "CANNOT_VERIFY",
+    "save": "FAIL",
+    "canonical_id": "PASS",
+    "my_tournaments": "FAIL",
+    "reload": "NOT_VERIFIED"
+  },
+  "trip_builder": "NOT_FOUND_IN_UI",
+  "listener_leak": "NOT_VERIFIED",
+  "mobile": {
+    "320": "PASS",
+    "360": "PASS",
+    "390": "PASS",
+    "430": "PASS"
+  },
+  "network_failures": {
+    "total": 133,
+    "external": 132,
+    "not_found": 1,
+    "application_critical": 0
+  },
+  "solver": "NOT_VERIFIED"
+}
