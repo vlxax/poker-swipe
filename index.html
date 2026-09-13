@@ -3288,9 +3288,6 @@ function exposeV32(name,get,set){
   ['bindMetrics18',()=>bindMetrics18,null],['publishProfile28',()=>publishProfile28,v=>{publishProfile28=v}],
   ['loadPlayers28',()=>loadPlayers28,v=>{loadPlayers28=v}]
 ].forEach((x,i)=>{try{exposeV32(x[0],x[1],x[2])}catch(e){console.warn(`[V32 EXPOSE ERROR] ${x[0]}: ${e.message}`)}});
-/* Ensure critical functions are directly accessible on window */
-window.renderSizing=renderSizing;window.rankIndex28=rankIndex28;window.d25RenderSpot=d25RenderSpot;
-window.renderTournaments23=renderTournaments23;window.ui=ui;
 window.PokerSwipeCore={
   version:'32.0',storageKey:STORAGE,userKey:USER_KEY,
   store:{getState:()=>S,replaceState:v=>{S=v;save()},save:()=>save()},
@@ -3378,12 +3375,12 @@ function checks30(r,m){return[
 ]}
 function pass30(x){return x[3]?x[1]<=x[2]:x[1]>=x[2]}
 function unlocked30(i,m=m30()){return checks30(rule30(i),m).every(pass30)}
-rankIndex28=function(){const m=m30();let idx=0;for(let i=0;i<V30_RULES.length;i++)if(unlocked30(i,m))idx=i;return idx};
-rankUnlocked28=function(r,m){const i=Math.max(0,RANKS28.indexOf(r));return unlocked30(i,m30())};
-rankReq28=function(r,m){const i=Math.max(0,RANKS28.indexOf(r)),mm=m30();return `<div class="req28">${checks30(rule30(i),mm).map(x=>`<div><span>${x[0]} · <b>${x[1]}${x[3]?'%':''}</b></span><strong class="${pass30(x)?'ok':'bad'}">${pass30(x)?'✓':x[3]?'нужно ≤ '+x[2]+'%':'нужно '+x[2]}</strong></div>`).join('')}</div>`};
+window.rankIndex28=function(){const m=m30();let idx=0;for(let i=0;i<V30_RULES.length;i++)if(unlocked30(i,m))idx=i;return idx};
+window.rankUnlocked28=function(r,m){const i=Math.max(0,RANKS28.indexOf(r));return unlocked30(i,m30())};
+window.rankReq28=function(r,m){const i=Math.max(0,RANKS28.indexOf(r)),mm=m30();return `<div class="req28">${checks30(rule30(i),mm).map(x=>`<div><span>${x[0]} · <b>${x[1]}${x[3]?'%':''}</b></span><strong class="${pass30(x)?'ok':'bad'}">${pass30(x)?'✓':x[3]?'нужно ≤ '+x[2]+'%':'нужно '+x[2]}</strong></div>`).join('')}</div>`};
 function nextTask30(i,m){const r=rule30(i),c=checks30(r,m).filter(x=>!pass30(x));if(!c.length)return 'Все требования выполнены.';const x=c[0];if(x[0]==='РЕШЕНИЯ')return `Сыграй ещё ${Math.max(0,x[2]-x[1])} решений.`;if(x[0]==='ОШИБКИ / 30')return `Снизь долю грубых ошибок на последних 30 решениях до ${x[2]}% или ниже.`;return `Подтяни ${x[0].toLowerCase()} до ${x[2]}. Сейчас ${x[1]}.`}
 function rankPct30(i,m){const c=checks30(rule30(i),m);const vals=c.map(x=>x[3]?Math.min(1,x[2]/Math.max(1,x[1])):x[2]===0?1:Math.min(1,x[1]/x[2]));return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100)}
-openRank28=function(i){const m=m30(),r=RANKS28[i],rr=rule30(i),ok=unlocked30(i,m),task=nextTask30(i,m);openModal(`<span class="ey">${ok?'РАНГ ОТКРЫТ':'РАНГ ЗАКРЫТ 🔒'}</span><h1>${r.name}</h1><img src="${r.img}" style="width:150px;height:150px;object-fit:cover;border-radius:24px;display:block;margin:8px auto"><p>${r.line}</p>${rankReq28(r,m)}<div class="rank30Next"><b>Ближайшая задача:</b> ${task}</div><p class="mut small">Ранг подтверждается не одной удачной рукой: учитываются Skill, дистанция, четыре базовых навыка и качество последних 30 решений.</p><button class="primary" id="rank28Close">ПОНЯЛ →</button>`);setTimeout(()=>{$('#rank28Close').onclick=closeModal},0)};
+window.openRank28=function(i){const m=m30(),r=RANKS28[i],rr=rule30(i),ok=unlocked30(i,m),task=nextTask30(i,m);openModal(`<span class="ey">${ok?'РАНГ ОТКРЫТ':'РАНГ ЗАКРЫТ 🔒'}</span><h1>${r.name}</h1><img src="${r.img}" style="width:150px;height:150px;object-fit:cover;border-radius:24px;display:block;margin:8px auto"><p>${r.line}</p>${rankReq28(r,m)}<div class="rank30Next"><b>Ближайшая задача:</b> ${task}</div><p class="mut small">Ранг подтверждается не одной удачной рукой: учитываются Skill, дистанция, четыре базовых навыка и качество последних 30 решений.</p><button class="primary" id="rank28Close">ПОНЯЛ →</button>`);setTimeout(()=>{$('#rank28Close').onclick=closeModal},0)};
 
 const CTX30={
  swipe:[
@@ -3546,7 +3543,7 @@ if(Array.isArray(window.DIAG25)){
 }
 
 /* Diagnostic UI: readable, Russian, full line before the decision. */
-window.d25RenderSpot = d25RenderSpot = function(){
+window.d25RenderSpot = function(){
  const d=DIAG25[D25.index],progress=(D25.index/DIAG25.length)*100,c=d.v31||v31ContextFor(d,D25.index);
  $('#story').onclick=null;
  $('#story').innerHTML=`<div class="v31DiagWrap">
@@ -3588,7 +3585,7 @@ window.d25RenderSpot = d25RenderSpot = function(){
 };
 
 /* Diagnostic finale: human analysis first, numbers second. */
-window.d25Finish = d25Finish = async function(){
+window.d25Finish = async function(){
  const p=d25Profile(D25.results);
  S.diagDone=true;S.diagVersion=31;S.diagnosticProfile25=p;S.diagnosticProfile31={...p,rank:v31Rank(p.overall)};
  S.diagnostic=D25.results.map(x=>({concept:x.concept,ok:x.score>=72,score:x.score,confidence:x.confidence,dim:x.dim,action:x.action,source:x.br?.source||'',brainConfidence:x.br?.confidence||0,decisionClass:x.decisionClass}));
@@ -3653,7 +3650,7 @@ window.d25Finish = d25Finish = async function(){
 
 /* Smarter verdict wording for regular Swipe: no more "one magic correct answer". */
 const v31FinalizeBase = window.finalizeSwipe;
-window.finalizeSwipe = finalizeSwipe = function(s,a,size){
+window.finalizeSwipe = function(s,a,size){
  if(swLocked)return;
  swLocked=true;
  const br=PokerSwipeGrading.gradeBrain({...s,spotId:s.id},a,size,'swipe');
@@ -3692,7 +3689,7 @@ window.finalizeSwipe = finalizeSwipe = function(s,a,size){
 
 /* Full passport in regular swipe, including preflop line for postflop decisions. */
 const v31RenderSwipeBase = window.renderSwipe;
-window.renderSwipe = renderSwipe = function(){
+window.renderSwipe = function(){
  v31RenderSwipeBase.apply(this,arguments);
  const s=swSession?.[swIndex]; if(!s)return;
  const visual=document.getElementById('swipeVisual'); if(!visual)return;
@@ -3737,12 +3734,12 @@ function v31RussianChrome(){
  const chip=document.getElementById('levelChip');if(chip)chip.textContent=`НАВЫК ${S.skill}`;
 }
 const v31UiBase=window.ui;
-window.ui=ui=function(){if(v31UiBase)v31UiBase.apply(this,arguments);v31RussianChrome()};
-v31RussianChrome();
+window.ui=function(){if(v31UiBase)v31UiBase.apply(this,arguments);if(typeof window.S!=='undefined')v31RussianChrome()};
+if(typeof window.S!=='undefined')v31RussianChrome();
 
 /* Profile: explain numbers instead of throwing four stats at the user. */
 const v31ProfileBase=window.renderProfile;
-window.renderProfile=renderProfile=function(){
+window.renderProfile=function(){
  v31ProfileBase.apply(this,arguments);
  const root=document.getElementById('profileArea');if(!root)return;
  const m=typeof m30==='function'?m30():null;
@@ -3847,7 +3844,7 @@ function openClub(name){const c=CLUBS.find(x=>x.name===name);if(!c)return;openMo
 function openSeries(region){openModal(`<div class="p41SheetHead"><span class="ey">${region}</span><h2>МОЯ ПОЕЗДКА.</h2><p>Минимальный рабочий планировщик серии.</p></div><div class="p41Form"><label>ДАТЫ</label><input id="v48Dates" class="p41Field" value="Выбрать даты"><label>ДИСЦИПЛИНЫ</label><div class="p41Multi" id="v48Games">${['NLH','PLO','HU','OFC'].map(x=>`<button type="button">${x}</button>`).join('')}</div><label>БЮДЖЕТ</label><input id="v48Budget" class="p41Field" value="50 000 ₽"></div><button class="p41Primary" id="v48SaveTrip">СОХРАНИТЬ ПОЕЗДКУ →</button>`);setTimeout(()=>{document.querySelectorAll('#v48Games button').forEach(b=>b.onclick=()=>b.classList.toggle('on'));const x=document.getElementById('v48SaveTrip');if(x)x.onclick=()=>{let a=[];try{a=JSON.parse(localStorage.getItem('ps_v48_trips')||'[]')||[]}catch(e){};a.push({region,dates:document.getElementById('v48Dates').value,games:[...document.querySelectorAll('#v48Games button.on')].map(b=>b.textContent),budget:document.getElementById('v48Budget').value});localStorage.setItem('ps_v48_trips',JSON.stringify(a));closeModal();TOP='trips';window.renderTournaments23?.()};},0)}
 function journal(){const area=document.getElementById('tournamentsArea');if(!area)return;if(JOURNAL){JOURNAL();const root=area.querySelector('.t23');if(root)root.insertAdjacentHTML('afterbegin',`<button class="v48JournalBack" id="v48Back">← НАЗАД В ПОЛЯНУ</button><div class="v48Source"><b>МОИ ОНЛАЙН / ОФЛАЙН ТУРНИРЫ</b>Добавляй турниры вручную. PokerSwipe считает вложено, профит, ROI, bounty и место.</div>`);setTimeout(()=>{const b=document.getElementById('v48Back');if(b)b.onclick=()=>{TOP='afisha';SUB='today';window.renderTournaments23?.()}},0)}else area.innerHTML='<div class="v48"><div class="v48Source"><b>ОШИБКА</b>Журнал не найден.</div></div>';nav()}
 function bind(){nav();document.querySelectorAll('[data-top]').forEach(b=>b.onclick=()=>{TOP=b.dataset.top;if(TOP==='journal')journal();else window.renderTournaments23?.()});document.querySelectorAll('[data-sub]').forEach(b=>b.onclick=()=>{SUB=b.dataset.sub;window.renderTournaments23?.()});document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{DAY=b.dataset.day;window.renderTournaments23?.()});document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{FILTER=b.dataset.filter;window.renderTournaments23?.()});document.querySelectorAll('[data-club]').forEach(b=>b.onclick=()=>openClub(b.dataset.club));document.querySelectorAll('[data-region]').forEach(b=>b.onclick=()=>{if(b.dataset.region==='clubs'){TOP='afisha';SUB='clubs'}else TOP='series';window.renderTournaments23?.()});document.querySelectorAll('[data-series]').forEach(b=>b.onclick=()=>openSeries(b.dataset.series));const q=document.getElementById('v48Search');if(q)q.oninput=()=>{const s=q.value.toLowerCase().trim(),a=filtered().filter(c=>(c.name+' '+c.address).toLowerCase().includes(s)),l=document.getElementById('v48ClubList');if(l){l.innerHTML=a.map(clubCard).join('');l.querySelectorAll('[data-club]').forEach(b=>b.onclick=()=>openClub(b.dataset.club))}};const nt=document.getElementById('v48NewTrip');if(nt)nt.onclick=()=>openSeries('ВЫБЕРИ РЕГИОН')}
-window.renderTournaments23=renderTournaments23=function(){if(TOP==='journal'){journal();return}const area=document.getElementById('tournamentsArea');if(!area)return;let body='';if(TOP==='afisha')body=SUB==='clubs'?clubs():SUB==='regions'?regions():afisha();else if(TOP==='series')body=series();else body=trips();area.innerHTML=`<div class="v48">${hero()}${body}</div>`;bind()};
+window.renderTournaments23=function(){if(TOP==='journal'){journal();return}const area=document.getElementById('tournamentsArea');if(!area)return;let body='';if(TOP==='afisha')body=SUB==='clubs'?clubs():SUB==='regions'?regions():afisha();else if(TOP==='series')body=series();else body=trips();area.innerHTML=`<div class="v48">${hero()}${body}</div>`;bind()};
 async function load(){try{const j=await(await fetch('data/moscow_clubs_pokernomoney.json',{cache:'no-store'})).json();CLUBS=j.clubs||[]}catch(e){}try{const j=await(await fetch('data/moscow_schedule_today.json',{cache:'no-store'})).json();SCHEDULE=j.events||[]}catch(e){}if(document.getElementById('tournamentsArea'))window.renderTournaments23?.()}
 nav();load();
 
@@ -4068,7 +4065,7 @@ function openPolyana(){
 
 /* Critical fix: old journal filters and SAVE call renderTournaments23().
    They now stay inside the journal instead of falling back to Polyana. */
-window.renderTournaments23 = renderTournaments23 = function(){
+window.renderTournaments23 = function(){
   if(V54_MODE==='journal'){
     if(V54_JOURNAL_RENDER){
       V54_JOURNAL_RENDER();
