@@ -1555,7 +1555,7 @@ async function loadPlayers28(){
   return REMOTE_PLAYERS28;
 }
 
-function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S))}catch(e){}ui();if(typeof publishProfile28==='function')setTimeout(()=>publishProfile28(),0)}
+function save(){try{localStorage.setItem(STORAGE,JSON.stringify(S))}catch(e){}typeof ui==='function'&&ui();if(typeof publishProfile28==='function')setTimeout(()=>publishProfile28(),0)}
 function ui(){const h=$('#hello'),l=$('#levelChip');if(h)h.textContent=S.nick?`Привет, ${S.nick}`:'';if(l)l.textContent=`SKILL ${S.skill}`;const p=$('[data-nav="profile"]');if(p)p.classList.toggle('hasLeak',!!topLeak())}
 function touchDay(){const d=today();if(S.lastDay!==d){S.streak=S.lastDay?S.streak+1:1;S.lastDay=d}}
 function formScore(){const a=S.events.filter(e=>e.mode!=='diagnostic').slice(-20);if(!a.length)return 50;return Math.round(a.reduce((z,e)=>z+gradeScore(e.grade),0)/a.length*100)}
