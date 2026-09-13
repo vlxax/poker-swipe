@@ -1,0 +1,138 @@
+/* Personalised daily training — session UX (presentation only). */
+
+.trSessionHead {
+  margin: 0 0 12px;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.trSessionProgress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.trSessionProgressFill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(200, 255, 61, 0.55), rgba(200, 255, 61, 0.95));
+  transition: width 0.25s ease;
+}
+
+.trSessionMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.trSessionScore {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--mut, #9aa89a);
+  letter-spacing: 0.04em;
+}
+
+.trFeedbackSections {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 16px;
+}
+
+.trFeedbackBlock {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.trFeedbackBlock.trFbYour {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.trFeedbackBlock.trFbCorrect.g {
+  border-color: rgba(200, 255, 61, 0.35);
+}
+
+.trFeedbackBlock.trFbCorrect.y {
+  border-color: rgba(255, 214, 102, 0.35);
+}
+
+.trFeedbackBlock.trFbCorrect.r {
+  border-color: rgba(255, 120, 120, 0.35);
+}
+
+.trFeedbackBlock b {
+  display: block;
+  font-size: 15px;
+  margin-top: 4px;
+  line-height: 1.25;
+}
+
+.trFeedbackBlock .mut {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.trChoiceGrid.is-answering .choice {
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.trChoiceGrid.is-answering .choice.is-pending {
+  opacity: 1;
+  box-shadow: 0 0 0 1px rgba(200, 255, 61, 0.25);
+}
+
+.trChoiceGrid .choice.is-correct {
+  border-color: rgba(200, 255, 61, 0.45) !important;
+}
+
+.trChoiceGrid .choice.is-incorrect {
+  border-color: rgba(255, 120, 120, 0.45) !important;
+  opacity: 0.85;
+}
+
+.trNextHint {
+  margin: 0 0 10px;
+  font-size: 11px;
+  color: var(--mut, #9aa89a);
+  text-align: center;
+}
+
+.pgDailyDrill .pgControls,
+.pgDailyFeedback .pgControls {
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 480px) {
+  .grid2.pgDecisionGrid,
+  .grid2.trChoiceGrid {
+    gap: 10px;
+  }
+
+  .grid2.pgDecisionGrid .choice,
+  .grid2.trChoiceGrid .choice {
+    min-height: 52px;
+    font-size: 12px;
+  }
+
+  .pgDailyDrill .pgPrompt {
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .trFeedbackBlock {
+    padding: 14px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trSessionProgressFill {
+    transition: none;
+  }
+}

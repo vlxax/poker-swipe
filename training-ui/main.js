@@ -20,7 +20,7 @@ import { installHomeRecommendation } from './homeRecommendation.js';
 import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
 import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
-import { drillViewModel } from './viewModel.js';
+import { drillViewModel, sessionProgressViewModel } from './viewModel.js';
 import * as R from './renderer.js';
 import { installGradingGateway } from './gradingGateway.js';
 
@@ -120,6 +120,9 @@ function previewScenarioFromPlan(preparedDaily) {
   };
 }
 
+let pendingOptionId = null;
+let lastPaintKey = '';
+
 const handlers = {
   start() {
     const r = ctl.start();
@@ -134,9 +137,14 @@ const handlers = {
     paint();
   },
   answer(optionId) {
+    pendingOptionId = optionId;
+    paint();
     const res = ctl.answer(optionId);
+    pendingOptionId = null;
     if (res) {
       pushDailyNav({ phase: 'feedback', index: ctl.index });
+      paint();
+    } else {
       paint();
     }
   },
@@ -178,12 +186,35 @@ function moreSpots() {
   paint();
 }
 
+function sessionMetaVM() {
+  const prog = ctl.progress();
+  return sessionProgressViewModel({
+    index: prog.index,
+    total: prog.total,
+    results: ctl.results
+  });
+}
+
 function drillVM() {
   const drill = ctl.current();
   const prog = ctl.progress();
   const snap = ctl.taskStates[ctl.index];
   const vm = drillViewModel({ drill, index: prog.index, total: prog.total });
+  vm.sessionProgress = sessionMetaVM();
+  vm.isAnswering = ctl.answering || !!pendingOptionId;
+  vm.pendingOptionId = pendingOptionId;
   if (snap && snap.optionId) vm.selectedOptionId = snap.optionId;
+  if (snap && snap.lastAnswer && !ctl.showingFeedback) {
+    vm.reviewChoiceId = snap.optionId;
+    const g = snap.lastAnswer.grade;
+    vm.reviewChoiceCorrect = !!(snap.lastAnswer.chosenRecommended || g === 'EXCELLENT' || g === 'GOOD');
+  }
+  return vm;
+}
+
+function feedbackVM() {
+  const vm = ctl.feedbackVM();
+  vm.sessionProgress = sessionMetaVM();
   return vm;
 }
 
@@ -204,6 +235,12 @@ function pushDailyNav(snap) {
 function paint() {
   const el = root();
   if (!el) return;
+
+  const paintKey = `${ctl.state}:${ctl.index}:${ctl.showingFeedback}:${assessment.state}`;
+  const shouldScrollTop = paintKey !== lastPaintKey
+    && (ctl.state === 'ready' || ctl.state === 'limited')
+    && !ctl.showingFeedback;
+  if (paintKey !== lastPaintKey) lastPaintKey = paintKey;
 
   if (assessment.state === 'answering') {
     R.renderAssessment(el, assessment.viewModel(), assessmentHandlers);
@@ -226,7 +263,7 @@ function paint() {
 
   if (st === 'ready' || st === 'limited') {
     if (ctl.showingFeedback && ctl.lastAnswer) {
-      R.renderFeedback(el, ctl.feedbackVM(), handlers);
+      R.renderFeedback(el, feedbackVM(), handlers);
     } else {
       R.renderDrill(el, drillVM(), handlers);
     }
@@ -235,7 +272,10 @@ function paint() {
   } else if (st === 'loading') {
     R.renderLoading(el, { cancel: () => { ctl.cancel(); paint(); } });
   } else if (st === 'error') {
-    R.renderError(el, { retry: () => { ctl._resetRun(); handlers.start(); } });
+    R.renderError(el, {
+      retry: () => { ctl._resetRun(); handlers.start(); },
+      back: goHome
+    });
   } else if (st === 'cancelled') {
     R.renderCancelled(el, { back: goHome });
   } else {
@@ -253,6 +293,10 @@ function paint() {
         legacy: legacyFallback
       });
     }
+  }
+
+  if (shouldScrollTop) {
+    try { el.scrollTop = 0; } catch (e) { /* ignore */ }
   }
 }
 
