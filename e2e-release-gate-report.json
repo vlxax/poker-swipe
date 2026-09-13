@@ -1,13 +1,13 @@
 {
   "boot": "PASS",
   "navigation": "FAIL",
-  "daily_e2e": "FAIL",
-  "my_hands_import": "PARTIAL",
+  "daily_e2e": "PASS",
+  "my_hands_import": "FAIL",
   "my_hands_analysis": "PENDING",
   "my_hands_duplicate": "PENDING",
   "my_hands_invalid": "PENDING",
-  "polyana_save": "PASS",
-  "polyana_my_tournaments": "PASS",
+  "polyana_save": "FAIL",
+  "polyana_my_tournaments": "FAIL",
   "canonical_id_persistence": "PENDING",
   "trip_builder": "NOT_APPLICABLE",
   "persistence_after_reload": "PASS",
@@ -17,5 +17,16 @@
   "mobile_390": "PASS",
   "mobile_430": "PASS",
   "network_analysis": "PENDING",
-  "failures": []
+  "failures": [
+    {
+      "step": "MY_HANDS_IMPORT",
+      "error": "page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-nav=\"myhands\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button data-nav=\"myhands\" data-ps3d-state=\"0\" data-ps3d-type=\"cards\" data-ps3d-build=\"poker3d-nav-figma-v1\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    56 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+      "severity": "P1"
+    },
+    {
+      "step": "POLYANA",
+      "error": "page.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-nav=\"polyana\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button data-nav=\"polyana\" data-ps3d-state=\"0\" data-ps3d-type=\"meadow\" data-ps3d-build=\"poker3d-nav-figma-v1\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    56 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <iframe title=\"Рука дня\" allow=\"fullscreen\" id=\"psHandDayFrame\" src=\"modules/hand-of-the-day.html?v=hand-day-bridge-v3&t=1789318514366\"></iframe> from <div aria-hidden=\"false\" id=\"psHandDayOverlay\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+      "severity": "P1"
+    }
+  ]
 }
