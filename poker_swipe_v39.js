@@ -70,10 +70,7 @@ window.renderHome=function(){
   </div>`;
 
   const goSwipe=()=>{try{swSession=[]}catch(e){};show('swipe')};
-  document.getElementById('v36Daily').onclick=()=>{
-    if(typeof window.openCalendarDaily==='function')window.openCalendarDaily();
-    else show('daily');
-  };
+  document.getElementById('v36Daily').onclick=()=>show('daily');
   document.getElementById('v36Sizing').onclick=()=>show('sizing');
   document.getElementById('v36Review').onclick=()=>show('review');
   document.getElementById('v36Swipe').onclick=goSwipe;

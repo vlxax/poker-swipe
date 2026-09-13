@@ -44,62 +44,52 @@ async function clickText(page, re) {
 
 async function dailyFlow(page) {
   await page.locator('#v36Daily').click({ timeout: 15000 });
-  await page.waitForTimeout(400);
-  const start = page.locator('#dStart');
-  mark('DAILY.open', await start.count() > 0 || /РАЗДАЧА|НАЧАТЬ|СЕСТЬ/i.test(await page.locator('#dailyArea').innerText().catch(() => '')));
-  await page.evaluate(() => {
-    document.getElementById('daily')?.classList.add('active');
-    document.querySelector('#dStart')?.scrollIntoView({ block: 'center' });
-  });
-  if (await start.count()) await start.click({ force: true });
-  else mark('DAILY.open', false);
+  await page.waitForSelector('#psHandDayFrame', { timeout: 15000 });
+  await page.waitForTimeout(800);
+  const frame = page.frameLocator('#psHandDayFrame');
+  const play = frame.locator('#playBtn');
+  mark('DAILY.open', await play.count() > 0);
+  await play.click({ force: true, timeout: 15000 });
+  await page.waitForTimeout(600);
+  mark('DAILY.hand', await frame.locator('#handScreen.active, #decisionArea, #heroCards').count() > 0);
 
-  for (let i = 0; i < 3; i++) {
-    const n = page.locator('#dNext');
-    if (await n.count()) await n.click();
-    await page.waitForTimeout(200);
+  let acted = false;
+  for (let i = 0; i < 24; i++) {
+    if (await frame.locator('#finishScreen.active').count()) break;
+    if (await frame.locator('#readScreen.active').count()) {
+      const ch = frame.locator('#readChoices button, #readChoices .choice, #readChoices [data-read]').first();
+      if (await ch.count()) await ch.click({ force: true });
+      const rev = frame.locator('#revealBtn2');
+      if (await rev.count()) await rev.click({ force: true });
+      await page.waitForTimeout(400);
+      continue;
+    }
+    const fold = frame.locator('#decisionArea [data-action="fold"]');
+    const check = frame.locator('#decisionArea [data-action="check"]');
+    const any = frame.locator('#decisionArea [data-action]').first();
+    if (await fold.count()) { await fold.click({ force: true }); acted = true; }
+    else if (await check.count()) { await check.click({ force: true }); acted = true; }
+    else if (await any.count()) { await any.click({ force: true }); acted = true; }
+    await page.waitForTimeout(350);
   }
-  const choices = page.locator('[data-dchoice]');
-  mark('DAILY.hand', await page.locator('#dailyArea').count() > 0);
-  mark('DAILY.action', await choices.count() > 0);
-  if (await choices.count()) await choices.first().click();
-  await page.waitForTimeout(300);
+  mark('DAILY.action', acted);
 
-  if (await page.locator('#dSizeGo').count()) {
-    await page.locator('#dSizeGo').click();
-    await page.waitForTimeout(200);
-  }
-  const conf = page.locator('[data-dconf]');
-  if (await conf.count()) await conf.nth(1).click();
-  await page.waitForTimeout(300);
+  const finishOn = await frame.locator('#finishScreen.active').count() > 0;
+  const txt = await frame.locator('#finishScreen').innerText().catch(() => '');
+  mark('DAILY.grade', finishOn && /РЕШЕНИЯ|САЙЗИНГ|РИД|БАНК/i.test(txt));
+  mark('DAILY.explanation', /Разберём|Фолд бывает|прочитала|дешевле/i.test(txt) || await frame.locator('.finish-coach').count() > 0);
 
-  for (let i = 0; i < 12; i++) {
-    const token = page.locator('#argTray [data-arg]').first();
-    const drop = page.locator('.drop').first();
-    if (!(await token.count()) || !(await drop.count())) break;
-    await token.click();
-    await drop.click();
-    await page.waitForTimeout(80);
-  }
-  const gradeBtn = page.locator('#dailyArea button.primary').last();
-  if (await gradeBtn.count()) await gradeBtn.click();
-  await page.waitForTimeout(500);
-
-  const area = (await page.locator('#dailyArea').innerText().catch(() => '')) || '';
-  mark('DAILY.grade', /ВСКРЫТИЕ|ЛОГИКА|ДОКАРУТИТЬ|СОШЛАСЬ|GTO BRAIN/i.test(area));
-  mark('DAILY.explanation', /brain|поясн|логик|GTO|аргумент/i.test(area));
-  if (await page.locator('#dSave').count()) {
-    await page.locator('#dSave').click();
+  if (await frame.locator('#hdSave').count()) {
+    await frame.locator('#hdSave').click({ force: true });
     mark('DAILY.save', true);
-  } else {
-    mark('DAILY.save', /СОХРАН|архив/i.test(area) || await page.evaluate(() => (window.S?.dailyArchive || []).length > 0));
-  }
-  if (await page.locator('#dHistory').count()) {
-    await page.locator('#dHistory').click();
-    await page.waitForTimeout(300);
-  }
-  const hist = (await page.locator('#dailyArea').innerText().catch(() => '')) || '';
-  mark('DAILY.history', /АРХИВ|ЧИСТО|ЖИВЁТ|ОШИБКА|DONE|ПЕРЕСМОТР/i.test(hist) || await page.evaluate(() => (window.S?.dailyArchive || []).some(x => x.date)));
+  } else mark('DAILY.save', false);
+
+  if (await frame.locator('#hdHistory').count()) {
+    await frame.locator('#hdHistory').click({ force: true });
+    const htxt = await frame.locator('#hdHistoryList').innerText().catch(() => '');
+    mark('DAILY.history', /АРХИВ|ЧИСТО|ЖИВЁТ|ОШИБКА/i.test(htxt));
+  } else mark('DAILY.history', false);
+
   const before = await page.evaluate(() => (window.S?.dailyArchive || []).length);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.S, { timeout: 20000 }).catch(() => {});
