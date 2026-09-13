@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const STORE='pokerswipe.v40.poliana';
+const STORE='pokerswipe.polyana.state';
 const state={view:'today',city:'Москва',seriesId:null,tripStep:null,disc:['NLH','PLO','HU'],maxBuyin:5000,budget:50000,from:'2026-09-14',to:'2026-09-20',selected:{}};
 try{Object.assign(state,JSON.parse(localStorage.getItem(STORE)||'{}'))}catch(_){ }
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(_){}}
