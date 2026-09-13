@@ -3223,7 +3223,7 @@ if(_editNickBtn){
    DOMContentLoaded only made V30/V31 execute before the core existed. */
 function exposeV32(name,get,set){
   try{Object.defineProperty(window,name,{configurable:true,enumerable:false,get,set:set||undefined})}
-  catch(e){try{window[name]=get()}catch(_){}}
+  catch(e){try{const val=get();window[name]=val}catch(err){console.warn(`[EXP32 FALLBACK FAIL] ${name}: ${err.message}`)}}
 }
 [
   ['$',()=> $,null],['$$',()=> $$,null],['esc',()=>esc,null],['clamp',()=>clamp,null],
@@ -3287,7 +3287,10 @@ function exposeV32(name,get,set){
   ['openTournament23',()=>openTournament23,v=>{openTournament23=v}],
   ['bindMetrics18',()=>bindMetrics18,null],['publishProfile28',()=>publishProfile28,v=>{publishProfile28=v}],
   ['loadPlayers28',()=>loadPlayers28,v=>{loadPlayers28=v}]
-].forEach(x=>exposeV32(x[0],x[1],x[2]));
+].forEach((x,i)=>{try{exposeV32(x[0],x[1],x[2])}catch(e){console.warn(`[V32 EXPOSE ERROR] ${x[0]}: ${e.message}`)}});
+/* Ensure critical functions are directly accessible on window */
+window.renderSizing=renderSizing;window.rankIndex28=rankIndex28;window.d25RenderSpot=d25RenderSpot;
+window.renderTournaments23=renderTournaments23;window.ui=ui;
 window.PokerSwipeCore={
   version:'32.0',storageKey:STORAGE,userKey:USER_KEY,
   store:{getState:()=>S,replaceState:v=>{S=v;save()},save:()=>save()},
