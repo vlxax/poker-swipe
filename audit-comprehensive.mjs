@@ -84,37 +84,45 @@ async function auditSIZING(page) {
 
 async function auditREVIEW(page) {
   console.log(`    🔍 REVIEW`);
-  
+
   try {
     await page.evaluate(() => {
       if (typeof window.show === 'function') {
         window.show('review');
       }
     });
-    
+
     await page.waitForTimeout(500);
-    
+
     const elements = await page.evaluate(() => {
       const m = {};
-      
-      const timeline = document.getElementById('reviewTimeline');
+
+      const timeline = document.querySelector('.timeline');
       if (timeline) {
         const r = timeline.getBoundingClientRect();
         m['timeline'] = {top: Math.round(r.top), bottom: Math.round(r.bottom), height: Math.round(r.height)};
+
+        const nodes = timeline.querySelectorAll('[class*="node"]');
+        if (nodes.length > 0) {
+          m['timelineNodeCount'] = nodes.length;
+          const lastNode = nodes[nodes.length - 1];
+          const nr = lastNode.getBoundingClientRect();
+          m['lastNode'] = {top: Math.round(nr.top), bottom: Math.round(nr.bottom), height: Math.round(nr.height)};
+        }
       }
-      
-      const decisionBtn = document.getElementById('rvNone');
+
+      const decisionBtn = document.getElementById('rvNone') || document.querySelector('[id*="decision"]') || document.querySelector('button.primary');
       if (decisionBtn) {
         const r = decisionBtn.getBoundingClientRect();
         m['decisionBtn'] = {top: Math.round(r.top), bottom: Math.round(r.bottom), height: Math.round(r.height), text: decisionBtn.textContent.substring(0, 20)};
       }
-      
-      const actions = document.querySelector('.actions');
+
+      const actions = document.querySelector('.actions') || document.querySelector('[class*="action"]');
       if (actions) {
         const r = actions.getBoundingClientRect();
         m['actions'] = {top: Math.round(r.top), bottom: Math.round(r.bottom), height: Math.round(r.height)};
       }
-      
+
       return m;
     });
     
@@ -147,34 +155,40 @@ async function auditREVIEW(page) {
 
 async function auditDAILY(page) {
   console.log(`    🔍 DAILY`);
-  
+
   try {
     await page.evaluate(() => {
       if (typeof window.show === 'function') {
         window.show('daily');
       }
     });
-    
+
     await page.waitForTimeout(500);
-    
+
     const elements = await page.evaluate(() => {
       const m = {};
-      
+
       const selectors = {
-        'history': '#dailyHistory',
-        'table': '#dailyTable',
-        'decision': '#dailyDecision',
-        'startBtn': '#dailyStart'
+        'history': '#dailyHistory, [class*="history"]',
+        'table': '#dailyTable, .daily-table, [class*="table"]',
+        'decision': '#dailyDecision, [class*="decision"]',
+        'startBtn': '#dailyStart, button.primary, [class*="start"]'
       };
-      
+
       for (const [name, sel] of Object.entries(selectors)) {
         const el = document.querySelector(sel);
-        if (el) {
+        if (el && el.offsetHeight > 0) {
           const r = el.getBoundingClientRect();
           m[name] = {top: Math.round(r.top), bottom: Math.round(r.bottom), height: Math.round(r.height)};
         }
       }
-      
+
+      const panel = document.querySelector('.panel');
+      if (panel) {
+        const r = panel.getBoundingClientRect();
+        m['panel'] = {top: Math.round(r.top), bottom: Math.round(r.bottom), height: Math.round(r.height)};
+      }
+
       return m;
     });
     
@@ -248,5 +262,10 @@ async function runAudit() {
 }
 
 const results = await runAudit();
-fs.writeFileSync('/tmp/claude-0/-home-user-poker-swipe/1f63b7bc-0693-5bf7-9188-d77e639a37f3/scratchpad/audit-baseline.json', JSON.stringify(results, null, 2));
-console.log('\n✅ Baseline audit complete');
+const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+const filename = process.argv[2] === 'baseline'
+  ? '/tmp/claude-0/-home-user-poker-swipe/1f63b7bc-0693-5bf7-9188-d77e639a37f3/scratchpad/audit-baseline.json'
+  : `/tmp/claude-0/-home-user-poker-swipe/1f63b7bc-0693-5bf7-9188-d77e639a37f3/scratchpad/audit-current-${timestamp}.json`;
+
+fs.writeFileSync(filename, JSON.stringify(results, null, 2));
+console.log(`\n✅ Audit complete: ${filename}`);
