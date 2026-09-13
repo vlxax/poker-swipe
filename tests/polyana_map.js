@@ -2,23 +2,34 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole} = jsdomPkg;
+const {JSDOM, VirtualConsole, ResourceLoader} = jsdomPkg;
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const MIME = {'.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.html': 'text/html'};
 
-function serve(url) {
-  const parsed = new URL(url);
-  if (parsed.hostname !== 'app.local') return null;
-  const rel = parsed.pathname.replace(/^\//, '');
-  const file = path.join(root, rel);
-  if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-    const ext = path.extname(file).toLowerCase();
-    return new Response(new Uint8Array(fs.readFileSync(file)), {status: 200, headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}});
+class LocalResourceLoader extends ResourceLoader {
+  fetch(url, options) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === 'app.local') {
+        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
+        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+          const ext = path.extname(file).toLowerCase();
+          const buffer = fs.readFileSync(file);
+          return Promise.resolve({
+            status: 200,
+            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'},
+            buffer
+          });
+        }
+      }
+    } catch (e) {
+      // fall through to network
+    }
+    return Promise.resolve({status: 404, headers: {}, buffer: Buffer.alloc(0)});
   }
-  return new Response('', {status: 404});
 }
 
 function boot() {
@@ -29,11 +40,8 @@ function boot() {
   const received = [];
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'polyana/map.html'), 'utf8'), {
     url: 'http://app.local/polyana/map.html',
-    runScripts: 'dangerously',
-    resources: {interceptors: [async req => {
-      if (req.url.startsWith('https://')) return undefined;
-      return serve(req.url);
-    }]},
+    runScripts: 'outside-only',
+    resources: new LocalResourceLoader(),
     pretendToBeVisual: true,
     virtualConsole: vc,
     beforeParse(window) {
