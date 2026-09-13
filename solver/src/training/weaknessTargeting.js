@@ -1,7 +1,8 @@
 // Canonical weakness skill resolution for session slots (P0).
 // Aligns primary_weakness picks with dynamic diagnoses + skill targets + tiers.
 
-import { SKILL_DIAGNOSES, diagnosisPriorityBoost, computeDynamicSkillTargets } from './dynamicPlayerProfile.js';
+import { SKILL_DIAGNOSES, diagnosisPriorityBoost } from './skillDiagnoses.js';
+import { computeDynamicSkillTargets } from './dynamicSkillTargets.js';
 import { buildSkillTiers } from './skillTiers.js';
 import { getTargetDifficulty, pickRelevantSkillForSpot } from './adaptiveDifficulty.js';
 
@@ -263,14 +264,55 @@ export function spotWithinAdaptiveBand(spot, ctx, { relax = 0, slotKind = null, 
   return d >= lo && d <= hi;
 }
 
+function weaknessSkillsForBand(ctx, slotKind, tiers) {
+  const chain = resolvePrimaryWeaknessChain({ ...ctx, tiers });
+  if (slotKind === 'primary_weakness') {
+    return [chain.primary, ...chain.fallbacks].filter(Boolean);
+  }
+  return (chain.fallbacks.length
+    ? chain.fallbacks
+    : (tiers?.secondary || chain.diagnosed.slice(1))).filter(Boolean);
+}
+
+/** Unused spots in source with strict (distance 0) adaptive band for this weakness slot. */
+export function strictInBandSpotsFromSource(source, usedIds, ctx, slotKind, tiers) {
+  const skills = weaknessSkillsForBand(ctx, slotKind, tiers);
+  if (!skills.length || !Array.isArray(source)) return [];
+  const bandCtx = { ...ctx, tiers };
+  return source.filter((s) => {
+    if (usedIds.has(s.id)) return false;
+    const tags = s.skillTags || [];
+    const matched = skills.filter((sk) => tags.includes(sk));
+    if (!matched.length) return false;
+    return matched.some((sk) => {
+      const { allowed } = weaknessSlotAllowedDifficulties(bandCtx, sk);
+      return allowed.includes(s.difficulty);
+    });
+  });
+}
+
+/**
+ * When strict in-band tasks exist in source, pool must only contain those (P0 contract).
+ */
+export function restrictPoolToStrictInBandWhenAvailable(pool, source, usedIds, ctx, slotKind, tiers, scoreForSlot) {
+  const strictSpots = strictInBandSpotsFromSource(source, usedIds, ctx, slotKind, tiers);
+  if (!strictSpots.length) return pool;
+  const strictIds = new Set(strictSpots.map((s) => s.id));
+  let narrowed = pool.filter((x) => strictIds.has(x.spot.id));
+  if (!narrowed.length) {
+    narrowed = strictSpots.map((s) => ({
+      spot: s,
+      score: Math.max(scoreForSlot(s, slotKind, ctx), 0.5),
+      bucket: slotKind === 'primary_weakness' || slotKind === 'secondary_weakness' ? 'weakness' : 'maintenance',
+      slotKind
+    }));
+  }
+  return narrowed.length ? narrowed : pool;
+}
+
 /** Prefer in-band tasks; if none, nearest integer difficulty (documented fallback). */
 export function filterPoolByAdaptiveBand(pool, ctx, { slotKind = null, minResults = 1, skillOverride = null } = {}) {
   if (!WEAKNESS_SLOTS.has(slotKind) || !pool.length) return pool;
-
-  const inBand = pool.filter((x) => spotWithinAdaptiveBand(x.spot, ctx, {
-    relax: 0, slotKind, skillOverride
-  }));
-  if (inBand.length >= minResults) return inBand;
 
   const scored = pool.map((x) => {
     const skill = bandSkillForSpot(x.spot, ctx, { slotKind, skillOverride });
@@ -278,6 +320,16 @@ export function filterPoolByAdaptiveBand(pool, ctx, { slotKind = null, minResult
     const dist = distanceToAllowedDifficulty(x.spot.difficulty, allowed);
     return { item: x, dist };
   });
+  const strict = scored.filter((x) => x.dist === 0);
+  if (strict.length >= minResults) {
+    return strict.sort((a, b) => b.item.score - a.item.score).map((x) => x.item);
+  }
+
+  const inBand = pool.filter((x) => spotWithinAdaptiveBand(x.spot, ctx, {
+    relax: 0, slotKind, skillOverride
+  }));
+  if (inBand.length >= minResults) return inBand;
+
   scored.sort((a, b) => a.dist - b.dist || b.item.score - a.item.score);
   if (!scored.length) return pool;
   const withinOne = scored.filter((x) => x.dist <= 1.001);

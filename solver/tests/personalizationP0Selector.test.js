@@ -168,5 +168,5 @@ test('Test E — Phase 13 audit regression thresholds', () => {
   assert.equal(report.metrics.duplicateRate, 0);
   assert.equal(report.metrics.invalidSpotCount, 0);
   assert.ok(report.metrics.profileMismatchRate < 5, `profile mismatch ${report.metrics.profileMismatchRate}%`);
-  assert.ok(report.metrics.diffMismatchRate < 10, `diff mismatch ${report.metrics.diffMismatchRate}%`);
+  assert.ok(report.metrics.diffMismatchRate < 5, `diff mismatch ${report.metrics.diffMismatchRate}%`);
 });

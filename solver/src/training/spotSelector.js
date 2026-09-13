@@ -28,7 +28,9 @@ import {
   diagnosedFocusSkills,
   spotMatchesSkillId,
   spotMatchesAnySkill,
-  weaknessBandDistance
+  weaknessBandDistance,
+  restrictPoolToStrictInBandWhenAvailable,
+  strictInBandSpotsFromSource
 } from './weaknessTargeting.js';
 
 export { buildSkillTiers } from './skillTiers.js';
@@ -164,7 +166,8 @@ function filterPoolToSessionFocus(pool, tiers, ctx) {
     const topSkill = targets
       ? Object.entries(targets).sort((a, b) => b[1] - a[1])[0]?.[0]
       : null;
-    if (topSkill && focus.includes(topSkill)) {
+    const chain = resolvePrimaryWeaknessChain({ ...ctx, tiers, count: ctx.sessionCount || 7 });
+    if (topSkill && focus.includes(topSkill) && topSkill === chain.primary) {
       const topOnly = filtered.filter((x) => (x.spot.skillTags || []).includes(topSkill));
       if (topOnly.length >= 3) filtered = topOnly;
     }
@@ -533,7 +536,13 @@ function pickOneSlot(candidates, slotKind, ctx, rng, usedIds) {
       bucket: slotToLegacyBucket(slotKind),
       slotKind
     }))
-    .filter((x) => x.score > -5);
+    .filter((x) => {
+      if (x.score > -5) return true;
+      if (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness') {
+        return weaknessBandDistance(x.spot, { ...ctx, tiers }, slotKind) === 0;
+      }
+      return false;
+    });
 
   if (slotKind === 'primary_weakness') {
     pool = filterPoolForPrimaryWeakness(pool, { ...ctx, tiers });
@@ -559,40 +568,32 @@ function pickOneSlot(candidates, slotKind, ctx, rng, usedIds) {
       .filter((x) => x.score > -5);
   }
 
+  if (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness') {
+    pool = restrictPoolToStrictInBandWhenAvailable(
+      pool, source, usedIds, { ...ctx, tiers }, slotKind, tiers,
+      (s, sk, c) => scoreForSessionSlot(s, sk, c)
+    );
+  }
+
   pool.sort((a, b) => b.score - a.score);
 
   const topLeak = (ctx.leakPriorities || [])[0]?.concept;
   if (topLeak && (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness')) {
     const leakPool = pool.filter((x) => spotMatchesLeakConcept(x.spot, topLeak));
     const minLeak = slotKind === 'primary_weakness' ? 1 : 2;
-    if (leakPool.length >= minLeak) pool = leakPool;
+    const strictAvail = strictInBandSpotsFromSource(source, usedIds, { ...ctx, tiers }, slotKind, tiers);
+    const leakStrict = leakPool.filter((x) => weaknessBandDistance(x.spot, ctx, slotKind) === 0);
+    if (leakPool.length >= minLeak && (!strictAvail.length || leakStrict.length)) {
+      pool = leakStrict.length ? leakStrict : leakPool;
+    }
   }
 
   if (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness') {
+    pool = restrictPoolToStrictInBandWhenAvailable(
+      pool, source, usedIds, { ...ctx, tiers }, slotKind, tiers,
+      (s, sk, c) => scoreForSessionSlot(s, sk, c)
+    );
     pool = filterPoolByAdaptiveBand(pool, ctx, { slotKind, minResults: 1 });
-    const minBand = pool.length
-      ? Math.min(...pool.map((x) => weaknessBandDistance(x.spot, ctx, slotKind)))
-      : Infinity;
-    if (minBand > 0 && Array.isArray(ctx.candidateSpots) && ctx.candidateSpots.length) {
-      const chain = resolvePrimaryWeaknessChain({ ...ctx, tiers });
-      const skills = slotKind === 'primary_weakness'
-        ? [chain.primary, ...chain.fallbacks].filter(Boolean)
-        : (chain.fallbacks.length ? chain.fallbacks : (ctx.tiers?.secondary || chain.diagnosed.slice(1)));
-      const expanded = ctx.candidateSpots
-        .filter((s) => !usedIds.has(s.id) && spotMatchesAnySkill(s, skills))
-        .map((s) => ({
-          spot: s,
-          score: scoreForSessionSlot(s, slotKind, ctx),
-          bucket: slotToLegacyBucket(slotKind),
-          slotKind
-        }))
-        .filter((x) => x.score > -5);
-      const banded = filterPoolByAdaptiveBand(expanded, ctx, { slotKind, minResults: 1 });
-      const bandedMin = banded.length
-        ? Math.min(...banded.map((x) => weaknessBandDistance(x.spot, ctx, slotKind)))
-        : Infinity;
-      if (bandedMin < minBand) pool = banded;
-    }
   } else {
     pool = lowDifficultyPoolPreference(pool, slotKind, ctx);
   }
