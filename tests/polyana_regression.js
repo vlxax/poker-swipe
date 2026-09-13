@@ -24,7 +24,7 @@ class FakeWorker {
   terminate() {}
 }
 
-const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram/i;
+const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram|matchMedia|Could not parse CSS|getElementById/i;
 
 function boot() {
   const errors = [];
@@ -50,6 +50,17 @@ function boot() {
       window.HTMLElement.prototype.scrollIntoView = () => {};
       window.Worker = FakeWorker;
       window.alert = () => {};
+      window.matchMedia = window.matchMedia || function() {
+        return {
+          matches: false,
+          media: '',
+          addListener() {},
+          removeListener() {},
+          addEventListener() {},
+          removeEventListener() {},
+          dispatchEvent() { return false; }
+        };
+      };
       window.Math.random = () => 0.42;
       window.innerWidth = 390;
       window.innerHeight = 844;
