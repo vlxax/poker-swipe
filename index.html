@@ -4955,31 +4955,40 @@ let V60_VIEW='builder';
 let V60_RESULT_TAB='plans';
 let V60_PLAN='balanced';
 let V60_STATE={
- city:'Калининград',from:'2026-09-12',to:'2026-09-16',budget:50000,
- games:['NLH','PLO'],formats:['Bounty','PKO','Deepstack'],buyins:['any'],reentries:'any',noOverlap:true
+ city:'Москва',from:'2026-09-12',to:'2026-09-16',budget:50000,
+ games:[],formats:[],buyins:['any'],reentries:'any',noOverlap:true
 };
 
-const V60_CATALOG=[
- {city:'Калининград',date:'2026-09-12',time:'19:00',club:'LEVEL Autumn Series',name:'Welcome Bounty',game:'NLH',format:'Bounty',buyin:2000,reentries:1},
- {city:'Калининград',date:'2026-09-13',time:'14:00',club:'STRADDLE Poker Series',name:'PLO Deepstack',game:'PLO',format:'Deepstack',buyin:3500,reentries:2},
- {city:'Калининград',date:'2026-09-13',time:'20:00',club:'QUANTUM Series',name:'Mystery Bounty',game:'NLH',format:'Mystery',buyin:4000,reentries:1},
- {city:'Калининград',date:'2026-09-14',time:'16:00',club:'LEVEL Autumn Series',name:'Main Event Day 1A',game:'NLH',format:'Deepstack',buyin:10000,reentries:2},
- {city:'Калининград',date:'2026-09-15',time:'15:00',club:'HEADS UP Series',name:'High Roller Bounty',game:'NLH',format:'Bounty',buyin:8000,reentries:1},
- {city:'Калининград',date:'2026-09-15',time:'21:00',club:'STRADDLE Poker Series',name:'Turbo Knockout',game:'NLH',format:'PKO',buyin:3000,reentries:1},
- {city:'Калининград',date:'2026-09-16',time:'13:00',club:'QUANTUM Series',name:'PLO Closer',game:'PLO',format:'Deepstack',buyin:3000,reentries:1},
-
- {city:'Сочи',date:'2026-09-12',time:'18:00',club:'SOCHI Poker Series',name:'Opening Event',game:'NLH',format:'Deepstack',buyin:5000,reentries:2},
- {city:'Сочи',date:'2026-09-13',time:'15:00',club:'SOCHI Poker Series',name:'PLO Championship',game:'PLO',format:'Deepstack',buyin:7000,reentries:2},
- {city:'Сочи',date:'2026-09-14',time:'18:00',club:'SOCHI Poker Series',name:'Mystery Bounty',game:'NLH',format:'Mystery',buyin:6000,reentries:1},
- {city:'Сочи',date:'2026-09-15',time:'14:00',club:'SOCHI Poker Series',name:'Main Event',game:'NLH',format:'Deepstack',buyin:12000,reentries:2},
-
- {city:'Минск',date:'2026-09-12',time:'19:00',club:'MINSK Poker Week',name:'Welcome PKO',game:'NLH',format:'PKO',buyin:3000,reentries:1},
- {city:'Минск',date:'2026-09-13',time:'16:00',club:'MINSK Poker Week',name:'PLO Event',game:'PLO',format:'Deepstack',buyin:3500,reentries:2},
- {city:'Минск',date:'2026-09-14',time:'17:00',club:'MINSK Poker Week',name:'Main Event',game:'NLH',format:'Deepstack',buyin:8000,reentries:2},
-];
+let V60_CATALOG=[];
+async function loadV60Catalog(){
+ if(V60_CATALOG.length)return V60_CATALOG;
+ try{
+  const resp=await fetch('data/moscow_schedule_today.json');
+  const data=await resp.json();
+  if(!data.events)return [];
+  V60_CATALOG=data.events.filter(t=>t.date&&t.time&&t.club&&t.tournament).map(t=>({
+   city:'Москва',
+   _id:t._id,
+   date:t.date,
+   time:t.time,
+   club:t.club,
+   name:t.tournament,
+   game:t.game||'Unknown',
+   format:t.type||'Tournament',
+   buyin:Math.max(t.fee_rub||1000,1000),
+   reentries:t.reentry_limit||1,
+   address:t.address,
+   district:t.district
+  }));
+  return V60_CATALOG;
+ }catch(e){
+  console.error('Failed to load tournament catalog:',e);
+  return [];
+ }
+}
 
 const cityImg={
- 'Калининград':'assets/regions/kaliningrad.webp','Сочи':'assets/regions/sochi.webp','Минск':'assets/regions/minsk.webp'
+ 'Москва':'assets/regions/moscow.webp'
 };
 const fmt=x=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(x)+' ₽';
 const dateTxt=iso=>{
@@ -5045,8 +5054,10 @@ function buildPlans(){
 function renderTripBuilder(){
  if(typeof show==='function')show('tournaments');
  const area=document.getElementById('tournamentsArea');if(!area)return;
- area.innerHTML='<div class="v60Wrap">'+topbar()+builderBody()+'</div>';
- bindBuilder();markTripsNav();
+ loadV60Catalog().then(()=>{
+  area.innerHTML='<div class="v60Wrap">'+topbar()+builderBody()+'</div>';
+  bindBuilder();markTripsNav();
+ });
 }
 function topbar(){
  return `<div class="v60Top"><button class="v60Back" id="v60Back">‹</button><div class="v60TopTitle"><b>${V60_VIEW==='builder'?'СОБРАТЬ <span>ПОЕЗДКУ</span>':'РЕЗУЛЬТАТЫ ПОДБОРА'}</b><small>${V60_VIEW==='builder'?'Планируй покерную серию':'Сетка турниров под твой бюджет'}</small></div><button class="v60IconBtn">▣</button></div>`;
@@ -5056,8 +5067,7 @@ function builderBody(){
  return `<div class="v60Hero"><h1>СОБЕРИ ПОЕЗДКУ ПОД <span style="color:#c8ff3d">СВОЮ ИГРУ.</span></h1><p>Выбери направление, даты и бюджет — PokerSwipe соберёт подходящие серии и непересекающуюся сетку турниров.</p></div>
  <div class="v60Block"><div class="v60BlockHead"><i>⌖</i><b>1. КУДА И КОГДА?</b></div>
   <div class="v60Cities">
-   ${['Калининград','Сочи','Минск'].map(c=>`<button class="v60City ${V60_STATE.city===c?'on':''}" data-v60city="${c}"><img src="${cityImg[c]}"><span>${c}</span></button>`).join('')}
-   <button class="v60City more"><span>•••<br>ЕЩЁ</span></button>
+   ${['Москва'].map(c=>`<button class="v60City ${V60_STATE.city===c?'on':''}" data-v60city="${c}"><span style="font-size:14px">${c}</span></button>`).join('')}
   </div>
   <div class="v60Dates"><div class="v60DateBox"><small>ЗАЕЗД</small><b>${dateTxt(V60_STATE.from)}</b><input id="v60From" type="date" value="${V60_STATE.from}"></div><div class="v60Nights"><div><b>${d.nights} ночи</b>${d.days} дней</div></div><div class="v60DateBox"><small>ВЫЕЗД</small><b>${dateTxt(V60_STATE.to)}</b><input id="v60To" type="date" value="${V60_STATE.to}"></div></div>
  </div>
@@ -5111,6 +5121,7 @@ function bindBuilder(){
 }
 function renderResults(){
  const area=document.getElementById('tournamentsArea');if(!area)return;
+ loadV60Catalog().then(()=>{
  const plans=buildPlans(),chosen=plans.find(x=>x.id===V60_PLAN)||plans[0],count=eligible().length;
  area.innerHTML='<div class="v60Wrap">'+topbar()+`
   <div class="v60Summary"><b>${V60_STATE.city}, ${dateTxt(V60_STATE.from)} – ${dateTxt(V60_STATE.to)}</b><small>Бюджет ${fmt(V60_STATE.budget)} · ${V60_STATE.games.join(', ')} · ${V60_STATE.formats.join(', ')}</small></div>
@@ -5124,6 +5135,7 @@ function renderResults(){
  </div>`;
  bindResults(plans);
  markTripsNav();
+ });
 }
 function planCard(p){
  return `<button class="v60Plan ${V60_PLAN===p.id?'on':''}" data-v60plan="${p.id}">
