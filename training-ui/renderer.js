@@ -48,7 +48,17 @@ export const renderHome = (root, vm, handlers = {}) => {
         `<div class="row"><span>${esc(s.label)}</span><b>${esc(s.score)}</b></div>`).join('')}</div>`
       : '';
     const focusHtml = (vm.focusItems || []).map((item) => `<div class="row"><span>•</span><b>${esc(item)}</b></div>`).join('');
+    const resumeHtml = vm.resume ? `<div class="trResumeCard panel" style="margin-bottom:16px;border:1px solid rgba(200,255,61,0.25)">
+      <span class="ey">${esc(vm.resume.title)}</span>
+      <h2 style="margin:8px 0 4px;font-size:1.1rem">${esc(vm.resume.sessionLabel)}</h2>
+      <p class="mut small">${esc(vm.resume.progressText)} · ${esc(vm.resume.answeredText)}${vm.resume.activityLabel ? ` · ${esc(vm.resume.activityLabel)}` : ''}</p>
+      <div class="grid2" style="margin-top:12px;gap:8px">
+        <button class="primary" id="trResumeContinue">${esc(vm.resume.continueCta)} →</button>
+        <button class="secondary" id="trResumeNew">${esc(vm.resume.newCta)}</button>
+      </div>
+    </div>` : '';
     root.innerHTML = `<div class="panel dailyStage">
+      ${resumeHtml}
       <span class="ey">ТРЕНИРОВКА</span>
       <h1 class="impact">${esc(vm.title)}</h1>
       <p class="mut">${esc(vm.subtitle)}</p>
@@ -60,6 +70,10 @@ export const renderHome = (root, vm, handlers = {}) => {
       <p class="mut small">${esc(vm.whyText)}</p>
       <button class="primary" id="trStart" style="margin-top:16px">${esc(vm.cta)} →</button>
     </div>`;
+    const rc = root.querySelector('#trResumeContinue');
+    const rn = root.querySelector('#trResumeNew');
+    if (rc && typeof h.continueResume === 'function') rc.onclick = () => h.continueResume();
+    if (rn && typeof h.startNew === 'function') rn.onclick = () => h.startNew();
     const b = root.querySelector('#trStart');
     if (b && typeof h.start === 'function') b.onclick = () => h.start();
   } else {

@@ -179,11 +179,21 @@ export function renderGameLobby(root, vm, handlers = {}) {
   const id = 'daily_lobby_' + (vm.planSessionId || 'session');
   const focus = (vm.focusItems && vm.focusItems[0]) ? esc(vm.focusItems[0]) : 'разные игровые ситуации';
 
+  const resumeHtml = vm.resume ? `<div class="trResumeCard panel" style="margin:12px 0;border:1px solid rgba(200,255,61,0.25)">
+    <span class="ey">${esc(vm.resume.title)}</span>
+    <p class="mut small" style="margin:6px 0">${esc(vm.resume.sessionLabel)} · ${esc(vm.resume.progressText)} · ${esc(vm.resume.answeredText)}${vm.resume.activityLabel ? ` · ${esc(vm.resume.activityLabel)}` : ''}</p>
+    <div class="grid2" style="gap:8px">
+      <button type="button" class="primary pgCta" id="trResumeContinue">${esc(vm.resume.continueCta)} →</button>
+      <button type="button" class="secondary" id="trResumeNew">${esc(vm.resume.newCta)}</button>
+    </div>
+  </div>` : '';
+
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
     ${hudWithBack(ctx, id, {
       title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>',
       subtitle: vm.subtitle || ''
     }, 'daily', true)}
+    ${resumeHtml}
     <div class="pgArenaWrap pgDealIn">${gameArena({ ...disp })}</div>
     <div class="pgDailyChallenge">
       <span class="ey">${esc(vm.focusHeading || 'СЕГОДНЯ В ФОКУСЕ')}</span>
@@ -194,6 +204,11 @@ export function renderGameLobby(root, vm, handlers = {}) {
       <button type="button" class="primary pgCta pgBubblePress" id="trStart">${esc(vm.cta || 'НАЧАТЬ РАЗДАЧУ')} →</button>
     </div>
   </div>`;
+
+  const rc = root.querySelector('#trResumeContinue');
+  const rn = root.querySelector('#trResumeNew');
+  if (rc && typeof handlers.continueResume === 'function') rc.onclick = () => handlers.continueResume();
+  if (rn && typeof handlers.startNew === 'function') rn.onclick = () => handlers.startNew();
 
   const b = root.querySelector('#trStart');
   if (b && typeof handlers.start === 'function') {

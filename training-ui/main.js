@@ -23,6 +23,10 @@ import { solve, SOLVE_OPTS } from './solveBridge.js';
 import { drillViewModel, sessionProgressViewModel } from './viewModel.js';
 import * as R from './renderer.js';
 import { installGradingGateway } from './gradingGateway.js';
+import {
+  buildResumeSnapshot, loadResume, saveResume, clearResume,
+  resumeCardViewModel, validateResumeSnapshot
+} from './sessionResume.js';
 
 if (typeof window !== 'undefined') installGradingGateway(window);
 
@@ -73,12 +77,30 @@ const legacyRenderDaily = (typeof window.renderDaily === 'function') ? window.re
 
 const root = () => document.querySelector('#dailyArea');
 
+let cachedResume = loadResume(storage);
+
+function refreshCachedResume() {
+  cachedResume = loadResume(storage);
+}
+
+function persistSessionIfStable() {
+  if (pendingOptionId || ctl.answering) return;
+  if (ctl.state === 'done') {
+    clearResume(storage);
+    cachedResume = null;
+    return;
+  }
+  const snap = buildResumeSnapshot(ctl);
+  if (snap && saveResume(storage, snap)) refreshCachedResume();
+}
+
 const ctl = new SessionController({
   store,
   solve,
   solveOpts: SOLVE_OPTS,
   config: SESSION_CONFIG,
   onStateChange: () => {
+    persistSessionIfStable();
     if (!suppressControllerPaint) paint();
   }
 });
@@ -128,6 +150,8 @@ let lastDrillScrollIndex = null;
 
 const handlers = {
   start() {
+    clearResume(storage);
+    cachedResume = null;
     const r = ctl.start();
     if (r.reason === 'no_profile') { legacyFallback(); return; }
     if (r.started) {
@@ -137,6 +161,37 @@ const handlers = {
         pushDailyNav({ phase: 'drill', index: 0 });
       }
     }
+    paint();
+  },
+  startNew() {
+    clearResume(storage);
+    cachedResume = null;
+    ctl._resetRun();
+    handlers.start();
+  },
+  continueResume() {
+    if (!cachedResume) return;
+    const check = validateResumeSnapshot(cachedResume);
+    if (!check.ok) {
+      clearResume(storage);
+      cachedResume = null;
+      paint();
+      return;
+    }
+    const restored = ctl.restoreFromSnapshot(cachedResume);
+    if (!restored.ok) {
+      clearResume(storage);
+      cachedResume = null;
+      paint();
+      return;
+    }
+    if (typeof window.show === 'function') window.show('daily');
+    window.MiniAppNav?.reset('daily');
+    pushDailyNav({ phase: 'drill', index: ctl.index });
+    if (ctl.showingFeedback) {
+      pushDailyNav({ phase: 'feedback', index: ctl.index });
+    }
+    persistSessionIfStable();
     paint();
   },
   answer(optionId) {
@@ -185,6 +240,8 @@ const assessmentHandlers = {
 };
 
 function moreSpots() {
+  clearResume(storage);
+  cachedResume = null;
   ctl._resetRun();
   ctl.config = { ...ctl.config, count: 5 };
   const r = ctl.start();
@@ -284,7 +341,14 @@ function paint() {
     const vm = ctl.home();
     if (vm.type === 'training') {
       vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);
-      R.renderHome(el, vm, { start: handlers.start });
+      if (cachedResume && validateResumeSnapshot(cachedResume).ok) {
+        vm.resume = resumeCardViewModel(cachedResume);
+      }
+      R.renderHome(el, vm, {
+        start: handlers.start,
+        continueResume: handlers.continueResume,
+        startNew: handlers.startNew
+      });
     } else {
       // No leak or skill profile yet → offer the primary diagnostic as the entry
       // to personalised training, keeping the validated legacy daily available.
@@ -316,7 +380,12 @@ window.PersonalizedTrainingUi = {
   onboarding,
   paint,
   beginAssessment: () => { assessment.begin(); paint(); },
-  miniApps
+  miniApps,
+  sessionResume: {
+    load: () => loadResume(storage),
+    clear: () => { clearResume(storage); cachedResume = null; },
+    persist: persistSessionIfStable
+  }
 };
 
 export { store, ctl, paint, assessment };
