@@ -1522,7 +1522,7 @@ function load(){
   if(!s.events.length&&old.played){for(let i=0;i<Math.min(old.played,30);i++)s.events.push({mode:'legacy',concept:'legacy',grade:i<(old.good||0)?'g':i<(old.good||0)+(old.mid||0)?'y':'r',ts:now()-i*1000,excludeFromRank:true})}
 
   /* P0-1: SAFE HAND LOADING WITH VALIDATION */
-  const handLoadResult=HandValidation.safeLoadHands(old.hands);
+  const handLoadResult=window.HandValidation?.safeLoadHands(old.hands);
   s.hands=handLoadResult.hands;
   if(!handLoadResult.valid&&handLoadResult.invalidCount>0){
     console.warn(`[VALIDATION] Corrupted hands detected: ${handLoadResult.invalidCount} invalid, ${handLoadResult.recoveredCount} recovered`,handLoadResult.invalid);
@@ -1628,7 +1628,7 @@ function courseForConcept(c=''){
  return null
 }
 function disciplineScore(){const a=S.events.slice(-40);if(a.length<5)return null;const red=a.filter(e=>e.grade==='r').length,blind=a.filter(e=>e.grade==='r'&&e.confidence>=90).length,repeat=Math.max(0,topLeak()?.r-2||0);return clamp(Math.round(88-red/a.length*45-blind*3-repeat*2),20,98)}
-function show(id){if(!document.getElementById(id))id='home';const mainApp=$('#mainApp');const onboard=$('#onboarding');if(mainApp&&mainApp.classList.contains('hidden'))mainApp.classList.remove('hidden');if(onboard)onboard.classList.add('hidden');$$('.screen').forEach(x=>x.classList.toggle('active',x.id===id));$$('[data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav===id));try{window.scrollTo(0,0)}catch(e){};if(id==='home')renderHome();if(id==='swipe')renderSwipe();if(id==='sizing')renderSizing();if(id==='review')renderReview();if(id==='daily')renderDaily();if(id==='heal')renderHeal();if(id==='myhands')renderMy();if(id==='xray')renderXray();if(id==='profile')renderProfile()}
+function show(id){if(!document.getElementById(id))id='home';const mainApp=$('#mainApp');const onboard=$('#onboarding');if(mainApp&&mainApp.classList.contains('hidden'))mainApp.classList.remove('hidden');if(onboard)onboard.classList.add('hidden');$$('.screen').forEach(x=>x.classList.toggle('active',x.id===id));$$('[data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav===id));try{window.scrollTo(0,0)}catch(e){};if(id==='home')typeof renderHome==='function'&&renderHome();if(id==='swipe')typeof renderSwipe==='function'&&renderSwipe();if(id==='sizing')typeof renderSizing==='function'&&renderSizing();if(id==='review')typeof renderReview==='function'&&renderReview();if(id==='daily')typeof renderDaily==='function'&&renderDaily();if(id==='heal')typeof renderHeal==='function'&&renderHeal();if(id==='myhands')typeof renderMy==='function'&&renderMy();if(id==='xray')typeof renderXray==='function'&&renderXray();if(id==='profile')typeof renderProfile==='function'&&renderProfile()}
 function openModal(s){$('#modalBody').innerHTML=s;$('#modal').classList.remove('hidden')};function closeModal(){$('#modal').classList.add('hidden')};$('#modalClose').onclick=closeModal;$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
 function editNickname(){
   openModal(`<span class="ey">ПРОФИЛЬ</span>
@@ -2816,9 +2816,9 @@ function renderTournaments23(){
  </div>`;
  $('#t23Add').onclick=()=>openTournamentForm23();
  const ea=$('#t23EmptyAdd');if(ea)ea.onclick=()=>openTournamentForm23();
- $$('[data-t23f]').forEach(b=>b.onclick=()=>{T23_FILTER=b.dataset.t23f;renderTournaments23()});
- $$('[data-t23cur]').forEach(b=>b.onclick=()=>{T23_CURRENCY=b.dataset.t23cur;renderTournaments23()});
- $('#t23Sort').onclick=()=>{T23_SORT=T23_SORT==='new'?'old':'new';renderTournaments23()};
+ $$('[data-t23f]').forEach(b=>b.onclick=()=>{T23_FILTER=b.dataset.t23f;typeof renderTournaments23==='function'&&renderTournaments23()});
+ $$('[data-t23cur]').forEach(b=>b.onclick=()=>{T23_CURRENCY=b.dataset.t23cur;typeof renderTournaments23==='function'&&renderTournaments23()});
+ $('#t23Sort').onclick=()=>{T23_SORT=T23_SORT==='new'?'old':'new';typeof renderTournaments23==='function'&&renderTournaments23()};
  $$('[data-t23open]').forEach(b=>b.onclick=()=>openTournament23(b.dataset.t23open));
 }
 function tournamentFormHTML23(t={}){
@@ -2846,9 +2846,9 @@ function openTournamentForm23(id=null){
     buyin:Math.max(0,t23Num($('#t23Buyin').value)),entries:Math.max(1,Math.round(t23Num($('#t23Entries').value)||1)),
     bountyCount:Math.max(0,Math.round(t23Num($('#t23BCount').value))),bountyWon:Math.max(0,t23Num($('#t23Bounty').value)),prize:Math.max(0,t23Num($('#t23Prize').value)),
     place:Math.max(0,Math.round(t23Num($('#t23Place').value))),field:Math.max(0,Math.round(t23Num($('#t23Field').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};
-   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id));S.tournaments.push(rec);T23_CURRENCY=rec.currency;save();closeModal();renderTournaments23();
+   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id));S.tournaments.push(rec);T23_CURRENCY=rec.currency;save();closeModal();typeof renderTournaments23==='function'&&renderTournaments23();
   };
-  const del=$('#t23Delete');if(del)del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id));save();closeModal();renderTournaments23()};
+  const del=$('#t23Delete');if(del)del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id));save();closeModal();typeof renderTournaments23==='function'&&renderTournaments23()};
  },0);
 }
 function openTournament23(id){
@@ -3028,9 +3028,9 @@ openTournamentForm23=function(id=null){
     buyin:Math.max(0,t23Num($('#t23Buyin').value)),entries:Math.max(1,Math.round(t23Num($('#t23Entries').value)||1)),
     bountyCount:Math.max(0,Math.round(t23Num($('#t23BCount').value))),prize:Math.max(0,t23Num($('#t23Prize').value)),
     place:Math.max(0,Math.round(t23Num($('#t23Place').value))),field:Math.max(0,Math.round(t23Num($('#t23Field').value))),updatedAt:Date.now(),createdAt:old?.createdAt||Date.now()};
-   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id)); S.tournaments.push(rec); T23_CURRENCY=rec.currency; save(); closeModal(); renderTournaments23();
+   S.tournaments=t23List().filter(x=>String(x.id)!==String(rec.id)); S.tournaments.push(rec); T23_CURRENCY=rec.currency; save(); closeModal(); typeof renderTournaments23==='function'&&renderTournaments23();
   };
-  const del=$('#t23Delete'); if(del) del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id)); save(); closeModal(); renderTournaments23();};
+  const del=$('#t23Delete'); if(del) del.onclick=()=>{S.tournaments=t23List().filter(x=>String(x.id)!==String(old.id)); save(); closeModal(); typeof renderTournaments23==='function'&&renderTournaments23();};
  },20);
 }
 openTournament23=function(id){
@@ -3041,7 +3041,7 @@ openTournament23=function(id){
   <div class="t23DetailActions24"><button class="primary" id="t23Edit">РЕДАКТИРОВАТЬ →</button>${t.id?'<button class="t23EditGhost24" id="t23QuickDelete">УДАЛИТЬ</button>':''}</div></div>`);
  setTimeout(()=>{
    const eb=$('#t23Edit'); if(eb) eb.onclick=(e)=>{e.preventDefault(); closeModal(); setTimeout(()=>openTournamentForm23(id),80)};
-   const db=$('#t23QuickDelete'); if(db) db.onclick=(e)=>{e.preventDefault(); S.tournaments=t23List().filter(x=>String(x.id)!==String(id)); save(); closeModal(); renderTournaments23();};
+   const db=$('#t23QuickDelete'); if(db) db.onclick=(e)=>{e.preventDefault(); S.tournaments=t23List().filter(x=>String(x.id)!==String(id)); save(); closeModal(); typeof renderTournaments23==='function'&&renderTournaments23();};
  },40);
 }
 
@@ -3130,7 +3130,7 @@ function d25Finish(){
  <div class="d25Plan"><b>ЧТО БУДЕТ ДАЛЬШЕ</b><br>${d25Plan(p)}</div><div class="d25Foot">12 решений — это стартовый baseline, а не окончательный диагноз. После реальной дистанции стартовый тест постепенно перестаёт влиять на профиль. ICM здесь специально не оценивается: без полного payout/stack tree это была бы имитация точности.</div><button class="primary" id="d25Enter">ВОЙТИ В POKER SWIPE →</button></div>`;
  $('#d25Enter').onclick=()=>{$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');D25.active=false;window.renderHome?.()};
 }
-renderDiagnostic=function(){if(!D25.active)D25={active:true,index:0,results:[],started:performance.now(),pending:null,force:false};if(D25.index>=DIAG25.length){d25Finish();return}d25RenderSpot();}
+renderDiagnostic=function(){if(!D25.active)D25={active:true,index:0,results:[],started:performance.now(),pending:null,force:false};if(D25.index>=DIAG25.length){d25Finish();return}typeof d25RenderSpot==='function'&&d25RenderSpot();}
 
 /* Start-screen story now leads into the real assessment */
 const __renderStoryV25Base=renderStory;
@@ -3302,8 +3302,8 @@ setTimeout(()=>{
     if(typeof window.PokerBrain!=='object' || typeof window.PokerBrain.gradeDecision!=='function'){
       throw new Error('GTO Brain не загрузился.');
     }
-    ui();
-    renderStory();
+    typeof ui==='function'&&ui();
+    typeof renderStory==='function'&&renderStory();
     window.__pokerBooted=true;
   }catch(e){
     console.error('POKER SWIPE BOOT FAILED',e);
@@ -3429,12 +3429,12 @@ window.startQuickGame30=startQuickGame30;
 
 function reqSummary30(i,m){const c=checks30(rule30(i),m).filter(x=>!pass30(x)).slice(0,3);return c.map(x=>x[3]?`${x[0]} ${x[1]}% / ≤${x[2]}%`:`${x[0]} ${x[1]}/${x[2]}`).join(' · ')||'условия выполнены'}
 window.renderHome=function(){
- const h=document.getElementById('home');if(!h)return;const m=m30(),ri=rankIndex28(),r=RANKS28[ri],next=RANKS28[ri+1],np=next?rankPct30(ri+1,m):100,leak=typeof topLeak==='function'?topLeak():null,leakName=leak?conceptLabel(leak.concept):'ПОКА НЕТ ДОКАЗАННОГО ЛИКА',form=typeof formScore==='function'?formScore():50;
+ const h=document.getElementById('home');if(!h)return;const m=m30(),ri=window.rankIndex28?.(),r=window.RANKS28?.[ri],next=window.RANKS28?.[ri+1],np=next?rankPct30(ri+1,m):100,leak=typeof topLeak==='function'?topLeak():null,leakName=leak?conceptLabel(leak.concept):'ПОКА НЕТ ДОКАЗАННОГО ЛИКА',form=typeof formScore==='function'?formScore():50;
  h.innerHTML=`<div class="v30Home"><div class="v30Topline"><span class="ey">POKER SWIPE · V30</span><span class="sig">by <b>Фриковая Дама</b> 💋</span></div><div class="v30Hero"><div class="v30HeroHead"><img class="v30HeroAvatar" src="${r.img}"><div><span class="ey">${esc(S.nick||'ИГРОК')} · ТВОЙ РАНГ</span><h1>${r.name}</h1><div class="v30HeroStats"><span class="v30StatChip"><strong class="pink">${S.skill}</strong> SKILL</span><span class="v30StatChip"><strong>${form}</strong> ФОРМА</span><span class="v30StatChip"><strong>${m.sample}</strong> РЕШЕНИЙ</span></div></div></div><div class="v30Career"><div class="v30CareerTop"><div><span class="city">NEXT STOP · 🇧🇾 МИНСК</span><h2>HIGH ROLLER</h2><span class="mut small">Карьерная цель · допуск через подтверждённые навыки</span></div><b>${np}%</b></div><div class="v30Progress"><i style="width:${np}%"></i></div><div class="v30ReqLine">${next?`До <b>${next.name}</b>: ${reqSummary30(ri+1,m)}`:'Максимальный ранг открыт.'}</div><button class="primary v30Play" id="homePlay30">ПРОДОЛЖИТЬ КАРЬЕРУ →</button></div></div><div class="v30ActionGrid"><button class="v30Action main" id="homeSwipe30"><span class="ey">10 РУК · КОНТЕКСТНЫЕ СПОТЫ</span><b>POKER<br>SWIPE</b><small>Поле, стадия, стол, effective stack и профиль оппонента входят в задачу.</small><span class="go">→</span></button><button class="v30Action quick" id="homeQuick30"><span class="ey">⚡ НОВОЕ</span><b>3-MAX<br>HYPER</b><small>1500 фишек · уровни по 2 руки · два AI. Решения идут в твой Poker DNA.</small><span class="go">→</span></button></div><div class="v30Today"><button class="v30Mini" id="homeDaily30"><span class="ey">СЕГОДНЯ</span><b>РАЗДАЧА ДНЯ</b><span class="mut small">Один сложный контекстный спот.</span></button><button class="v30Mini" id="homeSizing30"><span class="ey">САЙЗИНГ</span><b>СКОЛЬКО, ГЕНИЙ?</b><span class="mut small">Размер + причина, а не угадайка.</span></button><button class="v30Mini" id="homeReview30"><span class="ey">РАЗБОР</span><b>ГДЕ СЛОМАЛОСЬ?</b><span class="mut small">Первая существенная ошибка линии.</span></button><button class="v30Mini" id="homeXray30"><span class="ey">ДИАПАЗОН</span><b>РЕНТГЕН</b><span class="mut small">Линия + профиль + борд.</span></button></div><div class="v30Leak"><span class="ey">ФРИКОВАЯ ДАМА НАШЛА КОСЯК</span><h2>${esc(leakName)}</h2><p>${leak?`${leak.r} ошибок на ${leak.n} решениях · score ${leak.score}. Не диагноз по одной руке — уже есть повторяемость.`:'Пока данных недостаточно. Не буду придумывать тебе лик ради красивой карточки.'}</p><button class="secondary" id="homeLeak30">${leak?'ПОКАЗАТЬ, ЧТО ЛЕЧИТЬ':'НАБРАТЬ ВЫБОРКУ'} →</button></div></div>`;
  document.getElementById('homePlay30').onclick=()=>{swSession=[];show('swipe')};document.getElementById('homeSwipe30').onclick=()=>{swSession=[];show('swipe')};document.getElementById('homeQuick30').onclick=startQuickGame30;document.getElementById('homeDaily30').onclick=()=>show('daily');document.getElementById('homeSizing30').onclick=()=>show('sizing');document.getElementById('homeReview30').onclick=()=>show('review');document.getElementById('homeXray30').onclick=()=>show('xray');document.getElementById('homeLeak30').onclick=()=>leak?show('profile'):show('swipe');document.body.classList.add('home-context');
 };
 
-const prevProfile30=window.renderProfile;window.renderProfile=function(){prevProfile30.apply(this,arguments);const root=document.getElementById('profileArea');if(!root)return;root.querySelectorAll('.rank30Progress').forEach(x=>x.remove());const m=m30(),ri=rankIndex28(),next=RANKS28[ri+1];root.querySelectorAll('.rank28Card').forEach((b,i)=>{const sm=b.querySelector('small');if(sm&&i>ri)sm.textContent='🔒 нажми: условия';});if(next){const box=document.createElement('div');box.className='rank30Progress';box.innerHTML=`<span class="ey">КАК ПОЛУЧИТЬ СЛЕДУЮЩИЙ РАНГ</span><h3>${next.name} · ${rankPct30(ri+1,m)}%</h3><div class="rank30Items">${checks30(rule30(ri+1),m).map(x=>`<div class="rank30Item"><span>${x[0]} · ${x[1]}${x[3]?'%':''}</span><strong class="${pass30(x)?'ok':'bad'}">${pass30(x)?'ГОТОВО ✓':x[3]?'НУЖНО ≤ '+x[2]+'%':'НУЖНО '+x[2]}</strong></div>`).join('')}</div><div class="rank30Next"><b>Следующий шаг:</b> ${nextTask30(ri+1,m)}</div>`;const hero=root.querySelector('.rank28Hero');if(hero)hero.insertAdjacentElement('afterend',box);else root.prepend(box)}enhanceVerdict30(root)};
+const prevProfile30=window.renderProfile;window.renderProfile=function(){prevProfile30.apply(this,arguments);const root=document.getElementById('profileArea');if(!root)return;root.querySelectorAll('.rank30Progress').forEach(x=>x.remove());const m=m30(),ri=window.rankIndex28?.(),next=window.RANKS28?.[ri+1];root.querySelectorAll('.rank28Card').forEach((b,i)=>{const sm=b.querySelector('small');if(sm&&i>ri)sm.textContent='🔒 нажми: условия';});if(next){const box=document.createElement('div');box.className='rank30Progress';box.innerHTML=`<span class="ey">КАК ПОЛУЧИТЬ СЛЕДУЮЩИЙ РАНГ</span><h3>${next.name} · ${rankPct30(ri+1,m)}%</h3><div class="rank30Items">${checks30(rule30(ri+1),m).map(x=>`<div class="rank30Item"><span>${x[0]} · ${x[1]}${x[3]?'%':''}</span><strong class="${pass30(x)?'ok':'bad'}">${pass30(x)?'ГОТОВО ✓':x[3]?'НУЖНО ≤ '+x[2]+'%':'НУЖНО '+x[2]}</strong></div>`).join('')}</div><div class="rank30Next"><b>Следующий шаг:</b> ${nextTask30(ri+1,m)}</div>`;const hero=root.querySelector('.rank28Hero');if(hero)hero.insertAdjacentElement('afterend',box);else root.prepend(box)}enhanceVerdict30(root)};
 
 // Ensure the new screen exists before self-navigation is used.
 ensureQG30();
