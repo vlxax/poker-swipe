@@ -4,9 +4,12 @@
  *
  * Key invariant: If context and action are identical, the grade should be identical
  * regardless of whether it comes from SWIPE, SIZING, QUICK, or other modes.
+ *
+ * Runner: node:test (project canonical). Previously imported @jest/globals.
  */
 
-import { describe, test, expect } from '@jest/globals';
+import { describe, test } from 'node:test';
+import assert from 'node:assert/strict';
 import {
   gradeSwipeSizing,
   gradeSwipeDecision,
@@ -15,8 +18,10 @@ import {
 } from '../src/api/modeAdapters.js';
 import { gradeDecision, gradeToClass } from '../src/api/unifiedGrading.js';
 
+void gradeDailyDrill;
+void gradeDecision;
+
 describe('Unified Grading - Regression Tests', () => {
-  // Test scenario: BTN 25BB, facing BB 25BB, AK on 3-2-5r, hero checks turn
   const baseScenario = {
     id: 'TEST_REGRESSION_001',
     spotId: 'TEST_REGRESSION_001',
@@ -38,28 +43,22 @@ describe('Unified Grading - Regression Tests', () => {
 
   const testAction = 'CALL';
   const testSizePct = null;
+  const VALID_GRADES = ['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE'];
 
   test('SWIPE and SIZING should assign same grade for identical context', () => {
-    // Grade via SWIPE mode adapter
     const swipeResult = gradeSwipeDecision({
       scenario: baseScenario,
       action: testAction
     });
-
-    // Grade via SIZING mode adapter
     const sizingResult = gradeSwipeSizing({
       spot: baseScenario,
       action: testAction,
       sizePct: testSizePct
     });
-
-    // Verify grades are identical
-    expect(swipeResult.grade).toBe(sizingResult.grade);
-    expect(swipeResult.gradeClass).toBe(sizingResult.gradeClass);
-    expect(swipeResult.source).toBe(sizingResult.source);
-
-    // Both should have legacy source (hardcoded brain)
-    expect(swipeResult.source).toMatch(/legacy|unknown/);
+    assert.equal(swipeResult.grade, sizingResult.grade);
+    assert.equal(swipeResult.gradeClass, sizingResult.gradeClass);
+    assert.equal(swipeResult.source, sizingResult.source);
+    assert.match(String(swipeResult.source), /legacy|unknown/);
   });
 
   test('QUICK mode should match SWIPE for same context', () => {
@@ -67,14 +66,12 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: testAction
     });
-
     const quickResult = gradeQuickDecision({
       scenario: baseScenario,
       action: testAction
     });
-
-    expect(quickResult.grade).toBe(swipeResult.grade);
-    expect(quickResult.gradeClass).toBe(swipeResult.gradeClass);
+    assert.equal(quickResult.grade, swipeResult.grade);
+    assert.equal(quickResult.gradeClass, swipeResult.gradeClass);
   });
 
   test('Grade consistency: calling same function twice should give same result', () => {
@@ -82,16 +79,14 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: testAction
     });
-
     const result2 = gradeSwipeDecision({
       scenario: baseScenario,
       action: testAction
     });
-
-    expect(result1.grade).toBe(result2.grade);
-    expect(result1.gradeClass).toBe(result2.gradeClass);
-    expect(result1.evLossBB).toBe(result2.evLossBB);
-    expect(result1.source).toBe(result2.source);
+    assert.equal(result1.grade, result2.grade);
+    assert.equal(result1.gradeClass, result2.gradeClass);
+    assert.equal(result1.evLossBB, result2.evLossBB);
+    assert.equal(result1.source, result2.source);
   });
 
   test('Different actions on same scenario should possibly differ', () => {
@@ -99,26 +94,21 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: 'CHECK'
     });
-
     const callResult = gradeSwipeDecision({
       scenario: baseScenario,
       action: 'CALL'
     });
-
-    // CHECK and CALL may have different grades (expected)
-    // This test just verifies both produce valid results
-    expect(checkResult.grade).toBeDefined();
-    expect(callResult.grade).toBeDefined();
-    expect(['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE']).toContain(checkResult.grade);
-    expect(['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE']).toContain(callResult.grade);
+    assert.ok(checkResult.grade);
+    assert.ok(callResult.grade);
+    assert.ok(VALID_GRADES.includes(checkResult.grade));
+    assert.ok(VALID_GRADES.includes(callResult.grade));
   });
 
   test('Grade class mapping should be consistent', () => {
     const testGrades = ['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE'];
     const expectedClasses = ['g', 'g', 'y', 'r', 'r'];
-
-    const results = testGrades.map(grade => gradeToClass(grade));
-    expect(results).toEqual(expectedClasses);
+    const results = testGrades.map((grade) => gradeToClass(grade));
+    assert.deepEqual(results, expectedClasses);
   });
 
   test('Sizing with specific size should grade action + sizing', () => {
@@ -126,28 +116,20 @@ describe('Unified Grading - Regression Tests', () => {
       ...baseScenario,
       street: 'flop'
     };
-
     const halfPotResult = gradeSwipeSizing({
       spot: bettingScenario,
       action: 'BET',
       sizePct: 50
     });
-
     const fullPotResult = gradeSwipeSizing({
       spot: bettingScenario,
       action: 'BET',
       sizePct: 100
     });
-
-    // Both should have valid grades
-    expect(halfPotResult.grade).toBeDefined();
-    expect(fullPotResult.grade).toBeDefined();
-
-    // May differ due to sizing evaluation
-    // Just verify both are in valid set
-    const validGrades = ['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE'];
-    expect(validGrades).toContain(halfPotResult.grade);
-    expect(validGrades).toContain(fullPotResult.grade);
+    assert.ok(halfPotResult.grade);
+    assert.ok(fullPotResult.grade);
+    assert.ok(VALID_GRADES.includes(halfPotResult.grade));
+    assert.ok(VALID_GRADES.includes(fullPotResult.grade));
   });
 
   test('Result should have all required unified fields', () => {
@@ -155,24 +137,16 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: testAction
     });
-
-    // Verify unified interface
-    expect(result).toHaveProperty('grade');
-    expect(result).toHaveProperty('gradeClass');
-    expect(result).toHaveProperty('evLossBB');
-    expect(result).toHaveProperty('source');
-    expect(result).toHaveProperty('confidence');
-    expect(result).toHaveProperty('metadata');
-    expect(result).toHaveProperty('explanationData');
-
-    // Verify types
-    expect(typeof result.grade).toBe('string');
-    expect(typeof result.gradeClass).toBe('string');
-    expect(result.evLossBB === null || typeof result.evLossBB === 'number').toBe(true);
-    expect(typeof result.source).toBe('string');
-    expect(typeof result.confidence).toBe('number');
-    expect(typeof result.metadata).toBe('object');
-    expect(typeof result.explanationData).toBe('object');
+    for (const key of ['grade', 'gradeClass', 'evLossBB', 'source', 'confidence', 'metadata', 'explanationData']) {
+      assert.ok(Object.prototype.hasOwnProperty.call(result, key), `missing ${key}`);
+    }
+    assert.equal(typeof result.grade, 'string');
+    assert.equal(typeof result.gradeClass, 'string');
+    assert.ok(result.evLossBB === null || typeof result.evLossBB === 'number');
+    assert.equal(typeof result.source, 'string');
+    assert.equal(typeof result.confidence, 'number');
+    assert.equal(typeof result.metadata, 'object');
+    assert.equal(typeof result.explanationData, 'object');
   });
 
   test('Legacy brain results should have null evLossBB', () => {
@@ -180,10 +154,8 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: testAction
     });
-
-    // Legacy brain doesn't calculate actual EV
-    expect(result.evLossBB).toBeNull();
-    expect(result.source).toMatch(/legacy/);
+    assert.equal(result.evLossBB, null);
+    assert.match(String(result.source), /legacy/);
   });
 
   test('Confidence should reflect data source', () => {
@@ -191,11 +163,9 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: testAction
     });
-
-    // Legacy brain has low/fixed confidence
-    if (result.source.includes('legacy')) {
-      expect(result.confidence).toBeLessThanOrEqual(100);
-      expect(result.confidence).toBeGreaterThanOrEqual(0);
+    if (String(result.source).includes('legacy')) {
+      assert.ok(result.confidence <= 100);
+      assert.ok(result.confidence >= 0);
     }
   });
 
@@ -204,44 +174,35 @@ describe('Unified Grading - Regression Tests', () => {
       scenario: baseScenario,
       action: 'CALL'
     }).grade;
-
     const sizingGrade = gradeSwipeSizing({
       spot: baseScenario,
       action: 'CALL',
       sizePct: null
     }).grade;
-
     const quickGrade = gradeQuickDecision({
       scenario: baseScenario,
       action: 'CALL'
     }).grade;
-
-    // All three should agree
-    expect(swipeGrade).toBe(sizingGrade);
-    expect(sizingGrade).toBe(quickGrade);
+    assert.equal(swipeGrade, sizingGrade);
+    assert.equal(sizingGrade, quickGrade);
   });
 
   test('Error handling: missing required fields should return graceful result', () => {
     const result = gradeSwipeDecision({
-      scenario: {}  // Empty scenario
-      // Missing action
+      scenario: {}
     });
-
-    expect(result.grade).toBeDefined();
-    expect(['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE']).toContain(result.grade);
-    // Should not throw, should return fallback
+    assert.ok(result.grade);
+    assert.ok(VALID_GRADES.includes(result.grade));
   });
 
   test('Grade order should match visual hierarchy', () => {
     const gradeOrder = ['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE'];
-    const classOrder = gradeOrder.map(g => gradeToClass(g));
-
-    // g (good) before y (yellow) before r (red)
-    expect(classOrder[0]).toBe('g');
-    expect(classOrder[1]).toBe('g');
-    expect(classOrder[2]).toBe('y');
-    expect(classOrder[3]).toBe('r');
-    expect(classOrder[4]).toBe('r');
+    const classOrder = gradeOrder.map((g) => gradeToClass(g));
+    assert.equal(classOrder[0], 'g');
+    assert.equal(classOrder[1], 'g');
+    assert.equal(classOrder[2], 'y');
+    assert.equal(classOrder[3], 'r');
+    assert.equal(classOrder[4], 'r');
   });
 });
 
@@ -260,16 +221,13 @@ describe('Unified Grading - Mode Adapter Consistency', () => {
       pot: 10,
       ctx: 'facing 25% bet'
     };
-
     const result = gradeSwipeSizing({
       spot: compactSpot,
       action: 'CALL',
       sizePct: null
     });
-
-    // Should produce valid result without errors
-    expect(result).toHaveProperty('grade');
-    expect(result).toHaveProperty('gradeClass');
+    assert.ok(Object.prototype.hasOwnProperty.call(result, 'grade'));
+    assert.ok(Object.prototype.hasOwnProperty.call(result, 'gradeClass'));
   });
 
   test('All adapters should return unified format', () => {
@@ -283,21 +241,16 @@ describe('Unified Grading - Mode Adapter Consistency', () => {
       pot: 6,
       pos: 'BTN'
     };
-
     const modes = [
       () => gradeSwipeDecision({ scenario, action: 'BET' }),
       () => gradeSwipeSizing({ spot: scenario, action: 'BET', sizePct: 50 }),
       () => gradeQuickDecision({ scenario, action: 'BET' })
     ];
-
-    modes.forEach(modeFunc => {
+    for (const modeFunc of modes) {
       const result = modeFunc();
-      expect(result).toHaveProperty('grade');
-      expect(result).toHaveProperty('gradeClass');
-      expect(result).toHaveProperty('source');
-      expect(result).toHaveProperty('confidence');
-      expect(result).toHaveProperty('metadata');
-      expect(result).toHaveProperty('explanationData');
-    });
+      for (const key of ['grade', 'gradeClass', 'source', 'confidence', 'metadata', 'explanationData']) {
+        assert.ok(Object.prototype.hasOwnProperty.call(result, key), `missing ${key}`);
+      }
+    }
   });
 });

@@ -5,15 +5,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { listTrainerGradableCells } from '../trainerNativeGenerator.js';
+import { listTrainerGradableCells, countCanonicalTrainerCallCells } from '../trainerNativeGenerator.js';
 import { getTrainerMeta } from '../lookup.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const OUT = path.join(ROOT, 'data/trainer/built/trainer-candidate-index.json');
 
-const { candidates, actionCounts, modeCounts, totalCharts, chartsScanned } = listTrainerGradableCells({
-  maxCharts: 400,
-  maxPerChart: 12
+const canonical = countCanonicalTrainerCallCells();
+const {
+  candidates,
+  actionCounts,
+  modeCounts,
+  totalCharts,
+  chartsScanned,
+  invalidCandidates,
+  disabledCandidates,
+  callChartsInIndex
+} = listTrainerGradableCells({
+  maxCharts: Infinity,
+  maxPerChart: 8,
+  reserveCall: 2
 });
 
 const slim = candidates.map((t) => ({
@@ -40,6 +51,10 @@ const report = {
   candidateCount: slim.length,
   actionCounts,
   modeCounts,
+  invalidCandidates,
+  disabledCandidates,
+  callChartsInIndex,
+  canonicalCall: canonical,
   meta: getTrainerMeta()?.stats || null,
   candidates: slim
 };
@@ -49,5 +64,11 @@ console.log(JSON.stringify({
   path: OUT,
   candidateCount: slim.length,
   actionCounts,
-  modeCounts
+  modeCounts,
+  chartsScanned,
+  totalCharts,
+  invalidCandidates,
+  disabledCandidates,
+  callChartsInIndex,
+  canonicalCall: canonical
 }, null, 2));

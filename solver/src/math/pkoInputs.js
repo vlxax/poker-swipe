@@ -26,7 +26,7 @@ export function validatePkoInputs({
     missing,
     bountyPresent,
     missingBountyTreatedAsZero: false,
-    strategySource: ok ? STRATEGY_SOURCE.HEURISTIC : STRATEGY_SOURCE.HEURISTIC,
+    strategySource: ok ? STRATEGY_SOURCE.HEURISTIC : 'INCOMPLETE_INPUT',
     canClaimPkoSolver: false,
     note: ok
       ? 'PKO overlay uses bounty economics + tournament inputs. Not a full PKO solver.'

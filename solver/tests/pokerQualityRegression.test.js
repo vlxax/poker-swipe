@@ -9,6 +9,7 @@ import {
   MEANINGFUL_STACK_BUCKETS
 } from '../src/preflop/stackAwarePolicy.js';
 import { STRATEGY_SOURCE, mapLegacySource, isForbiddenGtoClaim } from '../src/analysis/strategySource.js';
+import { fromPolyanaEvent, attachToTrip, unknownToNull } from '../src/tournaments/canonicalTournament.js';
 import { gradeSizing, sizeFamily } from '../src/analysis/sizingGrade.js';
 import { validateIcmInputs, assertIcmRunnable } from '../src/math/icmInputs.js';
 import { validatePkoInputs } from '../src/math/pkoInputs.js';
@@ -290,6 +291,55 @@ test('data integrity: disabled invalid variants have explicit reasons; library C
   assert.equal(posErr.length, 0, JSON.stringify(posErr));
 });
 
+test('heuristic stacks 5-15 and 75-100 are not solver-verified', () => {
+  for (const stack of [5, 7, 10, 12, 15, 75, 100]) {
+    const r = lookupStackAwarePreflop(atlasStub(), { spot: 'RFI', pos: 'UTG', stack, hand: 'A9s' });
+    assert.equal(r.strategySource, STRATEGY_SOURCE.HEURISTIC, String(stack));
+    assert.equal(isForbiddenGtoClaim(r.note), false);
+    assert.equal(/SOLVER_VERIFIED|GTO|SOLVER/.test(r.strategySource), false);
+  }
+  const mid = lookupStackAwarePreflop(atlasStub(), { spot: 'RFI', pos: 'UTG', stack: 20, hand: 'A9s' });
+  assert.equal(mid.strategySource, STRATEGY_SOURCE.CURATED_REFERENCE);
+});
+
+test('ICM labels are educational or incomplete, never solver ICM', () => {
+  const good = validateIcmInputs({
+    stacks: [40, 30, 20],
+    payouts: [50, 30, 20],
+    playersRemaining: 3
+  });
+  assert.equal(good.strategySource, STRATEGY_SOURCE.ICM_EDUCATIONAL_MODEL);
+  assert.equal(isForbiddenGtoClaim('GTO ICM'), true);
+  assert.equal(isForbiddenGtoClaim('Solver ICM'), true);
+  assert.equal(isForbiddenGtoClaim('Exact ICM solution'), true);
+  const bad = validateIcmInputs({});
+  assert.equal(bad.ok, false);
+});
+
+test('PKO incomplete bounty is INCOMPLETE_INPUT not zero', () => {
+  const miss = validatePkoInputs({ effectiveStack: 25, remainingPlayers: 18 });
+  assert.equal(miss.strategySource, 'INCOMPLETE_INPUT');
+  assert.ok(miss.missing.includes('hero_bounty'));
+  assert.equal(miss.canClaimPkoSolver, false);
+});
+
+test('exploit 5-hand sample is not a strong exploit', () => {
+  const tiny = exploitRecommendation({ sampleHands: 5, archetype: 'STATION' });
+  assert.equal(tiny.allowStrongExploit, false);
+  assert.equal(tiny.adjustment, 'baseline');
+  const mid = exploitRecommendation({ sampleHands: 40, archetype: 'STATION' });
+  const large = exploitRecommendation({ sampleHands: 120, archetype: 'STATION' });
+  assert.ok(mid.strength > tiny.strength);
+  assert.ok(large.strength >= mid.strength);
+});
+
+test('river explanation never invents villain combo counts', () => {
+  const r = riverBluffCatchReport({ potBB: 12, betBB: 8, blockerNotes: ['Hero blocks nut flush'] });
+  assert.equal(r.bluffCombos, null);
+  assert.equal(/Villain has \d+ bluff combos/i.test(r.explanation), false);
+  assert.match(r.explanation, /not invented/i);
+});
+
 test('illegal / malformed context rejected by integrity audit', () => {
   const bad = auditCanonicalSpot({
     id: 'X_BAD',
@@ -302,4 +352,33 @@ test('illegal / malformed context rejected by integrity audit', () => {
     history: []
   }, { mode: 'swipe' });
   assert.equal(bad.ok, false);
+});
+
+test('Polyana canonical tournament id is preserved; null stays null', () => {
+  const event = {
+    id: '7c129757',
+    date: '2026-09-13',
+    time: '19:00',
+    club: 'A2',
+    tournament: 'Классика PATRON CLASSIC',
+    game: null,
+    format: null,
+    fee_rub: 0,
+    reentry_limit: null,
+    addon_allowed: null,
+    bounty_type: null,
+    late_reg_minutes: null,
+    level_minutes: null,
+    address: 'Венёвская улица, 2А'
+  };
+  const rec = fromPolyanaEvent(event);
+  assert.equal(rec.id, '7c129757');
+  assert.equal(rec.polyanaId, '7c129757');
+  assert.equal(rec.game, null);
+  assert.equal(rec.reentryLimit, null);
+  assert.equal(rec.addon, null);
+  assert.equal(rec.bounty, null);
+  assert.equal(unknownToNull(null), null);
+  const trip = attachToTrip({ city: 'Москва' }, rec);
+  assert.deepEqual(trip.tournamentIds, ['7c129757']);
 });

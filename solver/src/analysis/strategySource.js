@@ -21,10 +21,18 @@ export const USER_SOURCE_LABEL = {
   ICM_EDUCATIONAL_MODEL: 'ICM educational model'
 };
 
-const GTO_CLAIM_RE = /\b(gto\s+solver(\s+result)?|exact\s+gto|solver\s+output|nash\s+equilibrium\s+export)\b/i;
+const GTO_CLAIM_RE = /\b(gto(\s+icm)?|solver\s+icm|exact\s+icm(\s+solution)?|gto\s+solver(\s+result)?|exact\s+gto|solver\s+output|nash\s+equilibrium\s+export|solver_verified)\b/i;
 
 export function isForbiddenGtoClaim(text = '') {
   return GTO_CLAIM_RE.test(String(text));
+}
+
+export function isHonestIcmLabel(source = '') {
+  const s = String(source || '');
+  if (/\b(gto\s+icm|solver\s+icm|exact\s+icm)\b/i.test(s)) return false;
+  return s === STRATEGY_SOURCE.ICM_EDUCATIONAL_MODEL
+    || s === STRATEGY_SOURCE.TOURNAMENT_HEURISTIC
+    || /educational|incomplete|heuristic/i.test(s);
 }
 
 export function mapLegacySource(legacy = {}, { cfrConverged = false } = {}) {

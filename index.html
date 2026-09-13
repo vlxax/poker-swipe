@@ -4588,7 +4588,10 @@ function chooseBudget(){
  setTimeout(()=>{document.getElementById('v58BudgetSave').onclick=()=>{DRAFT.budget=document.getElementById('v58BudgetInput').value;DRAFT.hotel=document.getElementById('v58Hotel').value;DRAFT.transport=document.getElementById('v58Transport').value;closeModal();renderTrips58()}},0);
 }
 function buildTrip(){
- const trips=loadTrips();trips.push({...DRAFT});saveTrips(trips);renderTrips58();
+ const trips=loadTrips();
+ const tournamentIds=(window.S?.tournaments||[]).map(t=>t.polyanaId||t.id).filter(Boolean);
+ trips.push({...DRAFT, tournamentIds});
+ saveTrips(trips);renderTrips58();
 }
 function bindTrips(){
  document.getElementById('v58City')?.addEventListener('click',chooseCity);
@@ -5192,6 +5195,7 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="my-tournaments-pro.js" data-my-tournaments-pro="1"></script>
 <link rel="stylesheet" href="poker-glossy-ui.css" data-glossy-ui="1">
 
+<script type="module" src="solver/src/tournaments/canonicalTournament.js"></script>
 <script src="polyana/polyana-integrated.js"></script>
 
 <script>

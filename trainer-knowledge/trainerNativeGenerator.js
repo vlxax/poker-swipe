@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 
 import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { buildTrainerQueryFromCanonical } from './canonicalTrainerQuery.js';
-import { listCharts, lookupTrainerHandAction } from './lookup.js';
+import { listCharts, lookupTrainerHandAction, getTrainerChartHands } from './lookup.js';
 import { canGradeWithTrainerAction } from './status.js';
+import { applySemanticsToCell, chartHasAiAction } from './semanticLegend.js';
 import { trainerActionToLibraryChoice } from './adapters/taskAdapter.js';
 import { legalPreflopUserOptions } from './legalPreflopUserOptions.js';
 
@@ -229,7 +230,7 @@ export function buildTrainerNativeTask({ chart, hand, handRec, lookup }) {
   const built = buildTrainerQueryFromCanonical(canonical, hand);
   if (!built.complete) return null;
 
-  const verify = lookupTrainerHandAction({ ...built.query, hand });
+  const verify = lookupTrainerHandAction({ ...built.query, hand, chartId: chart.id });
   if (verify.status !== 'EXACT_TRAINER_MATCH' || !verify.gradingAllowed) return null;
   if (verify.action !== handRec.actionRaw) return null;
 
@@ -237,60 +238,123 @@ export function buildTrainerNativeTask({ chart, hand, handRec, lookup }) {
   return task;
 }
 
-export function listTrainerGradableCells({ maxCharts = 200, maxPerChart = 8 } = {}) {
+export function countCanonicalTrainerCallCells() {
+  const builtCharts = listCharts();
+  let callCells = 0;
+  let callCharts = 0;
+  const invalid = { missingContext: 0, mixedBlocked: 0 };
+  for (const chart of builtCharts) {
+    const packed = getTrainerChartHands(chart.id);
+    if (!packed?.hands) continue;
+    const hasAI = chartHasAiAction(packed);
+    let chartCall = 0;
+    for (const cell of Object.values(packed.hands)) {
+      const sem = applySemanticsToCell(cell, chart.legendScheme || null, {
+        sourceMode: chart.sourceMode,
+        chartHasAI: hasAI
+      });
+      if (sem.isMixed && (sem.normalizedAction === 'CALL' || cell.actionRaw === 'nAI')) invalid.mixedBlocked++;
+      const callLike = !sem.isMixed && sem.gradingAllowed && (
+        sem.normalizedAction === 'CALL' || sem.contextualAction === 'NON_ALL_IN_CALL'
+      );
+      if (callLike) {
+        callCells++;
+        chartCall++;
+      }
+    }
+    if (chartCall) callCharts++;
+  }
+  return {
+    totalCharts: builtCharts.length,
+    callCharts,
+    callCells,
+    invalid
+  };
+}
+
+export function listTrainerGradableCells({ maxCharts = Infinity, maxPerChart = 8, reserveCall = 2 } = {}) {
   const builtCharts = listCharts();
   const candidates = [];
   const actionCounts = { FOLD: 0, CALL: 0, RAISE: 0, 'ALL-IN': 0, OTHER: 0 };
   const modeCounts = {};
   let chartsScanned = 0;
+  let invalidCandidates = 0;
+  let disabledCandidates = 0;
+  const callChartIds = new Set();
 
-  const sorted = [...builtCharts].sort((a, b) =>
-    (b.parseStats?.gradingAllowedCells || 0) - (a.parseStats?.gradingAllowedCells || 0)
-  );
+  const sorted = [...builtCharts].sort((a, b) => {
+    const ac = a.sourceMode === 'callpush' ? 1 : 0;
+    const bc = b.sourceMode === 'callpush' ? 1 : 0;
+    if (bc !== ac) return bc - ac;
+    return (b.parseStats?.gradingAllowedCells || 0) - (a.parseStats?.gradingAllowedCells || 0);
+  });
 
   for (const chart of sorted) {
     if (chartsScanned >= maxCharts) break;
-    const gradingCells = chart.parseStats?.gradingAllowedCells || 0;
-    if (gradingCells <= 0) continue;
     chartsScanned++;
 
     let hands = [];
     if (chart.sourceGroup === 'UO' || chart.sourceMode === 'uo') {
-      hands = loadUoHandsForChart(chart.id).filter((h) => h.gradingAllowed);
+      hands = loadUoHandsForChart(chart.id).filter((h) => h.gradingAllowed || h.normalizedAction === 'CALL');
     } else {
-      const raw = loadChartHands(chart.id);
-      if (raw) {
-        hands = Object.entries(raw)
-          .filter(([, cell]) => {
-            const naiCall = cell.a === 'nAI' && chart.sourceMode === 'callpush';
-            const orangeCall = cell.a === 'ORANGE_208_160_32' && (chart.legendScheme === 'UO_STYLE' || chart.sourceMode === 'uo');
-            return (cell.g === 1 || naiCall || orangeCall) && cell.m !== 1;
-          })
-          .map(([hand, cell]) => {
-            const naiCall = cell.a === 'nAI' && chart.sourceMode === 'callpush';
-            const orangeCall = cell.a === 'ORANGE_208_160_32';
-            return {
-              hand,
-              actionRaw: cell.a,
-              normalizedAction: cell.a === 'UNSELECTED' ? 'FOLD'
-                : (naiCall || orangeCall) ? 'CALL'
-                  : cell.a,
-              contextualAction: naiCall ? 'NON_ALL_IN_CALL' : null,
-              gradingAllowed: true,
-              isMixed: false,
-              provenance: chart.provenance
-            };
+      const packed = getTrainerChartHands(chart.id);
+      if (packed?.hands) {
+        const hasAI = chartHasAiAction(packed);
+        hands = Object.entries(packed.hands).map(([hand, cell]) => {
+          const sem = applySemanticsToCell(cell, chart.legendScheme || null, {
+            sourceMode: chart.sourceMode,
+            chartHasAI: hasAI
           });
+          return {
+            hand,
+            actionRaw: sem.actionRaw ?? cell.actionRaw,
+            normalizedAction: sem.normalizedAction
+              || (cell.actionRaw === 'UNSELECTED' ? 'FOLD' : cell.actionRaw),
+            contextualAction: sem.contextualAction || null,
+            gradingAllowed: Boolean(sem.gradingAllowed),
+            isMixed: Boolean(sem.isMixed),
+            provenance: sem.provenance || chart.provenance
+          };
+        }).filter((h) => {
+          if (h.isMixed) {
+            disabledCandidates++;
+            return false;
+          }
+          const callLike = h.normalizedAction === 'CALL' || h.contextualAction === 'NON_ALL_IN_CALL';
+          if (!h.gradingAllowed && !callLike) return false;
+          if (!canGradeWithTrainerAction(h.actionRaw, h.normalizedAction, h.contextualAction) && !callLike) {
+            return false;
+          }
+          return true;
+        });
       }
     }
 
+    hands.sort((a, b) => {
+      const ac = a.normalizedAction === 'CALL' ? 1 : 0;
+      const bc = b.normalizedAction === 'CALL' ? 1 : 0;
+      return bc - ac;
+    });
+
     let added = 0;
+    let addedCall = 0;
     for (const handRec of hands) {
       if (added >= maxPerChart) break;
+      const isCall = handRec.normalizedAction === 'CALL' || handRec.contextualAction === 'NON_ALL_IN_CALL';
+      if (!isCall && addedCall < reserveCall && added >= maxPerChart - (reserveCall - addedCall)) {
+        continue;
+      }
       const task = buildTrainerNativeTask({ chart, hand: handRec.hand, handRec, lookup: null });
-      if (!task) continue;
+      if (!task) {
+        invalidCandidates++;
+        continue;
+      }
       candidates.push(task);
       added++;
+      if (task.trainerMeta.normalizedAction === 'CALL') {
+        addedCall++;
+        callChartIds.add(chart.id);
+      }
       modeCounts[chart.sourceMode] = (modeCounts[chart.sourceMode] || 0) + 1;
       const act = task.trainerMeta.normalizedAction;
       if (act === 'FOLD') actionCounts.FOLD++;
@@ -301,5 +365,14 @@ export function listTrainerGradableCells({ maxCharts = 200, maxPerChart = 8 } = 
     }
   }
 
-  return { candidates, actionCounts, modeCounts, totalCharts: builtCharts.length, chartsScanned };
+  return {
+    candidates,
+    actionCounts,
+    modeCounts,
+    totalCharts: builtCharts.length,
+    chartsScanned,
+    invalidCandidates,
+    disabledCandidates,
+    callChartsInIndex: callChartIds.size
+  };
 }
