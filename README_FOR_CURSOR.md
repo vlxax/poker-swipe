@@ -151,9 +151,9 @@ POKER ENGINE (solver-core/)          SOLVER / CFR (solver/src/cfr/)
 
 ## 5b. Grading paths (dual brain)
 
-See **[docs/GRADING_PATHS.md](../docs/GRADING_PATHS.md)**. Daily uses `gradeAnswer` + library EV; swipe uses PokerBrain via gateway. Same task id can disagree across modes — not silently unified.
+See **[docs/GRADING_PATHS.md](../docs/GRADING_PATHS.md)**. Daily uses `gradeAnswer` + library EV. Swipe on **library** spots (`libraryTaskToBrainSpot` + `_drill`) routes through the same `gradeAnswer` in `gradingGateway.js`; non-library swipe still uses PokerBrain policy.
 
-Regression: `solver/tests/gradingPathConsistency.test.js` (daily gateway ≡ `gradeAnswer`).
+Regressions: `gradingPathConsistency.test.js` (daily gateway ≡ `gradeAnswer`); `gradingConsistency.test.js` + `gradingConsistency.report.json` (daily vs swipe gateway per option).
 
 ---
 

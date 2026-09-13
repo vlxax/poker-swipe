@@ -1,5 +1,35 @@
 # Grading paths map (factual)
 
+## End-to-end flow (task → feedback)
+
+```
+task-context/library.js (authoring: correct, alsoOk, options, explain)
+        │
+        ├──────────────────────────────┬─────────────────────────────┐
+        ▼                              ▼                             ▼
+ drillFromLibraryTask          libraryTaskToBrainSpot          buildCanonicalSpot
+ (libraryDrill.js)             (swipe / brain HUD payload)      (HUD identity only)
+        │                              │
+        ▼                              │
+ gradeAnswer ◄─── gradingGateway mode: daily
+ (answerEvaluator.js)                  │
+        │                              │
+        │         gradingGateway mode: swipe|sizing|quick
+        │              │               │
+        │              ├─ spot._library + spot._drill → gradeAnswer (same EV tiers)
+        │              └─ else → modeAdapters → unifiedGrading → PokerBrain
+        ▼                              ▼
+ taskFeedback.js / renderer      legacy g/y/r + unified verdict
+```
+
+| Stage | Daily | Swipe (library task) | Swipe (non-library) |
+|--------|--------|----------------------|----------------------|
+| **Source of truth** | `correct` / `alsoOk` + fixed option EVs | Same when `_library` (gateway adapter) | `POKER_BRAIN_PACK` atlases + exact nodes |
+| **Action vocabulary** | Russian labels → `choiceToActionType` | Swipe sends EN (`FOLD`/`CALL`/…) mapped to drill option id | `normAction` in `poker_brain.js` |
+| **Frequencies** | `recommendedFrequency: 1` (pure quiz) | N/A on library path | `node.actions` freqs → `gradeFromFreq` |
+| **Fallback** | `INACCURACY` if EV missing | Library path: same as daily; else `NO_MODEL` → poor grade | Postflop atlas / preflop lookup |
+| **Unsupported** | Schema validation in planner | Brain without `_drill`: policy may disagree with library | `source: NO_MODEL` |
+
 ## Daily personalized training
 
 ```
@@ -9,29 +39,36 @@ training-ui/main.js → SessionController.answer()
   → libraryDrill synthetic EV tiers (NOT CFR, NOT PokerBrain)
 ```
 
-**Truth source:** `task-context/library.js` `correct` / `alsoOk` + `libraryDrill.js` option EVs.
-
-## Swipe / sizing / quick (legacy + game shell)
+## Swipe / sizing / quick
 
 ```
-[data-sa] click / swipe-gesture → finalizeSwipe / sizing handlers
-  → gradingGateway modes swipe|sizing|quick
-  → solver/src/api/modeAdapters.js → unifiedGrading.js
-  → PokerBrain / frequency tables (poker_brain*.js)
+gesture / UI → gradingGateway.gradeDecision({ mode: 'swipe', scenario, action })
+  → if scenario._library && scenario._drill → gradeAnswer (library truth)
+  → else modeAdapters → unifiedGrading.gradeViaLegacy → PokerBrain.gradeDecision
 ```
 
-**Truth source:** `POKER_BRAIN_PACK` / policy tables — separate from library.
+**Non-library truth:** `strategy_pack_v17.js` / `POKER_BRAIN_PACK` — independent of library `correct`.
 
-## Canonical spot (display / context only)
+## Canonical identity
 
-`task-context/canonicalSpot.js` normalizes hero/villain/pot/history for HUD.  
-It does **not** replace grading truth for daily drills.
+- **Task id:** `task.id` (e.g. `PRE_RFI_BTN_A8S`)
+- **Drill id:** `stableHash('lib|{taskId}|{concept}')` in `libraryDrill.js`
+- **Canonical spot:** `buildCanonicalSpot(task)` — display / integrity; not grading truth
 
-## Architectural gap
+## Regression & audit
 
-The same **task id** shown in swipe (via `libraryTaskToSwipe`) can be graded differently than in daily (`gradeAnswer`) because backends differ.  
-Regression: `solver/tests/gradingPathConsistency.test.js` locks **daily gateway ≡ gradeAnswer** only.
+| Test | Locks |
+|------|--------|
+| `gradingPathConsistency.test.js` | daily gateway ≡ `gradeAnswer` |
+| `gradingConsistency.test.js` | library spots: daily ≡ swipe gateway (all options) |
+| `gradingConsistency.report.json` | Machine-readable A/B/C/D split |
+
+## Dual-grading policy
+
+- **Do not** auto-merge library `correct` with PokerBrain policy without human review.
+- **Safe adapter:** library-mapped swipe spots carry `_drill`; gateway routes them to `gradeAnswer` without changing EV math.
+- **Blockers:** Non-library swipe spots where Brain policy conflicts with library — listed in `gradingConsistency.report.json` → `conflictSpotIds` (must be empty for UX merge).
 
 ## Not GTO
 
-Neither path proves solver-GTO unless explicitly wired to CFR output. Labels like `source: 'cfr'` in unified grading are provenance metadata, not proof of solver validation for library tasks.
+Neither path proves solver-GTO unless explicitly wired to CFR output. Gateway `source: 'cfr'` on library drills is metadata for the EV-tier evaluator, not CFR output.

@@ -1,0 +1,619 @@
+{
+  "generatedAt": "2026-09-13T20:37:29.291Z",
+  "totalComparable": 421,
+  "exactMatches": 421,
+  "normalizedMatches": 0,
+  "trueConflicts": 0,
+  "uncomparable": 0,
+  "conflictSpotIds": [],
+  "brainPolicyBlockersCount": 96,
+  "brainPolicyBlockersSample": [
+    {
+      "taskId": "PRE_RFI_UTG_AJO",
+      "libraryCorrect": "РЕЙЗ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "PRE_RFI_SB_22",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.579
+      }
+    },
+    {
+      "taskId": "PRE_RFI_BTN_22_SHORT",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.723
+      }
+    },
+    {
+      "taskId": "PRE_RFI_BTN_A5S_15",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.998
+      }
+    },
+    {
+      "taskId": "PRE_BB_T6O",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.899
+      }
+    },
+    {
+      "taskId": "PRE_3B_SB_A5S",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "PRE_3B_BB_KK",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "y",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.599
+      }
+    },
+    {
+      "taskId": "PRE_SQZ_AQS",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "PRE_VS3B_66",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.932
+      }
+    },
+    {
+      "taskId": "TOUR_BUBBLE_77_CALL",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "TOUR_ITM_AQS",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "TOUR_PKO_BOUNTY",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "TOUR_FT_QQ",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "SHORT_BTN_A9O",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.997
+      }
+    },
+    {
+      "taskId": "SHORT_BB_87S",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null
+    },
+    {
+      "taskId": "SHORT_SB_55",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.911
+      }
+    },
+    {
+      "taskId": "SHORT_BB_A5O",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.862
+      }
+    },
+    {
+      "taskId": "MISC_RIVER_BLUF",
+      "libraryCorrect": "СТАВКА",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "y",
+      "brainSource": "STRUCTURAL_MODEL",
+      "brainTop": {
+        "action": "CHECK",
+        "freq": 0.644
+      }
+    },
+    {
+      "taskId": "MISC_XR_TPTK",
+      "libraryCorrect": "РЕЙЗ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "STRUCTURAL_MODEL",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.759
+      }
+    },
+    {
+      "taskId": "CASH_100BB_AA",
+      "libraryCorrect": "4-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.58
+      }
+    }
+  ],
+  "verdict": "SAFE_TO_MERGE_FOR_UX_PERSONALIZATION",
+  "note": "Daily path uses library EV tiers (gradeAnswer). Swipe path uses gradingGateway; library tasks with _library/_drill route to the same gradeAnswer when wired.",
+  "categories": {
+    "A_exactEquivalent": 421,
+    "B_presentationOnly": 0,
+    "C_trueStrategicConflict": 0,
+    "D_uncomparable": 0
+  },
+  "samples": {
+    "exactMatches": [
+      {
+        "taskId": "PRE_RFI_BTN_A8S",
+        "canonicalId": "PRE_RFI_BTN_A8S",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_BTN_A8S",
+        "canonicalId": "PRE_RFI_BTN_A8S",
+        "option": "РЕЙЗ",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "GOOD",
+          "legacyGrade": "g",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "g",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_CO_KTS",
+        "canonicalId": "PRE_RFI_CO_KTS",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_CO_KTS",
+        "canonicalId": "PRE_RFI_CO_KTS",
+        "option": "РЕЙЗ",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "GOOD",
+          "legacyGrade": "g",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "g",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_HJ_77",
+        "canonicalId": "PRE_RFI_HJ_77",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "INACCURACY",
+          "legacyGrade": "y",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "y",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_HJ_77",
+        "canonicalId": "PRE_RFI_HJ_77",
+        "option": "РЕЙЗ",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "GOOD",
+          "legacyGrade": "g",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "g",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_UTG_AJO",
+        "canonicalId": "PRE_RFI_UTG_AJO",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "INSUFFICIENT_CONTEXT"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "INSUFFICIENT_CONTEXT",
+          "topAction": null
+        }
+      },
+      {
+        "taskId": "PRE_RFI_UTG_AJO",
+        "canonicalId": "PRE_RFI_UTG_AJO",
+        "option": "РЕЙЗ",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "INSUFFICIENT_CONTEXT"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "INSUFFICIENT_CONTEXT",
+          "topAction": null
+        }
+      },
+      {
+        "taskId": "PRE_RFI_SB_22",
+        "canonicalId": "PRE_RFI_SB_22",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "INACCURACY",
+          "legacyGrade": "y",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "y",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_SB_22",
+        "canonicalId": "PRE_RFI_SB_22",
+        "option": "ОЛЛ-ИН",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_BTN_22_SHORT",
+        "canonicalId": "PRE_RFI_BTN_22_SHORT",
+        "option": "ФОЛД",
+        "isAuthorCorrect": false,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "BIG MISTAKE",
+          "bucket": "bad",
+          "chosenRecommended": false,
+          "nearOptimal": false
+        },
+        "dailyGateway": {
+          "grade": "BIG MISTAKE",
+          "verdict": "BIG MISTAKE"
+        },
+        "swipeGateway": {
+          "grade": "BIG MISTAKE",
+          "solverGrade": "BIG MISTAKE",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "INACCURACY",
+          "legacyGrade": "y",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "y",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      },
+      {
+        "taskId": "PRE_RFI_BTN_22_SHORT",
+        "canonicalId": "PRE_RFI_BTN_22_SHORT",
+        "option": "ОЛЛ-ИН",
+        "isAuthorCorrect": true,
+        "isAlsoOk": false,
+        "daily": {
+          "grade": "EXCELLENT",
+          "bucket": "optimal",
+          "chosenRecommended": true,
+          "nearOptimal": true
+        },
+        "dailyGateway": {
+          "grade": "EXCELLENT",
+          "verdict": "EXCELLENT"
+        },
+        "swipeGateway": {
+          "grade": "EXCELLENT",
+          "solverGrade": "EXCELLENT",
+          "routedLibrary": true,
+          "source": "cfr"
+        },
+        "swipeAdapter": {
+          "grade": "MISTAKE",
+          "legacyGrade": "r",
+          "source": "REFERENCE_ATLAS"
+        },
+        "brainDirect": {
+          "grade": "r",
+          "source": "REFERENCE_ATLAS",
+          "topAction": "RAISE"
+        }
+      }
+    ],
+    "normalizedMatches": [],
+    "trueConflicts": [],
+    "uncomparable": []
+  }
+}

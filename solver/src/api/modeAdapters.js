@@ -64,7 +64,12 @@ export function gradeSwipeDecision(input = {}) {
       villainPosition: scenario.villainPos || scenario.villainPosition,
       effectiveStackBb: scenario.stack || scenario.effectiveStackBb,
       potBb: scenario.pot || scenario.potBb,
-      description: scenario.ctx || scenario.description || ''
+      description: scenario.ctx || scenario.description || '',
+      preferred: scenario.preferred,
+      live: scenario.live,
+      actions: scenario.actions,
+      _library: scenario._library,
+      _drill: scenario._drill
     },
     chosenActionType: action,
     chosenSize: sizePct,
