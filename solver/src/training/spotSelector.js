@@ -850,7 +850,7 @@ export function selectSpots({
     return !recentIds.has(s.id) && !recentFps.has(contentFingerprint(s));
   });
   let candidates = eligible.length >= count ? eligible : (softEligible.length >= count ? softEligible : spots);
-  if (prefersLowDifficulty({ skillProfile, targetDiff })) {
+  if (skillProfile?.overall != null && skillProfile.overall < 35) {
     const easy = candidates.filter((s) => (s.difficulty || 1) <= 3);
     if (easy.length >= count) candidates = easy;
   }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T15:05:21.807Z",
+  "generatedAt": "2026-09-13T15:21:16.246Z",
   "sessions": 100,
   "tasks": 700,
   "profiles": 10,
@@ -7,8 +7,8 @@
   "POKER_LOGIC": "PASS",
   "PERSONALIZATION_QUALITY": "PASS",
   "DUPLICATES": 0,
-  "NEAR_DUPLICATES": 0.6,
-  "PROFILE_MISMATCH": 15.7,
+  "NEAR_DUPLICATES": 0.9,
+  "PROFILE_MISMATCH": 14.8,
   "INVALID_SPOTS": 0,
   "TESTS": "13/13 harness+script",
   "NEXT_P0_FIXES": [
@@ -32,20 +32,20 @@
     ],
     "skillCoverageCount": 13,
     "difficultyDistribution": {
-      "1": 116,
-      "2": 282,
-      "3": 42,
-      "4": 107,
-      "5": 153
+      "1": 109,
+      "2": 267,
+      "3": 38,
+      "4": 120,
+      "5": 166
     },
     "intraSessionExactDupSessions": 0,
-    "intraSessionNearDupSessions": 2,
-    "corpusReuseRate": 74.7,
-    "uniqueTaskIds": 177,
+    "intraSessionNearDupSessions": 3,
+    "corpusReuseRate": 74.4,
+    "uniqueTaskIds": 179,
     "gradingCollisionTasks": 0,
     "gradingCollisionUnique": 0,
     "explainMatchRate": 100,
-    "terminologyTaskCount": 42,
+    "terminologyTaskCount": 51,
     "brainContextIssueRate": 0,
     "brainContextIssueCount": 0,
     "advancedHardRate": 60.7,
@@ -53,24 +53,24 @@
     "personalizedSessions": 100,
     "vmErrors": 0,
     "weaknessEligible": 420,
-    "mismatchCount": 66,
-    "difficultyMismatchCount": 219,
+    "mismatchCount": 62,
+    "difficultyMismatchCount": 236,
     "invalidByCode": {},
     "invalidSamples": [],
     "explainMissSamples": [],
     "termSamples": [
+      "ADV9B_POSITION_UTG_OPEN",
+      "ADV5_FT_AJ_ICM",
       "ADV9B5_POSITION_SB_STEAL",
+      "TOUR_ITM_FOLD_AJO",
+      "ADV9B5_ICM_UTG_FOLD",
       "ADV9B_POSITION_HJ_STEAL",
       "ADV9B_ICM_BTN_FOLD",
       "ADV5_ICM_BUBBLE_QQ",
+      "ADV9B5_ICM_MEDIUM_FOLD",
       "ADV9B_STACKDEPTH_DEEP_SET",
-      "ADV5_ICM_PKO_OVERLAY",
-      "ADV9B5_BLUFFING_RIVER",
-      "TOUR_ANTE_3X",
-      "ADV9B_RIVER_DEFENSE",
-      "ADV9B5_EXPLOIT_MANIAC",
-      "R_PRICE_DEF",
-      "OPP_MANIAC_3BARREL"
+      "PRE_ISO_LIMP",
+      "ADV5_ICM_PKO_OVERLAY"
     ],
     "brainMissingCommon": [],
     "personalizationAfter20": {
@@ -97,15 +97,16 @@
           "postflop",
           "bluffCatch"
         ],
-        "overallAfter20": 44,
+        "overallAfter20": 45,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "river",
-          "betSizing",
-          "postflop",
           "bluffCatch",
+          "river",
           "rangeReading",
-          "bluffing"
+          "bluffing",
+          "postflop",
+          "betSizing",
+          "exploit"
         ]
       },
       "strongBalanced": {
@@ -168,19 +169,21 @@
       },
       "newUser": {
         "weakAfter20": [
+          "stackDepthAwareness",
           "icm",
-          "shortStack",
-          "stackDepthAwareness"
+          "preflop"
         ],
         "overallAfter20": 41,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "icm",
           "stackDepthAwareness",
+          "shortStack",
           "preflop",
-          "positionAwareness",
+          "icm",
           "pko",
-          "shortStack"
+          "positionAwareness",
+          "bluffing",
+          "exploit"
         ]
       },
       "decliningIcm": {
@@ -271,7 +274,7 @@
       },
       "riverWeak": {
         "start": 49,
-        "end": 44,
+        "end": 42,
         "weakStart": [
           "river",
           "bluffCatch",
@@ -280,7 +283,7 @@
         "weakEnd": [
           "postflop",
           "river",
-          "rangeReading"
+          "betSizing"
         ],
         "kind": "weakness"
       },
@@ -332,7 +335,7 @@
       },
       "newUser": {
         "start": 67,
-        "end": 45,
+        "end": 50,
         "weakStart": [
           "preflop",
           "shortStack",
@@ -389,7 +392,7 @@
       },
       "mixed": {
         "start": 76,
-        "end": 41,
+        "end": 40,
         "weakStart": [
           "postflop"
         ],
@@ -401,7 +404,7 @@
         "kind": "mixed"
       }
     },
-    "icmVsRiverOverlap": 6,
+    "icmVsRiverOverlap": 4,
     "sampleSession": {
       "profileId": "icmWeak",
       "index": 0,
