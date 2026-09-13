@@ -19,7 +19,13 @@ import { gradeAnswer } from '../src/training/answerEvaluator.js';
 import { contentFingerprint, isTooSimilar } from '../src/training/sessionDiversity.js';
 import { validateTask } from '../../task-context/validator.js';
 import { rebuildSkillProfileFromStore } from '../src/training/dynamicPlayerProfile.js';
-import { getTargetDifficulty } from '../src/training/adaptiveDifficulty.js';
+import { getTargetDifficulty, pickRelevantSkillForSpot } from '../src/training/adaptiveDifficulty.js';
+import { buildSkillTiers } from '../src/training/skillTiers.js';
+import {
+  weaknessSlotDifficultyMatches,
+  resolvePrimaryWeaknessChain,
+  spotMatchesSkillId
+} from '../src/training/weaknessTargeting.js';
 import {
   buildPlayerStore,
   alignMasteryReviewsBeforePlan
@@ -394,18 +400,51 @@ function weaknessHit(task, weakSkills) {
   return tags.some((t) => weakSkills.includes(t));
 }
 
-function difficultyMismatch(task, store, weakSkills) {
+function difficultyMismatch(task, store, { slotKind = '', recentResults = [] } = {}) {
   const profile = store.loadSkillProfile && store.loadSkillProfile();
   if (!profile) return false;
-  const skill = (deriveSkillTags(task)[0]) || 'preflop';
-  const info = getTargetDifficulty(profile, skill);
-  const d = task.difficulty || 1;
+  const spot = {
+    skillTags: deriveSkillTags(task),
+    difficulty: task.difficulty || 1
+  };
+  const ctx = {
+    skillProfile: profile,
+    dynamicProfile: profile?.dynamic || profile,
+    tiers: buildSkillTiers(profile),
+    recentResults
+  };
+  if (slotKind === 'primary_weakness' || slotKind === 'secondary_weakness') {
+    return !weaknessSlotDifficultyMatches(spot, ctx, {
+      slotKind,
+      taskPool: getTaskPool()
+    });
+  }
+  const skill = pickRelevantSkillForSpot(spot, profile);
+  const info = getTargetDifficulty(profile, skill, { recentResults });
+  const d = spot.difficulty;
   if (info.max != null && d > info.max + 1.01) return true;
   if (info.min != null && d < info.min - 1.01) return true;
   const overall = profile.overall;
   if (overall != null && overall >= 85 && d <= 1) return true;
-  if (overall != null && overall <= 40 && d >= 5 && !weakSkills.length) return true;
+  if (overall != null && overall <= 40 && d >= 5) return true;
   return false;
+}
+
+function primaryWeaknessSlotMismatch(task, store) {
+  const profile = rebuildSkillProfileFromStore(store, {
+    now: AUDIT_NOW0,
+    history: store.loadHistory()
+  });
+  const chain = resolvePrimaryWeaknessChain({
+    skillProfile: profile,
+    dynamicProfile: profile?.dynamic || profile,
+    tiers: buildSkillTiers(profile),
+    count: TASKS_PER_SESSION
+  });
+  if (!chain.primary) return false;
+  const spot = { skillTags: deriveSkillTags(task) };
+  const allowed = [chain.primary, ...chain.fallbacks].filter(Boolean);
+  return !allowed.some((skill) => spotMatchesSkillId(spot, skill));
 }
 
 async function generateSession(store, { count, now }) {
@@ -448,6 +487,7 @@ export async function runTrainingQualityAudit({
   const explainMiss = [];
   const brainLow = [];
   const mismatches = [];
+  const primarySlotMismatches = [];
   const diffMismatches = [];
   const skillSet = new Set();
   const diffDist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -474,10 +514,17 @@ export async function runTrainingQualityAudit({
       const now = AUDIT_NOW0 + s * SESSION_GAP_MS;
       const session = await generateSession(store, { count, now });
       const drills = session.drills || [];
+      const plan = session.plan || {};
+      const slotKinds = plan.slotKinds || [];
       const tasks = drills.map((d) => {
         const id = d.sourceTaskId || d.metadata?.taskId;
         return getTaskById(id) || d.metadata?.task || null;
       }).filter(Boolean);
+      const recentResults = (store.loadHistory() || []).map((h) => ({
+        grade: h.grade,
+        skillTags: h.skillTags || [],
+        nearOptimal: h.grade === 'EXCELLENT' || h.grade === 'GOOD'
+      }));
 
       if (session.personalized || (session.plan && session.plan.personalized)) personalizedSessions++;
 
@@ -508,8 +555,10 @@ export async function runTrainingQualityAudit({
       };
       allSessions.push(rec);
 
-      for (const task of tasks) {
-        allTasks.push({ profileId: pid, session: s, task });
+      for (let ti = 0; ti < tasks.length; ti++) {
+        const task = tasks[ti];
+        const slotKind = slotKinds[ti] || '';
+        allTasks.push({ profileId: pid, session: s, task, slotKind });
         for (const tag of deriveSkillTags(task)) skillSet.add(tag);
         diffDist[task.difficulty] = (diffDist[task.difficulty] || 0) + 1;
 
@@ -532,11 +581,14 @@ export async function runTrainingQualityAudit({
 
         if (profile.kind === 'weakness' || profile.kind === 'beginner' || profile.kind === 'mixed') {
           if (!weaknessHit(task, weakSkills)) {
-            mismatches.push({ id: task.id, profile: pid, tags: deriveSkillTags(task), weakSkills });
+            mismatches.push({ id: task.id, profile: pid, slotKind, tags: deriveSkillTags(task), weakSkills });
           }
         }
-        if (difficultyMismatch(task, store, weakSkills)) {
-          diffMismatches.push({ id: task.id, profile: pid, difficulty: task.difficulty, overall: overallScore(store) });
+        if (slotKind === 'primary_weakness' && primaryWeaknessSlotMismatch(task, store)) {
+          primarySlotMismatches.push({ id: task.id, profile: pid });
+        }
+        if (difficultyMismatch(task, store, { slotKind, recentResults })) {
+          diffMismatches.push({ id: task.id, profile: pid, slotKind, difficulty: task.difficulty, overall: overallScore(store) });
         }
 
         try {
@@ -620,7 +672,9 @@ export async function runTrainingQualityAudit({
     const p = profiles[row.profileId];
     return p.kind === 'weakness' || p.kind === 'beginner' || p.kind === 'mixed';
   }).length;
+  const primarySlotEligible = allTasks.filter((row) => row.slotKind === 'primary_weakness').length;
   const mismatchRate = pct(mismatches.length, weaknessEligible || 1);
+  const primarySlotMismatchRate = pct(primarySlotMismatches.length, primarySlotEligible || 1);
 
   const invalidUnique = [...new Set(invalid.map((x) => x.id))];
   const gradingUnique = [...new Set(grading.map((x) => x.id))];
@@ -708,6 +762,7 @@ export async function runTrainingQualityAudit({
     DUPLICATES: duplicateRate,
     NEAR_DUPLICATES: nearDuplicateRate,
     PROFILE_MISMATCH: mismatchRate,
+    PROFILE_MISMATCH_PRIMARY_SLOT: primarySlotMismatchRate,
     INVALID_SPOTS: invalidUnique.length,
     TESTS: null,
     NEXT_P0_FIXES: p0,
@@ -731,6 +786,8 @@ export async function runTrainingQualityAudit({
       vmErrors,
       weaknessEligible,
       mismatchCount: mismatches.length,
+      primarySlotMismatchCount: primarySlotMismatches.length,
+      primarySlotEligible,
       difficultyMismatchCount: diffMismatches.length,
       invalidByCode: invalid.reduce((m, x) => (m[x.code] = (m[x.code] || 0) + 1, m), {}),
       invalidSamples: invalidUnique.slice(0, 25),

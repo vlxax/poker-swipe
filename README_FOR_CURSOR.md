@@ -149,6 +149,14 @@ POKER ENGINE (solver-core/)          SOLVER / CFR (solver/src/cfr/)
 
 ---
 
+## 5b. Grading paths (dual brain)
+
+See **[docs/GRADING_PATHS.md](../docs/GRADING_PATHS.md)**. Daily uses `gradeAnswer` + library EV; swipe uses PokerBrain via gateway. Same task id can disagree across modes — not silently unified.
+
+Regression: `solver/tests/gradingPathConsistency.test.js` (daily gateway ≡ `gradeAnswer`).
+
+---
+
 ## 6. Testing
 
 ### UI / training (Node + jsdom)
@@ -158,6 +166,9 @@ cd /workspace && npm install   # jsdom devDependency at repo root
 node --test solver/tests/trainingUiRenderer.test.js
 node --test solver/tests/playerProfileUi.test.js
 node --test solver/tests/swipeGesture.test.js
+npm run test:training          # curated training UI + personalization + grading path
+npm run test:training-audit    # Phase 13 harness (slow)
+npm run test:e2e:daily         # Playwright daily bootstrap (needs browser)
 ```
 
 ### Solver-core (from `solver/` package)

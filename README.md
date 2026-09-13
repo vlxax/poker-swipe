@@ -1,3 +1,11 @@
+# PokerSwipe repository
+
+> **For Cursor agents and the main Poker Swipe app (index.html, training-ui, solver):** use **[README_FOR_CURSOR.md](./README_FOR_CURSOR.md)** as the authoritative architecture map, grading paths (**[docs/GRADING_PATHS.md](./docs/GRADING_PATHS.md)**), tests, and known issues.
+>
+> The sections below describe the **standalone Daily Hand Stage 3 HTML package** bundled in this repo — not the full monorepo product map.
+
+---
+
 # PokerSwipe Daily Hand - Stage 3 Production Ready
 
 ## 📦 What You're Getting

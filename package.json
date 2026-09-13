@@ -6,7 +6,10 @@
     "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail",
-    "test": "node tests/polyana_regression.js && node tests/polyana_map.js"
+    "test": "node tests/polyana_regression.js && node tests/polyana_map.js",
+    "test:training": "node --test solver/tests/sessionReview.test.js solver/tests/sessionResume.test.js solver/tests/trainingUiRenderer.test.js solver/tests/swipeGesture.test.js solver/tests/playerProfileUi.test.js solver/tests/personalizationP0Selector.test.js solver/tests/positionAwarenessStrictBand.test.js solver/tests/gradingPathConsistency.test.js",
+    "test:training-audit": "node --test solver/tests/trainingQualityAudit.test.js",
+    "test:e2e:daily": "node tests/daily_e2e_verify.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
