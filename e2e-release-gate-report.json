@@ -1,0 +1,21 @@
+{
+  "boot": "PASS",
+  "navigation": "FAIL",
+  "daily_e2e": "FAIL",
+  "my_hands_import": "PARTIAL",
+  "my_hands_analysis": "PENDING",
+  "my_hands_duplicate": "PENDING",
+  "my_hands_invalid": "PENDING",
+  "polyana_save": "PASS",
+  "polyana_my_tournaments": "PASS",
+  "canonical_id_persistence": "PENDING",
+  "trip_builder": "NOT_APPLICABLE",
+  "persistence_after_reload": "PASS",
+  "listener_leak": "PARTIAL",
+  "mobile_320": "PASS",
+  "mobile_360": "PASS",
+  "mobile_390": "PASS",
+  "mobile_430": "PASS",
+  "network_analysis": "PENDING",
+  "failures": []
+}
