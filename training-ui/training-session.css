@@ -76,6 +76,13 @@
 .trFeedbackBlock .mut {
   margin: 0;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.trFeedbackBlock b {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .trChoiceGrid.is-answering .choice {

@@ -78,7 +78,9 @@ const ctl = new SessionController({
   solve,
   solveOpts: SOLVE_OPTS,
   config: SESSION_CONFIG,
-  onStateChange: () => paint()
+  onStateChange: () => {
+    if (!suppressControllerPaint) paint();
+  }
 });
 
 // Primary 12-question diagnostic (P0). Run before the first personalised session
@@ -121,7 +123,8 @@ function previewScenarioFromPlan(preparedDaily) {
 }
 
 let pendingOptionId = null;
-let lastPaintKey = '';
+let suppressControllerPaint = false;
+let lastDrillScrollIndex = null;
 
 const handlers = {
   start() {
@@ -137,10 +140,13 @@ const handlers = {
     paint();
   },
   answer(optionId) {
+    if (pendingOptionId || ctl.answering || ctl.showingFeedback) return;
     pendingOptionId = optionId;
+    suppressControllerPaint = true;
     paint();
     const res = ctl.answer(optionId);
     pendingOptionId = null;
+    suppressControllerPaint = false;
     if (res) {
       pushDailyNav({ phase: 'feedback', index: ctl.index });
       paint();
@@ -236,12 +242,6 @@ function paint() {
   const el = root();
   if (!el) return;
 
-  const paintKey = `${ctl.state}:${ctl.index}:${ctl.showingFeedback}:${assessment.state}`;
-  const shouldScrollTop = paintKey !== lastPaintKey
-    && (ctl.state === 'ready' || ctl.state === 'limited')
-    && !ctl.showingFeedback;
-  if (paintKey !== lastPaintKey) lastPaintKey = paintKey;
-
   if (assessment.state === 'answering') {
     R.renderAssessment(el, assessment.viewModel(), assessmentHandlers);
     return;
@@ -295,8 +295,12 @@ function paint() {
     }
   }
 
-  if (shouldScrollTop) {
+  const inDrill = (st === 'ready' || st === 'limited') && !ctl.showingFeedback && !pendingOptionId;
+  if (inDrill && lastDrillScrollIndex !== ctl.index) {
+    lastDrillScrollIndex = ctl.index;
     try { el.scrollTop = 0; } catch (e) { /* ignore */ }
+  } else if (!inDrill && st !== 'ready' && st !== 'limited') {
+    lastDrillScrollIndex = null;
   }
 }
 

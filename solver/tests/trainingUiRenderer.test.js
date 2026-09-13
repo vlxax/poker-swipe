@@ -153,6 +153,19 @@ test('renderFeedback shows structured YOUR/CORRECT/WHY blocks', () => {
   assert.equal(next, 1);
 });
 
+test('sessionProgressViewModel uses results length and does not inflate index', () => {
+  const sp = VM.sessionProgressViewModel({ index: 3, total: 7, results: [
+    { grade: 'EXCELLENT' },
+    { grade: 'MISTAKE' },
+    { grade: 'GOOD' }
+  ] });
+  assert.equal(sp.index, 3);
+  assert.equal(sp.total, 7);
+  assert.equal(sp.answered, 3);
+  assert.equal(sp.correct, 2);
+  assert.equal(sp.remaining, 5);
+});
+
 test('viewModel builds a full per-question assessment view', () => {
   const a = VM.assessmentViewModel({
     item: {

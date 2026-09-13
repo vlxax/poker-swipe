@@ -62,6 +62,16 @@ export function choiceClass(o, vm) {
   return parts.join(' ');
 }
 
+function isInteractiveFeedbackTarget(el) {
+  if (!el || el === document.body) return false;
+  const node = el.nodeType === 1 ? el : el.parentElement;
+  if (!node || !node.closest) return false;
+  if (node.closest('details, summary')) return true;
+  if (node.closest('input, textarea, select, [contenteditable="true"]')) return true;
+  const btn = node.closest('button');
+  return !!(btn && btn.id !== 'trNext');
+}
+
 export function wireFeedbackNext(root, h) {
   const b = root.querySelector('#trNext');
   if (!b || typeof h.next !== 'function') return;
@@ -69,10 +79,11 @@ export function wireFeedbackNext(root, h) {
   b.onclick = go;
   try { b.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
   const onKey = (ev) => {
-    if (ev.key === 'Enter' && !ev.repeat && document.activeElement !== b) {
-      ev.preventDefault();
-      go();
-    }
+    if (ev.key !== 'Enter' || ev.repeat) return;
+    if (ev.target === b) return;
+    if (isInteractiveFeedbackTarget(ev.target)) return;
+    ev.preventDefault();
+    go();
   };
   root.addEventListener('keydown', onKey, { once: true });
 }
