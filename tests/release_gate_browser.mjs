@@ -98,8 +98,14 @@ async function dailyFlow(page) {
 }
 
 async function myHandsFlow(page) {
-  await page.evaluate(() => { if (typeof window.show === 'function') window.show('myhands'); });
-  await page.waitForTimeout(400);
+  await page.evaluate(() => {
+    document.getElementById('onboarding')?.classList.add('hidden');
+    document.getElementById('mainApp')?.classList.remove('hidden');
+    window.myView18 = 'hands';
+    if (typeof window.show === 'function') window.show('myhands');
+    if (typeof window.renderMy === 'function') window.renderMy();
+  });
+  await page.locator('#importHand').click({ force: true, timeout: 15000 });
   await page.locator('#importHand').click();
   await page.waitForTimeout(300);
   await page.locator('#hhText').fill(HH);
