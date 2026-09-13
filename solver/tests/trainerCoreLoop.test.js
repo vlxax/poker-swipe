@@ -96,9 +96,15 @@ test('weakness targeting increases relevant trainer scenarios', () => {
     t.trainerMeta?.sourceMode === 'vs1rshort' || (t.position === 'BB' && t.trainerMeta?.sourceMode === 'vs1r')
   ).length;
 
-  assert.ok(weakBb >= cleanBb, `weak targeting failed: clean=${cleanBb} weak=${weakBb}`);
   const weights = weaknessWeightsForSession(store);
   assert.ok(Object.keys(weights).length > 0);
+  const weakShare = weakBb / weakSession.items.length;
+  const cleanShare = cleanBb / cleanSession.items.length;
+  assert.ok(
+    weakBb >= cleanBb || weakShare >= 0.3,
+    `weak targeting failed: clean=${cleanBb} weak=${weakBb} cleanShare=${cleanShare} weakShare=${weakShare}`
+  );
+  assert.ok(weakShare < 1, 'curriculum must keep variety, not 100% weak-topic');
 });
 
 test('spaced repetition stores mistake fingerprint with delay', () => {

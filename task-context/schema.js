@@ -122,6 +122,11 @@ const ALLOWED_HAND_TOKEN = /^(AA|KK|QQ|JJ|TT|AK|AQ|AJ|AT|KQ)$/i;
 
 const COPY_PHRASES = [
   [/check-check/gi, 'чек-чек'],
+  [/defence/gi, 'защита'],
+  [/showdown/gi, 'шоудаун'],
+  [/push-fold/gi, 'пуш-фолд'],
+  [/bluffcatch/gi, 'блеф-кетч'],
+  [/bluff-catch/gi, 'блеф-кетч'],
   [/check-raise/gi, 'чек-рейз'],
   [/fold equity/gi, 'фолд-эквити'],
   [/fold-equity/gi, 'фолд-эквити'],

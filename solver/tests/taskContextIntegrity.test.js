@@ -23,6 +23,8 @@ test('displayed board equals canonical board for swipe adapter', () => {
   const task = tasks.find((t) => t.street === 'ФЛОП' && t.board.length === 3);
   assert.ok(task);
   const spot = libraryTaskToMiniAppSpot(task, 'swipe');
+  assert.ok(spot, 'swipe adapter must map library tasks, not return null');
+  assert.ok(spot._canonical);
   assert.equal(spot.board.join(''), spot._canonical.board.join(''));
 });
 

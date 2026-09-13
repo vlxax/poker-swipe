@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole, requestInterceptor} = jsdomPkg;
+import { createAppLocalResourceLoader } from './jsdomAppResources.js';
+const {JSDOM, VirtualConsole} = jsdomPkg;
 
 // jsdom teardown can throw on queued rAF after window.close(); ignore that artifact.
 process.on('uncaughtException', err => {
@@ -33,21 +34,7 @@ function boot() {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
     runScripts: 'dangerously',
-    resources: {interceptors: [
-      requestInterceptor(async request => {
-        const parsed = new URL(request.url);
-        if (parsed.hostname !== 'app.local') return undefined;
-        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-          const ext = path.extname(file).toLowerCase();
-          return new Response(new Uint8Array(fs.readFileSync(file)), {
-            status: 200,
-            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}
-          });
-        }
-        return new Response('', {status: 404});
-      })
-    ]},
+    resources: new (createAppLocalResourceLoader(root, MIME))(),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {

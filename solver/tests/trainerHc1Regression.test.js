@@ -81,13 +81,13 @@ describe('human confirmation #1 regression', () => {
     assert.equal(recon.mixedSafety.pass, true);
   });
 
-  test('7. orange not guessed', () => {
+  test('7. orange UO_STYLE is CALL', () => {
     const orange = resolveSemanticEntry('ORANGE_208_160_32', 'UO_STYLE');
-    assert.equal(orange.gradingAllowed, false);
-    assert.equal(orange.status, 'NEEDS_CLARIFICATION');
-    assert.ok(existsSync(RECON));
-    const recon = JSON.parse(readFileSync(RECON, 'utf8'));
-    assert.equal(recon.orangeYellowSafety.orangeNewGrading, 0);
+    assert.equal(orange.normalizedAction, 'CALL');
+    assert.equal(orange.gradingAllowed, true);
+    assert.equal(orange.status, 'TRAINER_CONFIRMED');
+    const other = resolveSemanticEntry('ORANGE_208_160_32', 'MARGIN_STYLE');
+    assert.equal(other.gradingAllowed, false);
   });
 
   test('8. yellow not guessed', () => {
