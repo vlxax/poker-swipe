@@ -7,10 +7,14 @@ import path from 'path';
 const ROOT = '/home/user/poker-swipe';
 const PORT = 9876;
 
+const notFoundURLs = [];
+
 function startServer() {
   return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
-      let filePath = path.join(ROOT, req.url === '/' ? 'index.html' : req.url);
+      // Strip query string from URL
+      let url = req.url.split('?')[0];
+      let filePath = path.join(ROOT, url === '/' ? 'index.html' : url);
       const ext = path.extname(filePath);
       const mime = {
         '.html': 'text/html',
@@ -19,13 +23,17 @@ function startServer() {
         '.json': 'application/json',
         '.png': 'image/png',
         '.jpg': 'image/jpeg',
-        '.svg': 'image/svg+xml'
+        '.svg': 'image/svg+xml',
+        '.webp': 'image/webp'
       };
 
       if (fs.existsSync(filePath)) {
         res.writeHead(200, {'Content-Type': mime[ext] || 'application/octet-stream'});
         res.end(fs.readFileSync(filePath));
       } else {
+        if (!notFoundURLs.includes(url)) {
+          notFoundURLs.push(url);
+        }
         res.writeHead(404);
         res.end('Not found');
       }
@@ -194,6 +202,10 @@ async function runTests() {
     console.error(`\n✗ VERIFICATION FAILED: ${error.message}`);
     process.exitCode = 1;
   } finally {
+    if (notFoundURLs.length > 0) {
+      console.log('\n[MISSING RESOURCES]');
+      notFoundURLs.forEach(url => console.log(`  404: ${url}`));
+    }
     await context.close();
     await browser.close();
   }

@@ -17,7 +17,9 @@ const PORT = 9876;
 function startServer() {
   return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
-      let filePath = path.join(ROOT, req.url === '/' ? 'index.html' : req.url);
+      // Strip query string from URL
+      let url = req.url.split('?')[0];
+      let filePath = path.join(ROOT, url === '/' ? 'index.html' : url);
       const ext = path.extname(filePath);
       const mime = {
         '.html': 'text/html',
@@ -102,11 +104,31 @@ async function runTests() {
     console.log('\n3. MY HANDS flow...');
 
     // Directly call show() function
-    await page.evaluate(() => {
+    const showResult = await page.evaluate(() => {
+      console.log('[TEST] In evaluate, typeof show:', typeof show);
+      const myhandsElement = document.getElementById('myhands');
+      console.log('[TEST] myhands element exists:', !!myhandsElement);
+
       if (typeof show === 'function') {
-        show('myhands');
+        console.log('[TEST] Calling show("myhands")');
+        try {
+          show('myhands');
+          const active = document.querySelector('.screen.active');
+          console.log('[TEST] After show(), active screen:', active ? active.id : 'none');
+          if (myhandsElement) {
+            console.log('[TEST] myhands classList after show():', myhandsElement.classList.toString());
+          }
+          return {success: true, screen: active ? active.id : 'none'};
+        } catch(e) {
+          console.log('[TEST] Error calling show():', e.message);
+          return {success: false, error: e.message};
+        }
+      } else {
+        console.log('[TEST] show() is not defined');
+        return {success: false, reason: 'show not defined'};
       }
     });
+    console.log('   show() result:', showResult);
 
     await page.waitForTimeout(800);
     const myhandsScreen = await page.$('#myhands.active');
@@ -117,6 +139,10 @@ async function runTests() {
         const active = document.querySelector('.screen.active');
         return active ? active.id : 'none';
       });
+      const allScreens = await page.evaluate(() => {
+        return [...document.querySelectorAll('.screen')].map(s => ({id: s.id, hasActive: s.classList.contains('active')}));
+      });
+      console.log('   All screens:', allScreens);
       throw new Error(`MY HANDS not active. show() defined: ${showDefined}, Active: ${activeScreen}`);
     }
 
