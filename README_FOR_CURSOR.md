@@ -168,7 +168,7 @@ node --test solver/tests/playerProfileUi.test.js
 node --test solver/tests/swipeGesture.test.js
 npm run test:training          # curated training UI + personalization + grading path
 npm run test:training-audit    # Phase 13 harness (slow)
-npm run test:e2e:daily         # Playwright daily bootstrap (needs browser)
+npm run test:e2e:daily         # Playwright daily bootstrap (pretest installs Chromium; ephemeral port)
 ```
 
 ### Solver-core (from `solver/` package)
@@ -184,12 +184,15 @@ Note: `npm test` in `solver/` runs `node --test tests/` which may fail if a brok
 ### Root package
 
 ```bash
-npm test   # polyana_regression.js + polyana_map.js only
+npm test              # polyana_map.js (fast gate)
+npm run test:polyana  # polyana_regression.js — legacy full index.html jsdom stress test (slow; optional)
 ```
+
+**Polyana DOM regression (`tests/polyana_regression.js`):** jsdom **v26** removed `requestInterceptor`; the test uses a custom `ResourceLoader` + stubs (`matchMedia`, third-party scripts). It boots the full `index.html` graph and can take several minutes in CI. It is **not** part of `npm test` so training/Polyana map checks stay fast; run `npm run test:polyana` when changing Polyana shell integration.
 
 ### Playwright / E2E
 
-`@playwright/test` in root `devDependencies` — **no default npm script** → **NOT AVAILABLE** as one-command CI in `package.json`.
+`npm run test:e2e:daily` — daily training bootstrap at 390×844 (`tests/daily_e2e_verify.mjs`).
 
 ### Manual QA scripts (examples)
 

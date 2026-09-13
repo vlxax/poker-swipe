@@ -1,8 +1,10 @@
+// Legacy Polyana UI regression (full index.html in jsdom). Optional: npm run test:polyana — not in npm test gate.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole, requestInterceptor} = jsdomPkg;
+import { LocalAppResourceLoader, stubBrowserChrome } from './jsdomAppResourceLoader.js';
+const { JSDOM, VirtualConsole } = jsdomPkg;
 
 // jsdom teardown can throw on queued rAF after window.close(); ignore that artifact.
 process.on('uncaughtException', err => {
@@ -13,8 +15,6 @@ process.on('uncaughtException', err => {
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const MIME = {'.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.html': 'text/html', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.png': 'image/png'};
 
 class FakeWorker {
   postMessage(message) {
@@ -33,21 +33,7 @@ function boot() {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
     runScripts: 'dangerously',
-    resources: {interceptors: [
-      requestInterceptor(async request => {
-        const parsed = new URL(request.url);
-        if (parsed.hostname !== 'app.local') return undefined;
-        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-          const ext = path.extname(file).toLowerCase();
-          return new Response(new Uint8Array(fs.readFileSync(file)), {
-            status: 200,
-            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}
-          });
-        }
-        return new Response('', {status: 404});
-      })
-    ]},
+    resources: new LocalAppResourceLoader(root),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {
@@ -66,6 +52,7 @@ function boot() {
       window.Math.random = () => 0.42;
       window.innerWidth = 390;
       window.innerHeight = 844;
+      stubBrowserChrome(window);
 
       const probes = {docListeners: 0, winListeners: 0, observers: 0};
       window.__pspProbes = probes;

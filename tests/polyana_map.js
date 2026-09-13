@@ -2,24 +2,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
+import { LocalAppResourceLoader, stubBrowserChrome } from './jsdomAppResourceLoader.js';
 const {JSDOM, VirtualConsole} = jsdomPkg;
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const MIME = {'.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.html': 'text/html'};
-
-function serve(url) {
-  const parsed = new URL(url);
-  if (parsed.hostname !== 'app.local') return null;
-  const rel = parsed.pathname.replace(/^\//, '');
-  const file = path.join(root, rel);
-  if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-    const ext = path.extname(file).toLowerCase();
-    return new Response(new Uint8Array(fs.readFileSync(file)), {status: 200, headers: {'Content-Type': MIME[ext] || 'application/octet-stream'}});
-  }
-  return new Response('', {status: 404});
-}
 
 function boot() {
   const errors = [];
@@ -30,15 +17,24 @@ function boot() {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'polyana/map.html'), 'utf8'), {
     url: 'http://app.local/polyana/map.html',
     runScripts: 'dangerously',
-    resources: {interceptors: [async req => {
-      if (req.url.startsWith('https://')) return undefined;
-      return serve(req.url);
-    }]},
+    resources: new LocalAppResourceLoader(root),
     pretendToBeVisual: true,
     virtualConsole: vc,
     beforeParse(window) {
+      stubBrowserChrome(window);
       window.fetch = async url => {
-        const u = new URL(String(url), 'http://app.local/polyana/map.html');
+        const raw = String(url);
+        if (raw.includes('moscow_schedule_today.json')) {
+          const today = new Date().toISOString().slice(0, 10);
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              events: [{ date: today, time: '19:00', club: 'Minds', tournament: 'turbo deep stack' }]
+            })
+          };
+        }
+        const u = new URL(raw, 'http://app.local/polyana/map.html');
         const rel = u.pathname.replace(/^\//, '');
         const file = path.join(root, rel);
         if (fs.existsSync(file) && fs.statSync(file).isFile()) {
