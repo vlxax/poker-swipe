@@ -186,7 +186,40 @@ padding-bottom: calc(var(--bottom-nav-height) + var(--tg-bottom-safe) + 14px)
 
 ---
 
-## Next Steps (STEP 2)
+## STEP 2: RESPONSIVE LAYOUT TESTING — COMPLETE ✅
+
+### Responsive Audit Results
+
+Tested 7 viewport sizes using jsdom (CSS computed styles):
+
+| Viewport | Width | Screen Padding-Bottom | vs Expected | Status |
+|----------|-------|----------------------|-------------|--------|
+| iPhone SE | 375px | **126px** | +60px | ⚠️ EXCESSIVE |
+| iPhone 12/13 | 390px | **126px** | +60px | ⚠️ EXCESSIVE |
+| iPhone 14 | 393px | **126px** | +60px | ⚠️ EXCESSIVE |
+| iPhone X/11 Pro | 375px | **126px** | +60px | ⚠️ EXCESSIVE |
+| Android HD | 360px | **126px** | +60px | ⚠️ EXCESSIVE |
+| Android Plus | 414px | **126px** | +60px | ⚠️ EXCESSIVE |
+| Tablet/Desktop | 768px | **126px** | +60px | ⚠️ EXCESSIVE |
+
+### Key Findings
+
+✅ **Consistent padding across all viewports:** 126px (V54 rule wins cascade)  
+✅ **Excessive by 60px:** Expected ~66px, actual 126px  
+✅ **Nav z-index confirmed:** 90 (V24 override)  
+✅ **Problem is NOT viewport-specific:** It's a universal CSS conflict  
+
+### Confirmation
+
+The responsive audit **definitively confirms** our STEP 1 architectural analysis:
+- Line 3866 (V54) rule: `padding-bottom:126px!important;` is winning
+- This rule is wrong and causes 60px of unnecessary bottom padding
+- The issue affects ALL viewports equally
+- Root cause: V24 regression (18px) + V54 overcorrection (126px) = cascading CSS conflict
+
+---
+
+## Next Steps (STEP 3+)
 
 - **Responsive Layout Testing**: Test all viewports with current CSS
 - **Z-Index Audit**: Map full stacking context tree
