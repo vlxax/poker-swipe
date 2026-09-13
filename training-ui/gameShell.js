@@ -1,6 +1,10 @@
 // Shared game-interface shell for personalised Daily (HUD + felt + controls).
 // Uses window.MaCompact when present; falls back to inline markup.
 
+import {
+  sessionProgressHtml, feedbackSectionsHtml, choiceClass, wireFeedbackNext
+} from './sessionChrome.js';
+
 function esc(s) {
   return typeof window.esc === 'function'
     ? window.esc(s)
@@ -175,11 +179,21 @@ export function renderGameLobby(root, vm, handlers = {}) {
   const id = 'daily_lobby_' + (vm.planSessionId || 'session');
   const focus = (vm.focusItems && vm.focusItems[0]) ? esc(vm.focusItems[0]) : 'разные игровые ситуации';
 
+  const resumeHtml = vm.resume ? `<div class="trResumeCard panel" style="margin:12px 0;border:1px solid rgba(200,255,61,0.25)">
+    <span class="ey">${esc(vm.resume.title)}</span>
+    <p class="mut small" style="margin:6px 0">${esc(vm.resume.sessionLabel)} · ${esc(vm.resume.progressText)} · ${esc(vm.resume.answeredText)}${vm.resume.activityLabel ? ` · ${esc(vm.resume.activityLabel)}` : ''}</p>
+    <div class="grid2" style="gap:8px">
+      <button type="button" class="primary pgCta" id="trResumeContinue">${esc(vm.resume.continueCta)} →</button>
+      <button type="button" class="secondary" id="trResumeNew">${esc(vm.resume.newCta)}</button>
+    </div>
+  </div>` : '';
+
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyLobby">
     ${hudWithBack(ctx, id, {
       title: '<h1 class="impact">РАЗДАЧА <span class="pink">ДНЯ</span></h1>',
       subtitle: vm.subtitle || ''
     }, 'daily', true)}
+    ${resumeHtml}
     <div class="pgArenaWrap pgDealIn">${gameArena({ ...disp })}</div>
     <div class="pgDailyChallenge">
       <span class="ey">${esc(vm.focusHeading || 'СЕГОДНЯ В ФОКУСЕ')}</span>
@@ -190,6 +204,11 @@ export function renderGameLobby(root, vm, handlers = {}) {
       <button type="button" class="primary pgCta pgBubblePress" id="trStart">${esc(vm.cta || 'НАЧАТЬ РАЗДАЧУ')} →</button>
     </div>
   </div>`;
+
+  const rc = root.querySelector('#trResumeContinue');
+  const rn = root.querySelector('#trResumeNew');
+  if (rc && typeof handlers.continueResume === 'function') rc.onclick = () => handlers.continueResume();
+  if (rn && typeof handlers.startNew === 'function') rn.onclick = () => handlers.startNew();
 
   const b = root.querySelector('#trStart');
   if (b && typeof handlers.start === 'function') {
@@ -220,23 +239,25 @@ export function renderGameDrill(root, vm, handlers = {}) {
   const id = 'daily_drill_' + (vm.drillId || vm.progress.index);
   const selectedId = vm.selectedOptionId || null;
 
+  const gridBusy = vm.isAnswering ? ' is-answering' : '';
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyDrill">
     ${hudWithBack(ctx, id, {
       title: '<h2>Разбор решения</h2>',
-      subtitle: `Task ${vm.progress.index}/${vm.progress.total}`
+      subtitle: `Раздача ${vm.progress.index}/${vm.progress.total}`
     }, 'daily')}
+    ${sessionProgressHtml(vm.sessionProgress || vm.progress)}
     ${streetDots(vm.street)}
     <div class="pgArenaWrap pgDealIn">${gameArena({ ...disp })}</div>
     <div class="pgControls">
-      <p class="pgPrompt">${esc(vm.prompt)}</p>
-      <div class="grid2 pgDecisionGrid">${vm.options.map((o) =>
-        `<button type="button" class="choice pgBubblePress${selectedId === o.id ? ' selected' : ''}" data-option="${esc(o.id)}">${esc(o.labelRu)}</button>`).join('')}</div>
+      <p class="pgPrompt" id="trPrompt">${esc(vm.prompt)}</p>
+      <div class="grid2 pgDecisionGrid trChoiceGrid${gridBusy}" role="group" aria-labelledby="trPrompt">${vm.options.map((o) =>
+        `<button type="button" class="${choiceClass(o, { ...vm, selectedOptionId: selectedId })}" data-option="${esc(o.id)}"${vm.isAnswering ? ' disabled' : ''}>${esc(o.labelRu)}</button>`).join('')}</div>
     </div>
   </div>`;
 
   root.querySelectorAll('[data-option]').forEach((b) => {
     b.onclick = () => {
-      if (typeof handlers.answer !== 'function') return;
+      if (vm.isAnswering || b.disabled || typeof handlers.answer !== 'function') return;
       window.PsMotion?.decisionLock(b);
       handlers.answer(b.dataset.option);
     };
@@ -253,16 +274,17 @@ export function renderGameFeedback(root, vm, handlers = {}) {
 
   root.innerHTML = `<div class="panel pgShell pgDaily pgDailyFeedback">
     <div class="pgHud">${window.MiniAppNav?.headRow('daily', `<div class="pgHudTitle"><h2>Вскрытие</h2><span class="ey">${esc(vm.gradeTitle || vm.verdict || 'Результат')}</span></div>`, {}) || ''}</div>
+    ${sessionProgressHtml(vm.sessionProgress)}
     <div class="pgControls">
       <div class="verdict pgVerdictCompact">
         <div class="dualGrade">
           <div class="gradeBox ${cls}"><span class="ey">ОЦЕНКА</span><b>${esc(vm.gradeTitle || vm.verdict || vm.grade || '—')}</b></div>
           <div class="gradeBox ${cls}"><span class="ey">EV</span><b>${vm.evLossBb != null ? Number(vm.evLossBb).toFixed(2) : '—'} BB</b></div>
         </div>
-        <p class="mut small">${esc(vm.why || vm.summary || '')}</p>
-        ${vm.remember ? `<p><b>${esc(vm.remember)}</b></p>` : ''}
+        ${feedbackSectionsHtml(vm, cls)}
         ${vm.tip ? `<p class="mut small">${esc(vm.tip)}</p>` : ''}
       </div>
+      <p class="trNextHint">Нажми «Далее» или Enter</p>
       <button type="button" class="primary pgCta pgBubblePress" id="trNext">СЛЕДУЮЩАЯ РАЗДАЧА →</button>
     </div>
   </div>`;
@@ -276,10 +298,7 @@ export function renderGameFeedback(root, vm, handlers = {}) {
   window.PsMotion?.pulseTarget(root, cls, '.pgVerdictCompact');
   window.PsMotion?.progressiveReveal(verdict);
 
-  const b = root.querySelector('#trNext');
-  if (b && typeof handlers.next === 'function') {
-    b.onclick = () => handlers.next();
-  }
+  wireFeedbackNext(root, handlers);
   window.MiniAppNav?.wire(root, 'daily', () => handlers.back?.());
 }
 

@@ -156,6 +156,9 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
       structured: true,
       verdict: fb.verdict,
       correctLine: fb.correctLine,
+      chosenAction: fb.chosenLabelRu || null,
+      correctAction: fb.correctLine || fb.recLabelRu || null,
+      keyTakeaway: fb.concept || fb.remember || null,
       why: fb.why,
       userMistake: fb.userMistake,
       remember: fb.concept,
@@ -176,12 +179,17 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
     };
   }
 
+  const fbLoose = result && result.feedbackRu;
   return {
     grade: result && result.grade,
-    gradeTitle: result && result.feedbackRu && result.feedbackRu.title,
-    summary: result && result.feedbackRu && result.feedbackRu.summary,
-    tip: result && result.feedbackRu && result.feedbackRu.tip,
-    concept: result && result.feedbackRu && result.feedbackRu.concept,
+    gradeTitle: fbLoose && fbLoose.title,
+    chosenAction: fbLoose && fbLoose.chosenLabelRu,
+    correctAction: fbLoose && (fbLoose.correctLine || fbLoose.recLabelRu),
+    keyTakeaway: fbLoose && (fbLoose.concept || fbLoose.remember),
+    summary: fbLoose && fbLoose.summary,
+    tip: fbLoose && fbLoose.tip,
+    concept: fbLoose && fbLoose.concept,
+    why: fbLoose && fbLoose.why,
     evLossBb: result && result.evLossBb,
     nearOptimal: !!(result && result.nearOptimal),
     mixedStrategy: !!(result && result.mixedStrategy),
@@ -190,6 +198,21 @@ export function feedbackViewModel({ result = null, drill = null } = {}) {
       recommendedActionLabel: rec ? actionLabelRu(rec) : null,
       recommendedFrequency: sol.recommendedFrequency != null ? sol.recommendedFrequency : null
     }
+  };
+}
+
+/** Session HUD: progress + score from existing results (no new scoring). */
+export function sessionProgressViewModel({ index = 0, total = 0, results = [] } = {}) {
+  const safeTotal = total > 0 ? total : 0;
+  const safeIndex = safeTotal ? Math.min(Math.max(1, index), safeTotal) : 0;
+  const correct = (results || []).filter((r) => r && (r.grade === 'EXCELLENT' || r.grade === 'GOOD')).length;
+  const remaining = safeTotal ? Math.max(0, safeTotal - safeIndex + 1) : 0;
+  return {
+    index: safeIndex,
+    total: safeTotal,
+    correct,
+    remaining,
+    answered: (results || []).length
   };
 }
 

@@ -127,6 +127,45 @@ test('renderHome renders personal training CTA with start handler', async () => 
   assert.equal(started, 1);
 });
 
+test('renderFeedback shows structured YOUR/CORRECT/WHY blocks', () => {
+  const root = freshRoot();
+  const vm = {
+    grade: 'MISTAKE',
+    structured: true,
+    verdict: 'Ошибка',
+    chosenAction: 'Фолд',
+    correctAction: 'Колл',
+    why: 'Пот-оддсы хорошие.',
+    keyTakeaway: 'Защита BB',
+    userMistake: 'Фолд слишком тайтовый.',
+    sessionProgress: { index: 2, total: 7, correct: 1, answered: 1, remaining: 6 },
+    evLossBb: 0.4,
+    chosenRecommended: false
+  };
+  let next = 0;
+  R.renderFeedback(root, vm, { next: () => next++ });
+  assert.ok(root.innerHTML.includes('ТВОЙ ХОД'));
+  assert.ok(root.innerHTML.includes('ВЕРНАЯ ЛИНИЯ'));
+  assert.ok(root.innerHTML.includes('ПОЧЕМУ'));
+  assert.ok(root.innerHTML.includes('ЗАПОМНИ'));
+  assert.ok(root.querySelector('.trSessionProgress'));
+  root.querySelector('#trNext').onclick();
+  assert.equal(next, 1);
+});
+
+test('sessionProgressViewModel uses results length and does not inflate index', () => {
+  const sp = VM.sessionProgressViewModel({ index: 3, total: 7, results: [
+    { grade: 'EXCELLENT' },
+    { grade: 'MISTAKE' },
+    { grade: 'GOOD' }
+  ] });
+  assert.equal(sp.index, 3);
+  assert.equal(sp.total, 7);
+  assert.equal(sp.answered, 3);
+  assert.equal(sp.correct, 2);
+  assert.equal(sp.remaining, 5);
+});
+
 test('viewModel builds a full per-question assessment view', () => {
   const a = VM.assessmentViewModel({
     item: {

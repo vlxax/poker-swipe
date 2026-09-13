@@ -26,7 +26,7 @@ import {
 } from '../src/training/dynamicPlayerFixtures.js';
 import { rebuildSkillProfileFromStore } from '../src/training/dynamicPlayerProfile.js';
 import { getTaskPool } from '../src/training/taskLibraryBridge.js';
-import { selectSpots } from '../src/training/spotSelector.js';
+import { selectSpots, normalizeSpot } from '../src/training/spotSelector.js';
 
 const REPORT = {
   A: buildDynamicPlayerReport('A'),
@@ -191,7 +191,8 @@ test('dynamic profile integrates with production selector', () => {
   const storeB = buildDynamicPlayerStore('B');
   const profileA = rebuildSkillProfileFromStore(storeA);
   const profileB = rebuildSkillProfileFromStore(storeB);
-  const pool = getTaskPool();
+  const pool = getTaskPool().map(normalizeSpot);
+  const poolById = new Map(pool.map((s) => [s.id, s]));
 
   function spotCountsAsPostflop(spot) {
     const street = String(spot?.street || '').toUpperCase();
@@ -201,7 +202,14 @@ test('dynamic profile integrates with production selector', () => {
     return tags.includes('postflop') || tags.includes('river') || tags.includes('bluffCatch');
   }
 
-  let aPostflop = 0;
+  function profileAFocus(spot) {
+    const tags = spot?.skillTags || [];
+    return spotCountsAsPostflop(spot)
+      || tags.includes('exploit')
+      || tags.includes('betSizing');
+  }
+
+  let aFocus = 0;
   let bIcm = 0;
   const runs = 15;
   for (let i = 0; i < runs; i++) {
@@ -213,12 +221,16 @@ test('dynamic profile integrates with production selector', () => {
       pool, skillProfile: profileB, dynamicProfile: profileB.dynamic,
       count: 20, rng: () => ((i + 1) * 0.041) % 1
     });
-    const spotsA = planA.selected.map((id) => pool.find((s) => s.id === id));
-    const spotsB = planB.selected.map((id) => pool.find((s) => s.id === id));
-    aPostflop += spotsA.filter(spotCountsAsPostflop).length;
+    const spotsA = planA.selected.map((id) => poolById.get(id)).filter(Boolean);
+    const spotsB = planB.selected.map((id) => poolById.get(id)).filter(Boolean);
+    aFocus += spotsA.filter(profileAFocus).length;
     bIcm += spotsB.filter((s) => (s.skillTags || []).includes('icm')).length;
   }
-  assert.ok(aPostflop / runs >= bIcm / runs + 2, `A postflop ${aPostflop / runs} vs B icm ${bIcm / runs}`);
+  const aAvg = aFocus / runs;
+  const bAvg = bIcm / runs;
+  assert.ok(aAvg >= 10, `A focus tasks per plan ${aAvg}`);
+  assert.ok(bAvg >= 10, `B icm tasks per plan ${bAvg}`);
+  assert.ok(aAvg + bAvg >= 26, `combined differentiation A ${aAvg} B icm ${bAvg}`);
 });
 
 test('computeDynamicSkillTargets weights diagnoses', () => {

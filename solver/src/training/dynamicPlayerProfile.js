@@ -4,16 +4,9 @@
 import { SKILLS, skillLabelRu, scoredSkillFromEvidence, confidenceFromEvidence, trendFromEvidence } from './skillProfile.js';
 import { buildSkillMasteryStates, recentAccuracyForSkill } from './skillMastery.js';
 import { recentAccuracy as gradeRecentAccuracy } from './adaptiveDifficulty.js';
-
-export const SKILL_DIAGNOSES = {
-  TRUE_WEAKNESS: 'true_weakness',
-  TEMPORARY_MISTAKE: 'temporary_mistake',
-  MASTERED: 'mastered',
-  DECAYING: 'decaying',
-  IMPROVING: 'improving',
-  STABLE: 'stable',
-  LEARNING: 'learning'
-};
+import { SKILL_DIAGNOSES, diagnosisPriorityBoost } from './skillDiagnoses.js';
+export { SKILL_DIAGNOSES, diagnosisPriorityBoost } from './skillDiagnoses.js';
+export { computeDynamicSkillTargets } from './dynamicSkillTargets.js';
 
 export const PROFILE_VERSION = 2;
 const RECENT_WINDOW = 8;
@@ -290,19 +283,6 @@ export function attachDynamicProfile(skillProfile, dynamicProfile) {
   };
 }
 
-export function diagnosisPriorityBoost(diagnosis) {
-  switch (diagnosis) {
-    case SKILL_DIAGNOSES.TRUE_WEAKNESS: return 3.5;
-    case SKILL_DIAGNOSES.DECAYING: return 3;
-    case SKILL_DIAGNOSES.TEMPORARY_MISTAKE: return 2;
-    case SKILL_DIAGNOSES.IMPROVING: return 1.2;
-    case SKILL_DIAGNOSES.LEARNING: return 1.5;
-    case SKILL_DIAGNOSES.MASTERED: return -2.5;
-    case SKILL_DIAGNOSES.STABLE: return 0.5;
-    default: return 0;
-  }
-}
-
 export function dynamicWeaknessBoost(spot, dynamicProfile) {
   if (!dynamicProfile?.tracks) return 0;
   let boost = 0;
@@ -319,65 +299,6 @@ export function dynamicWeaknessBoost(spot, dynamicProfile) {
     }
   }
   return boost;
-}
-
-export function computeDynamicSkillTargets(dynamicProfile, count = 7) {
-  if (!dynamicProfile?.tracks) return null;
-  const ranked = Object.values(dynamicProfile.tracks)
-    .filter((t) => t.score != null)
-    .map((t) => ({
-      ...t,
-      priority: diagnosisPriorityBoost(t.diagnosis) + (t.score < 50 ? 2 : 0)
-        + (t.diagnosis === SKILL_DIAGNOSES.DECAYING ? 1.5 : 0)
-        + (t.diagnosis === SKILL_DIAGNOSES.IMPROVING
-          && t.recentAccuracy != null && t.longTermAccuracy != null
-          && t.recentAccuracy - t.longTermAccuracy >= 0.25 ? 1.8 : 0)
-    }))
-    .sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      return (a.score ?? 999) - (b.score ?? 999);
-    });
-
-  if (!ranked.length) return null;
-
-  const targets = {};
-  let remaining = count;
-  const alloc = (skill, n) => {
-    if (n <= 0 || remaining <= 0) return;
-    const take = Math.min(n, remaining);
-    targets[skill] = (take + (targets[skill] || 0));
-    remaining -= take;
-  };
-
-  const hasImprovingGap = (t) =>
-    t.recentAccuracy != null
-    && t.longTermAccuracy != null
-    && t.recentAccuracy - t.longTermAccuracy >= 0.25;
-
-  const focus = ranked.filter((t) =>
-    t.diagnosis === SKILL_DIAGNOSES.TRUE_WEAKNESS
-    || t.diagnosis === SKILL_DIAGNOSES.DECAYING
-    || t.diagnosis === SKILL_DIAGNOSES.TEMPORARY_MISTAKE
-    || t.diagnosis === SKILL_DIAGNOSES.LEARNING
-    || (t.diagnosis === SKILL_DIAGNOSES.IMPROVING && hasImprovingGap(t))
-  ).slice(0, 3);
-
-  const pool = focus.length ? focus : ranked.slice(0, 3);
-
-  if (pool[0]) alloc(pool[0].skill, Math.max(2, Math.round(count * 0.38)));
-  if (pool[1]) alloc(pool[1].skill, Math.max(1, Math.round(count * 0.24)));
-  if (pool[2]) alloc(pool[2].skill, Math.max(1, Math.round(count * 0.14)));
-
-  const mastered = ranked.find((t) => t.diagnosis === SKILL_DIAGNOSES.MASTERED);
-  if (mastered && remaining > 0) alloc(mastered.skill, 1);
-
-  let guard = 0;
-  while (remaining > 0 && pool.length && guard < count) {
-    alloc(pool[guard % pool.length].skill, 1);
-    guard++;
-  }
-
-  return targets;
 }
 
 export function rebuildSkillProfileFromStore(store, { now = Date.now(), history = null } = {}) {

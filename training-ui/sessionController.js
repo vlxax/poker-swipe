@@ -10,6 +10,7 @@ import {
 import { gradeDecision as gradeProductionDecision } from './gradingGateway.js';
 import { rebuildSkillProfileFromStore } from '../solver/src/training/dynamicPlayerProfile.js';
 import { homeViewModel, summaryViewModel, feedbackViewModel } from './viewModel.js';
+import { enrichSummaryViewModel } from './sessionReview.js';
 import { ScenarioEngine, getScenarioById } from '../solver/src/handOfDay/index.js';
 
 export class SessionController {
@@ -153,13 +154,60 @@ export class SessionController {
     this.showingFeedback = false;
     this.lastAnswer = null;
     this.taskStates = {};
+    this.answering = false;
     this.state = 'idle';
+    this.mode = 'drill';
+  }
+
+  /**
+   * Restore an in-progress daily session from a validated resume snapshot.
+   * Does not re-record training results or invoke grading.
+   */
+  restoreFromSnapshot(snapshot) {
+    if (!snapshot || !snapshot.drills || !snapshot.drills.length) {
+      return { ok: false, reason: 'missing' };
+    }
+    if (snapshot.type && snapshot.type !== 'drill' && snapshot.type !== 'daily_personalized') {
+      return { ok: false, reason: 'type' };
+    }
+    const index = snapshot.index;
+    const total = snapshot.drills.length;
+    if (!Number.isInteger(index) || index < 0 || index >= total) {
+      return { ok: false, reason: 'index' };
+    }
+
+    this.genToken++;
+    if (this.abort) {
+      try { this.abort.abort(); } catch (e) { /* ignore */ }
+    }
+    this.abort = null;
+
+    this.mode = 'drill';
+    this.session = snapshot.session
+      ? {
+        sessionId: snapshot.session.sessionId,
+        primaryConcept: snapshot.session.primaryConcept,
+        personalized: snapshot.session.personalized,
+        plan: snapshot.session.plan || { total, filled: total }
+      }
+      : { plan: { total, filled: total } };
+    this.drills = snapshot.drills;
+    this.index = index;
+    this.results = Array.isArray(snapshot.results) ? snapshot.results.map((r) => ({ ...r })) : [];
+    this.taskStates = snapshot.taskStates ? { ...snapshot.taskStates } : {};
+    this.state = snapshot.state === 'limited' ? 'limited' : 'ready';
+    this.showingFeedback = !!snapshot.showingFeedback;
+    this.lastAnswer = snapshot.lastAnswer ? { ...snapshot.lastAnswer } : null;
+    this.answering = false;
+    this._captureBaseline();
+    this._notify();
+    return { ok: true };
   }
 
   _captureBaseline() {
     this.baselineLossByConcept = {};
     const primary = this.session && this.session.primaryConcept;
-    if (!primary) return;
+    if (!primary || typeof this.store?.loadHistory !== 'function') return;
     const losses = (this.store.loadHistory() || [])
       .filter((h) => h && h.concept === primary)
       .map((h) => h.evLossBb);
@@ -269,11 +317,16 @@ export class SessionController {
 
   summary() {
     const primary = this.session && this.session.primaryConcept;
-    return summaryViewModel({
+    const base = summaryViewModel({
       session: this.session,
       results: this.results,
       baselineLosses: primary ? this.baselineLossByConcept[primary] || [] : [],
       minSamples: this.config.trendMinSamples || 5
+    });
+    return enrichSummaryViewModel(base, {
+      results: this.results,
+      drills: this.drills,
+      taskStates: this.taskStates
     });
   }
 

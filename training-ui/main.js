@@ -20,9 +20,14 @@ import { installHomeRecommendation } from './homeRecommendation.js';
 import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';
 import { buildCanonicalSpot } from '../task-context/canonicalSpot.js';
 import { solve, SOLVE_OPTS } from './solveBridge.js';
-import { drillViewModel } from './viewModel.js';
+import { drillViewModel, sessionProgressViewModel } from './viewModel.js';
 import * as R from './renderer.js';
 import { installGradingGateway } from './gradingGateway.js';
+import {
+  buildResumeSnapshot, loadResume, saveResume, clearResume,
+  resumeCardViewModel, validateResumeSnapshot
+} from './sessionResume.js';
+import { buildMistakeReviewItems, historyEntriesViewModel } from './sessionReview.js';
 
 if (typeof window !== 'undefined') installGradingGateway(window);
 
@@ -73,12 +78,32 @@ const legacyRenderDaily = (typeof window.renderDaily === 'function') ? window.re
 
 const root = () => document.querySelector('#dailyArea');
 
+let cachedResume = loadResume(storage);
+
+function refreshCachedResume() {
+  cachedResume = loadResume(storage);
+}
+
+function persistSessionIfStable() {
+  if (pendingOptionId || ctl.answering) return;
+  if (ctl.state === 'done') {
+    clearResume(storage);
+    cachedResume = null;
+    return;
+  }
+  const snap = buildResumeSnapshot(ctl);
+  if (snap && saveResume(storage, snap)) refreshCachedResume();
+}
+
 const ctl = new SessionController({
   store,
   solve,
   solveOpts: SOLVE_OPTS,
   config: SESSION_CONFIG,
-  onStateChange: () => paint()
+  onStateChange: () => {
+    persistSessionIfStable();
+    if (!suppressControllerPaint) paint();
+  }
 });
 
 // Primary 12-question diagnostic (P0). Run before the first personalised session
@@ -92,6 +117,7 @@ const assessment = new AssessmentController({
   const onboarding = installOnboardingHooks({ store, assessment, appWindow: typeof window !== 'undefined' ? window : undefined });
 
 const goHome = () => {
+  resetPostSessionUi();
   if (typeof window.show === 'function') window.show('home');
   else if (legacyRenderDaily) legacyRenderDaily();
 };
@@ -120,8 +146,30 @@ function previewScenarioFromPlan(preparedDaily) {
   };
 }
 
+let pendingOptionId = null;
+let suppressControllerPaint = false;
+let lastDrillScrollIndex = null;
+let postSessionView = 'summary';
+let mistakeReviewIndex = 0;
+
+function resetPostSessionUi() {
+  postSessionView = 'summary';
+  mistakeReviewIndex = 0;
+}
+
+function mistakeItemsForReview() {
+  return buildMistakeReviewItems({
+    results: ctl.results,
+    drills: ctl.drills,
+    taskStates: ctl.taskStates
+  });
+}
+
 const handlers = {
   start() {
+    resetPostSessionUi();
+    clearResume(storage);
+    cachedResume = null;
     const r = ctl.start();
     if (r.reason === 'no_profile') { legacyFallback(); return; }
     if (r.started) {
@@ -133,10 +181,50 @@ const handlers = {
     }
     paint();
   },
+  startNew() {
+    resetPostSessionUi();
+    clearResume(storage);
+    cachedResume = null;
+    ctl._resetRun();
+    handlers.start();
+  },
+  continueResume() {
+    if (!cachedResume) return;
+    const check = validateResumeSnapshot(cachedResume);
+    if (!check.ok) {
+      clearResume(storage);
+      cachedResume = null;
+      paint();
+      return;
+    }
+    const restored = ctl.restoreFromSnapshot(cachedResume);
+    if (!restored.ok) {
+      clearResume(storage);
+      cachedResume = null;
+      paint();
+      return;
+    }
+    if (typeof window.show === 'function') window.show('daily');
+    window.MiniAppNav?.reset('daily');
+    pushDailyNav({ phase: 'drill', index: ctl.index });
+    if (ctl.showingFeedback) {
+      pushDailyNav({ phase: 'feedback', index: ctl.index });
+    }
+    persistSessionIfStable();
+    paint();
+  },
   answer(optionId) {
+    if (pendingOptionId || ctl.answering || ctl.showingFeedback) return;
+    pendingOptionId = optionId;
+    suppressControllerPaint = true;
+    paint();
     const res = ctl.answer(optionId);
+    pendingOptionId = null;
+    suppressControllerPaint = false;
     if (res) {
       pushDailyNav({ phase: 'feedback', index: ctl.index });
+      paint();
+    } else {
       paint();
     }
   },
@@ -160,7 +248,26 @@ const handlers = {
     }
     paint();
   },
-  more() { moreSpots(); }
+  more() { moreSpots(); },
+  reviewMistakes() {
+    postSessionView = 'review';
+    mistakeReviewIndex = 0;
+    paint();
+  },
+  backToSummary() {
+    postSessionView = 'summary';
+    paint();
+  },
+  nextMistake() {
+    const items = mistakeItemsForReview();
+    if (mistakeReviewIndex < items.length - 1) mistakeReviewIndex++;
+    else postSessionView = 'review_done';
+    paint();
+  },
+  finishReview() {
+    postSessionView = 'review_done';
+    paint();
+  }
 };
 
 const assessmentHandlers = {
@@ -171,6 +278,9 @@ const assessmentHandlers = {
 };
 
 function moreSpots() {
+  resetPostSessionUi();
+  clearResume(storage);
+  cachedResume = null;
   ctl._resetRun();
   ctl.config = { ...ctl.config, count: 5 };
   const r = ctl.start();
@@ -178,12 +288,35 @@ function moreSpots() {
   paint();
 }
 
+function sessionMetaVM() {
+  const prog = ctl.progress();
+  return sessionProgressViewModel({
+    index: prog.index,
+    total: prog.total,
+    results: ctl.results
+  });
+}
+
 function drillVM() {
   const drill = ctl.current();
   const prog = ctl.progress();
   const snap = ctl.taskStates[ctl.index];
   const vm = drillViewModel({ drill, index: prog.index, total: prog.total });
+  vm.sessionProgress = sessionMetaVM();
+  vm.isAnswering = ctl.answering || !!pendingOptionId;
+  vm.pendingOptionId = pendingOptionId;
   if (snap && snap.optionId) vm.selectedOptionId = snap.optionId;
+  if (snap && snap.lastAnswer && !ctl.showingFeedback) {
+    vm.reviewChoiceId = snap.optionId;
+    const g = snap.lastAnswer.grade;
+    vm.reviewChoiceCorrect = !!(snap.lastAnswer.chosenRecommended || g === 'EXCELLENT' || g === 'GOOD');
+  }
+  return vm;
+}
+
+function feedbackVM() {
+  const vm = ctl.feedbackVM();
+  vm.sessionProgress = sessionMetaVM();
   return vm;
 }
 
@@ -226,16 +359,28 @@ function paint() {
 
   if (st === 'ready' || st === 'limited') {
     if (ctl.showingFeedback && ctl.lastAnswer) {
-      R.renderFeedback(el, ctl.feedbackVM(), handlers);
+      R.renderFeedback(el, feedbackVM(), handlers);
     } else {
       R.renderDrill(el, drillVM(), handlers);
     }
   } else if (st === 'done') {
-    R.renderSummary(el, ctl.summary(), { ...handlers, back: goHome });
+    const doneHandlers = { ...handlers, back: goHome };
+    if (postSessionView === 'review') {
+      const items = mistakeItemsForReview();
+      if (!items.length) R.renderMistakeReviewEmpty(el, doneHandlers);
+      else R.renderMistakeReview(el, { items, index: mistakeReviewIndex }, doneHandlers);
+    } else if (postSessionView === 'review_done') {
+      R.renderMistakeReviewDone(el, doneHandlers);
+    } else {
+      R.renderSummary(el, ctl.summary(), doneHandlers);
+    }
   } else if (st === 'loading') {
     R.renderLoading(el, { cancel: () => { ctl.cancel(); paint(); } });
   } else if (st === 'error') {
-    R.renderError(el, { retry: () => { ctl._resetRun(); handlers.start(); } });
+    R.renderError(el, {
+      retry: () => { ctl._resetRun(); handlers.start(); },
+      back: goHome
+    });
   } else if (st === 'cancelled') {
     R.renderCancelled(el, { back: goHome });
   } else {
@@ -244,7 +389,17 @@ function paint() {
     const vm = ctl.home();
     if (vm.type === 'training') {
       vm.previewScenario = previewScenarioFromPlan(ctl.preparedDaily);
-      R.renderHome(el, vm, { start: handlers.start });
+      if (cachedResume && validateResumeSnapshot(cachedResume).ok) {
+        vm.resume = resumeCardViewModel(cachedResume);
+      }
+      if (typeof store.loadHistory === 'function') {
+        vm.recentHistory = historyEntriesViewModel(store.loadHistory(), { limit: 6 });
+      }
+      R.renderHome(el, vm, {
+        start: handlers.start,
+        continueResume: handlers.continueResume,
+        startNew: handlers.startNew
+      });
     } else {
       // No leak or skill profile yet → offer the primary diagnostic as the entry
       // to personalised training, keeping the validated legacy daily available.
@@ -253,6 +408,14 @@ function paint() {
         legacy: legacyFallback
       });
     }
+  }
+
+  const inDrill = (st === 'ready' || st === 'limited') && !ctl.showingFeedback && !pendingOptionId;
+  if (inDrill && lastDrillScrollIndex !== ctl.index) {
+    lastDrillScrollIndex = ctl.index;
+    try { el.scrollTop = 0; } catch (e) { /* ignore */ }
+  } else if (!inDrill && st !== 'ready' && st !== 'limited') {
+    lastDrillScrollIndex = null;
   }
 }
 
@@ -268,7 +431,12 @@ window.PersonalizedTrainingUi = {
   onboarding,
   paint,
   beginAssessment: () => { assessment.begin(); paint(); },
-  miniApps
+  miniApps,
+  sessionResume: {
+    load: () => loadResume(storage),
+    clear: () => { clearResume(storage); cachedResume = null; },
+    persist: persistSessionIfStable
+  }
 };
 
 export { store, ctl, paint, assessment };

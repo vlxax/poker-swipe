@@ -15,7 +15,14 @@ import {
 import {
   buildProfileDailyPlan, recordTrainingResult
 } from '../src/training/personalizedTraining.js';
-import { rebuildSkillProfileFromStore, SKILL_DIAGNOSES } from '../src/training/dynamicPlayerProfile.js';
+import {
+  resolvePrimaryWeaknessChain,
+  spotMatchesSkillId,
+  spotWithinAdaptiveBand,
+  weaknessSlotDifficultyMatches,
+  primaryWeaknessSkillsForAudit
+} from '../src/training/weaknessTargeting.js';
+import { buildSkillTiers } from '../src/training/skillTiers.js';
 import { drillFromLibraryTask } from '../src/training/libraryDrill.js';
 import { getTaskById, getTaskPool, auditTaskMetadata } from '../src/training/taskLibraryBridge.js';
 import { contentFingerprint, isTooSimilar } from '../src/training/sessionDiversity.js';
@@ -25,6 +32,21 @@ import {
 import { gradeAnswer } from '../src/training/answerEvaluator.js';
 import { seededRng } from '../src/training/personalizationSeed.js';
 import { buildTaskFeedback } from '../src/training/taskFeedback.js';
+import { rebuildSkillProfileFromStore } from '../src/training/dynamicPlayerProfile.js';
+
+const MISMATCH_BREAKDOWN = {
+  diagnosis_only_not_tiers: 0,
+  tiers_only_not_diagnosis: 0,
+  matches_neither: 0,
+  secondary_slot_excluded: 0,
+  matches_primary_canonical: 0,
+  no_primary_defined: 0,
+  primary_mismatch_total: 0
+};
+
+function resetMismatchBreakdown() {
+  for (const k of Object.keys(MISMATCH_BREAKDOWN)) MISMATCH_BREAKDOWN[k] = 0;
+}
 
 export const AUDIT_CONFIG = {
   sessionsPerProfile: 34,
@@ -36,13 +58,6 @@ export const AUDIT_CONFIG = {
 
 const CYRILLIC = /[а-яА-ЯёЁ]/;
 const RU_OPTIONS = new Set(['ФОЛД', 'КОЛЛ', 'ЧЕК', 'РЕЙЗ', 'СТАВКА', 'ОЛЛ-ИН', '3-БЕТ', '4-БЕТ']);
-const FOCUS_DIAGNOSES = new Set([
-  SKILL_DIAGNOSES.TRUE_WEAKNESS,
-  SKILL_DIAGNOSES.DECAYING,
-  SKILL_DIAGNOSES.TEMPORARY_MISTAKE,
-  SKILL_DIAGNOSES.LEARNING
-]);
-
 function pct(n, d) {
   if (!d) return 0;
   return Math.round((n / d) * 1000) / 10;
@@ -93,26 +108,45 @@ function answerExplanationOk(task) {
   return { ok, grade: grade.grade, verdict: fb?.verdict };
 }
 
-function focusSkillsFromProfile(profile) {
-  const tracks = profile?.tracks || profile?.dynamic?.tracks || {};
-  const fromTracks = Object.values(tracks)
-    .filter((t) => t && FOCUS_DIAGNOSES.has(t.diagnosis))
-    .map((t) => t.skill);
-  if (fromTracks.length) return [...new Set(fromTracks)];
-  const weak = profile?.weakest?.skill;
-  return weak ? [weak] : topWeaknesses({ loadSkillProfile: () => profile }).map((w) => w.skill);
+function classifyPrimarySlotMismatch(spot, profile, slotKind) {
+  if (slotKind !== 'primary_weakness') {
+    if (slotKind === 'secondary_weakness') MISMATCH_BREAKDOWN.secondary_slot_excluded++;
+    return null;
+  }
+  const chain = resolvePrimaryWeaknessChain({
+    skillProfile: profile,
+    dynamicProfile: profile?.dynamic || profile,
+    tiers: buildSkillTiers(profile),
+    count: 15
+  });
+  if (!chain.primary) {
+    MISMATCH_BREAKDOWN.no_primary_defined++;
+    return 'no_primary_defined';
+  }
+  const allowed = [chain.primary, ...chain.fallbacks].filter(Boolean);
+  if (allowed.some((skill) => spotMatchesSkillId(spot, skill))) {
+    MISMATCH_BREAKDOWN.matches_primary_canonical++;
+    return 'ok';
+  }
+  MISMATCH_BREAKDOWN.primary_mismatch_total++;
+  const tiers = buildSkillTiers(profile);
+  const matchesTiers = (spot.skillTags || []).some((t) => tiers.primary.includes(t));
+  const matchesDiagnosis = (spot.skillTags || []).some((t) => chain.diagnosed.includes(t));
+  if (matchesDiagnosis && !matchesTiers) MISMATCH_BREAKDOWN.diagnosis_only_not_tiers++;
+  else if (matchesTiers && !matchesDiagnosis) MISMATCH_BREAKDOWN.tiers_only_not_diagnosis++;
+  else MISMATCH_BREAKDOWN.matches_neither++;
+  return 'mismatch';
 }
 
-function spotMatchesWeakness(spot, weakSkills) {
-  if (!weakSkills.length) return true;
-  return (spot.skillTags || []).some((t) => weakSkills.includes(t));
-}
-
-function difficultyMatchesSpot(spot, profile, recentResults) {
-  const skill = pickRelevantSkillForSpot(spot, profile);
-  if (!skill || spot.difficulty == null) return true;
-  const band = getTargetDifficulty(profile, skill, { recentResults });
-  return spot.difficulty >= band.min - 0.6 && spot.difficulty <= band.max + 0.6;
+function difficultyMatchesSpot(spot, profile, recentResults, slotKind, taskPool, usedIds) {
+  const tiers = buildSkillTiers(profile);
+  return weaknessSlotDifficultyMatches(spot, {
+    skillProfile: profile,
+    recentResults,
+    dynamicProfile: profile?.dynamic || profile,
+    tiers,
+    count: 15
+  }, { slotKind, taskPool, usedIds });
 }
 
 function sessionNearDuplicatePairs(spots) {
@@ -126,6 +160,8 @@ function sessionNearDuplicatePairs(spots) {
   }
   return { pairs, total };
 }
+
+const AUDIT_TASK_POOL = getTaskPool();
 
 function auditSession(store, profileId, sessionIndex, config = AUDIT_CONFIG) {
   const now = config.baseNow + sessionIndex * 120_000;
@@ -157,9 +193,9 @@ function auditSession(store, profileId, sessionIndex, config = AUDIT_CONFIG) {
   let diffMismatch = 0;
   let profileMismatch = 0;
   let primaryWeakSlots = 0;
+  let secondaryWeakSlots = 0;
   let advancedTasks = 0;
-
-  const weakSkills = focusSkillsFromProfile(profile);
+  const usedIdsForDiff = new Set();
 
   for (let i = 0; i < spots.length; i++) {
     const spot = spots[i];
@@ -179,16 +215,35 @@ function auditSession(store, profileId, sessionIndex, config = AUDIT_CONFIG) {
     const ans = answerExplanationOk(task);
     if (!ans.ok) answerFails++;
 
-    if (!difficultyMatchesSpot(spot, profile, recentResults)) diffMismatch++;
+    const slotForDiff = (plan.slotKinds || [])[i] || '';
+    if (slotForDiff === 'primary_weakness' || slotForDiff === 'secondary_weakness') {
+      if (!difficultyMatchesSpot(spot, profile, recentResults, slotForDiff, AUDIT_TASK_POOL, usedIdsForDiff)) {
+        diffMismatch++;
+      }
+    }
+    usedIdsForDiff.add(spot.id);
 
     if (task.difficulty >= 4) advancedTasks++;
 
     const slot = (plan.slotKinds || [])[i] || '';
-    if (slot.includes('weakness')) {
+    if (slot === 'primary_weakness') {
       primaryWeakSlots++;
-      if (!spotMatchesWeakness(spot, weakSkills)) profileMismatch++;
+      const cls = classifyPrimarySlotMismatch(spot, profile, slot);
+      if (cls === 'mismatch') profileMismatch++;
+    } else if (slot === 'secondary_weakness') {
+      secondaryWeakSlots++;
+      classifyPrimarySlotMismatch(spot, profile, slot);
+    } else {
+      classifyPrimarySlotMismatch(spot, profile, slot);
     }
   }
+
+  const primaryChain = resolvePrimaryWeaknessChain({
+    skillProfile: profile,
+    dynamicProfile: profile?.dynamic || profile,
+    tiers: buildSkillTiers(profile),
+    count: config.tasksPerSession
+  });
 
   const dupIds = spotIds.length - new Set(spotIds).size;
   const { pairs: nearDupPairs, total: nearDupTotal } = sessionNearDuplicatePairs(spots);
@@ -215,7 +270,8 @@ function auditSession(store, profileId, sessionIndex, config = AUDIT_CONFIG) {
     diffMismatch,
     profileMismatch,
     primaryWeakSlots,
-    weakSkills,
+    secondaryWeakSlots,
+    primaryWeaknessSkill: primaryChain.primary,
     distribution: classifyTrainingBucket,
     bucketCounts: (() => {
       const d = { icmPush: 0, postRiver: 0, other: 0 };
@@ -256,6 +312,7 @@ function simulateAnswers(store, plan, { count = 3, now, pickWrong = false } = {}
 }
 
 export function runTrainingQualityAudit(config = AUDIT_CONFIG) {
+  resetMismatchBreakdown();
   const lib = buildLibrary();
   const libVal = validateLibrary(lib);
   const meta = auditTaskMetadata(lib);
@@ -352,6 +409,9 @@ export function runTrainingQualityAudit(config = AUDIT_CONFIG) {
   const totalProfileMismatch = trimmed.reduce((n, s) => n + s.profileMismatch, 0);
   const totalPrimaryWeak = trimmed.reduce((n, s) => n + s.primaryWeakSlots, 0);
   const totalDiffMismatch = trimmed.reduce((n, s) => n + s.diffMismatch, 0);
+  const totalWeaknessSlotsForDiff = trimmed.reduce((n, s) => {
+    return n + (s.primaryWeakSlots || 0) + (s.secondaryWeakSlots || 0);
+  }, 0);
   const totalAnswerFails = trimmed.reduce((n, s) => n + s.answerFails, 0);
   const totalContextFails = trimmed.reduce((n, s) => n + s.contextFails, 0);
   const totalRuFails = trimmed.reduce((n, s) => n + s.ruTermFails, 0);
@@ -395,14 +455,15 @@ export function runTrainingQualityAudit(config = AUDIT_CONFIG) {
     answerFailCount: totalAnswerFails,
     contextFailCount: totalContextFails,
     ruTermFailCount: totalRuFails,
-    diffMismatchRate: pct(totalDiffMismatch, totalTasks),
+    diffMismatchRate: pct(totalDiffMismatch, totalWeaknessSlotsForDiff || totalPrimaryWeak),
     personalizedRate: pct(personalizedCount, trimmed.length),
     crossProfileOverlap: crossOverlap,
     session0Rates,
     libraryValid: libVal.ok,
     libraryTaskCount: lib.length,
     metadataFullyUsable: meta.fullyUsable,
-    metadataTotal: meta.total
+    metadataTotal: meta.total,
+    mismatchBreakdown: { ...MISMATCH_BREAKDOWN }
   };
 
   const thresholds = {
