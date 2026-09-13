@@ -40,6 +40,7 @@ describe('trainer semantic legend layer', () => {
 
     const callpush = resolveNaiContextualAction('callpush', { chartHasAI: true });
     assert.equal(callpush.contextualAction, 'NON_ALL_IN_CALL');
+    assert.equal(callpush.normalizedAction, 'CALL');
     assert.equal(callpush.gradingAllowed, true);
 
     const vs3bet = resolveNaiContextualAction('vs3bet', { chartHasAI: true });
@@ -68,7 +69,8 @@ describe('trainer semantic legend layer', () => {
     assert.equal(uo.id, 'ORANGE_UO');
     assert.equal(margin.id, 'ORANGE_MARGIN');
     assert.notEqual(uo.rawLabel, margin.rawLabel);
-    assert.equal(uo.gradingAllowed, false);
+    assert.equal(uo.normalizedAction, 'CALL');
+    assert.equal(uo.gradingAllowed, true);
     assert.equal(margin.gradingAllowed, false);
   });
 

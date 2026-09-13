@@ -28,6 +28,14 @@ export const STRATEGY_SOURCE = {
   HEURISTIC: 'HEURISTIC'
 };
 
+export const RECOMMENDATION_SOURCE = {
+  SOLVER_VERIFIED: 'SOLVER_VERIFIED',
+  TRAINER_VERIFIED: 'TRAINER_VERIFIED',
+  CURATED_REFERENCE: 'CURATED_REFERENCE',
+  HEURISTIC: 'HEURISTIC',
+  EXPLOIT: 'EXPLOIT'
+};
+
 /** Actions that must not drive correct/incorrect grading until confirmed. */
 export const NON_GRADABLE_ACTIONS = new Set([
   'nAI',
@@ -35,12 +43,17 @@ export const NON_GRADABLE_ACTIONS = new Set([
   'UO'
 ]);
 
-export function actionGradingStatus(rawAction, normalizedAction = null) {
+export function actionGradingStatus(rawAction, normalizedAction = null, contextualAction = null) {
   const raw = String(rawAction || '').trim();
   const normalized = String(normalizedAction || '').trim();
+  const contextual = String(contextualAction || '').trim();
   if (!raw) return TRAINER_STATUS.MISSING_TRAINER_DATA;
-  if (normalized === 'FOLD') return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  if (normalized === 'FOLD' || normalized === 'CALL') return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  if (contextual === 'NON_ALL_IN_CALL' && (normalized === 'CALL' || normalized === 'NON_ALL_IN' || raw === 'nAI')) {
+    return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  }
   if (raw === 'UNSELECTED') return TRAINER_STATUS.EXACT_TRAINER_DATA;
+  if (raw === 'ORANGE_208_160_32' && normalized === 'CALL') return TRAINER_STATUS.EXACT_TRAINER_DATA;
   if (raw === 'nAI' || raw === 'LOW_PLAYABILITY' || raw === 'UO') {
     return TRAINER_STATUS.NEEDS_CLARIFICATION;
   }
@@ -50,6 +63,6 @@ export function actionGradingStatus(rawAction, normalizedAction = null) {
   return TRAINER_STATUS.NEEDS_CLARIFICATION;
 }
 
-export function canGradeWithTrainerAction(rawAction, normalizedAction = null) {
-  return actionGradingStatus(rawAction, normalizedAction) === TRAINER_STATUS.EXACT_TRAINER_DATA;
+export function canGradeWithTrainerAction(rawAction, normalizedAction = null, contextualAction = null) {
+  return actionGradingStatus(rawAction, normalizedAction, contextualAction) === TRAINER_STATUS.EXACT_TRAINER_DATA;
 }

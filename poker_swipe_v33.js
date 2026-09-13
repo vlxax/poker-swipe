@@ -20,7 +20,13 @@
     LINE_REFERENCE:'МОДЕЛЬ ЛИНИИ',
     INSUFFICIENT_CONTEXT:'НЕ ХВАТАЕТ КОНТЕКСТА',
     REPAIR_MODEL:'КОРИДОР ИСПРАВЛЕНИЯ',
-    LINE_MODEL:'МОДЕЛЬ ЛИНИИ'
+    SOLVER_VERIFIED:'РАСЧЁТ НА УСТРОЙСТВЕ',
+    TRAINER_VERIFIED:'ЧАРТА ТРЕНЕРА',
+    CURATED_REFERENCE:'УЧЕБНЫЙ АТЛАС',
+    HEURISTIC:'ЭВРИСТИКА',
+    EXPLOIT:'ЭКСПЛОЙТ',
+    TOURNAMENT_HEURISTIC:'ТУРНИРНАЯ ЭВРИСТИКА',
+    ICM_EDUCATIONAL_MODEL:'ICM-МОДЕЛЬ (УЧЕБНАЯ)',
   };
   window.brainSourceLabel=function brainSourceLabelV33(source=''){return sourceLabels[source]||String(source).replaceAll('_',' ')};
   window.brainPanel=function brainPanelV33(result){

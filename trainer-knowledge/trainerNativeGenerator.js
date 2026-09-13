@@ -166,9 +166,18 @@ function conceptForSourceMode(mode) {
 }
 
 export function buildTrainerNativeTask({ chart, hand, handRec, lookup }) {
-  if (!chart || !hand || !handRec?.gradingAllowed) return null;
-  if (handRec.isMixed) return null;
-  if (!canGradeWithTrainerAction(handRec.actionRaw, handRec.normalizedAction || handRec.actionRaw)) {
+  if (!chart || !hand) return null;
+  const contextual = handRec.contextualAction || null;
+  const normalized = handRec.normalizedAction
+    || (handRec.actionRaw === 'UNSELECTED' ? 'FOLD' : handRec.actionRaw);
+  const callLike = normalized === 'CALL' || contextual === 'NON_ALL_IN_CALL'
+    || (handRec.actionRaw === 'ORANGE_208_160_32' && normalized === 'CALL');
+  const mixedOk = Boolean(handRec.isMixed) && callLike
+    && Array.isArray(handRec.strategies)
+    && handRec.strategies.some((s) => s.normalizedAction === 'CALL' || s.contextualAction === 'NON_ALL_IN_CALL');
+  if (!handRec.gradingAllowed && !callLike && !mixedOk) return null;
+  if (handRec.isMixed && !mixedOk) return null;
+  if (!canGradeWithTrainerAction(handRec.actionRaw, normalized, contextual) && !callLike) {
     return null;
   }
 
@@ -252,15 +261,26 @@ export function listTrainerGradableCells({ maxCharts = 200, maxPerChart = 8 } = 
       const raw = loadChartHands(chart.id);
       if (raw) {
         hands = Object.entries(raw)
-          .filter(([, cell]) => cell.g === 1 && cell.m !== 1)
-          .map(([hand, cell]) => ({
-            hand,
-            actionRaw: cell.a,
-            normalizedAction: cell.a === 'UNSELECTED' ? 'FOLD' : cell.a,
-            gradingAllowed: true,
-            isMixed: false,
-            provenance: chart.provenance
-          }));
+          .filter(([, cell]) => {
+            const naiCall = cell.a === 'nAI' && chart.sourceMode === 'callpush';
+            const orangeCall = cell.a === 'ORANGE_208_160_32' && (chart.legendScheme === 'UO_STYLE' || chart.sourceMode === 'uo');
+            return (cell.g === 1 || naiCall || orangeCall) && cell.m !== 1;
+          })
+          .map(([hand, cell]) => {
+            const naiCall = cell.a === 'nAI' && chart.sourceMode === 'callpush';
+            const orangeCall = cell.a === 'ORANGE_208_160_32';
+            return {
+              hand,
+              actionRaw: cell.a,
+              normalizedAction: cell.a === 'UNSELECTED' ? 'FOLD'
+                : (naiCall || orangeCall) ? 'CALL'
+                  : cell.a,
+              contextualAction: naiCall ? 'NON_ALL_IN_CALL' : null,
+              gradingAllowed: true,
+              isMixed: false,
+              provenance: chart.provenance
+            };
+          });
       }
     }
 

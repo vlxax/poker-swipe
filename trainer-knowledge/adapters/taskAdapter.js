@@ -47,13 +47,18 @@ function scenarioFromCanonical(task) {
 const TRAINER_OPTION_MAP = {
   AI: ['ОЛЛ-ИН', 'РЕЙЗ'],
   RAISE: ['РЕЙЗ', '3-БЕТ', '4-БЕТ'],
+  CALL: ['КОЛЛ'],
+  NON_ALL_IN_CALL: ['КОЛЛ'],
   UNSELECTED: ['ФОЛД', 'СФОЛДИТЬ']
 };
 
 export function trainerActionToLibraryChoice(trainerAction, task) {
   if (!trainerAction) return null;
-  const normalized = trainerAction === 'UNSELECTED' ? 'FOLD' : trainerAction;
-  if (!canGradeWithTrainerAction(trainerAction, normalized)) return null;
+  const normalized = trainerAction === 'UNSELECTED' ? 'FOLD'
+    : trainerAction === 'CALL' || trainerAction === 'NON_ALL_IN_CALL' ? 'CALL'
+      : trainerAction;
+  if (!canGradeWithTrainerAction(trainerAction, normalized, trainerAction === 'NON_ALL_IN_CALL' ? 'NON_ALL_IN_CALL' : null)
+    && normalized !== 'CALL') return null;
   const opts = task.options || [];
   const candidates = TRAINER_OPTION_MAP[trainerAction] || TRAINER_OPTION_MAP[normalized] || [];
   for (const c of candidates) {

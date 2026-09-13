@@ -95,11 +95,20 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
   const bestEV = solution.bestEV != null ? solution.bestEV : evs.length ? Math.max(...evs) : null;
   const evLossBb = chosenEV != null && bestEV != null ? Math.max(0, bestEV - chosenEV) : null;
 
-  const grade = gradeForLoss(evLossBb, preset);
-  const nearOptimal = evLossBb != null && evLossBb <= GOOD_LOSS;
-  const mixedStrategy = solution.recommendedFrequency != null &&
-    solution.recommendedFrequency > 0.2 && solution.recommendedFrequency < 0.8;
+  const mixedStrategy = (solution.recommendedFrequency != null &&
+    solution.recommendedFrequency > 0.2 && solution.recommendedFrequency < 0.8)
+    || Boolean(drill?.metadata?.task?.alsoOk?.length);
+
   const chosenRecommended = !!opt && !!solution.recommendedAction && sameAction(opt.action, solution.recommendedAction);
+  const chosenAlsoOk = !!opt && Array.isArray(drill?.metadata?.task?.alsoOk)
+    && drill.metadata.task.alsoOk.includes(opt.labelRu);
+
+  let grade = gradeForLoss(evLossBb, preset);
+  if (chosenAlsoOk && mixedStrategy) {
+    const mixedGrade = gradeForLoss(Math.min(evLossBb == null ? 0.03 : evLossBb, 0.04), preset);
+    if (GRADE_ORDER.indexOf(mixedGrade) < GRADE_ORDER.indexOf(grade)) grade = mixedGrade;
+    if (grade === 'MISTAKE' || grade === 'BIG MISTAKE') grade = 'GOOD';
+  }
 
   const task = drill && drill.metadata && drill.metadata.task;
   let feedbackRu;
@@ -132,9 +141,10 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
     evLossBb,
     chosenEV,
     bestEV,
-    nearOptimal,
+    nearOptimal: evLossBb != null && evLossBb <= GOOD_LOSS,
     mixedStrategy,
     chosenRecommended,
+    chosenAlsoOk: !!chosenAlsoOk,
     chosenOption: opt,
     feedbackRu
   };
