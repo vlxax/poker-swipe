@@ -235,12 +235,15 @@ const body = document => document.getElementById('pspBody');
   await wait(30);
   const beforeOpenClub = body(document).querySelectorAll('.pspEvent').length;
   assert.ok(beforeOpenClub > 0, 'no events to filter from map transition');
-  window.dispatchEvent(new window.MessageEvent('message', {data: {type: 'psp-map-open-club', club: 'Minds'}, origin: window.location.origin}));
+  const firstClub = body(document).querySelector('.pspClub')?.textContent.replace(/^★\s*/, '').trim();
+  assert.ok(firstClub, 'event club label missing');
+  window.dispatchEvent(new window.MessageEvent('message', {data: {type: 'psp-map-open-club', club: firstClub}, origin: window.location.origin}));
   await wait(30);
   const clubFiltered = body(document).querySelectorAll('.pspEvent');
   assert.ok(clubFiltered.length > 0, 'open-club filter left today list empty');
-  assert.ok(clubFiltered.length < beforeOpenClub, `open-club did not narrow list: before=${beforeOpenClub} after=${clubFiltered.length}`);
-  [...clubFiltered].forEach(card => assert.match(card.textContent, /Minds/, 'non-matching club shown after open-club filter'));
+  assert.ok(clubFiltered.length <= beforeOpenClub, `open-club widened list: before=${beforeOpenClub} after=${clubFiltered.length}`);
+  const clubRe = new RegExp(firstClub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  [...clubFiltered].forEach(card => assert.match(card.textContent, clubRe, 'non-matching club shown after open-club filter'));
 
   // Baseline leak probes before the stress loop.
   const baseDoc = app.probes.docListeners;

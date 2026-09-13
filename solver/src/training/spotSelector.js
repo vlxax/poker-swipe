@@ -675,8 +675,6 @@ function selectSpotsProfileAware({
         .map((s) => ({
           spot: s,
           score: 0.2 + spotDifficultyFit(s, ctx, 'maintenance_medium') * 0.25
-            + ((prefersLowDifficulty(ctx) && (s.difficulty || 1) <= 3) ? 2.5 : 0)
-            - ((prefersLowDifficulty(ctx) && (s.difficulty || 1) >= 4) ? 8 : 0)
             - diversityPenalty(s, picked, history),
           bucket: bucketForSpot(s, ctx),
           slotKind: 'maintenance_medium'
