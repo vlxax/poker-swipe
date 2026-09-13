@@ -3221,9 +3221,6 @@ if(_editNickBtn){
 /* V32: one synchronous boot plus a live public bridge for feature modules.
    The application markup is already above this script, so waiting for
    DOMContentLoaded only made V30/V31 execute before the core existed. */
-/* Overlay scripts assign rank helpers after this IIFE; keep lexical bindings
-   so exposeV32 setters can receive the real implementations. */
-let rankIndex28, rankUnlocked28, rankReq28, openRank28;
 function exposeV32(name,get,set){
   try{Object.defineProperty(window,name,{configurable:true,enumerable:false,get,set:set||undefined})}
   catch(e){try{window[name]=get()}catch(_){}}
