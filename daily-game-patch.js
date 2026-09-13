@@ -78,9 +78,9 @@
       window.dArgs = {};
       window.dChoice = null;
       window.dSize = null;
-      window.dStart = window.now();
-      window.MiniAppNav?.push('dailyLegacy', { phase: 'street', dStreet: 0 });
-      const run = () => window.dailyStreet();
+    window.dStart = window.now();
+    window.MiniAppNav?.push('dailyLegacy', { phase: 'street', dStreet: 0 });
+    const run = () => window.dailyStreet();
       if (window.PsMotion?.startHand) window.PsMotion.startHand(area, run);
       else run();
     };

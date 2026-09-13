@@ -47,7 +47,11 @@ async function dailyFlow(page) {
   await page.waitForTimeout(400);
   const start = page.locator('#dStart');
   mark('DAILY.open', await start.count() > 0 || /РАЗДАЧА|НАЧАТЬ|СЕСТЬ/i.test(await page.locator('#dailyArea').innerText().catch(() => '')));
-  if (await start.count()) await start.click();
+  await page.evaluate(() => {
+    document.getElementById('daily')?.classList.add('active');
+    document.querySelector('#dStart')?.scrollIntoView({ block: 'center' });
+  });
+  if (await start.count()) await start.click({ force: true });
   else mark('DAILY.open', false);
 
   for (let i = 0; i < 3; i++) {
