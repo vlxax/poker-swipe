@@ -1897,9 +1897,9 @@ function renderPlayers28(root){
  box.innerHTML=`<h3>ДРУГИЕ ИГРОКИ</h3>${REMOTE_PLAYERS28.length?REMOTE_PLAYERS28.map((p,i)=>`<button class="player28" data-p28="${i}"><img src="${remoteAvatar28(p)}"><div><b>${esc(p.nickname||'Игрок')}</b><small>${esc(p.rank_name||'Рыбуляр')} · ${+p.hands_count||0} решений</small></div><strong>${+p.skill||0}</strong></button>`).join(''):'<div class="sync28">Пока кроме тебя никто не сохранил публичный профиль. Открой приложение на другом телефоне/Telegram — после первого сохранения игрок появится здесь.</div>'}`;
  root.querySelectorAll('[data-p28]').forEach(b=>b.onclick=()=>openPublic28(REMOTE_PLAYERS28[+b.dataset.p28]));
 }
-const _renderProfileV25Master=renderProfile;
+const _renderProfileV25Master=typeof renderProfile==='function'?renderProfile:null;
 renderProfile=function(){
- _renderProfileV25Master();
+ if(_renderProfileV25Master)_renderProfileV25Master();
  const root=$('#profileArea');if(!root)return;
  const m=rankMetrics28(),ri=rankIndex28(),r=RANKS28[ri],next=RANKS28[ri+1],pct=next?Math.max(4,Math.min(100,Math.round(((Number(S.skill)||0)-r.skill)/Math.max(1,next.skill-r.skill)*100))):100;
  const wrap=document.createElement('div');
@@ -1961,10 +1961,10 @@ const _xrRevealV16=xrReveal;
 xrReveal=function(score){_xrRevealV16(score);const v=$('#xrayArea .verdict');if(v)v.insertAdjacentHTML('afterend',`<div class="brainPanel"><div class="brainHead"><b>◉ RANGE ENGINE</b><span class="brainSource">COMBO REMOVAL · EXACT</span></div><p class="brainExplain">В этом режиме score взвешивается количеством реально доступных combinations после board removal. Следующий слой Brain использует ту же range-модель для blocker и bluff-density проверки.</p></div>`)}
 
 /* Home + YOU: expose that Brain is actually online */
-const _renderHomeV16=renderHome;
-renderHome=function(){_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>АНАЛИЗ</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')}  · ${s.exactNodes} </span></div></div><span>v${PokerBrain.version}</span></div>`)}
-const _renderProfileV16=renderProfile;
-renderProfile=function(){_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b></b> ${s.totalPolicies.toLocaleString('ru-RU')}  YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
+const _renderHomeV16=typeof renderHome==='function'?renderHome:null;
+renderHome=function(){if(_renderHomeV16)_renderHomeV16();const s=PokerBrain.stats(),creator=$('#home .homeCreator');if(creator)creator.insertAdjacentHTML('afterend',`<div class="brainHome"><div><b><i class="brainPulse"></i>АНАЛИЗ</b><div><span>${s.totalPolicies.toLocaleString('ru-RU')}  · ${s.exactNodes} </span></div></div><span>v${PokerBrain.version}</span></div>`)}
+const _renderProfileV16=typeof renderProfile==='function'?renderProfile:null;
+renderProfile=function(){if(_renderProfileV16)_renderProfileV16();const p=$('#profile .youMethod'),s=PokerBrain.stats();if(p)p.insertAdjacentHTML('afterend',`<div class="analysisNote"><b></b> ${s.totalPolicies.toLocaleString('ru-RU')}  YOU хранит не только итог «правильно/ошибка», но и источник модели, confidence и policy score каждого решения.</div>`)}
 
 /* Brain-based course routing when conceptId exists */
 const _courseForConceptV16=courseForConcept;
@@ -2026,7 +2026,7 @@ function wirePush18(){let pos='BTN',stage='MID',mode='PUSH',f=()=>{let h=[$('#ph
 function reconView18(){return`<div class="tool18 recon18"><div class="toolTop"><button class="back18" onclick="myGo18('hub')">←</button><h2>РАЗБОР РАЗДАЧИ</h2></div><div class="panel18"><div class="label18">КОНТЕКСТ</div><select id="rf"><option>MTT</option><option>CASH</option></select><input id="rs" placeholder="Эффективный стек · BB"><input id="rp" placeholder="Твоя позиция · BTN"><input id="rvp" placeholder="Оппонент · BB"><input id="rh" placeholder="Твоя рука · AsQd"><input id="rv" placeholder="Рука оппа · если видел"><textarea id="rr" placeholder="Что ты думал о его диапазоне ДО шоудауна?"></textarea></div>${['PREFLOP','FLOP','TURN','RIVER'].map(x=>`<div class="street18"><b>${x}</b><input id="r${x}" placeholder="Борд / действия / сайзы как помнишь"></div>`).join('')}<div class="panel18"><div class="label18">ФАКТ ПОСЛЕ РУКИ</div><select id="rres"><option>Не помню / неважно</option><option>Я выиграл</option><option>Оппонент выиграл</option><option>Сплит</option></select><textarea id="rq" placeholder="Что хочешь понять? Например: он вообще имел право так коллить?"></textarea></div><button id="ran" class="primary">РАЗОБРАТЬ →</button><button id="rsave" class="secondary" style="margin-top:7px">НЕ ПОМНЮ БОЛЬШЕ · СОХРАНИТЬ</button><div id="rout"></div></div>`}
 function saveRecon18(part){let h={id:Date.now(),format:$('#rf').value,stack:$('#rs').value,pos:$('#rp').value,vpos:$('#rvp').value,hero:$('#rh').value,villain:$('#rv').value,read:$('#rr').value,pre:$('#rPREFLOP').value,flop:$('#rFLOP').value,turn:$('#rTURN').value,river:$('#rRIVER').value,result:$('#rres').value,question:$('#rq').value,partial:part};S.myHands18=S.myHands18||[];S.myHands18.push(h);save();return h}
 function wireRecon18(){$('#rsave').onclick=()=>{saveRecon18(true);$('#rout').innerHTML=`<div class="answer18 mix18"><h2>СОХРАНЕНО.</h2><p>Неполная реальная рука лучше идеально выдуманной.</p></div>`};$('#ran').onclick=()=>{let h=saveRecon18(false),n=[h.pre,h.flop,h.turn,h.river].filter(Boolean).length;$('#rout').innerHTML=`<div class="answer18 good18"><span class="ey">HAND SCAN</span><h2>${n}/4 УЛИЦЫ</h2><p>${h.read?'Read до шоудауна сохранён отдельно. ':''}Результат банка не используется как доказательство качества решения. Оппонента разбираем с его позиции.</p></div>`}}
-const oldMy18=renderMy;renderMy=function(){let a=$('#myArea');if(!a)return;let v=window.myView18||'hands';if(v==='hands')oldMy18();if(v==='hub')a.innerHTML=myHub18();if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0)}if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0)}if(v==='recon'){a.innerHTML=reconView18();setTimeout(wireRecon18,0)}}
+const oldMy18=typeof renderMy==='function'?renderMy:null;renderMy=function(){let a=$('#myArea');if(!a)return;let v=window.myView18||'hands';if(v==='hands'&&oldMy18)oldMy18();if(v==='hub')a.innerHTML=myHub18();if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0)}if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0)}if(v==='recon'){a.innerHTML=reconView18();setTimeout(wireRecon18,0)}}
 window.myGo18=myGo18;
 
 
@@ -2162,9 +2162,9 @@ show=function(id){
 function creatorMark21(){
  return `<div class="creatorHomeMark21"><span class="dash"></span><span class="by">by</span><span class="name">Фриковая Дама</span><span class="kiss">💋</span></div>`;
 }
-const __renderHomeV21=renderHome;
+const __renderHomeV21=typeof renderHome==='function'?renderHome:null;
 renderHome=function(){
-  __renderHomeV21();
+  if(__renderHomeV21)__renderHomeV21();
   document.body.classList.add('home-context');
   const h=document.getElementById('home');
   if(h && !h.querySelector('.creatorHomeMark21')){
@@ -2686,11 +2686,11 @@ myHub18=function(){
  <button class="my18Tool reconCard" onclick="myGo18('recon')"><span class="vis18">↯</span><span class="ey">ПОСЛЕ КАТКИ</span><h2>РАЗБОР<br>РАЗДАЧИ</h2><p>Собери линию за минуту и посмотри, где ошибся ты и что делал оппонент.</p><span class="go">РАЗОБРАТЬ →</span></button></div>
  <div style="margin-top:16px"><span class="ey">НЕДАВНИЕ</span>${a.length?a.map(x=>x.version===22?`<button class="hr22Saved" data-saved22="${x.id}"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')} → открыть разбор</small></button>`:`<div class="saved18"><b>${esc(x.hero||'Раздача')} · ${esc(x.pos||'')}</b><small>${esc(x.question||x.result||'сохранено')}</small></div>`).join(''):`<div class="saved18"><b>Пока пусто.</b><small>Принеси сюда первую спорную офлайн-раздачу.</small></div>`}</div></div>`;
 }
-const __renderMyV22=renderMy;
+const __renderMyV22=typeof renderMy==='function'?renderMy:null;
 renderMy=function(){
  const a=$('#myArea');if(!a)return;const v=window.myView18||'hub';
  if(v==='hub'){a.innerHTML=myHub18();setTimeout(()=>$$('[data-saved22]').forEach(b=>b.onclick=()=>openSaved22(b.dataset.saved22)),0);return}
- if(v==='recon'){reconView18();return}
+ if(v==='recon'){if(__renderMyV22)__renderMyV22();return}
  if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0);return}
  if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0);return}
 }
@@ -2874,10 +2874,10 @@ function appendTournamentYou23(){
  root.insertAdjacentHTML('beforeend',html);
  $('#t23YouOpen').onclick=()=>show('tournaments');
 }
-const __renderProfileV23=renderProfile;
-renderProfile=function(){__renderProfileV23();setTimeout(appendTournamentYou23,0)};
-const __showV23=show;
-show=function(id){__showV23(id);if(id==='tournaments')renderTournaments23()};
+const __renderProfileV23=typeof renderProfile==='function'?renderProfile:null;
+renderProfile=function(){if(__renderProfileV23)__renderProfileV23();setTimeout(appendTournamentYou23,0)};
+const __showV23=typeof show==='function'?show:null;
+show=function(id){if(__showV23)__showV23(id);if(id==='tournaments'&&typeof renderTournaments23==='function')renderTournaments23()};
 window.renderTournaments23=renderTournaments23;
 window.openTournamentForm23=openTournamentForm23;
 
@@ -3133,9 +3133,9 @@ function d25Finish(){
 renderDiagnostic=function(){if(!D25.active)D25={active:true,index:0,results:[],started:performance.now(),pending:null,force:false};if(D25.index>=DIAG25.length){d25Finish();return}typeof d25RenderSpot==='function'&&d25RenderSpot();}
 
 /* Start-screen story now leads into the real assessment */
-const __renderStoryV25Base=renderStory;
+const __renderStoryV25Base=typeof renderStory==='function'?renderStory:null;
 renderStory=function(){
- if(S.onboarded&&S.diagDone){$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');window.renderHome?.();return}
+ if(S.onboarded&&S.diagDone){$('#onboarding').classList.add('hidden');$('#mainApp').classList.remove('hidden');document.body.classList.add('home-context');if(__renderStoryV25Base)__renderStoryV25Base();return}
  if(!S.onboarded){
    if(story<3){$('#story').onclick=()=>{story++;renderStory()};$('#story').innerHTML=storyScene21(story);return}
    $('#story').onclick=null;$('#story').innerHTML=`<div class="storyCinema21" style="justify-content:center"><div class="storyStep21">${[0,1,2].map(()=>'<i class="on"></i>').join('')}</div><div class="storyIdentity21"><span class="line"></span><b>СТАРТОВЫЙ ПРОФИЛЬ</b><span class="line"></span></div><h1 class="impact">НАПИШИ СВОЙ<br><span class="pink">НИКНЕЙМ.</span></h1><p>Дальше — 12 реальных решений примерно на две минуты. Префлоп, постфлоп, размеры и ривер.</p><input id="nickInput" maxlength="18" placeholder="Твой никнейм"><button class="primary" id="nickGo" style="margin-top:10px">НАЧАТЬ ТЕСТ →</button></div>`;
@@ -3168,9 +3168,9 @@ renderStory=function(){
 
 /* Diagnostic baseline appears in YOU, but fades out after real sample grows */
 you20Events=function(){const all=Array.isArray(S.events)?S.events:[];return all.filter(e=>e.mode!=='diagnostic'&&!e.excludeFromProfile);}
-const __renderProfileV25Base=renderProfile;
+const __renderProfileV25Base=typeof renderProfile==='function'?renderProfile:null;
 renderProfile=function(){
- __renderProfileV25Base();
+ if(__renderProfileV25Base)__renderProfileV25Base();
  const root=$('#profileArea .you20'),p=S.diagnosticProfile25;if(!root||root.querySelector('.d25Retake'))return;
  const box=p?`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>${p.overall}/100 · ${d25Level(p.overall)}</h3></div><button id="d25RetakeBtn">ПЕРЕПРОЙТИ</button></div><p>Префлоп ${p.dims?.pre??'—'} · постфлоп ${p.dims?.post??'—'} · сайзинг ${p.dims?.size??'—'} · дисциплина ${p.dims?.discipline??'—'}. Диагностика задаёт baseline, но не подмешивается в текущую статистику решений.</p></div>`:`<div class="d25Retake"><div class="d25RetakeTop"><div><span class="ey">СТАРТОВЫЙ СРЕЗ</span><h3>НОВАЯ ДИАГНОСТИКА</h3></div><button id="d25RetakeBtn">ПРОЙТИ</button></div><p>12 спотов: префлоп, постфлоп, размеры и river discipline.</p></div>`;
  root.insertAdjacentHTML('beforeend',box);$('#d25RetakeBtn').onclick=()=>d25Start(true);
