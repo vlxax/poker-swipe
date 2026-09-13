@@ -133,11 +133,18 @@ const HandImportSystem = (() => {
     if (m) result.effStack = parseFloat(m[1]) / (result.bbSize || 1);
 
     // Extract hero hand
-    m = text.match(/(?:Hole|Dealt to)\s+cards?.*?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])/i);
+    m = text.match(/hole cards:\s*\[([^\]]+)\]/i) || text.match(/(?:Hole|Dealt to)\s+cards?.*?([A-Z2-9][shdc♠♥♦♣])\s+([A-Z2-9][shdc♠♥♦♣])/i);
     if (m) {
-      const card1 = normalizeCard(m[1]);
-      const card2 = normalizeCard(m[2]);
-      if (card1 && card2) result.hero = [card1, card2];
+      if (m[1] && m[1].includes(' ')) {
+        const parts = m[1].trim().split(/\s+/);
+        const card1 = normalizeCard(parts[0]);
+        const card2 = normalizeCard(parts[1]);
+        if (card1 && card2) result.hero = [card1, card2];
+      } else {
+        const card1 = normalizeCard(m[1]);
+        const card2 = normalizeCard(m[2]);
+        if (card1 && card2) result.hero = [card1, card2];
+      }
     }
 
     // Extract board (flop, turn, river)

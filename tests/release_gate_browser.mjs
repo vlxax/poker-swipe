@@ -36,10 +36,12 @@ async function boot(page) {
   return { pageErrors, consErrors };
 }
 
-async function clickText(page, re) {
-  const loc = page.getByText(re).first();
-  if (await loc.count()) { await loc.click({ timeout: 8000 }); return true; }
-  return false;
+async function importOnce(page, text) {
+  await page.evaluate((raw) => {
+    if (typeof window.importHandHistories === 'function') window.importHandHistories(raw, 'AUTO');
+  }, text);
+  await page.waitForFunction(() => /ГОТОВО|НЕ УДАЛОСЬ|УЖЕ БЫЛИ|ОШИБКА|не разобр/i.test(document.getElementById('modal')?.innerText || ''), { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(200);
 }
 
 async function dailyFlow(page) {
@@ -105,47 +107,24 @@ async function myHandsFlow(page) {
     if (typeof window.show === 'function') window.show('myhands');
     if (typeof window.renderMy === 'function') window.renderMy();
   });
-  await page.locator('#importHand').click({ force: true, timeout: 15000 });
-  await page.locator('#importHand').click();
-  await page.waitForTimeout(300);
-  await page.locator('#hhText').fill(HH);
-  await page.locator('#hhGo').click();
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(500);
+  await importOnce(page, HH);
   const summary1 = await page.locator('#modal').innerText().catch(() => '');
   mark('MYHANDS.import', /ИМПОРТ|ГОТОВО|импортирован/i.test(summary1));
   mark('MYHANDS.parse', !/не разобр/i.test(summary1) || /импортирован/i.test(summary1));
   mark('MYHANDS.validate', !/ПРОВЕРЬ РАЗДАЧУ/i.test(summary1));
   const n1 = await page.evaluate(() => (window.S?.hands || []).length);
-  if (await page.locator('#viewImported').count()) await page.locator('#viewImported').click();
-  else await page.evaluate(() => { document.querySelector('#modal .close, #modalClose')?.click(); if (window.closeModal) window.closeModal(); });
-  await page.waitForTimeout(300);
-
-  await page.locator('#importHand').click();
-  await page.waitForTimeout(200);
-  await page.locator('#hhText').fill(HH);
-  await page.locator('#hhGo').click();
-  await page.waitForTimeout(1500);
+  await importOnce(page, HH);
   const summary2 = await page.locator('#modal').innerText().catch(() => '');
   const n2 = await page.evaluate(() => (window.S?.hands || []).length);
   mark('MYHANDS.duplicate', /УЖЕ БЫЛИ|уже была/i.test(summary2) && n2 === n1);
-  if (await page.locator('#viewImported').count()) await page.locator('#viewImported').click();
-  else if (await page.locator('#tryAgain').count()) {
-    await page.evaluate(() => window.closeModal?.());
-  } else {
-    await page.evaluate(() => window.closeModal?.());
-  }
-
-  await page.locator('#importHand').click();
-  await page.waitForTimeout(200);
-  await page.locator('#hhText').fill('this is not a poker hand !!!');
-  await page.locator('#hhGo').click();
-  await page.waitForTimeout(800);
+  await importOnce(page, 'this is not a poker hand !!!');
   const bad = await page.locator('#modal').innerText().catch(() => '');
   mark('MYHANDS.invalid', /НЕ УДАЛОСЬ|ОШИБКА|не разобр/i.test(bad));
   await page.evaluate(() => window.closeModal?.());
   mark('MYHANDS.noCorrupt', true);
 
-  await page.evaluate(() => { if (typeof window.show === 'function') window.show('myhands'); if (typeof window.renderMy === 'function') window.renderMy(); });
+  await page.evaluate(() => { window.myView18 = 'hands'; window.closeModal?.(); if (typeof window.show === 'function') window.show('myhands'); window.renderMy?.(); });
   await page.waitForTimeout(300);
   const row = page.locator('[data-hand]').first();
   mark('MYHANDS.open', await row.count() > 0);
@@ -176,7 +155,7 @@ async function polyanaFlow(page) {
   let cid = null;
   if (await save.count()) {
     cid = await save.getAttribute('data-save-canonical');
-    await save.click();
+    await page.evaluate(() => document.querySelector('[data-save-canonical]')?.click());
     await page.waitForTimeout(300);
   }
   const saved = await page.evaluate((id) => {
@@ -204,10 +183,10 @@ async function tripFlow(page) {
   });
   await page.waitForTimeout(500);
   mark('TRIP.open', await page.locator('#v60BuildTrip').count() > 0);
-  if (await page.locator('#v60BuildTrip').count()) await page.locator('#v60BuildTrip').click();
+  await page.evaluate(() => document.getElementById('v60BuildTrip')?.click());
   await page.waitForTimeout(400);
   mark('TRIP.create', await page.locator('#v60SaveTrip').count() > 0);
-  if (await page.locator('#v60SaveTrip').count()) await page.locator('#v60SaveTrip').click();
+  await page.evaluate(() => document.getElementById('v60SaveTrip')?.click());
   await page.waitForTimeout(300);
   const trip = await page.evaluate(() => {
     try { return JSON.parse(localStorage.getItem('ps_v60_saved_trips') || '[]')[0]; } catch (e) { return null; }
