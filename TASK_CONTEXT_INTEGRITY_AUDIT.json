@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-08-25T14:32:29.350Z",
+  "generatedAt": "2026-09-14T11:07:37.438Z",
   "TOTAL_ACTIVE_TASKS": 1249,
-  "VALID_ACTIVE": 1236,
-  "INVALID_ACTIVE": 13,
+  "VALID_ACTIVE": 1249,
+  "INVALID_ACTIVE": 0,
   "QUARANTINED_COUNT": 441,
   "BY_MODE": {
     "DAILY": {
@@ -19,132 +19,31 @@
     "SWIPE": {
       "total": 64,
       "active": 64,
-      "validActive": 56,
-      "invalidActive": 8,
+      "validActive": 64,
+      "invalidActive": 0,
       "quarantined": [],
       "warnings": 0,
-      "invalidActiveIds": [
-        "T_Q832_AQ_V0",
-        "T_Q832_AQ_V1",
-        "T_Q832_AQ_V2",
-        "T_Q832_AQ_V3",
-        "T_JT85_KQ_V0",
-        "T_JT85_KQ_V1",
-        "T_JT85_KQ_V2",
-        "T_JT85_KQ_V3"
-      ],
+      "invalidActiveIds": [],
       "quarantinedIds": [],
-      "records": [
-        {
-          "id": "T_Q832_AQ_V0",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_Q832_AQ_V1",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_Q832_AQ_V2",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_Q832_AQ_V3",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_JT85_KQ_V0",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_JT85_KQ_V1",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_JT85_KQ_V2",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        },
-        {
-          "id": "T_JT85_KQ_V3",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "swipe"
-        }
-      ],
+      "records": [],
       "library": {
         "total": 180,
         "active": 180,
-        "validActive": 176,
-        "invalidActive": 4,
+        "validActive": 180,
+        "invalidActive": 0,
         "quarantined": [],
         "warnings": 0,
-        "invalidActiveIds": [
-          "PRE_ISO_LIMP",
-          "TOUR_ICM_88",
-          "TOUR_ICM_AJ_FOLD",
-          "ADV9B_ICM_BTN_FOLD"
-        ],
+        "invalidActiveIds": [],
         "quarantinedIds": [],
-        "records": [
-          {
-            "id": "PRE_ISO_LIMP",
-            "type": "POSITION_MISMATCH",
-            "detail": "position BTN not reflected in history/question",
-            "mode": "swipe"
-          },
-          {
-            "id": "TOUR_ICM_88",
-            "type": "POSITION_MISMATCH",
-            "detail": "position BB not reflected in history/question",
-            "mode": "swipe"
-          },
-          {
-            "id": "TOUR_ICM_AJ_FOLD",
-            "type": "POSITION_MISMATCH",
-            "detail": "position BB not reflected in history/question",
-            "mode": "swipe"
-          },
-          {
-            "id": "ADV9B_ICM_BTN_FOLD",
-            "type": "POSITION_MISMATCH",
-            "detail": "position BTN not reflected in history/question",
-            "mode": "swipe"
-          }
-        ]
+        "records": []
       },
       "combined": {
         "total": 244,
         "active": 244,
-        "validActive": 232,
-        "invalidActive": 12,
+        "validActive": 244,
+        "invalidActive": 0,
         "quarantined": "",
-        "invalidActiveIds": [
-          "PRE_ISO_LIMP",
-          "TOUR_ICM_88",
-          "TOUR_ICM_AJ_FOLD",
-          "ADV9B_ICM_BTN_FOLD",
-          "T_Q832_AQ_V0",
-          "T_Q832_AQ_V1",
-          "T_Q832_AQ_V2",
-          "T_Q832_AQ_V3",
-          "T_JT85_KQ_V0",
-          "T_JT85_KQ_V1",
-          "T_JT85_KQ_V2",
-          "T_JT85_KQ_V3"
-        ]
+        "invalidActiveIds": []
       }
     },
     "TRAINER_NATIVE": {
@@ -162,22 +61,13 @@
     "SIZING": {
       "total": 8,
       "active": 8,
-      "validActive": 7,
-      "invalidActive": 1,
+      "validActive": 8,
+      "invalidActive": 0,
       "quarantined": [],
       "warnings": 0,
-      "invalidActiveIds": [
-        "SZ7"
-      ],
+      "invalidActiveIds": [],
       "quarantinedIds": [],
-      "records": [
-        {
-          "id": "SZ7",
-          "type": "POSITION_MISMATCH",
-          "detail": "position BTN not reflected in history/question",
-          "mode": "sizing"
-        }
-      ]
+      "records": []
     },
     "REVIEW": {
       "total": 6,
@@ -238,26 +128,12 @@
       "excludedFromUserFacingActive": true
     }
   },
-  "REMAINING_INVALID_ACTIVE_TASK_IDS": [
-    "PRE_ISO_LIMP",
-    "TOUR_ICM_88",
-    "TOUR_ICM_AJ_FOLD",
-    "ADV9B_ICM_BTN_FOLD",
-    "T_Q832_AQ_V0",
-    "T_Q832_AQ_V1",
-    "T_Q832_AQ_V2",
-    "T_Q832_AQ_V3",
-    "T_JT85_KQ_V0",
-    "T_JT85_KQ_V1",
-    "T_JT85_KQ_V2",
-    "T_JT85_KQ_V3",
-    "SZ7"
-  ],
+  "REMAINING_INVALID_ACTIVE_TASK_IDS": "NONE",
   "STALE_COPY_PATHS_REMAINING": "NO",
-  "DESCRIPTION_EQUALS_CANONICAL": "NO",
-  "GRADING_EQUALS_CANONICAL": "NO",
-  "TRAINER_LOOKUP_EQUALS_CANONICAL": "NO",
-  "SAFE_TO_MERGE": "NO",
+  "DESCRIPTION_EQUALS_CANONICAL": "YES",
+  "GRADING_EQUALS_CANONICAL": "YES",
+  "TRAINER_LOOKUP_EQUALS_CANONICAL": "YES",
+  "SAFE_TO_MERGE": "YES",
   "QUARANTINED": [
     {
       "id": "PRE_RFI_BTN_A8S",
@@ -2474,8 +2350,8 @@
   },
   "library": {
     "total": 180,
-    "swipeValid": 176,
-    "swipeInvalid": 4,
+    "swipeValid": 180,
+    "swipeInvalid": 0,
     "quarantined": 441
   }
 }

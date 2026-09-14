@@ -286,7 +286,10 @@ function lowDifficultyPoolPreference(pool, slotKind, ctx) {
   const easy = pool.filter((x) => (x.spot.difficulty || 1) <= 3);
   if (easy.length >= 2) return easy;
   const stretch = pool.filter((x) => (x.spot.difficulty || 1) <= (strictLowOverall ? 3 : 4));
-  return stretch.length >= 2 ? stretch : pool;
+  if (stretch.length >= 2) return stretch;
+  if (strictLowOverall && easy.length >= 1) return easy;
+  if (strictLowOverall) return stretch.length ? stretch : pool.filter((x) => (x.spot.difficulty || 1) <= 3);
+  return pool;
 }
 
 function highTargetDifficultyBoost(spot, ctx, slotKind = null) {
@@ -602,9 +605,9 @@ function pickOneSlot(candidates, slotKind, ctx, rng, usedIds) {
       (s, sk, c) => scoreForSessionSlot(s, sk, c)
     );
     pool = filterPoolByAdaptiveBand(pool, ctx, { slotKind, minResults: 1 });
-  } else {
-    pool = lowDifficultyPoolPreference(pool, slotKind, ctx);
   }
+  // Low-skill profiles must not be flooded with L4–L5 via weakness slots (Phase 13 audit).
+  pool = lowDifficultyPoolPreference(pool, slotKind, ctx);
 
   if (!pool.length) return null;
 

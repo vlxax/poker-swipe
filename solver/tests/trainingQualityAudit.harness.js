@@ -512,6 +512,7 @@ export async function runTrainingQualityAudit({
 
     for (let s = 0; s < perProfile; s++) {
       const now = AUDIT_NOW0 + s * SESSION_GAP_MS;
+      const overallAtSessionStart = overallScore(store);
       const session = await generateSession(store, { count, now });
       const drills = session.drills || [];
       const plan = session.plan || {};
@@ -566,7 +567,7 @@ export async function runTrainingQualityAudit({
           advancedTotal++;
           if ((task.difficulty || 0) >= 4) advancedHard++;
         }
-        if (profile.kind === 'beginner') {
+        if (profile.kind === 'beginner' && (overallAtSessionStart == null || overallAtSessionStart < 42)) {
           beginnerTotal++;
           if ((task.difficulty || 0) <= 3) beginnerEasy++;
         }
