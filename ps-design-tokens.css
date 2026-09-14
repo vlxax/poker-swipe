@@ -38,6 +38,91 @@
 .psScreen {
   color: var(--ps-text-primary);
   font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-md);
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography roles — layer on headings/labels without changing poker card fonts */
+.psTypeDisplay {
+  font-family: var(--ps-font-display);
+  font-size: var(--ps-text-display);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.psTypeScreenTitle {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xl);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+.psTypeSectionTitle {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-lg);
+  font-weight: 800;
+  line-height: 1.15;
+}
+.psTypeCardTitle {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-md);
+  font-weight: 800;
+  line-height: 1.2;
+}
+.psTypeBody {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-md);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.psTypeSecondary {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ps-text-secondary);
+}
+.psTypeCaption {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xs);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ps-text-secondary);
+}
+.psTypeButton {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-sm);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.psTypeStat {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xl);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.psScreenHeader {
+  padding: calc(8px + env(safe-area-inset-top, 0px)) 14px var(--ps-space-3);
+  max-width: 520px;
+  margin: 0 auto;
+}
+.psScreenHeader .psScreenBack {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  border: 0;
+  background: transparent;
+  color: var(--ps-text-primary);
+  font-size: var(--ps-text-lg);
+  padding: 0;
 }
 .psScreenBody {
   padding: 0 14px calc(110px + env(safe-area-inset-bottom, 0px));
