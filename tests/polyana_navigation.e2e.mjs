@@ -32,7 +32,7 @@ async function main() {
         tourActive: tour?.classList.contains('active'),
         areaLen: area?.innerHTML.trim().length || 0,
         hasPspShell: !!area?.querySelector('.pspTop, .pspHero, .pspTabs'),
-        psYou: document.querySelectorAll('#profileArea .psYou').length,
+        pidProfile: document.querySelectorAll('#profileArea .pid').length,
         v38You: document.querySelectorAll('#polyana .v38You, #tournamentsArea .v38You').length,
         polyDisplay: poly ? getComputedStyle(poly).display : null,
         polyOpacity: poly ? getComputedStyle(poly).opacity : null,

@@ -28,7 +28,7 @@ Competing v54 router vs native `#polyana` / `polyana-integrated.js`. Fixed via `
 - **Tokens:** `ps-design-tokens.css`
 - **Bridge (legacy markup → one product):** `ps-ui-unified.css` (loaded last)
 - **Shell:** `.psScreen` on all primary sections + injected `#ranges`
-- **Profile:** `profile.js` / `profile.css` (`.psBlock`, `.psHero` — aligned via bridge typography)
+- **Profile:** `profile.js` («Твой покерный почерк», `.pid`) / `profile.css` + `ps-ui-unified.css` `.pid` bridge
 
 ## PER-SCREEN BEFORE → AFTER
 
@@ -40,7 +40,7 @@ Competing v54 router vs native `#polyana` / `polyana-integrated.js`. Fixed via `
 | **SIZING** | Dense panel, ad-hoc CTA | Panel + primary CTA match system; result `psReveal` |
 | **MY HANDS** | `.myHero` / entries disparate | Hero + entries use card border/radius/spacing rhythm |
 | **MY RANGES** | Separate injected screen | `#ranges.psScreen` + horizontal padding/safe area |
-| **PROFILE** | v38 CSS competed with profile.css | Dead **v38** block removed from `poker_swipe_v39.css`; profile owner unchanged |
+| **PROFILE** | psYou / v38 / inline panel wrappers | **`profile.js` `.pid`**; `__psVisualV2` blocks `game-visual-rebuild` wrap; v38 CSS removed |
 | **POLYANA** | Blank while loading | Loading/error cards; list empty copy unchanged |
 | **TOURNAMENTS** | ps72 overlay | Stress-tested 20×; no stale overlay |
 
@@ -80,6 +80,7 @@ See `CSS_COLLISION_REPORT.md` — conflicting `.screen.active` **fixed**; classi
 | `npm run test:e2e:ui-visual` | PASS (27 PNGs, 3 viewports × 9 screens) |
 | `npm run test:css-collision` | PASS |
 | `npm run test:ui-audit` | Regenerates `UI_SYSTEM_AUDIT.md` |
+| `npm run test:e2e:profile` | Post-merge pid ownership, styles, 20× home↔profile, profile PNGs |
 
 ## SCREENSHOTS / VISUAL CHECK
 
@@ -93,7 +94,7 @@ None.
 
 - Optional: delete unlinked `polyana-integrated.css` at repo root.
 - Optional: migrate v36 home markup to explicit `psCard` classes (bridge sufficient today).
-- Update `tests/v32_regression.js` if CI runs it (still expects `.v38You`).
+- `tests/v32_regression.js` updated to assert `#profileArea .pid`.
 
 ## COMMITS (this pass)
 

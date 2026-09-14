@@ -188,4 +188,6 @@ function render(){
 
 window.PokerSwipeProfile={render,model,cleanEvents,confidence};
 window.renderProfile=render;
+window.renderProfile.__psVisualV2=true;
+window.renderProfile.__psProfileHandwriting=true;
 })();

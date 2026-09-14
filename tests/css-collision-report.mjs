@@ -4,7 +4,7 @@ import { join } from 'path';
 const ROOT = process.cwd();
 
 const CLASSIFICATION = {
-  '#profileArea': { kind: 'intentional', note: 'profile.css wins (loaded late); v39 v38 block removed' },
+  '#profileArea': { kind: 'intentional', note: 'profile.css + ps-ui-unified .pid bridge; handwriting profile (not psYou)' },
   '#dailyArea': { kind: 'intentional', note: 'game-visual-system + mini-app-compact; bridge in ps-ui-unified.css' },
   '#polyana': { kind: 'intentional', note: 'scoped #polyana in polyana-integrated.css' },
   '#psPolyanaArea': { kind: 'duplicate', note: 'polyana/polyana-integrated.css + root polyana-integrated.css — verify single link in index' },
