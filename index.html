@@ -2689,7 +2689,7 @@ const __renderMyV22=typeof renderMy==='function'?renderMy:null;
 renderMy=function(){
  const a=$('#myArea');if(!a)return;const v=window.myView18||'hub';
  if(v==='hub'){a.innerHTML=myHub18();setTimeout(()=>$$('[data-saved22]').forEach(b=>b.onclick=()=>openSaved22(b.dataset.saved22)),0);return}
- if(v==='recon'){if(__renderMyV22)__renderMyV22();return}
+ if(v==='recon'){reconView18();return}
  if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0);return}
  if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0);return}
 }
