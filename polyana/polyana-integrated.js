@@ -34,6 +34,8 @@ const state={
   },
   favorites:loadFavorites(),
   loaded:false,
+  loadStatus:'idle',
+  loadError:'',
   lateTimer:null
 };
 
@@ -312,6 +314,28 @@ function filterSheet(){
       </div>
     </div>
   </div>`;
+}
+
+function renderStatusView(kind){
+  const r=root();if(!r)return;
+  const isLoad=kind==='loading';
+  const isErr=kind==='error';
+  const title=isLoad?'Загружаем афишу…':isErr?'Не удалось загрузить':'Нет данных';
+  const body=isLoad
+    ?'Подтягиваем клубы и турниры Москвы.'
+    :isErr
+      ?`${esc(state.loadError||'Проверь сеть или открой экран позже.')}`
+      :'Список пуст. Попробуй позже или сбрось фильтры.';
+  r.innerHTML=`<div class="pspHero pspShellState"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
+  <div class="pspStateCard ${kind}" role="status">
+    <span class="pspStateEy">${isLoad?'ЗАГРУЗКА':isErr?'ОШИБКА':'ПУСТО'}</span>
+    <b>${title}</b>
+    <p>${body}</p>
+    ${isErr?'<button type="button" class="pspStateRetry" data-psp-retry>ПОВТОРИТЬ</button>':''}
+  </div>`;
+  r.onclick=(e)=>{
+    if(e.target.closest?.('[data-psp-retry]')){state.loadStatus='idle';state.loaded=false;ensurePolyanaMounted();}
+  };
 }
 
 function shell(){
@@ -642,11 +666,21 @@ function render(){
   renderBody();
 }
 async function load(){
-  const [ed,cd]=await Promise.all([fetchFirst(DATA_URLS,'events'),fetchFirst(CLUB_URLS,'clubs')]);
-  state.events=(ed.events||[]).map(normalize);
-  state.clubs=(cd.clubs||[]);
-  state.loaded=true;
-  render();
+  state.loadStatus='loading';
+  renderStatusView('loading');
+  try{
+    const [ed,cd]=await Promise.all([fetchFirst(DATA_URLS,'events'),fetchFirst(CLUB_URLS,'clubs')]);
+    state.events=(ed.events||[]).map(normalize);
+    state.clubs=(cd.clubs||[]);
+    state.loaded=true;
+    state.loadStatus='ready';
+    state.loadError='';
+    render();
+  }catch(err){
+    state.loadStatus='error';
+    state.loadError=String(err?.message||err||'Ошибка загрузки');
+    renderStatusView('error');
+  }
 }
 function warmMapCache(){
   if(window.__pspMapWarmStarted)return;
@@ -659,11 +693,22 @@ function warmMapCache(){
   document.body.appendChild(f);
 }
 
+function ensurePolyanaMounted(){
+  const r=root();if(!r)return;
+  if(state.loadStatus==='loading')return;
+  if(state.loadStatus==='error'||state.loadStatus==='empty'){
+    if(!r.querySelector('.pspShellState'))renderStatusView(state.loadStatus);
+    return;
+  }
+  if(!state.loaded){load();return;}
+  if(!r.querySelector('.pspHero,.pspTop,.pspTabs'))render();
+}
+
 function openPolyana(){
   if(typeof window.show==='function')window.show('polyana');
   const nav=document.querySelector('.nav [data-nav="polyana"]');
   document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
-  if(!state.loaded)load();else render();
+  ensurePolyanaMounted();
   warmMapCache();
 }
 
@@ -722,5 +767,6 @@ if(document.readyState==='loading'){
   setTimeout(warmMapCache,250);
 }
 
+window.ensurePokerSwipePolyana=ensurePolyanaMounted;
 window.openPokerSwipePolyana=openPolyana;
 })();

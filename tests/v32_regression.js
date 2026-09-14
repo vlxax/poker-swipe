@@ -154,7 +154,7 @@ async function boot({returning = false} = {}) {
 
   window.show('profile');
   await wait(100);
-  assert.ok(document.querySelector('.v38You'), 'profile v38 layout missing');
+  assert.ok(document.querySelector('#profileArea .pid'), 'profile handwriting (pid) layout missing');
   assert.match(document.querySelector('#profileArea').textContent, /ТВОЯ ИГРА/i);
   assert.match(document.querySelector('#profileArea').textContent, /УРОВЕНЬ ИГРЫ/i);
 

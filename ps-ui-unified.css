@@ -1,0 +1,223 @@
+/**
+ * PokerSwipe — unified visual bridge (loads last).
+ * Maps active legacy markup to design tokens without changing renderers.
+ * Motion owner for screen enter: this file + ps-design-tokens.css keyframes.
+ */
+
+/* ── Motion: single screen-enter owner (overrides game-motion.css) ── */
+.psScreen.screen.active {
+  animation: psScreenEnter var(--ps-motion-normal) var(--ps-ease) both !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psScreen.screen.active {
+    animation: none !important;
+  }
+}
+
+/* ── Shared typography on primary screens ── */
+.psScreen .ey,
+.psScreen .v36Eyebrow,
+.psScreen .psEy {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--ps-text-secondary);
+}
+
+.psScreen .impact,
+.psScreen h1.impact,
+.psScreen .v36Top h1,
+.psScreen .v36Daily h2,
+.psScreen .v36Tile h3,
+.psScreen .myHero h1.impact,
+.psScreen #dailyArea h1.impact,
+.psScreen #sizingArea h1.impact,
+.psScreen #swipeCard h2 {
+  font-family: var(--ps-font-ui) !important;
+  font-size: var(--ps-text-xl);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+
+.psScreen .mut,
+.psScreen .mut.small,
+.psScreen .v36Daily p,
+.psScreen .v36Tile p,
+.psScreen .myHero > p {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-md);
+  line-height: 1.4;
+  color: var(--ps-text-secondary);
+}
+
+/* ── Card family ── */
+.psScreen .panel,
+.psScreen .dailyStage,
+.psScreen .myHero,
+#home .v36Daily,
+#home .v36Personal,
+#home .v36Tile,
+#home .v36Quick,
+#home .v36Stat,
+.psScreen .pspEvent,
+.psScreen .pspAd,
+.psScreen .pspFresh {
+  border: 1px solid var(--ps-border);
+  border-radius: var(--ps-radius-card);
+  background: var(--ps-card-bg);
+}
+
+#home .v36Grid {
+  gap: var(--ps-space-3);
+}
+
+.psScreen .panel,
+.psScreen .dailyStage {
+  padding: var(--ps-space-4);
+}
+
+/* ── Buttons ── */
+.psScreen .primary,
+.psScreen .v38Primary,
+.psScreen .v36Personal button,
+.psScreen .pgCta,
+.psScreen .pspApply,
+.psScreen .pspFilterPrimary {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-sm);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+  transition: transform var(--ps-motion-fast) var(--ps-ease), opacity var(--ps-motion-fast) var(--ps-ease);
+}
+
+.psScreen .primary,
+.psScreen .v38Primary,
+.psScreen .v36Personal button,
+.psScreen .pgCta,
+.psScreen .pspApply {
+  background: var(--ps-accent);
+  color: #090c07;
+  border: 0;
+}
+
+.psScreen .choice,
+.psScreen .diagChoice,
+.psScreen .secondary,
+.psScreen .v38Secondary,
+.psScreen .pspTab {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-sm);
+  font-weight: 800;
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+  transition: transform var(--ps-motion-fast) var(--ps-ease);
+}
+
+.psScreen .primary:active,
+.psScreen .choice:active,
+.psScreen .tile:active,
+#home .v36Tile:active,
+#home .v36Daily:active,
+.psScreen .pspEvent:active,
+.psScreen .pspTab:active {
+  transform: scale(0.98);
+}
+
+/* ── Screen body rhythm ── */
+.psScreen#mainApp > main,
+.psScreen {
+  font-family: var(--ps-font-ui);
+}
+
+#dailyArea,
+#sizingArea,
+#myArea,
+#swipeCard,
+#home .v36Home {
+  padding-left: 14px;
+  padding-right: 14px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ranges.psScreen #rangesArea,
+#rangesArea {
+  padding: 0 14px calc(110px + env(safe-area-inset-bottom, 0px));
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* Profile (main handwriting / .pid) */
+#profileArea .pid,
+#profileArea .pid-intro,
+#profileArea .pid-map,
+#profileArea .pid-spots section,
+#profileArea .pid-changes,
+#profileArea .pid-collect {
+  font-family: var(--ps-font-ui);
+}
+#profileArea .pid-ey {
+  font-size: var(--ps-text-xs);
+  letter-spacing: 0.1em;
+  color: var(--ps-text-secondary);
+}
+#profileArea .pid-intro h1,
+#profileArea .pid-heading h2 {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xl);
+  font-weight: 900;
+  line-height: 1.05;
+}
+#profileArea .pid-axis,
+#profileArea .pid-spot,
+#profileArea .pid-collect {
+  border: 1px solid var(--ps-border);
+  border-radius: var(--ps-radius-card);
+  background: var(--ps-card-bg);
+}
+#profileArea .pid-tools button {
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+}
+
+/* Poker notation — do not override card glyphs */
+.psScreen .pc,
+.psScreen .hand,
+.psScreen .board,
+.psScreen .swipeCardV .card,
+.psScreen [class*="Card"] .suit {
+  font-family: inherit;
+}
+
+/* Feedback motion */
+.psScreen .verdict:not(.hidden),
+.psScreen #sizeResult:not(:empty) {
+  animation: psReveal var(--ps-motion-normal) var(--ps-ease) both;
+}
+
+@keyframes psReveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psScreen .verdict,
+  .psScreen #sizeResult {
+    animation: none !important;
+  }
+}

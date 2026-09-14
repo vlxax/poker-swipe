@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="css/pwa-install.css">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
+<link rel="stylesheet" href="ps-design-tokens.css">
 <link rel="stylesheet" href="freak-lady-reactive.css">
 <link rel="stylesheet" href="game-character-layout.css">
 <link rel="stylesheet" href="game-visual-system.css">
@@ -1193,19 +1194,19 @@ button{letter-spacing:-.01em}
 <div id="mainApp" class="hidden">
 <header class="top creatorTop"><div class="brandBlock"><div class="brand">POKER <span class="pink">SWIPE</span></div><button id="editNickBtn" class="nickEdit" aria-label="Изменить имя"><span id="hello"></span><i>✎</i></button></div><div class="topRightMark24"><span>by</span><b>Фриковая Дама</b><i>💋</i></div><div class="chip skillChip" id="levelChip">SKILL 50</div></header>
 <main>
-<section id="home" class="screen active"></section>
-<section id="swipe" class="screen"><div id="swipeCard"></div><div id="swipeVerdict" class="verdict hidden"></div><div class="actions" id="swipeActions"></div></section>
-<section id="sizing" class="screen"><div id="sizingArea"></div></section>
-<section id="review" class="screen"><div id="reviewArea"></div></section>
-<section id="daily" class="screen"><div id="dailyArea"></div></section>
-<section id="exploit" class="screen"><div id="exploitArea"></div></section>
-<section id="heal" class="screen"><div id="healArea"></div></section>
-<section id="myhands" class="screen"><div id="myArea"></div></section>
-<section id="xray" class="screen"><div id="xrayArea"></div></section>
-<section id="tournaments" class="screen"><div id="tournamentsArea"></div></section>
-<section id="polyana" class="screen"><div id="psPolyanaArea"></div></section>
-<section id="mytournaments" class="screen" aria-label="Мои турниры"><div id="myTournamentsRoot"></div></section>
-<section id="profile" class="screen"><div id="profileArea"></div></section>
+<section id="home" class="screen psScreen active"></section>
+<section id="swipe" class="screen psScreen"><div id="swipeCard"></div><div id="swipeVerdict" class="verdict hidden"></div><div class="actions" id="swipeActions"></div></section>
+<section id="sizing" class="screen psScreen"><div id="sizingArea"></div></section>
+<section id="review" class="screen psScreen"><div id="reviewArea"></div></section>
+<section id="daily" class="screen psScreen"><div id="dailyArea"></div></section>
+<section id="exploit" class="screen psScreen"><div id="exploitArea"></div></section>
+<section id="heal" class="screen psScreen"><div id="healArea"></div></section>
+<section id="myhands" class="screen psScreen"><div id="myArea"></div></section>
+<section id="xray" class="screen psScreen"><div id="xrayArea"></div></section>
+<section id="tournaments" class="screen psScreen"><div id="tournamentsArea"></div></section>
+<section id="polyana" class="screen psScreen"><div id="psPolyanaArea"></div></section>
+<section id="mytournaments" class="screen psScreen" aria-label="Мои турниры"><div id="myTournamentsRoot"></div></section>
+<section id="profile" class="screen psScreen"><div id="profileArea"></div></section>
 </main>
 <nav class="nav">
 <button class="on" data-nav="home"><i>⌂</i>ИГРАТЬ</button>
@@ -4057,6 +4058,11 @@ function openJournal(){
 }
 function openPolyana(){
   V54_MODE='polyana';
+  if(window.__PSP_NATIVE_POLYANA && typeof window.openPokerSwipePolyana==='function'){
+    window.openPokerSwipePolyana();
+    markNav('polyana');
+    return;
+  }
   tournamentScreen();
   if(typeof V54_POLYANA_RENDER==='function')V54_POLYANA_RENDER();
   markNav('tournaments');
@@ -4097,7 +4103,7 @@ function buildFiveNav(){
   const home=nav.querySelector('[data-nav="home"]');
   const hands=nav.querySelector('[data-nav="myhands"]');
   const profile=nav.querySelector('[data-nav="profile"]');
-  if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
+  if(field && !window.__PSP_NATIVE_POLYANA)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
   [home,hands,profile].filter(Boolean).forEach(b=>{
     const id=b.dataset.nav;
     b.onclick=function(e){
@@ -5369,38 +5375,6 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="screen-router.js"></script>
 <link rel="stylesheet" href="profile.css">
 <script src="profile.js"></script>
-<script>
-function installShowWrapper() {
-  if(!window.show) return;
-  if(window.show._wrappedByPatch) return;
-  var originalShow = window.show;
-  window.show = function(id) {
-    if(!document.getElementById(id)) id = 'home';
-    originalShow.call(this, id);
-    var screens = document.querySelectorAll('.screen');
-    for(var i = 0; i < screens.length; i++) {
-      if(screens[i].id === id) screens[i].classList.add('active');
-      else screens[i].classList.remove('active');
-    }
-    if(id === 'home' && typeof window.renderHome === 'function') window.renderHome();
-    if(id === 'swipe' && typeof window.renderSwipe === 'function') window.renderSwipe();
-    if(id === 'sizing' && typeof window.renderSizing === 'function') window.renderSizing();
-    if(id === 'review' && typeof window.renderReview === 'function') window.renderReview();
-    if(id === 'daily' && typeof window.renderDaily === 'function') window.renderDaily();
-    if(id === 'heal' && typeof window.renderHeal === 'function') window.renderHeal();
-    if(id === 'myhands' && typeof window.renderMy === 'function') window.renderMy();
-    if(id === 'xray' && typeof window.renderXray === 'function') window.renderXray();
-    if(id === 'profile' && typeof window.renderProfile === 'function') window.renderProfile();
-  };
-  window.show._wrappedByPatch = true;
-}
-setTimeout(installShowWrapper, 50);
-setTimeout(installShowWrapper, 150);
-setTimeout(installShowWrapper, 300);
-setTimeout(installShowWrapper, 600);
-setTimeout(installShowWrapper, 1200);
-setTimeout(installShowWrapper, 2500);
-setInterval(installShowWrapper, 3000);
-</script>
+<link rel="stylesheet" href="ps-ui-unified.css" data-ps-ui-unified="1">
 </body>
 </html>
