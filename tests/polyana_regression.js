@@ -1,8 +1,10 @@
+// Legacy Polyana UI regression (full index.html in jsdom). Optional: npm run test:polyana — not in npm test gate.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import jsdomPkg from 'jsdom';
-const {JSDOM, VirtualConsole, ResourceLoader} = jsdomPkg;
+import { LocalAppResourceLoader, stubBrowserChrome } from './jsdomAppResourceLoader.js';
+const { JSDOM, VirtualConsole } = jsdomPkg;
 
 // jsdom teardown can throw on queued rAF after window.close(); ignore that artifact.
 process.on('uncaughtException', err => {
@@ -14,8 +16,6 @@ process.on('uncaughtException', err => {
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const MIME = {'.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.html': 'text/html', '.jpeg': 'image/jpeg', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.png': 'image/png'};
-
 class FakeWorker {
   postMessage(message) {
     setTimeout(() => this.onmessage?.({data: {id: message.id, result: {h: 46.2, v: 53.8, n: message.samples, approx: true}}}), 5);
@@ -25,29 +25,6 @@ class FakeWorker {
 
 const NOISE = /Not implemented|Could not load|iframe|resource|URL|fetch|myGo18|telegram/i;
 
-class LocalResourceLoader extends ResourceLoader {
-  fetch(url, options) {
-    try {
-      const parsed = new URL(url);
-      if (parsed.hostname === 'app.local') {
-        const file = path.join(root, decodeURIComponent(parsed.pathname.replace(/^\//, '')));
-        if (fs.existsSync(file) && fs.statSync(file).isFile()) {
-          const ext = path.extname(file).toLowerCase();
-          const buffer = fs.readFileSync(file);
-          return Promise.resolve({
-            status: 200,
-            headers: {'Content-Type': MIME[ext] || 'application/octet-stream'},
-            buffer
-          });
-        }
-      }
-    } catch (e) {
-      // fall through to network
-    }
-    return Promise.resolve({status: 404, headers: {}, buffer: Buffer.alloc(0)});
-  }
-}
-
 async function boot() {
   const errors = [];
   const virtualConsole = new VirtualConsole();
@@ -56,8 +33,8 @@ async function boot() {
 
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'index.html'), 'utf8'), {
     url: 'http://app.local/index.html',
-    runScripts: 'outside-only',
-    resources: new LocalResourceLoader(),
+    runScripts: 'dangerously',
+    resources: new LocalAppResourceLoader(root),
     pretendToBeVisual: true,
     virtualConsole,
     beforeParse(window) {
@@ -77,6 +54,7 @@ async function boot() {
       window.Math.random = () => 0.42;
       window.innerWidth = 390;
       window.innerHeight = 844;
+      stubBrowserChrome(window);
 
       const probes = {docListeners: 0, winListeners: 0, observers: 0, timers: 0, intervals: 0};
       window.__pspProbes = probes;

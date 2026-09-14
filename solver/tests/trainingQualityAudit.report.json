@@ -1,19 +1,18 @@
 {
-  "generatedAt": "2026-08-22T09:49:50.843Z",
+  "generatedAt": "2026-09-13T20:36:36.471Z",
   "sessions": 100,
   "tasks": 700,
   "profiles": 10,
   "TRAINING_QUALITY": "PASS",
   "POKER_LOGIC": "PASS",
   "PERSONALIZATION_QUALITY": "PASS",
-  "DUPLICATES": 0.1,
-  "NEAR_DUPLICATES": 0.3,
-  "PROFILE_MISMATCH": 14.3,
+  "DUPLICATES": 6,
+  "NEAR_DUPLICATES": 2.9,
+  "PROFILE_MISMATCH": 16,
+  "PROFILE_MISMATCH_PRIMARY_SLOT": 0.7,
   "INVALID_SPOTS": 0,
   "TESTS": "13/13 harness+script",
-  "NEXT_P0_FIXES": [
-    "Normalize Russian poker terms (батон/баттон, блафф/блеф, leftover English in user-facing copy)"
-  ],
+  "NEXT_P0_FIXES": [],
   "detail": {
     "skillCoverage": [
       "betSizing",
@@ -31,80 +30,71 @@
     ],
     "skillCoverageCount": 12,
     "difficultyDistribution": {
-      "1": 109,
-      "2": 260,
-      "3": 38,
-      "4": 121,
-      "5": 172
+      "1": 105,
+      "2": 270,
+      "3": 23,
+      "4": 133,
+      "5": 169
     },
     "intraSessionExactDupSessions": 0,
-    "intraSessionNearDupSessions": 1,
-    "corpusReuseRate": 74.6,
-    "uniqueTaskIds": 178,
+    "intraSessionNearDupSessions": 8,
+    "corpusReuseRate": 75,
+    "uniqueTaskIds": 175,
     "gradingCollisionTasks": 0,
     "gradingCollisionUnique": 0,
     "explainMatchRate": 100,
-    "terminologyTaskCount": 49,
+    "terminologyTaskCount": 0,
     "brainContextIssueRate": 0,
     "brainContextIssueCount": 0,
-    "advancedHardRate": 60.7,
-    "beginnerEasyRate": 70,
+    "advancedHardRate": 92.1,
+    "beginnerEasyRate": 90,
     "personalizedSessions": 100,
     "vmErrors": 0,
     "weaknessEligible": 420,
-    "mismatchCount": 60,
-    "difficultyMismatchCount": 253,
+    "mismatchCount": 67,
+    "primarySlotMismatchCount": 2,
+    "primarySlotEligible": 300,
+    "difficultyMismatchCount": 162,
     "invalidByCode": {},
     "invalidSamples": [],
     "explainMissSamples": [],
-    "termSamples": [
-      "ADV9B_POSITION_UTG_OPEN",
-      "ADV9B5_POSITION_SB_STEAL",
-      "ADV5_FT_AJ_ICM",
-      "ADV9B5_ICM_UTG_FOLD",
-      "ADV9B_ICM_BTN_FOLD",
-      "ADV9B_POSITION_HJ_STEAL",
-      "TOUR_ITM_FOLD_AJO",
-      "ADV5_ICM_PKO_OVERLAY",
-      "ADV9B_PREFLOP_UTG_AQ",
-      "ADV9B5_ICM_MEDIUM_FOLD",
-      "ADV9B_STACKDEPTH_DEEP_SET",
-      "ADV5_ICM_BUBBLE_QQ"
-    ],
+    "termSamples": [],
     "brainMissingCommon": [],
     "personalizationAfter20": {
       "icmWeak": {
         "weakAfter20": [
+          "preflop",
           "shortStack",
-          "icm",
-          "preflop"
+          "icm"
         ],
         "overallAfter20": 57,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "shortStack",
-          "stackDepthAwareness",
           "preflop",
+          "positionAwareness",
+          "shortStack",
           "icm",
-          "positionAwareness"
+          "stackDepthAwareness",
+          "bluffing"
         ]
       },
       "riverWeak": {
         "weakAfter20": [
-          "river",
           "postflop",
-          "bluffing"
+          "river",
+          "bluffCatch"
         ],
-        "overallAfter20": 43,
+        "overallAfter20": 45,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "bluffCatch",
+          "exploit",
           "river",
-          "rangeReading",
-          "bluffing",
           "postflop",
           "betSizing",
-          "exploit"
+          "bluffCatch",
+          "rangeReading",
+          "bluffing",
+          "preflop"
         ]
       },
       "strongBalanced": {
@@ -116,31 +106,34 @@
         "overallAfter20": 95,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "preflop",
-          "betSizing",
-          "postflop",
-          "river",
-          "exploit",
           "shortStack",
           "stackDepthAwareness",
-          "icm"
+          "preflop",
+          "icm",
+          "rangeReading",
+          "bluffCatch",
+          "river",
+          "bluffing",
+          "postflop",
+          "betSizing",
+          "exploit"
         ]
       },
       "beginner": {
         "weakAfter20": [
           "preflop",
           "icm",
-          "shortStack"
+          "positionAwareness"
         ],
-        "overallAfter20": 9,
+        "overallAfter20": 10,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "shortStack",
-          "stackDepthAwareness",
-          "icm",
-          "positionAwareness",
           "preflop",
-          "bluffing"
+          "positionAwareness",
+          "shortStack",
+          "icm",
+          "stackDepthAwareness",
+          "betSizing"
         ]
       },
       "advanced": {
@@ -152,137 +145,140 @@
         "overallAfter20": 96,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "preflop",
-          "postflop",
-          "shortStack",
-          "stackDepthAwareness",
           "icm",
-          "positionAwareness",
-          "river",
-          "betSizing",
-          "bluffCatch",
-          "rangeReading",
+          "stackDepthAwareness",
+          "preflop",
           "exploit",
-          "bluffing"
+          "betSizing",
+          "river",
+          "postflop",
+          "bluffing",
+          "rangeReading",
+          "bluffCatch"
         ]
       },
       "newUser": {
         "weakAfter20": [
           "stackDepthAwareness",
           "icm",
-          "shortStack"
+          "preflop"
         ],
         "overallAfter20": 38,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "preflop",
-          "positionAwareness",
           "icm",
           "stackDepthAwareness",
-          "shortStack"
+          "preflop",
+          "positionAwareness",
+          "shortStack",
+          "bluffing",
+          "exploit",
+          "river",
+          "postflop"
         ]
       },
       "decliningIcm": {
         "weakAfter20": [
           "icm",
-          "shortStack",
-          "stackDepthAwareness"
+          "positionAwareness",
+          "shortStack"
         ],
-        "overallAfter20": 49,
+        "overallAfter20": 47,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "icm",
           "stackDepthAwareness",
-          "preflop",
           "shortStack",
-          "positionAwareness"
+          "preflop",
+          "icm",
+          "positionAwareness",
+          "bluffing"
         ]
       },
       "improvingPostflop": {
         "weakAfter20": [
           "icm",
-          "stackDepthAwareness",
-          "preflop"
+          "shortStack",
+          "stackDepthAwareness"
         ],
-        "overallAfter20": 60,
+        "overallAfter20": 52,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "stackDepthAwareness",
-          "shortStack",
-          "positionAwareness",
           "preflop",
+          "positionAwareness",
           "icm",
-          "exploit",
-          "postflop",
-          "betSizing"
+          "stackDepthAwareness",
+          "shortStack"
         ]
       },
       "shortWeak": {
         "weakAfter20": [
-          "stackDepthAwareness",
+          "shortStack",
           "icm",
-          "shortStack"
+          "stackDepthAwareness"
         ],
         "overallAfter20": 57,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
+          "preflop",
+          "positionAwareness",
+          "shortStack",
           "icm",
-          "stackDepthAwareness",
-          "preflop"
+          "stackDepthAwareness"
         ]
       },
       "mixed": {
         "weakAfter20": [
           "postflop",
           "river",
-          "bluffing"
+          "bluffCatch"
         ],
-        "overallAfter20": 45,
+        "overallAfter20": 49,
         "nextSessionHitsWeakness": true,
         "nextSkills": [
-          "bluffCatch",
+          "betSizing",
           "river",
+          "postflop",
+          "exploit",
+          "bluffCatch",
           "rangeReading",
           "bluffing",
-          "postflop",
-          "betSizing",
-          "exploit"
+          "preflop"
         ]
       }
     },
     "profileOverall": {
       "icmWeak": {
         "start": 62,
-        "end": 59,
+        "end": 58,
         "weakStart": [
           "icm",
           "shortStack"
         ],
         "weakEnd": [
-          "icm",
           "shortStack",
+          "icm",
           "stackDepthAwareness"
         ],
         "kind": "weakness"
       },
       "riverWeak": {
         "start": 49,
-        "end": 41,
+        "end": 44,
         "weakStart": [
           "river",
           "bluffCatch",
           "postflop"
         ],
         "weakEnd": [
-          "river",
           "postflop",
-          "betSizing"
+          "river",
+          "bluffCatch"
         ],
         "kind": "weakness"
       },
       "strongBalanced": {
         "start": 95,
-        "end": 95,
+        "end": 96,
         "weakStart": [
           "preflop",
           "postflop",
@@ -290,14 +286,14 @@
         ],
         "weakEnd": [
           "shortStack",
-          "river",
-          "bluffing"
+          "bluffing",
+          "icm"
         ],
         "kind": "strong"
       },
       "beginner": {
         "start": 15,
-        "end": 4,
+        "end": 6,
         "weakStart": [
           "preflop",
           "postflop",
@@ -307,7 +303,7 @@
         "weakEnd": [
           "preflop",
           "icm",
-          "stackDepthAwareness"
+          "positionAwareness"
         ],
         "kind": "beginner"
       },
@@ -328,7 +324,7 @@
       },
       "newUser": {
         "start": 67,
-        "end": 47,
+        "end": 56,
         "weakStart": [
           "preflop",
           "shortStack",
@@ -356,7 +352,7 @@
       },
       "improvingPostflop": {
         "start": 71,
-        "end": 52,
+        "end": 49,
         "weakStart": [
           "exploit",
           "stackDepthAwareness",
@@ -371,7 +367,7 @@
       },
       "shortWeak": {
         "start": 66,
-        "end": 56,
+        "end": 58,
         "weakStart": [
           "shortStack",
           "stackDepthAwareness"
@@ -385,19 +381,19 @@
       },
       "mixed": {
         "start": 76,
-        "end": 39,
+        "end": 42,
         "weakStart": [
           "postflop"
         ],
         "weakEnd": [
           "postflop",
           "river",
-          "betSizing"
+          "bluffCatch"
         ],
         "kind": "mixed"
       }
     },
-    "icmVsRiverOverlap": 3,
+    "icmVsRiverOverlap": 6,
     "sampleSession": {
       "profileId": "icmWeak",
       "index": 0,
@@ -406,20 +402,20 @@
       "personalized": true,
       "source": "library",
       "taskIds": [
-        "TOUR_FT_AK",
-        "ADV9B5_SHORT_COVER_SHOVE",
-        "TOUR_BUBBLE_A7O",
-        "PRE_RFI_UTG_AJO",
-        "TOUR_ITM_AQS",
-        "SHORT_BTN_A9O",
-        "PRE_BB_T6O"
+        "TOUR_PKO_FT_TT",
+        "PRE_RFI_BTN_A8S",
+        "PRE_RFI_BTN_22_SHORT",
+        "PRE_RFI_UTG_99",
+        "ADV5_FT_AJ_ICM",
+        "PRE_RFI_SB_KT",
+        "TOUR_ITM_FOLD_AJO"
       ],
       "difficulties": [
         2,
+        1,
+        2,
+        1,
         5,
-        2,
-        2,
-        2,
         1,
         2
       ],
@@ -439,34 +435,32 @@
       "personalized": true,
       "source": "library",
       "taskIds": [
-        "ADV5_FLOP_SET_3WAY",
-        "ADV9B5_PREFLOP_BTN_4B",
-        "ADV9B5_SIZING_TURN",
-        "ADV9B_SHORT_SB_A8O",
-        "ADV5_3STREET_BLUFF",
-        "ADV9B_EXPLOIT_AGRO_FOLD",
-        "ADV9B_POSITION_HJ_STEAL"
+        "ADV5_PREFLOP_5B_JJ",
+        "ADV9B5_POSITION_BTN_ISO",
+        "ADV5_DEEP_4BET_AK",
+        "ADV5_TURN_RANGE_XR",
+        "ADV5_RIVER_SIZING_BLOCK",
+        "ADV9B5_EXPLOIT_LOVER_FOLD",
+        "ADV9B5_BLUFFCATCH_RIVER_A4"
       ],
       "difficulties": [
         5,
         5,
         5,
-        4,
         5,
-        4,
-        4
+        5,
+        5,
+        5
       ],
       "skills": [
-        "postflop",
+        "rangeReading",
         "preflop",
+        "postflop",
         "betSizing",
-        "shortStack",
-        "stackDepthAwareness",
-        "icm",
-        "bluffing",
         "river",
         "exploit",
-        "positionAwareness"
+        "bluffCatch",
+        "bluffing"
       ]
     },
     "sampleBeginner": {
@@ -477,29 +471,30 @@
       "personalized": true,
       "source": "library",
       "taskIds": [
-        "TOUR_PKO_FT_TT",
-        "SHORT_BTN_A9O",
-        "TOUR_ITM_AQS",
+        "TOUR_BUBBLE_A7O",
+        "TOUR_FT_AK",
+        "PRE_RFI_BTN_22_SHORT",
+        "PRE_RFI_SB_KT",
+        "SHORT_BB_A5O",
         "TOUR_PKO_BUBBLE_99",
-        "PRE_RFI_UTG_99",
-        "SHORT_BB_87S",
-        "F_CEBET_OVERPAIR"
+        "R_TRIP_PAIRED"
       ],
       "difficulties": [
         2,
-        1,
         2,
         2,
         1,
         2,
-        1
+        2,
+        2
       ],
       "skills": [
-        "shortStack",
-        "stackDepthAwareness",
         "icm",
+        "stackDepthAwareness",
         "positionAwareness",
+        "shortStack",
         "preflop",
+        "river",
         "postflop"
       ]
     }

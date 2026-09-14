@@ -29,6 +29,7 @@ import {
 } from '../solver/src/api/modeAdapters.js';
 import { gradeToLegacy } from '../solver/src/api/unifiedGrading.js';
 import { gradeAnswer } from '../solver/src/training/answerEvaluator.js';
+import { choiceToActionType } from '../solver/src/training/libraryDrill.js';
 import { gradeAssessmentItem } from '../solver/src/training/assessment.js';
 import { attemptFromGradingResult, mapDecisionAction } from '../range-learning/attemptAdapter.js';
 import { getLearnerMemory } from '../range-learning/persistence.js';
@@ -65,6 +66,40 @@ function emptyCanonical(mode, extra = {}) {
 
 function spotFromInput(input = {}) {
   return input.spot || input.scenario || input.item || {};
+}
+
+function libraryDrillFromSpot(spot) {
+  if (!spot || !spot._library) return null;
+  return spot._drill || null;
+}
+
+function resolveLibraryChosenId(drill, input) {
+  if (!drill || !Array.isArray(drill.options)) return null;
+  if (input.chosenActionId != null) return input.chosenActionId;
+  const raw = input.action || input.chosenActionType || input.chosenAction?.type;
+  if (raw == null) return null;
+  const brain = String(raw).toUpperCase();
+  const typeFromBrain = (() => {
+    if (/ФОЛД|FOLD/.test(brain)) return 'fold';
+    if (/КОЛЛ|CALL/.test(brain)) return 'call';
+    if (/ЧЕК|CHECK/.test(brain)) return 'check';
+    if (/ПУШ|ОЛЛ|PUSH|JAM/.test(brain)) return 'all_in';
+    if (/3-БЕТ|4-БЕТ|3BET|4BET|РЕЙЗ|RAISE/.test(brain)) return 'raise';
+    if (/СТАВ|BET/.test(brain)) return 'bet';
+    return choiceToActionType(raw);
+  })();
+  const byLabel = drill.options.find((o) => String(o.labelRu || '').trim() === String(raw).trim());
+  if (byLabel) return byLabel.id;
+  if (/3-БЕТ|3BET/.test(brain)) {
+    const o = drill.options.find((x) => /3-БЕТ/i.test(x.labelRu));
+    if (o) return o.id;
+  }
+  if (/4-БЕТ|4BET/.test(brain)) {
+    const o = drill.options.find((x) => /4-БЕТ/i.test(x.labelRu));
+    if (o) return o.id;
+  }
+  const byType = drill.options.find((o) => choiceToActionType(o.labelRu) === typeFromBrain);
+  return byType ? byType.id : null;
 }
 
 function handClassOf(spot) {
@@ -334,6 +369,18 @@ export function gradeDecision(input = {}, options = {}) {
       return remember(canonicalFromAssessment(input, solver), options);
     }
     if (BRAIN_MODES.has(mode) || mode === 'daily-legacy') {
+      const spot = spotFromInput(input);
+      const libDrill = libraryDrillFromSpot(spot);
+      if (libDrill) {
+        const chosenId = input.chosenActionId || input.chosenId || resolveLibraryChosenId(libDrill, input);
+        const solver = gradeAnswer({
+          drill: libDrill,
+          chosenId,
+          chosenAction: input.chosenAction,
+          preset: input.preset || libDrill.preset || 'mtt'
+        });
+        return remember(canonicalFromSolver(mode, { ...input, drill: libDrill }, solver), options);
+      }
       const unified = routeBrain(mode === 'daily-legacy' ? 'swipe' : mode, input);
       return remember(canonicalFromBrain(mode, input, unified), options);
     }

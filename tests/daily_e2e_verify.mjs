@@ -4,29 +4,42 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
+import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = '/opt/cursor/artifacts';
-const PORT = 8779;
-const BASE = `http://127.0.0.1:${PORT}/tests/daily_game_bootstrap.html`;
+const OUT = process.env.DAILY_E2E_ARTIFACTS || '/opt/cursor/artifacts';
 
-function startServer() {
-  return spawn('python3', ['-m', 'http.server', String(PORT)], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
+async function pickFreePort() {
+  return new Promise((resolve, reject) => {
+    const srv = net.createServer();
+    srv.listen(0, '127.0.0.1', () => {
+      const { port } = srv.address();
+      srv.close((err) => (err ? reject(err) : resolve(port)));
+    });
+    srv.on('error', reject);
+  });
 }
 
-async function waitForServer(ms = 10000) {
+function startServer(port) {
+  return spawn('python3', ['-m', 'http.server', String(port), '--bind', '127.0.0.1'], {
+    cwd: root,
+    stdio: ['ignore', 'pipe', 'pipe']
+  });
+}
+
+async function waitForServer(port, ms = 15000) {
   const start = Date.now();
   while (Date.now() - start < ms) {
     try {
-      const r = await fetch(`http://127.0.0.1:${PORT}/`);
+      const r = await fetch(`http://127.0.0.1:${port}/`);
       if (r.ok) return;
     } catch (_) {}
     await new Promise((r) => setTimeout(r, 200));
   }
-  throw new Error('Server did not start');
+  throw new Error(`Server did not start on port ${port}`);
 }
 
 async function shot(page, name) {
@@ -36,8 +49,14 @@ async function shot(page, name) {
 
 async function main() {
   fs.mkdirSync(OUT, { recursive: true });
-  const server = startServer();
-  await waitForServer();
+  const port = await pickFreePort();
+  const base = `http://127.0.0.1:${port}/tests/daily_game_bootstrap.html`;
+  const server = startServer(port);
+  server.stderr?.on('data', (chunk) => {
+    const msg = String(chunk);
+    if (/Address already in use/i.test(msg)) console.error(msg);
+  });
+  await waitForServer(port);
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
@@ -45,11 +64,19 @@ async function main() {
   page.on('pageerror', (e) => errors.push(String(e)));
 
   try {
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 120000 });
+    await page.goto(base, { waitUntil: 'networkidle', timeout: 120000 });
     await page.waitForTimeout(3000);
     await page.waitForFunction(() => window.__maGameLayout === true, { timeout: 30000 });
 
-    await page.evaluate(() => window.show('daily'));
+    // Full index.html can leave `show('daily')` ineffective when legacy inline scripts throw
+    // before screen-router settles; activate the daily screen the same way `show` would.
+    await page.evaluate(() => {
+      const id = 'daily';
+      document.querySelectorAll('.screen').forEach((x) => x.classList.toggle('active', x.id === id));
+      document.querySelectorAll('[data-nav]').forEach((b) => b.classList.toggle('on', b.dataset.nav === id));
+      if (typeof window.renderDaily === 'function') window.renderDaily();
+    });
+    await page.waitForFunction(() => !!document.querySelector('#dailyArea .pgDailyLobby'), { timeout: 30000 });
     await shot(page, 'daily_a_intro_390x844');
 
     const intro = await page.evaluate(() => ({

@@ -59,9 +59,9 @@ export const ADVANCED_TASKS_9B = [
     table: '6-MAX', left: '6 LEFT', position: 'BTN', hero: ['K♦', 'J♦'], heroStack: 14, villain: 'SB',
     villainStack: 32, opp: 'РЕГ', board: [], pot: 5.2,
     history: [{ street: 'ПРЕФЛОП', text: 'BTN. Баббл: 6 left, призовых 5. SB запушил 32 ББ, BB сфолдил.', pot: 5.2 }],
-    question: 'Что делаешь с KJs на баттоне при 14 ББ против пуша SB на баббле?',
+    question: 'Что делаешь с K♦J♦ на баттоне при 14 ББ против пуша SB на баббле?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'ФОЛД', alsoOk: [],
-    concept: 'bubble ICM KJs fold', explain: 'KJs доминируется Ax и парами в пуше SB. На баббле ICM-фолд: приз за 5-е место дороже chipEV от маргинального колла.',
+    concept: 'баббл ICM-фолд с баттона', explain: 'KJ доминируется Ax и парами в пуше SB. На баббле ICM-фолд: приз за 5-е место дороже chipEV от маргинального колла.',
     difficulty: 4, tags: ['баббл', 'ICM', 'короткий стек', 'фолд']
   }),
   T({
@@ -206,9 +206,9 @@ export const ADVANCED_TASKS_9B = [
     table: '6-MAX', left: '5 LEFT', position: 'CO', hero: ['A♣', 'J♠'], heroStack: 20, villain: 'BTN',
     villainStack: 55, opp: 'РЕГ', board: [], pot: 22,
     history: [{ street: 'ПРЕФЛОП', text: 'Финальный стол. CO открыл 2.2, BTN-чиплидер трибетил 12, CO 4-бетил олл-ин 20, BTN 5-бетил олл-ин 55.', pot: 22 }],
-    question: 'Что делаешь с AJo в CO при 20 ББ против 5-бета чиплидера на финальном столе?',
+    question: 'Что делаешь с A♣J♠ в CO при 20 ББ против 5-бета чиплидера на финальном столе?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'ФОЛД', alsoOk: [],
-    concept: 'final table AJo fold', explain: 'AJo против 5-бета чиплидера при 20 ББ — ICM-фолд: доминируется AK/QQ+, а призовая структура делает вылет слишком дорогим.',
+    concept: 'финальный стол ICM-фолд', explain: 'AJ против 5-бета чиплидера при 20 ББ — ICM-фолд: доминируется AK/QQ+, а призовая структура делает вылет слишком дорогим.',
     difficulty: 5, tags: ['финальный стол', 'ICM', 'префлоп', 'фолд']
   }),
   T({
@@ -411,9 +411,9 @@ export const ADVANCED_TASKS_9B = [
     table: '6-MAX', left: '4 LEFT', position: 'UTG', hero: ['A♦', 'T♦'], heroStack: 15, villain: 'BB',
     villainStack: 60, opp: 'РЕГ', board: [], pot: 7.0,
     history: [{ street: 'ПРЕФЛОП', text: 'Финальный стол, 4 left. UTG открыл 2.2, все сфолдили до BB, BB запушил 60 ББ.', pot: 7.0 }],
-    question: 'Что делаешь с ATs в UTG при 15 ББ против пуша BB на финальном столе?',
+    question: 'Что делаешь с A♦T♦ в UTG при 15 ББ против пуша BB на финальном столе?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'ФОЛД', alsoOk: [],
-    concept: 'UTG ICM ATs fold', explain: 'ATs против пуша 60 ББ при 15 ББ — ICM-фолд: доминируется AK/AQ/парами, приз за 4-е место слишком ценен.',
+    concept: 'UTG ICM-фолд', explain: 'AT против пуша 60 ББ при 15 ББ — ICM-фолд: доминируется AK/AQ/парами, приз за 4-е место слишком ценен.',
     difficulty: 5, tags: ['финальный стол', 'ICM', 'префлоп', 'ранняя позиция']
   }),
   T({
@@ -491,9 +491,9 @@ export const ADVANCED_TASKS_9B = [
     table: '9-MAX', left: '22 LEFT', position: 'UTG', hero: ['K♠', 'Q♠'], heroStack: 25, villain: 'BB',
     villainStack: 23, opp: 'РЕГ', board: [], pot: 5.8,
     history: [{ street: 'ПРЕФЛОП', text: 'UTG при 25 ББ, все до тебя сфолдили.', pot: 5.8 }],
-    question: 'Что делаешь с KQs в UTG при 25 ББ?',
+    question: 'Что делаешь с K♠Q♠ в UTG при 25 ББ?',
     options: ['ФОЛД', 'РЕЙЗ', 'ОЛЛ-ИН'], correct: 'РЕЙЗ', alsoOk: ['ОЛЛ-ИН'],
-    concept: 'UTG open KQs', explain: 'KQs — открытие из UTG при 25 ББ. Рейз стандартен; олл-ин тоже играбелен, но рейз сохраняет гибкость постфлоп.',
+    concept: 'оупен UTG', explain: 'KQ в масти — открытие из UTG при 25 ББ. Рейз стандартен; олл-ин тоже играбелен, но рейз сохраняет гибкость постфлоп.',
     difficulty: 4, tags: ['префлоп', 'ранняя позиция', 'RFI', 'позиция']
   }),
   T({
@@ -508,7 +508,7 @@ export const ADVANCED_TASKS_9B = [
     ],
     question: 'Что делаешь с двумя парами AK на тёрне A72K при 80 ББ?',
     options: ['КОЛЛ', 'РЕЙЗ'], correct: 'РЕЙЗ', alsoOk: ['КОЛЛ'],
-    concept: 'deep turn two pair', explain: 'AK — две пары на A72K. Чек-рейз максимизирует ценность: BB имеет Ax/Kx/7x. На глубоких стеках рейз раздувает банк для ривера.',
+    concept: 'глубокий тёрн две пары', explain: 'AK — две пары на A72K. Чек-рейз максимизирует ценность: BB имеет Ax/Kx/7x. На глубоких стеках рейз раздувает банк для ривера.',
     difficulty: 4, tags: ['тёрн', 'глубина стека', 'ценность', 'трибет-пот']
   }),
   T({

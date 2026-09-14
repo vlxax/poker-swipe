@@ -220,9 +220,9 @@ export const ADVANCED_TASKS = [
     table: '6-MAX', left: '3 LEFT', position: 'BB', hero: ['A♦', 'J♣'], heroStack: 12, villain: 'BTN',
     villainStack: 80, opp: 'АГРО-РЕГ', board: [], pot: 15.0,
     history: [{ street: 'ПРЕФЛОП', text: 'Финальный стол, 3 left. BTN-чиплидер запушил 80 ББ. Ты — короткий стек 12 ББ.', pot: 15.0 }],
-    question: 'Что делаешь с AJo на финальном столе против пуша чиплидера?',
+    question: 'Что делаешь с A♦J♣ на финальном столе против пуша чиплидера?',
     options: ['ФОЛД', 'КОЛЛ'], correct: 'ФОЛД', alsoOk: [],
-    concept: 'final table ICM fold AJo', explain: 'AJo против пуша 80 ББ при 3 left — жёсткий ICM-фолд: доминируется Ax и парами, а приз за 3-е место слишком ценен.',
+    concept: 'финальный стол ICM-фолд', explain: 'AJ против пуша 80 ББ при 3 left — жёсткий ICM-фолд: доминируется Ax и парами, а приз за 3-е место слишком ценен.',
     difficulty: 5, tags: ['финальный стол', 'ICM', 'фолд', 'префлоп']
   }),
   T({
