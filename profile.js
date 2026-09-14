@@ -1,243 +1,567 @@
-/* =========================================================
-   PokerSwipe V38 — PLAYER DASHBOARD
-   Clean replacement for the old layered YOU/Profile screen.
-   No ranks, no avatar ladder, no duplicated legacy profile DOM.
-   ========================================================= */
-(function(){
-'use strict';
+/* PokerSwipe — ТЫ / ПРОФИЛЬ (single owner of window.renderProfile) */
+(function () {
+  'use strict';
 
-function v38Esc(s){
-  return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function v38Events(){
-  const state=typeof S!=='undefined'?S:window.S;
-  return (Array.isArray(state?.events)?state.events:[]).filter(e=>e.mode!=='diagnostic'&&!e.excludeFromProfile);
-}
-function v38GradeScore(g){ return g==='g'?1:g==='y'?0.62:g==='r'?0:0.5; }
-function v38Stat(filter){
-  const a=v38Events().filter(filter);
-  return {n:a.length,score:a.length?Math.round(a.reduce((s,e)=>s+v38GradeScore(e.grade),0)/a.length*100):0};
-}
-function v38SplitStat(filter){
-  const a=v38Events().filter(filter);
-  const cur=a.slice(-20), prev=a.slice(-40,-20);
-  const score=x=>x.length?Math.round(x.reduce((s,e)=>s+v38GradeScore(e.grade),0)/x.length*100):null;
-  const now=score(cur), before=score(prev);
-  return {n:a.length,score:now??score(a)??0,delta:(now!=null&&before!=null)?now-before:null};
-}
-function v38Confidence(n){
-  if(n<8)return ['НИЗКАЯ','Нужно больше решений'];
-  if(n<25)return ['СРЕДНЯЯ','Уже виден паттерн'];
-  return ['ВЫСОКАЯ','Выборка достаточно устойчива'];
-}
-function v38State(score,n){
-  if(n<5)return 'Мало данных';
-  if(score>=80)return 'Сильная зона';
-  if(score>=68)return 'Стабильно';
-  if(score>=55)return 'Есть потери';
-  return 'Главная проблема';
-}
-function v38Trend(delta){
-  if(delta==null)return '<span class="v38Trend neutral">—</span>';
-  if(delta>=4)return `<span class="v38Trend up">↑ ${delta}</span>`;
-  if(delta<=-4)return `<span class="v38Trend down">↓ ${Math.abs(delta)}</span>`;
-  return '<span class="v38Trend neutral">→</span>';
-}
-function v38ConceptName(leak){
-  try{return leak?conceptLabel(leak.concept):''}catch(e){return String(leak?.concept||'').toUpperCase()}
-}
-function v38LastForm(){
-  try{return typeof formScore==='function'?formScore():50}catch(e){return 50}
-}
-function v38ScoreBar(x){return Math.max(3,Math.min(100,Number(x)||0))}
-function v38Row(name,stat){
-  const value=stat.n>=5?stat.score:'—';
-  return `<div class="v38SkillRow">
-    <div class="v38SkillHead">
-      <div><b>${name}</b><small>${v38State(stat.score,stat.n)} · ${stat.n} решений</small></div>
-      <div class="v38SkillScore">${value} ${stat.n>=5?v38Trend(stat.delta):''}</div>
-    </div>
-    <div class="v38Bar ${stat.n<5?'pending':''}"><i style="width:${stat.n>=5?v38ScoreBar(stat.score):0}%"></i></div>
-  </div>`;
-}
-function v38StateObject(){return typeof S!=='undefined'?S:(window.S||{})}
-function v38Score(events){return events.length?Math.round(events.reduce((s,e)=>s+v38GradeScore(e.grade),0)/events.length*100):null}
-function v38ModeStat(events,modes){const a=events.filter(e=>modes.includes(String(e.mode||'').toLowerCase()));return{n:a.length,score:v38Score(a)}}
-function v38Value(score,n){return n>=5&&score!=null?String(score):'—'}
-function v38ConceptStats(events){
-  const map={};
-  events.filter(e=>e.concept).forEach(e=>{
-    const key=String(e.concept),x=map[key]||(map[key]={concept:key,n:0,g:0,y:0,r:0,blind:0,events:[]});
-    x.n++;x[e.grade]=(x[e.grade]||0)+1;x.events.push(e);
-    if(e.grade==='r'&&Number(e.confidence)>=80)x.blind++;
-  });
-  return Object.values(map).map(x=>({...x,score:v38Score(x.events)}));
-}
-function v38ModuleCard(id,title,value,meta,sub,tone=''){
-  return `<button class="v38Module ${tone}" data-v38go="${id}"><span>${title}</span><b>${value}</b><small>${meta}</small><em>${sub}</em><i>→</i></button>`;
-}
-function v38Identity(events,pre,post,size,disc){
-  if(events.length<8)return ['ПРОФИЛЬ СОБИРАЕТСЯ','PokerSwipe пока наблюдает и не будет придумывать тебе стиль по нескольким рукам.'];
-  const acts=events.map(e=>String(e.action||'').toUpperCase()),raises=acts.filter(x=>/RAISE|BET|ALL.?IN|ПУШ/.test(x)).length,calls=acts.filter(x=>/CALL|КОЛЛ/.test(x)).length;
-  const known=[pre,post,size,disc].filter(x=>x.n>=5).sort((a,b)=>b.score-a.score);
-  const strong=known[0],weak=known[known.length-1];
-  if(raises>calls*1.35)return ['АГРЕССИВНЫЙ, НО ПРОВЕРЯЕМЫЙ',`Ты чаще выбираешь давление. ${weak&&weak.score<60?'Главный риск — качество решений в слабой зоне, а не сама агрессия.':'Пока эта агрессия держится на приемлемом качестве решений.'}`];
-  if(calls>raises*1.35)return ['ЛЮБИШЬ ДОЙТИ ДО ШОУДАУНА',`Колл встречается чаще агрессивных действий. ${weak&&weak.score<60?'Важно проверить, где это дисциплина, а где дорогое любопытство.':'Пока это не выглядит автоматическим ликованием.'}`];
-  return ['СБАЛАНСИРОВАННЫЙ ИГРОК',strong?`Сильнее всего сейчас выглядит зона с оценкой ${strong.score}. Слабую часть профиля проверяем только на достаточной выборке.`:'Стиль уже проявляется, но для точного вывода нужно больше решений.'];
-}
-function v38ConfidenceMatrix(events){
-  const c={rightSure:0,rightUnsure:0,wrongUnsure:0,wrongSure:0};
-  events.filter(e=>Number.isFinite(Number(e.confidence))).forEach(e=>{
-    const sure=Number(e.confidence)>=80,right=e.grade==='g';
-    if(right&&sure)c.rightSure++;else if(right)c.rightUnsure++;else if(!right&&sure)c.wrongSure++;else c.wrongUnsure++;
-  });return c;
-}
-function v38Tendencies(events){
-  const out=[],mistakes=events.filter(e=>e.grade==='r'),actions=mistakes.map(e=>String(e.action||'').toUpperCase());
-  const calls=actions.filter(x=>/CALL|КОЛЛ/.test(x)).length,aggr=actions.filter(x=>/RAISE|BET|ALL.?IN|ПУШ/.test(x)).length;
-  if(mistakes.length>=5&&calls/mistakes.length>=.4)out.push(['ЛЮБИШЬ УЗНАТЬ','Заметная доля ошибок приходится на коллы. Это сигнал проверить bluff-catch, а не готовый диагноз.']);
-  if(mistakes.length>=5&&aggr/mistakes.length>=.4)out.push(['ДАВИШЬ БЕЗ ДОСТАТОЧНОЙ ОПОРЫ','Среди ошибок часто встречаются агрессивные действия. Проверь, где диапазону не хватает value или fold equity.']);
-  const sized=events.filter(e=>Number.isFinite(Number(e.sizePct))&&Number.isFinite(Number(e.sizeBest)));
-  const under=sized.filter(e=>Number(e.sizePct)+12<Number(e.sizeBest)).length;
-  if(sized.length>=5&&under/sized.length>=.4)out.push(['НЕДОБИРАЕШЬ САЙЗОМ',`В ${under} из ${sized.length} оценённых сайзингов выбранный размер был заметно меньше ориентира.`]);
-  const unsureRight=events.filter(e=>e.grade==='g'&&Number(e.confidence)<80&&Number.isFinite(Number(e.confidence))).length;
-  if(events.length>=10&&unsureRight>=4)out.push(['ЗНАЕШЬ БОЛЬШЕ, ЧЕМ ДУМАЕШЬ',`${unsureRight} правильных решений были приняты без высокой уверенности.`]);
-  return out.slice(0,3);
-}
-function v38Timeline(state,events){
-  const snaps=(Array.isArray(state.snapshots)?state.snapshots:[]).slice(-4).reverse();
-  if(snaps.length)return snaps.map((x,i)=>`<div class="v38TimelineRow"><span>${v38Esc(x.date||'')}</span><b>${i===0?'POKER DNA':'SKILL'} ${Number(x.skill)||50}</b><small>FORM ${Number(x.form)||50}</small></div>`).join('');
-  const labels={daily:'Раздача дня',swipe:'Poker Swipe',sizing:'Сайзинг',review:'Разбор линии',heal:'Heal',quickgame:'Быстрая игра'};
-  return events.slice(-4).reverse().map(e=>`<div class="v38TimelineRow"><span>${v38Esc(e.date||'')}</span><b>${v38Esc(labels[e.mode]||'Решение')}</b><small>${e.grade==='g'?'Сильная линия':e.grade==='r'?'Ошибка':'Допустимо'} · ${v38Esc(v38ConceptName(e)||'')}</small></div>`).join('')||'<div class="v38Empty">История появится после первых решений.</div>';
-}
+  const HIGH_CONF = 80;
+  const MIN_SHOW = 10;
+  const MIN_DIAGNOSIS = 20;
 
-window.renderProfile=function(){
-  const root=document.getElementById('profileArea'); if(!root)return;
-  const state=v38StateObject();
-  const ev=v38Events();
-  const sample=ev.length;
-  const skill=Number(state.skill||50);
-  const form=v38LastForm();
-  const leak=typeof topLeak==='function'?topLeak():null;
-  const conf=v38Confidence(sample);
-
-  const pre=v38SplitStat(e=>/RFI|BB defence|3-bet|flat IP|polar 3-bet/i.test(e.concept||'') || String(e.street||'').toUpperCase()==='ПРЕФЛОП');
-  const size=v38SplitStat(e=>e.mode==='sizing'||e.sizePct!=null);
-  const post=v38SplitStat(e=>String(e.street||'').toUpperCase()!=='ПРЕФЛОП' && e.street && e.mode!=='sizing');
-  const disc=v38SplitStat(e=>e.mode!=='diagnostic');
-  try{
-    if(typeof disciplineScore==='function'){
-      const ds=disciplineScore();
-      if(Number.isFinite(ds))disc.score=ds;
+  function state() {
+    if (typeof window.PokerSwipeCore?.store?.getState === 'function') {
+      return window.PokerSwipeCore.store.getState();
     }
-  }catch(e){}
+    return window.S || { events: [], skill: 50, nick: '', snapshots: [], hands: [], dailyArchive: [], healCourses: {}, tournaments: [], xray: { runs: 0 }, streak: 0 };
+  }
 
-  const recent=ev.slice(-20), previous=ev.slice(-40,-20);
-  const avg=a=>a.length?Math.round(a.reduce((s,e)=>s+v38GradeScore(e.grade),0)/a.length*100):null;
-  const rn=avg(recent), pn=avg(previous);
-  const formDelta=(rn!=null&&pn!=null)?rn-pn:null;
-  const identity=v38Identity(ev,pre,post,size,disc),matrix=v38ConfidenceMatrix(ev);
-  const concepts=v38ConceptStats(ev),strongZones=concepts.filter(x=>x.n>=5).sort((a,b)=>b.score-a.score).slice(0,3);
-  const blindZones=concepts.filter(x=>x.n>=3&&(x.blind>0||x.score<60)).sort((a,b)=>(b.blind-a.blind)||(a.score-b.score)).slice(0,3);
-  const tendencies=v38Tendencies(ev);
-  const daily=v38ModeStat(ev,['daily']),training=v38ModeStat(ev,['swipe','quickgame','training']),sizingMode=v38ModeStat(ev,['sizing']),review=v38ModeStat(ev,['review']);
-  const hands=(Array.isArray(state.hands)?state.hands.length:0)+(Array.isArray(state.myHands18)?state.myHands18.length:0);
-  const courses=Object.values(state.healCourses||{}),closed=courses.filter(x=>Array.isArray(x)&&x.length&&x.every(Boolean)).length,steps=courses.reduce((n,x)=>n+(Array.isArray(x)?x.filter(Boolean).length:0),0);
-  const tournaments=Array.isArray(state.tournaments)?state.tournaments.length:0;
-  const planned=Object.keys(window.PokerSwipePolianaV40?.state?.selected||{}).length;
-  const name=v38Esc(state.nick||state.name||'ИГРОК');
-  const verdict=sample<8?'Я ещё не знаю тебя достаточно хорошо. Дай мне несколько решений — и я начну говорить фактами.':leak?`${v38ConceptName(leak)} повторяется чаще остальных ошибок. Особенно внимательно смотрим на решения, где ты была уверена.`:formDelta>=4?'Ты стала заметно чище на последнем отрезке. Теперь важно удержать результат на новых спотах.':'Профиль уже собран. Ищи правду не в одной цифре, а в структуре решений.';
-  const comparison=[['PREFLOP',pre],['POSTFLOP',post],['SIZING',size],['DISCIPLINE',disc]].filter(x=>x[1].n>=5);
-  const won=comparison.filter(x=>(x[1].delta||0)>=4).length,lost=comparison.filter(x=>(x[1].delta||0)<=-4).length;
+  function esc(v) {
+    if (typeof window.esc === 'function') return window.esc(v);
+    return String(v ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  }
 
-  root.innerHTML=`<div class="v38You">
-    <header class="v38Hero">
-      <div class="v38IdentityTop"><div><span class="v38Eyebrow">${name} · ${sample} РЕШЕНИЙ</span><h1>${identity[0].replace(',','<br><em>,</em>')}</h1></div><span class="v38Suit">♠</span></div>
-      <p>${identity[1]}</p>
+  function eventsForProfile() {
+    return (state().events || []).filter((e) => e && e.mode !== 'diagnostic' && !e.excludeFromProfile);
+  }
 
-      <div class="v38HeroGrid">
-        <div class="v38MainScore">
-          <span>POKER DNA</span>
-          <b>${skill}</b>
-          <small>${formDelta==null?'нужна предыдущая выборка':`${formDelta>=0?'+':''}${formDelta} к прошлому отрезку`}</small>
+  function gradeWeight(g) {
+    if (g === 'g') return 1;
+    if (g === 'y') return 0.55;
+    if (g === 'r') return 0;
+    return null;
+  }
+
+  function weightedQuality(ev) {
+    const w = [];
+    for (const e of ev) {
+      const g = gradeWeight(e.grade);
+      if (g === null) continue;
+      w.push(g);
+    }
+    if (!w.length) return null;
+    return Math.round((w.reduce((a, b) => a + b, 0) / w.length) * 100);
+  }
+
+  function playerConfidence(e) {
+    const c = e.confidence;
+    if (c === null || c === undefined || c === '') return null;
+    const n = Number(c);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function conceptName(c) {
+    try {
+      return typeof conceptLabel === 'function' ? conceptLabel(c) : String(c || '');
+    } catch (err) {
+      return String(c || '');
+    }
+  }
+
+  function splitSkill(filter) {
+    const all = eventsForProfile().filter(filter);
+    const cur = all.slice(-20);
+    const prev = all.slice(-40, -20);
+    const now = weightedQuality(cur);
+    const before = weightedQuality(prev);
+    const overall = weightedQuality(all);
+    return {
+      n: all.length,
+      score: now ?? overall,
+      delta: now != null && before != null ? now - before : null,
+    };
+  }
+
+  function profileStatusLabel(n) {
+    if (n < MIN_SHOW) return 'Собираем выборку';
+    if (n < MIN_DIAGNOSIS) return 'Паттерн проявляется';
+    return 'Достаточно для выводов';
+  }
+
+  function sampleReliability(n) {
+    if (n < 8) return ['Низкая', 'Нужно больше решений в профиле'];
+    if (n < 25) return ['Средняя', 'Уже виден общий паттерн'];
+    return ['Высокая', 'Выборка устойчивая'];
+  }
+
+  function confidenceMatrix(ev) {
+    const m = { cc: 0, cu: 0, yOk: 0, wu: 0, wc: 0, unknown: 0 };
+    for (const e of ev) {
+      const pc = playerConfidence(e);
+      if (pc === null) {
+        m.unknown++;
+        continue;
+      }
+      const high = pc >= HIGH_CONF;
+      if (e.grade === 'g') {
+        if (high) m.cc++;
+        else m.cu++;
+      } else if (e.grade === 'y') {
+        m.yOk++;
+      } else if (e.grade === 'r') {
+        if (high) m.wc++;
+        else m.wu++;
+      } else {
+        m.unknown++;
+      }
+    }
+    return m;
+  }
+
+  function blindZones(ev) {
+    const by = {};
+    for (const e of ev) {
+      if (e.grade !== 'r') continue;
+      const pc = playerConfidence(e);
+      if (pc === null || pc < HIGH_CONF) continue;
+      const key = e.concept || 'unknown';
+      if (!by[key]) by[key] = { concept: key, n: 0, examples: [] };
+      by[key].n++;
+      if (by[key].examples.length < 3) by[key].examples.push(e);
+    }
+    return Object.values(by)
+      .filter((x) => x.n >= 2)
+      .sort((a, b) => b.n - a.n);
+  }
+
+  function confirmedStrengths(ev) {
+    const stats = typeof conceptStats === 'function' ? conceptStats() : [];
+    return stats
+      .filter((x) => x.n >= MIN_SHOW && x.score >= 75 && (x.r || 0) <= Math.max(1, Math.floor(x.n * 0.15)))
+      .slice(0, 4);
+  }
+
+  function healProgress() {
+    const courses = state().healCourses || {};
+    let done = 0;
+    let total = 0;
+    for (const steps of Object.values(courses)) {
+      if (!Array.isArray(steps)) continue;
+      total += steps.length;
+      done += steps.filter(Boolean).length;
+    }
+    return { done, total };
+  }
+
+  function exploitOverview() {
+    try {
+      const raw = localStorage.getItem('pokerswipe_exploit_session_v1');
+      if (!raw) return null;
+      const snap = JSON.parse(raw);
+      const stats = snap?.stats || snap?.progress?.stats || snap;
+      const tasks = Number(stats?.tasksSeen ?? stats?.overview?.tasksSeen ?? 0);
+      if (!tasks) return { tasksSeen: 0 };
+      const acc = stats?.accuracy ?? stats?.overview?.accuracy;
+      return {
+        tasksSeen: tasks,
+        accuracyPercent: acc != null && Number.isFinite(Number(acc)) ? Math.round(Number(acc) * (Number(acc) <= 1 ? 100 : 1)) : null,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function polyanaFavorites() {
+    try {
+      const raw = localStorage.getItem('psp-polyana-favorite-clubs-v1');
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list.length : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function tournamentSummary() {
+    const list = Array.isArray(state().tournaments) ? state().tournaments : [];
+    if (!list.length) return { count: 0 };
+    if (typeof t23Stats === 'function') {
+      try {
+        const st = t23Stats();
+        return { count: st.count, profit: st.profit, currency: st.currency, invested: st.invested };
+      } catch (e) { /* fall through */ }
+    }
+    return { count: list.length };
+  }
+
+  function sectionCards(ev) {
+    const q = (mode) => weightedQuality(ev.filter(mode));
+    const n = (mode) => ev.filter(mode).length;
+    const heal = healProgress();
+    const xr = state().xray || {};
+    const exploit = exploitOverview();
+    const polyFav = polyanaFavorites();
+    const tour = tournamentSummary();
+    const dailyArch = state().dailyArchive || [];
+    const handsSaved = (state().hands || []).length;
+    const recon = (state().myHands18 || []).length;
+
+    return [
+      {
+        id: 'daily',
+        title: 'Раздача дня',
+        route: 'daily',
+        primary: `${dailyArch.length} в архиве`,
+        secondary: dailyArch.length ? 'завершённые дни, не общий счётчик решений' : 'раздел ещё не отмечал прохождения',
+      },
+      {
+        id: 'swipe',
+        title: 'Swipe / тренировка',
+        route: 'swipe',
+        primary: n((e) => e.mode === 'swipe' || e.mode === 'quickgame') + ' решений',
+        secondary: q((e) => e.mode === 'swipe' || e.mode === 'quickgame') != null
+          ? `взвешенное качество ${q((e) => e.mode === 'swipe' || e.mode === 'quickgame')}/100`
+          : 'мало данных для оценки',
+      },
+      {
+        id: 'sizing',
+        title: 'Sizing',
+        route: 'sizing',
+        primary: n((e) => e.mode === 'sizing' || e.sizePct != null) + ' решений',
+        secondary: q((e) => e.mode === 'sizing' || e.sizePct != null) != null
+          ? `качество ${q((e) => e.mode === 'sizing' || e.sizePct != null)}/100`
+          : 'мало данных',
+      },
+      {
+        id: 'review',
+        title: 'Review',
+        route: 'review',
+        primary: n((e) => e.mode === 'review') + ' упражнений',
+        secondary: 'разбор учебных линий, не импортированные руки',
+      },
+      {
+        id: 'myhands',
+        title: 'My Hands',
+        route: 'myhands',
+        primary: `${handsSaved} раздач в коллекции`,
+        secondary: recon ? `+ ${recon} черновиков recon` : 'сохранённые разборы из реальной игры',
+      },
+      {
+        id: 'heal',
+        title: 'Heal',
+        route: 'heal',
+        primary: heal.total ? `${heal.done}/${heal.total} шагов курса` : 'курсы не начаты',
+        secondary: 'прогресс прохождения ≠ подтверждённое исправление лика',
+      },
+      {
+        id: 'exploit',
+        title: 'Exploit',
+        route: 'exploit',
+        primary: exploit?.tasksSeen ? `${exploit.tasksSeen} задач` : 'нет сохранённой статистики',
+        secondary: exploit?.accuracyPercent != null ? `точность ответов ${exploit.accuracyPercent}%` : 'мини-приложение не записывало сессию',
+      },
+      {
+        id: 'ranges',
+        title: 'Ranges / X-Ray',
+        route: 'ranges',
+        primary: (xr.runs || 0) + ' сессий рентгена',
+        secondary: xr.best ? `лучший результат ${xr.best}/100` : 'справочник и тренажёр диапазонов',
+      },
+      {
+        id: 'polyana',
+        title: 'Поляна',
+        route: 'polyana',
+        primary: polyFav ? `${polyFav} избранных клубов` : 'избранное не настроено',
+        secondary: 'расписание и карта — отдельно от покерного skill',
+      },
+      {
+        id: 'mytournaments',
+        title: 'Мои турниры',
+        route: 'mytournaments',
+        primary: tour.count ? `${tour.count} турниров` : 'история пуста',
+        secondary:
+          tour.profit != null && tour.currency
+            ? `результат ${tour.profit >= 0 ? '+' : ''}${tour.profit} ${tour.currency}`
+            : 'реальные бай-ины и призы, не планы Поляны',
+      },
+    ];
+  }
+
+  function skillSummary(ev, n) {
+    const skill = Number.isFinite(Number(state().skill)) ? Number(state().skill) : 50;
+    const lines = [];
+    if (n < MIN_SHOW) {
+      lines.push('Skill пока опирается на короткую выборку — не путай с финальным уровнем.');
+    } else {
+      lines.push('Skill — накопленная оценка качества решений с учётом свежести и сложности спотов.');
+    }
+    const leak = typeof topLeak === 'function' ? topLeak() : null;
+    if (leak && leak.n >= 3) {
+      lines.push(`Повторяемость: ${conceptName(leak.concept)} (${leak.r}/${leak.n} ошибок в концепте).`);
+    }
+    return { skill, lines };
+  }
+
+  function youVsYou(ev) {
+    const recent = ev.slice(-20);
+    const previous = ev.slice(-40, -20);
+    const r = weightedQuality(recent);
+    const p = weightedQuality(previous);
+    if (r == null || p == null || !previous.length) {
+      return { ok: false, text: 'Сравнение «ты vs ты» появится после двух сопоставимых отрезков по 20 решений.' };
+    }
+    const delta = r - p;
+    let text;
+    if (Math.abs(delta) < 4) text = 'Качество решений примерно на том же уровне — смотри конкретные зоны ниже.';
+    else if (delta > 0) text = `Взвешенное качество последних 20 решений выше предыдущих 20 на ${delta} п.п.`;
+    else text = `Последние 20 решений слабее предыдущих 20 на ${Math.abs(delta)} п.п.`;
+    return { ok: true, recent: r, previous: p, delta, text };
+  }
+
+  function snapshotHistory() {
+    const snaps = (state().snapshots || []).slice(-14);
+    if (snaps.length < 2) return null;
+    return snaps;
+  }
+
+  function bindTools(root) {
+    const box = root.querySelector('.psTools');
+    if (!box) return;
+    box.querySelector('#psHeal')?.addEventListener('click', () => window.show?.('heal'));
+    box.querySelector('#psRetake')?.addEventListener('click', () => window.startDiagnostic25?.(true));
+    box.querySelector('#psExport')?.addEventListener('click', () => window.exportPokerSwipe32?.());
+    box.querySelector('#psImport')?.addEventListener('click', () => box.querySelector('#psImportFile')?.click());
+    box.querySelector('#psImportFile')?.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result || ''));
+          const incoming = parsed?.state || parsed;
+          if (!incoming || typeof incoming !== 'object' || !Array.isArray(incoming.events)) {
+            throw new Error('Это не backup PokerSwipe');
+          }
+          const next = typeof structuredClone === 'function' ? structuredClone(incoming) : JSON.parse(JSON.stringify(incoming));
+          if (window.PokerSwipeCore?.store?.replaceState) {
+            window.PokerSwipeCore.store.replaceState(next);
+            window.PokerSwipeCore.store.save?.();
+          } else {
+            window.S = next;
+            if (typeof save === 'function') save();
+          }
+          window.openModal?.('<span class="ey">ИМПОРТ</span><h2>Данные восстановлены</h2><p>Перезагрузка…</p>');
+          setTimeout(() => location.reload(), 800);
+        } catch (err) {
+          window.openModal?.(`<span class="ey">ИМПОРТ</span><h2>Не удалось</h2><p>${esc(err.message)}</p>`);
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  function renderProfile() {
+    const root = document.getElementById('profileArea');
+    if (!root) return;
+    root.className = 'psYouRoot';
+
+    const ev = eventsForProfile();
+    const n = ev.length;
+    const nick = esc(state().nick || state().name || 'ИГРОК');
+    const status = profileStatusLabel(n);
+    const rel = sampleReliability(n);
+    const sum = skillSummary(ev, n);
+    const form = typeof formScore === 'function' ? formScore() : null;
+
+    const pre = splitSkill((e) => /RFI|BB defence|3-bet|flat IP|polar 3-bet/i.test(e.concept || '') || String(e.street || '').toUpperCase() === 'ПРЕФЛОП');
+    const post = splitSkill((e) => String(e.street || '').toUpperCase() !== 'ПРЕФЛОП' && e.street && e.mode !== 'sizing');
+    const size = splitSkill((e) => e.mode === 'sizing' || e.sizePct != null);
+    let discScore = null;
+    try {
+      if (typeof disciplineScore === 'function') discScore = disciplineScore();
+    } catch (e) { /* noop */ }
+    const disc = { n, score: Number.isFinite(discScore) ? discScore : weightedQuality(ev), delta: null };
+
+    const matrix = confidenceMatrix(ev.filter((e) => playerConfidence(e) != null));
+    const blinds = blindZones(ev);
+    const strengths = confirmedStrengths(ev);
+    const vs = youVsYou(ev);
+    const history = snapshotHistory();
+    const sections = sectionCards(ev);
+
+    const dnaNodes = [
+      ['Префлоп', pre],
+      ['Постфлоп', post],
+      ['Sizing', size],
+      ['Дисциплина', disc],
+    ];
+
+    root.innerHTML = `<div class="psYou">
+      <header class="psHero">
+        <span class="psEy">ТЫ · ${nick} · POKER DNA</span>
+        <h1>ТВОЁ<br><em>ПОКЕРНОЕ ДОСЬЕ.</em></h1>
+        <p>Агрегат решений и разделов. Тренировки, импорт рук и турниры остаются в своих экранах — здесь только сводка.</p>
+        <span class="psStateChip">${esc(status)} · ${n} решений в профиле</span>
+        <div class="psHeroGrid">
+          <div class="psSkillBig">
+            <span>SKILL</span>
+            <b>${sum.skill}</b>
+            <small>${esc(sum.lines[0])}</small>
+          </div>
+          <div class="psHeroMeta">
+            <div>
+              <span>ФОРМА (20)</span>
+              <b>${form != null ? form : '—'}</b>
+              <small>качество последних решений, не изменение Skill</small>
+            </div>
+            <div>
+              <span>ДОСТОВЕРНОСТЬ</span>
+              <b>${esc(rel[0])}</b>
+              <small>${esc(rel[1])}</small>
+            </div>
+          </div>
         </div>
-        <div class="v38HeroMeta">
-          <div><span>ФОРМА</span><b>${form}</b>${v38Trend(formDelta)}</div>
-          <div><span>ДОСТОВЕРНОСТЬ</span><b>${conf[0]}</b><small>${conf[1]}</small></div>
+        <button type="button" class="psMethodToggle" id="psHow">КАК СЧИТАЕТСЯ SKILL И ВЫБОРКА? ↓</button>
+        <div class="psMethod hidden" id="psMethod">
+          <b>Skill</b> обновляется из качества решений (g / y / r с весами), а не из числа входов в приложение.
+          <b> Форма</b> — только последние 20 решений. <b>Взвешенное качество</b> в картах разделов — не «точность ответов», если это не доля верных в Exploit.
+          Диагностика, тестовые и помеченные excludeFromProfile события сюда не попадают.
         </div>
-      </div>
-      <button class="v38TextButton" id="v38How">КАК ЭТО СЧИТАЕТСЯ? ↓</button>
-      <div class="v38Method hidden" id="v38Method">
-        <b>Уровень игры</b> меняется от качества решений, а не от количества входов в приложение. PokerSwipe смотрит на последние решения, размеры ставок, повторяемость ошибок и выборку. Одна удачная сессия не делает тебя сильнее, одна плохая — не ломает профиль.
-      </div>
-    </header>
+      </header>
 
-    <section class="v38Queen"><span class="v38Eyebrow">ФРИКОВАЯ ДАМА ГОВОРИТ</span><blockquote>«${v38Esc(verdict)}»</blockquote></section>
+      <section class="psBlock">
+        <div class="psBlockHead">
+          <div><span class="psEy">КАРТА НАВЫКОВ</span><h2>POKER DNA</h2></div>
+          <small>размер выборки у каждой зоны</small>
+        </div>
+        <div class="psDnaGrid">
+          ${dnaNodes
+            .map(([label, st]) => {
+              const sc = st.score != null ? st.score : '—';
+              const showBar = st.n >= 5 && st.score != null;
+              return `<div class="psDnaNode">
+              <b>${esc(label)}</b>
+              <div class="psScore">${sc}${st.delta != null && Math.abs(st.delta) >= 4 ? (st.delta > 0 ? ` <small>↑${st.delta}</small>` : ` <small>↓${Math.abs(st.delta)}</small>`) : ''}</div>
+              <small>${st.n} реш. · ${st.n < MIN_SHOW ? 'мало данных' : 'оценка по выборке'}</small>
+              ${showBar ? `<div class="psBar"><i style="width:${Math.max(3, Math.min(100, st.score))}%"></i></div>` : ''}
+            </div>`;
+            })
+            .join('')}
+        </div>
+      </section>
 
-    <section class="v38Section" id="v38Dna">
-      <div class="v38SectionTitle"><div><span class="v38Eyebrow">КАРТА ПОКЕРНОГО МОЗГА</span><h2>POKER DNA</h2></div><small>↑↓ против предыдущей выборки</small></div>
-      ${v38Row('Префлоп',pre)}
-      ${v38Row('Постфлоп',post)}
-      ${v38Row('Размеры ставок',size)}
-      ${v38Row('Дисциплина решений',disc)}
-      <div class="v38ConceptGrid">${concepts.sort((a,b)=>b.n-a.n).slice(0,6).map(x=>`<div><span>${v38Esc(v38ConceptName(x))}</span><b>${v38Value(x.score,x.n)}</b><small>${x.n} решений${x.n<5?' · мало данных':''}</small></div>`).join('')||'<div class="v38Empty">Детальная карта откроется после первых решений.</div>'}</div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">РАЗДЕЛЫ ПРИЛОЖЕНИЯ</span>
+        <h2>СТАТИСТИКА ПО ЭКРАНАМ</h2>
+        <div class="psSections">
+          ${sections
+            .map(
+              (s) => `<button type="button" class="psSecCard" data-ps-route="${esc(s.route)}">
+            <div class="psSecTop"><b>${esc(s.title)}</b><span>→</span></div>
+            <p><strong>${esc(s.primary)}</strong> · ${esc(s.secondary)}</p>
+          </button>`
+            )
+            .join('')}
+        </div>
+      </section>
 
-    <section class="v38Section">
-      <div class="v38SectionTitle"><div><span class="v38Eyebrow">ВСЁ ПРИЛОЖЕНИЕ В ОДНОМ МЕСТЕ</span><h2>ТВОЯ ИГРА ПО РАЗДЕЛАМ</h2></div></div>
-      <div class="v38Modules">
-        ${v38ModuleCard('daily','DAILY',v38Value(daily.score,daily.n),`${daily.n} решений`,daily.n>=5?`точность ${daily.score}%`:'нужна выборка')}
-        ${v38ModuleCard('swipe','TRAINING',v38Value(training.score,training.n),`${training.n} решений`,training.n>=5?`качество ${training.score}%`:'нужна выборка')}
-        ${v38ModuleCard('myhands','MY HANDS',String(hands),`${hands} сохранено`,review.n?`${review.n} разборов`:'реальная игра')}
-        ${v38ModuleCard('heal','HEAL',String(closed),`${closed} курсов закрыто`,`${steps} шагов пройдено`,closed?'good':'')}
-        ${v38ModuleCard('tournaments','ПОЛЯНА',String(tournaments||planned),`${tournaments} турниров`,`${planned} в плане`)}
-        ${v38ModuleCard('sizing','SIZING',v38Value(sizingMode.score,sizingMode.n),`${sizingMode.n} решений`,sizingMode.n>=5?`качество ${sizingMode.score}%`:'нужна выборка')}
-      </div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">СИЛЬНЫЕ СТОРОНЫ</span>
+        <h2>ПОДТВЕРЖДЁННЫЕ ЗОНЫ</h2>
+        ${
+          strengths.length
+            ? `<div class="psList">${strengths
+                .map(
+                  (s) =>
+                    `<div class="psListItem"><strong>${esc(conceptName(s.concept))}</strong> · ${s.score}/100 · ${s.n} реш. · ошибок ${s.r || 0}</div>`
+                )
+                .join('')}</div>`
+            : `<p class="psEmpty">Нужно ≥${MIN_SHOW} решений в концепте и устойчивое качество ≥75 — без этого сильную сторону не называем.</p>`
+        }
+      </section>
 
-    <section class="v38Split">
-      <div class="v38Zone good"><span class="v38Eyebrow">СИЛЬНЫЕ СТОРОНЫ</span><h2>${strongZones.length?'НА ЭТО МОЖНО ОПЕРЕТЬСЯ':'ЕЩЁ НЕ ДОКАЗАНО'}</h2>${strongZones.map(x=>`<div class="v38ZoneRow"><div><b>${v38Esc(v38ConceptName(x))}</b><small>${x.n} решений</small></div><strong>${x.score}</strong></div>`).join('')||'<p>Нужно минимум 5 решений в одной зоне.</p>'}</div>
-      <div class="v38Zone bad"><span class="v38Eyebrow">СЛЕПЫЕ ЗОНЫ</span><h2>${blindZones.length?'ТУТ ТЫ ТЕРЯЕШЬ':'ПОКА НЕ НАЙДЕНЫ'}</h2>${blindZones.map(x=>`<div class="v38ZoneRow"><div><b>${v38Esc(v38ConceptName(x))}</b><small>${x.r} ошибок · ${x.blind} уверенных</small></div><strong>${x.score}</strong></div>`).join('')||'<p>Нет повторяемого паттерна на достаточной выборке.</p>'}${blindZones.length?'<button class="v38Primary" id="v38TrainLeak">ПРОВЕРИТЬ ГЛАВНЫЙ ЛИК →</button>':''}</div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">СЛЕПЫЕ ЗОНЫ</span>
+        <h2>УВЕРЕННОСТЬ И ОШИБКА</h2>
+        ${
+          blinds.length
+            ? `<div class="psList">${blinds
+                .map((b) => {
+                  const ex = b.examples
+                    .map((e) => `${esc(conceptName(e.concept))} · conf ${playerConfidence(e)}`)
+                    .join('; ');
+                  return `<div class="psListItem"><strong>${esc(conceptName(b.concept))}</strong> — ${b.n} повтор${b.n === 1 ? '' : 'а'} при уверенности ≥${HIGH_CONF}. ${ex}</div>`;
+                })
+                .join('')}</div>`
+            : `<p class="psEmpty">Нужны повторяющиеся ошибки (≥2) с явно высокой уверенностью игрока в решении.</p>`
+        }
+      </section>
 
-    <section class="v38Section">
-      <div class="v38SectionTitle"><div><span class="v38Eyebrow">КАК ТЫ ДУМАЕШЬ</span><h2>УВЕРЕННОСТЬ × РЕЗУЛЬТАТ</h2></div></div>
-      <div class="v38Matrix"><div class="good"><span>ПРАВИЛЬНО + УВЕРЕНА</span><b>${matrix.rightSure}</b></div><div><span>ПРАВИЛЬНО + СОМНЕВАЛАСЬ</span><b>${matrix.rightUnsure}</b></div><div><span>ОШИБЛАСЬ + СОМНЕВАЛАСЬ</span><b>${matrix.wrongUnsure}</b></div><div class="bad"><span>ОШИБЛАСЬ + УВЕРЕНА</span><b>${matrix.wrongSure}</b><small>самые дорогие ошибки</small></div></div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">МАТРИЦА УВЕРЕННОСТИ ИГРОКА</span>
+        <h2>РЕШЕНИЕ × УВЕРЕННОСТЬ</h2>
+        <p class="psEmpty" style="margin-bottom:8px">Только поле confidence (твоя уверенность). Линия y не считается провалом. Без confidence: ${matrix.unknown} событий.</p>
+        <div class="psMatrix">
+          <div><span>ВЕРНО · ВЫСОКАЯ</span><b>${matrix.cc}</b></div>
+          <div><span>ВЕРНО · НИЗКАЯ</span><b>${matrix.cu}</b></div>
+          <div><span>ДОПУСТИМО (y)</span><b>${matrix.yOk}</b></div>
+          <div><span>ОШИБКА · ВЫСОКАЯ</span><b>${matrix.wc}</b></div>
+          <div><span>ОШИБКА · НИЗКАЯ</span><b>${matrix.wu}</b></div>
+        </div>
+      </section>
 
-    <section class="v38Section">
-      <div class="v38SectionTitle"><div><span class="v38Eyebrow">ПОВЕДЕНЧЕСКИЕ ПАТТЕРНЫ</span><h2>ТВОИ ТЕНДЕНЦИИ</h2></div></div>
-      <div class="v38Tendencies">${tendencies.map((x,i)=>`<article><span>0${i+1}</span><div><b>${x[0]}</b><p>${x[1]}</p></div></article>`).join('')||'<div class="v38Empty">Пока данных недостаточно. Здесь не будет фейковой психологии ради красивого текста.</div>'}</div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">ТЫ VS ТЫ</span>
+        <h2>ДВА ОТРЕЗКА ПО 20 РЕШЕНИЙ</h2>
+        ${
+          vs.ok
+            ? `<div class="psVs">
+            <div><b>${vs.previous}</b><small>предыдущие 20</small></div>
+            <div class="psVsMid">${vs.delta > 0 ? '+' : ''}${vs.delta} п.п.</div>
+            <div><b>${vs.recent}</b><small>последние 20</small></div>
+          </div><p class="psEmpty">${esc(vs.text)}</p>`
+            : `<p class="psEmpty">${esc(vs.text)}</p>`
+        }
+      </section>
 
-    <section class="v38Versus">
-      <div><span class="v38Eyebrow">ТЫ VS ТЫ · ПОСЛЕДНИЕ 20</span><h2>${comparison.length?`${won} : ${lost}`:'НУЖНА ДИСТАНЦИЯ'}</h2><p>${comparison.length?`Сейчас ты сильнее прошлого отрезка в ${won} зонах; просадка есть в ${lost}. Нейтральные изменения не считаются победой или поражением.`:'Сравнение появится, когда будет две сопоставимые выборки.'}</p></div>
-      <div class="v38Compare">${comparison.map(x=>`<div><span>${x[0]}</span><b>${v38Trend(x[1].delta)}</b></div>`).join('')}</div>
-    </section>
+      <section class="psBlock">
+        <span class="psEy">ИСТОРИЯ</span>
+        <h2>SKILL И ФОРМА ПО ДНЯМ</h2>
+        ${
+          history
+            ? `<div class="psHistory">${history
+                .map((s) => {
+                  const h = Math.max(4, Math.round((s.skill || 0) * 0.56));
+                  return `<div class="psHistBar" style="height:${h}px" title="${esc(s.date)} skill ${s.skill}"></div>`;
+                })
+                .join('')}</div><p class="psEmpty">Последние ${history.length} дней из snapshots (skill по дню).</p>`
+            : `<p class="psEmpty">История появится после нескольких дней с сохранёнными snapshots.</p>`
+        }
+      </section>
 
-    <section class="v38Section"><div class="v38SectionTitle"><div><span class="v38Eyebrow">БИОГРАФИЯ ИГРОКА</span><h2>КАК МЕНЯЕТСЯ ТВОЯ ИГРА</h2></div></div><div class="v38Timeline">${v38Timeline(state,ev)}</div></section>
+      <section class="psBlock psTools panel">
+        <span class="psEy">СЛУЖЕБНОЕ</span>
+        <h2>ДАННЫЕ И НАСТРОЙКИ</h2>
+        <p class="psEmpty">Экспорт, импорт, Heal и повтор диагностики — те же действия, что в V32 tools.</p>
+        <div class="v32ToolGrid">
+          <button type="button" id="psHeal">HEAL-КУРСЫ</button>
+          <button type="button" id="psRetake">ПЕРЕПРОЙТИ ТЕСТ</button>
+          <button type="button" id="psExport">ЭКСПОРТ JSON</button>
+          <button type="button" id="psImport">ИМПОРТ JSON</button>
+        </div>
+        <input class="hidden" id="psImportFile" type="file" accept="application/json,.json" hidden>
+      </section>
+    </div>`;
 
-    <section class="v38Foot">
-      <span>${sample} решений · серия ${Number(state.streak||0)} дней</span>
-      <button id="v38Data">ДАННЫЕ И ПРОФИЛЬ →</button>
-    </section>
-  </div>`;
+    root.querySelector('#psHow')?.addEventListener('click', () => root.querySelector('#psMethod')?.classList.toggle('hidden'));
+    root.querySelectorAll('[data-ps-route]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-ps-route');
+        if (id === 'mytournaments') {
+          if (typeof window.openMyTournamentsV72 === 'function') window.openMyTournamentsV72();
+          else if (typeof window.show === 'function') window.show('mytournaments');
+          return;
+        }
+        if (typeof window.show === 'function') window.show(id);
+      });
+    });
+    bindTools(root);
+  }
 
-  const goSwipe=()=>{try{swSession=[]}catch(e){};show('swipe')};
-  const trainLeak=()=>{
-    const target=blindZones[0]?.concept||leak?.concept;
-    if(target && typeof startConceptSwipe==='function') startConceptSwipe(target);
-    else goSwipe();
-  };
-  document.getElementById('v38TrainLeak')?.addEventListener('click',trainLeak);
-  root.querySelectorAll('[data-v38go]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.v38go)));
-  document.getElementById('v38Data')?.addEventListener('click',()=>{
-    if(typeof openModal==='function')openModal(`<span class="v38Eyebrow">ПРОФИЛЬ И ДАННЫЕ</span><h2>${name}</h2><p>${sample} решений хранятся в локальном профиле этого устройства.</p><button class="v38Primary" id="v38ExportNow">ЭКСПОРТ ДАННЫХ</button>`);
-    setTimeout(()=>document.getElementById('v38ExportNow')?.addEventListener('click',()=>window.exportPokerSwipe32?.()),0);
-  });
-  document.getElementById('v38How')?.addEventListener('click',()=>{
-    document.getElementById('v38Method')?.classList.toggle('hidden');
-  });
-};
+  renderProfile.__psVisualV2 = true;
+  window.renderProfile = renderProfile;
 
+  if (document.getElementById('profile')?.classList.contains('active')) {
+    try {
+      renderProfile();
+    } catch (e) {
+      console.error('[profile]', e);
+    }
+  }
 })();
