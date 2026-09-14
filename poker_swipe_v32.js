@@ -283,8 +283,7 @@ function profileToolsV32(){
   q('#v32ImportFile').onchange=e=>{const file=e.target.files?.[0];if(file)importStateFile(file)};
   const players=q('#players28Box');if(players)players.innerHTML='<h3>ДРУГИЕ ИГРОКИ</h3><div class="sync28">Публичные профили временно отключены: сначала серверная проверка Telegram и RLS, потом социальный слой.</div>';
 }
-const baseProfile=window.renderProfile;
-window.renderProfile=function renderProfileV32(){const result=baseProfile.apply(this,arguments);profileToolsV32();setTimeout(profileToolsV32,60);return result};
+/* Profile render owned by profile.js — tools wired there via psProfileBindTools(). */
 
 /* Disable the unsafe automatic public layer until a verified backend is added. */
 window.publishProfile28=async()=>false;
