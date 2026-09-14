@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-09-14T11:07:38.030Z",
+  "datasets": [
+    {
+      "file": "strategy_pack_v17.js",
+      "sourceName": "POKER_BRAIN_PACK",
+      "sourceType": "CURATED",
+      "solverOutput": false,
+      "version": "17.0",
+      "gameType": "MTT/CASH mixed",
+      "authoritativeUse": "Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed Pio/GTO Wizard/TexasSolver output dump.",
+      "externalValidation": false,
+      "frequencyPrecision": "atlas/heuristic"
+    },
+    {
+      "file": "task-context/library.js",
+      "sourceName": "TRAINING_LIBRARY",
+      "sourceType": "UNKNOWN",
+      "solverOutput": false,
+      "version": null,
+      "gameType": "MTT/CASH mixed",
+      "authoritativeUse": "Authoritative for Daily/Swipe quiz grading via LIBRARY_CURATED",
+      "externalValidation": false,
+      "frequencyPrecision": "atlas/heuristic"
+    },
+    {
+      "file": "solver/src/training/libraryDrill.js",
+      "sourceName": "LIBRARY_DRILL_GATEWAY",
+      "sourceType": "UNKNOWN",
+      "solverOutput": false,
+      "version": null,
+      "gameType": "MTT/CASH mixed",
+      "authoritativeUse": "training/quiz",
+      "externalValidation": false,
+      "frequencyPrecision": "atlas/heuristic"
+    },
+    {
+      "file": "ranges-ui/referenceRangesPack.js",
+      "sourceName": "REFERENCE_RANGES_UI",
+      "sourceType": "UNKNOWN",
+      "solverOutput": false,
+      "version": null,
+      "gameType": "MTT/CASH mixed",
+      "authoritativeUse": "training/quiz",
+      "externalValidation": false,
+      "frequencyPrecision": "atlas/heuristic"
+    }
+  ],
+  "uiClaims": [
+    {
+      "location": "index.html brainPanel",
+      "claim": "GTO BRAIN label",
+      "honest": "PARTIAL — shows brainSource when available"
+    },
+    {
+      "location": "libraryDrill grading",
+      "claim": "EV loss BB",
+      "honest": "evAvailable:false for library quiz"
+    },
+    {
+      "location": "strategy_pack truth",
+      "claim": "solverOutput:false",
+      "honest": "Must not market as exact GTO frequencies"
+    }
+  ]
+}

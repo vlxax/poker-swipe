@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T20:37:29.291Z",
+  "generatedAt": "2026-09-14T11:08:44.317Z",
   "totalComparable": 421,
   "exactMatches": 421,
   "normalizedMatches": 0,
@@ -222,18 +222,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -258,7 +258,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
@@ -288,18 +288,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -324,7 +324,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
@@ -354,18 +354,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -390,7 +390,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
@@ -420,18 +420,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -456,7 +456,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
@@ -486,18 +486,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -522,7 +522,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
@@ -552,18 +552,18 @@
         "isAuthorCorrect": false,
         "isAlsoOk": false,
         "daily": {
-          "grade": "BIG MISTAKE",
+          "grade": "MISTAKE",
           "bucket": "bad",
           "chosenRecommended": false,
           "nearOptimal": false
         },
         "dailyGateway": {
-          "grade": "BIG MISTAKE",
-          "verdict": "BIG MISTAKE"
+          "grade": "MISTAKE",
+          "verdict": "MISTAKE"
         },
         "swipeGateway": {
-          "grade": "BIG MISTAKE",
-          "solverGrade": "BIG MISTAKE",
+          "grade": "MISTAKE",
+          "solverGrade": "MISTAKE",
           "routedLibrary": true,
           "source": "cfr"
         },
@@ -588,7 +588,7 @@
           "grade": "EXCELLENT",
           "bucket": "optimal",
           "chosenRecommended": true,
-          "nearOptimal": true
+          "nearOptimal": false
         },
         "dailyGateway": {
           "grade": "EXCELLENT",
