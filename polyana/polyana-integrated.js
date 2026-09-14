@@ -148,6 +148,8 @@ function startDate(e){
   return Number.isNaN(+d)?null:d;
 }
 function lateClose(e){
+  const V=eventVis();
+  if(V?.lateClose)return V.lateClose(e);
   const s=startDate(e),raw=e.late_reg_minutes;
   if(!s||raw===null||raw===undefined||raw==='')return null;
   const m=Number(raw);

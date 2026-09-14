@@ -68,7 +68,8 @@
 @keyframes pspMapSpin{to{transform:rotate(360deg)}}
 #polyana .pspJoinStatus{display:block;margin-top:6px;font-size:7px;font-weight:1000;letter-spacing:.12em;color:#9a9790}
 #polyana .pspJoinStatus--soon{color:#b8c4a8}
-#polyana .pspJoinStatus--late_reg,#polyana .pspJoinStatus--started{color:#c8ff3d}
+#polyana .pspJoinStatus--late_reg{color:#c8ff3d}
+#polyana .pspJoinStatus--started_unknown{color:#c4b896}
 #polyana .pspJoinStatus--expired{color:#6f6972}
 #polyana .pspMapNote{font-size:7px;color:#6f6972;line-height:1.45;margin:7px 2px 0}
 #polyana .pspMapPinWrap{background:transparent!important;border:0!important}
