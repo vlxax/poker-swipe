@@ -70,7 +70,10 @@
       const result = orig(id);
 
       if (id !== 'mytournaments') hideMyTournamentsUi();
-      if (id === 'polyana') scrubPolyanaLeak();
+      if (id === 'polyana') {
+        scrubPolyanaLeak();
+        if (typeof window.ensurePokerSwipePolyana === 'function') window.ensurePokerSwipePolyana();
+      }
 
       if (id === 'mytournaments') {
         reparentPs72();

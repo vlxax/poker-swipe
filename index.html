@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="css/pwa-install.css">
 <link rel="stylesheet" href="poker_swipe_v32.css">
 <link rel="stylesheet" href="poker_swipe_v33.css">
+<link rel="stylesheet" href="ps-design-tokens.css">
 <link rel="stylesheet" href="freak-lady-reactive.css">
 <link rel="stylesheet" href="game-character-layout.css">
 <link rel="stylesheet" href="game-visual-system.css">
@@ -4057,6 +4058,11 @@ function openJournal(){
 }
 function openPolyana(){
   V54_MODE='polyana';
+  if(window.__PSP_NATIVE_POLYANA && typeof window.openPokerSwipePolyana==='function'){
+    window.openPokerSwipePolyana();
+    markNav('polyana');
+    return;
+  }
   tournamentScreen();
   if(typeof V54_POLYANA_RENDER==='function')V54_POLYANA_RENDER();
   markNav('tournaments');
@@ -4097,7 +4103,7 @@ function buildFiveNav(){
   const home=nav.querySelector('[data-nav="home"]');
   const hands=nav.querySelector('[data-nav="myhands"]');
   const profile=nav.querySelector('[data-nav="profile"]');
-  if(field)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
+  if(field && !window.__PSP_NATIVE_POLYANA)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
   [home,hands,profile].filter(Boolean).forEach(b=>{
     const id=b.dataset.nav;
     b.onclick=function(e){
@@ -5369,38 +5375,5 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="screen-router.js"></script>
 <link rel="stylesheet" href="profile.css">
 <script src="profile.js"></script>
-<script>
-function installShowWrapper() {
-  if(!window.show) return;
-  if(window.show._wrappedByPatch) return;
-  var originalShow = window.show;
-  window.show = function(id) {
-    if(!document.getElementById(id)) id = 'home';
-    originalShow.call(this, id);
-    var screens = document.querySelectorAll('.screen');
-    for(var i = 0; i < screens.length; i++) {
-      if(screens[i].id === id) screens[i].classList.add('active');
-      else screens[i].classList.remove('active');
-    }
-    if(id === 'home' && typeof window.renderHome === 'function') window.renderHome();
-    if(id === 'swipe' && typeof window.renderSwipe === 'function') window.renderSwipe();
-    if(id === 'sizing' && typeof window.renderSizing === 'function') window.renderSizing();
-    if(id === 'review' && typeof window.renderReview === 'function') window.renderReview();
-    if(id === 'daily' && typeof window.renderDaily === 'function') window.renderDaily();
-    if(id === 'heal' && typeof window.renderHeal === 'function') window.renderHeal();
-    if(id === 'myhands' && typeof window.renderMy === 'function') window.renderMy();
-    if(id === 'xray' && typeof window.renderXray === 'function') window.renderXray();
-    if(id === 'profile' && typeof window.renderProfile === 'function') window.renderProfile();
-  };
-  window.show._wrappedByPatch = true;
-}
-setTimeout(installShowWrapper, 50);
-setTimeout(installShowWrapper, 150);
-setTimeout(installShowWrapper, 300);
-setTimeout(installShowWrapper, 600);
-setTimeout(installShowWrapper, 1200);
-setTimeout(installShowWrapper, 2500);
-setInterval(installShowWrapper, 3000);
-</script>
 </body>
 </html>

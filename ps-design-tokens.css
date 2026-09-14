@@ -1,0 +1,98 @@
+/* PokerSwipe design tokens — shared visual language (incremental adoption) */
+:root {
+  --ps-font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ps-font-display: "Arial Narrow", Arial, sans-serif;
+
+  --ps-text-xs: 9px;
+  --ps-text-sm: 11px;
+  --ps-text-md: 13px;
+  --ps-text-lg: 17px;
+  --ps-text-xl: 24px;
+  --ps-text-display: 32px;
+
+  --ps-radius-sm: 11px;
+  --ps-radius-md: 16px;
+  --ps-radius-lg: 24px;
+  --ps-radius-card: 20px;
+  --ps-radius-pill: 999px;
+
+  --ps-space-1: 4px;
+  --ps-space-2: 8px;
+  --ps-space-3: 12px;
+  --ps-space-4: 16px;
+  --ps-space-5: 24px;
+
+  --ps-page-bg: #070809;
+  --ps-card-bg: #111216;
+  --ps-card-bg-elevated: #0d0f11;
+  --ps-border: rgba(255, 255, 255, 0.09);
+  --ps-text-primary: #f4f4f1;
+  --ps-text-secondary: #a8a8b0;
+  --ps-accent: var(--v36-accent, #c8ff3d);
+
+  --ps-motion-fast: 160ms;
+  --ps-motion-normal: 220ms;
+  --ps-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.psScreen {
+  color: var(--ps-text-primary);
+  font-family: var(--ps-font-ui);
+}
+.psScreenBody {
+  padding: 0 14px calc(110px + env(safe-area-inset-bottom, 0px));
+  max-width: 520px;
+  margin: 0 auto;
+}
+.psSection {
+  margin-top: var(--ps-space-3);
+}
+.psCard {
+  border: 1px solid var(--ps-border);
+  border-radius: var(--ps-radius-card);
+  background: var(--ps-card-bg);
+  padding: var(--ps-space-4);
+}
+.psBtn {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-sm);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  border-radius: var(--ps-radius-md);
+  min-height: 44px;
+  transition: transform var(--ps-motion-fast) var(--ps-ease), opacity var(--ps-motion-fast) var(--ps-ease);
+}
+.psBtn:active {
+  transform: scale(0.98);
+}
+.psBtn--primary {
+  background: var(--ps-accent);
+  color: #090c07;
+  border: 0;
+}
+.psBtn--secondary {
+  background: #141519;
+  color: var(--ps-text-primary);
+  border: 1px solid var(--ps-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psBtn,
+  .screen.active {
+    transition: none !important;
+  }
+}
+
+.screen.active {
+  animation: psScreenEnter var(--ps-motion-normal) var(--ps-ease);
+}
+@keyframes psScreenEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

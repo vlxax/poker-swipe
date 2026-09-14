@@ -659,11 +659,17 @@ function warmMapCache(){
   document.body.appendChild(f);
 }
 
+function ensurePolyanaMounted(){
+  const r=root();if(!r)return;
+  if(!state.loaded)load();
+  else if(!r.querySelector('.pspHero,.pspTop,.pspTabs'))render();
+}
+
 function openPolyana(){
   if(typeof window.show==='function')window.show('polyana');
   const nav=document.querySelector('.nav [data-nav="polyana"]');
   document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
-  if(!state.loaded)load();else render();
+  ensurePolyanaMounted();
   warmMapCache();
 }
 
@@ -722,5 +728,6 @@ if(document.readyState==='loading'){
   setTimeout(warmMapCache,250);
 }
 
+window.ensurePokerSwipePolyana=ensurePolyanaMounted;
 window.openPokerSwipePolyana=openPolyana;
 })();

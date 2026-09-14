@@ -349,7 +349,7 @@
   function renderProfile() {
     const root = document.getElementById('profileArea');
     if (!root) return;
-    root.className = 'psYouRoot';
+    root.className = 'psYouRoot psScreenBody';
 
     const ev = eventsForProfile();
     const n = ev.length;
