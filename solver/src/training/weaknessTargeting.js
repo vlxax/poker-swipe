@@ -241,8 +241,11 @@ function skillTasksForAudit(taskPool, skill, usedIds) {
 function weaknessSlotMatchesForSkill(spot, ctx, skill, taskPool, { usedIds = null } = {}) {
   const { allowed } = weaknessSlotAllowedDifficulties(ctx, skill);
   const d = spot.difficulty;
+  const overall = ctx.skillProfile?.overall;
+  const strictBeginner = overall != null && overall < 35;
   if (allowed.includes(d)) return true;
   const dist = distanceToAllowedDifficulty(d, allowed);
+  if (strictBeginner) return false;
   if (dist <= 1) return true;
   if (!Array.isArray(taskPool) || !taskPool.length) return false;
   const skillTasks = skillTasksForAudit(taskPool, skill, usedIds);

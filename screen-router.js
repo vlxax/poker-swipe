@@ -1,6 +1,5 @@
 /**
- * PokerSwipe — Screen Router
- * Strict isolation: Polyana, My Tournaments, and other main views are separate screens.
+ * PokerSwipe — Screen Router (authoritative navigation teardown + screen isolation)
  */
 (function () {
   'use strict';
@@ -39,6 +38,26 @@
     });
   }
 
+  /**
+   * Close transient UI before switching routes. No cross-screen DOM scrub.
+   */
+  function teardownTransientUI() {
+    if (window.PsHandDayBridge?.dismissOverlay) {
+      window.PsHandDayBridge.dismissOverlay();
+    }
+    if (typeof window.closeModal === 'function') {
+      try { window.closeModal(); } catch (_) { /* ignore */ }
+    }
+    const polyanaFiltersOpen = document.querySelector('#polyana .pspFiltersOverlay.on, #pspFilters.on');
+    if (!polyanaFiltersOpen) {
+      document.body.classList.remove('pspFilterLock');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+    document.documentElement.classList.remove('psHandDayOpen');
+    document.body.classList.remove('psHandDayOpen');
+  }
+
   function wrapShow() {
     if (!window.show || window.show._psScreenRouter) return;
     const orig = window.show;
@@ -46,7 +65,8 @@
     window.show = function psShow(id) {
       if (id === 'tournaments') id = 'polyana';
 
-      const prev = document.querySelector('.screen.active')?.id;
+      teardownTransientUI();
+
       const result = orig(id);
 
       if (id !== 'mytournaments') hideMyTournamentsUi();
@@ -142,5 +162,10 @@
     init();
   }
 
-  window.PsScreenRouter = { scrubPolyanaLeak, hideMyTournamentsUi, reparentPs72 };
+  window.PsScreenRouter = {
+    scrubPolyanaLeak,
+    hideMyTournamentsUi,
+    reparentPs72,
+    teardownTransientUI
+  };
 })();

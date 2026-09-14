@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2026-09-14T11:07:38.254Z",
+  "engine": "poker_brain.js + POKER_BRAIN_PACK",
+  "note": "If source is REFERENCE_ATLAS/HEURISTIC, frequencies are not solver-exact.",
+  "dimensions": {
+    "effectiveStack": "PARTIALLY_SUPPORTED",
+    "spr": "PARTIALLY_SUPPORTED",
+    "position": "SUPPORTED",
+    "potType": "PARTIALLY_SUPPORTED",
+    "street": "SUPPORTED",
+    "players": "IGNORED",
+    "actionHistory": "PARTIALLY_SUPPORTED"
+  },
+  "probes": [
+    {
+      "dimension": "effectiveStack",
+      "value": 20,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "effectiveStack",
+      "value": 40,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "effectiveStack",
+      "value": 100,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 0.5,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 1,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 2,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 4,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 8,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    },
+    {
+      "dimension": "spr",
+      "value": 12,
+      "ok": true,
+      "source": "STRUCTURAL_MODEL",
+      "confidence": 68,
+      "top": {
+        "action": "BET",
+        "freq": 0.536
+      }
+    }
+  ],
+  "warnings": [
+    "Multiway and full tournament payout context are not modeled for library postflop atlas lookups.",
+    "Imported My Hands without payout structure cannot receive exact ICM grades."
+  ]
+}

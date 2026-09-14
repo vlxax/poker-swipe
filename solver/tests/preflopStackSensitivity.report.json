@@ -1,0 +1,1596 @@
+{
+  "generatedAt": "2026-09-14T11:07:38.162Z",
+  "strategySource": {
+    "file": "strategy_pack_v17.js",
+    "sourceName": "POKER_BRAIN_PACK",
+    "sourceType": "CURATED",
+    "solverOutput": false,
+    "version": "17.0",
+    "authoritativeUse": "REFERENCE_ATLAS — not licensed solver dump"
+  },
+  "depths": [
+    15,
+    20,
+    25,
+    30,
+    40,
+    50,
+    75,
+    100
+  ],
+  "totalComparablePolicies": 30,
+  "identicalAcrossAllDepths": 15,
+  "partiallyChanging": 1,
+  "materiallyChanging": 14,
+  "unknownSource": 0,
+  "solverVerified": false,
+  "suspiciousIdenticalClusters": [
+    {
+      "spot": "RFI_BTN",
+      "hand": "AA",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "KK",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "AKs",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "AQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "25": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "30": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "40": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "50": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "KQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "25": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "30": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "40": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "50": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AA",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "KK",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AKs",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "25": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "30": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "40": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "50": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "A5s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "25": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "30": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "40": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "50": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "KQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "25": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "30": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "40": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "50": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "K7o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "25": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "30": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "40": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "50": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "76s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "25": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "30": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "40": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "50": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "22",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "25": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "30": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "40": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "50": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "72o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "25": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "30": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "40": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "50": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    }
+  ],
+  "suspiciousCases": [
+    {
+      "label": "UTG 20bb K7o",
+      "key": "RFI|UTG|20|K7o",
+      "frequencies": {
+        "FOLD": 0.507,
+        "RAISE": 0.493
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "UTG 20bb A2o",
+      "key": "RFI|UTG|20|A2o",
+      "frequencies": {
+        "FOLD": 0.5,
+        "RAISE": 0.5
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "UTG 20bb 22",
+      "key": "RFI|UTG|20|22",
+      "frequencies": {
+        "FOLD": 0.961,
+        "RAISE": 0.039
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "BTN 20bb 72o",
+      "key": "RFI|BTN|20|72o",
+      "frequencies": {
+        "FOLD": 0.643,
+        "RAISE": 0.357
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "BB vs BTN 20bb 72o",
+      "key": "BB_DEFEND|BTN|20|72o",
+      "frequencies": {
+        "FOLD": 0.523,
+        "CALL": 0.476,
+        "RAISE": 0
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "BB vs BTN 20bb 32o",
+      "key": "BB_DEFEND|BTN|20|32o",
+      "frequencies": {
+        "FOLD": 0.75,
+        "CALL": 0.25,
+        "RAISE": 0
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "BB vs BTN 20bb J2o",
+      "key": "BB_DEFEND|BTN|20|J2o",
+      "frequencies": {
+        "FOLD": 0.123,
+        "CALL": 0.871,
+        "RAISE": 0.006
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "AA vs 3bet 20bb",
+      "key": "VS_3BET|BTN|20|AA",
+      "frequencies": {
+        "FOLD": 0.009,
+        "CALL": 0.58,
+        "RAISE": 0.41
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    },
+    {
+      "label": "AA vs 3bet 50bb",
+      "key": "VS_3BET|BTN|50|AA",
+      "frequencies": {
+        "FOLD": 0.009,
+        "CALL": 0.58,
+        "RAISE": 0.41
+      },
+      "source": "CURATED",
+      "stackSpecificRow": true,
+      "interpolated": false,
+      "solverVerified": false
+    }
+  ],
+  "comparisons": [
+    {
+      "spot": "RFI_UTG",
+      "hand": "AA",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.008,
+          "RAISE": 0.992
+        },
+        "25": {
+          "FOLD": 0.009,
+          "RAISE": 0.991
+        },
+        "30": {
+          "FOLD": 0.01,
+          "RAISE": 0.99
+        },
+        "40": {
+          "FOLD": 0.011,
+          "RAISE": 0.989
+        },
+        "50": {
+          "FOLD": 0.012,
+          "RAISE": 0.988
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "KK",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.016,
+          "RAISE": 0.984
+        },
+        "25": {
+          "FOLD": 0.017,
+          "RAISE": 0.983
+        },
+        "30": {
+          "FOLD": 0.018,
+          "RAISE": 0.982
+        },
+        "40": {
+          "FOLD": 0.022,
+          "RAISE": 0.978
+        },
+        "50": {
+          "FOLD": 0.023,
+          "RAISE": 0.977
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "AKs",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.006,
+          "RAISE": 0.994
+        },
+        "25": {
+          "FOLD": 0.006,
+          "RAISE": 0.994
+        },
+        "30": {
+          "FOLD": 0.007,
+          "RAISE": 0.993
+        },
+        "40": {
+          "FOLD": 0.008,
+          "RAISE": 0.992
+        },
+        "50": {
+          "FOLD": 0.009,
+          "RAISE": 0.991
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 4
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "AQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.042,
+          "RAISE": 0.958
+        },
+        "25": {
+          "FOLD": 0.046,
+          "RAISE": 0.954
+        },
+        "30": {
+          "FOLD": 0.049,
+          "RAISE": 0.951
+        },
+        "40": {
+          "FOLD": 0.057,
+          "RAISE": 0.943
+        },
+        "50": {
+          "FOLD": 0.062,
+          "RAISE": 0.938
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "A5s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.119,
+          "RAISE": 0.881
+        },
+        "25": {
+          "FOLD": 0.128,
+          "RAISE": 0.872
+        },
+        "30": {
+          "FOLD": 0.137,
+          "RAISE": 0.863
+        },
+        "40": {
+          "FOLD": 0.157,
+          "RAISE": 0.843
+        },
+        "50": {
+          "FOLD": 0.168,
+          "RAISE": 0.832
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "KQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.059,
+          "RAISE": 0.941
+        },
+        "25": {
+          "FOLD": 0.063,
+          "RAISE": 0.937
+        },
+        "30": {
+          "FOLD": 0.068,
+          "RAISE": 0.932
+        },
+        "40": {
+          "FOLD": 0.079,
+          "RAISE": 0.921
+        },
+        "50": {
+          "FOLD": 0.085,
+          "RAISE": 0.915
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "K7o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.507,
+          "RAISE": 0.493
+        },
+        "25": {
+          "FOLD": 0.527,
+          "RAISE": 0.473
+        },
+        "30": {
+          "FOLD": 0.547,
+          "RAISE": 0.453
+        },
+        "40": {
+          "FOLD": 0.586,
+          "RAISE": 0.414
+        },
+        "50": {
+          "FOLD": 0.605,
+          "RAISE": 0.395
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "76s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.787,
+          "RAISE": 0.213
+        },
+        "25": {
+          "FOLD": 0.8,
+          "RAISE": 0.2
+        },
+        "30": {
+          "FOLD": 0.813,
+          "RAISE": 0.187
+        },
+        "40": {
+          "FOLD": 0.836,
+          "RAISE": 0.164
+        },
+        "50": {
+          "FOLD": 0.846,
+          "RAISE": 0.154
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "22",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.961,
+          "RAISE": 0.039
+        },
+        "25": {
+          "FOLD": 0.964,
+          "RAISE": 0.036
+        },
+        "30": {
+          "FOLD": 0.966,
+          "RAISE": 0.034
+        },
+        "40": {
+          "FOLD": 0.971,
+          "RAISE": 0.029
+        },
+        "50": {
+          "FOLD": 0.973,
+          "RAISE": 0.027
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_UTG",
+      "hand": "72o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.991,
+          "RAISE": 0.009
+        },
+        "25": {
+          "FOLD": 0.992,
+          "RAISE": 0.008
+        },
+        "30": {
+          "FOLD": 0.993,
+          "RAISE": 0.007
+        },
+        "40": {
+          "FOLD": 0.994,
+          "RAISE": 0.006
+        },
+        "50": {
+          "FOLD": 0.994,
+          "RAISE": 0.006
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 4
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "AA",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "KK",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "AKs",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "25": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "30": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "40": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "50": {
+          "FOLD": 0,
+          "RAISE": 1
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "AQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "25": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "30": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "40": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "50": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "A5s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.002,
+          "RAISE": 0.998
+        },
+        "25": {
+          "FOLD": 0.002,
+          "RAISE": 0.998
+        },
+        "30": {
+          "FOLD": 0.002,
+          "RAISE": 0.998
+        },
+        "40": {
+          "FOLD": 0.003,
+          "RAISE": 0.997
+        },
+        "50": {
+          "FOLD": 0.003,
+          "RAISE": 0.997
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 2
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "KQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "25": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "30": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "40": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "50": {
+          "FOLD": 0.001,
+          "RAISE": 0.999
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "K7o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.016,
+          "RAISE": 0.984
+        },
+        "25": {
+          "FOLD": 0.017,
+          "RAISE": 0.983
+        },
+        "30": {
+          "FOLD": 0.018,
+          "RAISE": 0.982
+        },
+        "40": {
+          "FOLD": 0.022,
+          "RAISE": 0.978
+        },
+        "50": {
+          "FOLD": 0.023,
+          "RAISE": 0.977
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "76s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.055,
+          "RAISE": 0.945
+        },
+        "25": {
+          "FOLD": 0.059,
+          "RAISE": 0.941
+        },
+        "30": {
+          "FOLD": 0.063,
+          "RAISE": 0.937
+        },
+        "40": {
+          "FOLD": 0.074,
+          "RAISE": 0.926
+        },
+        "50": {
+          "FOLD": 0.079,
+          "RAISE": 0.921
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "22",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.277,
+          "RAISE": 0.723
+        },
+        "25": {
+          "FOLD": 0.293,
+          "RAISE": 0.707
+        },
+        "30": {
+          "FOLD": 0.31,
+          "RAISE": 0.69
+        },
+        "40": {
+          "FOLD": 0.345,
+          "RAISE": 0.655
+        },
+        "50": {
+          "FOLD": 0.364,
+          "RAISE": 0.636
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "RFI_BTN",
+      "hand": "72o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.643,
+          "RAISE": 0.357
+        },
+        "25": {
+          "FOLD": 0.661,
+          "RAISE": 0.339
+        },
+        "30": {
+          "FOLD": 0.678,
+          "RAISE": 0.322
+        },
+        "40": {
+          "FOLD": 0.712,
+          "RAISE": 0.288
+        },
+        "50": {
+          "FOLD": 0.728,
+          "RAISE": 0.272
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 5
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AA",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.589,
+          "RAISE": 0.411
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "KK",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.599,
+          "RAISE": 0.401
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AKs",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "25": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "30": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "40": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "50": {
+          "FOLD": 0,
+          "CALL": 0.586,
+          "RAISE": 0.413
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "AQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "25": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "30": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "40": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "50": {
+          "FOLD": 0.001,
+          "CALL": 0.634,
+          "RAISE": 0.365
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "A5s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "25": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "30": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "40": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "50": {
+          "FOLD": 0.003,
+          "CALL": 0.723,
+          "RAISE": 0.274
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "KQo",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "25": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "30": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "40": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "50": {
+          "FOLD": 0.002,
+          "CALL": 0.655,
+          "RAISE": 0.343
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "K7o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "25": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "30": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "40": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "50": {
+          "FOLD": 0.017,
+          "CALL": 0.915,
+          "RAISE": 0.068
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "76s",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "25": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "30": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "40": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "50": {
+          "FOLD": 0.051,
+          "CALL": 0.93,
+          "RAISE": 0.018
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "22",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "25": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "30": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "40": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "50": {
+          "FOLD": 0.221,
+          "CALL": 0.777,
+          "RAISE": 0.002
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    },
+    {
+      "spot": "BB_VS_BTN",
+      "hand": "72o",
+      "byDepth": {
+        "15": null,
+        "20": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "25": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "30": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "40": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "50": {
+          "FOLD": 0.523,
+          "CALL": 0.476,
+          "RAISE": 0
+        },
+        "75": null,
+        "100": null
+      },
+      "uniquePolicies": 1
+    }
+  ]
+}
