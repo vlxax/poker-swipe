@@ -4,40 +4,56 @@
 
 | Area | Status |
 |------|--------|
-| **POLYANA** | **FIXED** (runtime ownership clarified; v54 legacy router no longer hijacks native Polyana when `__PSP_NATIVE_POLYANA`) |
-| **VISUAL CONSISTENCY** | **READY WITH LIMITATIONS** (token layer + screen shell added; full migration incomplete) |
-| **MOTION** | **PARTIAL** (screen enter animation + button press via tokens; per-feature motion not unified) |
-| **MOBILE LAYOUT** | **PASS** (UI smoke @ 390px; audit at 390/393/430 — see `UI_SYSTEM_AUDIT.md`) |
+| **POLYANA** | **FIXED** |
+| **VISUAL CONSISTENCY** | **READY WITH LIMITATIONS** (tokens + `.psScreen` on all primary sections; per-screen renderers still use legacy class names) |
+| **MOTION** | **PARTIAL** (`.screen.active` enter via tokens; game-polish may override same keyframe name — see collisions) |
+| **MOBILE LAYOUT** | **PASS** (UI smoke + geometry @ 390/393/430) |
 
 ## POLYANA ROOT CAUSE
 
-**Cause:** Competing routers. `v54-consolidated-script` in `index.html` wired the Polyana nav button to `show('tournaments')` and rendered legacy V48 content into `#tournamentsArea`, while canonical UI lives in `#polyana` / `#psPolyanaArea` via `polyana/polyana-integrated.js`. Depending on listener order and load timing, users could land on an empty/wrong screen.
+**Cause:** Competing routers. `v54-consolidated-script` wired Polyana nav to `show('tournaments')` + legacy `renderTournaments23` into `#tournamentsArea`, while canonical UI is `#polyana` / `#psPolyanaArea` via `polyana/polyana-integrated.js`.
 
-**Why it regressed:** Merge of consolidated tournament/Polyana router without gating on native Polyana flag; `installShowWrapper` polling reintroduced duplicate `show` behavior.
+**Why it regressed:** Consolidated tournament router without gating on `__PSP_NATIVE_POLYANA`; `installShowWrapper` polling duplicated `show` behavior.
 
 **Fix:**
-- `index.html` — `openPolyana()` delegates to `openPokerSwipePolyana()` when `__PSP_NATIVE_POLYANA`.
-- `polyana/polyana-integrated.js` — `ensurePokerSwipePolyana()` for mount without duplicate navigation.
-- `screen-router.js` — calls `ensurePokerSwipePolyana()` when route is `polyana`.
-- Removed `installShowWrapper` block from `index.html`.
+- `index.html` — `openPolyana()` → `openPokerSwipePolyana()` when native flag set; v54 field click skipped when native.
+- `polyana/polyana-integrated.js` — `ensurePokerSwipePolyana()` / mount ensure.
+- `screen-router.js` — `ensurePokerSwipePolyana()` on `show('polyana')`; `tournaments` alias → `polyana`.
+- Removed `installShowWrapper` + polling from `index.html`.
 
-**Regression test:** `npm run test:e2e:polyana` (10 open/close cycles, tab interaction, no duplicate DOM).
+**Regression:** `npm run test:e2e:polyana` (10 cycles, tab interaction, duplicate DOM checks).
 
 ## DESIGN SYSTEM
 
-- **Tokens:** `ps-design-tokens.css` (`--ps-font-*`, spacing, radii, colors, motion).
-- **Shell:** `.psScreen`, `.psScreenBody`, `.psSection`, `.psCard`, `.psBtn` variants.
-- **Profile:** uses `.psScreenBody` on `#profileArea` (owner unchanged: `profile.js`).
+| Layer | Location |
+|-------|----------|
+| Tokens | `ps-design-tokens.css` |
+| Typography roles | `.psTypeDisplay` … `.psTypeStat` |
+| Shell | `.psScreen`, `.psScreenBody`, `.psScreenHeader`, `.psSection` |
+| Cards / buttons | `.psCard`, `.psBtn`, `--primary` / `--secondary` |
+| Motion | `--ps-motion-*`, `psScreenEnter` on `.screen.active`, `prefers-reduced-motion` |
 
-## SCREEN RESULTS (summary)
+**Fonts:** UI = system stack; display = Arial Narrow (existing brand). Profile uses `psScreenBody`.
 
-See `UI_SYSTEM_AUDIT.md` for per-viewport table. Primary screens open in UI smoke; Polyana shows `pspHero` shell with data.
+## SCREEN RESULTS
+
+| Screen | Before (audit) | After |
+|--------|----------------|-------|
+| HOME | Mixed tile fonts | `.psScreen` + tokens; tiles still v36 classes |
+| DAILY | Isolated felt UI | Opens; daily e2e PASS |
+| SWIPE | Own motion | Opens via `show('swipe')` |
+| SIZING | Dense controls | Opens; geometry PASS |
+| MY HANDS | Module tabs | Nav + smoke PASS |
+| MY RANGES | Injected section | `show('ranges')` smoke PASS |
+| PROFILE | `profile.js` owner | `psScreenBody`; ownership unchanged |
+| POLYANA | Did not open / wrong route | Native route; content in `#psPolyanaArea` |
+| TOURNAMENTS | ps72 overlay | `mytournaments` nav; smoke PASS |
+
+Detail: `UI_SYSTEM_AUDIT.md` (27 rows × 3 viewports).
 
 ## LEGACY COLLISIONS
 
-- `.v38*` rules remain in `poker_swipe_v39.css` (inactive DOM).
-- V48/V54 tournament Polyana still available as fallback if native script fails to load.
-- Multiple legacy inline patches in `index.html` remain; not removed in this pass.
+See `CSS_COLLISION_REPORT.md` (13 multi-file selectors). **Not removed** without runtime proof: `.nav` inline patches, `.v38*` in v39 CSS (inactive DOM), V48/V54 Polyana fallback.
 
 ## SCREEN OWNERSHIP
 
@@ -47,22 +63,36 @@ See `SCREEN_OWNERSHIP.md`.
 
 | Command | Result |
 |---------|--------|
+| `npm test` | PASS |
 | `npm run test:e2e:polyana` | PASS |
-| `npm run test:e2e:ui-smoke` | PASS (8 routes) |
-| `npm run test:ui-audit` | Generated `UI_SYSTEM_AUDIT.md` |
-| `npm run test:e2e:daily` | (run in CI/local) |
+| `npm run test:e2e:ui-smoke` | PASS |
+| `npm run test:e2e:ui-geometry` | PASS |
+| `npm run test:e2e:daily` | PASS |
+| `npm run test:e2e:navigation` | PASS |
+| `npm run test:e2e:ui-visual` | PASS (9 screenshots → `/opt/cursor/artifacts/ui-baseline`) |
+| `npm run test:ui-audit` | Generated audit |
+| `npm run test:css-collision` | Generated collision report |
+
+## SCREENSHOTS / VISUAL CHECK
+
+Baseline PNGs: `/opt/cursor/artifacts/ui-baseline/*-390x844.png` + `manifest.json`.
 
 ## REMAINING P0
 
-- None for Polyana open path on tested HEAD.
+None for Polyana open path or primary-screen smoke on tested HEAD.
 
 ## REMAINING P1
 
-- Migrate remaining screens to token classes (incremental).
-- Remove dead `.v38` CSS after proof no references.
-- Geometry Playwright suite for CTA vs nav overlap (not yet automated).
-- Visual screenshot baselines per screen.
+- Migrate Daily/Sizing/Home tile markup to `.psCard` / `.psType*` (incremental).
+- Deduplicate `psScreenEnter` between `game-polish.css` and tokens (rename or single owner).
+- Polyana explicit loading/error UI if API empty (shell renders; network failures need product copy).
+- Retire dead `.v38` CSS after reference audit.
+- `tests/v32_regression.js` still expects `.v38You` on profile — update if that suite is run in CI.
 
-## COMMITS
+## COMMITS (branch `cursor/ui-system-polyana-2f0c`)
 
-See branch `cursor/ui-system-polyana-2f0c` history.
+1. `fix: restore Polyana native route and mount ensure`
+2. `test: add Polyana, UI smoke, and audit scripts`
+3. (this turn) shell + typography tokens, geometry/visual/collision tests, docs
+
+**Do not merge to `main` until product sign-off.**
