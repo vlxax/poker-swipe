@@ -1,0 +1,22 @@
+{
+  "version": 8,
+  "source": "archive(3).zip",
+  "structured_source_charts": 1578,
+  "source_label_training_enabled": 1578,
+  "meaningful_source_charts_with_at_least_one_colored_cell": 1577,
+  "empty_source_charts": ["B2_1506"],
+  "empty_source_chart_note": "B2_1506 is genuinely 0% / 0 of 1326 combos in the source image. It remains available and its cells are correctly classified as unselected; there is no non-trivial positive action to train.",
+  "strict_poker_action_training_charts": 284,
+  "uo_structured_charts": 60,
+  "source_training_semantics": "All 1578 charts can be quizzed on the exact source label/dominant source color for a hand. Unknown labels are preserved verbatim and are not reinterpreted as fold/call/raise.",
+  "strict_training_semantics": "The existing strict decision quiz remains available only on charts where at least two confirmed poker-action labels pass the strict pixel-confidence gate.",
+  "callpush": "All 615 Call/Push charts now participate in source-label training using the source margin buckets 5%, 10%, 15%, 20% and unselected. Margin buckets are not renamed as poker actions.",
+  "safety": [
+    "nAI is kept as the source label nAI",
+    "LOW_PLAYABILITY remains an annotation, not a poker action",
+    "SOURCE_MIX/SOURCE_OTHER remain source annotations",
+    "UNSELECTED is not renamed FOLD",
+    "pixel proportions are not presented as solver frequencies"
+  ],
+  "github_file_limit": "package remains under 100 files"
+}
