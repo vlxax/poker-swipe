@@ -1821,44 +1821,17 @@ const XR_META=[
  {title:'BVB POLAR',villain:'SB · 55 BB',hero:['Q♠','8♥'],board:['Q♣','7♦','2♠','5♣','K♥'],line:['SB open 3','Q♣7♦2♠ · 33%','5♣ · 80%','K♥ · 150%'],canonical_key:'sb-rfi',teaching_hands:{0:['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','Q8s','JTs','J9s','T9s','T8s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','KTo','QJo'],1:['AA','KK','QQ','JJ','TT','99','77','55','22','AKs','AQs','AJs','ATs','A5s','KQs','KJs','QJs','QTs','Q9s','Q8s','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','KQo','QJo'],2:['AA','KK','QQ','77','55','22','AKs','AQs','A5s','KQs','KJs','QJs','QTs','JTs','T9s','87s','76s','65s','54s','AKo','AQo','KQo'],3:['KK','QQ','77','55','22','AKs','KQs','KJs','A5s','JTs','T9s','87s']},river:[['KK','V'],['QQ','V'],['77','V'],['55','V'],['22','V'],['AKs','V'],['KQs','V'],['KJs','V'],['A5s','B'],['JTs','B'],['T9s','B'],['87s','B']]}
 ];
 
-// Inline canonical ranges (minimal set for XRAY: btn-rfi and sb-rfi only)
-const XRAY_CANONICAL_RANGES={
- 'btn-rfi':['22','33','44','55','66','77','88','99','TT','JJ','QQ','KK','AA','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','J9s','JTs','T9s','T8s','98s','87s','76s','65s','54s','AKo','AQo','KQo','QJo'],
- 'sb-rfi':['22','33','44','55','66','77','88','99','TT','JJ','QQ','KK','AA','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','K7s','K6s','K5s','K4s','K3s','K2s','QJs','QTs','Q9s','Q8s','J9s','JTs','J8s','T9s','T8s','T7s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','KTo','QJo']
-};
-
-// Fallback: hardcoded ranges (compatibility, loaded if canonical fails)
+// Fallback: hardcoded ranges for XRAY teaching scenarios
 const XR_FALLBACK=[
  {title:'ТРОЙНОЙ БАРРЕЛЬ',villain:'BTN · 40 BB',hero:['K♠','J♦'],board:['K♣','8♦','3♠','4♥','A♣'],line:['BTN open 2.2','K♣8♦3♠ · 33%','4♥ · 75%','A♣ · 125%'],ref:[['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','QJs','QTs','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','QJo'],['AA','KK','QQ','JJ','TT','99','88','44','33','AKs','AQs','AJs','ATs','A8s','A5s','KQs','KJs','KTs','QJs','QTs','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','KQo'],['AA','KK','88','44','33','AKs','AQs','A8s','A5s','KQs','KJs','QJs','QTs','JTs','T9s','76s','65s','54s','AKo','AQo','KQo'],['AA','KK','88','44','33','AKs','AQs','A8s','QJs','QTs','JTs','T9s']],river:[['AA','V'],['KK','V'],['88','V'],['44','V'],['33','V'],['AKs','V'],['AQs','V'],['A8s','V'],['QJs','B'],['QTs','B'],['JTs','B'],['T9s','B']]},
  {title:'BVB POLAR',villain:'SB · 55 BB',hero:['Q♠','8♥'],board:['Q♣','7♦','2♠','5♣','K♥'],line:['SB open 3','Q♣7♦2♠ · 33%','5♣ · 80%','K♥ · 150%'],ref:[['AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22','AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s','KQs','KJs','KTs','K9s','K8s','QJs','QTs','Q9s','Q8s','JTs','J9s','T9s','T8s','98s','87s','76s','65s','54s','AKo','AQo','AJo','ATo','KQo','KJo','KTo','QJo'],['AA','KK','QQ','JJ','TT','99','77','55','22','AKs','AQs','AJs','ATs','A5s','KQs','KJs','QJs','QTs','Q9s','Q8s','JTs','T9s','98s','87s','76s','65s','54s','AKo','AQo','KQo','QJo'],['AA','KK','QQ','77','55','22','AKs','AQs','A5s','KQs','KJs','QJs','QTs','JTs','T9s','87s','76s','65s','54s','AKo','AQo','KQo'],['KK','QQ','77','55','22','AKs','KQs','KJs','A5s','JTs','T9s','87s']],river:[['KK','V'],['QQ','V'],['77','V'],['55','V'],['22','V'],['AKs','V'],['KQs','V'],['KJs','V'],['A5s','B'],['JTs','B'],['T9s','B'],['87s','B']]}
 ];
 
-// Load XRAY ranges from canonical DB (or fallback)
+// Load XRAY ranges from teaching scenario metadata
 function loadXrayRanges(scenarioIdx){
- const meta=XR_META[scenarioIdx];
- if(!meta)return null;
- const canonicalKey=meta.canonical_key;
- const canonical=XRAY_CANONICAL_RANGES[canonicalKey];
- if(!canonical){
-  console.warn(`Canonical ${canonicalKey} not found, using fallback`);
-  return {ref:XR_FALLBACK[scenarioIdx].ref,canonical_used:false};
- }
- // Validate all teaching hands exist in canonical
- for(let st=0;st<4;st++){
-  const teaching=meta.teaching_hands[st];
-  for(const h of teaching){
-   if(!canonical.includes(h)){
-    console.warn(`Hand ${h} not in canonical ${canonicalKey}, using fallback`);
-    return {ref:XR_FALLBACK[scenarioIdx].ref,canonical_used:false};
-   }
-  }
- }
- // Return ref structure compatible with existing code
- const ref=[
-  meta.teaching_hands[0],meta.teaching_hands[1],
-  meta.teaching_hands[2],meta.teaching_hands[3]
- ];
- return {ref,canonical_used:true};
+ if(scenarioIdx<0||scenarioIdx>=XR_META.length)return null;
+ const scenario=XR_FALLBACK[scenarioIdx];
+ return {ref:scenario.ref};
 }
 
 let xrI=0,xrStage=0,xrCurrent=new Set(),xrCandidate=new Set(),xrClass={},xrScores={pre:0,narrow:0,river:0,blockers:0},xrFunnel=[],xrRangeSource='fallback';
@@ -1869,7 +1842,7 @@ function xrDead(stage,hero=false){const s=XR_META[xrI],n=stage===0?0:stage===1?3
 function weightedScore(user,ref,dead){let inter=0,u=0,r=0;for(const k of user){const w=comboCount([k],dead);u+=w;if(ref.has(k))inter+=w}for(const k of ref)r+=comboCount([k],dead);const p=inter/Math.max(1,u),rc=inter/Math.max(1,r);return Math.round(2*p*rc/Math.max(.001,p+rc)*100)}
 function xrGrid(){const prev=xrCandidate;let o='<div class="xrGrid">';for(let r=0;r<13;r++)for(let c=0;c<13;c++){const k=xkey(r,c),alive=prev.has(k),keep=xrCurrent.has(k);o+=`<button class="xrCell ${alive?'alive':'dead'} ${keep?'keep':''}" data-xc="${k}" ${alive?'':'disabled'}>${k}</button>`}return o+'</div>'}
 function renderXray(){if(!S.xray.onboarded){$('#xrayArea').innerHTML=`${quickBanner('xray')}<div class="xrStage"><span class="ey">◎ РЕНТГЕН · ДИАПЗОН</span><h1 class="impact">СОБЕРИ ДИАПАЗОН<br><span class="pink">СОПЕРНИКА.</span></h1><p>Собери диапазон соперника по ходу раздачи. На каждой улице убирай руки, которые, по твоему мнению, он уже не сыграл бы таким образом. В конце сравним твой диапазон с моделью.</p><button class="primary" id="xrOnboard">ПОПРОБОВАТЬ →</button></div>`;$('#xrOnboard').onclick=()=>{S.xray.onboarded=true;save();renderXray()};return}const sMeta=XR_META[S.xray.runs%XR_META.length];const ranges=loadXrayRanges(S.xray.runs%XR_META.length);const s={...sMeta,ref:ranges.ref};const pre=comboCount(s.ref[0],[]);$('#xrayArea').innerHTML=`${quickBanner('xray')}<div class="xrStage"><span class="ey">◎ РЕНТГЕН · ДИАПАЗОН</span><h1 class="impact">НЕ УГАДЫВАЙ РУКУ.<br><span class="pink">УБИРАЙ НЕВОЗМОЖНЫЕ.</span></h1><p>Отмечай, какие руки ещё могут быть у оппонента после каждого действия. Диапазон будет сужаться по улицам.</p><div class="shareCard"><span class="ey">СПОТ</span><h2>${s.title}</h2><div class="big">${pre} → ?</div><p class="mut">доступные комбинации</p></div><button class="primary" id="xrFull">РАЗОБРАТЬ ПО УЛИЦАМ →</button><button class="secondary" id="xrQuick">НАЧАТЬ С ТЁРНА →</button></div>`;$('#xrFull').onclick=()=>xrBegin(0);$('#xrQuick').onclick=()=>xrBegin(2)}
-function xrBegin(st){xrI=S.xray.runs%XR_META.length;const ranges=loadXrayRanges(xrI);xrRangeSource=ranges.canonical_used?'canonical':'fallback';xrStage=st;xrCurrent=new Set(ranges.ref[st===0?0:st-1]);xrCandidate=new Set(xrCurrent);xrScores={pre:0,narrow:0,river:0,blockers:0};xrFunnel=[];renderXrayStage()}
+function xrBegin(st){xrI=S.xray.runs%XR_META.length;const ranges=loadXrayRanges(xrI);xrRangeSource='fallback';xrStage=st;xrCurrent=new Set(ranges.ref[st===0?0:st-1]);xrCandidate=new Set(xrCurrent);xrScores={pre:0,narrow:0,river:0,blockers:0};xrFunnel=[];renderXrayStage()}
 function xrStreetQuestion(s,stage){const v=(s.villain||'соперник').split('·')[0].trim();const streets=['префлопе','флопе','тёрне','ривере'];const st=streets[stage]||'улице';if(stage===0)return`Какие руки ${v} открывает в этой ситуации?`;if(stage===1)return`Какие руки ${v} продолжают после ставки на этом флопе?`;if(stage===2)return`Какие руки ${v} продолжают после линии на тёрне?`;return`Какие руки ${v} остаются на ривере после этой линии?`}
 function renderXrayStage(){const sMeta=XR_META[xrI];const ranges=loadXrayRanges(xrI);const s={...sMeta,ref:ranges.ref};const dead=xrDead(xrStage,false),ref=new Set(s.ref[xrStage]);const live=comboCount(xrCurrent,dead);const streetNames=['ПРЕФЛОП','ФЛОП','ТЁРН','РИВЕР'];const villainPos=(s.villain||'СОПЕРНИК').split('·')[0].trim();const villainStack=(s.villain||'').includes('BB')?s.villain.split('·')[1]?.trim()||'—':'—';const preflopLine=s.line[0]||'—';const boardHtml=xrStage?board(s.board.slice(0,xrStage===1?3:xrStage===2?4:5)):'';const potGuess=xrStage===0?'3.5 BB':xrStage===1?'8 BB':xrStage===2?'18 BB':'35 BB';const task=xrStreetQuestion(s,xrStage);const ruleNote=xrStage>0?'<p class="mut small">То, что ты убил на прошлой улице, не воскресает.</p>':'';$('#xrayArea').innerHTML=`<div class="xrStage">${refBadge()}<span class="ey">РЕНТГЕН · ${streetNames[xrStage]}</span><div class="row"><span class="mut small">Hero (ты)</span><b>${hand(s.hero)}</b></div><div class="row"><span class="mut small">Соперник</span><b>${villainPos} · ${villainStack}</b></div><div class="row"><span class="mut small">Префлоп</span><b>${preflopLine}</b></div>${boardHtml}<div class="row"><span class="mut small">Линия на ${streetNames[xrStage].toLowerCase()}</span><b>${s.line[xrStage]}</b></div><div class="dailyPot"><div><span class="ey">БАНК</span><b>${potGuess}</b></div><div><span class="ey">ТВОЯ МОДЕЛЬ</span><b id="xrLive">${live}</b><span class="mut small"> комбо</span></div></div><h2>${task}</h2><p class="mut small">Убери руки, которые соперник уже не играет так. Оставь те, что ещё могут быть.</p>${ruleNote}${xrGrid()}<button class="primary" id="xrLock">ЗАФИКСИРОВАТЬ ДИАПАЗОН →</button></div>`;$$('[data-xc]').forEach(b=>b.onclick=()=>{const k=b.dataset.xc;xrCurrent.has(k)?xrCurrent.delete(k):xrCurrent.add(k);b.classList.toggle('keep',xrCurrent.has(k));$('#xrLive').textContent=comboCount(xrCurrent,dead)});$('#xrLock').onclick=()=>{const score=weightedScore(xrCurrent,ref,dead);if(xrStage===0)xrScores.pre=score;else{xrScores.narrowSum=(xrScores.narrowSum||0)+score;xrScores.narrowCount=(xrScores.narrowCount||0)+1;xrScores.narrow=Math.round(xrScores.narrowSum/xrScores.narrowCount)}xrFunnel[xrStage]=comboCount(xrCurrent,dead);xrReveal(score)}}
 function xrReveal(score){const sMeta=XR_META[xrI];const ranges=loadXrayRanges(xrI);const s={...sMeta,ref:ranges.ref};const ref=new Set(s.ref[xrStage]),dead=xrDead(xrStage,false),extra=[...xrCurrent].filter(k=>!ref.has(k)).length,miss=[...ref].filter(k=>!xrCurrent.has(k)).length;$('#xrayArea').innerHTML=`<div class="xrStage"><span class="ey">СРАВНЕНИЕ</span><h1 class="impact">${score>=80?'ПОХОЖЕ.<br><span class="pink">ДАЛЬШЕ.</span>':'ДИАПАЗОН<br><span class="pink">ПЛЫВЁТ.</span>'}</h1><div class="grid2"><div class="lab"><span class="ey">ЛИШНИЕ РУКИ</span><h2>${extra}</h2></div><div class="lab"><span class="ey">УБРАЛ РАНО</span><h2>${miss}</h2></div></div><div class="verdict"><h2>ТОЧНОСТЬ ${score}%</h2><p>Учитываем реальное число комбинаций после карт на борде.</p></div><button class="primary" id="xrNext">${xrStage<3?'СЛЕДУЮЩАЯ УЛИЦА':'ВЭЛЬЮ / БЛЕФ'} →</button></div>`;$('#xrNext').onclick=()=>{if(xrStage<3){xrStage++;xrCandidate=new Set(xrCurrent);renderXrayStage()}else xrRiver()}}
