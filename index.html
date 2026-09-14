@@ -884,7 +884,6 @@ body{
 /* ================= V24 · POLISH ================= */
 #levelChip,.creatorHomeMark21{display:none!important}
 main{padding-bottom:96px}
-.screen{padding-bottom:18px}
 .nav{z-index:90!important;position:fixed!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
 .topRightMark24{display:flex;align-items:center;gap:6px;align-self:flex-start;padding-top:4px;white-space:nowrap}
 .topRightMark24 span{font-family:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,serif;font-style:italic;font-size:10px;color:#cabdca}
@@ -1943,7 +1942,7 @@ function buildSwipeSemanticCards(s,a,br,g){const cards=[
 finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerSwipeGrading.gradeBrain({...s,spotId:s.id},a,size,'swipe');const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,conceptId:br.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const card=$('#swipeCard');const v=$('#swipeVerdict');card.classList.add('hidden');v.classList.remove('hidden');const verdictLabel=g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА';const verdictHeadline=g==='g'?'РЕШЕНИЕ ЖИВЕТ':g==='y'?'МИКС А НЕ НОРМА':'МОДЕЛЬ НЕ СОГЛАСНА';const charImg=g==='g'?'assets/freak-lady/correct/sprite.png':g==='y'?'assets/freak-lady/thinking/sprite.png':'assets/freak-lady/wrong/sprite.png';const charReactionText=g==='g'?'ОДОБРЕНИЕ':g==='y'?'СОМНЕНИЕ':'ОТКАЗ';const charReactionMsg=g==='g'?'Даже придраться неприятно.':g==='y'?'Живёт, но тонко.':'Модель предпочитает другое.';const actionFreqs=br.frequencies||{};const topActions=Object.entries(actionFreqs).filter(e=>!['check','call','raise','fold','bet'].includes(e[0]) || actionFreqs[e[0]]>0).sort((a,b)=>b[1]-a[1]).slice(0,3);const freqHtml=topActions.map(([act,pct])=>`<div class="v31Brain__row"><span class="v31Brain__act">${act}</span><div class="v31Brain__bar"><i style="width:${Math.min(100,pct)}%"></i></div><span class="v31Brain__pct">${Math.round(pct)}%</span></div>`).join('');v.innerHTML=`<div class="v31Verdict reveal"><div class="v31Result"><div class="v31ResultHero anim-${g}"><div class="v31ResultGrade">${verdictLabel}</div><div class="v31ResultVerdict">${verdictHeadline}</div><span class="ey">ПОКЕРНЫЙ РАЗБОР · ${s.street}</span></div></div><div class="v31VerdictContent"><div class="v31BrainHUD"><span class="ey">GTO АНАЛИЗ</span><div class="v31Brain__header"><div><b>ДЕЙСТВИЕ</b><span class="v31Brain__conf">${br.confidence||0}%</span></div></div><div class="v31Brain__body">${freqHtml||'<p class="mut">Анализ в процессе</p>'}</div><p class="v31Brain__why">${esc(br.explanation||'')}</p></div><div class="v31CharacterZone"><div class="v31Character anim-${g}"><img src="${charImg}" alt="Фриковая Дама" loading="lazy"/></div><div class="v31Reaction"><span class="ey">${charReactionText}</span><strong>${charReactionMsg}</strong></div></div></div><div class="v31VerdictCTA"><button class="primary" id="verdictNext" style="width:100%">СЛЕДУЮЩИЙ СПОТ →</button></div></div>`;const app=document.querySelector('.app');if(app){app.scrollTop=0}$('#verdictNext').onclick=()=>{swipeNext()};requestAnimationFrame(()=>{v.scrollIntoView({behavior:'smooth',block:'nearest'})});$('#verdictNext').focus()}
 
 /* Sizing: action + sizing family from Brain */
-let renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · ЛАБОРАТОРИЯ РАЗМЕРА</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><div class="goalPills"><span class="goalPill on">${s.goal}</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerSwipeGrading.gradeBrain({...s,spotId:s.id},action,v||null,'sizing'),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">РАЗМЕР СТАВКИ</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;window.FreakLady?.react($('#sizeResult').querySelector('.verdict'),g,'sizing');$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
+window.renderSizing=function(){const s=SIZING[sz%SIZING.length];$('#sizingArea').innerHTML=`${quickBanner('sizing')}<div class="panel">${refBadge()}<span class="ey">${s.street} · ЛАБОРАТОРИЯ РАЗМЕРА</span><h1 class="impact">НЕ УГАДАЙ.<br><span class="pink">ПОСТРОЙ СТАВКУ.</span></h1><p class="mut">${s.ctx}</p><div class="table">${board(s.board)}<div class="pot"><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div class="stack" id="sizeStack"></div></div>${hand(s.hero)}<div class="sizeRead"><div><span class="ey">ТВОЁ РЕШЕНИЕ</span><b id="sizePct">50%</b></div><strong id="sizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input class="range" id="sizeRange" type="range" min="0" max="150" value="50"><div class="scale"><span>CHECK</span><span>25</span><span>50</span><span>75</span><span>100</span><span>150</span></div><div class="goalPills"><span class="goalPill on">${s.goal}</span></div><button class="primary" id="sizeLock">ПОСТАВИТЬ 50% →</button><div id="sizeResult"></div></div>`;const r=$('#sizeRange');const upd=()=>{const v=+r.value;$('#sizePct').textContent=v?v+'%':'CHECK';$('#sizeBB').textContent=v?(s.pot*v/100).toFixed(1)+' BB':'0 BB';$('#sizeLock').textContent=v?`ПОСТАВИТЬ ${v}% →`:'CHECK →';$('#sizeStack').innerHTML=Array.from({length:clamp(Math.round(v/20),0,8)},()=>'<i></i>').join('')};r.oninput=upd;upd();$('#sizeLock').onclick=()=>{const v=+r.value,action=v===0?'CHECK':'BET',br=PokerSwipeGrading.gradeBrain({...s,spotId:s.id},action,v||null,'sizing'),g=br.grade;recordEvent({spotId:s.id,mode:'sizing',concept:s.concept,conceptId:br.concept,street:s.street,action,sizePct:v||null,grade:g,gradeAction:br.actionGrade,gradeSize:br.sizeGrade,why:br.explanation,brainSource:br.source,brainConfidence:br.confidence,policyScore:br.score});$('#sizeResult').innerHTML=`<div class="verdict"><div class="dualGrade"><div class="gradeBox ${br.actionGrade}"><span class="ey">ДЕЙСТВИЕ</span><b>${action} · ${br.actionGrade==='g'?'ЧИСТО':br.actionGrade==='y'?'МИКС':'МИМО'}</b></div><div class="gradeBox ${br.sizeGrade||br.actionGrade}"><span class="ey">РАЗМЕР СТАВКИ</span><b>${v?v+'%':'—'}${v?` · ${br.sizeGrade==='g'?'ЧИСТО':br.sizeGrade==='y'?'ТОНКО':'МИМО'}`:''}</b></div></div>${brainPanel(br)}<button class="primary" id="sizeNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'СЛЕДУЮЩИЙ СПОТ'} →</button></div>`;window.FreakLady?.react($('#sizeResult').querySelector('.verdict'),g,'sizing');$('#sizeNext').onclick=()=>{if(quick.active)quickAdvance();else{sz++;renderSizing()}}}}
 
 /* Review: culprit comes from line model, repair from Brain */
 reviewReveal=function(){const R=REVIEWS[rv%REVIEWS.length],bm=PokerBrain.reviewLine(R),pointOk=(bm.clean&&rvPick==='none')||(!bm.clean&&rvPick===bm.culpritIndex);if(bm.clean){recordEvent({spotId:R.id,mode:'review',concept:R.concept,conceptId:bm.concept,grade:pointOk?'g':'r',action:String(rvPick),why:bm.why,brainSource:bm.source,brainConfidence:bm.confidence});$('#reviewArea').innerHTML=`<div class="panel"><span class="ey">GTO BRAIN · LINE CHECK</span><h1 class="impact">${pointOk?'ЧИСТО.<br><span class="pink">ЛИНИЯ ЖИВЁТ.</span>':'ТЫ НАШЁЛ<br><span class="pink">ОШИБКУ ИЗ ВОЗДУХА.</span>'}</h1><div class="brainPanel"><div class="brainHead"><b>◉ LINE MODEL</b><span class="brainSource">${bm.confidence}%</span></div><p class="brainExplain">${esc(bm.why)}</p></div><button class="primary" id="rvNext">${quick.active?'ДАЛЬШЕ ПО СЕССИИ':'ЕЩЁ ДЕЛО'} →</button></div>`;window.FreakLady?.react($('#reviewArea').querySelector('.panel'),pointOk?'g':'r','review');$('#rvNext').onclick=()=>quick.active?quickAdvance():(rv++,renderReview());return}$('#reviewArea').innerHTML=`<div class="panel"><span class="ey">GTO BRAIN · LOSS MAP ${pointOk?'✓':'✕'}</span><h1 class="impact">${pointOk?'НАШЁЛ.<br><span class="pink">ОБОСНУЙ.</span>':'СОФТ ВИДИТ<br><span class="pink">ДРУГОЙ УЗЕЛ.</span>'}</h1><div class="brainPanel"><div class="brainHead"><b>◉ ПОТЕРИ ПО ЛИНИИ</b><span class="brainSource">LINE MODEL · ${bm.confidence}%</span></div><div class="brainPolicy">${(bm.losses||[]).map((x,i)=>`<div class="brainAction"><span>${R.nodes[i]?.[0]||i}</span><i><span style="width:${Math.min(100,Math.round(x*200))}%"></span></i><b>${x.toFixed(2)}</b></div>`).join('')}</div><p class="brainExplain">${esc(bm.why)}</p></div><div class="evidence">${R.reasons.map((x,i)=>`<button data-rr="${i}">${x}</button>`).join('')}</div><div id="rvReason"></div></div>`;window.FreakLady?.react($('#reviewArea').querySelector('.panel'),pointOk?'g':'r','review');$$('[data-rr]').forEach(b=>b.onclick=()=>reviewRepair(pointOk,+b.dataset.rr===R.correctReason))}
@@ -2690,7 +2689,8 @@ const __renderMyV22=typeof renderMy==='function'?renderMy:null;
 renderMy=function(){
  const a=$('#myArea');if(!a)return;const v=window.myView18||'hub';
  if(v==='hub'){a.innerHTML=myHub18();setTimeout(()=>$$('[data-saved22]').forEach(b=>b.onclick=()=>openSaved22(b.dataset.saved22)),0);return}
- if(v==='recon'){if(__renderMyV22)__renderMyV22();return}
+ if(v==='hands'){if(__renderMyV22)__renderMyV22();return}
+ if(v==='recon'){reconView18();return}
  if(v==='eq'){a.innerHTML=eqView18();setTimeout(wireEq18,0);return}
  if(v==='push'){a.innerHTML=pushView18();setTimeout(wirePush18,0);return}
 }
@@ -3863,7 +3863,6 @@ document.documentElement.dataset.pokerSwipeVersion='48-master';
  --v54-lime:#c8ff3d;--v54-pink:#ff4f98;
 }
 html,body{background:var(--v54-bg)!important;color:var(--v54-white)!important}
-.screen{padding-bottom:126px!important}
 
 /* FIVE REAL SECTIONS */
 .nav{
@@ -5370,5 +5369,38 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="screen-router.js"></script>
 <link rel="stylesheet" href="profile.css">
 <script src="profile.js"></script>
+<script>
+function installShowWrapper() {
+  if(!window.show) return;
+  if(window.show._wrappedByPatch) return;
+  var originalShow = window.show;
+  window.show = function(id) {
+    if(!document.getElementById(id)) id = 'home';
+    originalShow.call(this, id);
+    var screens = document.querySelectorAll('.screen');
+    for(var i = 0; i < screens.length; i++) {
+      if(screens[i].id === id) screens[i].classList.add('active');
+      else screens[i].classList.remove('active');
+    }
+    if(id === 'home' && typeof window.renderHome === 'function') window.renderHome();
+    if(id === 'swipe' && typeof window.renderSwipe === 'function') window.renderSwipe();
+    if(id === 'sizing' && typeof window.renderSizing === 'function') window.renderSizing();
+    if(id === 'review' && typeof window.renderReview === 'function') window.renderReview();
+    if(id === 'daily' && typeof window.renderDaily === 'function') window.renderDaily();
+    if(id === 'heal' && typeof window.renderHeal === 'function') window.renderHeal();
+    if(id === 'myhands' && typeof window.renderMy === 'function') window.renderMy();
+    if(id === 'xray' && typeof window.renderXray === 'function') window.renderXray();
+    if(id === 'profile' && typeof window.renderProfile === 'function') window.renderProfile();
+  };
+  window.show._wrappedByPatch = true;
+}
+setTimeout(installShowWrapper, 50);
+setTimeout(installShowWrapper, 150);
+setTimeout(installShowWrapper, 300);
+setTimeout(installShowWrapper, 600);
+setTimeout(installShowWrapper, 1200);
+setTimeout(installShowWrapper, 2500);
+setInterval(installShowWrapper, 3000);
+</script>
 </body>
 </html>
