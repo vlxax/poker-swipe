@@ -669,6 +669,18 @@
       };
     });
     wireContextButtons(document.getElementById('swipeCard'));
+    const scene = document.getElementById('swipeVisual');
+    if (scene && window.PsMotion?.attachSwipeScene) {
+      window.PsMotion.attachSwipeScene(scene, {
+        getActions: () => Array.from(document.querySelectorAll('[data-sa]')).map((b) => b.dataset.sa),
+        isLocked: () => !!window.swLocked,
+        onAction: (action) => {
+          if (window.swLocked) return;
+          const btn = Array.from(document.querySelectorAll('[data-sa]')).find((b) => b.dataset.sa === action);
+          if (btn && !btn.disabled) btn.click();
+        }
+      });
+    }
     } catch (_) {
       return renderSwipeGame._maOrig?.();
     }

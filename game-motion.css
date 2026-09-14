@@ -371,4 +371,56 @@ body {
     filter: none !important;
   }
   .ps-nav-indicator { transition: none !important; }
+  .psSwipeDragging .pgArenaWrap,
+  .psSwipeCommit .pgArenaWrap,
+  .psSwipeCancel .pgArenaWrap {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Swipe deck drag (scene only; actions unchanged) */
+.psSwipeDraggable .pgArenaWrap,
+.psSwipeDraggable.swipeCardV,
+.psSwipeDraggable.pgSwipeScene {
+  touch-action: none;
+  cursor: grab;
+}
+.psSwipeDraggable .pgArenaWrap.psSwipeDragging,
+.psSwipeDraggable.swipeCardV.psSwipeDragging,
+.psSwipeDraggable.pgSwipeScene.psSwipeDragging {
+  cursor: grabbing;
+}
+.psSwipeHints {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.psSwipeDraggable {
+  position: relative;
+}
+.psSwipeHint {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: rgba(200, 255, 61, 0.35);
+  opacity: 0;
+  transition: opacity var(--motion-fast) var(--motion-ease);
+}
+.psSwipeHint.on {
+  opacity: 1;
+  color: rgba(200, 255, 61, 0.95);
+}
+.psSwipeHint--left { left: 8px; top: 50%; transform: translateY(-50%); }
+.psSwipeHint--right { right: 8px; top: 50%; transform: translateY(-50%); }
+.psSwipeHint--up { left: 50%; top: 6px; transform: translateX(-50%); }
+.psHandEnter .pgArenaWrap,
+.psHandEnter.pgArenaWrap {
+  animation: psHandEnter 220ms var(--motion-ease) both;
+}
+@keyframes psHandEnter {
+  from { opacity: 0.4; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
 }
