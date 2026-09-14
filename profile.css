@@ -1,25 +1,21 @@
 /* PokerSwipe · «Твой покерный почерк» — scoped to #profileArea */
 #profileArea:has(>.pid){padding:0 16px calc(104px + env(safe-area-inset-bottom,0px))!important;min-height:0!important;height:auto!important}
 #profile:has(.pid){min-height:0!important;height:auto!important;padding-bottom:0!important}
-#profileArea .pid{--acid:#c8ff3d;--ink:#f4f5f2;--muted:#9da39a;--line:#ffffff18;--panel:#0f1210;--panel2:#151815;--pink:#e69ab7;max-width:590px;margin:0 auto;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.45;text-align:left;overflow-wrap:anywhere}
+#profileArea .pid{--acid:#c8ff3d;--ink:#f4f5f2;--muted:#9da39a;--line:#ffffff18;--panel:#0f1210;--panel2:#151815;--pink:#e69ab7;max-width:520px;margin:0 auto;color:var(--ink);font-family:var(--ps-font-ui,inherit);font-size:var(--ps-text-sm,14px);line-height:var(--ps-leading-normal,1.45);text-align:left;overflow-wrap:anywhere}
 #profileArea .pid *{box-sizing:border-box}
 #profileArea .pid h1,#profileArea .pid h2,#profileArea .pid h3,#profileArea .pid p{margin:0}
 #profileArea .pid button,#profileArea .pid summary,#profileArea .pid label{font:inherit;color:inherit;touch-action:manipulation}
 #profileArea .pid button,#profileArea .pid summary,#profileArea .pid label{cursor:pointer}
 #profileArea .pid button:focus-visible,#profileArea .pid summary:focus-visible{outline:2px solid var(--acid);outline-offset:4px}
 #profileArea .pid .pid-ey{display:block;color:#abb0a8;font-size:10px;line-height:1.3;font-weight:800;letter-spacing:.17em}
-#profileArea .pid .pid-intro{padding:22px 2px 26px;border-bottom:1px solid var(--line)}
-#profileArea .pid .pid-brand{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:12px;letter-spacing:.05em}
-#profileArea .pid .pid-brand b{font-size:18px;letter-spacing:-.03em}
-#profileArea .pid .pid-brand i{font-style:normal;color:var(--acid)}
-#profileArea .pid .pid-brand span{color:var(--muted);font-size:10px;letter-spacing:.22em}
-#profileArea .pid .pid-person{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:27px}
+#profileArea .pid .pid-intro{padding:12px 0 22px;border-bottom:1px solid var(--line)}
+#profileArea .pid .pid-screen-ey{margin:0 0 14px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.17em}
+#profileArea .pid .pid-person{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;margin-top:0}
 #profileArea .pid .pid-avatar{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--acid);color:#0a0b09;font-size:22px}
 #profileArea .pid .pid-person>div b{display:block;font-size:18px;letter-spacing:.08em}
 #profileArea .pid .pid-person small{display:block;margin-top:4px;color:var(--muted);font-size:11px}
 #profileArea .pid .pid-skill{color:#b7bbb3;font-size:11px;border:1px solid var(--line);padding:6px 9px;border-radius:999px}
-#profileArea .pid h1{margin:30px 0 25px;font-size:clamp(38px,11.2vw,68px);font-weight:950;line-height:.89;letter-spacing:-.065em}
-#profileArea .pid h1 em{font-style:normal;color:var(--acid)}
+#profileArea .pid h1.impact{margin:18px 0 20px;font-size:var(--ps-text-xl,24px);font-weight:900;line-height:1.05;letter-spacing:-.04em}
 #profileArea .pid .pid-voice{max-width:520px;padding:2px 0 2px 16px;border-left:3px solid var(--acid)}
 #profileArea .pid .pid-voice p{margin-top:8px;font-size:18px;line-height:1.45;color:#dfe1dc}
 #profileArea .pid .pid-collect{margin:26px 0 0;padding:22px 0;border-bottom:1px solid var(--line)}
@@ -90,5 +86,5 @@
 #profileArea .pid .pid-error{padding:24px 0}
 #profileArea .pid .pid-error h2{font-size:24px}
 #profileArea .pid .pid-error p{margin-top:8px;color:var(--muted)}
-@media(max-width:430px){#profileArea .pid .pid-spots{grid-template-columns:1fr}#profileArea .pid .pid-brand span{font-size:9px}#profileArea .pid .pid-voice p{font-size:17px}}
+@media(max-width:430px){#profileArea .pid .pid-spots{grid-template-columns:1fr}#profileArea .pid .pid-voice p{font-size:16px}}
 @media(max-width:370px){#profileArea:has(>.pid){padding-left:12px!important;padding-right:12px!important}#profileArea .pid h1{font-size:39px}#profileArea .pid .pid-person{grid-template-columns:auto 1fr}#profileArea .pid .pid-skill{grid-column:2;justify-self:start}#profileArea .pid .pid-heading{align-items:start;flex-direction:column;gap:7px}#profileArea .pid .pid-confidence{grid-template-columns:1fr}}
