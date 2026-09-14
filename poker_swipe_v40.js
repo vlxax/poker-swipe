@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const STORE='pokerswipe.v40.poliana';
+const STORE='pokerswipe.polyana.state';
 const state={view:'today',city:'Москва',seriesId:null,tripStep:null,disc:['NLH','PLO','HU'],maxBuyin:5000,budget:50000,from:'2026-09-14',to:'2026-09-20',selected:{}};
 try{Object.assign(state,JSON.parse(localStorage.getItem(STORE)||'{}'))}catch(_){ }
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state))}catch(_){}}
@@ -84,9 +84,8 @@ function bind(){
  $$('[data-p40plansub]').forEach(b=>b.onclick=()=>{const body=$('#p40PlanBody');if(!body)return;$$('[data-p40plansub]').forEach(x=>x.classList.toggle('on',x===b));const s=b.dataset.p40plansub;if(s==='grid'){const by={};selectedEvents().forEach(e=>(by[e.day]||(by[e.day]=[])).push(e));body.innerHTML=planGrid(by)}if(s==='budget')body.innerHTML=budgetView();if(s==='logistics')body.innerHTML=logisticsView()});
 }
 const baseRender=window.renderTournaments23;
-window.renderTournaments23=function(){render()};
 const baseShow=window.show;
-window.show=function(id){const r=baseShow.apply(this,arguments);if(id==='tournaments')setTimeout(render,0);return r};
+window.show=function(id){const r=baseShow.apply(this,arguments);return r};
 function chrome(){const b=$('[data-nav="tournaments"]');if(b&&b.childNodes.length)b.childNodes[b.childNodes.length-1].textContent=' ПОЛЯНА'}
 const oldUi=window.ui;window.ui=function(){const r=oldUi?.apply(this,arguments);chrome();return r};
 chrome();

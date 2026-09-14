@@ -1,0 +1,99 @@
+{
+  "boot": {
+    "pageerror": 0,
+    "console_error": 133
+  },
+  "apis": {
+    "S": "object",
+    "PokerSwipeCore": "object",
+    "renderSizing": "function",
+    "show": "function",
+    "showScreen": "undefined"
+  },
+  "desktop_tests": {
+    "Home": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "Swipe": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "Sizing": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "Daily": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "My Hands": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "Polyana": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "My Tournaments": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    },
+    "Profile": {
+      "status": "PASS",
+      "has_content": true,
+      "is_visible": true
+    }
+  },
+  "mobile_tests": {
+    "320x844": {
+      "viewport": "320x844",
+      "screens": {
+        "Swipe": "PASS",
+        "Sizing": "PASS"
+      }
+    },
+    "390x844": {
+      "viewport": "390x844",
+      "screens": {
+        "Swipe": "PASS",
+        "Sizing": "PASS"
+      }
+    },
+    "430x932": {
+      "viewport": "430x932",
+      "screens": {
+        "Swipe": "PASS",
+        "Sizing": "PASS"
+      }
+    }
+  },
+  "sizing_deepdive": {
+    "window_renderSizing_type": "function",
+    "window_renderSizing_is_function": true,
+    "renders_content": false,
+    "main_html_length": 0
+  },
+  "screenshots": [
+    "boot-baseline-1789314653565.png",
+    "desktop-Home-1789314661536.png",
+    "desktop-Swipe-1789314662614.png",
+    "desktop-Sizing-1789314663663.png",
+    "desktop-Daily-1789314664714.png",
+    "desktop-My Hands-1789314665762.png",
+    "desktop-Polyana-1789314666802.png",
+    "desktop-My Tournaments-1789314667851.png",
+    "desktop-Profile-1789314668885.png",
+    "mobile-320x844-1789314672309.png",
+    "mobile-390x844-1789314675517.png",
+    "mobile-430x932-1789314679048.png",
+    "sizing-deepdive-1789314685942.png"
+  ]
+}
