@@ -57,9 +57,12 @@ function ensureCss(){
 function ensureScreen(){
   let s=document.getElementById('ranges');
   if(!s){
-    s=document.createElement('section'); s.id='ranges'; s.className='screen'; s.innerHTML='<div id="rangesArea"></div>';
+    s=document.createElement('section'); s.id='ranges'; s.className='screen psScreen'; s.innerHTML='<div id="rangesArea"></div>';
     const x=document.getElementById('xray'); (x?.parentNode||document.getElementById('mainApp')||document.body).insertBefore(s,x||null);
-  } else if(!s.querySelector('#rangesArea')) s.innerHTML='<div id="rangesArea"></div>';
+  } else {
+    s.classList.add('psScreen');
+    if(!s.querySelector('#rangesArea')) s.innerHTML='<div id="rangesArea"></div>';
+  }
   return s;
 }
 function chart(){ return safeChart(UO_DATA,state.position,state.stack); }

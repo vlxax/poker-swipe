@@ -36,8 +36,20 @@ const state={
   loaded:false,
   loadStatus:'idle',
   loadError:'',
-  lateTimer:null
+  lateTimer:null,
+  expiryTimer:null
 };
+
+const eventVis=()=>window.PspEventVisibility;
+function activeTodayEvents(nowMs=Date.now()){
+  const V=eventVis();
+  const base=state.events.filter(e=>allowed(e)&&match(e));
+  if(!V)return base;
+  return V.filterActiveToday(base,nowMs);
+}
+function countableEvents(nowMs=Date.now()){
+  return state.tab==='today'?activeTodayEvents(nowMs):state.events.filter(e=>allowed(e)&&match(e));
+}
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const root=()=>document.getElementById(ROOT_ID);
@@ -136,6 +148,8 @@ function startDate(e){
   return Number.isNaN(+d)?null:d;
 }
 function lateClose(e){
+  const V=eventVis();
+  if(V?.lateClose)return V.lateClose(e);
   const s=startDate(e),raw=e.late_reg_minutes;
   if(!s||raw===null||raw===undefined||raw==='')return null;
   const m=Number(raw);
@@ -266,7 +280,7 @@ function districtOptions(){
 function filterSheet(){
   const clubs=eventClubNames();
   const districts=districtOptions();
-  const filteredCount=state.events.filter(match).length;
+  const filteredCount=countableEvents().length;
 
   return `<div id="pspFilters" class="pspSheetBg pspFiltersOverlay" aria-hidden="true">
     <div class="pspSheet pspFilterSheet" role="dialog" aria-modal="true" aria-label="Фильтры Поляны" tabindex="-1">
@@ -342,7 +356,7 @@ function shell(){
   return `<div class="pspHero"><div><h1>ПОЛЯНА<span>.</span></h1><p>Навигатор по спортивному покеру Москвы.</p></div></div>
   <div class="pspTabs"><button type="button" class="pspTab ${state.tab==='today'?'on':''}" data-psp-tab="today">СЕГОДНЯ</button><button type="button" class="pspTab ${state.tab==='clubs'?'on':''}" data-psp-tab="clubs">КЛУБЫ</button><button type="button" class="pspTab ${state.tab==='map'?'on':''}" data-psp-tab="map">КАРТА</button></div>
   <div class="pspAd"><div class="pspAdLabel">Партнёрское предложение</div><img src="assets/headsup_promo_frikovaya_dama.jpeg" alt="HEADS UP — промокод ФРИКОВАЯ ДАМА, бесплатный re-entry"></div>
-  <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${state.events.filter(allowed).length}</b> событий</div></div>
+  <div class="pspFresh"><strong><span class="pspFreshDot"></span>АФИША ОБНОВЛЕНА</strong><div class="pspFreshMeta"><b>${state.clubs.length}</b> клубов · <b>${activeTodayEvents().length}</b> активных сегодня</div></div>
   <div id="pspBody"></div>
   ${filterSheet()}
   <div id="pspDetail" class="pspSheetBg pspFiltersOverlay" aria-hidden="true"><div class="pspSheet"><button type="button" class="pspClose" data-psp-detail-close>Закрыть</button><div id="pspDetailBody"></div></div></div>`;
@@ -364,7 +378,7 @@ function activeFilters(){
   return a;
 }
 function today(){
-  const arr=state.events.filter(match).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
+  const arr=activeTodayEvents().sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));
   const active=activeFilters();
   return `<div class="pspListHead pspTodayHead">
     <div><b>МОСКВА <span>· СЕГОДНЯ</span></b><small>${arr.length} событий</small></div>
@@ -375,6 +389,9 @@ function today(){
 }
 function card(e){
   const fav=isFavorite(e.club);
+  const V=eventVis();
+  const joinStatus=V?.eventJoinStatus(e);
+  const statusTag=V?.statusLabel(joinStatus);
   const tags=[e._game,e._type,e.level_minutes!=null?`${e.level_minutes} мин`:'',e._reentryUnlimited?'re-entry ∞':Number.isFinite(e._reentryCount)?`${e._reentryCount} re-entry`:''].filter(Boolean);
   const late=lateRegInfo(e);
   const meta=[
@@ -385,8 +402,9 @@ function card(e){
   const lateHtml=late?`<span class="pspLateReg ${late.open?'open':'closed'}" data-late-event="${e._id}" data-late-open="${late.open?'1':'0'}">${esc(late.text)}</span>`:'';
   const metaHtml=[lateHtml,...meta.map(esc)].filter(Boolean).join(' · ');
 
+  const statusHtml=statusTag?`<span class="pspJoinStatus pspJoinStatus--${esc(joinStatus||'unknown')}">${esc(statusTag)}</span>`:'';
   return `<button type="button" class="pspEvent ${fav?'favorite':''}" data-event="${e._id}">
-    <div class="pspTime">${esc(e.time||'—')}<small>Сегодня</small></div>
+    <div class="pspTime">${esc(e.time||'—')}<small>Сегодня</small>${statusHtml}</div>
     <div><div class="pspName">${esc(e._title)}</div><div class="pspClub">${fav?'★ ':''}${esc(e.club||'')}</div>
     <div class="pspTags">${tags.map((x,i)=>`<span class="pspTag ${i===0?'acid':''}">${esc(x)}</span>`).join('')}</div>
     ${metaHtml?`<div class="pspMeta">${metaHtml}</div>`:''}</div>
@@ -417,9 +435,38 @@ function clubsView(){
 function mapView(){
   return `<div class="pspMapPanel">
     <div class="pspMapTop"><div><b>КАРТА КЛУБОВ</b><span>Карта Москвы · точки клубов</span></div><button type="button" class="pspMapReset" data-map-reset>Москва</button></div>
-    <iframe id="pspMoscowMapFrame" class="pspMapBox" src="polyana/map.html?v=8" title="Карта клубов Москвы" loading="eager" frameborder="0" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="pspMapSkeleton" id="pspMapSkeleton" aria-hidden="false"><span class="pspMapSkeletonPulse"></span><b>Карта загружается</b><small>Клубы появятся через мгновение</small></div>
+    <iframe id="pspMoscowMapFrame" class="pspMapBox" data-map-src="polyana/map.html?v=9" title="Карта клубов Москвы" loading="lazy" frameborder="0" referrerpolicy="no-referrer-when-downgrade" hidden></iframe>
     <div class="pspMapNote">Карта: OpenStreetMap.</div>
   </div>`;
+}
+function syncMapEvents(){
+  const f=document.getElementById('pspMoscowMapFrame');
+  if(!f?.contentWindow)return;
+  const payload=activeTodayEvents().map(e=>({
+    date:e.date,time:e.time,club:e.club,tournament:e._title||e.tournament,
+    late_reg_minutes:e.late_reg_minutes,duration_minutes:e.duration_minutes
+  }));
+  try{f.contentWindow.postMessage({type:'psp-map-events',events:payload},location.origin)}catch(_){}
+}
+function postMapResize(){
+  try{
+    document.getElementById('pspMoscowMapFrame')?.contentWindow?.postMessage({type:'psp-map-resize'},location.origin);
+  }catch(_){}
+}
+function mountMapIframe(){
+  const f=document.getElementById('pspMoscowMapFrame');
+  if(!f||f.getAttribute('src'))return;
+  const src=f.dataset.mapSrc||'polyana/map.html?v=9';
+  const onReady=()=>{
+    f.hidden=false;
+    const sk=document.getElementById('pspMapSkeleton');
+    if(sk)sk.setAttribute('aria-hidden','true');
+    syncMapEvents();
+    requestAnimationFrame(()=>{postMapResize();requestAnimationFrame(postMapResize)});
+  };
+  f.addEventListener('load',onReady,{once:true});
+  f.setAttribute('src',src);
 }
 
 function detail(id){
@@ -484,14 +531,52 @@ function updateLateRegCountdowns(){
   }
 
   if(expiredOpenFilter&&state.tab==='today'){renderBody();return}
+  if(state.tab==='today')refreshTodayListIfStale(now);
   scheduleLateTicker(minRemaining);
+}
+function refreshTodayListIfStale(nowMs=Date.now()){
+  const body=document.getElementById('pspBody');
+  if(!body||state.tab!=='today')return;
+  const active=activeTodayEvents(nowMs);
+  const shown=[...body.querySelectorAll('[data-event]')].map(n=>Number(n.dataset.event));
+  const activeIds=active.map(e=>e._id);
+  if(shown.length!==activeIds.length||shown.some((id,i)=>id!==activeIds[i])){
+    renderBody();
+    return;
+  }
+  const headSmall=document.querySelector('#polyana .pspTodayHead small');
+  if(headSmall)headSmall.textContent=`${activeIds.length} событий`;
+  syncMapEvents();
+}
+function clearExpiryTimer(){
+  if(state.expiryTimer){clearTimeout(state.expiryTimer);state.expiryTimer=null}
+}
+function scheduleExpiryRefresh(){
+  clearExpiryTimer();
+  const V=eventVis();
+  if(!V||!state.loaded)return;
+  const now=Date.now();
+  let next=Infinity;
+  for(const e of state.events){
+    if(!V.isScheduledToday(e,now))continue;
+    const until=V.activeUntilMs(e);
+    if(until>now&&until<next)next=until;
+  }
+  if(!Number.isFinite(next))return;
+  const delay=Math.max(500,Math.min(60000,next-now+120));
+  state.expiryTimer=setTimeout(()=>{
+    refreshTodayListIfStale();
+    scheduleExpiryRefresh();
+  },delay);
 }
 
 function renderBody(){
   const b=document.getElementById('pspBody');if(!b)return;
   clearLateTimer();
   b.innerHTML=state.tab==='today'?today():state.tab==='clubs'?clubsView():mapView();
+  if(state.tab==='map')requestAnimationFrame(mountMapIframe);
   updateLateRegCountdowns();
+  scheduleExpiryRefresh();
 }
 
 function openOverlay(el){
@@ -542,7 +627,7 @@ function resetFilters(){
 }
 function updateApplyCount(){
   const btn=document.querySelector('#polyana [data-psp-apply]');
-  if(btn)btn.textContent=`ПОКАЗАТЬ ${state.events.filter(match).length} ТУРНИРОВ`;
+  if(btn)btn.textContent=`ПОКАЗАТЬ ${countableEvents().length} ТУРНИРОВ`;
 }
 function updateClubSearch(value){
   const q=String(value||'').trim().toLowerCase();
@@ -558,6 +643,7 @@ function handleRootClick(e){
   if(tab){
     state.tab=tab.dataset.pspTab;
     render();
+    if(state.tab==='map')requestAnimationFrame(()=>{mountMapIframe();postMapResize()});
     return;
   }
 
@@ -667,7 +753,12 @@ function render(){
 }
 async function load(){
   state.loadStatus='loading';
-  renderStatusView('loading');
+  const r=root();
+  if(r&&!r.querySelector('.pspTabs'))render();
+  else{
+    const b=document.getElementById('pspBody');
+    if(b)b.innerHTML='<div class="pspEmpty" role="status">Подтягиваем клубы и турниры Москвы…</div>';
+  }
   try{
     const [ed,cd]=await Promise.all([fetchFirst(DATA_URLS,'events'),fetchFirst(CLUB_URLS,'clubs')]);
     state.events=(ed.events||[]).map(normalize);
@@ -686,7 +777,7 @@ function warmMapCache(){
   if(window.__pspMapWarmStarted)return;
   window.__pspMapWarmStarted=true;
   const f=document.createElement('iframe');
-  f.src='polyana/map.html?v=8&warm=1';
+  f.src='polyana/map.html?v=9&warm=1';
   f.setAttribute('aria-hidden','true');
   f.tabIndex=-1;
   f.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;left:-10000px;top:-10000px;border:0';
@@ -710,6 +801,8 @@ function openPolyana(){
   document.querySelectorAll('.nav [data-nav]').forEach(x=>x.classList.toggle('on',x===nav));
   ensurePolyanaMounted();
   warmMapCache();
+  if(state.tab==='map')requestAnimationFrame(postMapResize);
+  refreshTodayListIfStale();
 }
 
 document.addEventListener('keydown',e=>{
@@ -719,8 +812,21 @@ document.addEventListener('keydown',e=>{
   if(detail?.classList.contains('on'))closeOverlay(detail);
   else if(filters?.classList.contains('on'))closeOverlay(filters);
 });
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.loaded)updateLateRegCountdowns()});
-window.addEventListener('focus',()=>{if(state.loaded)updateLateRegCountdowns()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden)return;
+  if(state.loaded){
+    updateLateRegCountdowns();
+    refreshTodayListIfStale();
+    if(state.tab==='map')postMapResize();
+  }
+});
+window.addEventListener('focus',()=>{
+  if(state.loaded){
+    updateLateRegCountdowns();
+    refreshTodayListIfStale();
+    if(state.tab==='map')postMapResize();
+  }
+});
 window.addEventListener('message',e=>{
   if(e.origin!==location.origin||!e.data)return;
   const d=e.data;
@@ -769,4 +875,5 @@ if(document.readyState==='loading'){
 
 window.ensurePokerSwipePolyana=ensurePolyanaMounted;
 window.openPokerSwipePolyana=openPolyana;
+window.__pspActiveTodayEvents=activeTodayEvents;
 })();
