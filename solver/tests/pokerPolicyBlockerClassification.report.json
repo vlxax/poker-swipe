@@ -1,0 +1,248 @@
+{
+  "generatedAt": "2026-09-14T11:07:38.278Z",
+  "brainPolicyBlockersCount": 96,
+  "note": "Full list requires grading harness export; sample classified from gradingConsistency.report.json",
+  "byClassification": {
+    "CONTEXT_LOSS": 8,
+    "ACTION_NORMALIZATION": 5,
+    "TRUE_POLICY_CONFLICT": 7
+  },
+  "rows": [
+    {
+      "spotId": "PRE_RFI_UTG_AJO",
+      "taskId": "PRE_RFI_UTG_AJO",
+      "libraryCorrect": "РЕЙЗ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "PRE_RFI_SB_22",
+      "taskId": "PRE_RFI_SB_22",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.579
+      },
+      "classification": "ACTION_NORMALIZATION"
+    },
+    {
+      "spotId": "PRE_RFI_BTN_22_SHORT",
+      "taskId": "PRE_RFI_BTN_22_SHORT",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.723
+      },
+      "classification": "ACTION_NORMALIZATION"
+    },
+    {
+      "spotId": "PRE_RFI_BTN_A5S_15",
+      "taskId": "PRE_RFI_BTN_A5S_15",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.998
+      },
+      "classification": "ACTION_NORMALIZATION"
+    },
+    {
+      "spotId": "PRE_BB_T6O",
+      "taskId": "PRE_BB_T6O",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.899
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "PRE_3B_SB_A5S",
+      "taskId": "PRE_3B_SB_A5S",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "PRE_3B_BB_KK",
+      "taskId": "PRE_3B_BB_KK",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "y",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.599
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "PRE_SQZ_AQS",
+      "taskId": "PRE_SQZ_AQS",
+      "libraryCorrect": "3-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "PRE_VS3B_66",
+      "taskId": "PRE_VS3B_66",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.932
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "TOUR_BUBBLE_77_CALL",
+      "taskId": "TOUR_BUBBLE_77_CALL",
+      "libraryCorrect": "ФОЛД",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "TOUR_ITM_AQS",
+      "taskId": "TOUR_ITM_AQS",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "TOUR_PKO_BOUNTY",
+      "taskId": "TOUR_PKO_BOUNTY",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "TOUR_FT_QQ",
+      "taskId": "TOUR_FT_QQ",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "SHORT_BTN_A9O",
+      "taskId": "SHORT_BTN_A9O",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.997
+      },
+      "classification": "ACTION_NORMALIZATION"
+    },
+    {
+      "spotId": "SHORT_BB_87S",
+      "taskId": "SHORT_BB_87S",
+      "libraryCorrect": "КОЛЛ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "INSUFFICIENT_CONTEXT",
+      "brainTop": null,
+      "classification": "CONTEXT_LOSS"
+    },
+    {
+      "spotId": "SHORT_SB_55",
+      "taskId": "SHORT_SB_55",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "RAISE",
+        "freq": 0.911
+      },
+      "classification": "ACTION_NORMALIZATION"
+    },
+    {
+      "spotId": "SHORT_BB_A5O",
+      "taskId": "SHORT_BB_A5O",
+      "libraryCorrect": "ОЛЛ-ИН",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.862
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "MISC_RIVER_BLUF",
+      "taskId": "MISC_RIVER_BLUF",
+      "libraryCorrect": "СТАВКА",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "y",
+      "brainSource": "STRUCTURAL_MODEL",
+      "brainTop": {
+        "action": "CHECK",
+        "freq": 0.644
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "MISC_XR_TPTK",
+      "taskId": "MISC_XR_TPTK",
+      "libraryCorrect": "РЕЙЗ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "STRUCTURAL_MODEL",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.759
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    },
+    {
+      "spotId": "CASH_100BB_AA",
+      "taskId": "CASH_100BB_AA",
+      "libraryCorrect": "4-БЕТ",
+      "dailyGrade": "EXCELLENT",
+      "brainGrade": "r",
+      "brainSource": "REFERENCE_ATLAS",
+      "brainTop": {
+        "action": "CALL",
+        "freq": 0.58
+      },
+      "classification": "TRUE_POLICY_CONFLICT"
+    }
+  ]
+}

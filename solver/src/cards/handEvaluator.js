@@ -36,11 +36,17 @@ export function evaluateCards(cards) {
   // straight detection over full mask (and wheel)
   let straightHigh = 0;
   const straightFromMask = (m, allowWheel) => {
+    let best = 0;
     for (let low = 0; low <= 8; low++) {
-      if ((m & (0b11111 << low)) === (0b11111 << low)) return low + 5; // highest card value (2..14)
+      if ((m & (0b11111 << low)) === (0b11111 << low)) {
+        const high = low + 6; // rank value of top card (2..14); low=0 → 6-high, low=8 → broadway
+        if (high > best) best = high;
+      }
     }
-    if (allowWheel && (m & 0b1000000000111) === 0b1000000000111) return 5; // A 2 3 4 5 -> wheel high = 5
-    return 0;
+    if (allowWheel && (m & 0b1000000000111) === 0b1000000000111) {
+      if (5 > best) best = 5;
+    }
+    return best;
   };
   const allMask = mask;
   straightHigh = straightFromMask(allMask, true);
@@ -80,6 +86,9 @@ export function evaluateCards(cards) {
     category = 'four_of_a_kind';
     const kicker = ordered.find((r) => r !== quads) || 0;
     value = [7, quads, kicker];
+  } else if (tripsList.length >= 2) {
+    category = 'full_house';
+    value = [6, tripsList[0], tripsList[1]];
   } else if (tripsList.length && pairsList.length) {
     category = 'full_house';
     value = [6, tripsList[0], pairsList[0]];

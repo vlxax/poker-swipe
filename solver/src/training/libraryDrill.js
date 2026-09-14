@@ -172,6 +172,9 @@ export function drillFromLibraryTask(task, { leakConcept = null } = {}) {
         bestEV,
         actionEVs,
         evSpreadBb: BEST_EV - WRONG_EV,
+        evAvailable: false,
+        evSource: 'library_quiz_score',
+        policySource: 'LIBRARY_CURATED',
         confidence: { score: 0.85, level: 'high' }
       },
       explanation: {

@@ -5355,7 +5355,7 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="game-visual-rebuild.js"></script>
 <link rel="stylesheet" href="screen-router.css">
 <script src="poker_swipe_v73_hotfix.js"></script>
-<script src="screen-router.js"></script>
+<script type="module" src="hand-bucket-bridge.js"></script>
 <script src="poker_swipe_v32.js"></script>
 <script src="poker_brain.js"></script>
 <script src="poker_brain_v33.js"></script>
@@ -5367,39 +5367,7 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="poker_swipe_v39.js"></script>
 <link rel="stylesheet" href="poker_swipe_v40.css">
 <script src="poker_swipe_v40.js"></script>
-<script>
-function installShowWrapper() {
-  if(!window.show) return;
-  if(window.show._wrappedByPatch) return;
-  var originalShow = window.show;
-  window.show = function(id) {
-    if(!document.getElementById(id)) id = 'home';
-    originalShow.call(this, id);
-    var screens = document.querySelectorAll('.screen');
-    for(var i = 0; i < screens.length; i++) {
-      if(screens[i].id === id) screens[i].classList.add('active');
-      else screens[i].classList.remove('active');
-    }
-    if(id === 'home' && typeof window.renderHome === 'function') window.renderHome();
-    if(id === 'swipe' && typeof window.renderSwipe === 'function') window.renderSwipe();
-    if(id === 'sizing' && typeof window.renderSizing === 'function') window.renderSizing();
-    if(id === 'review' && typeof window.renderReview === 'function') window.renderReview();
-    if(id === 'daily' && typeof window.renderDaily === 'function') window.renderDaily();
-    if(id === 'heal' && typeof window.renderHeal === 'function') window.renderHeal();
-    if(id === 'myhands' && typeof window.renderMy === 'function') window.renderMy();
-    if(id === 'xray' && typeof window.renderXray === 'function') window.renderXray();
-    if(id === 'profile' && typeof window.renderProfile === 'function') window.renderProfile();
-  };
-  window.show._wrappedByPatch = true;
-}
-setTimeout(installShowWrapper, 50);
-setTimeout(installShowWrapper, 150);
-setTimeout(installShowWrapper, 300);
-setTimeout(installShowWrapper, 600);
-setTimeout(installShowWrapper, 1200);
-setTimeout(installShowWrapper, 2500);
-setInterval(installShowWrapper, 3000);
-</script>
+<script src="screen-router.js"></script>
 <link rel="stylesheet" href="profile.css">
 <script src="profile.js"></script>
 </body>

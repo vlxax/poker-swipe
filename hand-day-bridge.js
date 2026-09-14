@@ -1,12 +1,12 @@
 /**
- * PokerSwipe — Hand of the Day bridge
- * Fullscreen overlay on show('daily'). Hides app bottom nav. No engine rewrite.
- * Module: modules/hand-of-the-day.html (approved redesign).
+ * PokerSwipe — Hand of the Day module loader (optional fullscreen iframe).
+ * Does NOT hijack show('daily') — personalised training owns #daily via training-ui.
+ * Module: modules/hand-of-the-day.html
  */
 (function () {
   'use strict';
 
-  const BUILD = 'hand-day-bridge-v3';
+  const BUILD = 'hand-day-bridge-v4';
   const MODULE_SRC = 'modules/hand-of-the-day.html';
   const OVERLAY_ID = 'psHandDayOverlay';
 
@@ -51,6 +51,22 @@
     }
   }
 
+  /** Hide overlay without changing route — used by navigation teardown. */
+  function dismissHandDayOverlay() {
+    const overlay = document.getElementById(OVERLAY_ID);
+    if (overlay) {
+      overlay.style.display = 'none';
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+    const frame = document.getElementById('psHandDayFrame');
+    if (frame) {
+      try { frame.src = 'about:blank'; } catch (_) { /* ignore */ }
+    }
+    setAppNavHidden(false);
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
+
   function openHandDay() {
     const overlay = ensureOverlay();
     const frame = document.getElementById('psHandDayFrame');
@@ -62,40 +78,10 @@
   }
 
   function closeHandDay() {
-    const overlay = document.getElementById(OVERLAY_ID);
-    if (overlay) {
-      overlay.style.display = 'none';
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-    const frame = document.getElementById('psHandDayFrame');
-    if (frame) {
-      try { frame.src = 'about:blank'; } catch (_) {}
-    }
-    setAppNavHidden(false);
+    dismissHandDayOverlay();
     if (typeof window.show === 'function') {
       try { window.show('home'); } catch (_) { /* ignore */ }
     }
-  }
-
-  function patchShow() {
-    if (!window.show || window.show.__psHandDayBridge) return;
-    const orig = window.show;
-    window.show = function psHandDayShow(id) {
-      if (id === 'daily') {
-        openHandDay();
-        return true;
-      }
-      if (document.documentElement.classList.contains('psHandDayOpen')) {
-        const overlay = document.getElementById(OVERLAY_ID);
-        if (overlay) {
-          overlay.style.display = 'none';
-          overlay.setAttribute('aria-hidden', 'true');
-        }
-        setAppNavHidden(false);
-      }
-      return orig.apply(this, arguments);
-    };
-    window.show.__psHandDayBridge = true;
   }
 
   function onMessage(ev) {
@@ -114,6 +100,7 @@
       'html.psHandDayOpen, body.psHandDayOpen { overflow: hidden !important; }',
       'html.psHandDayOpen .nav, body.psHandDayOpen .nav,',
       'html.psHandDayOpen #bottomNav, body.psHandDayOpen #bottomNav { display: none !important; }',
+      '#' + OVERLAY_ID + '[aria-hidden="true"] { display: none !important; pointer-events: none !important; }',
       '#' + OVERLAY_ID + ' { touch-action: auto; }',
       '#' + OVERLAY_ID + ' iframe { touch-action: manipulation; }'
     ].join('\n');
@@ -122,16 +109,19 @@
 
   function init() {
     injectCss();
-    patchShow();
     window.addEventListener('message', onMessage);
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && document.documentElement.classList.contains('psHandDayOpen')) {
         closeHandDay();
       }
     });
-    setTimeout(patchShow, 0);
-    setTimeout(patchShow, 400);
-    window.PsHandDayBridge = { BUILD, open: openHandDay, close: closeHandDay, MODULE_SRC: MODULE_SRC };
+    window.PsHandDayBridge = {
+      BUILD,
+      open: openHandDay,
+      close: closeHandDay,
+      dismissOverlay: dismissHandDayOverlay,
+      MODULE_SRC
+    };
   }
 
   if (document.readyState === 'loading') {
