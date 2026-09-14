@@ -184,4 +184,6 @@ Run: `npm test`, `test:training`, `test:training-audit`, `test:poker-correctness
 
 # COMMITS
 
-See `git log` on `cursor/post-session-review-b438` after Phase 2 push.
+- `a52dc97` — test: validate full poker training library (180 tasks)
+- `538ebb7` — test: poker context, provenance, preflop sensitivity audits + npm scripts
+- `d9edc91` — docs: phase 2 report; Phase 13 harness + selector/weakness guards (included)
