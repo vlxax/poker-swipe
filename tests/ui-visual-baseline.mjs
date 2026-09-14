@@ -5,6 +5,12 @@ import { join } from 'path';
 const URL = process.env.PS_URL || 'http://127.0.0.1:8080/index.html';
 const OUT = process.env.PS_VISUAL_OUT || '/opt/cursor/artifacts/ui-baseline';
 
+const VIEWPORTS = [
+  { tag: '390x844', width: 390, height: 844 },
+  { tag: '393x852', width: 393, height: 852 },
+  { tag: '430x932', width: 430, height: 932 },
+];
+
 const SHOTS = [
   { name: 'home', nav: 'home' },
   { name: 'daily', show: 'daily' },
@@ -20,18 +26,22 @@ const SHOTS = [
 async function main() {
   mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(URL, { waitUntil: 'load', timeout: 120000 });
-  await page.waitForTimeout(2500);
-
   const manifest = [];
-  for (const s of SHOTS) {
-    if (s.nav) await page.click(`.nav [data-nav="${s.nav}"]`);
-    else await page.evaluate((id) => { if (typeof show === 'function') show(id); }, s.show);
-    await page.waitForTimeout(600);
-    const file = join(OUT, `${s.name}-390x844.png`);
-    await page.screenshot({ path: file, fullPage: false });
-    manifest.push({ screen: s.name, file });
+
+  for (const vp of VIEWPORTS) {
+    const page = await browser.newPage({ viewport: { width: vp.width, height: vp.height } });
+    await page.goto(URL, { waitUntil: 'load', timeout: 120000 });
+    await page.waitForTimeout(2500);
+
+    for (const s of SHOTS) {
+      if (s.nav) await page.click(`.nav [data-nav="${s.nav}"]`);
+      else await page.evaluate((id) => { if (typeof show === 'function') show(id); }, s.show);
+      await page.waitForTimeout(s.nav === 'polyana' ? 1200 : 600);
+      const file = join(OUT, `${s.name}-${vp.tag}.png`);
+      await page.screenshot({ path: file, fullPage: false });
+      manifest.push({ screen: s.name, viewport: vp.tag, file });
+    }
+    await page.close();
   }
 
   writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ capturedAt: new Date().toISOString(), shots: manifest }, null, 2));
