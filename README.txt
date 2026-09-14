@@ -1,24 +1,11 @@
-PokerSwipe Auth Hotfix
-=======================
+РАЗДЕЛ «ТЫ» — PokerSwipe
 
-Что заменять в репозитории:
-1) js/pokerswipe-auth.js
-2) js/pokerswipe-auth-bootstrap.js
+В архиве только рендер и стили профиля. Это часть существующего приложения, не самостоятельное приложение.
 
-Эти файлы сделаны для ТЕКУЩЕГО стандартного Supabase Magic Link шаблона.
-Менять email-шаблон на 6-значный OTP для этого hotfix НЕ нужно.
+Интеграция:
+1. Замените блок PLAYER DASHBOARD в poker_swipe_v39.js содержимым profile.js. Старый рендер профиля одновременно не подключайте.
+2. Замените блок V38 — PLAYER DASHBOARD / YOU в poker_swipe_v39.css содержимым profile.css.
+3. Остальные блоки этих файлов сохраните: они относятся к другим экранам.
 
-Что исправлено:
-- вход теперь понимает Supabase callback и в #hash, и в ?query;
-- access_token/refresh_token удаляются из адресной строки сразу после сохранения;
-- JWT декодируется как base64url (а не обычный base64);
-- если expires_at отсутствует/строка/миллисекунды, сессия не умирает сразу;
-- refresh token rotation сохраняется;
-- magic link явно получает redirect_to на корень текущего PokerSwipe;
-- исправлен случай, когда profile ещё не успел создаться и bootstrap мог упасть;
-- email не вставляется в HTML небезопасной строкой.
-
-Важно:
-- Supabase Site URL должен оставаться: https://vlxax.github.io/poker-swipe/
-- Этот ZIP не меняет настройки Supabase на сервере.
-- После загрузки файлов дождись GitHub Pages deploy и открой приложение заново в Safari.
+Профиль использует существующие состояние S, функции show, formScore, disciplineScore, conceptLabel, topLeak, startConceptSwipe, openModal, exportPokerSwipe32 и контейнер #profileArea.
+Проверен изолированный DOM-рендер. Полная интеграция и мобильная вёрстка в браузере ещё не проверены.
