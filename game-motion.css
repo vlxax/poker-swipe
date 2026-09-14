@@ -57,7 +57,7 @@ body {
 #sizeResult:empty,
 #swipeVerdict.hidden { min-height: 0; }
 
-.screen.active { animation: none !important; }
+/* Screen enter: owned by ps-design-tokens.css + ps-ui-unified.css (loaded last) */
 
 /* Press targets */
 .primary,

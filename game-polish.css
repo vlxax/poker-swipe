@@ -381,11 +381,12 @@ body.psGameVisualV2 .psLossMap {
    SCREEN TRANSITIONS + REVEAL
    ═══════════════════════════════════════════ */
 
+/* Screen enter animation: see ps-design-tokens.css / ps-ui-unified.css */
 body.psGameVisualV2 .screen.ps-screen-enter {
-  animation: psScreenEnter var(--ps-screen-motion) cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: psScreenEnterPolish var(--ps-screen-motion) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes psScreenEnter {
+@keyframes psScreenEnterPolish {
   from {
     opacity: 0.88;
     transform: translateY(6px);

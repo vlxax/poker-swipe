@@ -24,7 +24,7 @@ function ensureScreen() {
   if (document.getElementById('ranges')) return document.querySelector('#rangesArea');
   const main = document.querySelector('#mainApp main') || document.querySelector('main');
   if (!main) return null;
-  main.insertAdjacentHTML('beforeend', '<section id="ranges" class="screen"><div id="rangesArea"></div></section>');
+  main.insertAdjacentHTML('beforeend', '<section id="ranges" class="screen psScreen"><div id="rangesArea"></div></section>');
   if (!document.querySelector('link[data-ranges-css]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
