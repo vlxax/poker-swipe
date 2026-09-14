@@ -1,0 +1,69 @@
+{
+  "source": "archive(3).zip",
+  "charts_parsed": 1578,
+  "cells_parsed": 266682,
+  "parser": "fixed 13x13 geometry + per-chart 4-color legend; full-cell pixel analysis; no OCR",
+  "color_match": "RGB distance < 65, saturation > 0.22",
+  "strict_action_rule": "colored coverage >= 11/15 and dominant source action >= 13/15; only labels with confirmed poker-action meaning are gradeable",
+  "strict_action_trainable_charts": 284,
+  "all_charts_interactive_reference": 1578,
+  "strict_action_candidates": 31617,
+  "by_mode": {
+    "callpush": {
+      "charts": 615,
+      "trainable": 0,
+      "candidates": 0
+    },
+    "huante": {
+      "charts": 172,
+      "trainable": 92,
+      "candidates": 15286
+    },
+    "sbvsbb": {
+      "charts": 34,
+      "trainable": 0,
+      "candidates": 1206
+    },
+    "vs1r": {
+      "charts": 323,
+      "trainable": 98,
+      "candidates": 9024
+    },
+    "vs1r1c": {
+      "charts": 68,
+      "trainable": 23,
+      "candidates": 2293
+    },
+    "vs1rshort": {
+      "charts": 33,
+      "trainable": 23,
+      "candidates": 1001
+    },
+    "vs2r": {
+      "charts": 53,
+      "trainable": 0,
+      "candidates": 222
+    },
+    "vs3bet": {
+      "charts": 56,
+      "trainable": 24,
+      "candidates": 610
+    },
+    "vs4bet": {
+      "charts": 11,
+      "trainable": 2,
+      "candidates": 158
+    },
+    "vslimp": {
+      "charts": 11,
+      "trainable": 5,
+      "candidates": 628
+    },
+    "vssqueeze": {
+      "charts": 202,
+      "trainable": 17,
+      "candidates": 1189
+    }
+  },
+  "important": "All 1578 charts are parsed. Graded action training is enabled only where at least two confirmed poker actions are present. nAI, low-playability/source-mix, callpush margin colors, and unknown SB-vs-BB source labels are preserved but not reinterpreted."
+}

@@ -1,0 +1,41 @@
+{
+  "source": "archive(3).zip",
+  "structured_interactive_charts": 60,
+  "source_library_charts": 1578,
+  "source_assets_embedded": 1578,
+  "missing_source_assets": [],
+  "interactive_positions": [
+    "EP",
+    "MP",
+    "LJ",
+    "HJ",
+    "CO",
+    "BTN"
+  ],
+  "interactive_stack_bands": [
+    "2-4",
+    "4-6",
+    "6-8",
+    "8-10",
+    "10-12",
+    "12-15",
+    "15-18",
+    "18-25",
+    "25-40",
+    "40+"
+  ],
+  "library_source_mode_counts": {
+    "vssqueeze": 202,
+    "vs1r1c": 68,
+    "vs1rshort": 33,
+    "vs3bet": 56,
+    "vs1r": 323,
+    "vs4bet": 11,
+    "vs2r": 53,
+    "huante": 172,
+    "vslimp": 11,
+    "sbvsbb": 34,
+    "callpush": 615
+  },
+  "note": "All 1578 library charts are preserved for lookup/viewing. Only 60 UO charts are structured hand-by-hand and therefore eligible for answer grading."
+}

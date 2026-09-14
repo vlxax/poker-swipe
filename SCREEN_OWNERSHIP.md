@@ -7,7 +7,7 @@
 | SWIPE | `swipe` | `renderSwipe` | inline + grading wrappers | `game-layout.css`, swipe styles | game-visual-rebuild | — |
 | SIZING | `sizing` | `renderSizing` | inline brain wrappers | sizing panel CSS | game-visual-rebuild | — |
 | MY HANDS | `myhands` | `renderMy` | inline + solver integration script | my hands CSS blocks | game-visual-rebuild | — |
-| MY RANGES | `ranges` | `render()` in `ranges-ui/main.js` | **`ranges-ui/main.js` (v4)** | **`ranges-ui/ranges-ui.css`** | dynamic `#ranges.psScreen` insert | — |
+| MY RANGES | `ranges` | `render()` in `ranges-ui/main.js` | **`ranges-ui/main.js` (v9 / structured UO)** | **`ranges-ui/ranges-ui.css`** | dynamic `#ranges.psScreen` insert | — |
 | PROFILE | `profile` | `render` | **`profile.js`** → `window.renderProfile` + `window.PokerSwipeProfile` | **`profile.css`** + `ps-ui-unified.css` (`.pid` bridge) | `game-visual-rebuild` **skipped** (`renderProfile.__psVisualV2`); legacy `index.html` v31/v30 wrappers **inactive** (overwritten by `profile.js`) | full `#profileArea` innerHTML each render |
 | POLYANA | `polyana` | `ensurePokerSwipePolyana` / `openPokerSwipePolyana` | **`polyana/polyana-integrated.js`** | **`polyana/polyana-integrated.css`** | v54 legacy fallback only if native flag false; `screen-router` scrub + ensure mount | `render()` replaces `#psPolyanaArea` |
 | TOURNAMENTS | `mytournaments` | `openMyTournamentsV72` | `my-tournaments-pro.js` / ps72 overlay | `my-tournaments-pro.css` | v54 journal on `#tournaments` (separate screen) | `screen-router` hide ps72 |
