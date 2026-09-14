@@ -11,7 +11,11 @@
     "test:training": "node --test solver/tests/sessionReview.test.js solver/tests/sessionResume.test.js solver/tests/trainingUiRenderer.test.js solver/tests/swipeGesture.test.js solver/tests/playerProfileUi.test.js solver/tests/personalizationP0Selector.test.js solver/tests/positionAwarenessStrictBand.test.js solver/tests/gradingPathConsistency.test.js solver/tests/gradingConsistency.test.js",
     "test:training-audit": "node --test solver/tests/trainingQualityAudit.test.js",
     "pretest:e2e:daily": "playwright install chromium",
-    "test:e2e:daily": "node tests/daily_e2e_verify.mjs"
+    "test:e2e:daily": "node tests/daily_e2e_verify.mjs",
+    "test:e2e:navigation": "node tests/navigation_daily_production.e2e.mjs",
+    "test:poker-correctness": "node --test solver/tests/handEvaluator.test.js solver/tests/handEvaluator.exhaustive.test.js solver/tests/handBucket.test.js solver/tests/libraryEvProvenance.test.js",
+    "test:poker-library": "node solver/scripts/taskContextIntegrityAudit.mjs",
+    "test:grading-consistency": "node --test solver/tests/gradingConsistency.test.js solver/tests/gradingPathConsistency.test.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
