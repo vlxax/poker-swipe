@@ -1,567 +1,191 @@
-/* PokerSwipe — ТЫ / ПРОФИЛЬ (single owner of window.renderProfile) */
+/* PokerSwipe · «Твой покерный почерк»
+ * Single owner of window.renderProfile. Read-only analytics: does not mutate grading/EV/state.
+ */
 (function () {
-  'use strict';
+'use strict';
 
-  const HIGH_CONF = 80;
-  const MIN_SHOW = 10;
-  const MIN_DIAGNOSIS = 20;
+const esc = x => String(x ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const list = x => Array.isArray(x) ? x.filter(v => v && typeof v === 'object') : [];
+const num = x => x !== null && x !== undefined && x !== '' && Number.isFinite(Number(x)) ? Number(x) : null;
+const pct = (n,d) => d ? Math.round(n / d * 100) : null;
+const clamp = (n,a,b) => Math.max(a, Math.min(b,n));
 
-  function state() {
-    if (typeof window.PokerSwipeCore?.store?.getState === 'function') {
-      return window.PokerSwipeCore.store.getState();
-    }
-    return window.S || { events: [], skill: 50, nick: '', snapshots: [], hands: [], dailyArchive: [], healCourses: {}, tournaments: [], xray: { runs: 0 }, streak: 0 };
-  }
+const ACTIVITY = [
+ ['daily','Раздача дня',['daily']],['swipe','Poker Swipe',['swipe','training','quickgame']],
+ ['sizing','Сайзинг',['sizing']],['review','Разбор линии',['review']],['myhands','Мои раздачи',['myhands']],
+ ['heal','Heal',['heal']],['exploit','Эксплойт',['exploit']],['ranges','Ренджи',['ranges']],
+ ['xray','Рентген',['xray']],['polyana','Поляна',['polyana']],['mytournaments','Мои турниры',[]]
+];
 
-  function esc(v) {
-    if (typeof window.esc === 'function') return window.esc(v);
-    return String(v ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-  }
+const LABELS = {
+ 'preflop.rfi':'Открытия префлоп','preflop.open':'Открытия префлоп','rfi':'Открытия префлоп',
+ 'bb_defence':'Защита большого блайнда','bb.defence':'Защита большого блайнда','preflop.bb_defence':'Защита большого блайнда',
+ '3bet':'Игра против 3-бета','3-bet':'Игра против 3-бета','preflop.3bet':'Игра против 3-бета',
+ 'river_bluffcatch':'Блафф-кэтч на ривере','thin_value':'Тонкое вэлью','sizing':'Размер ставки'
+};
 
-  function eventsForProfile() {
-    return (state().events || []).filter((e) => e && e.mode !== 'diagnostic' && !e.excludeFromProfile);
-  }
+function currentState(){ return window.PokerSwipeCore?.store?.getState?.() ?? window.S ?? null; }
+function confidence(e){ const n=num(e.playerConfidence ?? e.confidence); return n!==null && n>=0 && n<=100 ? n : null; }
+function gradeLabel(g){ return g==='g'?'основная линия':g==='y'?'допустимая линия':'ошибка'; }
+function eventTime(e){ return num(e.ts) ?? (Date.parse(e.date)||0); }
 
-  function gradeWeight(g) {
-    if (g === 'g') return 1;
-    if (g === 'y') return 0.55;
-    if (g === 'r') return 0;
-    return null;
-  }
+function cleanEvents(state){
+ const seen=new Set();
+ return list(state?.events).filter(e=>{
+  if(e.mode==='diagnostic'||e.mode==='legacy'||e.excludeFromProfile||e.test===true||!['g','y','r'].includes(e.grade)) return false;
+  const id=e.eventId??e.id;
+  if(id!=null){ const k=String(id); if(seen.has(k)) return false; seen.add(k); }
+  return true;
+ }).sort((a,b)=>eventTime(a)-eventTime(b));
+}
+function summary(events){
+ const n=events.length,g=events.filter(e=>e.grade==='g').length,r=events.filter(e=>e.grade==='r').length;
+ return {n,g,r,y:n-g-r,accuracy:pct(g,n),errorRate:pct(r,n)};
+}
+function conceptKey(e){ return String(e.conceptId||e.concept||'').trim(); }
+function label(key){ return LABELS[key] || window.conceptLabel?.(key) || key.replace(/[._]/g,' ').replace(/\b\w/g,m=>m.toUpperCase()); }
+function groups(events){
+ const m=new Map();
+ for(const e of events){ const key=conceptKey(e); if(!key||key==='unknown') continue; if(!m.has(key))m.set(key,[]); m.get(key).push(e); }
+ return [...m].map(([key,a])=>{
+  const s=summary(a),confidentWrong=a.filter(e=>e.grade==='r'&&confidence(e)!==null&&confidence(e)>=80).length;
+  return {key,events:a,...s,confidentWrong};
+ });
+}
+function streetOf(e){ return String(e.street||'').toUpperCase(); }
+function inPreflop(e){ const s=streetOf(e),k=conceptKey(e); return /^(PREFLOP|ПРЕФЛОП)$/.test(s)||/^preflop\.|RFI|BB defence|3-?bet/i.test(k); }
+function inPostflop(e){ const s=streetOf(e),k=conceptKey(e); return /^(FLOP|TURN|RIVER|ФЛОП|ТЕРН|ТЁРН|РИВЕР)$/.test(s)||/^postflop\./i.test(k); }
+function inSizing(e){ return e.mode==='sizing'||e.gradeSize!=null||/sizing|size|bet_size/i.test(conceptKey(e)); }
 
-  function weightedQuality(ev) {
-    const w = [];
-    for (const e of ev) {
-      const g = gradeWeight(e.grade);
-      if (g === null) continue;
-      w.push(g);
-    }
-    if (!w.length) return null;
-    return Math.round((w.reduce((a, b) => a + b, 0) / w.length) * 100);
-  }
+function statusFor(n){ return n<10?'Собираем данные':n<20?'Виден паттерн':'Есть выборка'; }
+function axisModel(name,events){
+ const s=summary(events),concepts=groups(events).sort((a,b)=>b.n-a.n);
+ return {name,events,concepts,...s,status:statusFor(s.n)};
+}
+function evidenceRank(g){ return g.n*2 + g.confidentWrong*4 + g.r; }
+function latestProofs(g){ return g.events.slice(-4).reverse(); }
+function strengthCandidate(concepts){
+ return concepts.filter(g=>g.n>=10 && g.accuracy>=75 && summary(g.events.slice(-5)).accuracy>=60)
+  .sort((a,b)=>(b.accuracy-a.accuracy)||(b.n-a.n))[0]||null;
+}
+function growthCandidate(concepts){
+ const confident=concepts.filter(g=>g.n>=6&&g.confidentWrong>=2).sort((a,b)=>(b.confidentWrong-a.confidentWrong)||(b.errorRate-a.errorRate))[0];
+ if(confident) return confident;
+ return concepts.filter(g=>g.n>=10&&g.r>=2).sort((a,b)=>(b.errorRate-a.errorRate)||evidenceRank(b)-evidenceRank(a))[0]||null;
+}
+function compareAxis(axis){
+ if(axis.events.length<40) return null;
+ const before=summary(axis.events.slice(-40,-20)),after=summary(axis.events.slice(-20));
+ const d=(after.accuracy??0)-(before.accuracy??0);
+ return {name:axis.name,before:before.accuracy,after:after.accuracy,d,n:40};
+}
+function matrix(events){
+ const cells=[0,0,0,0]; let missing=0,acceptable=0;
+ for(const e of events){ if(e.grade==='y'){acceptable++;continue;} const c=confidence(e); if(c===null){missing++;continue;} cells[(e.grade==='r'?2:0)+(c>=80?0:1)]++; }
+ return {cells,missing,acceptable};
+}
+function uniqueHands(state){
+ const seen=new Set(); return [...list(state?.hands),...list(state?.myHands18)].filter(h=>{const id=h.sourceHandId?`${h.sourceRoom||''}:${h.sourceHandId}`:h.id;if(id==null)return true;const k=String(id);if(seen.has(k))return false;seen.add(k);return true;}).length;
+}
+function model(state){
+ const events=cleanEvents(state),concepts=groups(events),m=matrix(events);
+ const axes=[axisModel('Префлоп',events.filter(inPreflop)),axisModel('Постфлоп',events.filter(inPostflop)),axisModel('Сайзинг',events.filter(inSizing))];
+ const strength=strengthCandidate(concepts),growth=growthCandidate(concepts);
+ const changes=axes.map(compareAxis).filter(Boolean).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
+ return {events,concepts,m,axes,strength,growth,changes};
+}
 
-  function playerConfidence(e) {
-    const c = e.confidence;
-    if (c === null || c === undefined || c === '') return null;
-    const n = Number(c);
-    return Number.isFinite(n) ? n : null;
-  }
+function proofRows(g){
+ return latestProofs(g).map(e=>`<p class="pid-proof"><span>${esc(e.date||'Без даты')}</span><b>${esc(e.action||e.answer||'Решение')}</b><small>${gradeLabel(e.grade)}${confidence(e)!==null?' · уверенность '+confidence(e)+'%':''}</small></p>`).join('');
+}
+function evidence(g){
+ if(!g) return '';
+ return `<details class="pid-evidence"><summary><span>Почему мы так считаем?</span><b>${g.n} решений</b></summary><p class="pid-explain">Основная линия: ${g.g}. Допустимая: ${g.y}. Ошибок: ${g.r}.${g.confidentWrong?` Ошибок при высокой уверенности: ${g.confidentWrong}.`:''}</p>${proofRows(g)}<p class="pid-note">Повторы одной и той же задачи могут переоценивать силу сигнала. Профиль описывает сохранённые упражнения, а не всю реальную игру.</p></details>`;
+}
+function axisCard(a){
+ const score=a.n>=10?a.accuracy:null;
+ const top=a.concepts.slice(0,3);
+ return `<details class="pid-axis" ${a.name==='Префлоп'?'open':''}><summary><span><b>${a.name}</b><small>${a.status} · ${a.n} решений</small></span><strong>${score===null?'—':score+'%'}</strong></summary><div class="pid-axis-body">${score!==null?`<div class="pid-meter"><i style="width:${clamp(score,0,100)}%"></i></div>`:''}${top.length?top.map(g=>`<div class="pid-topic"><span>${esc(label(g.key))}<small>${g.n} решений · ${g.r} ошибок${g.confidentWrong?' · '+g.confidentWrong+' уверенных':''}</small></span><b>${g.n>=6?g.accuracy+'%':'—'}</b></div>`).join(''):`<p class="pid-muted">Пока нет достаточно конкретных тем, чтобы показать разбор.</p>`}</div></details>`;
+}
+function mainObservation(strength,growth,has){
+ if(!has) return 'Я только начинаю собирать твой покерный почерк. Первые решения покажут, на что ты уже можешь опереться и где чаще всего теряешь точность.';
+ if(strength&&growth) return `${label(strength.key)} сейчас выглядит твоей опорой. А в теме «${label(growth.key)}» есть паттерн, который стоит проверить внимательнее.`;
+ if(growth) return `В теме «${label(growth.key)}» уже виден повторяющийся паттерн. Я бы начала разбор именно отсюда.`;
+ if(strength) return `«${label(strength.key)}» сейчас выглядит самой устойчивой частью твоей сохранённой выборки.`;
+ return 'Данных уже достаточно для карты игры, но пока рано делать сильные выводы по отдельным темам.';
+}
+function spotlight(type,g){
+ const isStrength=type==='strength';
+ if(!g) return `<article class="pid-spot ${isStrength?'pid-spot-good':'pid-spot-grow'}"><span class="pid-ey">${isStrength?'ТВОЯ ОПОРА':'ТОЧКА РОСТА'}</span><h3>${isStrength?'Пока ищем устойчивую сильную сторону':'Пока собираем повторяющийся паттерн'}</h3><p>${isStrength?'Нужно хотя бы 10 решений в одной теме и стабильность на последних задачах.':'Уверенная ошибка важна для обучения, но не означает большой проигрыш в фишках без достоверного EV.'}</p></article>`;
+ const line=isStrength?`${g.accuracy}% основных линий на ${g.n} решениях.`:`${g.r} ошибок на ${g.n} решениях${g.confidentWrong?`, из них ${g.confidentWrong} при высокой уверенности`:''}.`;
+ return `<article class="pid-spot ${isStrength?'pid-spot-good':'pid-spot-grow'}"><span class="pid-ey">${isStrength?'ТВОЯ ОПОРА':'ТОЧКА РОСТА'}</span><h3>${esc(label(g.key))}</h3><p>${line}</p>${evidence(g)}</article>`;
+}
+function changesBlock(changes){
+ if(!changes.length) return `<div class="pid-change-empty"><b>Пока сравнивать рано</b><p>«Что изменилось» появится после двух полных отрезков по 20 решений внутри одной зоны. Сравниваем только похожие группы задач.</p></div>`;
+ return changes.map(c=>`<div class="pid-change"><span><b>${c.name}</b><small>предыдущие 20 → последние 20</small></span><strong class="${c.d>0?'pid-up':c.d<0?'pid-down':''}">${c.before}% → ${c.after}%</strong><em>${c.d>0?'+':''}${c.d} п.п.</em></div>`).join('')+`<p class="pid-note">Это изменение качества решений в сохранённых упражнениях. Оно не доказывает изменение винрейта или турнирных результатов.</p>`;
+}
+function activityBlock(state,events){
+ const rows=ACTIVITY.map(([route,name,modes])=>{
+  const s=summary(events.filter(e=>modes.includes(e.mode))); let value=s.n,detail=s.n?`${s.n} решений`:'нет решений';
+  if(route==='myhands'){value=uniqueHands(state);detail='сохранённых раздач';}
+  if(route==='mytournaments'){value=list(state.tournaments).length;detail='турниров в истории';}
+  if(route==='heal'){const c=Object.values(state.healCourses||{}).filter(Array.isArray);value=c.filter(a=>a.length&&a.every(v=>v===1||v===true)).length;detail='завершённых курсов';}
+  if(route==='polyana'){value='—';detail='расписание и планы';}
+  if(route==='ranges'&&!s.n){value='—';detail='справочник';}
+  if(route==='xray'&&!s.n){value=num(state.xray?.runs)??'—';detail='прохождений';}
+  return `<div><span>${name}<small>${detail}</small></span><b>${value||'—'}</b></div>`;
+ }).join('');
+ return `<details class="pid-details"><summary>Активность в приложении <span>не оценка игры</span></summary><div class="pid-activity">${rows}</div></details>`;
+}
 
-  function conceptName(c) {
-    try {
-      return typeof conceptLabel === 'function' ? conceptLabel(c) : String(c || '');
-    } catch (err) {
-      return String(c || '');
-    }
-  }
+function render(){
+ const root=document.getElementById('profileArea'); if(!root) return;
+ const state=currentState();
+ if(!state){ root.innerHTML='<div class="pid"><section class="pid-error"><h2>Профиль пока недоступен</h2><p>Не удалось загрузить данные игрока. Попробуй открыть профиль снова.</p></section></div>'; return; }
+ const M=model(state),has=M.events.length>0;
+ const name=state.nick||state.name||'ЛЕРА';
+ const observation=mainObservation(M.strength,M.growth,has);
+ const matrixCount=M.m.cells.reduce((a,b)=>a+b,0);
+ const confidenceSummary=matrixCount?`${M.m.cells[2]} уверенных ошибок · ${M.m.cells[0]} уверенных основных линий`:'Пока нет достаточных отметок уверенности';
+ const skill=(has||state.diagDone)?num(state.skill):null;
 
-  function splitSkill(filter) {
-    const all = eventsForProfile().filter(filter);
-    const cur = all.slice(-20);
-    const prev = all.slice(-40, -20);
-    const now = weightedQuality(cur);
-    const before = weightedQuality(prev);
-    const overall = weightedQuality(all);
-    return {
-      n: all.length,
-      score: now ?? overall,
-      delta: now != null && before != null ? now - before : null,
-    };
-  }
+ root.innerHTML=`<div class="pid" data-profile-build="poker-handwriting-v2">
+  <header class="pid-intro">
+   <div class="pid-brand"><b>POKER <i>SWIPE</i></b><span>ЛИЧНОЕ ДОСЬЕ</span></div>
+   <div class="pid-person"><span class="pid-avatar">♠</span><div><b>${esc(name)}</b><small>${M.events.length} решений в истории</small></div>${skill!==null?`<span class="pid-skill">Skill ${esc(skill)}</span>`:''}</div>
+   <h1>ТВОЙ ПОКЕРНЫЙ<br><em>ПОЧЕРК.</em></h1>
+   <div class="pid-voice"><span class="pid-ey">ФРИКОВАЯ ДАМА ЗАМЕТИЛА</span><p>${esc(observation)}</p></div>
+  </header>
 
-  function profileStatusLabel(n) {
-    if (n < MIN_SHOW) return 'Собираем выборку';
-    if (n < MIN_DIAGNOSIS) return 'Паттерн проявляется';
-    return 'Достаточно для выводов';
-  }
+  ${!has?`<section class="pid-collect"><span class="pid-ey">ДОСЬЕ СОБИРАЕТСЯ</span><h2>Мне нужны твои решения, а не просто клики.</h2><p>Когда появится выборка, здесь будут конкретные темы, доказательства и изменения — без психологических ярлыков и без выдуманного EV.</p></section>`:`
+  <section class="pid-map">
+   <div class="pid-heading"><div><span class="pid-ey">КАРТА ТВОЕЙ ИГРЫ</span><h2>Три направления. Внутри — конкретные споты.</h2></div><small>Нажми на зону ↓</small></div>
+   <div class="pid-axes">${M.axes.map(axisCard).join('')}</div>
+  </section>
 
-  function sampleReliability(n) {
-    if (n < 8) return ['Низкая', 'Нужно больше решений в профиле'];
-    if (n < 25) return ['Средняя', 'Уже виден общий паттерн'];
-    return ['Высокая', 'Выборка устойчивая'];
-  }
+  <section class="pid-spots">${spotlight('strength',M.strength)}${spotlight('growth',M.growth)}</section>
 
-  function confidenceMatrix(ev) {
-    const m = { cc: 0, cu: 0, yOk: 0, wu: 0, wc: 0, unknown: 0 };
-    for (const e of ev) {
-      const pc = playerConfidence(e);
-      if (pc === null) {
-        m.unknown++;
-        continue;
-      }
-      const high = pc >= HIGH_CONF;
-      if (e.grade === 'g') {
-        if (high) m.cc++;
-        else m.cu++;
-      } else if (e.grade === 'y') {
-        m.yOk++;
-      } else if (e.grade === 'r') {
-        if (high) m.wc++;
-        else m.wu++;
-      } else {
-        m.unknown++;
-      }
-    }
-    return m;
-  }
+  <section class="pid-changes"><div class="pid-heading"><div><span class="pid-ey">ЧТО ИЗМЕНИЛОСЬ</span><h2>Сравнение с собой</h2></div></div>${changesBlock(M.changes)}</section>
+  `}
 
-  function blindZones(ev) {
-    const by = {};
-    for (const e of ev) {
-      if (e.grade !== 'r') continue;
-      const pc = playerConfidence(e);
-      if (pc === null || pc < HIGH_CONF) continue;
-      const key = e.concept || 'unknown';
-      if (!by[key]) by[key] = { concept: key, n: 0, examples: [] };
-      by[key].n++;
-      if (by[key].examples.length < 3) by[key].examples.push(e);
-    }
-    return Object.values(by)
-      .filter((x) => x.n >= 2)
-      .sort((a, b) => b.n - a.n);
-  }
+  <section class="pid-secondary">
+   <details class="pid-details"><summary>Уверенность и ошибки <span>${esc(confidenceSummary)}</span></summary>${matrixCount?`<div class="pid-confidence"><div><span>Верно · уверенно</span><b>${M.m.cells[0]}</b></div><div><span>Верно · с сомнением</span><b>${M.m.cells[1]}</b></div><div><span>Ошибка · уверенно</span><b>${M.m.cells[2]}</b></div><div><span>Ошибка · с сомнением</span><b>${M.m.cells[3]}</b></div></div><p class="pid-note">Высокая уверенность — от 80%. Уверенная ошибка важнее для обучения, но без достоверного EV мы не называем её «дорогой».</p>`:`<p class="pid-muted">Когда в решениях появится уверенность, здесь будет связь между уверенностью и качеством ответа.</p>`}</details>
+   ${activityBlock(state,M.events)}
+   <details class="pid-details"><summary>Границы наблюдения <span>что профиль знает</span></summary><p class="pid-muted">Профиль строится по сохранённым упражнениям PokerSwipe. Турнирный результат не используется как доказательство качества решения. Частота коллов или рейзов сама по себе не превращается в «стиль игрока»: нужен контекст доступных действий и состава задач.</p></details>
+  </section>
 
-  function confirmedStrengths(ev) {
-    const stats = typeof conceptStats === 'function' ? conceptStats() : [];
-    return stats
-      .filter((x) => x.n >= MIN_SHOW && x.score >= 75 && (x.r || 0) <= Math.max(1, Math.floor(x.n * 0.15)))
-      .slice(0, 4);
-  }
+  <details class="pid-settings"><summary>Данные и настройки <span>↗</span></summary><div class="pid-tools">${typeof window.exportPokerSwipe32==='function'?'<button type="button" data-pid-action="export">Скачать данные</button>':''}${typeof window.importPokerSwipe32==='function'?'<label>Восстановить из файла<input type="file" data-pid-import accept="application/json,.json"></label>':''}${typeof window.startDiagnostic25==='function'?'<button type="button" data-pid-action="diagnostic">Повторить диагностику</button>':''}</div><p class="pid-note" id="pid-status" role="status"></p></details>
+ </div>`;
 
-  function healProgress() {
-    const courses = state().healCourses || {};
-    let done = 0;
-    let total = 0;
-    for (const steps of Object.values(courses)) {
-      if (!Array.isArray(steps)) continue;
-      total += steps.length;
-      done += steps.filter(Boolean).length;
-    }
-    return { done, total };
-  }
+ root.onclick=e=>{
+  const a=e.target.closest('[data-pid-action]')?.dataset.pidAction;
+  if(a==='export') window.exportPokerSwipe32?.();
+  if(a==='diagnostic'&&window.confirm('Начать диагностику заново?')) window.startDiagnostic25?.(true);
+ };
+ const input=root.querySelector('[data-pid-import]');
+ if(input) input.onchange=async()=>{const file=input.files?.[0]; if(!file)return; try{await window.importPokerSwipe32(file);render();}catch(e){const s=root.querySelector('#pid-status');if(s)s.textContent='Не удалось восстановить данные. Проверь файл.';}};
+}
 
-  function exploitOverview() {
-    try {
-      const raw = localStorage.getItem('pokerswipe_exploit_session_v1');
-      if (!raw) return null;
-      const snap = JSON.parse(raw);
-      const stats = snap?.stats || snap?.progress?.stats || snap;
-      const tasks = Number(stats?.tasksSeen ?? stats?.overview?.tasksSeen ?? 0);
-      if (!tasks) return { tasksSeen: 0 };
-      const acc = stats?.accuracy ?? stats?.overview?.accuracy;
-      return {
-        tasksSeen: tasks,
-        accuracyPercent: acc != null && Number.isFinite(Number(acc)) ? Math.round(Number(acc) * (Number(acc) <= 1 ? 100 : 1)) : null,
-      };
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function polyanaFavorites() {
-    try {
-      const raw = localStorage.getItem('psp-polyana-favorite-clubs-v1');
-      const list = raw ? JSON.parse(raw) : [];
-      return Array.isArray(list) ? list.length : 0;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  function tournamentSummary() {
-    const list = Array.isArray(state().tournaments) ? state().tournaments : [];
-    if (!list.length) return { count: 0 };
-    if (typeof t23Stats === 'function') {
-      try {
-        const st = t23Stats();
-        return { count: st.count, profit: st.profit, currency: st.currency, invested: st.invested };
-      } catch (e) { /* fall through */ }
-    }
-    return { count: list.length };
-  }
-
-  function sectionCards(ev) {
-    const q = (mode) => weightedQuality(ev.filter(mode));
-    const n = (mode) => ev.filter(mode).length;
-    const heal = healProgress();
-    const xr = state().xray || {};
-    const exploit = exploitOverview();
-    const polyFav = polyanaFavorites();
-    const tour = tournamentSummary();
-    const dailyArch = state().dailyArchive || [];
-    const handsSaved = (state().hands || []).length;
-    const recon = (state().myHands18 || []).length;
-
-    return [
-      {
-        id: 'daily',
-        title: 'Раздача дня',
-        route: 'daily',
-        primary: `${dailyArch.length} в архиве`,
-        secondary: dailyArch.length ? 'завершённые дни, не общий счётчик решений' : 'раздел ещё не отмечал прохождения',
-      },
-      {
-        id: 'swipe',
-        title: 'Swipe / тренировка',
-        route: 'swipe',
-        primary: n((e) => e.mode === 'swipe' || e.mode === 'quickgame') + ' решений',
-        secondary: q((e) => e.mode === 'swipe' || e.mode === 'quickgame') != null
-          ? `взвешенное качество ${q((e) => e.mode === 'swipe' || e.mode === 'quickgame')}/100`
-          : 'мало данных для оценки',
-      },
-      {
-        id: 'sizing',
-        title: 'Sizing',
-        route: 'sizing',
-        primary: n((e) => e.mode === 'sizing' || e.sizePct != null) + ' решений',
-        secondary: q((e) => e.mode === 'sizing' || e.sizePct != null) != null
-          ? `качество ${q((e) => e.mode === 'sizing' || e.sizePct != null)}/100`
-          : 'мало данных',
-      },
-      {
-        id: 'review',
-        title: 'Review',
-        route: 'review',
-        primary: n((e) => e.mode === 'review') + ' упражнений',
-        secondary: 'разбор учебных линий, не импортированные руки',
-      },
-      {
-        id: 'myhands',
-        title: 'My Hands',
-        route: 'myhands',
-        primary: `${handsSaved} раздач в коллекции`,
-        secondary: recon ? `+ ${recon} черновиков recon` : 'сохранённые разборы из реальной игры',
-      },
-      {
-        id: 'heal',
-        title: 'Heal',
-        route: 'heal',
-        primary: heal.total ? `${heal.done}/${heal.total} шагов курса` : 'курсы не начаты',
-        secondary: 'прогресс прохождения ≠ подтверждённое исправление лика',
-      },
-      {
-        id: 'exploit',
-        title: 'Exploit',
-        route: 'exploit',
-        primary: exploit?.tasksSeen ? `${exploit.tasksSeen} задач` : 'нет сохранённой статистики',
-        secondary: exploit?.accuracyPercent != null ? `точность ответов ${exploit.accuracyPercent}%` : 'мини-приложение не записывало сессию',
-      },
-      {
-        id: 'ranges',
-        title: 'Ranges / X-Ray',
-        route: 'ranges',
-        primary: (xr.runs || 0) + ' сессий рентгена',
-        secondary: xr.best ? `лучший результат ${xr.best}/100` : 'справочник и тренажёр диапазонов',
-      },
-      {
-        id: 'polyana',
-        title: 'Поляна',
-        route: 'polyana',
-        primary: polyFav ? `${polyFav} избранных клубов` : 'избранное не настроено',
-        secondary: 'расписание и карта — отдельно от покерного skill',
-      },
-      {
-        id: 'mytournaments',
-        title: 'Мои турниры',
-        route: 'mytournaments',
-        primary: tour.count ? `${tour.count} турниров` : 'история пуста',
-        secondary:
-          tour.profit != null && tour.currency
-            ? `результат ${tour.profit >= 0 ? '+' : ''}${tour.profit} ${tour.currency}`
-            : 'реальные бай-ины и призы, не планы Поляны',
-      },
-    ];
-  }
-
-  function skillSummary(ev, n) {
-    const skill = Number.isFinite(Number(state().skill)) ? Number(state().skill) : 50;
-    const lines = [];
-    if (n < MIN_SHOW) {
-      lines.push('Skill пока опирается на короткую выборку — не путай с финальным уровнем.');
-    } else {
-      lines.push('Skill — накопленная оценка качества решений с учётом свежести и сложности спотов.');
-    }
-    const leak = typeof topLeak === 'function' ? topLeak() : null;
-    if (leak && leak.n >= 3) {
-      lines.push(`Повторяемость: ${conceptName(leak.concept)} (${leak.r}/${leak.n} ошибок в концепте).`);
-    }
-    return { skill, lines };
-  }
-
-  function youVsYou(ev) {
-    const recent = ev.slice(-20);
-    const previous = ev.slice(-40, -20);
-    const r = weightedQuality(recent);
-    const p = weightedQuality(previous);
-    if (r == null || p == null || !previous.length) {
-      return { ok: false, text: 'Сравнение «ты vs ты» появится после двух сопоставимых отрезков по 20 решений.' };
-    }
-    const delta = r - p;
-    let text;
-    if (Math.abs(delta) < 4) text = 'Качество решений примерно на том же уровне — смотри конкретные зоны ниже.';
-    else if (delta > 0) text = `Взвешенное качество последних 20 решений выше предыдущих 20 на ${delta} п.п.`;
-    else text = `Последние 20 решений слабее предыдущих 20 на ${Math.abs(delta)} п.п.`;
-    return { ok: true, recent: r, previous: p, delta, text };
-  }
-
-  function snapshotHistory() {
-    const snaps = (state().snapshots || []).slice(-14);
-    if (snaps.length < 2) return null;
-    return snaps;
-  }
-
-  function bindTools(root) {
-    const box = root.querySelector('.psTools');
-    if (!box) return;
-    box.querySelector('#psHeal')?.addEventListener('click', () => window.show?.('heal'));
-    box.querySelector('#psRetake')?.addEventListener('click', () => window.startDiagnostic25?.(true));
-    box.querySelector('#psExport')?.addEventListener('click', () => window.exportPokerSwipe32?.());
-    box.querySelector('#psImport')?.addEventListener('click', () => box.querySelector('#psImportFile')?.click());
-    box.querySelector('#psImportFile')?.addEventListener('change', (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(String(reader.result || ''));
-          const incoming = parsed?.state || parsed;
-          if (!incoming || typeof incoming !== 'object' || !Array.isArray(incoming.events)) {
-            throw new Error('Это не backup PokerSwipe');
-          }
-          const next = typeof structuredClone === 'function' ? structuredClone(incoming) : JSON.parse(JSON.stringify(incoming));
-          if (window.PokerSwipeCore?.store?.replaceState) {
-            window.PokerSwipeCore.store.replaceState(next);
-            window.PokerSwipeCore.store.save?.();
-          } else {
-            window.S = next;
-            if (typeof save === 'function') save();
-          }
-          window.openModal?.('<span class="ey">ИМПОРТ</span><h2>Данные восстановлены</h2><p>Перезагрузка…</p>');
-          setTimeout(() => location.reload(), 800);
-        } catch (err) {
-          window.openModal?.(`<span class="ey">ИМПОРТ</span><h2>Не удалось</h2><p>${esc(err.message)}</p>`);
-        }
-      };
-      reader.readAsText(file);
-    });
-  }
-
-  function renderProfile() {
-    const root = document.getElementById('profileArea');
-    if (!root) return;
-    root.className = 'psYouRoot psScreenBody';
-
-    const ev = eventsForProfile();
-    const n = ev.length;
-    const nick = esc(state().nick || state().name || 'ИГРОК');
-    const status = profileStatusLabel(n);
-    const rel = sampleReliability(n);
-    const sum = skillSummary(ev, n);
-    const form = typeof formScore === 'function' ? formScore() : null;
-
-    const pre = splitSkill((e) => /RFI|BB defence|3-bet|flat IP|polar 3-bet/i.test(e.concept || '') || String(e.street || '').toUpperCase() === 'ПРЕФЛОП');
-    const post = splitSkill((e) => String(e.street || '').toUpperCase() !== 'ПРЕФЛОП' && e.street && e.mode !== 'sizing');
-    const size = splitSkill((e) => e.mode === 'sizing' || e.sizePct != null);
-    let discScore = null;
-    try {
-      if (typeof disciplineScore === 'function') discScore = disciplineScore();
-    } catch (e) { /* noop */ }
-    const disc = { n, score: Number.isFinite(discScore) ? discScore : weightedQuality(ev), delta: null };
-
-    const matrix = confidenceMatrix(ev.filter((e) => playerConfidence(e) != null));
-    const blinds = blindZones(ev);
-    const strengths = confirmedStrengths(ev);
-    const vs = youVsYou(ev);
-    const history = snapshotHistory();
-    const sections = sectionCards(ev);
-
-    const dnaNodes = [
-      ['Префлоп', pre],
-      ['Постфлоп', post],
-      ['Sizing', size],
-      ['Дисциплина', disc],
-    ];
-
-    root.innerHTML = `<div class="psYou">
-      <header class="psHero">
-        <span class="psEy">ТЫ · ${nick} · POKER DNA</span>
-        <h1>ТВОЁ<br><em>ПОКЕРНОЕ ДОСЬЕ.</em></h1>
-        <p>Агрегат решений и разделов. Тренировки, импорт рук и турниры остаются в своих экранах — здесь только сводка.</p>
-        <span class="psStateChip">${esc(status)} · ${n} решений в профиле</span>
-        <div class="psHeroGrid">
-          <div class="psSkillBig">
-            <span>SKILL</span>
-            <b>${sum.skill}</b>
-            <small>${esc(sum.lines[0])}</small>
-          </div>
-          <div class="psHeroMeta">
-            <div>
-              <span>ФОРМА (20)</span>
-              <b>${form != null ? form : '—'}</b>
-              <small>качество последних решений, не изменение Skill</small>
-            </div>
-            <div>
-              <span>ДОСТОВЕРНОСТЬ</span>
-              <b>${esc(rel[0])}</b>
-              <small>${esc(rel[1])}</small>
-            </div>
-          </div>
-        </div>
-        <button type="button" class="psMethodToggle" id="psHow">КАК СЧИТАЕТСЯ SKILL И ВЫБОРКА? ↓</button>
-        <div class="psMethod hidden" id="psMethod">
-          <b>Skill</b> обновляется из качества решений (g / y / r с весами), а не из числа входов в приложение.
-          <b> Форма</b> — только последние 20 решений. <b>Взвешенное качество</b> в картах разделов — не «точность ответов», если это не доля верных в Exploit.
-          Диагностика, тестовые и помеченные excludeFromProfile события сюда не попадают.
-        </div>
-      </header>
-
-      <section class="psBlock">
-        <div class="psBlockHead">
-          <div><span class="psEy">КАРТА НАВЫКОВ</span><h2>POKER DNA</h2></div>
-          <small>размер выборки у каждой зоны</small>
-        </div>
-        <div class="psDnaGrid">
-          ${dnaNodes
-            .map(([label, st]) => {
-              const sc = st.score != null ? st.score : '—';
-              const showBar = st.n >= 5 && st.score != null;
-              return `<div class="psDnaNode">
-              <b>${esc(label)}</b>
-              <div class="psScore">${sc}${st.delta != null && Math.abs(st.delta) >= 4 ? (st.delta > 0 ? ` <small>↑${st.delta}</small>` : ` <small>↓${Math.abs(st.delta)}</small>`) : ''}</div>
-              <small>${st.n} реш. · ${st.n < MIN_SHOW ? 'мало данных' : 'оценка по выборке'}</small>
-              ${showBar ? `<div class="psBar"><i style="width:${Math.max(3, Math.min(100, st.score))}%"></i></div>` : ''}
-            </div>`;
-            })
-            .join('')}
-        </div>
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">РАЗДЕЛЫ ПРИЛОЖЕНИЯ</span>
-        <h2>СТАТИСТИКА ПО ЭКРАНАМ</h2>
-        <div class="psSections">
-          ${sections
-            .map(
-              (s) => `<button type="button" class="psSecCard" data-ps-route="${esc(s.route)}">
-            <div class="psSecTop"><b>${esc(s.title)}</b><span>→</span></div>
-            <p><strong>${esc(s.primary)}</strong> · ${esc(s.secondary)}</p>
-          </button>`
-            )
-            .join('')}
-        </div>
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">СИЛЬНЫЕ СТОРОНЫ</span>
-        <h2>ПОДТВЕРЖДЁННЫЕ ЗОНЫ</h2>
-        ${
-          strengths.length
-            ? `<div class="psList">${strengths
-                .map(
-                  (s) =>
-                    `<div class="psListItem"><strong>${esc(conceptName(s.concept))}</strong> · ${s.score}/100 · ${s.n} реш. · ошибок ${s.r || 0}</div>`
-                )
-                .join('')}</div>`
-            : `<p class="psEmpty">Нужно ≥${MIN_SHOW} решений в концепте и устойчивое качество ≥75 — без этого сильную сторону не называем.</p>`
-        }
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">СЛЕПЫЕ ЗОНЫ</span>
-        <h2>УВЕРЕННОСТЬ И ОШИБКА</h2>
-        ${
-          blinds.length
-            ? `<div class="psList">${blinds
-                .map((b) => {
-                  const ex = b.examples
-                    .map((e) => `${esc(conceptName(e.concept))} · conf ${playerConfidence(e)}`)
-                    .join('; ');
-                  return `<div class="psListItem"><strong>${esc(conceptName(b.concept))}</strong> — ${b.n} повтор${b.n === 1 ? '' : 'а'} при уверенности ≥${HIGH_CONF}. ${ex}</div>`;
-                })
-                .join('')}</div>`
-            : `<p class="psEmpty">Нужны повторяющиеся ошибки (≥2) с явно высокой уверенностью игрока в решении.</p>`
-        }
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">МАТРИЦА УВЕРЕННОСТИ ИГРОКА</span>
-        <h2>РЕШЕНИЕ × УВЕРЕННОСТЬ</h2>
-        <p class="psEmpty" style="margin-bottom:8px">Только поле confidence (твоя уверенность). Линия y не считается провалом. Без confidence: ${matrix.unknown} событий.</p>
-        <div class="psMatrix">
-          <div><span>ВЕРНО · ВЫСОКАЯ</span><b>${matrix.cc}</b></div>
-          <div><span>ВЕРНО · НИЗКАЯ</span><b>${matrix.cu}</b></div>
-          <div><span>ДОПУСТИМО (y)</span><b>${matrix.yOk}</b></div>
-          <div><span>ОШИБКА · ВЫСОКАЯ</span><b>${matrix.wc}</b></div>
-          <div><span>ОШИБКА · НИЗКАЯ</span><b>${matrix.wu}</b></div>
-        </div>
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">ТЫ VS ТЫ</span>
-        <h2>ДВА ОТРЕЗКА ПО 20 РЕШЕНИЙ</h2>
-        ${
-          vs.ok
-            ? `<div class="psVs">
-            <div><b>${vs.previous}</b><small>предыдущие 20</small></div>
-            <div class="psVsMid">${vs.delta > 0 ? '+' : ''}${vs.delta} п.п.</div>
-            <div><b>${vs.recent}</b><small>последние 20</small></div>
-          </div><p class="psEmpty">${esc(vs.text)}</p>`
-            : `<p class="psEmpty">${esc(vs.text)}</p>`
-        }
-      </section>
-
-      <section class="psBlock">
-        <span class="psEy">ИСТОРИЯ</span>
-        <h2>SKILL И ФОРМА ПО ДНЯМ</h2>
-        ${
-          history
-            ? `<div class="psHistory">${history
-                .map((s) => {
-                  const h = Math.max(4, Math.round((s.skill || 0) * 0.56));
-                  return `<div class="psHistBar" style="height:${h}px" title="${esc(s.date)} skill ${s.skill}"></div>`;
-                })
-                .join('')}</div><p class="psEmpty">Последние ${history.length} дней из snapshots (skill по дню).</p>`
-            : `<p class="psEmpty">История появится после нескольких дней с сохранёнными snapshots.</p>`
-        }
-      </section>
-
-      <section class="psBlock psTools panel">
-        <span class="psEy">СЛУЖЕБНОЕ</span>
-        <h2>ДАННЫЕ И НАСТРОЙКИ</h2>
-        <p class="psEmpty">Экспорт, импорт, Heal и повтор диагностики — те же действия, что в V32 tools.</p>
-        <div class="v32ToolGrid">
-          <button type="button" id="psHeal">HEAL-КУРСЫ</button>
-          <button type="button" id="psRetake">ПЕРЕПРОЙТИ ТЕСТ</button>
-          <button type="button" id="psExport">ЭКСПОРТ JSON</button>
-          <button type="button" id="psImport">ИМПОРТ JSON</button>
-        </div>
-        <input class="hidden" id="psImportFile" type="file" accept="application/json,.json" hidden>
-      </section>
-    </div>`;
-
-    root.querySelector('#psHow')?.addEventListener('click', () => root.querySelector('#psMethod')?.classList.toggle('hidden'));
-    root.querySelectorAll('[data-ps-route]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-ps-route');
-        if (id === 'mytournaments') {
-          if (typeof window.openMyTournamentsV72 === 'function') window.openMyTournamentsV72();
-          else if (typeof window.show === 'function') window.show('mytournaments');
-          return;
-        }
-        if (typeof window.show === 'function') window.show(id);
-      });
-    });
-    bindTools(root);
-  }
-
-  renderProfile.__psVisualV2 = true;
-  window.renderProfile = renderProfile;
-
-  if (document.getElementById('profile')?.classList.contains('active')) {
-    try {
-      renderProfile();
-    } catch (e) {
-      console.error('[profile]', e);
-    }
-  }
+window.PokerSwipeProfile={render,model,cleanEvents,confidence};
+window.renderProfile=render;
 })();

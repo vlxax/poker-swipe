@@ -156,6 +156,39 @@
   margin: 0 auto;
 }
 
+/* Profile (main handwriting / .pid) */
+#profileArea .pid,
+#profileArea .pid-intro,
+#profileArea .pid-map,
+#profileArea .pid-spots section,
+#profileArea .pid-changes,
+#profileArea .pid-collect {
+  font-family: var(--ps-font-ui);
+}
+#profileArea .pid-ey {
+  font-size: var(--ps-text-xs);
+  letter-spacing: 0.1em;
+  color: var(--ps-text-secondary);
+}
+#profileArea .pid-intro h1,
+#profileArea .pid-heading h2 {
+  font-family: var(--ps-font-ui);
+  font-size: var(--ps-text-xl);
+  font-weight: 900;
+  line-height: 1.05;
+}
+#profileArea .pid-axis,
+#profileArea .pid-spot,
+#profileArea .pid-collect {
+  border: 1px solid var(--ps-border);
+  border-radius: var(--ps-radius-card);
+  background: var(--ps-card-bg);
+}
+#profileArea .pid-tools button {
+  min-height: 44px;
+  border-radius: var(--ps-radius-md);
+}
+
 /* Poker notation — do not override card glyphs */
 .psScreen .pc,
 .psScreen .hand,

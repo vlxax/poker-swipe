@@ -1,400 +1,90 @@
-// Ranges section bridge — trainer browser + narrowing trainer + Range Battleship.
+import { UO_DATA, RANGE_LIBRARY } from './ranges-data.js';
+import { ACTIONS, USER_UNANSWERED, SHAPE_ACTIVE, actionMap, comboCount, safeChart, shapeComparison, actionComparison, personalizedDrill, fisherYates, conceptLeaks, describeShapeLeak, describeActionLeak, sourceModeLabel, validateUO, handAt, comboFor } from './core.js';
+import { loadChartAsset } from './chart-assets.js';
 
-import { TrainerBrowserController } from './trainerBrowserController.js';
-import { BattleshipController } from './battleship/controller.js';
-import { NarrowingController } from './narrowing/controller.js';
-import * as TR from './renderer.js';
-import * as BR from './battleship/renderer.js';
-import * as NR from './narrowing/renderer.js';
+const RANKS=UO_DATA.rank_order||['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
+const POSITIONS=UO_DATA.positions||[], STACKS=UO_DATA.stack_bands||[];
+const LABEL={ACTIVE:'ИГРАЕМ',INACTIVE:'НЕ ИГРАЕМ',AI:'ОЛЛ-ИН',nAI:'nAI',RAISE:'РЕЙЗ',LOW_PLAYABILITY:'НИЗКАЯ ИГРАЕМОСТЬ',UNSELECTED:'НЕ ВЫБРАНО',UNANSWERED:'НЕ ОТВЕЧЕНО'};
+const EXPLAIN={AI:'В исходном чарте эта рука отмечена как олл-ин.',nAI:'В исходном чарте стоит обозначение nAI. Точная расшифровка источником не подтверждена.',RAISE:'В исходном чарте эта рука отмечена как рейз.',LOW_PLAYABILITY:'В исходном чарте рука отдельно отмечена как рука с низкой играемостью.',UNSELECTED:'В исходном чарте эта клетка не выделена.'};
+const PREF_KEY='pokerswipe.ranges.v4', SESSION_KEY='pokerswipe.ranges.v4.session', HISTORY_KEY='pokerswipe.ranges.history';
+const COLOR={ACTIVE:'active',AI:'ai',nAI:'nai',RAISE:'raise',LOW_PLAYABILITY:'low',UNSELECTED:'none',UNANSWERED:'unanswered'};
+const TOTAL_COMBOS=1326;
 
-const storage = (() => {
-  try {
-    const s = window.localStorage;
-    s.setItem('__ps_rng_probe__', '1');
-    s.removeItem('__ps_rng_probe__');
-    return s;
-  } catch (e) { return null; }
-})();
+const state={view:'home',trainStep:'build',trainMode:'shape',position:'BTN',stack:'18-25',selected:null,paint:new Set(),userActions:new Map(),shapeBrush:'add',brushAction:'AI',undo:[],baseline:null,baselineLeaks:[],drill:[],drillIndex:0,drillScore:0,drillAnswered:false,lastCorrect:false,libQuery:'',libPage:0,libPreview:null,libMode:'',libPosition:'',libStack:'',retestDone:false,emitted:false,sessionId:null,toast:''};
 
-function getPack() {
-  return window.POKER_BRAIN_PACK || null;
-}
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const uid=()=>`ranges-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+function ensureCss(){if(document.querySelector('link[data-ranges-ui]'))return;const l=document.createElement('link');l.rel='stylesheet';l.href='ranges-ui/ranges-ui.css';l.dataset.rangesUi='1';document.head.appendChild(l);}
+function ensureScreen(){let s=document.getElementById('ranges');if(!s){s=document.createElement('section');s.id='ranges';s.className='screen psScreen';s.innerHTML='<div id="rangesArea"></div>';const x=document.getElementById('xray');(x?.parentNode||document.getElementById('mainApp')||document.body).insertBefore(s,x||null);}else{s.classList.add('psScreen');if(!s.querySelector('#rangesArea'))s.innerHTML='<div id="rangesArea"></div>';}return s;}
+const chart=()=>safeChart(UO_DATA,state.position,state.stack);
+const pct=n=>(n/TOTAL_COMBOS*100).toFixed(1);
+function snap(){return{paint:[...state.paint],actions:[...state.userActions.entries()]};}
+function pushUndo(){state.undo.push(snap());if(state.undo.length>50)state.undo.shift();}
+function undo(){const s=state.undo.pop();if(!s)return;state.paint=new Set(s.paint);state.userActions=new Map(s.actions);}
+function savePrefs(){try{localStorage.setItem(PREF_KEY,JSON.stringify({position:state.position,stack:state.stack,trainMode:state.trainMode}));}catch{}}
+function saveSession(){try{localStorage.setItem(SESSION_KEY,JSON.stringify({view:state.view,trainStep:state.trainStep,trainMode:state.trainMode,position:state.position,stack:state.stack,paint:[...state.paint],userActions:[...state.userActions],shapeBrush:state.shapeBrush,brushAction:state.brushAction,baseline:state.baseline,baselineLeaks:state.baselineLeaks,drill:state.drill,drillIndex:state.drillIndex,drillScore:state.drillScore,retestDone:state.retestDone,emitted:state.emitted,sessionId:state.sessionId,ts:Date.now()}));}catch{}}
+function loadSaved(){try{const p=JSON.parse(localStorage.getItem(PREF_KEY)||'null');if(p){if(POSITIONS.includes(p.position))state.position=p.position;if(STACKS.includes(p.stack))state.stack=p.stack;if(['shape','actions'].includes(p.trainMode))state.trainMode=p.trainMode;}const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(s&&Date.now()-(s.ts||0)<1000*60*60*24*3&&POSITIONS.includes(s.position)&&STACKS.includes(s.stack)){Object.assign(state,{view:s.view||'home',trainStep:s.trainStep||'build',trainMode:s.trainMode||'shape',position:s.position,stack:s.stack,shapeBrush:s.shapeBrush||'add',brushAction:s.brushAction||'AI',baseline:s.baseline||null,baselineLeaks:s.baselineLeaks||[],drill:s.drill||[],drillIndex:s.drillIndex||0,drillScore:s.drillScore||0,retestDone:!!s.retestDone,emitted:!!s.emitted,sessionId:s.sessionId||null});state.paint=new Set(s.paint||[]);state.userActions=new Map(s.userActions||[]);}}catch{}}
+function clearSavedSession(){try{localStorage.removeItem(SESSION_KEY);}catch{}}
+function resetTraining({newSession=true}={}){state.paint.clear();state.userActions.clear();state.undo=[];state.baseline=null;state.baselineLeaks=[];state.drill=[];state.drillIndex=0;state.drillScore=0;state.drillAnswered=false;state.lastCorrect=false;state.retestDone=false;state.emitted=false;state.trainStep='build';if(newSession)state.sessionId=uid();}
+function goto(view){state.view=view;state.selected=null;if(view==='home'&&state.retestDone)clearSavedSession();render();}
+function currentResult(c){return state.trainMode==='actions'?actionComparison(c,state.userActions):shapeComparison(c,state.paint);}
+function currentLeaks(c){return conceptLeaks(c,{mode:state.trainMode,paint:state.paint,userActions:state.userActions});}
 
-function ensureScreen() {
-  if (document.getElementById('ranges')) return document.querySelector('#rangesArea');
-  const main = document.querySelector('#mainApp main') || document.querySelector('main');
-  if (!main) return null;
-  main.insertAdjacentHTML('beforeend', '<section id="ranges" class="screen psScreen"><div id="rangesArea"></div></section>');
-  if (!document.querySelector('link[data-ranges-css]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'ranges-ui/ranges.css';
-    link.dataset.rangesCss = '1';
-    document.head.appendChild(link);
-  }
-  if (!document.querySelector('link[data-battleship-css]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'ranges-ui/battleship/battleship.css';
-    link.dataset.battleshipCss = '1';
-    document.head.appendChild(link);
-  }
-  if (!document.querySelector('link[data-narrowing-css]')) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'ranges-ui/narrowing/narrowing.css';
-    link.dataset.narrowingCss = '1';
-    document.head.appendChild(link);
-  }
-  return document.querySelector('#rangesArea');
-}
+function compactResult(r){if(state.trainMode==='actions')return{score:r.score,accuracyPct:r.accuracyPct,coveragePct:r.coveragePct,mismatches:r.mismatches.map(x=>({h:x.h,truth:x.truth,user:x.user,combos:x.combos})),unanswered:r.unanswered.map(x=>x.h)};return{score:r.score,extraC:r.extraC,missC:r.missC,extras:r.extras,miss:r.miss};}
+function emitTraining(c,result){if(state.emitted)return null;state.emitted=true;const afterLeaks=currentLeaks(c).slice(0,5),before=state.baseline||{};const payload={mode:'ranges',version:4,sessionId:state.sessionId||uid(),chartId:c.id,sourceGroup:c.source_group||'UO',position:c.position,stack:c.stack_bb,trainingMode:state.trainMode,initialScore:before.score??null,retestScore:result.score,improvement:before.score==null?null:result.score-before.score,initial:compactResult(before),after:compactResult(result),leaksBefore:state.baselineLeaks.slice(0,5),leaksAfter:afterLeaks,drillScore:state.drillScore,drillTotal:state.drill.length,timestamp:new Date().toISOString()};try{const arr=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x?.sessionId!==payload.sessionId);arr.unshift(payload);localStorage.setItem(HISTORY_KEY,JSON.stringify(arr.slice(0,100)));}catch{}try{window.dispatchEvent(new CustomEvent('pokerswipe:ranges-training-result',{detail:payload}));}catch{}try{if(typeof window.recordTrainingResult==='function')window.recordTrainingResult(payload);else if(typeof window.recordEvent==='function')window.recordEvent({mode:'ranges',concept:payload.leaksAfter[0]?.family||'range-boundary',grade:payload.retestScore,payload});}catch(e){console.warn('[Ranges] result integration failed',e);}saveSession();return payload;}
 
-const root = () => ensureScreen() || document.querySelector('#rangesArea');
+function header(){return `<div class="rg-top rg-top-simple"><div><div class="rg-kicker">POKERSWIPE</div><h1>РЕНДЖИ</h1></div><button class="rg-home-btn" data-view="home">ГЛАВНАЯ</button></div>`;}
 
-const narrowCtl = new NarrowingController({ storage });
-const trainerCtl = new TrainerBrowserController({ pack: getPack(), storage });
-const battleCtl = new BattleshipController({ storage });
+function nav(){return `<div class="rg-primary-nav rg-nav-simple"><button class="rg-nav ${state.view==='train'?'on':''}" data-start-mode="shape"><b>СОБРАТЬ</b></button><button class="rg-nav ${state.view==='study'?'on':''}" data-view="study"><b>ИЗУЧИТЬ</b></button><button class="rg-nav ${state.view==='library'?'on':''}" data-view="library"><b>ВСЕ РЕНДЖИ</b></button></div>`;}
 
-let mode = 'hub'; // hub | battleship-catalog | battleship-play | narrowing | trainer
-let pickerPos = null;
-let pickerStack = null;
-let narrowPickerPos = null;
-let narrowPickerStack = null;
+function options(values,current,blank,labelFn=x=>x){return `${blank?`<option value="">${esc(blank)}</option>`:''}${values.map(x=>`<option value="${esc(x)}" ${x===current?'selected':''}>${esc(labelFn(x))}</option>`).join('')}`;}
+function chooser(c,compact=false){return `<div class="rg-card rg-chooser ${compact?'compact':''}"><div class="rg-spotline"><div><div class="rg-kicker">ТЕКУЩИЙ РЕНДЖ</div><strong>${esc(c.position)} · ${esc(c.stack_bb)} BB</strong></div></div><div class="rg-controls"><div class="rg-field"><label>Позиция</label><select id="rgPos">${options(POSITIONS,state.position)}</select></div><div class="rg-field"><label>Стек</label><select id="rgStack">${options(STACKS,state.stack)}</select></div></div></div>`;}
 
-function hubVm() {
-  // Build last studied range from storage if available
-  let lastStudiedRange = null;
-  try {
-    const lastRange = storage?.getItem?.('lastStudiedRange');
-    if (lastRange) {
-      lastStudiedRange = JSON.parse(lastRange);
-    }
-  } catch (e) {
-    // Ignore storage errors
-  }
+function modeToggle(){return `<div class="rg-mode-toggle rg-mode-simple"><button data-mode="shape" class="${state.trainMode==='shape'?'on':''}"><b>КАКИЕ РУКИ ИГРАЕМ</b></button><button data-mode="actions" class="${state.trainMode==='actions'?'on':''}"><b>КАК ИГРАЕМ</b></button></div>`;}
 
-  return {
-    phase: 'hub',
-    title: 'РЕНДЖИ',
-    lastStudiedRange
-  };
-}
+function userAction(h){return state.userActions.has(h)?state.userActions.get(h):USER_UNANSWERED;}
+function matrix(c,mode='study'){const truth=actionMap(c);let html='<div class="rg-grid-wrap"><div class="rg-grid" role="grid" aria-label="13 by 13 poker range matrix">';for(let r=0;r<13;r++)for(let col=0;col<13;col++){const h=handAt(r,col,RANKS),a=truth[h]||'UNSELECTED';let shown=a,cl='rg-cell';if(state.selected===h)cl+=' pick';if(mode==='build')shown=state.trainMode==='shape'?(state.paint.has(h)?SHAPE_ACTIVE:'INACTIVE'):userAction(h);if(mode==='compare'){if(state.trainMode==='shape'){const mine=state.paint.has(h),ok=a!=='UNSELECTED';shown=mine?SHAPE_ACTIVE:'INACTIVE';if(mine&&ok)cl+=' ok';else if(mine&&!ok)cl+=' wrong';else if(!mine&&ok)cl+=' missed';}else{shown=userAction(h);if(shown===USER_UNANSWERED)cl+=' missed';else if(shown===a)cl+=' ok';else cl+=' wrong';}}const aria=mode==='study'?`${h}: ${LABEL[a]||a}`:mode==='compare'?`${h}: ваш ${LABEL[shown]||shown}, source ${LABEL[a]||a}`:`${h}: ${LABEL[shown]||shown}`;html+=`<button type="button" class="${cl}" data-hand="${h}" data-a="${shown}" aria-label="${esc(aria)}">${h}</button>`;}return html+'</div></div>';}
 
-const handlers = {
-  openBattleshipCatalog() {
-    mode = 'battleship-catalog';
-    battleCtl.state.phase = 'catalog';
-    battleCtl.init().then(() => paint());
-  },
-  setPicker(pos, stack) {
-    if (pos) pickerPos = pos;
-    if (stack) pickerStack = stack;
-    else if (pos) pickerStack = null;
-  },
-  setNarrowPicker(pos, stack) {
-    if (pos) narrowPickerPos = pos;
-    if (stack) narrowPickerStack = stack;
-    else if (pos) narrowPickerStack = null;
-  },
-  async selectBattleshipCourse(courseId) {
-    mode = 'battleship-play';
-    await battleCtl.startCourse(courseId);
-    paint();
-  },
-  beginMission() {
-    battleCtl.beginMission();
-    paint();
-  },
-  handleCellTap(hand) {
-    battleCtl.handleCellTap(hand);
-    paint();
-  },
-  dismissTutorial() {
-    battleCtl.dismissTutorial();
-    paint();
-  },
-  nextMission() {
-    battleCtl.nextMission();
-    paint();
-  },
-  retryMission() {
-    battleCtl.retryMission();
-    paint();
-  },
-  repeatWeakMission() {
-    battleCtl.repeatWeakMission();
-    paint();
-  },
-  restartCourse() {
-    battleCtl.restartCourse();
-    paint();
-  },
-  openTrainer() {
-    mode = 'trainer';
-    trainerCtl.init().then(() => paint());
-  },
-  continueLastRange() {
-    mode = 'trainer';
-    try {
-      const lastRange = storage?.getItem?.('lastStudiedRange');
-      if (lastRange) {
-        const parsed = JSON.parse(lastRange);
-        trainerCtl.init().then(() => {
-          if (parsed.situation && parsed.position && parsed.stack) {
-            trainerCtl.selection = {
-              ...trainerCtl.selection,
-              situation: parsed.situation,
-              position: parsed.position,
-              stackBand: parsed.stack
-            };
-          }
-          paint();
-        });
-        return;
-      }
-    } catch (e) {
-      // Fallback to regular trainer
-    }
-    trainerCtl.init().then(() => paint());
-  },
-  openNarrowing() {
-    mode = 'narrowing';
-    narrowCtl.openCatalog();
-    narrowCtl.init().then(() => paint());
-    window.MiniAppNav?.reset('ranges');
-    window.MiniAppNav?.push('ranges', { phase: 'catalog', mode: 'narrowing' });
-  },
-  async startNarrowingLesson(lessonId) {
-    mode = 'narrowing';
-    await narrowCtl.startLesson(lessonId);
-    paint();
-  },
-  dismissNarrowingOnboard() {
-    narrowCtl.dismissOnboarding();
-    paint();
-  },
-  revealNarrowing() {
-    narrowCtl.revealRange();
-    paint();
-    setTimeout(() => {
-      narrowCtl.state.revealAnimating = false;
-      paint();
-    }, 650);
-  },
-  continueNarrowing() {
-    narrowCtl.continueAfterReveal();
-    paint();
-  },
-  answerNarrowingMc(choice) {
-    narrowCtl.answerMc(choice);
-    paint();
-  },
-  answerNarrowingYn(answer) {
-    narrowCtl.answerYesNo(answer);
-    paint();
-  },
-  tapNarrowingHand(hand) {
-    narrowCtl.tapHand(hand);
-    paint();
-  },
-  setField(field, value) {
-    trainerCtl.setField(field, value);
-    paint();
-  },
-  async showRange() {
-    await trainerCtl.showRange();
-    // Save last studied range for continuation
-    try {
-      const sel = trainerCtl.selection;
-      const catalog = trainerCtl.catalog || {};
-      const situations = catalog.situations || [];
-      const positions = catalog.positions || [];
-      const sit = situations.find(s => s.id === sel.situation);
-      const posObj = positions.find(p => p.id === sel.position);
-      if (sit && posObj) {
-        const lastRange = {
-          situation: sel.situation,
-          position: sel.position,
-          stack: sel.stackBand || sel.stack,
-          situationLabel: sit.label || sit.id,
-          positionLabel: posObj.display || posObj.id,
-          stackLabel: sel.stackBand || sel.stack || ''
-        };
-        storage?.setItem?.('lastStudiedRange', JSON.stringify(lastRange));
-      }
-    } catch (e) {
-      // Ignore storage errors
-    }
-    paint();
-  },
-  async selectHand(hand) {
-    await trainerCtl.selectHand(hand);
-    const vm = trainerCtl.viewModel();
-    if (vm.phase === 'matrix') {
-      vm.handDetail = trainerCtl.handDetail;
-      vm.selectedHand = hand;
-    }
-    paint();
-  },
-  back() {
-    if (mode === 'battleship-play') {
-      if (battleCtl.state.phase === 'complete') {
-        mode = 'battleship-catalog';
-        battleCtl.backToCatalog();
-        paint();
-        return;
-      }
-      mode = 'battleship-catalog';
-      battleCtl.backToCatalog();
-      paint();
-      return;
-    }
-    if (mode === 'battleship-catalog') {
-      mode = 'hub';
-      battleCtl.backToHub();
-      paint();
-      return;
-    }
-    if (mode === 'trainer') {
-      const r = trainerCtl.back();
-      if (r.navExit) mode = 'hub';
-      paint();
-      return;
-    }
-    if (mode === 'narrowing') {
-      const result = narrowCtl.back();
-      if (result.reopenCatalog) {
-        narrowCtl.openCatalog();
-        paint();
-        return;
-      }
-      if (result.navExit) {
-        mode = 'hub';
-        paint();
-        return;
-      }
-      paint();
-      return;
-    }
-    if (typeof window.show === 'function') window.show('home');
-  }
-};
+function home(c){return `<div class="rg-simple-home">
+  <div class="rg-simple-intro"><h2>Выбери, что хочешь сделать</h2><p>Без лишней теории — тренируй, смотри или найди нужный рендж.</p></div>
+  <button class="rg-simple-main" data-start-mode="shape"><b>СОБРАТЬ ДИАПАЗОН</b><span>${esc(c.position)} · ${esc(c.stack_bb)} BB</span><p>Отметь руки, которые ты бы сыграла, и проверь себя.</p><i>→</i></button>
+  <button class="rg-simple-row" data-view="study"><span><b>ИЗУЧИТЬ ДИАПАЗОН</b><small>Посмотреть готовый рендж и разобрать руки</small></span><i>→</i></button>
+  <button class="rg-simple-row" data-view="library"><span><b>НАЙТИ РЕНДЖ</b><small>${RANGE_LIBRARY.length} исходных чартов</small></span><i>→</i></button>
+</div>`;}
 
-function paint() {
-  const el = root();
-  if (!el) return;
+function study(c){const m=actionMap(c),h=state.selected,a=h?(m[h]||'UNSELECTED'):null;return `${nav()}${chooser(c,true)}<div class="rg-card rg-study-simple"><div class="rg-section-head"><div><h2>ГОТОВЫЙ ДИАПАЗОН</h2><p>Нажми на любую руку, чтобы увидеть действие.</p></div></div>${matrix(c,'study')}${h?`<div class="rg-hand-simple"><strong>${h}</strong><b>${esc(LABEL[a]||a)}</b><p>${esc(EXPLAIN[a]||'')}</p></div>`:`<div class="rg-hand-simple muted">Выбери руку в таблице</div>`}<div class="rg-actions"><button class="rg-btn primary" data-start-mode="shape">СОБРАТЬ ЭТОТ ДИАПАЗОН</button><button class="rg-btn rg-secondary-action" data-start-mode="actions">ПОТРЕНИРОВАТЬ ДЕЙСТВИЯ</button></div></div>`;}
 
-  if (mode === 'battleship-catalog') {
-    const vm = battleCtl.viewModel();
-    vm.phase = 'catalog';
-    vm.pickerPos = pickerPos;
-    vm.pickerStack = pickerStack;
-    BR.renderBattleshipCatalog(el, vm, handlers);
-    return;
-  }
-  if (mode === 'battleship-play') {
-    const vm = battleCtl.viewModel();
-    if (vm.state?.phase === 'error') {
-      BR.renderBattleshipError(el, vm, handlers);
-      return;
-    }
-    BR.renderBattleshipGame(el, vm, handlers);
-    BR.wireFinalOverlay(el, handlers);
-    return;
-  }
-  if (mode === 'narrowing') {
-    const vm = narrowCtl.viewModel();
-    vm.pickerPos = narrowPickerPos;
-    vm.pickerStack = narrowPickerStack;
-    if (vm.phase === 'catalog') {
-      NR.renderNarrowingCatalog(el, vm, handlers);
-      return;
-    }
-    if (vm.phase === 'error') {
-      NR.renderNarrowingError(el, { errorMessage: narrowCtl.state.errorMessage }, handlers);
-      return;
-    }
-    NR.renderNarrowingLesson(el, vm, handlers);
-    return;
-  }
+function paintTools(){if(state.trainMode==='shape')return `<div class="rg-brush-mode"><button data-shape-brush="add" class="${state.shapeBrush==='add'?'on':''}">+ ДОБАВЛЯТЬ</button><button data-shape-brush="erase" class="${state.shapeBrush==='erase'?'on':''}">− УБИРАТЬ</button></div>`;return `<div class="rg-palette">${ACTIONS.map(a=>`<button data-brush="${a}" class="${state.brushAction===a?'on':''}"><i class="rg-dot ${COLOR[a]}"></i>${esc(LABEL[a])}</button>`).join('')}</div>`;}
+function buildStep(c,isRetest=false){const ar=state.trainMode==='actions'?actionComparison(c,state.userActions):null;return `<div class="rg-train-head rg-train-simple"><div><h2>${isRetest?'СОБЕРИ ЕЩЁ РАЗ':state.trainMode==='shape'?'СОБЕРИ ДИАПАЗОН':'КАК ИГРАЕМ?'}</h2><p>${state.trainMode==='shape'?'Отметь руки, которые входят в диапазон. Можно провести пальцем по нескольким клеткам.':'Выбери действие и отметь руки. Пустые клетки не считаются ответом.'}</p></div></div>${chooser(c,true)}${modeToggle()}<div class="rg-card"><div class="rg-paint-tools"><button class="rg-tool" id="rgClear">ОЧИСТИТЬ</button><button class="rg-tool" id="rgUndo" ${state.undo.length?'':'disabled'}>ОТМЕНИТЬ</button></div>${paintTools()}${matrix(c,'build')}${state.trainMode==='actions'?`<div class="rg-simple-progress"><span>Заполнено</span><b>${ar.coveragePct}%</b></div>`:''}<div class="rg-actions"><button class="rg-btn pink" id="${isRetest?'rgFinishRetest':'rgCompare'}" ${state.trainMode==='actions'&&ar.coverage===0?'disabled':''}>${isRetest?'ПРОВЕРИТЬ ЕЩЁ РАЗ':'ПРОВЕРИТЬ'}</button></div>${isRetest&&state.retestDone?retestResult(c):''}</div>`;}
 
-  if (mode === 'trainer') {
-    const vm = trainerCtl.viewModel();
-    if (vm.phase === 'matrix' && trainerCtl.handDetail) {
-      vm.handDetail = trainerCtl.handDetail;
-      vm.selectedHand = trainerCtl.selectedHand;
-    }
-    TR.paint(el, vm, handlers);
-    return;
-  }
+function ghostStep(c){const x=currentResult(c),leaks=currentLeaks(c),desc=state.trainMode==='actions'?describeActionLeak(x,leaks):describeShapeLeak(x,leaks),top=leaks[0];return `<div class="rg-train-head rg-train-simple"><div><h2>РАЗБОР</h2><p>Вот где диапазон совпал и где стоит поправить.</p></div></div>${chooser(c,true)}<div class="rg-card">${matrix(c,'compare')}<div class="rg-simple-score"><strong>${x.score}%</strong><span>${state.trainMode==='shape'?'совпадение диапазона':'результат'}</span></div>${state.trainMode==='shape'?`<div class="rg-simple-errors"><div><b>${x.extraC}</b><span>лишних комбинаций</span></div><div><b>${x.missC}</b><span>пропущено</span></div></div>`:`<div class="rg-simple-errors"><div><b>${x.accuracyPct}%</b><span>верных ответов</span></div><div><b>${x.coveragePct}%</b><span>заполнено</span></div></div>`}<div class="rg-insight"><b>${esc(desc.title)}</b><p>${esc(desc.detail)}</p>${top?`<p><strong>${esc(top.label)}</strong></p>`:''}</div><div class="rg-actions"><button class="rg-btn" data-train-step="build">ИСПРАВИТЬ</button><button class="rg-btn primary" data-train-step="drill">ПОТРЕНИРОВАТЬ ОШИБКУ →</button></div></div>`;}
 
-  if (mode === 'hub') {
-    const vm = hubVm();
-    BR.renderRangesHub(el, vm, handlers);
-  }
-}
+function ensureDrill(c){if(state.drill.length)return;state.drill=personalizedDrill(c,{mode:state.trainMode,paint:state.paint,userActions:state.userActions,limit:10});state.drillIndex=0;state.drillScore=0;state.drillAnswered=false;}
+function drillChoices(q){if(state.trainMode==='shape')return `<button class="rg-btn" data-answer="UNSELECTED">НЕ ВХОДИТ</button><button class="rg-btn primary" data-answer="ACTIVE">ВХОДИТ</button>`;return ACTIONS.map(a=>`<button class="rg-btn" data-answer="${a}">${esc(LABEL[a])}</button>`).join('');}
+function drillStep(c){ensureDrill(c);if(state.drillIndex>=state.drill.length)return `<div class="rg-train-head"><div><div class="rg-kicker">TRAIN · 3/4</div><h2>ГОТОВО</h2></div></div><div class="rg-card rg-drill-card"><div class="rg-hand">${state.drillScore}/${state.drill.length}</div><p class="rg-note">Проверили руки рядом с твоими ошибками.</p><button class="rg-btn primary" data-train-step="retest">СОБРАТЬ ЕЩЁ РАЗ →</button></div>`;const q=state.drill[state.drillIndex];return `<div class="rg-train-head"><div><div class="rg-kicker">TRAIN · 3/4</div><h2>${state.trainMode==='shape'?'ЭТА РУКА ВХОДИТ?':'ЧТО ДЕЛАЕМ С РУКОЙ?'}</h2></div></div>${chooser(c,true)}<div class="rg-card rg-drill-card"><div class="rg-kicker">${state.drillIndex+1}/${state.drill.length}</div><div class="rg-progress"><i style="width:${state.drillIndex/state.drill.length*100}%"></i></div><div class="rg-hand">${q.h}</div><div class="rg-choice ${state.trainMode==='actions'?'many':''}">${drillChoices(q)}</div>${state.drillAnswered?`<div class="rg-insight rg-feedback"><b>${state.lastCorrect?'Верно.':'Мимо.'} · ${esc(LABEL[q.a]||q.a)}</b><p>${esc(EXPLAIN[q.a]||'')}</p><button class="rg-btn primary" id="rgNext">СЛЕДУЮЩАЯ →</button></div>`:''}</div>`;}
+function retestResult(c){const x=currentResult(c),before=state.baseline?.score??null,delta=before==null?null:x.score-before,afterLeaks=currentLeaks(c);return `<div class="rg-compare-before"><div><span>ДО</span><b>${before??'—'}%</b></div><div><span>ПОСЛЕ</span><b>${x.score}%</b></div><div><span>ИЗМЕНЕНИЕ</span><b>${delta==null?'—':`${delta>=0?'+':''}${delta} п.п.`}</b></div></div>${state.trainMode==='actions'?`<div class="rg-result"><div class="rg-stat"><span>Accuracy</span><b>${x.accuracyPct}%</b></div><div class="rg-stat"><span>Coverage</span><b>${x.coveragePct}%</b></div><div class="rg-stat"><span>Ошибок</span><b>${x.mismatches.length}</b></div></div>`:''}<div class="rg-insight"><b>${afterLeaks.length?`Осталось: ${esc(afterLeaks[0].label)}`:'Главный leak закрыт.'}</b><p>${afterLeaks.length?`${afterLeaks[0].severity} combos требуют внимания.`:'В этом retest системная ошибка больше не доминирует.'}</p></div><div class="rg-actions"><button class="rg-btn" data-view="home">ГОТОВО</button><button class="rg-btn primary" data-view="study">ПОСМОТРЕТЬ SOURCE</button></div>`;}
+function train(c){const body=state.trainStep==='build'?buildStep(c):state.trainStep==='ghost'?ghostStep(c):state.trainStep==='drill'?drillStep(c):buildStep(c,true);return `${nav()}${body}`;}
 
-function bindEntryPoints() {
-  const go = () => {
-    if (typeof window.show === 'function') window.show('ranges');
-    else paint();
-  };
-  ['homeXray', 'v36Xray', 'homeXray30', 'v31Xray'].forEach((id) => {
-    const b = document.getElementById(id);
-    if (b && !b.dataset.rangesBound) {
-      b.dataset.rangesBound = '1';
-      b.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        go();
-      }, true);
-    }
-  });
-}
+function baseLibraryRows(){const q=state.libQuery.trim().toLowerCase();return RANGE_LIBRARY.filter(r=>!q||[r.chart_id,r.source_mode,r.spot,r.position,r.stack,r.opponent,r.open,r.bet].join(' ').toLowerCase().includes(q));}
+function libRows({skip=null}={}){return baseLibraryRows().filter(r=>(skip==='mode'||!state.libMode||r.source_mode===state.libMode)&&(skip==='position'||!state.libPosition||r.position===state.libPosition)&&(skip==='stack'||!state.libStack||r.stack===state.libStack));}
+function uniq(rows,key){return [...new Set(rows.map(r=>r[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true}));}
+function library(){const filtered=libRows(),page=filtered.slice(state.libPage*12,state.libPage*12+12),modes=uniq(libRows({skip:'mode'}),'source_mode'),positions=uniq(libRows({skip:'position'}),'position'),stacks=uniq(libRows({skip:'stack'}),'stack');let modal='';if(state.libPreview){const r=RANGE_LIBRARY.find(x=>x.chart_id===state.libPreview);if(r)modal=`<div class="rg-modal" role="dialog" aria-modal="true"><div class="rg-viewer"><div class="rg-viewer-head"><div><strong>РЕНДЖ</strong><p>${esc(sourceModeLabel(r.source_mode))} · ${esc([r.position,r.stack].filter(Boolean).join(' · '))}</p></div><button class="rg-btn" id="rgClosePreview">ЗАКРЫТЬ</button></div><div class="rg-zoom"><img id="rgSourceChart" data-chart-path="${esc(r.compressed_file)}" alt="Чарт диапазона"><div class="rg-chart-loading" id="rgChartLoading">ЗАГРУЖАЮ…</div></div></div></div>`;}return `${nav()}<div class="rg-card rg-library-simple"><div class="rg-section-head"><div><h2>НАЙТИ РЕНДЖ</h2><p>Выбери ситуацию, позицию и стек.</p></div></div><input class="rg-search" id="rgSearch" value="${esc(state.libQuery)}" placeholder="Например: BTN 25BB"><div class="rg-lib-filters"><select id="rgLibMode">${options(modes,state.libMode,'Ситуация',sourceModeLabel)}</select><select id="rgLibPos">${options(positions,state.libPosition,'Позиция')}</select><select id="rgLibStack">${options(stacks,state.libStack,'Стек')}</select></div><div class="rg-lib-list">${page.map(r=>`<button class="rg-lib" data-preview="${esc(r.chart_id)}"><span><b>${esc(sourceModeLabel(r.source_mode))}</b><small>${esc([r.position,r.stack].filter(Boolean).join(' · '))}</small></span><b>ОТКРЫТЬ →</b></button>`).join('')||'<div class="rg-note">Такого ренджа не найдено. Измени один из фильтров.</div>'}</div><div class="rg-actions"><button class="rg-btn" id="rgPrev" ${state.libPage===0?'disabled':''}>← НАЗАД</button><button class="rg-btn" id="rgNextPage" ${(state.libPage+1)*12>=filtered.length?'disabled':''}>ЕЩЁ →</button></div></div>${modal}`;}
 
-const origShow = window.show;
-if (typeof origShow === 'function') {
-  window.show = function (id) {
-    const r = origShow.apply(this, arguments);
-    if (id === 'ranges') {
-      try { window.scrollTo(0, 0); } catch (e) { /* ignore */ }
-      mode = 'hub';
-      window.MiniAppNav?.reset('ranges');
-      window.MiniAppNav?.push('ranges', { phase: 'hub' });
-      battleCtl.init().then(() => paint());
-    }
-    return r;
-  };
-}
+async function hydratePreview(){const img=document.getElementById('rgSourceChart');if(!img)return;const path=img.dataset.chartPath;const loading=document.getElementById('rgChartLoading');try{const src=await loadChartAsset(path);if(!src)throw new Error(`Asset not found: ${path}`);if(!document.body.contains(img))return;img.src=src;if(loading)loading.remove();}catch(e){console.error('[Ranges] source chart asset failed',e);if(loading)loading.textContent='НЕ УДАЛОСЬ ЗАГРУЗИТЬ ЧАРТ';}}
 
-window.renderRanges = paint;
-window.PokerSwipeRanges = {
-  narrowController: narrowCtl,
-  trainerController: trainerCtl,
-  battleshipController: battleCtl,
-  paint,
-  storage,
-  openBattleship: () => handlers.openBattleshipCatalog(),
-  selectBattleshipCourse: (courseId) => handlers.selectBattleshipCourse(courseId),
-  beginMission: () => handlers.beginMission(),
-  handleCellTap: (hand) => handlers.handleCellTap(hand),
-  dismissTutorial: () => handlers.dismissTutorial(),
-  openNarrowing: () => handlers.openNarrowing(),
-  startNarrowingLesson: (id) => handlers.startNarrowingLesson(id)
-};
+function render(){const host=document.getElementById('rangesArea');if(!host)return;const c=chart();if(!c){host.innerHTML=`<div class="rg">${header()}<div class="rg-card rg-error"><h2>DATA ERROR</h2><p>Нет точного structured chart для ${esc(state.position)} · ${esc(state.stack)} BB. Другой chart не подставляется.</p></div></div>`;console.error('[Ranges] missing exact chart',state.position,state.stack);return;}const body=state.view==='home'?home(c):state.view==='train'?train(c):state.view==='study'?study(c):library();host.innerHTML=`<div class="rg">${header()}${body}</div>`;bind(c);hydratePreview();savePrefs();saveSession();}
+function updateHand(h,{fromBrush=false,saveUndo=true}={}){if(saveUndo)pushUndo();if(state.trainMode==='shape'){if(fromBrush){if(state.shapeBrush==='add')state.paint.add(h);else state.paint.delete(h);}else state.paint.has(h)?state.paint.delete(h):state.paint.add(h);}else state.userActions.set(h,state.brushAction);state.retestDone=false;state.emitted=false;}
+function startTraining(mode){resetTraining({newSession:true});state.trainMode=mode;state.view='train';render();}
+function answerDrill(q,answer){const correct=state.trainMode==='shape'?((answer==='ACTIVE')===(q.a!=='UNSELECTED')):answer===q.a;state.lastCorrect=correct;if(correct)state.drillScore++;state.drillAnswered=true;}
+function bindBrush(){if(state.view!=='train'||!['build','retest'].includes(state.trainStep))return;const grid=document.querySelector('#ranges .rg-grid');if(!grid)return;let painting=false,seen=new Set();const apply=el=>{const h=el?.closest?.('.rg-cell')?.dataset?.hand;if(!h||seen.has(h))return;seen.add(h);updateHand(h,{fromBrush:true,saveUndo:false});const cell=document.querySelector(`#ranges .rg-cell[data-hand="${CSS.escape(h)}"]`);if(cell){const a=state.trainMode==='shape'?(state.paint.has(h)?SHAPE_ACTIVE:'INACTIVE'):userAction(h);cell.dataset.a=a;cell.setAttribute('aria-label',`${h}: ${LABEL[a]||a}`);}};grid.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;painting=true;seen.clear();pushUndo();grid.setPointerCapture?.(e.pointerId);apply(e.target);e.preventDefault();});grid.addEventListener('pointermove',e=>{if(!painting)return;const el=document.elementFromPoint(e.clientX,e.clientY);if(el&&grid.contains(el))apply(el);});const end=()=>{if(!painting)return;painting=false;render();};grid.addEventListener('pointerup',end);grid.addEventListener('pointercancel',end);}
+function normalizeLibrarySelection(){if(state.libMode&&!libRows({skip:'mode'}).some(r=>r.source_mode===state.libMode))state.libMode='';if(state.libPosition&&!libRows({skip:'position'}).some(r=>r.position===state.libPosition))state.libPosition='';if(state.libStack&&!libRows({skip:'stack'}).some(r=>r.stack===state.libStack))state.libStack='';}
+function bind(c){document.querySelectorAll('#ranges [data-view]').forEach(b=>b.onclick=()=>goto(b.dataset.view));document.querySelectorAll('#ranges [data-xray]').forEach(b=>b.onclick=()=>window.show?.('xray'));document.querySelectorAll('#ranges [data-start-mode]').forEach(b=>b.onclick=()=>startTraining(b.dataset.startMode));document.querySelectorAll('#ranges [data-mode]').forEach(b=>b.onclick=()=>startTraining(b.dataset.mode));document.querySelectorAll('#ranges [data-quick-mode]').forEach(b=>b.onclick=()=>{resetTraining({newSession:true});state.trainMode=b.dataset.quickMode;state.view='train';state.trainStep='drill';state.drill=fisherYates(personalizedDrill(c,{mode:state.trainMode,paint:new Set(),userActions:new Map(),limit:24})).slice(0,10);render();});
+const pos=document.getElementById('rgPos'),stack=document.getElementById('rgStack');if(pos)pos.onchange=()=>{state.position=pos.value;resetTraining({newSession:true});render();};if(stack)stack.onchange=()=>{state.stack=stack.value;resetTraining({newSession:true});render();};
+document.querySelectorAll('#ranges .rg-cell').forEach(b=>b.onclick=e=>{if(state.view==='train'&&['build','retest'].includes(state.trainStep)){if(e.detail===0){updateHand(b.dataset.hand);render();}}else{state.selected=b.dataset.hand;render();}});
+document.querySelectorAll('#ranges [data-shape-brush]').forEach(b=>b.onclick=()=>{state.shapeBrush=b.dataset.shapeBrush;render();});document.querySelectorAll('#ranges [data-brush]').forEach(b=>b.onclick=()=>{state.brushAction=b.dataset.brush;render();});document.getElementById('rgClear')?.addEventListener('click',()=>{pushUndo();state.paint.clear();state.userActions.clear();state.retestDone=false;state.emitted=false;render();});document.getElementById('rgUndo')?.addEventListener('click',()=>{undo();render();});
+const compare=document.getElementById('rgCompare');if(compare)compare.onclick=()=>{state.baseline=currentResult(c);state.baselineLeaks=currentLeaks(c);state.trainStep='ghost';state.drill=[];render();};document.querySelectorAll('#ranges [data-train-step]').forEach(b=>b.onclick=()=>{if(b.dataset.trainStep==='drill')ensureDrill(c);if(b.dataset.trainStep==='retest'){state.paint.clear();state.userActions.clear();state.undo=[];state.retestDone=false;state.emitted=false;}state.trainStep=b.dataset.trainStep;render();});document.querySelectorAll('#ranges [data-answer]').forEach(b=>b.onclick=()=>{if(state.drillAnswered)return;answerDrill(state.drill[state.drillIndex],b.dataset.answer);render();});document.getElementById('rgNext')?.addEventListener('click',()=>{state.drillIndex++;state.drillAnswered=false;render();});const finish=document.getElementById('rgFinishRetest');if(finish)finish.onclick=()=>{if(state.retestDone)return;state.retestDone=true;emitTraining(c,currentResult(c));render();};
+let timer;const search=document.getElementById('rgSearch');if(search)search.oninput=()=>{clearTimeout(timer);const v=search.value;timer=setTimeout(()=>{state.libQuery=v;state.libPage=0;normalizeLibrarySelection();render();document.getElementById('rgSearch')?.focus();},120);};for(const [id,key] of [['rgLibMode','libMode'],['rgLibPos','libPosition'],['rgLibStack','libStack']]){const el=document.getElementById(id);if(el)el.onchange=()=>{state[key]=el.value;state.libPage=0;normalizeLibrarySelection();render();};}document.querySelectorAll('#ranges [data-preview]').forEach(b=>b.onclick=()=>{state.libPreview=b.dataset.preview;render();});document.getElementById('rgClosePreview')?.addEventListener('click',()=>{state.libPreview=null;render();});document.querySelector('.rg-modal')?.addEventListener('click',e=>{if(e.target.classList.contains('rg-modal')){state.libPreview=null;render();}});document.getElementById('rgPrev')?.addEventListener('click',()=>{state.libPage=Math.max(0,state.libPage-1);render();});document.getElementById('rgNextPage')?.addEventListener('click',()=>{state.libPage++;render();});bindBrush();}
 
-function boot() {
-  ensureScreen();
-  bindEntryPoints();
-  const obs = new MutationObserver(() => bindEntryPoints());
-  const home = document.getElementById('home');
-  if (home) obs.observe(home, { childList: true, subtree: true });
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', boot);
-} else {
-  boot();
-}
-
-export { narrowCtl, trainerCtl, battleCtl, paint };
+function mount(){ensureCss();ensureScreen();render();return true;}function unmount(){const host=document.getElementById('rangesArea');if(host)host.innerHTML='';}
+loadSaved();const integrity=validateUO(UO_DATA);if(!integrity.ok)console.error('[Ranges] UO integrity errors',integrity.errors);mount();
+window.renderRanges=render;window.PokerSwipeRanges={version:4,mount,unmount,render,state,data:{uo:UO_DATA,library:RANGE_LIBRARY},validate:()=>validateUO(UO_DATA)};
