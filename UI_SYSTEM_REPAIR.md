@@ -100,4 +100,21 @@ None.
 
 See branch `cursor/ui-system-polyana-2f0c` after push.
 
+## POST-MERGE PROFILE VERIFICATION (main handwriting)
+
+| Check | Result |
+|-------|--------|
+| `renderProfile` owner | `profile.js` → `render` (`renderName: "render"`) |
+| `PokerSwipeProfile` | present |
+| Runtime `.pid` | 1 root; `data-profile-build=poker-handwriting-v2` |
+| `psYou` / `v38You` at runtime | **0** |
+| `renderProfile.__psVisualV2` | **true** (blocks `game-visual-rebuild` legacy wrap) |
+| Computed fonts vs home | **match** (system-ui stack) |
+| Title | 24px / 900 |
+| Screen enter | `psScreenEnter` on `#profile` |
+| Home ↔ Profile 20× | PASS (`test:e2e:profile`) |
+| Profile PNGs | `profile-390x844`, `profile-393x852`, `profile-430x932` |
+
+**PR #97 merge-ready (UI gate):** **YES** — pending human product sign-off; **do not auto-merge**.
+
 **Do not merge to `main` until product sign-off.**
