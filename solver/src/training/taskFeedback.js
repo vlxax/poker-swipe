@@ -63,14 +63,20 @@ function buildWhy(task, recommendedLabel) {
   return `В этой раздаче (${contextLine(task)}) на ${streetRu(task)} оптимальная линия для ${h} — ${actionRu(recommendedLabel)} против ${v}.`;
 }
 
-function buildUserMistake(task, chosenLabel, recommendedLabel, grade) {
+function buildUserMistake(task, chosenLabel, recommendedLabel, grade, evAvailable = true) {
   if (grade === 'EXCELLENT' || grade === 'GOOD') {
     return `Ты выбрал ${actionRu(chosenLabel)} — это совпадает с лучшей линией в этой ситуации.`;
   }
   if (grade === 'INACCURACY') {
-    return `${actionRu(chosenLabel)} близко к оптимуму, но ${actionRu(recommendedLabel)} чуть лучше по EV в этой конкретной раздаче.`;
+    if (evAvailable) {
+      return `${actionRu(chosenLabel)} близко к оптимуму, но ${actionRu(recommendedLabel)} чуть лучше по EV в этой конкретной раздаче.`;
+    }
+    return `${actionRu(chosenLabel)} близко к оптимуму, но ${actionRu(recommendedLabel)} предпочтительнее в этой раздаче.`;
   }
-  return `${actionRu(chosenLabel)} здесь проигрывает ${actionRu(recommendedLabel)}: в этой линии (${streetRu(task)}, ${heroLabel(task)} vs ${villainLabel(task)}) ты теряешь EV.`;
+  if (evAvailable) {
+    return `${actionRu(chosenLabel)} здесь проигрывает ${actionRu(recommendedLabel)}: в этой линии (${streetRu(task)}, ${heroLabel(task)} vs ${villainLabel(task)}) ты теряешь EV.`;
+  }
+  return `${actionRu(chosenLabel)} здесь слабее ${actionRu(recommendedLabel)} для условий этой раздачи (${streetRu(task)}, ${heroLabel(task)} vs ${villainLabel(task)}).`;
 }
 
 function buildAlternative(task, chosenLabel, recommendedLabel) {
@@ -129,6 +135,7 @@ export function buildTaskFeedback({
   recommendedLabel,
   grade,
   evLossBb = null,
+  evAvailable = true,
   concept = null
 } = {}) {
   if (!task) return null;
@@ -140,7 +147,7 @@ export function buildTaskFeedback({
   const conceptLabel = humanConcept(task);
 
   const why = buildWhy(task, recommended);
-  const userMistake = buildUserMistake(task, chosen, recommended, grade);
+  const userMistake = buildUserMistake(task, chosen, recommended, grade, evAvailable);
   const alternative = buildAlternative(task, chosen, recommended);
   const detail = buildDetail(task, recommended, chosen);
   const flavor = shortFlavor(grade);

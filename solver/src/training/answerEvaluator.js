@@ -88,20 +88,34 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
     opt = options.find((o) => o.action && sameAction(o.action, chosenAction)) || null;
   }
 
-  const chosenEV = opt
+  const evAvailable = solution.evAvailable !== false && solution.evSource !== 'library_quiz_score';
+  const task = drill && drill.metadata && drill.metadata.task;
+
+  const chosenEV = evAvailable && opt
     ? actionEVs[opt.id] != null ? actionEVs[opt.id] : opt.evBB != null ? opt.evBB : null
     : null;
-  const evs = Object.values(actionEVs).filter((n) => Number.isFinite(n));
-  const bestEV = solution.bestEV != null ? solution.bestEV : evs.length ? Math.max(...evs) : null;
-  const evLossBb = chosenEV != null && bestEV != null ? Math.max(0, bestEV - chosenEV) : null;
+  const evs = evAvailable ? Object.values(actionEVs).filter((n) => Number.isFinite(n)) : [];
+  const bestEV = evAvailable
+    ? (solution.bestEV != null ? solution.bestEV : evs.length ? Math.max(...evs) : null)
+    : null;
+  const evLossBb = evAvailable && chosenEV != null && bestEV != null
+    ? Math.max(0, bestEV - chosenEV)
+    : null;
 
-  const grade = gradeForLoss(evLossBb, preset);
+  let grade;
+  if (!evAvailable && task && opt) {
+    const label = opt.labelRu;
+    if (label === task.correct) grade = 'EXCELLENT';
+    else if ((task.alsoOk || []).includes(label)) grade = 'GOOD';
+    else grade = 'MISTAKE';
+  } else {
+    grade = gradeForLoss(evLossBb, preset);
+  }
   const nearOptimal = evLossBb != null && evLossBb <= GOOD_LOSS;
   const mixedStrategy = solution.recommendedFrequency != null &&
     solution.recommendedFrequency > 0.2 && solution.recommendedFrequency < 0.8;
   const chosenRecommended = !!opt && !!solution.recommendedAction && sameAction(opt.action, solution.recommendedAction);
 
-  const task = drill && drill.metadata && drill.metadata.task;
   let feedbackRu;
   if (task) {
     const recommendedOpt = options.find((o) => solution.recommendedAction && sameAction(o.action, solution.recommendedAction))
@@ -113,6 +127,7 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
       recommendedLabel: recommendedOpt ? recommendedOpt.labelRu : task.correct,
       grade,
       evLossBb,
+      evAvailable,
       concept: drill.concept
     });
   } else {
@@ -130,6 +145,9 @@ export function gradeAnswer({ drill, chosenId, chosenAction, preset = 'mtt' } = 
   return {
     grade,
     evLossBb,
+    evAvailable,
+    evSource: solution.evSource || (evAvailable ? 'solver' : 'library_quiz_score'),
+    policySource: solution.policySource || (evAvailable ? 'SOLVER' : 'LIBRARY_CURATED'),
     chosenEV,
     bestEV,
     nearOptimal,
