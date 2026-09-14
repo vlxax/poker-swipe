@@ -1,0 +1,778 @@
+{
+  "generatedAt": "2026-09-14T11:07:37.357Z",
+  "summary": {
+    "totalTasks": 180,
+    "activeTasks": 180,
+    "duplicateIds": [],
+    "unreachableTasks": 0,
+    "invalidTasks": 0,
+    "contextInsufficient": 0,
+    "requiresSolverValidation": 0,
+    "schemaInvalid": 0,
+    "cardInvalid": 0,
+    "streetInvalid": 0,
+    "actionHistoryInvalid": 0,
+    "positionOrderInvalid": 0,
+    "stackInvalid": 0,
+    "handDescriptionMismatch": 0,
+    "drawMismatch": 0,
+    "icmContextInsufficient": 0,
+    "pkoContextInsufficient": 0,
+    "strategyUnverified": 180,
+    "objectiveErrors": 0,
+    "hardErrors": 0,
+    "warnings": 0,
+    "validationRequired": 0,
+    "icmContextPartial": 23,
+    "pkoContextPartial": 10
+  },
+  "icmPkoByTask": {
+    "PRE_RFI_BTN_A8S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_CO_KTS": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_HJ_77": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_UTG_AJO": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_SB_22": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_BTN_22_SHORT": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_BTN_A5S_15": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_K8S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_76S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_T6O": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_A2S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_55_3X": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_3B_SB_A5S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_3B_BB_KK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_3B_BTN_AQO": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_SQZ_AQS": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_VS3B_66": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_DRY_CBET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_DYNAMIC_CBET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_OVERBET_VS": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_SMALL_BET_DEF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_3BET_POT_QQ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_VALUE_BARREL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_CHECK_SD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_POLAR_AK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_THIN_VALUE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_BLUFFCATCH": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_PRICE_DEF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_BIG_VALUE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_BUBBLE_A7O": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_BUBBLE_77_CALL": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_ITM_AQS": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_PKO_BOUNTY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "TOUR_FT_QQ": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_ANTE_3X": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_NIT_FOLD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_STATION_VALUE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_MANIAC_CATCH": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_AGRO_3B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_LOVER_CBET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SHORT_BTN_A9O": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SHORT_BB_87S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SHORT_SB_55": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SHORT_BB_A5O": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "MISC_RIVER_BLUF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "MISC_FLOATPFLOP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "MISC_XR_TPTK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "MISC_CLEAN_LINE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "MISC_DONK_OVERPAIR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_100BB_AA": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_100BB_SETMINING": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_MP_KQS": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_ISO_LIMP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_3B_JJ_AGAINST": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_4BET_BLUF_A5S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_TPTK_DRY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_MONOTONE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_PAIRED_OVERBET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_GUTSHOT_RAISE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_OVERBET_2": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_PROTECTION": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_BACKDOOR_TRAP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_CHECK_BEHIND": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_OVERBET_FOLD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_KEVALUATE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_ICM_88": {
+      "icm": "ICM_CONTEXT_COMPLETE",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_PKO_77": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "TOUR_FT_AK": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_ITM_FOLD_AJO": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_BUBBLE_STEAL": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_PKO_DEFEND": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "OPP_NIT_3B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_STATION_BARREL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_MANIAC_3BARREL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_AGRO_CHECK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "OPP_LOVER_RIVER": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SNG_BUBBLE_AT": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "HU_PREFLOP_QQ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "3MAX_SB_88": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SNG_SHORT_AT": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_3B_SQZ_A5S": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_VS_3X": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_SB_KT": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_VALUE_TWO": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_TRIP_PAIRED": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_CEBET_OVERPAIR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_PKO_BUBBLE_99": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "TOUR_PKO_FT_TT": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "TOUR_PKO_COVER_JJ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "TOUR_ICM_QQ_FT": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_ICM_AJ_FOLD": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "TOUR_BUBBLE_AT_CALL": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_3BET_AA_DRAWY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_DEEP_KK_4B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "CASH_SQZ_AK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "SNG_ICM_77": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_3BET_JJ_SCARY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_3BET_BLUF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_MULTIWAY_TP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_SQUEEZE_SET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "F_AA_COORD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "T_BARREL_BLUF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_VALUE_TPTK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "R_BLUF_CATCH_PRICE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_RFI_UTG_99": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_BB_VS_SQZ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "PRE_4BET_AA_COLD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_ICM_COVER_A5S": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "ADV_TURN_BLOCKER_BARREL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_RIVER_THIN_BLOCK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_3BPOT_AKQ_SCARY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_BB_DEF_MERGE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_FLOP_XR_RANGE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_TURN_SPR_COMMIT": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_RIVER_BLUFFCATCH_BLOCK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_PREFLOP_MERGE_4B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_ICM_SHORT_COVER": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_RIVER_OVERBET_POLAR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV_MULTIWAY_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_ICM_BUBBLE_QQ": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_RIVER_BLOCKER_BLUFF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_FT_AJ_ICM": {
+      "icm": "ICM_CONTEXT_COMPLETE",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_3STREET_BLUFF": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_RIVER_BLUFFCATCH_KQ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_DEEP_4BET_AK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_TURN_RANGE_XR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_ICM_PKO_OVERLAY": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "ADV5_RIVER_THIN_SECOND": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_PREFLOP_5B_JJ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_FLOP_SET_3WAY": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV5_RIVER_SIZING_BLOCK": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_PREFLOP_UTG_AQ": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_PREFLOP_CO_MERGE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_SHORT_SB_A8O": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_ICM_BTN_FOLD": {
+      "icm": "ICM_CONTEXT_COMPLETE",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_ICM_COVER_CALL": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_RANGE_FLOP_XR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_BLUFFCATCH_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_SIZING_TURN_POT": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_EXPLOIT_NIT_RIVER": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_POSITION_HJ_STEAL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_STACKDEPTH_DEEP_SET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_RIVER_DEFENSE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_PREFLOP_BTN_4B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_SHORT_COVER_SHOVE": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "ADV9B5_ICM_MEDIUM_FOLD": {
+      "icm": "ICM_CONTEXT_COMPLETE",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_ICM_BUBBLE_SHOVE": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_RANGE_TURN_XR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFCATCH_RIVER_A4": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFCATCH_RIVER_88": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFING_TRIPLE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_EXPLOIT_MANIAC": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_EXPLOIT_STATION": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_EXPLOIT_LOVER_FOLD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_POSITION_BTN_ISO": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_POSITION_CO_STEAL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_STACKDEPTH_4BET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_SIZING_RIVER_OVERBET": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_POSTFLOP_FLOP_XR": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_SHORT_BTN_K9O": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_ICM_UTG_FOLD": {
+      "icm": "ICM_CONTEXT_COMPLETE",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_RANGE_RIVER_CALL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFING_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_PREFLOP_SB_DEFEND": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_SHORT_COVER": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_EXPLOIT_AGRO_FOLD": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_POSITION_UTG_OPEN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_STACKDEPTH_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_BLUFFCATCH_FLOP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B_RIVER_THIN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFCATCH_PRICE": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_EXPLOIT_NIT_3B": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_POSITION_SB_STEAL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_STACKDEPTH_FLOP": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_ICM_COVER_SHOVE": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL"
+    },
+    "ADV9B5_RANGE_FLOP_CALL": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_BLUFFING_RIVER": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_SIZING_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_SHORT_BB_DEFEND": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    },
+    "ADV9B5_POSTFLOP_TURN": {
+      "icm": "NOT_ICM_DEPENDENT",
+      "pko": "NOT_ICM_DEPENDENT"
+    }
+  },
+  "spotlight": {
+    "SNG_ICM_77": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT",
+      "action": "KEEP",
+      "note": "SNG 3-max bubble — heuristic training; not exact ICM without payout table"
+    },
+    "ADV_ICM_COVER_A5S": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL",
+      "action": "DOWNGRADE CLAIM",
+      "note": "PKO bounty size unspecified — concept training only"
+    },
+    "TOUR_PKO_FT_TT": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "PKO_CONTEXT_PARTIAL",
+      "action": "VALIDATION QUEUE",
+      "note": "FT PKO without bounty $ — queue for solver/ICM"
+    },
+    "ADV_ICM_SHORT_COVER": {
+      "icm": "ICM_CONTEXT_PARTIAL",
+      "pko": "NOT_ICM_DEPENDENT",
+      "action": "KEEP",
+      "note": "FT push/fold heuristic with stacks+field count"
+    }
+  },
+  "issues": []
+}
