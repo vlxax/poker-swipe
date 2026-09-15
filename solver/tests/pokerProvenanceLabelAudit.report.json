@@ -1,0 +1,508 @@
+{
+  "generatedAt": "2026-09-15T08:37:37.484Z",
+  "registryNote": "Compared against solver/config/pokerTruthDomains.json metadata (no runtime migration)",
+  "summary": {
+    "SAFE": 5,
+    "AMBIGUOUS": 17,
+    "MISLEADING": 40
+  },
+  "misleadingCount": 40,
+  "hits": [
+    {
+      "file": "index.html",
+      "line": 364,
+      "tag": "GTO",
+      "text": "/* V19 GTO BRAIN INSPECTOR */",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1155,
+      "tag": "GTO",
+      "text": "<p id=\"bootStatus\">Поднимаю локальный GTO Brain и профиль игрока…</p>",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1225,
+      "tag": "GTO",
+      "text": "window.POKER_BRAIN_PACK={\"version\":\"17.0\",\"generated\":\"2026-08-08\",\"truth\":{\"solverOutput\":false,\"description\":\"Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed ",
+      "classification": "SAFE",
+      "reason": "Explicit disclaimer or non-strategy context"
+    },
+    {
+      "file": "index.html",
+      "line": 1225,
+      "tag": "exact",
+      "text": "window.POKER_BRAIN_PACK={\"version\":\"17.0\",\"generated\":\"2026-08-08\",\"truth\":{\"solverOutput\":false,\"description\":\"Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed ",
+      "classification": "SAFE",
+      "reason": "Explicit disclaimer or non-strategy context"
+    },
+    {
+      "file": "index.html",
+      "line": 1232,
+      "tag": "exact",
+      "text": "const P=window.POKER_BRAIN_PACK||{exact:{},preflop:{},postflop:[],reviews:{},concepts:{},stats:{}};",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 1246,
+      "tag": "exact",
+      "text": "function nodeFor(spot){const id=baseId(spot.spotId||spot.id||'');let n=P.exact[id];if(!n&&spot.theme)n=P.exact['DAILY:'+spot.theme];if(n)return{...n,source:'EXACT_REFERENCE_NODE',confidence:94};return preflopLookup(spot)||genericPostflop(sp",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 1780,
+      "tag": "GTO",
+      "text": "function renderMy(){builder=null;$('#myArea').innerHTML=`<div class=\"myHero\"><span class=\"ey\">МОИ · РАЗДАЧИ ИЗ РЕАЛЬНОЙ ИГРЫ</span><h1 class=\"impact\">НЕ РЕЗУЛЬТАТ.<br><span class=\"pink\">РЕШЕНИЕ.</span></h1><p class=\"mut\">Сюда приносишь спор",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1813,
+      "tag": "solver",
+      "text": "function showHand(h){const ph=Array.isArray(h.potHistory)&&h.potHistory.length?h.potHistory:[{street:'PRE',pot:1.5}],max=Math.max(...ph.map(x=>Number(x.pot)||0),Number(h.pot)||0,1),eq=exactEquity(h.hero||[],h.villain||[],h.board||[]),truth=",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1813,
+      "tag": "exact",
+      "text": "function showHand(h){const ph=Array.isArray(h.potHistory)&&h.potHistory.length?h.potHistory:[{street:'PRE',pot:1.5}],max=Math.max(...ph.map(x=>Number(x.pot)||0),Number(h.pot)||0,1),eq=exactEquity(h.hero||[],h.villain||[],h.board||[]),truth=",
+      "classification": "SAFE",
+      "reason": "Mathematical equity exactness, not strategy provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1870,
+      "tag": "exact",
+      "text": "function remoteAvatar28(p){const exact=RANKS28.findIndex(r=>r.name===p.rank_name);const idx=exact>=0?exact:(Number(p.skill)>=45?2:Number(p.skill)>=35?1:0);return RANKS28[Math.max(0,Math.min(RANKS28.length-1,idx))].img}",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 1925,
+      "tag": "exact",
+      "text": "function brainSourceLabel(s=''){return ({EXACT_REFERENCE_NODE:'EXACT NODE',PREFLOP_ATLAS:'PREFLOP ATLAS',POSTFLOP_ATLAS:'POSTFLOP MODEL',LINE_MODEL:'LINE MODEL',REPAIR_MODEL:'REPAIR MODEL',NO_MODEL:'NO MODEL'})[s]||s}",
+      "classification": "SAFE",
+      "reason": "Explicit disclaimer or non-strategy context"
+    },
+    {
+      "file": "index.html",
+      "line": 1926,
+      "tag": "GTO",
+      "text": "function brainPanel(r){if(!r)return'';const pol=(r.topActions||[]).map(x=>`<div class=\"brainAction\"><span>${x.action}</span><i><span style=\"width:${Math.round(x.freq*100)}%\"></span></i><b>${Math.round(x.freq*100)}%</b></div>`).join('');cons",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1937,
+      "tag": "GTO",
+      "text": "{title:'ДИНАМИКА РЕЙНДЖЕЙ',icon:'≈',content:br.topActions&&br.topActions.length>0?`Top action: ${br.topActions[0].action} (${Math.round(br.topActions[0].freq*100)}%)`:br.confidence?`GTO Brain confidence: ${br.confidence}%`:'(данные модели)'",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1943,
+      "tag": "GTO",
+      "text": "finalizeSwipe=function(s,a,size){if(swLocked)return;swLocked=true;const br=PokerSwipeGrading.gradeBrain({...s,spotId:s.id},a,size,'swipe');const ga=br.actionGrade,gs=br.sizeGrade,g=br.grade,response=now()-swStart;swSessionGrades.push({g,str",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1949,
+      "tag": "GTO",
+      "text": "reviewReveal=function(){const R=REVIEWS[rv%REVIEWS.length],bm=PokerBrain.reviewLine(R),pointOk=(bm.clean&&rvPick==='none')||(!bm.clean&&rvPick===bm.culpritIndex);if(bm.clean){recordEvent({spotId:R.id,mode:'review',concept:R.concept,conceptI",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1953,
+      "tag": "GTO",
+      "text": "dailyReveal=function(){const D=dailyToday();let argGood=0;D.args.forEach((a,i)=>{const expected=a[1]==='bet'?'bet':a[1]==='check'?'check':a[1];if(dArgs[i]===expected)argGood++});const br=PokerSwipeGrading.gradeBrain({...D,spotId:D.id,street",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1957,
+      "tag": "GTO",
+      "text": "showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const html=a.result?`<div class=\"regReport\"><span class=\"ey\">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</s",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1957,
+      "tag": "solver",
+      "text": "showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const html=a.result?`<div class=\"regReport\"><span class=\"ey\">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</s",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 1957,
+      "tag": "exact",
+      "text": "showHand=function(h){_showHandV16(h);const a=PokerBrain.analyzeHand(h);const root=$('#myArea .panel');if(!root)return;const back=$('#myBack');const html=a.result?`<div class=\"regReport\"><span class=\"ey\">◉ GTO BRAIN · РАЗБОР ТОЧКИ РЕШЕНИЯ</s",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 1959,
+      "tag": "exact",
+      "text": "/* X-Ray: surface brain status because combo engine already computes exact card removal */",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 1961,
+      "tag": "exact",
+      "text": "xrReveal=function(score){_xrRevealV16(score);const v=$('#xrayArea .verdict');if(v)v.insertAdjacentHTML('afterend',`<div class=\"brainPanel\"><div class=\"brainHead\"><b>◉ RANGE ENGINE</b><span class=\"brainSource\">COMBO REMOVAL · EXACT</span></d",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 2051,
+      "tag": "GTO",
+      "text": "return `<div class=\"brain19\"><div class=\"brain19Top\"><div><span class=\"brain19Live\">● GTO BRAIN V19 ONLINE</span><h3 style=\"margin:5px 0 0\">NODE ENGINE</h3></div><b>${GTOBrainV19.nodes.length}</b></div><div class=\"brain19Grid\"><div><b>EXACT",
+      "classification": "AMBIGUOUS",
+      "reason": "Branded brain UI; pack truth.solverOutput is false"
+    },
+    {
+      "file": "index.html",
+      "line": 2051,
+      "tag": "exact",
+      "text": "return `<div class=\"brain19\"><div class=\"brain19Top\"><div><span class=\"brain19Live\">● GTO BRAIN V19 ONLINE</span><h3 style=\"margin:5px 0 0\">NODE ENGINE</h3></div><b>${GTOBrainV19.nodes.length}</b></div><div class=\"brain19Grid\"><div><b>EXACT",
+      "classification": "AMBIGUOUS",
+      "reason": "Branded brain UI; pack truth.solverOutput is false"
+    },
+    {
+      "file": "index.html",
+      "line": 2542,
+      "tag": "solver",
+      "text": "const a=x?.r?.actions;if(!a)return '<p>Для этой точки нет достаточно надёжной частотной модели. Не придумываем solver-цифры.</p>';",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 3166,
+      "tag": "solver",
+      "text": "window.PokerBrainV25={version:'25.0',analyze,diagnosticProfile:d25Profile,gradeDiagnostic:d25Grade,truth:'reference-policy + exact math; no fake solver dump'};",
+      "classification": "AMBIGUOUS",
+      "reason": "Marketing/reference language without CFR provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 3166,
+      "tag": "exact",
+      "text": "window.PokerBrainV25={version:'25.0',analyze,diagnosticProfile:d25Profile,gradeDiagnostic:d25Grade,truth:'reference-policy + exact math; no fake solver dump'};",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 3304,
+      "tag": "GTO",
+      "text": "throw new Error('GTO Brain не загрузился.');",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 3683,
+      "tag": "GTO",
+      "text": "const actionSummaryHtml=`<div class=\"actionSummary\"><div class=\"actionCard\"><span class=\"ey\">ТЫ ВЫБРАЛ</span><b>${a}${size!=null?' · '+size+'%':''}</b></div><div class=\"actionCard\"><span class=\"ey\">GTO</span><b class=\"grade-${g}\">${verdictL",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 4850,
+      "tag": "solver",
+      "text": "<div class=\"v59Warn\">Сейчас это честный reconstruction layer: приложение автоматически считает банк из введённых действий. Следующий слой анализа сравнивает ключевые решения с ближайшими reference nodes, но не выдаёт approximate node за exa",
+      "classification": "AMBIGUOUS",
+      "reason": "Marketing/reference language without CFR provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 4850,
+      "tag": "exact",
+      "text": "<div class=\"v59Warn\">Сейчас это честный reconstruction layer: приложение автоматически считает банк из введённых действий. Следующий слой анализа сравнивает ключевые решения с ближайшими reference nodes, но не выдаёт approximate node за exa",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 5191,
+      "tag": "exact",
+      "text": "/* Hook every trip-related CTA from Polyana to this exact new builder. */",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "index.html",
+      "line": 5219,
+      "tag": "solver",
+      "text": "/* My Hands · PokerSwipe solver integration (CFR range analysis).",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5220,
+      "tag": "GTO",
+      "text": "Replaces the legacy GTO BRAIN panel in showHand with a real async solver",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5220,
+      "tag": "solver",
+      "text": "Replaces the legacy GTO BRAIN panel in showHand with a real async solver",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5223,
+      "tag": "solver",
+      "text": "(esc, $, renderMy, _showHandV16) and can still load the pure-ESM solver. */",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5227,
+      "tag": "solver",
+      "text": "var solver=null,cacheInst=null,activeCtrl=null,activeKey=null;",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5229,
+      "tag": "GTO",
+      "text": "// Base renderer is the ORIGINAL (pre-GTO-BRAIN) showHand.",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5250,
+      "tag": "solver",
+      "text": "import('./solver/src/integration/reviewModel.js'),",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5251,
+      "tag": "solver",
+      "text": "import('./solver/src/integration/cache.js'),",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5252,
+      "tag": "solver",
+      "text": "import('./solver/src/integration/pokerSwipeHandAdapter.js')",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5254,
+      "tag": "solver",
+      "text": "solver={ reviewPokerSwipeHandAsync:m[0].reviewPokerSwipeHandAsync, createHandCache:m[1].createHandCache, handContentKey:m[2].handContentKey };",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5257,
+      "tag": "solver",
+      "text": "cacheInst=solver.createHandCache({ storage:storage, maxEntries:60 });",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5258,
+      "tag": "solver",
+      "text": "}).catch(function(){ solver=null; });",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5265,
+      "tag": "solver",
+      "text": "host.innerHTML='<div class=\"regReport\"><span class=\"ey\">◉ SOLVER · RANGE ANALYSIS</span><p>'+(opts.error?esc(opts.error):'Солвер пересчитает твои решения по диапазону: EV, EV loss, рекомендации по улицам и главную ошибку. Займёт несколько с",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5271,
+      "tag": "solver",
+      "text": "host.innerHTML='<div class=\"regReport\"><span class=\"ey\">◉ SOLVER · CFR-АНАЛИЗ</span><p class=\"mut\">Считаю диапазонный разбор… (несколько секунд на решение).</p><button class=\"secondary\" id=\"solverCancel\">ОТМЕНИТЬ</button></div>';",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5272,
+      "tag": "solver",
+      "text": "window.FreakLady?.react(host.querySelector('.regReport'),'thinking','solver',{wide:true});",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5278,
+      "tag": "solver",
+      "text": "if(!solver){ renderIdle(host,h,{error:'Солвер ещё не загружен. Повтори попытку через секунду.'}); return; }",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5284,
+      "tag": "solver",
+      "text": "try{ key=solver.handContentKey(h); }catch(e){ key=String(Date.now()); }",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5286,
+      "tag": "solver",
+      "text": "solver.reviewPokerSwipeHandAsync(h,{ signal:ctrl.signal, cache:cacheInst }).then(function(model){",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5301,
+      "tag": "solver",
+      "text": "parts.push('<div class=\"verdict\"><span class=\"ey\">SOLVER · RANGE ANALYSIS · EV LOSS</span><h2>'+esc(vru(overall.verdict))+' · '+fmtBB(overall.totalEvLossBB)+' BB</h2><p>'+decisions.length+' точек решений · решено '+ (overall.solvedDecisions",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5309,
+      "tag": "solver",
+      "text": "parts.push('<div class=\"verdict\"><span class=\"ey\">SOLVER · RANGE ANALYSIS</span><h2>'+esc(model.status)+'</h2><p>'+esc((model.warnings||[]).join(' '))+'</p></div>');",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "index.html",
+      "line": 5317,
+      "tag": "solver",
+      "text": "window.FreakLady?.react(host,coachMood,'solver',{wide:true});",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 3,
+      "tag": "solver",
+      "text": "// (renderDaily / show / localStorage / solver) already exists. It:",
+      "classification": "AMBIGUOUS",
+      "reason": "Marketing/reference language without CFR provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 4,
+      "tag": "solver",
+      "text": "//   • creates the persistent training store (same prefix as the solver layer),",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 13,
+      "tag": "solver",
+      "text": "} from '../solver/src/index.js';",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 14,
+      "tag": "solver",
+      "text": "import { getTaskById } from '../solver/src/training/taskLibraryBridge.js';",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 20,
+      "tag": "solver",
+      "text": "import { loadTrainerCandidateIndex } from '../solver/src/training/trainerCandidatePool.js';",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "training-ui/main.js",
+      "line": 63,
+      "tag": "solver",
+      "text": "// Called from the classic solver review render once a trainingCandidate exists.",
+      "classification": "MISLEADING",
+      "reason": "Strong solver/GTO claim without registry-backed provenance"
+    },
+    {
+      "file": "poker_brain.js",
+      "line": 3,
+      "tag": "exact",
+      "text": "const P=window.POKER_BRAIN_PACK||{exact:{},preflop:{},postflop:[],reviews:{},concepts:{},stats:{}};",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "poker_brain.js",
+      "line": 18,
+      "tag": "exact",
+      "text": "function nodeFor(spot){const id=baseId(spot.spotId||spot.id||'');let n=P.exact[id];if(!n&&spot.theme)n=P.exact['DAILY:'+spot.theme];if(n)return{...n,source:'EXACT_REFERENCE_NODE',confidence:94};return preflopLookup(spot)||genericPostflop(sp",
+      "classification": "AMBIGUOUS",
+      "reason": "Needs human review"
+    },
+    {
+      "file": "strategy_pack_v17.js",
+      "line": 1,
+      "tag": "GTO",
+      "text": "window.POKER_BRAIN_PACK={\"version\":\"17.0\",\"generated\":\"2026-08-08\",\"truth\":{\"solverOutput\":false,\"description\":\"Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed ",
+      "classification": "AMBIGUOUS",
+      "reason": "Pack disclaims solver dump while describing GTO reference engine"
+    },
+    {
+      "file": "strategy_pack_v17.js",
+      "line": 1,
+      "tag": "exact",
+      "text": "window.POKER_BRAIN_PACK={\"version\":\"17.0\",\"generated\":\"2026-08-08\",\"truth\":{\"solverOutput\":false,\"description\":\"Local GTO reference engine: exact poker math + large policy atlas + curated exact-node reference policies. It is not a licensed ",
+      "classification": "SAFE",
+      "reason": "Explicit disclaimer or non-strategy context"
+    }
+  ]
+}

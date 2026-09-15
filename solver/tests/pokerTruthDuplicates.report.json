@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-09-15T08:37:37.227Z",
+  "pairs": [
+    {
+      "id": "pushFold.js_vs_push18()",
+      "a": "ranges-ui/pushFold.js",
+      "b": "index.html push18 (legacy formula)",
+      "classification": "WRAPPER",
+      "note": "pushFold.js matches legacy push18 at stage=MID; legacy adds BUBBLE/FT; runtime push18 may delegate to GTOBrainV19"
+    },
+    {
+      "id": "strategy_pack_v17.js_vs_inline_pack",
+      "a": "strategy_pack_v17.js",
+      "b": "index.html window.POKER_BRAIN_PACK",
+      "classification": "IDENTICAL",
+      "note": "semantic JSON payloads match"
+    },
+    {
+      "id": "poker_brain.js_vs_inline_engine",
+      "a": "poker_brain.js",
+      "b": "index.html inline gradeDecision",
+      "classification": "DRIFTED",
+      "note": "inline duplicate of poker_brain gradeDecision with possible edits"
+    },
+    {
+      "id": "GTOBrainV19_vs_GTOBrainV20",
+      "a": "poker_brain_v20.js GTOBrainV19",
+      "b": "poker_brain_v20.js GTOBrainV20",
+      "classification": "ALIAS",
+      "note": "GTOBrainV19 assigned to GTOBrainV20 in poker_brain_v20.js"
+    }
+  ]
+}
