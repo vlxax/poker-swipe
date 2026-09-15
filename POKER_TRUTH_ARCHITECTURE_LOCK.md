@@ -1,6 +1,6 @@
 # Poker truth architecture lock
 
-Generated: 2026-09-15T08:37:37.502Z
+Generated: 2026-09-15T08:39:20.239Z
 
 ## Metrics
 
@@ -8,7 +8,7 @@ Generated: 2026-09-15T08:37:37.502Z
 |--------|------:|
 | PACK_DRIFT | 0 |
 | DAILY_TRUE_CONFLICTS | 0 |
-| SWIPE_TRUE_CONFLICTS | 1 |
+| SWIPE_TRUE_CONFLICTS | 0 |
 | PUSHFOLD_DIVERGENCES (MID stage) | 0 |
 | PUSHFOLD stage-adjusted divergence records | 28481 |
 | PROVENANCE_MISLEADING | 40 |
@@ -21,17 +21,16 @@ _none_
 
 ## Swipe conflict IDs
 
-- `R_98762_88`
+_none_
 
 ## Remaining issues
 
-- **P0**: Swipe preferred vs runtime brain conflicts (R_98762_88)
 - **P1**: pushFold.js omits push18 tournament stage bands (BUBBLE/FT)
 - **P1**: User-facing GTO/solver labels without provenance
 
 ## Verdict
 
-**ARCHITECTURE LOCKED WITH KNOWN CONFLICTS**
+**ARCHITECTURE LOCKED**
 
 ## Next implementation task
 

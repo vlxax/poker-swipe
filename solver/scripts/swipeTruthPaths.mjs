@@ -10,27 +10,25 @@ import { installPokerBrainForTests, resetPokerBrainTestEnv } from '../tests/brai
 
 const OUT = path.join(ROOT, 'solver/tests/swipeTruthPaths.report.json');
 
-const CONCEPT_TO_LIBRARY = {
-  'RFI BTN': 'PRE_RFI_BTN_A8S',
-  'BB defence': 'PRE_BB_K8S',
-  'polar 3-bet': 'PRE_3B_SB_A5S',
-  'dry board c-bet': 'F_DRY_CBET',
-  'dynamic board': 'F_DYNAMIC_CBET',
-  'vs overbet': 'F_OVERBET_VS',
-  'small bet defence': 'F_SMALL_BET_DEF',
-  'turn value barrel': 'T_VALUE_BARREL',
-  'turn showdown': 'T_CHECK_SD',
-  'thin value': 'R_THIN_VALUE',
-  'river bluffcatch': 'R_BLUFFCATCH',
-  'price defence': 'R_PRICE_DEF',
-  'river value': 'R_BIG_VALUE'
+const SWIPE_ID_ALIASES = {
+  PF_BTN_A8S: 'PRE_RFI_BTN_A8S',
+  PF_BB_K8S: 'PRE_BB_K8S',
+  PF_SB_A5S: 'PRE_3B_SB_A5S'
 };
 
+function cardSig(cards) {
+  return (cards || []).map((c) => String(c).replace(/\s/g, '')).join('|');
+}
+
 function resolveLibraryTask(swipeSpot) {
-  const byConcept = swipeSpot.concept ? CONCEPT_TO_LIBRARY[swipeSpot.concept] : null;
-  if (byConcept && getTaskById(byConcept)) return getTaskById(byConcept);
-  const direct = getTaskById(swipeSpot.id);
-  if (direct) return direct;
+  const alias = SWIPE_ID_ALIASES[swipeSpot.id];
+  if (alias && getTaskById(alias)) return getTaskById(alias);
+  const lib = loadTaskLibrary();
+  for (const t of lib.tasks || []) {
+    if (cardSig(t.hero) !== cardSig(swipeSpot.hero)) continue;
+    if (cardSig(t.board) !== cardSig(swipeSpot.board)) continue;
+    return t;
+  }
   return null;
 }
 
