@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "generatedBy": "architecture-lock-pass",
+  "domains": [
+    "PREFLOP_REFERENCE",
+    "PREFLOP_STACK_SPECIFIC",
+    "POSTFLOP_POLICY",
+    "LIBRARY_QUIZ_TRUTH",
+    "PUSH_FOLD",
+    "EQUITY",
+    "POSTFLOP_TEACHING",
+    "SIZING"
+  ],
+  "sources": [
+    {
+      "sourceId": "reference_ranges_pack",
+      "domain": "PREFLOP_REFERENCE",
+      "authoritativeFile": "ranges-ui/referenceRangesPack.js",
+      "stackSpecific": false,
+      "canGrade": false,
+      "canRender": true,
+      "allowedConsumers": ["ranges-ui", "range-trainer-reference"],
+      "mustNotSubstituteFor": ["PREFLOP_STACK_SPECIFIC", "LIBRARY_QUIZ_TRUTH"],
+      "provenance": "CURATED_6MAX_REFERENCE_UI"
+    },
+    {
+      "sourceId": "strategy_pack_v17",
+      "domain": "PREFLOP_STACK_SPECIFIC",
+      "authoritativeFile": "strategy_pack_v17.js",
+      "stackSpecific": true,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["poker_brain.js", "PokerSwipeGrading", "index.html-inline-duplicate"],
+      "mustNotSubstituteFor": ["PREFLOP_REFERENCE", "LIBRARY_QUIZ_TRUTH"],
+      "provenance": "LOCAL_ATLAS_solverOutput_false"
+    },
+    {
+      "sourceId": "poker_brain_engine",
+      "domain": "POSTFLOP_POLICY",
+      "authoritativeFile": "poker_brain.js",
+      "stackSpecific": true,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["PokerBrain.gradeDecision", "PokerSwipeGrading"],
+      "mustNotSubstituteFor": ["LIBRARY_QUIZ_TRUTH", "POSTFLOP_TEACHING"],
+      "provenance": "PREFLOP_ATLAS_POSTFLOP_ATLAS_EXACT_NODES"
+    },
+    {
+      "sourceId": "training_library",
+      "domain": "LIBRARY_QUIZ_TRUTH",
+      "authoritativeFile": "task-context/library.js",
+      "stackSpecific": false,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["gradeAnswer", "gradingGateway-daily", "gradingGateway-swipe-library"],
+      "mustNotSubstituteFor": ["POSTFLOP_POLICY"],
+      "provenance": "CURATED_QUIZ_EV_TIERS"
+    },
+    {
+      "sourceId": "push_fold_canonical",
+      "domain": "PUSH_FOLD",
+      "authoritativeFile": "ranges-ui/pushFold.js",
+      "stackSpecific": true,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["ranges-ui/push_fold_situation", "rangeSources.js"],
+      "mustNotSubstituteFor": ["PREFLOP_STACK_SPECIFIC"],
+      "provenance": "HEURISTIC_push18_formula_MID_stage"
+    },
+    {
+      "sourceId": "push18_legacy",
+      "domain": "PUSH_FOLD",
+      "authoritativeFile": "index.html push18()",
+      "stackSpecific": true,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["index.html", "poker_swipe_v33.js"],
+      "mustNotSubstituteFor": ["PREFLOP_STACK_SPECIFIC"],
+      "provenance": "LEGACY_DUPLICATE_runtime_may_wrap_GTOBrainV19"
+    },
+    {
+      "sourceId": "hand_evaluator",
+      "domain": "EQUITY",
+      "authoritativeFile": "solver/src/cards/handEvaluator.js",
+      "stackSpecific": false,
+      "canGrade": false,
+      "canRender": true,
+      "allowedConsumers": ["My Hands", "exactEquity UI"],
+      "mustNotSubstituteFor": ["POSTFLOP_POLICY", "LIBRARY_QUIZ_TRUTH"],
+      "provenance": "EXACT_MATH"
+    },
+    {
+      "sourceId": "xray_teaching",
+      "domain": "POSTFLOP_TEACHING",
+      "authoritativeFile": "index.html XR[]",
+      "stackSpecific": false,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["XRAY", "Reviews", "Daily calendar", "Swipe preferred/live", "library scenarios"],
+      "mustNotSubstituteFor": ["LIBRARY_QUIZ_TRUTH", "PREFLOP_REFERENCE"],
+      "provenance": "FEATURE_LOCAL_CURATED"
+    },
+    {
+      "sourceId": "sizing_dual",
+      "domain": "SIZING",
+      "authoritativeFile": "index.html SIZING[] + PokerBrain sizeEval",
+      "stackSpecific": false,
+      "canGrade": true,
+      "canRender": true,
+      "allowedConsumers": ["sizing lab", "gradingGateway-sizing"],
+      "mustNotSubstituteFor": [],
+      "provenance": "PARTIAL_DUAL_SOURCE"
+    }
+  ],
+  "mustNotUnify": [
+    "Do not use referenceRangesPack as stack-specific production grading truth.",
+    "Do not auto-merge LIBRARY_QUIZ_TRUTH correct/alsoOk with POSTFLOP_POLICY without human review.",
+    "Do not treat EQUITY exact math as strategy recommendation.",
+    "Do not route XRAY grading through referenceRangesPack or PREFLOP_REFERENCE.",
+    "Do not label PUSH_FOLD heuristic as solver-verified Nash without provenance metadata."
+  ]
+}
