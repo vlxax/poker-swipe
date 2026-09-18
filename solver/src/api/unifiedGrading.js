@@ -14,15 +14,12 @@ import { gradeAnswer } from '../training/answerEvaluator.js';
 import { classifyLoss, classifySeverity } from '../config/thresholds.js';
 import { SolverError } from './errors.js';
 import { grade as unifiedBrainGrade } from '../../../poker-brain/grade.js';
-import { loadPokerBrainPackFromStrategyFile } from '../../../trainer-knowledge/conflictDetector.js';
 
 let _cachedPack = null;
 function brainPack() {
   if (_cachedPack) return _cachedPack;
-  try {
-    _cachedPack = loadPokerBrainPackFromStrategyFile();
-  } catch (_) {
-    _cachedPack = null;
+  if (typeof globalThis !== 'undefined' && globalThis.window?.POKER_BRAIN_PACK) {
+    _cachedPack = globalThis.window.POKER_BRAIN_PACK;
   }
   return _cachedPack;
 }

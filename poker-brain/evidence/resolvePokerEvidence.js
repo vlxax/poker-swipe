@@ -41,8 +41,9 @@ export function resolvePokerEvidence(context, collected) {
   }
 
   const ranked = [...evidence].sort((a, b) => {
-    const ra = MATCH_RANK[a.contextMatch] ?? 1;
-    const rb = MATCH_RANK[b.contextMatch] ?? 1;
+    const exactBoost = (e) => (e.layerId === 'EXACT_NODES' ? 1 : 0);
+    const ra = (MATCH_RANK[a.contextMatch] ?? 1) + exactBoost(a);
+    const rb = (MATCH_RANK[b.contextMatch] ?? 1) + exactBoost(b);
     if (rb !== ra) return rb - ra;
     if (a.solverValidated && !b.solverValidated) return -1;
     if (!a.solverValidated && b.solverValidated) return 1;

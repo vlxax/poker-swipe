@@ -1,30 +1,11 @@
 import { UNKNOWN, createEmptyDecisionContext, isUnknown } from './DecisionContext.js';
+import { normalizePosition, normalizeStreet } from './positions.js';
+import { enrichDecisionContext } from './enrichContext.js';
+import { decisionContextFromCanonical } from '../adapters/canonicalSpotAdapter.js';
+import { decisionContextFromMyHand } from '../adapters/myHandsAdapter.js';
+import { normalizeActionHistory } from './actionHistory.js';
 
-const POS_ALIASES = {
-  'UTG+1': 'UTG+1',
-  MP: 'MP',
-  LJ: 'LJ',
-  EP: 'UTG',
-  MP1: 'HJ'
-};
-
-export function normalizePosition(pos) {
-  if (isUnknown(pos)) return UNKNOWN;
-  const p = String(pos).split(/\s|vs/i)[0].trim().toUpperCase();
-  return POS_ALIASES[p] || p;
-}
-
-export function normalizeStreet(street) {
-  if (isUnknown(street)) return UNKNOWN;
-  const s = String(street).toUpperCase()
-    .replace('ФЛОП', 'FLOP')
-    .replace('ТЁРН', 'TURN')
-    .replace('ТЕРН', 'TURN')
-    .replace('РИВЕР', 'RIVER')
-    .replace('ПРЕФЛОП', 'PREFLOP');
-  if (['PREFLOP', 'FLOP', 'TURN', 'RIVER'].includes(s)) return s;
-  return UNKNOWN;
-}
+export { normalizePosition, normalizeStreet } from './positions.js';
 
 function numOrUnknown(v) {
   if (v === null || v === undefined || v === '') return UNKNOWN;
@@ -70,11 +51,8 @@ function historyFromDescription(desc) {
   return history;
 }
 
-export function normalizeDecisionContext(raw = {}) {
+function baseFromSpot(spot, raw, feature) {
   const base = createEmptyDecisionContext();
-  const feature = inferFeature(raw);
-  const spot = raw.spot || raw.scenario || raw.item || raw.hand || raw;
-
   base.source = {
     feature,
     taskId: raw.taskId || spot.taskId || spot.id || spot.spotId || UNKNOWN,
@@ -84,17 +62,17 @@ export function normalizeDecisionContext(raw = {}) {
 
   base.street = normalizeStreet(spot.street || raw.street || (feature === 'ranges' ? 'PREFLOP' : UNKNOWN));
   base.hero = {
-    position: normalizePosition(spot.pos || spot.heroPosition || spot.heroSeat || raw.heroPosition),
-    stackBB: numOrUnknown(spot.stack ?? spot.effStack ?? spot.effectiveStackBb ?? spot.effectiveStackBB ?? raw.effectiveStackBB),
+    position: normalizePosition(spot.pos || spot.position || spot.heroPosition || spot.heroSeat || raw.heroPosition),
+    stackBB: numOrUnknown(spot.stack ?? spot.heroStack ?? spot.effStack ?? spot.effectiveStackBb ?? spot.effectiveStackBB ?? raw.effectiveStackBB),
     cards: cardsOrUnknown(spot.hero || spot.heroCards || raw.heroCards)
   };
   base.effectiveStackBB = numOrUnknown(
-    spot.effectiveStackBb ?? spot.effectiveStackBB ?? spot.stack ?? spot.effStack ?? base.hero.stackBB
+    spot.effStack ?? spot.effectiveStackBb ?? spot.effectiveStackBB ?? spot.stack ?? base.hero.stackBB
   );
   base.potBB = numOrUnknown(spot.pot ?? spot.potBb ?? spot.potBB ?? raw.potBB);
   base.board = cardsOrUnknown(spot.board || raw.board);
 
-  const villainPos = normalizePosition(spot.villainPos || spot.villainPosition || spot.villainSeat);
+  const villainPos = normalizePosition(spot.villainPos || spot.villainPosition || spot.villain || spot.villainSeat);
   if (!isUnknown(villainPos)) {
     base.villains.push({
       position: villainPos,
@@ -103,22 +81,24 @@ export function normalizeDecisionContext(raw = {}) {
   }
 
   const desc = spot.ctx || spot.description || spot.preflopLine || raw.description || '';
-  base.actionHistory = Array.isArray(spot.actionHistory)
-    ? spot.actionHistory.map((a) => ({
-      actor: a.actor || UNKNOWN,
-      position: normalizePosition(a.position),
-      action: String(a.action || UNKNOWN).toUpperCase(),
-      sizeBB: numOrUnknown(a.sizeBB ?? a.amountBB ?? a.pct)
-    }))
-    : historyFromDescription(desc);
+  if (Array.isArray(spot.history) && spot.history.length) {
+    base.actionHistory = normalizeActionHistory(spot.history, 'generic');
+  } else if (Array.isArray(spot.actionHistory)) {
+    base.actionHistory = normalizeActionHistory(spot.actionHistory, 'generic');
+  } else {
+    base.actionHistory = historyFromDescription(desc).map((a) => normalizeActionHistory([a])[0]).filter(Boolean);
+  }
 
-  if (spot.openSizeBB != null) {
+  if (spot.openSizeBB != null && !base.actionHistory.some((a) => a.action === 'OPEN')) {
     const opener = base.villains[0]?.position || UNKNOWN;
     base.actionHistory.push({
+      street: 'PREFLOP',
       actor: 'VILLAIN',
       position: opener,
       action: 'OPEN',
-      sizeBB: numOrUnknown(spot.openSizeBB)
+      amountBB: numOrUnknown(spot.openSizeBB),
+      raiseToBB: UNKNOWN,
+      allIn: false
     });
   }
 
@@ -156,10 +136,44 @@ export function normalizeDecisionContext(raw = {}) {
   return base;
 }
 
+export function normalizeDecisionContext(raw = {}) {
+  const feature = inferFeature(raw);
+  const spot = raw.spot || raw.scenario || raw.item || raw.hand || raw;
+
+  if (spot?._canonical) {
+    const fromCanon = decisionContextFromCanonical(spot._canonical, feature, raw);
+    return enrichDecisionContext(fromCanon);
+  }
+
+  if (feature === 'myhands' && (raw.hand?.actions || raw.actions || spot.actions)) {
+    const hand = raw.hand || spot;
+    return enrichDecisionContext(decisionContextFromMyHand(hand, raw));
+  }
+
+  const base = baseFromSpot(spot, raw, feature);
+  return enrichDecisionContext(base);
+}
+
 /** Adapters named by consumer */
 export const adapters = {
-  daily: (input) => normalizeDecisionContext({ ...input, mode: 'daily', spot: input.drill || input.spot }),
-  swipe: (input) => normalizeDecisionContext({ ...input, mode: 'swipe', scenario: input.scenario }),
+  daily: (input) => {
+    const spot = input.drill || input.spot;
+    const withCanon = spot?._canonical ? spot : { ...spot, _canonical: undefined };
+    if (withCanon._canonical || input.drill) {
+      const s = input.drill || input.spot;
+      if (s && !s._canonical && s.history) {
+        return normalizeDecisionContext({ ...input, mode: 'daily', spot: s, _drill: input.drill });
+      }
+    }
+    return normalizeDecisionContext({ ...input, mode: 'daily', spot: input.drill || input.spot, _drill: input.drill });
+  },
+  swipe: (input) => {
+    const scenario = input.scenario || {};
+    if (!scenario._canonical && scenario.id) {
+      return normalizeDecisionContext({ ...input, mode: 'swipe', scenario });
+    }
+    return normalizeDecisionContext({ ...input, mode: 'swipe', scenario });
+  },
   myhands: (input) => normalizeDecisionContext({ ...input, mode: 'myhands', hand: input.hand || input }),
   ranges: (input) => normalizeDecisionContext({
     ...input,

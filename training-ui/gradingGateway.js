@@ -35,7 +35,12 @@ import { attemptFromGradingResult, mapDecisionAction } from '../range-learning/a
 import { getLearnerMemory } from '../range-learning/persistence.js';
 import { analyze as brainAnalyze } from '../poker-brain/analyze.js';
 import { shadowCompareDaily } from '../poker-brain/integrations/dailyShadow.js';
-import { loadPokerBrainPackFromStrategyFile } from '../trainer-knowledge/conflictDetector.js';
+function browserBrainPack() {
+  if (typeof globalThis !== 'undefined' && globalThis.window?.POKER_BRAIN_PACK) {
+    return globalThis.window.POKER_BRAIN_PACK;
+  }
+  return null;
+}
 
 const GATEWAY_OWNER = 'training-ui/gradingGateway.js';
 const recordedDecisionIds = new Set();
@@ -367,22 +372,26 @@ export function gradeDecision(input = {}, options = {}) {
       });
       const canonical = canonicalFromSolver('daily', input, solver);
       try {
-        const pack = loadPokerBrainPackFromStrategyFile();
-        const brainDecision = brainAnalyze(
-          { mode: 'daily', drill: input.drill, spot: input.spot },
-          { pack }
-        );
-        canonical.metadata = {
-          ...(canonical.metadata || {}),
-          dailyShadow: {
-            comparison: shadowCompareDaily({
-              libraryVerdict: canonical,
-              brainDecision
-            }),
-            brainDomain: brainDecision.domain,
-            brainFlags: brainDecision.flags
-          }
-        };
+        const pack = browserBrainPack();
+        const brainDecision = pack
+          ? brainAnalyze(
+            { mode: 'daily', drill: input.drill, spot: input.spot },
+            { pack }
+          )
+          : null;
+        if (brainDecision) {
+          canonical.metadata = {
+            ...(canonical.metadata || {}),
+            dailyShadow: {
+              comparison: shadowCompareDaily({
+                libraryVerdict: canonical,
+                brainDecision
+              }),
+              brainDomain: brainDecision.domain,
+              brainFlags: brainDecision.flags
+            }
+          };
+        }
       } catch (_) { /* shadow only */ }
       return remember(canonical, options);
     }

@@ -25,20 +25,52 @@ const MATERIAL = [
  * evidence.meta may declare encoded dimensions.
  */
 export function compareEvidenceContext(evidence, context) {
-  if (!evidence) return CONTEXT_MATCH.UNKNOWN;
+  const detail = compareEvidenceContextDetail(evidence, context);
+  return detail.match;
+}
+
+export function compareEvidenceContextDetail(evidence, context) {
+  if (!evidence) {
+    return {
+      match: CONTEXT_MATCH.UNKNOWN,
+      ignoredMaterialFields: [],
+      missingMaterialFields: [],
+      reasons: []
+    };
+  }
   const meta = evidence.meta || {};
   const reasons = [];
+  const ignoredMaterialFields = [];
+  const missingMaterialFields = [];
 
   if (meta.solverValidated === false && meta.requiresSolverMatch) {
-    return CONTEXT_MATCH.INCOMPATIBLE;
+    return {
+      match: CONTEXT_MATCH.INCOMPATIBLE,
+      ignoredMaterialFields,
+      missingMaterialFields,
+      reasons: ['SOLVER_REQUIRED']
+    };
   }
+
+  const tree = context.preflopTree || {};
 
   if (meta.villainPositionDimension === false && context.domainNeedsVillainPosition) {
     reasons.push('COLLAPSED_VILLAIN_CONTEXT');
+    ignoredMaterialFields.push('threeBettorPosition');
   }
 
-  if (meta.openSizingDimension === false) {
+  if (meta.villainPositionDimension === false && !isUnknown(tree.threeBettorPosition)) {
+    if (!ignoredMaterialFields.includes('threeBettorPosition')) ignoredMaterialFields.push('threeBettorPosition');
+    reasons.push('COLLAPSED_VILLAIN_CONTEXT');
+  }
+
+  if (meta.openSizingDimension === false && !isUnknown(tree.openSizeBB)) {
+    ignoredMaterialFields.push('openSizeBB');
     reasons.push('OPEN_SIZE_NOT_IN_SOURCE');
+  }
+
+  if (meta.threeBetSizingDimension === false && !isUnknown(tree.threeBetSizeBB)) {
+    ignoredMaterialFields.push('threeBetSizeBB');
   }
 
   if (meta.stackSpecific === false && !isUnknown(context.effectiveStackBB)) {
@@ -47,22 +79,28 @@ export function compareEvidenceContext(evidence, context) {
 
   if (meta.stackSpecific === true && isUnknown(context.effectiveStackBB)) {
     reasons.push('STACK_CONTEXT_MISSING');
+    missingMaterialFields.push('effectiveStackBB');
   }
 
-  if (meta.stackSpecific === 'PARTIAL' && isUnknown(context.effectiveStackBB)) {
-    reasons.push('STACK_BUCKET_REQUIRED');
+  if ((meta.stackBucketDistanceBB ?? 0) > 0 || (context.stackBucket?.stackBucketDistanceBB ?? 0) > 0) {
+    reasons.push('STACK_BUCKET_APPROXIMATION');
   }
 
-  if (reasons.length === 0) {
-    if (meta.contextComplete === true) return CONTEXT_MATCH.EXACT;
-    return CONTEXT_MATCH.COMPATIBLE;
-  }
+  let match = CONTEXT_MATCH.COMPATIBLE;
+  if (reasons.length === 0 && meta.contextComplete === true) match = CONTEXT_MATCH.EXACT;
+  else if (reasons.length) match = CONTEXT_MATCH.PARTIAL;
 
-  if (reasons.includes('COLLAPSED_VILLAIN_CONTEXT') || reasons.includes('STACK_INVARIANT_SOURCE')) {
-    return CONTEXT_MATCH.PARTIAL;
-  }
-
-  return CONTEXT_MATCH.PARTIAL;
+  return {
+    match,
+    ignoredMaterialFields,
+    missingMaterialFields,
+    reasons,
+    stackBucket: {
+      actualStackBB: meta.actualStackBB ?? context.stackBucket?.actualStackBB,
+      lookupStackBB: meta.lookupStackBB ?? context.stackBucket?.lookupStackBB,
+      stackBucketDistanceBB: meta.stackBucketDistanceBB ?? context.stackBucket?.stackBucketDistanceBB
+    }
+  };
 }
 
 export { MATERIAL };

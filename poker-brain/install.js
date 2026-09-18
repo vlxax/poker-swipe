@@ -43,7 +43,7 @@ function install() {
     PB.analyzeHand = (hand) => {
       const base = prevAnalyzeHand(hand) || {};
       try {
-        const unified = engine.analyze({ mode: 'myhands', hand });
+        const unified = engine.analyze({ mode: 'myhands', hand, handId: hand.sourceHandId });
         return { ...base, unifiedDecision: unified };
       } catch (_) {
         return base;

@@ -1,5 +1,8 @@
 export { createEmptyDecisionContext, UNKNOWN, contextQualityLevel, listMissingContextFields } from './context/DecisionContext.js';
 export { normalizeDecisionContext, adapters, normalizePosition, normalizeStreet } from './context/normalize.js';
+export { normalizeActionHistory } from './context/actionHistory.js';
+export { explainRangeCell } from './integrations/rangesBrainVm.js';
+export { classifyDailyShadow } from './integrations/dailyShadow.js';
 export { KNOWLEDGE_LAYERS, LAYER_IDS, getLayer, layersForDomain } from './registry/knowledgeRegistry.js';
 export { resolvePokerDomain, POKER_DOMAINS } from './routing/resolvePokerDomain.js';
 export { collectPokerEvidence } from './evidence/collectPokerEvidence.js';

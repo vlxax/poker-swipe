@@ -1,12 +1,10 @@
 import { UNKNOWN, isUnknown } from '../context/DecisionContext.js';
 import { POKER_DOMAINS } from '../routing/resolvePokerDomain.js';
-
-const STACK_BUCKETS = [20, 25, 30, 40, 50];
+import { STACK_BUCKETS, nearestStackBucket } from '../context/stackBucket.js';
 
 function nearestStack(bb) {
-  const n = Number(bb);
-  if (!Number.isFinite(n)) return 30;
-  return STACK_BUCKETS.reduce((a, b) => (Math.abs(b - n) < Math.abs(a - n) ? b : a), STACK_BUCKETS[0]);
+  const { lookupStackBB } = nearestStackBucket(bb);
+  return lookupStackBB ?? 30;
 }
 
 function handClass(cards, classOfFn) {
@@ -62,6 +60,7 @@ export function collectPreflopAtlasEvidence(context, domain, deps = {}) {
   if (!policy) return null;
 
   const stackSensitive = domain === POKER_DOMAINS.PREFLOP_RFI;
+  const bucket = context.stackBucket || nearestStackBucket(context.effectiveStackBB);
 
   return {
     source: 'POKER_BRAIN_PACK',
@@ -80,7 +79,10 @@ export function collectPreflopAtlasEvidence(context, domain, deps = {}) {
       fourBetSizingDimension: false,
       villainPositionDimension: domain !== POKER_DOMAINS.PREFLOP_VS_3BET,
       stackBuckets: STACK_BUCKETS,
-      contextComplete: false
+      contextComplete: false,
+      actualStackBB: bucket.actualStackBB,
+      lookupStackBB: bucket.lookupStackBB,
+      stackBucketDistanceBB: bucket.stackBucketDistanceBB
     }
   };
 }

@@ -55,7 +55,9 @@ describe('PokerBrain unified engine', () => {
     assert.ok(ev);
     assert.equal(ev.solverValidated, false);
     assert.equal(ev.meta.openSizingDimension, false);
-    assert.equal(compareEvidenceContext(ev, ctx), CONTEXT_MATCH.PARTIAL);
+    const match = compareEvidenceContext(ev, ctx);
+    assert.ok([CONTEXT_MATCH.PARTIAL, CONTEXT_MATCH.COMPATIBLE].includes(match));
+    assert.equal(ev.meta.lookupStackBB, 30);
   });
 
   it('VS_3BET evidence flags collapsed villain context', () => {

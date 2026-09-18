@@ -5,9 +5,10 @@ import { resolvePokerEvidence } from './evidence/resolvePokerEvidence.js';
 import { buildDecisionResult } from './contracts/DecisionResult.js';
 import { createBrainTrace } from './trace.js';
 import { spotFromContext } from './adapters/legacySpot.js';
+import { enrichDecisionContext } from './context/enrichContext.js';
 
 function normalizeInput(input) {
-  if (input?.context && input.context.hero) return input.context;
+  if (input?.context && input.context.hero) return enrichDecisionContext({ ...input.context });
   const feature = input?.source?.feature || input?.mode;
   if (feature && adapters[feature]) return adapters[feature](input);
   return normalizeDecisionContext(input);

@@ -1,7 +1,7 @@
 import { layersForDomain } from '../registry/knowledgeRegistry.js';
 import { POKER_DOMAINS } from '../routing/resolvePokerDomain.js';
 import { collectPreflopAtlasEvidence } from './preflopAtlasAdapter.js';
-import { compareEvidenceContext } from './compareEvidenceContext.js';
+import { compareEvidenceContextDetail } from './compareEvidenceContext.js';
 
 const PREFLOP_DOMAINS = new Set([
   POKER_DOMAINS.PREFLOP_RFI,
@@ -23,10 +23,12 @@ export function collectPokerEvidence(context, domain, deps = {}) {
   if (PREFLOP_DOMAINS.has(domain)) {
     const atlas = collectPreflopAtlasEvidence(context, domain, deps);
     if (atlas) {
-      atlas.contextMatch = compareEvidenceContext(atlas, {
+      const compat = compareEvidenceContextDetail(atlas, {
         ...context,
         domainNeedsVillainPosition: domain === POKER_DOMAINS.PREFLOP_VS_3BET
       });
+      atlas.contextMatch = compat.match;
+      atlas.contextCompatibility = compat;
       evidence.push(atlas);
     } else {
       layersRejected.push({ source: 'POKER_BRAIN_PACK', reason: 'NO_POLICY_KEY' });
@@ -54,16 +56,21 @@ export function collectPokerEvidence(context, domain, deps = {}) {
     const spot = deps.spotFromContext?.(context) || {};
     const node = deps.legacyNodeFor(spot);
     if (node?.actions) {
+      const isExact = node.source === 'EXACT_REFERENCE_NODE' || node.exact === true;
       evidence.push({
         source: node.source || 'POSTFLOP_ATLAS',
-        layerId: node.source === 'EXACT_REFERENCE_NODE' ? 'EXACT_NODES' : 'POSTFLOP_ATLAS',
+        layerId: isExact ? 'EXACT_NODES' : 'POSTFLOP_ATLAS',
         domain,
         policy: node.actions,
         sizes: node.sizes || null,
-        provenance: 'CURATED_UNKNOWN',
+        provenance: isExact ? 'EXACT_REFERENCE' : 'CURATED_UNKNOWN',
         solverValidated: false,
-        contextMatch: 'PARTIAL',
-        meta: { contextComplete: false }
+        contextMatch: isExact ? 'COMPATIBLE' : 'PARTIAL',
+        meta: {
+          contextComplete: !!isExact,
+          requiresBoard: true,
+          requiresStreet: true
+        }
       });
     } else {
       layersRejected.push({ source: 'POSTFLOP_ATLAS', reason: 'NO_MODEL' });
