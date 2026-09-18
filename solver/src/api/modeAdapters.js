@@ -94,6 +94,7 @@ export function gradeSwipeDecision(input = {}) {
 /**
  * Determine preflop situation from scenario context
  * Mimics legacy preflopLookup situation detection
+ * Returns UNKNOWN for unrecognized situations (lossless requirement)
  */
 function detectPreflopSituation(scenario = {}) {
   const ctx = String(scenario.ctx || scenario.description || '').toLowerCase();
@@ -111,8 +112,8 @@ function detectPreflopSituation(scenario = {}) {
     return 'VS_OPEN';
   }
 
-  // Default to RFI if no clear situation
-  return 'RFI';
+  // Unrecognized situation - return UNKNOWN to trigger fallback to legacy path
+  return 'UNKNOWN';
 }
 
 /**
@@ -172,6 +173,12 @@ export function gradeQuickDecision(input = {}) {
 
       // Determine situation
       const situation = detectPreflopSituation(scenario);
+
+      // Lossless requirement: unknown situations stay on legacy path
+      if (situation === 'UNKNOWN') {
+        return gradeSwipeDecision({ ...input, mode: 'quick' });
+      }
+
       const heroPosition = String(scenario.pos || scenario.heroPosition || 'BTN').toUpperCase();
       const heroStack = Number(scenario.stack || scenario.effectiveStackBb || 30);
 
