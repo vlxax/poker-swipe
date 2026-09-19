@@ -151,9 +151,9 @@ function render(){
 
  root.innerHTML=`<div class="pid" data-profile-build="poker-handwriting-v2">
   <header class="pid-intro">
-   <div class="pid-brand"><b>POKER <i>SWIPE</i></b><span>ЛИЧНОЕ ДОСЬЕ</span></div>
+   <p class="pid-screen-ey">ПРОФИЛЬ</p>
    <div class="pid-person"><span class="pid-avatar">♠</span><div><b>${esc(name)}</b><small>${M.events.length} решений в истории</small></div>${skill!==null?`<span class="pid-skill">Skill ${esc(skill)}</span>`:''}</div>
-   <h1>ТВОЙ ПОКЕРНЫЙ<br><em>ПОЧЕРК.</em></h1>
+   <h1 class="impact">ТВОЙ ПОКЕРНЫЙ ПОЧЕРК</h1>
    <div class="pid-voice"><span class="pid-ey">ФРИКОВАЯ ДАМА ЗАМЕТИЛА</span><p>${esc(observation)}</p></div>
   </header>
 

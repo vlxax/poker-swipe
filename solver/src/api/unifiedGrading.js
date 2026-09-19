@@ -13,6 +13,16 @@
 import { gradeAnswer } from '../training/answerEvaluator.js';
 import { classifyLoss, classifySeverity } from '../config/thresholds.js';
 import { SolverError } from './errors.js';
+import { grade as unifiedBrainGrade } from '../../../poker-brain/grade.js';
+
+let _cachedPack = null;
+function brainPack() {
+  if (_cachedPack) return _cachedPack;
+  if (typeof globalThis !== 'undefined' && globalThis.window?.POKER_BRAIN_PACK) {
+    _cachedPack = globalThis.window.POKER_BRAIN_PACK;
+  }
+  return _cachedPack;
+}
 
 // Grade order for UI (visual hierarchy)
 export const GRADE_ORDER = ['EXCELLENT', 'GOOD', 'INACCURACY', 'MISTAKE', 'BIG_MISTAKE'];
@@ -179,22 +189,61 @@ function gradeViaLegacy(input = {}) {
   }
 
   try {
-    // Call legacy PokerBrain.gradeDecision
-    const legacyResult = window.PokerBrain.gradeDecision(
-      {
-        spotId: input.spotId || input.scenario?.id,
-        id: input.scenario?.id,
-        street: input.scenario?.street,
-        hero: input.scenario?.heroCards,
-        board: input.scenario?.board,
-        pos: input.scenario?.heroPosition,
-        stack: input.scenario?.effectiveStackBb,
-        pot: input.scenario?.potBb,
-        ctx: input.scenario?.description || ''
-      },
-      input.chosenAction?.type || input.chosenActionType || 'CHECK',
-      input.chosenAction?.sizePct ?? input.chosenSize ?? null
-    );
+    const scenario = input.scenario || {};
+    const action = input.chosenAction?.type || input.chosenActionType || 'CHECK';
+    const size = input.chosenAction?.sizePct ?? input.chosenSize ?? null;
+    const spotPayload = {
+      mode: input.mode || 'swipe',
+      scenario: {
+        ...scenario,
+        id: input.spotId || scenario.id,
+        spotId: scenario.spotId || scenario.id,
+        hero: scenario.heroCards || scenario.hero,
+        pos: scenario.heroPosition,
+        stack: scenario.effectiveStackBb,
+        pot: scenario.potBb,
+        ctx: scenario.description || ''
+      }
+    };
+
+    const PB = window.PokerBrain;
+    const legacyGradeDecision = PB._legacyGradeDecision || PB.gradeDecision?.bind(PB);
+    const classOf = PB.classOf?.bind(PB);
+    const legacyNodeFor = PB.nodeFor?.bind(PB);
+
+    let unifiedDecision = null;
+    let legacyResult = null;
+
+    if (typeof PB.grade === 'function') {
+      unifiedDecision = PB.grade(spotPayload, action, { trace: false });
+      legacyResult = unifiedDecision.legacyGrade || unifiedDecision.grading?.legacyResult;
+    } else {
+      unifiedDecision = unifiedBrainGrade(spotPayload, action, {
+        pack: brainPack() || window.POKER_BRAIN_PACK,
+        classOf,
+        legacyNodeFor,
+        legacyGradeDecision
+      });
+      legacyResult = unifiedDecision.legacyGrade || unifiedDecision.grading?.legacyResult;
+    }
+
+    if (!legacyResult && legacyGradeDecision) {
+      legacyResult = legacyGradeDecision(
+        {
+          spotId: spotPayload.scenario.spotId,
+          id: spotPayload.scenario.id,
+          street: spotPayload.scenario.street,
+          hero: spotPayload.scenario.hero,
+          board: spotPayload.scenario.board,
+          pos: spotPayload.scenario.pos,
+          stack: spotPayload.scenario.stack,
+          pot: spotPayload.scenario.pot,
+          ctx: spotPayload.scenario.ctx
+        },
+        action,
+        size
+      );
+    }
 
     if (!legacyResult) {
       return createDefaultGrade('legacy-policy');
@@ -216,7 +265,14 @@ function gradeViaLegacy(input = {}) {
         actionGrade: adapted.actionGrade,
         sizeGrade: adapted.sizeGrade,
         score: adapted.score,
-        mode: input.mode
+        mode: input.mode,
+        brainDecision: unifiedDecision
+          ? {
+            domain: unifiedDecision.domain,
+            primarySource: unifiedDecision.provenance?.primarySource,
+            flags: unifiedDecision.flags
+          }
+          : null
       },
       explanationData: {
         grade: adapted.grade,

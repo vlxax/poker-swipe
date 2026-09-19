@@ -33,6 +33,14 @@ import { choiceToActionType } from '../solver/src/training/libraryDrill.js';
 import { gradeAssessmentItem } from '../solver/src/training/assessment.js';
 import { attemptFromGradingResult, mapDecisionAction } from '../range-learning/attemptAdapter.js';
 import { getLearnerMemory } from '../range-learning/persistence.js';
+import { analyze as brainAnalyze } from '../poker-brain/analyze.js';
+import { shadowCompareDaily } from '../poker-brain/integrations/dailyShadow.js';
+function browserBrainPack() {
+  if (typeof globalThis !== 'undefined' && globalThis.window?.POKER_BRAIN_PACK) {
+    return globalThis.window.POKER_BRAIN_PACK;
+  }
+  return null;
+}
 
 const GATEWAY_OWNER = 'training-ui/gradingGateway.js';
 const recordedDecisionIds = new Set();
@@ -362,7 +370,30 @@ export function gradeDecision(input = {}, options = {}) {
         chosenAction: input.chosenAction,
         preset: input.preset || input.drill.preset || 'mtt'
       });
-      return remember(canonicalFromSolver('daily', input, solver), options);
+      const canonical = canonicalFromSolver('daily', input, solver);
+      try {
+        const pack = browserBrainPack();
+        const brainDecision = pack
+          ? brainAnalyze(
+            { mode: 'daily', drill: input.drill, spot: input.spot },
+            { pack }
+          )
+          : null;
+        if (brainDecision) {
+          canonical.metadata = {
+            ...(canonical.metadata || {}),
+            dailyShadow: {
+              comparison: shadowCompareDaily({
+                libraryVerdict: canonical,
+                brainDecision
+              }),
+              brainDomain: brainDecision.domain,
+              brainFlags: brainDecision.flags
+            }
+          };
+        }
+      } catch (_) { /* shadow only */ }
+      return remember(canonical, options);
     }
     if (mode === 'assessment') {
       const solver = gradeAssessmentItem(input.item, input.choice ?? input.chosenActionId);
@@ -388,7 +419,11 @@ export function gradeDecision(input = {}, options = {}) {
   } catch (err) {
     return emptyCanonical(mode, {
       errorType: 'engine_error',
-      metadata: { message: err && err.message ? err.message : String(err) },
+      metadata: {
+        message: err && err.message ? err.message : String(err),
+        explicitFallback: true,
+        fallbackKind: 'ENGINE_ERROR_EMPTY_CANONICAL'
+      },
       memory: { written: false, skipped: true, reason: 'engine_error', error: err && err.message }
     });
   }
