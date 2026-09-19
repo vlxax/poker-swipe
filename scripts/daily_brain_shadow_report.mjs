@@ -84,7 +84,7 @@ for (const task of TASKS) {
   }
   if (classification === 'NOT_COMPARABLE') summary.NOT_COMPARABLE += 1;
   if (classification === 'NO_BRAIN_EVIDENCE') summary.NO_EVIDENCE += 1;
-  if (classification === 'CONFLICT') summary.CONFLICT += 1;
+  if (classification === 'CONFLICT' || classification === 'POLICY_CONFLICT') summary.CONFLICT += 1;
 
   const cat = categoryFor(task, canonical);
   summary.byCategory[cat].total += 1;

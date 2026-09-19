@@ -36,8 +36,10 @@ const state={
   selectedHand:null, trainingMode:'learn', quiz:null, results:null,
   buildSelected:new Set(), buildCompared:false,
   query:'', filterMode:'', filterPos:'', filterStack:'', page:0,
-  showOriginal:false, diffStack:null, diffPosition:null
+  showOriginal:false, diffStack:null, diffPosition:null,
+  brainExplain:null, brainExplainLoading:false
 };
+let brainExplainSeq=0;
 
 function loadHistory(){try{const x=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');return Array.isArray(x)?x:[]}catch{return []}}
 function saveHistory(row){try{const a=loadHistory();a.unshift(row);localStorage.setItem(HISTORY_KEY,JSON.stringify(a.slice(0,500)));}catch{}}
@@ -176,6 +178,34 @@ function uoPositionDiffCard(meta,active){
 }
 
 function matrixCellClass(action,active){return `rg-cell ${active?'active':''} ${CONFIRMED_ACTIONS.has(action)?`a-${action.replace(/[^A-Z0-9]/g,'')}`:'source'}`;}
+function brainExplainPanel(sel){
+  if(!sel)return'';
+  const b=state.brainExplain;
+  if(state.brainExplainLoading&&(!b||b.hand!==sel))return `<div class="rg-brain"><small>POKERBRAIN</small><p>Загрузка…</p></div>`;
+  if(!b||b.hand!==sel)return'';
+  if(b.error)return `<div class="rg-brain"><small>POKERBRAIN</small><p>${esc(b.error)}</p></div>`;
+  const pol=b.policy?Object.entries(b.policy).filter(([,v])=>typeof v==='number').sort((a,c)=>c[1]-a[1]).slice(0,4).map(([a,v])=>`${a} ${Math.round(v*100)}%`).join(' · '):'—';
+  const ign=(b.ignoredMaterialFields||[]).join(', ');
+  return `<div class="rg-brain"><small>POKERBRAIN · ${esc(b.domain||'')}</small><p><b>${esc(b.primarySource||'NO_SOURCE')}</b> · ${esc(String(b.contextMatch||''))}</p><p>${esc(pol)}</p>${b.lookupStackBB!=null?`<p>Stack lookup ${esc(String(b.lookupStackBB))} BB · Δ ${esc(String(b.stackBucketDistanceBB??0))}</p>`:''}${ign?`<p class="rg-muted">Источник не кодирует: ${esc(ign)}</p>`:''}${(b.conflicts||[]).length?`<p class="rg-muted">Конфликты источников: ${b.conflicts.length}</p>`:''}</div>`;
+}
+async function refreshBrainExplain(hand){
+  const meta=spotMeta();if(!meta||!hand||state.view!=='study')return;
+  const seq=++brainExplainSeq;state.brainExplainLoading=true;render();
+  try{
+    let out;
+    if(window.PokerBrain?.explainRangeCell)out=window.PokerBrain.explainRangeCell(meta,hand);
+    else{
+      const vm=await import('../poker-brain/integrations/rangesBrainVm.js');
+      const ref=await import('./referenceRanges.js');
+      out=vm.explainRangeCellForRanges(meta,hand,{pack:window.POKER_BRAIN_PACK,classOf:window.PokerBrain?.classOf?.bind(window.PokerBrain),referenceLookupPolicy:ref.lookupReferencePolicy});
+    }
+    if(seq!==brainExplainSeq||state.selectedHand!==hand)return;
+    state.brainExplain=out;state.brainExplainLoading=false;render();
+  }catch(e){
+    if(seq!==brainExplainSeq)return;
+    state.brainExplain={hand,error:e?.message||String(e)};state.brainExplainLoading=false;render();
+  }
+}
 function study(){
   const meta=spotMeta(),sel=state.selectedHand;if(!meta)return'';let cells={},original='';
   if(meta.type==='uo'){const map=actionMap(currentUoChart());for(const h of HANDS)cells[h]={action:map[h]||'UNSELECTED',active:(map[h]||'UNSELECTED')!=='UNSELECTED',pure:true};}else cells=decodeStructured(meta.rec,RANKS);
@@ -184,7 +214,7 @@ function study(){
   const heat=h=>{const st=dStats.get(h)||bStats.get(h);if(!st)return'unseen';const a=st.seen?st.correct/st.seen:0;return st.lastCorrect===false||a<.6?'weak':a>=.85&&st.seen>=2?'mastered':'shaky';};
   return `<main><section class="rg-section"><div class="rg-section-head"><div><div class="rg-eyebrow">${esc(meta.mode)}</div><h2>${esc(meta.title)}</h2></div>${meta.type==='library'?`<button id="rgOriginal">${state.showOriginal?'МАТРИЦА':'ОРИГИНАЛ'}</button>`:''}</div><p>${esc(contextLine(meta))}</p><div class="rg-range-facts"><span><b>${(100*combos/1326).toFixed(1)}%</b><small>RANGE</small></span><span><b>${combos}</b><small>COMBOS</small></span></div>${original||`<div class="rg-grid">${HANDS.map(h=>`<button class="${matrixCellClass(cells[h].action,cells[h].active)} ${sel===h?'selected':''} mastery-${heat(h)}" data-hand="${h}">${h}</button>`).join('')}</div><div class="rg-mastery-legend"><span>● не проверено</span><span>● шатко</span><span>● ошибка</span><span>● освоено</span></div>`}
     ${composition.length?`<div class="rg-composition"><b>СОСТАВ RANGE</b>${composition.map(x=>`<div><span>${esc(x.label)}</span><strong>${x.combos} combos</strong></div>`).join('')}</div>`:''}
-    ${sel&&d?`<div class="rg-hand-card"><strong>${sel}</strong><div>${confirmed?`<b>${esc(ACTION_LABELS[d.action])}</b><p>Действие подтверждено и может проверяться в тренере решений.</p>`:`<b>${d.active?'ВХОДИТ В RANGE':'ВНЕ RANGE'}</b><p>${d.active?'Здесь изучается форма диапазона; неподтверждённый action не подменяется догадкой.':'Эта рука вне выделенной области source.'}</p>`}${(dStats.get(sel)||bStats.get(sel))?`<small>Попыток ${(dStats.get(sel)||bStats.get(sel)).seen} · ошибок ${(dStats.get(sel)||bStats.get(sel)).wrong}</small>`:''}</div></div>`:''}
+    ${sel&&d?`<div class="rg-hand-card"><strong>${sel}</strong><div>${confirmed?`<b>${esc(ACTION_LABELS[d.action])}</b><p>Действие подтверждено и может проверяться в тренере решений.</p>`:`<b>${d.active?'ВХОДИТ В RANGE':'ВНЕ RANGE'}</b><p>${d.active?'Здесь изучается форма диапазона; неподтверждённый action не подменяется догадкой.':'Эта рука вне выделенной области source.'}</p>`}${(dStats.get(sel)||bStats.get(sel))?`<small>Попыток ${(dStats.get(sel)||bStats.get(sel)).seen} · ошибок ${(dStats.get(sel)||bStats.get(sel)).wrong}</small>`:''}</div>${brainExplainPanel(sel)}</div>`:''}
     <div class="rg-legend"><span><i class="in"></i>в range</span><span><i></i>вне range</span></div></section><section class="rg-actions"><button data-spot-action="build"><b>СОБРАТЬ ПО ПАМЯТИ</b><small>проверить всю форму</small></button><button data-start="boundary"><b>ТРЕНИРОВАТЬ ГРАНИЦУ</b><small>стратегические пороги</small></button></section></main>`;
 }
 
@@ -263,7 +293,7 @@ function render(){
   if(state.view==='home')body=home();else if(state.view==='spots')body=spots();else if(state.view==='spot')body=spot();else if(state.view==='study')body=study();else if(state.view==='build')body=build();else if(state.view==='quiz')body=quiz();else if(state.view==='results')body=results();else if(state.view==='diff')body=diff();else body=home();
   host.innerHTML=`<div class="rg-app">${header()}${nav()}${body}</div>`;bind();hydrateOriginal();savePrefs();armRapid();
 }
-function go(v){state.prevView=state.view;state.view=v;state.selectedHand=null;if(v!=='build'){state.buildCompared=false;}render();}
+function go(v){state.prevView=state.view;state.view=v;state.selectedHand=null;state.brainExplain=null;state.brainExplainLoading=false;if(v!=='build'){state.buildCompared=false;}render();}
 function back(){if(state.view==='spot')go('spots');else if(['study','build','diff'].includes(state.view))go('spot');else if(['quiz','results'].includes(state.view)){state.spotId=state.quiz?.spotId||state.results?.spotId||state.spotId;go('spot');}else go('home');}
 
 function bind(){
@@ -283,7 +313,7 @@ function bind(){
   document.getElementById('rgNext')?.addEventListener('click',()=>{state.page++;render();});
   document.querySelectorAll('#ranges [data-spot-action]').forEach(b=>b.onclick=()=>{if(b.dataset.spotAction==='build'){state.buildSelected=new Set();state.buildCompared=false;}go(b.dataset.spotAction);});
   document.querySelectorAll('#ranges [data-start]').forEach(b=>b.onclick=()=>startTraining(b.dataset.start,b.dataset.modeTrain||'learn'));
-  document.querySelectorAll('#ranges [data-hand]').forEach(b=>b.onclick=()=>{state.selectedHand=b.dataset.hand;render();});
+  document.querySelectorAll('#ranges [data-hand]').forEach(b=>b.onclick=()=>{state.selectedHand=b.dataset.hand;state.brainExplain=null;render();refreshBrainExplain(b.dataset.hand);});
   document.getElementById('rgOriginal')?.addEventListener('click',()=>{state.showOriginal=!state.showOriginal;state.selectedHand=null;render();});
   document.querySelectorAll('#ranges [data-build-hand]').forEach(b=>b.onclick=()=>{if(state.buildCompared)return;const h=b.dataset.buildHand;state.buildSelected.has(h)?state.buildSelected.delete(h):state.buildSelected.add(h);render();});
   document.getElementById('rgCompare')?.addEventListener('click',()=>{if(state.buildCompared){state.buildSelected=new Set();state.buildCompared=false;}else state.buildCompared=true;render();});

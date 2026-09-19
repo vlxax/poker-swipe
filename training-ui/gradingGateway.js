@@ -419,7 +419,11 @@ export function gradeDecision(input = {}, options = {}) {
   } catch (err) {
     return emptyCanonical(mode, {
       errorType: 'engine_error',
-      metadata: { message: err && err.message ? err.message : String(err) },
+      metadata: {
+        message: err && err.message ? err.message : String(err),
+        explicitFallback: true,
+        fallbackKind: 'ENGINE_ERROR_EMPTY_CANONICAL'
+      },
       memory: { written: false, skipped: true, reason: 'engine_error', error: err && err.message }
     });
   }

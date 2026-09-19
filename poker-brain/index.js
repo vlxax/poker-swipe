@@ -1,8 +1,6 @@
 export { createEmptyDecisionContext, UNKNOWN, contextQualityLevel, listMissingContextFields } from './context/DecisionContext.js';
 export { normalizeDecisionContext, adapters, normalizePosition, normalizeStreet } from './context/normalize.js';
 export { normalizeActionHistory } from './context/actionHistory.js';
-export { explainRangeCell } from './integrations/rangesBrainVm.js';
-export { classifyDailyShadow } from './integrations/dailyShadow.js';
 export { KNOWLEDGE_LAYERS, LAYER_IDS, getLayer, layersForDomain } from './registry/knowledgeRegistry.js';
 export { resolvePokerDomain, POKER_DOMAINS } from './routing/resolvePokerDomain.js';
 export { collectPokerEvidence } from './evidence/collectPokerEvidence.js';
@@ -13,9 +11,13 @@ export { buildDecisionResult } from './contracts/DecisionResult.js';
 export { SolverPolicyProvider, createSolverProviderStub } from './solver/SolverPolicyProvider.js';
 export { analyze } from './analyze.js';
 export { grade } from './grade.js';
-export { createBrainTrace } from './trace.js';
 export { spotFromContext } from './adapters/legacySpot.js';
-export { shadowCompareDaily } from './integrations/dailyShadow.js';
+export { shadowCompareDaily, classifyDailyShadow } from './integrations/dailyShadow.js';
+export { canUnifiedBrainOwnDaily, summarizeDailyMigrationGate } from './integrations/dailyMigrationGate.js';
+export { ENGINE_VERSION, SCHEMA_VERSION } from './version.js';
+export { traceDecision, createBrainTrace } from './trace.js';
+export { analyzeWithTrace } from './analyze.js';
+export { explainRangeCell, explainRangeCellForRanges, formatRangeBrainVm } from './integrations/rangesBrainVm.js';
 export { LEGACY_BRAIN_OWNERSHIP } from './integrations/legacyOwnership.js';
 
 import { analyze as analyzeFn } from './analyze.js';

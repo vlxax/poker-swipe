@@ -61,8 +61,11 @@ export function classifyDailyShadow({ libraryVerdict, brainDecision, drill }) {
   const alsoOk = (drill?.alsoOk || libraryVerdict.alsoOk || []).map((x) => libraryAction({ action: x }));
   if (lib === brain) {
     const freq = brainDecision.recommendation?.frequencies?.[brainDecision.recommendation?.action];
+    if (freq != null && freq < 0.99 && freq >= 0.55) {
+      return { classification: 'DOMINANT_ACTION_MATCH', reason: 'same_dominant_action_mixed_freq' };
+    }
     if (freq != null && freq < 0.55 && freq > 0) {
-      return { classification: 'ACTION_MATCH_FREQUENCY_DIFFERENCE', reason: 'same_action_low_freq' };
+      return { classification: 'DOMINANT_ACTION_MATCH', reason: 'same_action_low_freq' };
     }
     return { classification: 'EXACT_MATCH', reason: 'action_match' };
   }
@@ -72,10 +75,10 @@ export function classifyDailyShadow({ libraryVerdict, brainDecision, drill }) {
   }
 
   if (brainDecision.conflicts?.length) {
-    return { classification: 'CONFLICT', reason: 'evidence_conflict' };
+    return { classification: 'POLICY_CONFLICT', reason: 'evidence_conflict' };
   }
 
-  return { classification: 'CONFLICT', reason: 'action_mismatch' };
+  return { classification: 'POLICY_CONFLICT', reason: 'action_mismatch' };
 }
 
 /** @deprecated use classifyDailyShadow */
@@ -84,6 +87,6 @@ export function shadowCompareDaily({ libraryVerdict, brainDecision }) {
   if (c.classification === 'EXACT_MATCH') return 'MATCH';
   if (c.classification === 'NO_BRAIN_EVIDENCE') return 'NO_EVIDENCE';
   if (c.classification === 'NOT_COMPARABLE') return 'NOT_COMPARABLE';
-  if (c.classification === 'CONFLICT') return 'CONFLICT';
+  if (c.classification === 'POLICY_CONFLICT' || c.classification === 'CONFLICT') return 'CONFLICT';
   return 'COMPATIBLE';
 }

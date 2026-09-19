@@ -2,6 +2,8 @@ import { layersForDomain } from '../registry/knowledgeRegistry.js';
 import { POKER_DOMAINS } from '../routing/resolvePokerDomain.js';
 import { collectPreflopAtlasEvidence } from './preflopAtlasAdapter.js';
 import { compareEvidenceContextDetail } from './compareEvidenceContext.js';
+import { collectReference6maxEvidenceSync } from './reference6maxProvider.js';
+import { collectUoTrainerEvidence } from './uoTrainerProvider.js';
 
 const PREFLOP_DOMAINS = new Set([
   POKER_DOMAINS.PREFLOP_RFI,
@@ -21,6 +23,22 @@ export function collectPokerEvidence(context, domain, deps = {}) {
   }
 
   if (PREFLOP_DOMAINS.has(domain)) {
+    const ref = collectReference6maxEvidenceSync(context, domain, deps);
+    if (ref?.policy) {
+      ref.role = 'SUPPORTING_REFERENCE';
+      evidence.push(ref);
+    } else if (ref?.notComparable) {
+      layersRejected.push({ source: 'REFERENCE_6MAX', reason: ref.meta?.reason || 'NOT_COMPARABLE' });
+    }
+
+    const trainer = collectUoTrainerEvidence(context, domain, deps);
+    if (trainer?.policy) {
+      trainer.role = 'SUPPORTING_TRAINER';
+      evidence.push(trainer);
+    } else if (trainer?.notComparable) {
+      layersRejected.push({ source: 'UO_TRAINER', reason: trainer.meta?.reason || 'NOT_COMPARABLE' });
+    }
+
     const atlas = collectPreflopAtlasEvidence(context, domain, deps);
     if (atlas) {
       const compat = compareEvidenceContextDetail(atlas, {

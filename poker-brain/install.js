@@ -2,6 +2,11 @@
  * Browser install: attach canonical analyze/grade to window.PokerBrain.
  */
 import { createPokerBrainEngine } from './index.js';
+import { ENGINE_VERSION } from './version.js';
+import { analyzeWithTrace } from './analyze.js';
+import { traceDecision } from './trace.js';
+import { explainRangeCellForRanges } from './integrations/rangesBrainVm.js';
+import { lookupReferencePolicy } from '../ranges-ui/referenceRanges.js';
 
 function install() {
   const PB = window.PokerBrain;
@@ -36,15 +41,49 @@ function install() {
     pack,
     ...opts
   });
-  PB.unifiedEngine = 'POKERBRAIN_UNIFIED_DECISION_ENGINE_V1';
+  PB.unifiedEngine = ENGINE_VERSION;
+  PB.engineVersion = ENGINE_VERSION;
+  PB.trace = (input, opts = {}) => traceDecision(analyzeWithTrace(input, {
+    legacyGradeDecision,
+    legacyNodeFor,
+    classOf,
+    pack,
+    referenceLookupPolicy: lookupReferencePolicy,
+    ...opts
+  }));
+  PB.explainRangeCell = (meta, hand, opts = {}) => explainRangeCellForRanges(meta, hand, {
+    pack,
+    classOf,
+    referenceLookupPolicy: lookupReferencePolicy,
+    legacyNodeFor,
+    ...opts
+  });
 
   const prevAnalyzeHand = PB.analyzeHand?.bind(PB);
   if (prevAnalyzeHand) {
     PB.analyzeHand = (hand) => {
       const base = prevAnalyzeHand(hand) || {};
       try {
-        const unified = engine.analyze({ mode: 'myhands', hand, handId: hand.sourceHandId });
-        return { ...base, unifiedDecision: unified };
+        const unified = engine.analyze({ mode: 'myhands', hand, handId: hand.sourceHandId }, {
+          referenceLookupPolicy: lookupReferencePolicy
+        });
+        return {
+          ...base,
+          unifiedDecision: unified,
+          brainVm: {
+            recommendation: unified.recommendation,
+            grading: unified.grading,
+            contextQuality: unified.contextQuality,
+            provenance: unified.provenance,
+            brainKnows: unified.brainKnows,
+            strategySourceKnows: unified.strategySourceKnows,
+            ignoredMaterialFields: unified.contextCompatibility?.ignoredMaterialFields,
+            missingMaterialFields: unified.contextCompatibility?.missingMaterialFields,
+            conflicts: unified.conflicts,
+            equity: unified.equity,
+            engineVersion: unified.engineVersion
+          }
+        };
       } catch (_) {
         return base;
       }

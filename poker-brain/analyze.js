@@ -4,6 +4,7 @@ import { collectPokerEvidence } from './evidence/collectPokerEvidence.js';
 import { resolvePokerEvidence } from './evidence/resolvePokerEvidence.js';
 import { buildDecisionResult } from './contracts/DecisionResult.js';
 import { createBrainTrace } from './trace.js';
+import { ENGINE_VERSION, SCHEMA_VERSION } from './version.js';
 import { spotFromContext } from './adapters/legacySpot.js';
 import { enrichDecisionContext } from './context/enrichContext.js';
 
@@ -42,5 +43,14 @@ export function analyze(input = {}, deps = {}) {
     collected,
     trace
   });
-  return { ...result, context: enrichedContext };
+  return {
+    ...result,
+    context: enrichedContext,
+    engineVersion: ENGINE_VERSION,
+    schemaVersion: SCHEMA_VERSION
+  };
+}
+
+export function analyzeWithTrace(input = {}, deps = {}) {
+  return analyze(input, { ...deps, traceEnabled: true });
 }
