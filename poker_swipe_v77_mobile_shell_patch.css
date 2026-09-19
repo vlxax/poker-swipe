@@ -1,0 +1,64 @@
+/* PokerSwipe V77 MobileShell PATCH 1.1 — merge candidate
+   Layout-only compatibility patch. No poker/grading/data changes. */
+:root{
+  --ps77-vh:100dvh;
+  --ps77-top-safe:max(env(safe-area-inset-top,0px),var(--tg-content-safe-area-inset-top,0px),var(--tg-js-content-top,0px));
+  --ps77-bottom-safe:max(env(safe-area-inset-bottom,0px),var(--tg-content-safe-area-inset-bottom,0px),var(--tg-js-content-bottom,0px));
+  --ps77-header-h:76px;
+  --ps77-nav-h:72px;
+}
+html,body{height:100%;min-height:100%;max-width:100%;overflow:hidden!important;background:#08080b!important}
+body.ps77-app-shell{position:fixed!important;inset:0!important;width:100%!important;margin:0!important;padding:0!important;overscroll-behavior:none!important}
+body.ps77-app-shell #mainApp{
+  position:relative!important;width:min(100%,480px)!important;height:var(--ps77-vh)!important;min-height:0!important;
+  max-height:var(--ps77-vh)!important;margin:0 auto!important;overflow:hidden!important;contain:layout paint;
+}
+body.ps77-app-shell #mainApp>main{
+  position:absolute!important;top:var(--ps77-header-h)!important;bottom:var(--ps77-nav-h)!important;left:0!important;right:0!important;
+  min-height:0!important;overflow:hidden!important;
+}
+body.ps77-app-shell #mainApp>.top{
+  position:absolute!important;top:0!important;left:0!important;right:0!important;box-sizing:border-box!important;
+  min-height:0!important;z-index:120!important;padding-top:calc(var(--ps77-top-safe) + 12px)!important;
+  background:linear-gradient(180deg,#08080b 0%,#08080bf2 82%,#08080b00 100%)!important;
+}
+body.ps77-app-shell #mainApp>.top .brand{font-size:18px!important;line-height:1!important;white-space:nowrap!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24{max-width:52%!important;overflow:hidden!important;justify-content:flex-end!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:8px!important;letter-spacing:.1em!important;white-space:nowrap!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24 span{font-size:9px!important}
+body.ps77-app-shell #mainApp>.top #levelChip{display:none!important}
+
+/* Only direct route screens become the app scroll viewport. Nested components/modals are untouched. */
+body.ps77-app-shell #mainApp>main>.screen{
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;
+  box-sizing:border-box!important;display:none!important;overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;scrollbar-width:none!important;
+  padding:12px 14px 24px!important;scroll-padding-top:12px!important;scroll-padding-bottom:28px!important;
+}
+body.ps77-app-shell #mainApp>main>.screen::-webkit-scrollbar{display:none!important}
+body.ps77-app-shell #mainApp>main>.screen.active{display:block!important}
+body.ps77-app-shell #mainApp>main>.screen>*{max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+
+body.ps77-app-shell #mainApp>.nav{
+  position:absolute!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;
+  box-sizing:border-box!important;z-index:130!important;padding:7px 6px calc(7px + var(--ps77-bottom-safe))!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;background:rgba(8,8,11,.97)!important;
+  backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;
+}
+body.ps77-app-shell #mainApp>.nav button{min-height:52px!important;overflow:hidden!important}
+
+/* Scope only known mini-app roots. Do not touch generic .actions or modal internals. */
+body.ps77-app-shell :is(#sizingArea,#reviewArea,#dailyArea,#exploitArea,#healArea,#myArea,#xrayArea,#profileArea,#psPolyanaArea,#myTournamentsRoot,#tournamentsArea){
+  min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;
+}
+body.ps77-app-shell #mainApp>main>.screen h1,
+body.ps77-app-shell #mainApp>main>.screen h2{overflow-wrap:anywhere}
+body.ps77-app-shell #mainApp>main>.screen :is(.toolTop,.swipeTop){min-width:0!important}
+body.ps77-app-shell #mainApp>main>.screen :is(.toolTop,.swipeTop)>*{min-width:0!important}
+body.ps77-app-shell #mainApp>main>.screen{overscroll-behavior-x:none!important}
+
+@media(max-width:390px){
+  body.ps77-app-shell #mainApp>main>.screen{padding-left:12px!important;padding-right:12px!important}
+  body.ps77-app-shell #mainApp>.top{padding-left:13px!important;padding-right:13px!important}
+  body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:7px!important}
+}

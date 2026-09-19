@@ -1136,7 +1136,7 @@ button{letter-spacing:-.01em}
 </style>
 
 
-<meta name="poker-swipe-build" content="V49-MASTER-2026-08-16">
+<meta name="poker-swipe-build" content="V77-TRUTH-CONTRACT-2026-09-18">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -1144,10 +1144,15 @@ button{letter-spacing:-.01em}
 <link rel="stylesheet" href="polyana/polyana-integrated.css">
 <script src="js/pwa-standalone.js"></script>
 <script src="js/pwa-install-helper.js"></script>
+<link rel="stylesheet" href="poker_swipe_v74_focus.css">
+
+<style id="v76PokerLoopCss">
+.swTruth{margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:4px}.swTruth b{font-size:12px}.swTruth small{color:var(--muted,#999);line-height:1.35}.swFocusBtn{border-color:rgba(255,55,125,.38)!important}.swRefWarn{border-left:3px solid #f2b84b}.swRefHead b{font-weight:600}.swipeReport .verdict p{line-height:1.45}
+</style>
 </head>
 <body>
 <div class="app">
-<div class="build" style="display:none">V25</div>
+<div class="build" style="display:none">V77</div>
 
 <section id="onboarding" class="onboard"><div id="story" class="story">
       <span class="ey">POKER SWIPE · STARTUP</span>
@@ -1705,16 +1710,25 @@ const SWIPE_BASE=[
  {id:'R_98762_88',street:'РИВЕР',pos:'BTN vs BB',hero:['8♣','8♦'],board:['9♠','8♥','7♣','6♦','2♠'],ctx:'BB чек.',stack:36,pot:17,actions:['ЧЕК','СТАВКА'],preferred:['ЧЕК'],live:['СТАВКА'],sizeZone:[20,40],concept:'thin value',why:'На 4-straight вопрос не в силе сета, а в том, какие худшие руки реально платят.'},
  {id:'R_AA742_A5',street:'РИВЕР',pos:'BTN vs BB',hero:['A♣','5♣'],board:['A♦','A♠','7♥','4♣','2♦'],ctx:'BB чек после двух small bets.',stack:35,pot:19,actions:['ЧЕК','СТАВКА'],preferred:['СТАВКА'],live:[],sizeZone:[55,90],concept:'river value',why:'Трипс сохраняет сильный value target; размер должен учитывать более слабые Ax.'}
 ];
-function expandSwipe(){const out=[];const stacks=[22,30,40,55];for(const b of SWIPE_BASE){stacks.forEach((st,i)=>out.push({...b,id:b.id+'_V'+i,stack:Math.max(16,Math.round((b.stack+st)/2)),pot:+(b.pot*(.92+i*.05)).toFixed(1)}))}return out}
-const SWIPE=expandSwipe();let swSession=[],swIndex=0,swStart=0,swTimer=null,swLocked=false,swSessionGrades=[];
+// V76: do not manufacture new poker spots by changing stack/pot while keeping the same answer.
+// Every training spot now preserves the authored context exactly.
+function expandSwipe(){return SWIPE_BASE.map(b=>({...b,provenance:b.provenance||'CURATED_LEGACY'}))}
+const SWIPE=expandSwipe();let swSession=[],swIndex=0,swStart=0,swTimer=null,swLocked=false,swSessionGrades=[],swConfidence=60;
 function newSwipeSession(){swSession=selectSwipeTasks();swIndex=0;swSessionGrades=[];S.seenSwipe=[...(S.seenSwipe||[]),...swSession.map(x=>x.id)].slice(-55);save()}
 function swipeGrade(s,a){return s.preferred.includes(a)?'g':s.live.includes(a)?'y':'r'}
-function renderSwipe(){if(!swSession.length||swIndex>=swSession.length)newSwipeSession();const s=swSession[swIndex];swLocked=false;swStart=now();clearTimeout(swTimer);$('#swipeVerdict').classList.add('hidden');$('#swipeVerdict').innerHTML='';const card=$('#swipeCard');card.classList.remove('hidden');card.innerHTML=`${quickBanner('swipe')}<div class="swipeShell"><div class="swipeTop"><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'ПРОВЕРКА ПАМЯТИ · ':''}${s.street} · ${s.pos}</span><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'ТОТ ЖЕ CONCEPT':'РУКА '+(swIndex+1)+'/10'}</span></div><div class="swipeProgress"><span style="width:${swIndex/10*100}%"></span></div><div class="swipeCardV in" id="swipeVisual">${refBadge()}<h2>ТВОЁ РЕШЕНИЕ?</h2>${s.board.length?board(s.board):''}${hand(s.hero)}<div class="swipeContext"><div><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div><span class="ey">ЭФФ. СТЕК</span><b>${s.stack} BB</b></div></div><p>${s.ctx}</p><div class="swipeHint">${s.concept}</div></div></div>`;$('#swipeActions').innerHTML=s.actions.map((a,i)=>`<button class="action ${/ФОЛД/.test(a)?'fold':/КОЛЛ|ЧЕК/.test(a)?'call':'raise'}" data-sa="${a}">${a}</button>`).join('');$$('[data-sa]').forEach(b=>b.onclick=()=>swipeTap(s,b.dataset.sa,b))}
+function swipeBrainSpot(s){return {id:s.id,spotId:s.id,street:s.street,pos:s.pos,hero:s.hero,board:s.board,stack:s.stack,pot:s.pot,ctx:s.ctx,concept:s.concept,provenance:s.provenance||'CURATED_LEGACY'}}
+function swipeReference(s,a,size){try{const r=window.PokerBrain?.gradeDecision?.(swipeBrainSpot(s),a,size);return r&&r.source&&r.source!=='NO_MODEL'?r:null}catch(e){return null}}
+function swipeReferenceHtml(r){if(!r)return '<div class="swRefWarn"><b>REFERENCE</b><span>Для этого спота нет подтверждённого узла Poker Brain — показана legacy-оценка задачи.</span></div>';const top=(r.topActions||[]).slice(0,3).map(x=>`<div class="swFreq"><span>${esc(x.action)}</span><b>${Math.round(Number(x.freq||0)*100)}%</b><i style="width:${Math.round(Number(x.freq||0)*100)}%"></i></div>`).join('');const src=esc(r.source||'REFERENCE'),conf=Math.max(0,Math.min(100,Number(r.confidence||0)));return `<div class="swRef"><div class="swRefHead"><span>REFERENCE · ${src}</span><b>доверие ${conf}%</b></div>${top||'<p class="mut small">Частоты для узла не опубликованы.</p>'}<p class="mut small">Model ${esc(r.modelVersion||window.PokerBrain?.version||'—')}. EV-loss не показывается: в текущем reference для этого спота нет надёжных action EV.</p></div>`}
+function swipeGradeFromReference(s,a,size){const r=swipeReference(s,a,size);if(!r)return {reference:null,ga:swipeGrade(s,a),gs:null};return {reference:r,ga:r.actionGrade||r.grade||swipeGrade(s,a),gs:size!=null?r.sizeGrade:null}}
+
+function renderSwipe(){if(!swSession.length||swIndex>=swSession.length)newSwipeSession();const s=swSession[swIndex];swLocked=false;swStart=now();clearTimeout(swTimer);$('#swipeVerdict').classList.add('hidden');$('#swipeVerdict').innerHTML='';const card=$('#swipeCard');card.classList.remove('hidden');card.innerHTML=`${quickBanner('swipe')}<div class="swipeShell"><div class="swipeTop"><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'ПРОВЕРКА ПАМЯТИ · ':''}${s.street} · ${s.pos}</span><span class="ey">${quick.active&&quick.flow[quick.index]==='memory'?'ТОТ ЖЕ CONCEPT':'РУКА '+(swIndex+1)+'/10'}</span></div><div class="swipeProgress"><span style="width:${swIndex/10*100}%"></span></div><div class="swipeCardV in" id="swipeVisual">${refBadge()}<h2>ТВОЁ РЕШЕНИЕ?</h2>${s.board.length?board(s.board):''}${hand(s.hero)}<div class="swipeContext"><div><span class="ey">БАНК</span><b>${s.pot} BB</b></div><div><span class="ey">ЭФФ. СТЕК</span><b>${s.stack} BB</b></div></div><p>${s.ctx}</p><div class="swipeHint">${s.concept}</div></div></div>`;$('#swipeActions').innerHTML=`<div class="swConfidence"><span>НAСКОЛЬКО УВЕРЕН?</span>${[30,60,90].map(c=>`<button class="swConf ${c===swConfidence?'selected':''}" data-conf="${c}">${c}%</button>`).join('')}</div>`+s.actions.map((a,i)=>`<button class="action ${/ФОЛД/.test(a)?'fold':/КОЛЛ|ЧЕК/.test(a)?'call':'raise'}" data-sa="${a}">${a}</button>`).join('');$$('[data-conf]').forEach(b=>b.onclick=()=>{swConfidence=+b.dataset.conf;$$('[data-conf]').forEach(x=>x.classList.toggle('selected',x===b))});$$('[data-sa]').forEach(b=>b.onclick=()=>swipeTap(s,b.dataset.sa,b))}
 function swipeTap(s,a,btn){if(swLocked)return;$$('[data-sa]').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');if((a==='СТАВКА'||(a==='РЕЙЗ'&&s.street!=='ПРЕФЛОП'))&&s.sizeZone){renderSwipeSize(s,a);return}finalizeSwipe(s,a,null)}
 function renderSwipeSize(s,a){$('#swipeVerdict').classList.remove('hidden');$('#swipeVerdict').innerHTML=`<div class="swipeSizeDrawer"><span class="ey">${a} · ВЫБЕРИ РАЗМЕР</span><div class="sizeRead"><div><b id="swSizePct">50%</b><span class="mut small">банка</span></div><strong id="swSizeBB">${(s.pot*.5).toFixed(1)} BB</strong></div><input id="swSize" class="range" type="range" min="10" max="150" value="50"><div class="scale"><span>10</span><span>33</span><span>50</span><span>75</span><span>100</span><span>150</span></div><button class="primary" id="swSizeLock">ПОСТАВИТЬ 50% →</button></div>`;requestAnimationFrame(()=>$('#swipeVerdict')?.scrollIntoView({behavior:'smooth',block:'nearest'}));const r=$('#swSize');r.oninput=()=>{$('#swSizePct').textContent=r.value+'%';$('#swSizeBB').textContent=(s.pot*+r.value/100).toFixed(1)+' BB';$('#swSizeLock').textContent=`ПОСТАВИТЬ ${r.value}% →`};$('#swSizeLock').onclick=()=>finalizeSwipe(s,a,+r.value)}
-function finalizeSwipe(s,a,size){if(swLocked)return;swLocked=true;const ga=swipeGrade(s,a);let gs=null;if(size!=null){const [lo,hi]=s.sizeZone;gs=size>=lo&&size<=hi?'g':size>=lo-15&&size<=hi+20?'y':'r'}const g=gs==='r'||ga==='r'?'r':gs==='y'||ga==='y'?'y':'g';const response=now()-swStart;swSessionGrades.push({g,street:s.street,concept:s.concept});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,why:s.why});$$('[data-sa]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · ТАПНИ, ЧТОБЫ ЗАДЕРЖАТЬ</span>${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'ЖИВЁТ':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'ПЕРЕБОР'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}<p>${s.why}</p>${size!=null?`<p class="mut small">Рабочая учебная зона: ${s.sizeZone[0]}–${s.sizeZone[1]}%.</p>`:''}<p class="pink"><b>${g==='g'?'Даже придраться неприятно.':g==='y'?'Решение живёт, но адвокат уже приехал.':'Карты новые. Привычка почему-то та же.'}</b></p><div id="holdArea"></div></div>`;const schedule=()=>{$('#holdArea').innerHTML='<button class="secondary" id="manualNext">СЛЕДУЮЩИЙ →</button>';$('#manualNext').onclick=swipeNext};if((swIndex+1)%5===0&&!quick.active){$('#holdArea').innerHTML=`<span class="ey">НAСКОЛЬКО УВЕРЕН?</span><div class="grid2">${[30,60,90].map(c=>`<button class="choice" data-swconf="${c}">${c}%</button>`).join('')}</div>`;$$('[data-swconf]').forEach(b=>b.onclick=()=>{ev.confidence=+b.dataset.swconf;save();$('#holdArea').innerHTML='';schedule()})}else schedule()}
+function finalizeSwipe(s,a,size){if(swLocked)return;swLocked=true;const ref=swipeGradeFromReference(s,a,size);const ga=ref.ga;let gs=ref.gs;if(size!=null&&gs==null){const [lo,hi]=s.sizeZone;gs=size>=lo&&size<=hi?'g':size>=lo-15&&size<=hi+20?'y':'r'}const g=gs==='r'||ga==='r'?'r':gs==='y'||ga==='y'?'y':'g';const response=now()-swStart;const confidentMistake=g==='r'&&swConfidence>=90;swSessionGrades.push({g,street:s.street,concept:s.concept,confidence:swConfidence,confidentMistake,referenceSource:ref.reference?.source||'LEGACY_TASK'});const ev=recordEvent({spotId:s.id,mode:'swipe',concept:s.concept,street:s.street,action:a,sizePct:size,grade:g,gradeAction:ga,gradeSize:gs,responseMs:response,confidence:swConfidence,confidentMistake,referenceSource:ref.reference?.source||'LEGACY_TASK',modelVersion:ref.reference?.modelVersion||null,why:ref.reference?.explanation||s.why});$$('[data-sa],[data-conf]').forEach(b=>{b.disabled=true;if(b.dataset.sa===a)b.classList.add('selected','grade-'+g)});const v=$('#swipeVerdict');v.classList.remove('hidden');const explain=ref.reference?.explanation||s.why;v.innerHTML=`<div class="swipeFlash" id="swipeFlash"><span class="ey">${g==='g'?'ЧИСТО':g==='y'?'ЖИВЁТ':'ОШИБКА'} · УВЕРЕННОСТЬ ${swConfidence}%</span>${confidentMistake?'<div class="swBlind">BLIND SPOT · УВЕРЕННАЯ ОШИБКА</div>':''}${size!=null?`<div class="dualGrade"><div class="gradeBox ${ga}"><span class="ey">ДЕЙСТВИЕ</span><b>${a} · ${ga==='g'?'ЧИСТО':ga==='y'?'ЖИВЁТ':'МИМО'}</b></div><div class="gradeBox ${gs}"><span class="ey">РАЗМЕР</span><b>${size}% · ${gs==='g'?'ЧИСТО':gs==='y'?'ТОНКО':'МИМО'}</b></div></div>`:`<h3 class="${g==='g'?'green':g==='y'?'yellow':'red'}">${a}</h3>`}${swipeReferenceHtml(ref.reference)}<div class="swExplain"><span class="ey">ПОЧЕМУ</span><p>${esc(explain)}</p></div><div class="swTruth"><span class="ey">ИСТОЧНИК ОЦЕНКИ</span><b>${ref.reference?'POKER BRAIN · '+esc(ref.reference.source||'REFERENCE'):'CURATED LEGACY TASK'}</b><small>${ref.reference?'Показаны только данные, которые реально есть в reference.':'Нет подтверждённого solver/reference узла — EV и частоты не выдумываются.'}</small></div>${size!=null&&!ref.reference?`<p class="mut small">Legacy учебная зона: ${s.sizeZone[0]}–${s.sizeZone[1]}%.</p>`:''}<p class="pink"><b>${g==='g'?'Даже придраться неприятно.':g==='y'?'Решение живёт, но есть что проверить.':'Карты новые. Привычка почему-то та же.'}</b></p><div id="holdArea">${g==='r'?'<button class="secondary swFocusBtn" id="trainThisConcept">ТРЕНИРОВАТЬ ЭТОТ ПАТТЕРН</button>':''}<button class="secondary" id="manualNext">СЛЕДУЮЩИЙ →</button></div></div>`;if($('#trainThisConcept'))$('#trainThisConcept').onclick=()=>startConceptSwipe(s.concept);$('#manualNext').onclick=swipeNext}
+
 function swipeNext(){clearTimeout(swTimer);if(quick.active){quickAdvance();return}const c=$('#swipeVisual');if(c)c.classList.add('out');setTimeout(()=>{swIndex++;if(swIndex>=10)renderSwipeReport();else renderSwipe()},220)}
-function renderSwipeReport(){const g=swSessionGrades.filter(x=>x.g==='g').length,y=swSessionGrades.filter(x=>x.g==='y').length,r=swSessionGrades.filter(x=>x.g==='r').length;const badBy={};for(const x of swSessionGrades.filter(x=>x.g==='r'))badBy[x.concept]=(badBy[x.concept]||0)+1;const worst=Object.entries(badBy).sort((a,b)=>b[1]-a[1])[0];$('#swipeCard').innerHTML=`<div class="swipeReport"><span class="ey">ОТЧЁТ ЗА СЕССИЮ · 10 РУК</span><h1 class="impact">ЛЕНТА<br><span class="pink">ЗАКОНЧЕНА.</span></h1><div class="swipeReportGrid"><div><span class="ey">ЧИСТО</span><b class="green">${g}</b></div><div><span class="ey">ЖИВЁТ</span><b class="yellow">${y}</b></div><div><span class="ey">ОШИБКА</span><b class="red">${r}</b></div></div><div class="verdict"><span class="ey">ЧТО Я УВИДЕЛА</span><h2>${worst?worst[0]:'ПОКА БЕЗ ЯВНОГО ЛИКА'}</h2><p>${worst?`${worst[1]} серьёзных ошибки в одной концепции.`:'Нужна ещё выборка.'}</p></div><button class="primary" id="swAgain">ЕЩЁ 10 →</button></div>`;window.FreakLady?.react($('#swipeCard').querySelector('.verdict'),window.FreakLady?.sessionMood(g,y,r)||'y','session',{wide:true});$('#swipeActions').innerHTML='';$('#swipeVerdict').classList.add('hidden');$('#swAgain').onclick=()=>{swSession=[];renderSwipe()}}
+function renderSwipeReport(){const g=swSessionGrades.filter(x=>x.g==='g').length,y=swSessionGrades.filter(x=>x.g==='y').length,r=swSessionGrades.filter(x=>x.g==='r').length,blind=swSessionGrades.filter(x=>x.confidentMistake).length;const badBy={};for(const x of swSessionGrades.filter(x=>x.g==='r'))badBy[x.concept]=(badBy[x.concept]||0)+1;const worstRaw=Object.entries(badBy).sort((a,b)=>b[1]-a[1])[0];const worst=worstRaw&&worstRaw[1]>=2?worstRaw:null;$('#swipeCard').innerHTML=`<div class="swipeReport"><span class="ey">ОТЧЁТ ЗА СЕССИЮ · 10 РУК</span><h1 class="impact">НЕ СЧЁТ.<br><span class="pink">ДИАГНОЗ.</span></h1><div class="swipeReportGrid"><div><span class="ey">ЧИСТО</span><b class="green">${g}</b></div><div><span class="ey">ЖИВЁТ</span><b class="yellow">${y}</b></div><div><span class="ey">ОШИБКА</span><b class="red">${r}</b></div></div>${blind?`<div class="swBlind report"><b>${blind}</b><span>уверенных ошибок · blind spot</span></div>`:''}<div class="verdict"><span class="ey">ПОВТОРЯЮЩИЙСЯ ПАТТЕРН</span><h2>${worst?esc(worst[0]):'ПОКА БЕЗ ЯВНОГО ЛИКА'}</h2><p>${worst?`${worst[1]} серьёзных ошибки в одной концепции. Это уже кандидат на focused drill.`:r?'Ошибки есть, но в этой сессии они не повторились достаточно, чтобы честно назвать их ликом.':'Серьёзных ошибок в этой сессии нет.'}</p></div>${worst?'<button class="primary" id="swHeal">ЛЕЧИТЬ ЭТО →</button>':''}<button class="secondary" id="swAgain">ЕЩЁ 10 →</button></div>`;window.FreakLady?.react($('#swipeCard').querySelector('.verdict'),window.FreakLady?.sessionMood(g,y,r)||'y','session',{wide:true});$('#swipeActions').innerHTML='';$('#swipeVerdict').classList.add('hidden');$('#swAgain').onclick=()=>{swSession=[];renderSwipe()};if($('#swHeal'))$('#swHeal').onclick=()=>window.PokerSwipeRuntime?.startHealForConcept?.(worst[0])}
+
 
 /* SIZING */
 const SIZING=[
@@ -5210,9 +5224,7 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="polyana-clubs-adapter.js" data-my-tournaments-pro="1"></script>
 <script src="my-tournaments-pro.js" data-my-tournaments-pro="1"></script>
 <link rel="stylesheet" href="poker-glossy-ui.css" data-glossy-ui="1">
-<link rel="stylesheet" href="training-ui/training-session.css">
 
-<script src="polyana/event-visibility.js"></script>
 <script src="polyana/polyana-integrated.js"></script>
 
 <script>
@@ -5368,7 +5380,6 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <script src="poker_swipe_v33.js"></script>
 <link rel="stylesheet" href="poker_swipe_v34.css">
 <script src="poker_brain_v34.js"></script>
-<script type="module" src="poker-brain/install.js"></script>
 <script src="poker_swipe_v34.js"></script>
 <link rel="stylesheet" href="poker_swipe_v39.css">
 <script src="poker_swipe_v39.js"></script>
@@ -5378,5 +5389,19 @@ document.documentElement.dataset.pokerSwipeVersion='60-trip-builder';
 <link rel="stylesheet" href="profile.css">
 <script src="profile.js"></script>
 <link rel="stylesheet" href="ps-ui-unified.css" data-ps-ui-unified="1">
+<script>
+/* V75 runtime adapter — controlled bridge from legacy lexical state to new UI. */
+window.PokerSwipeRuntime = Object.freeze({
+  getSnapshot(){ return {skill:S.skill, streak:S.streak, form:formScore(), events:S.events.length}; },
+  resetSwipe(){ swSession=[]; swIndex=0; swSessionGrades=[]; swLocked=false; },
+  startHealForConcept(concept){ activeCourse=courseForConcept(concept)||activeCourse; show('heal'); },
+  startConceptTraining(concept){ if(typeof startConceptSwipe==='function') return startConceptSwipe(concept); swSession=[]; show('swipe'); },
+  getTopLeak(){ return topLeak(); }
+});
+</script>
+<script src="poker_swipe_v75_stabilization.js"></script>
+<script src="poker_swipe_v77_truth_contract.js"></script>
+<link rel="stylesheet" href="poker_swipe_v77_mobile_shell_patch.css">
+<script src="poker_swipe_v77_mobile_shell_patch.js"></script>
 </body>
 </html>
