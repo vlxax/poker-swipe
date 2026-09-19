@@ -1,4 +1,4 @@
-/* PokerSwipe V77 MobileShell PATCH 1.1 — merge candidate. Layout/navigation only. */
+/* PokerSwipe V77 MobileShell PATCH 1.2 — visual merge candidate. Layout/navigation only. */
 (()=>{
   'use strict';
   const root=document.documentElement;
@@ -70,5 +70,5 @@
 
   normalizeShell();
   resetRouteScroll(true);
-  root.dataset.mobileShellPatch='v77-1-1';
+  root.dataset.mobileShellPatch='v77-1-2';
 })();

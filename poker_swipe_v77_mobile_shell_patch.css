@@ -62,3 +62,117 @@ body.ps77-app-shell #mainApp>main>.screen{overscroll-behavior-x:none!important}
   body.ps77-app-shell #mainApp>.top{padding-left:13px!important;padding-right:13px!important}
   body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:7px!important}
 }
+
+/* ===== PATCH 1.2 — MOBILE COMPOSITION / VISUAL DENSITY =====
+   Goal: use the phone width, keep typography intact, stop cards looking scattered.
+   This is presentation-only; no poker logic/data/grading changes. */
+
+/* The previous shell was safe but visually too narrow because many legacy renderers
+   add their own 14px gutters. Route screen owns the gutter now. */
+body.ps77-app-shell #mainApp{width:100%!important;max-width:520px!important}
+body.ps77-app-shell #mainApp>main>.screen{
+  padding:10px 12px 22px!important;
+}
+body.ps77-app-shell #mainApp>main>.screen :is(.v30Home,.v74Home,.qg30,.v48,.t23){
+  width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important;
+}
+body.ps77-app-shell #home :is(.v30Home,.v74Home){padding-left:0!important;padding-right:0!important}
+body.ps77-app-shell #home :is(.grid2,.metrics,.spot30,.rank30Progress){margin-left:0!important;margin-right:0!important}
+
+/* Never split Russian headings in the middle of a word. 1.1's anywhere wrapping was
+   responsible for ГДЕ СЛОМАЛО / СЬ? on narrow cards. */
+body.ps77-app-shell #mainApp>main>.screen :is(h1,h2,h3,.impact,.v30Action b,.v30Mini b,.tile>b,.tile h2){
+  overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important;
+}
+
+/* Header: one clean row. Brand stays readable; signature shrinks before it collides. */
+body.ps77-app-shell #mainApp>.top.creatorTop{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;
+  column-gap:12px!important;padding-left:14px!important;padding-right:14px!important;
+}
+body.ps77-app-shell #mainApp>.top .brandBlock{min-width:0!important}
+body.ps77-app-shell #mainApp>.top .brand{font-size:20px!important;letter-spacing:-.035em!important}
+body.ps77-app-shell #mainApp>.top .nickEdit{display:none!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24{
+  display:flex!important;position:static!important;min-width:0!important;max-width:190px!important;
+  align-items:center!important;gap:6px!important;overflow:hidden!important;white-space:nowrap!important;
+}
+body.ps77-app-shell #mainApp>.top .topRightMark24 span{font-size:10px!important;flex:0 0 auto!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24 b{
+  font-size:9px!important;letter-spacing:.16em!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+body.ps77-app-shell #mainApp>.top .topRightMark24 i{font-size:13px!important;flex:0 0 auto!important}
+
+/* HOME — coherent dashboard instead of a one-column article. */
+body.ps77-app-shell #home .metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+body.ps77-app-shell #home .metric{min-width:0!important;min-height:106px!important;padding:14px 12px!important}
+body.ps77-app-shell #home .metric b,
+body.ps77-app-shell #home .metric:first-child b{font-size:34px!important;line-height:1!important}
+body.ps77-app-shell #home .grid2{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+body.ps77-app-shell #home .tile{min-width:0!important;min-height:184px!important;padding:18px 16px!important}
+body.ps77-app-shell #home .tile h2,
+body.ps77-app-shell #home .tile>b{font-size:27px!important;line-height:.94!important;max-width:100%!important}
+body.ps77-app-shell #home .tile .mut{font-size:12px!important;line-height:1.42!important;max-width:92%!important}
+body.ps77-app-shell #home .quick5{margin-left:0!important;margin-right:0!important;width:100%!important;min-height:128px!important}
+
+/* V30/V40 home variants: keep major training cards balanced and full-width sections tidy. */
+body.ps77-app-shell #home .v30ActionGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+body.ps77-app-shell #home .v30Action{min-width:0!important;min-height:164px!important;padding:17px!important}
+body.ps77-app-shell #home .v30Action b{font-size:25px!important;line-height:.92!important}
+body.ps77-app-shell #home .v30Action small{font-size:11px!important;line-height:1.4!important;max-width:90%!important}
+body.ps77-app-shell #home .v30Today{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+body.ps77-app-shell #home .v30Mini{min-width:0!important;min-height:118px!important;padding:15px!important}
+body.ps77-app-shell #home .v30Mini b{font-size:18px!important;line-height:1!important}
+
+/* Training-first home variant: make it feel like the same dashboard. */
+body.ps77-app-shell #home .v74Home{gap:12px!important;padding-top:2px!important}
+body.ps77-app-shell #home .v74Hero{padding:20px 18px!important}
+body.ps77-app-shell #home .v74Hero h1{font-size:38px!important}
+body.ps77-app-shell #home .v74Stats{gap:9px!important}
+body.ps77-app-shell #home .v74Modes{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+body.ps77-app-shell #home .v74Modes button{grid-template-columns:34px minmax(0,1fr) 16px!important;min-height:116px!important;padding:14px!important}
+body.ps77-app-shell #home .v74Modes b{font-size:17px!important}
+body.ps77-app-shell #home .v74Modes small{font-size:10px!important;line-height:1.35!important}
+body.ps77-app-shell #home .v74Quick{min-height:112px!important}
+
+/* Game/review screens: use the width without making the poker table or action cards collide. */
+body.ps77-app-shell :is(#swipe,#sizing,#review,#daily,#exploit) :is(.panel,.lab,.story,.verdict){max-width:none!important}
+body.ps77-app-shell #reviewArea,
+body.ps77-app-shell #sizingArea,
+body.ps77-app-shell #dailyArea,
+body.ps77-app-shell #exploitArea{width:100%!important;margin:0!important}
+
+/* Character/result artwork is an accent, not a second full-height page. */
+body.ps77-app-shell :is(.verdictCharacterZone,.v31CharacterZone,.freakCoachReaction){
+  min-height:0!important;height:auto!important;max-height:none!important;overflow:hidden!important;
+}
+body.ps77-app-shell .charArtwork{height:auto!important;min-height:0!important;max-height:300px!important;overflow:hidden!important}
+body.ps77-app-shell .charArtwork img{
+  display:block!important;width:auto!important;height:auto!important;max-width:min(82vw,330px)!important;max-height:290px!important;
+  object-fit:contain!important;object-position:center bottom!important;margin:0 auto!important;
+}
+body.ps77-app-shell .v31Character{height:150px!important;max-height:150px!important}
+body.ps77-app-shell .v31Character img{max-height:150px!important}
+
+/* No accidental giant blank tails from legacy nav compensation. */
+body.ps77-app-shell #mainApp>main>.screen.active>:last-child{margin-bottom:8px!important}
+body.ps77-app-shell #mainApp>main>.screen.active :is(.v30Home,.v74Home,.qg30,.v48,.t23){padding-bottom:28px!important}
+
+@media(max-width:390px){
+  body.ps77-app-shell #mainApp>main>.screen{padding-left:10px!important;padding-right:10px!important}
+  body.ps77-app-shell #mainApp>.top.creatorTop{padding-left:12px!important;padding-right:12px!important;column-gap:8px!important}
+  body.ps77-app-shell #mainApp>.top .brand{font-size:18px!important}
+  body.ps77-app-shell #mainApp>.top .topRightMark24{max-width:165px!important}
+  body.ps77-app-shell #home .tile{min-height:170px!important;padding:15px 13px!important}
+  body.ps77-app-shell #home .tile h2,body.ps77-app-shell #home .tile>b{font-size:23px!important}
+  body.ps77-app-shell #home .v30Action b{font-size:22px!important}
+  body.ps77-app-shell #home .v74Hero h1{font-size:34px!important}
+}
+
+@media(max-width:350px){
+  body.ps77-app-shell #mainApp>.top .topRightMark24 span{display:none!important}
+  body.ps77-app-shell #mainApp>.top .topRightMark24{max-width:145px!important}
+  body.ps77-app-shell #home .grid2,
+  body.ps77-app-shell #home .v30ActionGrid,
+  body.ps77-app-shell #home .v74Modes{grid-template-columns:1fr!important}
+}

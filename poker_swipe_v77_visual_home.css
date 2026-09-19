@@ -1,0 +1,73 @@
+/* V77 Visual Home 1.3 — dashboard rebuild matching approved reference composition. */
+body.ps77-app-shell #home{padding:8px 12px 24px!important}
+body.ps77-app-shell #home .vh77{display:flex;flex-direction:column;gap:12px;width:100%;padding:0 0 20px}
+body.ps77-app-shell #home .vh77 *{box-sizing:border-box}
+body.ps77-app-shell #home .vh77 button{font:inherit;color:inherit;text-align:left}
+body.ps77-app-shell #home .vh77-card{position:relative;border:1px solid rgba(167,255,31,.32);background:radial-gradient(circle at 86% 12%,rgba(166,255,31,.07),transparent 27%),linear-gradient(145deg,#151a15,#0d100e 72%);border-radius:22px;overflow:hidden;box-shadow:inset 0 1px rgba(255,255,255,.035),0 14px 30px rgba(0,0,0,.18)}
+body.ps77-app-shell #home .vh77-ey{display:block;color:#a9a5b2;font-size:10px;font-weight:950;letter-spacing:.22em;text-transform:uppercase}
+body.ps77-app-shell #home .vh77-arrow{color:#aaff1f;font-size:29px;font-weight:1000;line-height:1}
+body.ps77-app-shell #home .vh77-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+body.ps77-app-shell #home .vh77-stat{min-width:0;min-height:112px;padding:15px 13px;border:1px solid rgba(167,255,31,.36);border-radius:22px;background:linear-gradient(145deg,#171b18,#0e100f);display:flex;flex-direction:column;justify-content:space-between}
+body.ps77-app-shell #home .vh77-stat b{font-size:35px;line-height:.9;letter-spacing:-.055em;color:#fff}
+body.ps77-app-shell #home .vh77-stat:first-child b{color:#aaff1f}
+body.ps77-app-shell #home .vh77-stat small{font-size:10px;color:#8d8995;font-weight:750;line-height:1.25}
+body.ps77-app-shell #home .vh77-hero{min-height:280px;padding:20px 17px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(130px,.95fr);align-items:stretch}
+body.ps77-app-shell #home .vh77-heroText{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+body.ps77-app-shell #home .vh77-hero h1{margin:13px 0 8px;font-size:40px;line-height:.84;letter-spacing:-.065em;color:#fff;text-transform:uppercase}
+body.ps77-app-shell #home .vh77-hero h1 span{color:#aaff1f}
+body.ps77-app-shell #home .vh77-hero p{max-width:230px;margin:0;color:#a7a4ad;font-size:13px;line-height:1.45;font-weight:700}
+body.ps77-app-shell #home .vh77-primary{margin-top:auto;min-height:64px;padding:12px 17px;border:0;border-radius:19px;background:linear-gradient(180deg,#d7ff68,#96e70f);color:#0b0d0b!important;box-shadow:0 10px 24px rgba(163,255,31,.2),inset 0 -5px rgba(67,117,0,.24);font-size:14px!important;font-weight:1000!important;line-height:1.05;display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(100%,230px)}
+body.ps77-app-shell #home .vh77-lady{position:absolute;z-index:1;right:-13px;bottom:-8px;width:52%;height:96%;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;overflow:hidden}
+body.ps77-app-shell #home .vh77-lady img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 15px rgba(155,255,38,.18))}
+body.ps77-app-shell #home .vh77-focus{padding:17px;min-height:118px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+body.ps77-app-shell #home .vh77-focus h2{margin:6px 0 5px;font-size:21px;line-height:1;letter-spacing:-.035em;color:#fff;overflow-wrap:normal!important;word-break:normal!important}
+body.ps77-app-shell #home .vh77-focus p{margin:0;color:#9e9aa5;font-size:11px;line-height:1.42;font-weight:700;max-width:280px}
+body.ps77-app-shell #home .vh77-smallCta{border:0;border-radius:18px;background:linear-gradient(180deg,#d7ff68,#96e70f);color:#0b0d0b!important;padding:13px 15px;font-size:11px!important;font-weight:1000!important;white-space:nowrap;min-height:48px}
+body.ps77-app-shell #home .vh77-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+body.ps77-app-shell #home .vh77-tool{min-width:0;min-height:180px;padding:17px 15px;border:1px solid rgba(167,255,31,.34);border-radius:22px;background:radial-gradient(circle at 88% 12%,rgba(167,255,31,.08),transparent 25%),linear-gradient(145deg,#151a15,#0d100e);display:flex;flex-direction:column;align-items:flex-start;overflow:hidden}
+body.ps77-app-shell #home .vh77-tool b{display:block;margin:10px 0 8px;color:#fff;font-size:25px;line-height:.9;letter-spacing:-.045em;overflow-wrap:normal!important;word-break:normal!important;hyphens:none!important}
+body.ps77-app-shell #home .vh77-tool p{margin:0;color:#9e9aa5;font-size:11px;line-height:1.4;font-weight:700}
+body.ps77-app-shell #home .vh77-toolFoot{margin-top:auto;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+body.ps77-app-shell #home .vh77-chips{display:flex;align-items:flex-end;height:42px;padding-left:5px}
+body.ps77-app-shell #home .vh77-chips i{display:block;width:31px;height:10px;margin-left:-20px;border-radius:50%;border:2px solid #8cd315;background:linear-gradient(90deg,#27351e,#a6ff2d 55%,#314321);box-shadow:0 -7px 0 #27351e,0 -14px 0 #93d728,0 -21px 0 #26341d}
+body.ps77-app-shell #home .vh77-dots{display:flex;gap:5px;align-items:center}.vh77-dots i{width:13px;height:13px;border-radius:50%;background:#272b2d;border:1px solid #343a3d}.vh77-dots i:first-child{background:#aaff1f;box-shadow:0 0 12px rgba(170,255,31,.45)}
+body.ps77-app-shell #home .vh77-wide{min-height:116px;padding:17px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
+body.ps77-app-shell #home .vh77-wide b{display:block;margin:8px 0 5px;font-size:25px;line-height:.92;color:#fff;letter-spacing:-.04em}
+body.ps77-app-shell #home .vh77-wide p{margin:0;color:#9e9aa5;font-size:11px;line-height:1.4;font-weight:700}
+body.ps77-app-shell #home .vh77-eye{font-size:38px;color:#aaff1f;filter:drop-shadow(0 0 12px rgba(170,255,31,.2))}
+body.ps77-app-shell #home .vh77-quick{min-height:100px;padding:17px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+body.ps77-app-shell #home .vh77-quick b{display:block;margin-top:7px;font-size:24px;line-height:.95;color:#fff}.vh77-quick strong{font-size:30px;color:#fff;letter-spacing:-.05em}
+
+/* Keep the global creator header stable and fully visible. */
+body.ps77-app-shell #mainApp>.top.creatorTop{grid-template-columns:minmax(130px,1fr) auto!important;min-height:72px!important;padding-left:16px!important;padding-right:16px!important}
+body.ps77-app-shell #mainApp>.top .brand{font-size:20px!important;overflow:visible!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24{max-width:none!important;overflow:visible!important}
+body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:9px!important;text-overflow:clip!important;overflow:visible!important}
+
+@media(max-width:390px){
+ body.ps77-app-shell #home{padding-left:10px!important;padding-right:10px!important}
+ body.ps77-app-shell #home .vh77-hero{grid-template-columns:minmax(0,1fr) 132px;min-height:270px;padding:18px 15px}
+ body.ps77-app-shell #home .vh77-hero h1{font-size:36px}
+ body.ps77-app-shell #home .vh77-lady{width:51%;right:-15px}
+ body.ps77-app-shell #home .vh77-primary{width:205px;font-size:13px!important}
+ body.ps77-app-shell #home .vh77-tool{min-height:170px;padding:15px 13px}
+ body.ps77-app-shell #home .vh77-tool b{font-size:22px}
+ body.ps77-app-shell #home .vh77-wide b{font-size:22px}
+ body.ps77-app-shell #mainApp>.top.creatorTop{padding-left:12px!important;padding-right:12px!important;column-gap:8px!important}
+ body.ps77-app-shell #mainApp>.top .brand{font-size:18px!important}
+ body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:8px!important;letter-spacing:.13em!important}
+}
+@media(max-width:350px){
+ body.ps77-app-shell #home .vh77-stats{gap:6px}
+ body.ps77-app-shell #home .vh77-stat{padding:12px 9px;min-height:102px}.vh77-stat b{font-size:30px!important}
+ body.ps77-app-shell #home .vh77-hero{grid-template-columns:1fr;min-height:300px}
+ body.ps77-app-shell #home .vh77-lady{opacity:.48;width:58%}
+ body.ps77-app-shell #home .vh77-grid{grid-template-columns:1fr}
+ body.ps77-app-shell #home .vh77-tool{min-height:145px}
+ body.ps77-app-shell #home .vh77-focus{grid-template-columns:1fr}.vh77-smallCta{width:100%}
+}
+
+/* V77 1.4 — user-provided Daily Hand dinosaur */
+body.ps77-app-shell #home .vh77-dino{right:-8px;bottom:-5px;width:51%;height:94%;mix-blend-mode:normal}
+body.ps77-app-shell #home .vh77-dino img{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 16px rgba(155,255,38,.22));clip-path:inset(0 0 0 0 round 0)}
+@media(max-width:390px){body.ps77-app-shell #home .vh77-dino{width:48%;right:-6px}}

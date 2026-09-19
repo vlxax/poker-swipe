@@ -1,37 +1,30 @@
-# PokerSwipe V77 MobileShell PATCH 1.1 — MERGE CANDIDATE
+# PokerSwipe V77 — Visual Home PATCH 1.3
 
-Apply these files on top of **V77 Truth Contract**. This is a patch, not a full application.
+Patch on top of current V77 + MobileShell. It does not replace the application and does not change Poker Brain, grading, datasets, saved data, or route names.
 
-## Files
-- `index.html` — V77 index with the two patch includes at the end.
-- `poker_swipe_v77_mobile_shell_patch.css`
-- `poker_swipe_v77_mobile_shell_patch.js`
-- `PATCH_README.md`
+## What changed
+- Rebuilt Home renderer to match the approved visual reference composition instead of trying to reshape legacy Home cards with CSS.
+- Three equal top stats: SKILL / FORM / БАЗА.
+- Large Daily hero with Freak Lady artwork already present in the repository.
+- Full-width personalized training recommendation.
+- Balanced 2×2 training grid for Sizing / Review / Poker Swipe / Ranges.
+- Full-width Exploit card and compact 5-minute session card.
+- Stable one-line `POKER SWIPE — by ФРИКОВАЯ ДАМА` chrome.
+- No mid-word Russian heading breaks.
+- MobileShell 1.2 remains in place for fixed app viewport and bottom navigation.
 
-## 1.1 fixes after audit
-- Removed global `.actions` override. Swipe/action bars outside the shell contract are no longer rewritten.
-- Removed the DOM-wide MutationObserver that could interfere while a long explanation was rendering.
-- Route observer now watches only `class` changes on direct `.screen` elements and resets scroll only when the active route changes.
-- Header and bottom-nav heights are measured with `getBoundingClientRect()` / `ResizeObserver`; no 70/76/72px breakpoint assumption is used for layout.
-- `.screen` shell rules are scoped to `#mainApp > main > .screen`; nested screens/modals are not converted into route viewports.
-- Legacy mini-app height normalization is scoped to known area roots.
-- Horizontal overflow is contained inside route screens.
-- Poker/grading/Truth Contract/data code is unchanged.
+## Files (6)
+- index.html
+- poker_swipe_v77_mobile_shell_patch.css
+- poker_swipe_v77_mobile_shell_patch.js
+- poker_swipe_v77_visual_home.css
+- poker_swipe_v77_visual_home.js
+- PATCH_README.md
 
-## Verification performed
-- Patch JS: `node --check` PASS.
-- Inline classic JS in patched `index.html`: syntax check PASS.
-- Patch include order: CSS in head; runtime patch is the last script after V77 Truth Contract.
-- Patch contains 4 files (GitHub upload friendly).
+Apply these files over V77 preserving repository paths. The visual-home files are loaded last on purpose so old Home wrappers cannot restyle the new dashboard.
 
-## Mobile acceptance checklist before merging main
-Check on the same iPhone/WebView used for the screenshots:
-1. Home: header is below status bar; bottom nav fixed; page itself does not scroll.
-2. Sizing: task can scroll internally from title to submit button; no clipped header/footer.
-3. Review: long forensic review scrolls inside the screen; reading position is not reset while content renders.
-4. Exploit: title/context/action area stay inside viewport; no document-level blank tail.
-5. Swipe: hand/card content remains visible above actions; route does not degrade to only FOLD/CALL/ALL-IN buttons.
-6. Navigate Home → Sizing → Review → Swipe: each new route starts at its own top.
-7. Modal/sheet: opens above current screen and remains scrollable/usable.
 
-If any of 1–7 fails, do not merge; capture the failing screen and console error.
+## 1.4
+- Replaced the Daily Hand hero character with the user-provided dinosaur image.
+- Image is local to the patch: `poker_swipe_daily_dino.jpeg`.
+- No poker logic, grading, routing, or data changes.
