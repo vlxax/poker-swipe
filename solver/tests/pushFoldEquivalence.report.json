@@ -1,0 +1,657 @@
+{
+  "generatedAt": "2026-09-15T08:37:37.463Z",
+  "canonicalImplementation": "ranges-ui/pushFold.js",
+  "legacyImplementation": "index.html push18() formula",
+  "runtimeNote": "index.html wraps push18 with GTOBrainV19 when available — not covered by this matrix",
+  "midStage": {
+    "comparable": 20280,
+    "matches": 20280,
+    "divergences": 0
+  },
+  "stageAdjustedDivergences": 28481,
+  "totalDivergenceRecords": 28481,
+  "pushFoldCanonical": true,
+  "push18LegacyDuplicate": true,
+  "samples": [
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 8,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 96,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 91,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 8,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 96,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 89,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 8,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 87,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 82,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 8,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 87,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 80,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 10,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 89,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 84,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 10,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 89,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 82,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 10,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 80,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 75,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 10,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 80,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 73,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 12,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 83,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 78,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 12,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 83,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 76,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 12,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 74,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 69,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 12,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 74,
+        "label": "CALL"
+      },
+      "push18": {
+        "p": 67,
+        "label": "CALL"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 15,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 72,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 67,
+        "label": "PUSH"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 15,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 72,
+        "label": "PUSH"
+      },
+      "push18": {
+        "p": 65,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 15,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 63,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 58,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 15,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 63,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 56,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 18,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 62,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 57,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 18,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 62,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 55,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 18,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 53,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 48,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 18,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 53,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 46,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 20,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 55,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 50,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 20,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 55,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 48,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 20,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 46,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 41,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 20,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 46,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 39,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 22,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 49,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 44,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 22,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 49,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 42,
+        "label": "MIX"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 22,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 40,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 35,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 22,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 40,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 33,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 25,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 38,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 33,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 25,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 38,
+        "label": "MIX"
+      },
+      "push18": {
+        "p": 31,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 25,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 29,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 24,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 25,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 29,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 22,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 28,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 28,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 23,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 28,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 28,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 21,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 28,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 19,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 14,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 28,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 19,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 12,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 30,
+      "stage": "BUBBLE",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 21,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 16,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 30,
+      "stage": "FT",
+      "mode": "PUSH",
+      "pushFold": {
+        "p": 21,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 14,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 30,
+      "stage": "BUBBLE",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 12,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 7,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    },
+    {
+      "hand": "AA",
+      "pos": "UTG",
+      "bb": 30,
+      "stage": "FT",
+      "mode": "CALL",
+      "pushFold": {
+        "p": 12,
+        "label": "FOLD"
+      },
+      "push18": {
+        "p": 5,
+        "label": "FOLD"
+      },
+      "reason": "pushFold.js omits tournament stage adjustment present in push18()"
+    }
+  ]
+}

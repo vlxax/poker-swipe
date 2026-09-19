@@ -32,7 +32,9 @@
     "test:poker-provenance": "node solver/scripts/pokerProvenanceAudit.mjs",
     "test:preflop-sensitivity": "node solver/scripts/preflopStackSensitivity.mjs",
     "test:poker-validation": "npm run test:poker-library && npm run test:poker-context && npm run test:poker-provenance && npm run test:preflop-sensitivity && node solver/scripts/postflopContextSensitivity.mjs && node solver/scripts/pokerPolicyBlockerClassification.mjs",
-    "test:grading-consistency": "node --test solver/tests/gradingConsistency.test.js solver/tests/gradingPathConsistency.test.js"
+    "test:grading-consistency": "node --test solver/tests/gradingConsistency.test.js solver/tests/gradingPathConsistency.test.js",
+    "test:poker-pack-drift": "node solver/scripts/pokerPackDrift.mjs",
+    "test:poker-architecture": "node --test solver/tests/pokerArchitecture.test.js && node solver/scripts/pokerTruthDuplicates.mjs && node solver/scripts/generatePokerTruthLockReport.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

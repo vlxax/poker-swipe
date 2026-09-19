@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-09-15T08:37:37.502Z",
+  "authority": "POSTFLOP_TEACHING (index.html XR[] teaching logic)",
+  "pass": true,
+  "checks": {
+    "usesLocalXrArray": true,
+    "noReferenceRangesPackInXray": true,
+    "noAbandonedCommitMarkers": true,
+    "gradingIsFeatureLocal": true
+  },
+  "xraySpotCount": 2
+}

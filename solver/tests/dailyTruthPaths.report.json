@@ -1,0 +1,152 @@
+{
+  "generatedAt": "2026-09-15T08:37:37.406Z",
+  "totalActiveDailySpots": 5,
+  "singleTruthSpots": 5,
+  "multiTruthComparable": 0,
+  "matches": 5,
+  "trueConflicts": 0,
+  "notComparable": 0,
+  "conflictIds": [],
+  "spots": [
+    {
+      "id": "DAILY_1",
+      "theme": "THIN VALUE",
+      "concept": "thin value",
+      "preferred": "СТАВКА",
+      "classification": "MATCH",
+      "calendarBucket": "optimal",
+      "brainBucket": "optimal",
+      "libCorrect": null,
+      "libBucket": "unknown",
+      "sources": {
+        "calendar": {
+          "authority": "POSTFLOP_TEACHING",
+          "preferred": "СТАВКА",
+          "grading": "index dailyReveal → PokerSwipeGrading.gradeBrain"
+        },
+        "library": null,
+        "brain": {
+          "authority": "POSTFLOP_POLICY",
+          "source": "CURATED_SCENARIO",
+          "grade": "g"
+        },
+        "exactNode": {
+          "key": "DAILY:THIN VALUE",
+          "inPack": true
+        }
+      }
+    },
+    {
+      "id": "DAILY_2",
+      "theme": "RIVER BLUFF-CATCH",
+      "concept": "river bluffcatch",
+      "preferred": "ФОЛД",
+      "classification": "MATCH",
+      "calendarBucket": "optimal",
+      "brainBucket": "optimal",
+      "libCorrect": null,
+      "libBucket": "unknown",
+      "sources": {
+        "calendar": {
+          "authority": "POSTFLOP_TEACHING",
+          "preferred": "ФОЛД",
+          "grading": "index dailyReveal → PokerSwipeGrading.gradeBrain"
+        },
+        "library": null,
+        "brain": {
+          "authority": "POSTFLOP_POLICY",
+          "source": "CURATED_SCENARIO",
+          "grade": "g"
+        },
+        "exactNode": {
+          "key": "DAILY:RIVER BLUFF-CATCH",
+          "inPack": true
+        }
+      }
+    },
+    {
+      "id": "DAILY_3",
+      "theme": "TURN BARREL",
+      "concept": "turn value sizing",
+      "preferred": "СТАВКА",
+      "classification": "MATCH",
+      "calendarBucket": "optimal",
+      "brainBucket": "optimal",
+      "libCorrect": null,
+      "libBucket": "unknown",
+      "sources": {
+        "calendar": {
+          "authority": "POSTFLOP_TEACHING",
+          "preferred": "СТАВКА",
+          "grading": "index dailyReveal → PokerSwipeGrading.gradeBrain"
+        },
+        "library": null,
+        "brain": {
+          "authority": "POSTFLOP_POLICY",
+          "source": "CURATED_SCENARIO",
+          "grade": "g"
+        },
+        "exactNode": {
+          "key": "DAILY:TURN BARREL",
+          "inPack": true
+        }
+      }
+    },
+    {
+      "id": "DAILY_4",
+      "theme": "DYNAMIC FLOP",
+      "concept": "dynamic board",
+      "preferred": "ЧЕК",
+      "classification": "MATCH",
+      "calendarBucket": "optimal",
+      "brainBucket": "optimal",
+      "libCorrect": null,
+      "libBucket": "unknown",
+      "sources": {
+        "calendar": {
+          "authority": "POSTFLOP_TEACHING",
+          "preferred": "ЧЕК",
+          "grading": "index dailyReveal → PokerSwipeGrading.gradeBrain"
+        },
+        "library": null,
+        "brain": {
+          "authority": "POSTFLOP_POLICY",
+          "source": "CURATED_SCENARIO",
+          "grade": "g"
+        },
+        "exactNode": {
+          "key": "DAILY:DYNAMIC FLOP",
+          "inPack": true
+        }
+      }
+    },
+    {
+      "id": "DAILY_5",
+      "theme": "BIG VALUE",
+      "concept": "river value",
+      "preferred": "СТАВКА",
+      "classification": "MATCH",
+      "calendarBucket": "optimal",
+      "brainBucket": "optimal",
+      "libCorrect": null,
+      "libBucket": "unknown",
+      "sources": {
+        "calendar": {
+          "authority": "POSTFLOP_TEACHING",
+          "preferred": "СТАВКА",
+          "grading": "index dailyReveal → PokerSwipeGrading.gradeBrain"
+        },
+        "library": null,
+        "brain": {
+          "authority": "POSTFLOP_POLICY",
+          "source": "CURATED_SCENARIO",
+          "grade": "g"
+        },
+        "exactNode": {
+          "key": "DAILY:BIG VALUE",
+          "inPack": true
+        }
+      }
+    }
+  ]
+}
