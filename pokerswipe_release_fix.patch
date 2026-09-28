@@ -1,0 +1,87 @@
+diff --git a/RELEASE_TESTING.md b/RELEASE_TESTING.md
+new file mode 100644
+index 0000000..5d5625e
+--- /dev/null
++++ b/RELEASE_TESTING.md
+@@ -0,0 +1,20 @@
++# Release testing
++
++## Clean setup
++Do not distribute or reuse archived `node_modules`. Install dependencies from the lockfile:
++
++```bash
++npm ci
++npx playwright install chromium
++```
++
++## Release smoke
++
++```bash
++npm run test:release-smoke
++```
++
++This runs poker correctness, grading consistency, navigation, Daily E2E and UI smoke tests.
++
++## Why node_modules is excluded
++The previously archived dependency directory was structurally incomplete (package roots such as Playwright/jsdom were missing their package metadata). The lockfile and package.json are the source of truth; a clean `npm ci` avoids shipping a machine-specific or corrupted dependency tree.
+diff --git a/index.html b/index.html
+index 7979140..6aacb67 100644
+--- a/index.html
++++ b/index.html
+@@ -1144,7 +1144,6 @@ button{letter-spacing:-.01em}
+ <link rel="stylesheet" href="polyana/polyana-integrated.css">
+ <script src="js/pwa-standalone.js"></script>
+ <script src="js/pwa-install-helper.js"></script>
+-<link rel="stylesheet" href="poker_swipe_v74_focus.css">
+ 
+ <style id="v76PokerLoopCss">
+ .swTruth{margin:12px 0;padding:12px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:4px}.swTruth b{font-size:12px}.swTruth small{color:var(--muted,#999);line-height:1.35}.swFocusBtn{border-color:rgba(255,55,125,.38)!important}.swRefWarn{border-left:3px solid #f2b84b}.swRefHead b{font-weight:600}.swipeReport .verdict p{line-height:1.45}
+@@ -5399,8 +5398,6 @@ window.PokerSwipeRuntime = Object.freeze({
+   getTopLeak(){ return topLeak(); }
+ });
+ </script>
+-<script src="poker_swipe_v75_stabilization.js"></script>
+-<script src="poker_swipe_v77_truth_contract.js"></script>
+ <link rel="stylesheet" href="poker_swipe_v77_mobile_shell_patch.css">
+ <script src="poker_swipe_v77_mobile_shell_patch.js"></script>
+ <link rel="stylesheet" href="poker_swipe_v77_visual_home.css">
+diff --git a/package.json b/package.json
+index 0795851..e2e7260 100644
+--- a/package.json
++++ b/package.json
+@@ -34,7 +34,8 @@
+     "test:poker-validation": "npm run test:poker-library && npm run test:poker-context && npm run test:poker-provenance && npm run test:preflop-sensitivity && node solver/scripts/postflopContextSensitivity.mjs && node solver/scripts/pokerPolicyBlockerClassification.mjs",
+     "test:grading-consistency": "node --test solver/tests/gradingConsistency.test.js solver/tests/gradingPathConsistency.test.js",
+     "test:poker-pack-drift": "node solver/scripts/pokerPackDrift.mjs",
+-    "test:poker-architecture": "node --test solver/tests/pokerArchitecture.test.js && node solver/scripts/pokerTruthDuplicates.mjs && node solver/scripts/generatePokerTruthLockReport.mjs"
++    "test:poker-architecture": "node --test solver/tests/pokerArchitecture.test.js && node solver/scripts/pokerTruthDuplicates.mjs && node solver/scripts/generatePokerTruthLockReport.mjs",
++    "test:release-smoke": "npm run test:poker-correctness && npm run test:grading-consistency && npm run test:e2e:navigation && npm run test:e2e:daily && npm run test:e2e:ui-smoke"
+   },
+   "devDependencies": {
+     "@playwright/test": "^1.62.1",
+diff --git a/screen-router.js b/screen-router.js
+index 93e423e..cd89491 100644
+--- a/screen-router.js
++++ b/screen-router.js
+@@ -42,9 +42,21 @@
+    * Close transient UI before switching routes. No cross-screen DOM scrub.
+    */
+   function teardownTransientUI() {
++    // Route changes must never leave a fullscreen Daily/legacy overlay above the next screen.
++    // Prefer the owning bridge cleanup when present, but also clean stale DOM left by older builds.
+     if (window.PsHandDayBridge?.dismissOverlay) {
+       window.PsHandDayBridge.dismissOverlay();
+     }
++    const staleHandDay = document.getElementById('psHandDayOverlay');
++    if (staleHandDay) {
++      staleHandDay.style.display = 'none';
++      staleHandDay.style.pointerEvents = 'none';
++      staleHandDay.setAttribute('aria-hidden', 'true');
++      const staleFrame = staleHandDay.querySelector('iframe');
++      if (staleFrame) {
++        try { staleFrame.src = 'about:blank'; } catch (_) { /* ignore */ }
++      }
++    }
+     if (typeof window.closeModal === 'function') {
+       try { window.closeModal(); } catch (_) { /* ignore */ }
+     }
