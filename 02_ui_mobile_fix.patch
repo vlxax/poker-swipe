@@ -1,0 +1,97 @@
+diff --git a/index.html b/index.html
+index 6aacb67..e1315ed 100644
+--- a/index.html
++++ b/index.html
+@@ -1214,10 +1214,10 @@ button{letter-spacing:-.01em}
+ </main>
+ <nav class="nav">
+ <button class="on" data-nav="home"><i>⌂</i>ИГРАТЬ</button>
+-<button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i>МОИ</button>
+ <button data-nav="polyana"><i class="tourNav23">♛</i>ПОЛЯНА</button>
+-<button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>ПРОФИЛЬ</button>
+ <button data-nav="mytournaments"><i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span></button>
++<button data-nav="profile"><i class="dnaNav"><span></span><span></span><span></span><span></span><b></b></i>ПРОФИЛЬ</button>
++<button data-nav="myhands"><i class="myNavGlyph24"><span></span><span></span></i><span>МОИ РАЗДАЧИ</span></button>
+ </nav>
+ </div>
+ 
+@@ -4116,6 +4116,9 @@ function buildFiveNav(){
+   const home=nav.querySelector('[data-nav="home"]');
+   const hands=nav.querySelector('[data-nav="myhands"]');
+   const profile=nav.querySelector('[data-nav="profile"]');
++  /* Public mobile order: ИГРАТЬ · ПОЛЯНА · МОИ ТУРНИРЫ · ПРОФИЛЬ · МОИ РАЗДАЧИ */
++  [home,field,my,profile,hands].filter(Boolean).forEach(el=>nav.appendChild(el));
++  if(hands){const label=hands.querySelector('span'); if(label)label.textContent='МОИ РАЗДАЧИ'; else hands.appendChild(Object.assign(document.createElement('span'),{textContent:'МОИ РАЗДАЧИ'}));}
+   if(field && !window.__PSP_NATIVE_POLYANA)field.onclick=function(e){e.preventDefault();e.stopPropagation();openPolyana()};
+   [home,hands,profile].filter(Boolean).forEach(b=>{
+     const id=b.dataset.nav;
+diff --git a/poker_swipe_v77_mobile_shell_patch.css b/poker_swipe_v77_mobile_shell_patch.css
+index 2015e86..861e4cb 100644
+--- a/poker_swipe_v77_mobile_shell_patch.css
++++ b/poker_swipe_v77_mobile_shell_patch.css
+@@ -176,3 +176,14 @@ body.ps77-app-shell #mainApp>main>.screen.active :is(.v30Home,.v74Home,.qg30,.v4
+   body.ps77-app-shell #home .v30ActionGrid,
+   body.ps77-app-shell #home .v74Modes{grid-template-columns:1fr!important}
+ }
++
++/* RELEASE UI FIX 02 — My Hands owns the full route width */
++body.ps77-app-shell #myhands{padding-left:12px!important;padding-right:12px!important}
++body.ps77-app-shell #myhands #myArea,
++body.ps77-app-shell #myhands .my18{width:100%!important;max-width:none!important;margin:0!important}
++body.ps77-app-shell #myhands .my18{padding-left:0!important;padding-right:0!important;padding-bottom:96px!important}
++body.ps77-app-shell #myhands .my18Tools{width:100%!important;grid-template-columns:1fr!important;gap:12px!important}
++body.ps77-app-shell #myhands .my18Tool{width:100%!important;max-width:none!important;min-height:190px!important;padding:20px 18px!important}
++body.ps77-app-shell #myhands .my18Tool h2{font-size:clamp(30px,9.2vw,42px)!important;line-height:.9!important;letter-spacing:-.045em!important;white-space:normal!important;overflow-wrap:normal!important;word-break:keep-all!important}
++body.ps77-app-shell #myhands .my18Tool p{max-width:78%!important;font-size:13px!important}
++@media(max-width:390px){body.ps77-app-shell #myhands .my18Tool h2{font-size:32px!important}}
+diff --git a/poker_swipe_v77_visual_home.css b/poker_swipe_v77_visual_home.css
+index b2fc36a..faf42c4 100644
+--- a/poker_swipe_v77_visual_home.css
++++ b/poker_swipe_v77_visual_home.css
+@@ -71,3 +71,11 @@ body.ps77-app-shell #mainApp>.top .topRightMark24 b{font-size:9px!important;text
+ body.ps77-app-shell #home .vh77-dino{right:-8px;bottom:-5px;width:51%;height:94%;mix-blend-mode:normal}
+ body.ps77-app-shell #home .vh77-dino img{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 0 16px rgba(155,255,38,.22));clip-path:inset(0 0 0 0 round 0)}
+ @media(max-width:390px){body.ps77-app-shell #home .vh77-dino{width:48%;right:-6px}}
++
++/* RELEASE UI FIX 02 — transparent animated Daily character */
++body.ps77-app-shell #home .vh77-dino{overflow:visible!important;background:transparent!important;isolation:isolate}
++body.ps77-app-shell #home .vh77-dinoVideo,
++body.ps77-app-shell #home .vh77-dinoFallback{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent!important;filter:drop-shadow(0 0 18px rgba(155,255,38,.22))}
++body.ps77-app-shell #home .vh77-dinoVideo{z-index:2}
++body.ps77-app-shell #home .vh77-dinoFallback{z-index:1}
++@media (prefers-reduced-motion:reduce){body.ps77-app-shell #home .vh77-dinoVideo{display:none!important}}
+diff --git a/poker_swipe_v77_visual_home.js b/poker_swipe_v77_visual_home.js
+index bd66e29..8725123 100644
+--- a/poker_swipe_v77_visual_home.js
++++ b/poker_swipe_v77_visual_home.js
+@@ -26,7 +26,7 @@
+     </section>
+     <section class="vh77-card vh77-hero">
+       <div class="vh77-heroText"><span class="vh77-ey">РАЗДАЧА ДНЯ</span><h1>ОДНА<br><span>РУКА.</span></h1><p>Один сложный спот: решение, размер и логика.</p><button class="vh77-primary" id="vh77Daily">ПЕРЕЙТИ К<br>РАЗДАЧЕ ДНЯ <span>→</span></button></div>
+-      <div class="vh77-lady vh77-dino" aria-hidden="true"><img src="poker_swipe_daily_dino.jpeg" alt=""></div>
++      <div class="vh77-lady vh77-dino" aria-hidden="true"><video class="vh77-dinoVideo" autoplay muted loop playsinline preload="metadata" poster="assets/daily-hand/demon-cards-v2.png"><source src="assets/green-monster/demon-idle.webm" type="video/webm"></video><img class="vh77-dinoFallback" src="assets/daily-hand/demon-cards-v2.png" alt=""></div>
+     </section>
+     <section class="vh77-card vh77-focus"><div><span class="vh77-ey">ТВОЯ ИГРА</span><h2>ПРОВЕРИМ: ${focus}</h2><p>${focusCopy}</p></div><button class="vh77-smallCta" id="vh77Focus">ПРОВЕРИТЬ →</button></section>
+     <section class="vh77-grid">
+diff --git a/polyana-promo-animated.js b/polyana-promo-animated.js
+index b93bce7..22b05f7 100644
+--- a/polyana-promo-animated.js
++++ b/polyana-promo-animated.js
+@@ -98,11 +98,13 @@ function ensureTournamentNav(){
+     btn.innerHTML='<i style="font-style:normal">▤</i><span>МОИ ТУРНИРЫ</span>';
+   }
+ 
+-  /* Stable order: ИГРАТЬ · МОИ · ПОЛЯНА · ПРОФИЛЬ · МОИ ТУРНИРЫ */
++  /* Stable order: ИГРАТЬ · ПОЛЯНА · МОИ ТУРНИРЫ · ПРОФИЛЬ · МОИ РАЗДАЧИ */
++  const home=nav.querySelector('[data-nav="home"]');
++  const field=nav.querySelector('[data-nav="polyana"],[data-nav="tournaments"]');
+   const profile=nav.querySelector('[data-nav="profile"]');
+-  if(profile){
+-    if(btn!==profile.nextElementSibling) nav.insertBefore(btn, profile.nextElementSibling);
+-  }else if(!btn.isConnected) nav.appendChild(btn);
++  const hands=nav.querySelector('[data-nav="myhands"]');
++  [home,field,btn,profile,hands].filter(Boolean).forEach(el=>nav.appendChild(el));
++  if(hands){const label=hands.querySelector('span');if(label)label.textContent='МОИ РАЗДАЧИ';}
+ 
+   if(btn.dataset.psTournamentHotfix!==BUILD){
+     btn.dataset.psTournamentHotfix=BUILD;
