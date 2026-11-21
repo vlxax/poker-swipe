@@ -1,8 +1,8 @@
 {
   "source": "https://pokernomoney.ru/",
-  "updated_at": "2026-11-21T00:23:33+03:00",
-  "fetched_at": "2026-11-21T00:23:33+03:00",
-  "lastSuccessfulSync": "2026-11-21T00:23:33+03:00",
+  "updated_at": "2026-11-21T05:38:02+03:00",
+  "fetched_at": "2026-11-21T05:38:02+03:00",
+  "lastSuccessfulSync": "2026-11-21T05:38:02+03:00",
   "club_count": 99,
   "event_count": 64,
   "source_card_count": 64,
@@ -33,7 +33,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 A2 FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -65,7 +65,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Регулярный турнир 16:00 Бесплатно AA poker club ул. Генерала Белова, 8",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -88,7 +88,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Mystery Bounty MYSTERY BOUNTY TOURNAMENT 18:00 Бесплатно AA poker club ул. Генерала Белова, 8",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -120,7 +120,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM CRAZY PINEAPPLE 13:00 500 ₽ вход до 15:25 Ace Poker Club улица Сергия Радонежского, 9с5",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -143,7 +143,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Баунти / Нокаут KNOCKOUT 16:00 1 000 ₽ вход до 19:00 Ace Poker Club улица Сергия Радонежского, 9с5",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -166,7 +166,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Фрирол FREEROLL 19:00 Бесплатно вход до 22:00 Ace Poker Club улица Сергия Радонежского, 9с5",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -212,7 +212,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 AK77 ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -242,7 +242,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "ARIA RISING STAKES 17:00 1 000 ₽ Aria Royale ул. Братиславская, д. 28 (2 этаж)",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -289,7 +289,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Aura Mafia Game 16:00 1 000 ₽ Aura Poker Club Новоясеневский проспект, 1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -319,7 +319,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Дип-стек DEEP STACK 18:00 500 ₽ вход до 21:45 AURUM Алтуфьевское ш., д. 22Б",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -333,7 +333,7 @@
         {
           "_id": "e717e0e9",
           "date": "2026-11-21",
-          "time": "19:30",
+          "time": "19:00",
           "club": "BetPoker",
           "tournament": "Классика Вечерняя классика",
           "fee_rub": 0,
@@ -342,15 +342,15 @@
           "district": "Центральный",
           "source_url": "https://pokernomoney.ru/tournaments/33547",
           "address": "★ 5.0 (12) ул. Арбат, 25/36",
-          "late_reg_until": "21:50",
+          "late_reg_until": "21:20",
           "late_reg_minutes": 140,
           "late_reg_source": "homepage_text",
           "reentry_limit": null,
           "reentry_cost_rub": null,
           "addon_allowed": null,
           "duration_minutes": null,
-          "source_card_text": "★ PREMIUM Классика Вечерняя классика 19:30 Бесплатно вход до 21:50 BetPoker ★ 5.0 (12) ул. Арбат, 25/36",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "source_card_text": "★ PREMIUM Классика Вечерняя классика 19:00 Бесплатно вход до 21:20 BetPoker ★ 5.0 (12) ул. Арбат, 25/36",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -435,7 +435,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Дип-стек DEEPSTACK TOURNAMENT 18:00 1 200 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -458,7 +458,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Freezeout FREEZEOUT 23:30 23:30 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -489,7 +489,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 Check-Check by VooDooSh ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -536,7 +536,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 Check-Check Club ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -566,7 +566,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут Bounty 17:00 500 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -628,7 +628,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "турнир по длинным нардам 16:00 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -651,7 +651,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "турнир по спортивному покеру 19:00 1 200 ₽ DUCKS POKER CLUB проспект Мира, 102с25",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -682,7 +682,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 EMPIRE POKER CLUB ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -705,7 +705,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 EMPIRE POKER CLUB ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -728,7 +728,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "23:30 EMPIRE POKER CLUB FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -759,7 +759,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 FHC FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -791,7 +791,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 Formula AK FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -823,7 +823,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Дип-стек Битва Deep Stack 18:00 Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -846,7 +846,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Охотник за Add-On 20:00 Бесплатно Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -877,7 +877,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:10 Friendly Green Edition ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -927,7 +927,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Agro Tournament 18:10 1 000 ₽ вход до 22:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -979,7 +979,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Double Life DOUBLE CHANCE 19:00 1 000 ₽ вход до 22:10 HEADS UP проспект Мира, 26с2",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1010,7 +1010,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:10 Hi, Jack Club FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1109,7 +1109,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 Legacy poker club ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1162,7 +1162,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 Magnum Club ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1209,7 +1209,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Обучающий ОБУЧЕНИЕ ПОКЕРУ 16:45 Бесплатно MASK OFF POKER Сущевский вал, д.16с1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -1232,7 +1232,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут BOSS BOUNTY TOURNAMENT 19:00 1 000 ₽ MASK OFF POKER Сущевский вал, д.16с1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1287,7 +1287,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Double Life Minds Double Life 17:00 1 500 ₽ Minds Новочеремушкинская ул., д. 21а",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1340,7 +1340,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 Nuts poker club Moscow FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1377,7 +1377,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Double rating 18:30 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1415,7 +1415,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 PLAYWAY ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1468,7 +1468,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 Pocket Rockets Club - Москва ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1523,7 +1523,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "16:00 POKER FACE Сlub FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1553,7 +1553,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 POKER HOUSE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1593,7 +1593,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "20:00 Poker Room GTO ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1632,7 +1632,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Mystery Bounty FREROLL MYSTERY BOUNTY TOURNAMENT 17:00 Бесплатно Poker Spot ул. Сущевская, 27, стр. 1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1687,7 +1687,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Mystery Bounty MYSTERY BOUNTY 18:00 1 200 ₽ PRIDE ул. Ладожская, д. 11",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1717,7 +1717,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "PKO PROGRESSIVE BOUNTY TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1764,7 +1764,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM ВЕЛИКИЙ ГЭТСБИ 18:00 2 000 ₽ Quantum Новая Басманная улица, 19 ст7",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -1815,7 +1815,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Феникс Phoenix 17:00 1 000 ₽ River Room Сретенский бульвар, д. 6 с. 1/1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1854,7 +1854,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 Royal Raise FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1913,7 +1913,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут BOUNTY TOURNAMENT POKER 18:00 1 000 ₽ SRP EQUITY Новолесная улица, д. 8/12",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1966,7 +1966,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 The MANSION ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -1998,7 +1998,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 TROYA покер FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2037,7 +2037,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 Vault Poker Club FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2093,7 +2093,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:30 YAKUDZA POKER COMMUNITY ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2139,7 +2139,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 БЛЕФ? ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2170,7 +2170,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 Восьмёрка Кикер ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2215,7 +2215,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 Две пары FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2270,7 +2270,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "19:00 Игры Центра — Компас ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2331,7 +2331,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Классика CLASSIC TEXAS HOLD'EM 19:00 1 000 ₽ вход до 21:30 Комьюнити Компас Дмитровское ш., 81",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2379,7 +2379,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Баунти / Нокаут Караоке вечеринка 18:00 1 200 ₽ вход до 22:10 МАКСИМУМ ★ 4.7 (14) Большая Никитская 43",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ]
@@ -2423,7 +2423,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "20:00 ПОКЕР в СТАН ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2476,7 +2476,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "★ PREMIUM Баунти / Нокаут BOUNTY Царь горы 17:00 1 200 ₽ Покерный клуб «Дистанция» ★ 5.0 (9) Ленинградский проспект 32/2",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2515,7 +2515,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "Freezeout FREEZE OUT TOURNAMENT 18:00 1 000 ₽ Резиденция ПОКЕР ★ 5.0 (1) Mos Kalyan, Таганская ул., 29, стр. 1",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2546,7 +2546,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "17:00 СТРИТ ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2591,7 +2591,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "18:00 ХРОНИКИ FREE ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         },
         {
@@ -2614,7 +2614,7 @@
           "addon_allowed": null,
           "duration_minutes": null,
           "source_card_text": "23:00 ХРОНИКИ ♠",
-          "fetched_at": "2026-11-21T00:23:33+03:00",
+          "fetched_at": "2026-11-21T05:38:02+03:00",
           "source": "https://pokernomoney.ru"
         }
       ],
@@ -2642,7 +2642,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM CRAZY PINEAPPLE 13:00 500 ₽ вход до 15:25 Ace Poker Club улица Сергия Радонежского, 9с5",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2665,7 +2665,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Регулярный турнир 16:00 Бесплатно AA poker club ул. Генерала Белова, 8",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2688,7 +2688,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Баунти / Нокаут KNOCKOUT 16:00 1 000 ₽ вход до 19:00 Ace Poker Club улица Сергия Радонежского, 9с5",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2711,7 +2711,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Aura Mafia Game 16:00 1 000 ₽ Aura Poker Club Новоясеневский проспект, 1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2734,7 +2734,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "турнир по длинным нардам 16:00 Бесплатно DUCKS POKER CLUB проспект Мира, 102с25",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2757,7 +2757,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "16:00 POKER FACE Сlub FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2780,7 +2780,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Обучающий ОБУЧЕНИЕ ПОКЕРУ 16:45 Бесплатно MASK OFF POKER Сущевский вал, д.16с1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2803,7 +2803,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "ARIA RISING STAKES 17:00 1 000 ₽ Aria Royale ул. Братиславская, д. 28 (2 этаж)",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2826,7 +2826,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 Check-Check by VooDooSh ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2849,7 +2849,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 Check-Check Club ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2872,7 +2872,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут Bounty 17:00 500 ₽ CHECK-RAISE CLUB MOSCOW Старопетровский проезд, 1с1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2895,7 +2895,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Double Life Minds Double Life 17:00 1 500 ₽ Minds Новочеремушкинская ул., д. 21а",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2918,7 +2918,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 Nuts poker club Moscow FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2941,7 +2941,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Mystery Bounty FREROLL MYSTERY BOUNTY TOURNAMENT 17:00 Бесплатно Poker Spot ул. Сущевская, 27, стр. 1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2964,7 +2964,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Феникс Phoenix 17:00 1 000 ₽ River Room Сретенский бульвар, д. 6 с. 1/1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -2987,7 +2987,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 Vault Poker Club FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3010,7 +3010,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 Восьмёрка Кикер ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3033,7 +3033,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Баунти / Нокаут BOUNTY Царь горы 17:00 1 200 ₽ Покерный клуб «Дистанция» ★ 5.0 (9) Ленинградский проспект 32/2",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3056,7 +3056,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "17:00 СТРИТ ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3079,7 +3079,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 A2 FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3102,7 +3102,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Mystery Bounty MYSTERY BOUNTY TOURNAMENT 18:00 Бесплатно AA poker club ул. Генерала Белова, 8",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3125,7 +3125,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Дип-стек DEEP STACK 18:00 500 ₽ вход до 21:45 AURUM Алтуфьевское ш., д. 22Б",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3148,7 +3148,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Дип-стек DEEPSTACK TOURNAMENT 18:00 1 200 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3171,7 +3171,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 EMPIRE POKER CLUB ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3194,7 +3194,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Дип-стек Битва Deep Stack 18:00 Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3217,7 +3217,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 Magnum Club ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3240,7 +3240,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 POKER HOUSE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3263,7 +3263,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Mystery Bounty MYSTERY BOUNTY 18:00 1 200 ₽ PRIDE ул. Ладожская, д. 11",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3286,7 +3286,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "PKO PROGRESSIVE BOUNTY TOURNAMENT 18:00 Бесплатно QQ POKER CLUB Нагатинская улица, 16",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3309,7 +3309,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM ВЕЛИКИЙ ГЭТСБИ 18:00 2 000 ₽ Quantum Новая Басманная улица, 19 ст7",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3332,7 +3332,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут BOUNTY TOURNAMENT POKER 18:00 1 000 ₽ SRP EQUITY Новолесная улица, д. 8/12",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3355,7 +3355,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 Две пары FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3378,7 +3378,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут Караоке вечеринка 18:00 1 200 ₽ вход до 22:10 МАКСИМУМ ★ 4.7 (14) Большая Никитская 43",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3401,7 +3401,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Freezeout FREEZE OUT TOURNAMENT 18:00 1 000 ₽ Резиденция ПОКЕР ★ 5.0 (1) Mos Kalyan, Таганская ул., 29, стр. 1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3424,7 +3424,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:00 ХРОНИКИ FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3447,7 +3447,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "18:10 Friendly Green Edition ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3470,7 +3470,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Agro Tournament 18:10 1 000 ₽ вход до 22:10 Friendly Poker Club Русаковская набережная, д. 1А, стр. 1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3493,7 +3493,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Double rating 18:30 1 000 ₽ Ocean's Poker Club Нижняя Красносельская улица, 35 с. 59",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3516,7 +3516,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "★ PREMIUM Фрирол FREEROLL 19:00 Бесплатно вход до 22:00 Ace Poker Club улица Сергия Радонежского, 9с5",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3539,7 +3539,30 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 AK77 ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
+      "source": "https://pokernomoney.ru"
+    },
+    {
+      "_id": "e717e0e9",
+      "date": "2026-11-21",
+      "time": "19:00",
+      "club": "BetPoker",
+      "tournament": "Классика Вечерняя классика",
+      "fee_rub": 0,
+      "type": "",
+      "game": null,
+      "district": "Центральный",
+      "source_url": "https://pokernomoney.ru/tournaments/33547",
+      "address": "★ 5.0 (12) ул. Арбат, 25/36",
+      "late_reg_until": "21:20",
+      "late_reg_minutes": 140,
+      "late_reg_source": "homepage_text",
+      "reentry_limit": null,
+      "reentry_cost_rub": null,
+      "addon_allowed": null,
+      "duration_minutes": null,
+      "source_card_text": "★ PREMIUM Классика Вечерняя классика 19:00 Бесплатно вход до 21:20 BetPoker ★ 5.0 (12) ул. Арбат, 25/36",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3562,7 +3585,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "турнир по спортивному покеру 19:00 1 200 ₽ DUCKS POKER CLUB проспект Мира, 102с25",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3585,7 +3608,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 EMPIRE POKER CLUB ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3608,7 +3631,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 FHC FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3631,7 +3654,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 Formula AK FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3654,7 +3677,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Double Life DOUBLE CHANCE 19:00 1 000 ₽ вход до 22:10 HEADS UP проспект Мира, 26с2",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3677,7 +3700,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 Legacy poker club ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3700,7 +3723,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Баунти / Нокаут BOSS BOUNTY TOURNAMENT 19:00 1 000 ₽ MASK OFF POKER Сущевский вал, д.16с1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3723,7 +3746,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 PLAYWAY ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3746,7 +3769,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 Pocket Rockets Club - Москва ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3769,7 +3792,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 Royal Raise FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3792,7 +3815,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 The MANSION ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3815,7 +3838,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 TROYA покер FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3838,7 +3861,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 БЛЕФ? ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3861,7 +3884,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:00 Игры Центра — Компас ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3884,7 +3907,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Классика CLASSIC TEXAS HOLD'EM 19:00 1 000 ₽ вход до 21:30 Комьюнити Компас Дмитровское ш., 81",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3907,30 +3930,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:10 Hi, Jack Club FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
-      "source": "https://pokernomoney.ru"
-    },
-    {
-      "_id": "e717e0e9",
-      "date": "2026-11-21",
-      "time": "19:30",
-      "club": "BetPoker",
-      "tournament": "Классика Вечерняя классика",
-      "fee_rub": 0,
-      "type": "",
-      "game": null,
-      "district": "Центральный",
-      "source_url": "https://pokernomoney.ru/tournaments/33547",
-      "address": "★ 5.0 (12) ул. Арбат, 25/36",
-      "late_reg_until": "21:50",
-      "late_reg_minutes": 140,
-      "late_reg_source": "homepage_text",
-      "reentry_limit": null,
-      "reentry_cost_rub": null,
-      "addon_allowed": null,
-      "duration_minutes": null,
-      "source_card_text": "★ PREMIUM Классика Вечерняя классика 19:30 Бесплатно вход до 21:50 BetPoker ★ 5.0 (12) ул. Арбат, 25/36",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3953,7 +3953,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "19:30 YAKUDZA POKER COMMUNITY ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3976,7 +3976,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Охотник за Add-On 20:00 Бесплатно Free Poker Moscow м. 1905 года, Звенигородское шоссе 18/20к1",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -3999,7 +3999,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "20:00 Poker Room GTO ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -4022,7 +4022,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "20:00 ПОКЕР в СТАН ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -4045,7 +4045,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "23:00 ХРОНИКИ ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -4068,7 +4068,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "Freezeout FREEZEOUT 23:30 23:30 1 000 ₽ CARTEL POKER CLUB Волоколамское шоссе, 124",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     },
     {
@@ -4091,7 +4091,7 @@
       "addon_allowed": null,
       "duration_minutes": null,
       "source_card_text": "23:30 EMPIRE POKER CLUB FREE ♠",
-      "fetched_at": "2026-11-21T00:23:33+03:00",
+      "fetched_at": "2026-11-21T05:38:02+03:00",
       "source": "https://pokernomoney.ru"
     }
   ]
